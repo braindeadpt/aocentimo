@@ -1,23 +1,23 @@
 @import "tailwindcss";
 
 @theme {
-  /* Broadsheet financeiro: papel, tinta, um acento */
-  --color-paper: #faf8f2;
-  --color-surface: #fffdf8;
-  --color-ink: #1a1610;
-  --color-ink2: #4c4437;
-  --color-muted: #847a64;
-  --color-line: #e6dfcf;
-  --color-line2: #c6bb9f;
+  /* Cartaz de contas: papel claro, tinta fria, vermelho-rubrica */
+  --color-paper: #fbfaf6;
+  --color-surface: #ffffff;
+  --color-ink: #161512;
+  --color-ink2: #4a463c;
+  --color-muted: #8b8471;
+  --color-line: #e4e0d2;
+  --color-line2: #b9b19c;
 
-  --color-accent: #14532d;
-  --color-accent-ink: #0d3a20;
-  --color-accent-soft: #e8f0e9;
+  --color-accent: #b3261e;
+  --color-accent-ink: #7c1a12;
+  --color-accent-soft: #f7e9e5;
 
-  --color-up: #b3401e;
-  --color-down: #0f6f66;
+  --color-up: #b3261e;
+  --color-down: #0f7a66;
 
-  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-display: var(--font-anton), "Arial Narrow", sans-serif;
   --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-plex), ui-monospace, "SF Mono", Consolas, monospace;
 }
@@ -34,7 +34,8 @@ body {
 }
 
 ::selection {
-  background: var(--color-accent-soft);
+  background: var(--color-accent);
+  color: var(--color-paper);
 }
 
 /* utilidades editoriais */
@@ -55,7 +56,7 @@ body {
 }
 
 .rule-strong {
-  border-top: 1.5px solid var(--color-ink);
+  border-top: 2px solid var(--color-ink);
 }
 
 .footnote {
@@ -72,8 +73,26 @@ body {
   color: var(--color-muted);
 }
 
+/* a barra do euro — segmento que cresce ao carregar */
+.eurobar-seg {
+  transform-origin: left;
+  animation: eurobar-grow 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes eurobar-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  .eurobar-seg {
+    animation: none;
   }
 }

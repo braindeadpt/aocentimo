@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Delta } from "@/components/Delta";
 import { Stat } from "@/components/Stat";
 import { Figure } from "@/components/Figure";
+import { EuroBar } from "@/components/EuroBar";
 
 export const metadata: Metadata = {
   title: "Sistema de design",
@@ -9,36 +10,39 @@ export const metadata: Metadata = {
 };
 
 const TOKENS = [
-  ["paper", "bg-paper", "#faf8f2 — fundo"],
-  ["surface", "bg-surface", "#fffdf8 — cartões"],
-  ["ink", "bg-ink", "#1a1610 — texto"],
-  ["ink2", "bg-ink2", "#4c4437 — texto secundário"],
-  ["muted", "bg-muted", "#847a64 — meta"],
-  ["line", "bg-line", "#e6dfcf — hairline"],
-  ["line2", "bg-line2", "#c6bb9f — regra forte"],
-  ["accent", "bg-accent", "#14532d — verde-garrafa"],
-  ["accent-soft", "bg-accent-soft", "#e8f0e9 — fundo de destaque"],
-  ["up", "bg-up", "#b3401e — sobe (mau em preços)"],
-  ["down", "bg-down", "#0f6f66 — desce (bom em preços)"],
+  ["paper", "bg-paper", "#fbfaf6 — fundo"],
+  ["surface", "bg-surface", "#ffffff — cartões"],
+  ["ink", "bg-ink", "#161512 — texto"],
+  ["ink2", "bg-ink2", "#4a463c — secundário"],
+  ["muted", "bg-muted", "#8b8471 — meta"],
+  ["line", "bg-line", "#e4e0d2 — hairline"],
+  ["line2", "bg-line2", "#b9b19c — regra"],
+  ["accent", "bg-accent", "#b3261e — rubrica"],
+  ["accent-soft", "bg-accent-soft", "#f7e9e5 — destaque"],
+  ["up", "bg-up", "#b3261e — sobe (mau em preços)"],
+  ["down", "bg-down", "#0f7a66 — desce (bom em preços)"],
 ];
 
 export default function EstiloPage() {
   return (
-    <div className="mx-auto max-w-5xl px-5 pt-14 pb-10">
+    <div className="mx-auto max-w-6xl px-5 pt-14 pb-10">
       <p className="kicker">Referência viva</p>
-      <h1 className="font-display text-4xl md:text-5xl tracking-tight mt-2">Sistema de design</h1>
+      <h1 className="font-display mt-2 text-4xl uppercase tracking-wide md:text-6xl">
+        Sistema de design
+      </h1>
       <p className="lede mt-5">
-        Broadsheet financeiro português: papel claro, tinta escura, uma cor de
-        acento. Serifada para voz, monoespaçada para números.
+        Cartaz de contas: papel claro, tinta fria, um vermelho-rubrica.
+        Condensada para voz, monoespaçada para números — e a barra do euro
+        como assinatura.
       </p>
 
       <section className="mt-10">
         <h2 className="kicker mb-4">Tokens de cor</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {TOKENS.map(([nome, cls, desc]) => (
             <div key={nome} className="border border-line bg-surface">
               <div className={`h-14 ${cls}`} />
-              <p className="num text-xs px-2 py-1.5 text-ink2">{nome}</p>
+              <p className="num px-2 py-1.5 text-xs text-ink2">{nome}</p>
               <p className="footnote px-2 pb-2">{desc}</p>
             </div>
           ))}
@@ -47,10 +51,12 @@ export default function EstiloPage() {
 
       <section className="mt-12">
         <h2 className="kicker mb-4">Tipografia</h2>
-        <div className="border-y border-line divide-y divide-line">
+        <div className="divide-y divide-line border-y border-line">
           <div className="py-5">
-            <p className="kicker mb-2">Display — Fraunces</p>
-            <p className="font-display text-4xl tracking-tight">Para onde vai o teu dinheiro.</p>
+            <p className="kicker mb-2">Display — Anton</p>
+            <p className="font-display text-5xl uppercase tracking-wide">
+              Para onde vai o teu dinheiro.
+            </p>
           </div>
           <div className="py-5">
             <p className="kicker mb-2">Corpo — Inter</p>
@@ -67,8 +73,21 @@ export default function EstiloPage() {
       </section>
 
       <section className="mt-12">
+        <h2 className="kicker mb-4">A barra do euro</h2>
+        <EuroBar
+          total={25987}
+          segmentos={[
+            { label: "Fica contigo", valor: 16419.69, cor: "#0f7a66" },
+            { label: "IRS", valor: 2270.31, cor: "#b3261e" },
+            { label: "SS do trabalhador", valor: 2310, cor: "#d07c1f" },
+            { label: "TSU da empresa", valor: 4987.5, cor: "#4a463c" },
+          ]}
+        />
+      </section>
+
+      <section className="mt-12">
         <h2 className="kicker mb-4">Componentes</h2>
-        <div className="grid md:grid-cols-4 gap-6">
+        <div className="grid gap-6 md:grid-cols-4">
           <Stat label="Exemplo" value="920 €" hint="salário mínimo 2026" />
           <Stat label="Variação" value={<Delta value={0.023} />} hint="preço a subir" />
           <Stat label="Variação" value={<Delta value={-0.015} />} hint="preço a descer" />

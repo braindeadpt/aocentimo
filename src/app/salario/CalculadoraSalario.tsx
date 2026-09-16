@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { simularSalario } from "@/lib/engines/irs";
+import { EuroBar } from "@/components/EuroBar";
 import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
 
 const inputCls =
@@ -159,6 +160,26 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
           empresa (23,75 %) sobre o custo total. É a fatia que nunca chega ao
           teu bolso.
         </p>
+      </div>
+
+      {/* a barra do euro — sobre o custo total para a empresa */}
+      <div className="md:col-span-2">
+        <p className="num mb-3 text-[0.65rem] uppercase tracking-[0.16em] text-muted">
+          O custo total, partido em fatias
+        </p>
+        <EuroBar
+          total={resultado.custoEmpresaAnual}
+          segmentos={[
+            { label: "Fica contigo", valor: resultado.liquidoAnual, cor: "#0f7a66" },
+            { label: "IRS", valor: resultado.irsAnual, cor: "#b3261e" },
+            { label: "A tua SS (11 %)", valor: resultado.ssAnual, cor: "#d07c1f" },
+            {
+              label: "TSU da empresa (23,75 %)",
+              valor: resultado.brutoAnualTotal * 0.2375,
+              cor: "#4a463c",
+            },
+          ]}
+        />
       </div>
     </div>
   );

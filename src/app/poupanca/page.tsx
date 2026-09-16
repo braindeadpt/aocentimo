@@ -14,7 +14,7 @@ export default function PoupancaPage() {
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
       <p className="kicker">Módulo 05</p>
-      <h1 className="font-display text-4xl md:text-5xl tracking-tight mt-2">
+      <h1 className="font-display text-4xl md:text-6xl tracking-wide mt-2 uppercase">
         Onde rende o que poupas
       </h1>
       <p className="lede mt-5">

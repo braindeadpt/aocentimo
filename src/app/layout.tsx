@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter, IBM_Plex_Mono } from "next/font/google";
+import { Anton, Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 
-const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces" });
+const anton = Anton({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-anton",
+});
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const plex = IBM_Plex_Mono({
   subsets: ["latin"],
@@ -25,7 +29,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt" className={`${fraunces.variable} ${inter.variable} ${plex.variable}`}>
+    <html lang="pt" className={`${anton.variable} ${inter.variable} ${plex.variable}`}>
       <body className="min-h-screen flex flex-col">
         <SiteHeader />
         <main className="flex-1">{children}</main>
