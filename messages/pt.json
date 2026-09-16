@@ -29,5 +29,83 @@
   "meta": {
     "title": "BRUTO — literacia financeira para Portugal",
     "description": "Simuladores e dados de literacia financeira para Portugal — salário líquido, IRS, crédito habitação, poupança e inflação. Cada número com fonte e data."
+  },
+  "common": {
+    "fonte": "Fonte",
+    "calculaOTeu": "Calcula o teu"
+  },
+  "home": {
+    "h1a": "PARA ONDE",
+    "h1b": "VAI O TEU",
+    "h1c": "DINHEIRO",
+    "lede": "Do salário bruto ao litro de gasóleo, seguimos cada euro: o que o Estado leva, o que a inflação come, o que o banco cobra — e o que sobra para ti. Com dados oficiais e a fonte à vista.",
+    "cta": "Vê quanto fica do teu bruto",
+    "hoje": "Hoje em Portugal",
+    "inflacaoHomologa": "Inflação, homóloga",
+    "alimentacao": "Alimentação",
+    "ihpcCP01": "IHPC CP01",
+    "salarioMinimo": "Salário mínimo",
+    "smnNota": "2026 · continente",
+    "ca": "Certificados de Aforro",
+    "caNota": "Série F · bruta",
+    "barraTitulo": "UM SALÁRIO DE 1 500 €, DESMONTADO",
+    "barraNota": "por ano · solteiro · regras 2026",
+    "segLiquido": "Fica contigo (líquido)",
+    "segIrs": "IRS",
+    "segSs": "A tua Seg. Social (11 %)",
+    "segTsu": "TSU da empresa (23,75 %)",
+    "barraFoot": "A empresa paga {custo} por ano para te pagar {bruto} brutos por mês — {peso} desse custo vai para o Estado antes de chegar ao teu bolso.",
+    "capitulosTitulo": "O PERCURSO DE UM EURO",
+    "capitulosNota": "seis capítulos",
+    "capitulos": [
+      {
+        "n": "01",
+        "href": "/salario",
+        "titulo": "O DESCONTO",
+        "tema": "Salário",
+        "descricao": "O euro nasce no teu recibo: 11 % para a Segurança Social, uma fatia de IRS, e uma TSU de 23,75 % que a empresa paga e tu nunca vês."
+      },
+      {
+        "n": "02",
+        "href": "/impostos",
+        "titulo": "O PREÇO",
+        "tema": "Impostos",
+        "descricao": "O euro gasta-se com imposto já dentro: 6 % no pão, 23 % no telemóvel, e na gasolina mais de metade do litro é Estado."
+      },
+      {
+        "n": "03",
+        "href": "/inflacao",
+        "titulo": "A EROSÃO",
+        "tema": "Inflação",
+        "descricao": "O euro parado encolhe: o índice oficial por categoria — pão, energia, restaurantes — e o que os teus 1 000 € de 2015 valem hoje."
+      },
+      {
+        "n": "04",
+        "href": "/credito",
+        "titulo": "O JURO",
+        "tema": "Crédito",
+        "descricao": "O euro que pediste: Euribor mais spread faz a TAN, a TAEG junta o resto, e o MTIC revela quanto a casa custa de verdade."
+      },
+      {
+        "n": "05",
+        "href": "/poupanca",
+        "titulo": "O RESTO",
+        "tema": "Poupança",
+        "descricao": "O euro que sobra: Certificados de Aforro, depósitos, 28 % de imposto sobre juros — e a taxa real, a única que interessa."
+      },
+      {
+        "n": "06",
+        "href": "/precos",
+        "titulo": "O LITRO",
+        "tema": "Combustíveis",
+        "descricao": "O euro na bomba, ao dia: a única família de bens essenciais com preço oficial quase diário em Portugal."
+      }
+    ],
+    "manifesto1": "NEM CONSELHOS.",
+    "manifesto2": "NEM PUBLICIDADE.",
+    "manifesto3": "SÓ A MECÂNICA.",
+    "manifestoLede": "Este site não te diz onde investir nem compara bancos. Mostra como o dinheiro funciona em Portugal — escalões, taxas, spreads, prémios — para perceberes as regras do jogo.",
+    "manifestoFoot": "Quem percebe as regras, decide melhor. Simuladores indicativos ·",
+    "metodologia": "metodologia e fontes"
   }
 }

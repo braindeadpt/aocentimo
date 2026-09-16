@@ -42,7 +42,7 @@ export function EuroBar({
               {w >= 12 && (
                 <span
                   className="num absolute inset-0 flex items-center justify-center text-xs md:text-sm"
-                  style={{ color: s.texto ?? "#fbfaf6" }}
+                  style={{ color: s.texto ?? "var(--color-paper)" }}
                 >
                   {fmtPct(s.valor / total, 0)}
                 </span>

@@ -170,13 +170,13 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
         <EuroBar
           total={resultado.custoEmpresaAnual}
           segmentos={[
-            { label: "Fica contigo", valor: resultado.liquidoAnual, cor: "#0f7a66" },
-            { label: "IRS", valor: resultado.irsAnual, cor: "#b3261e" },
-            { label: "A tua SS (11 %)", valor: resultado.ssAnual, cor: "#d07c1f" },
+            { label: "Fica contigo", valor: resultado.liquidoAnual, cor: "var(--color-keep)" },
+            { label: "IRS", valor: resultado.irsAnual, cor: "var(--color-accent)" },
+            { label: "A tua SS (11 %)", valor: resultado.ssAnual, cor: "var(--color-accent-ink)" },
             {
               label: "TSU da empresa (23,75 %)",
               valor: resultado.brutoAnualTotal * 0.2375,
-              cor: "#4a463c",
+              cor: "var(--color-ink2)",
             },
           ]}
         />

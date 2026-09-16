@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { m } from "@/lib/messages";
 
 /** Figura numerada, à maneira de publicação de referência. */
 export function Figure({
@@ -9,7 +10,8 @@ export function Figure({
 }: {
   n: number;
   title: string;
-  source?: string;
+  /** Texto livre ou um <Source/> estruturado. */
+  source?: ReactNode;
   children: ReactNode;
 }) {
   return (
@@ -19,7 +21,12 @@ export function Figure({
         <span className="font-display text-lg text-ink">{title}</span>
       </figcaption>
       {children}
-      {source && <p className="footnote mt-3">Fonte: {source}</p>}
+      {source && (
+        <p className="footnote mt-3">
+          <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-mark align-middle" />
+          {m.common.fonte}: {source}
+        </p>
+      )}
     </figure>
   );
 }

@@ -1,68 +1,255 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import * as echarts from "echarts";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { fmtData, fmtNum } from "@/lib/format";
+
+interface SerieIn {
+  name: string;
+  /** [data ISO "YYYY-MM-DD" ou "YYYY-MM", valor] */
+  data: [string, number][];
+  cor?: string;
+}
 
 interface Props {
-  series: { name: string; data: [string, number][] }[];
+  series: SerieIn[];
   height?: number;
   yFormat?: (v: number) => string;
 }
 
-/** Gráfico de linhas editorial — ECharts, sem chrome desnecessário. */
-export function LineChart({ series, height = 360, yFormat }: Props) {
-  const ref = useRef<HTMLDivElement>(null);
+const CORES = [
+  "var(--color-ink)",
+  "var(--color-accent)",
+  "var(--color-warn)",
+  "var(--color-keep)",
+];
+
+const PAD = { top: 16, right: 132, bottom: 30, left: 46 };
+
+function toMs(iso: string): number {
+  const [y, m, d] = iso.split("-").map(Number);
+  return Date.UTC(y, (m ?? 1) - 1, d ?? 1);
+}
+
+/** Ticks "redondos" — 1/2/5×10ⁿ, à maneira de gráfico editorial. */
+function niceTicks(min: number, max: number, count = 4) {
+  const span = max - min || 1;
+  const raw = span / count;
+  const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const norm = raw / mag;
+  const step = (norm >= 5 ? 10 : norm >= 2 ? 5 : norm >= 1 ? 2 : 1) * mag;
+  const lo = Math.floor(min / step) * step;
+  const hi = Math.ceil(max / step) * step;
+  const ticks: number[] = [];
+  for (let v = lo; v <= hi + step * 1e-9; v += step) ticks.push(v);
+  return { ticks, lo, hi };
+}
+
+function yearTicks(t0: number, t1: number): number[] {
+  const y0 = new Date(t0).getUTCFullYear();
+  const y1 = new Date(t1).getUTCFullYear();
+  const n = y1 - y0 + 1;
+  const step = Math.ceil(n / 8);
+  const ticks: number[] = [];
+  for (let y = y0; y <= y1; y += step) ticks.push(Date.UTC(y, 0, 1));
+  return ticks;
+}
+
+/**
+ * Gráfico de linhas editorial — SVG próprio, sem biblioteca.
+ * Rótulos no fim da linha (à maneira do FT), tooltip ao hover/focus,
+ * números mono tabulares. `prefers-reduced-motion`: estado final já.
+ */
+export function LineChart({ series, height = 360, yFormat = fmtNum }: Props) {
+  const wrap = useRef<HTMLDivElement>(null);
+  const [w, setW] = useState(720);
+  const [hover, setHover] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!ref.current) return;
-    const chart = echarts.init(ref.current, undefined, { renderer: "svg" });
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const el = wrap.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setW(e.contentRect.width));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
-    chart.setOption({
-      animation: !reduced,
-      grid: { left: 48, right: 16, top: 32, bottom: 28 },
-      tooltip: {
-        trigger: "axis",
-        textStyle: { fontFamily: "IBM Plex Mono" },
-        borderColor: "#c6bb9f",
-        backgroundColor: "#fffdf8",
-      },
-      legend: { top: 0, textStyle: { color: "#4c4437" } },
-      xAxis: {
-        type: "time",
-        axisLine: { lineStyle: { color: "#c6bb9f" } },
-        axisLabel: { color: "#847a64", fontFamily: "IBM Plex Mono", fontSize: 11 },
-        splitLine: { show: false },
-      },
-      yAxis: {
-        type: "value",
-        scale: true,
-        axisLabel: {
-          color: "#847a64",
-          fontFamily: "IBM Plex Mono",
-          fontSize: 11,
-          formatter: yFormat ? (v: number) => yFormat(v) : undefined,
-        },
-        splitLine: { lineStyle: { color: "#e6dfcf" } },
-      },
-      series: series.map((s, i) => ({
-        type: "line",
+  const dados = useMemo(
+    () =>
+      series.map((s, i) => ({
         name: s.name,
-        data: s.data,
-        showSymbol: false,
-        lineStyle: { width: 2, color: i === 0 ? "#14532d" : "#b3401e" },
-        itemStyle: { color: i === 0 ? "#14532d" : "#b3401e" },
-        emphasis: { disabled: true },
+        cor: s.cor ?? CORES[i % CORES.length],
+        pts: s.data
+          .map(([t, v]) => ({ t: toMs(t), v }))
+          .sort((a, b) => a.t - b.t),
       })),
-    });
+    [series]
+  );
 
-    const onResize = () => chart.resize();
-    window.addEventListener("resize", onResize);
-    return () => {
-      window.removeEventListener("resize", onResize);
-      chart.dispose();
+  const { escala, xticks, yticks, fim } = useMemo(() => {
+    const ts = dados.flatMap((d) => d.pts.map((p) => p.t));
+    const vs = dados.flatMap((d) => d.pts.map((p) => p.v));
+    const t0 = Math.min(...ts);
+    const t1 = Math.max(...ts);
+    const { ticks, lo, hi } = niceTicks(Math.min(...vs), Math.max(...vs));
+    const x = (t: number) =>
+      PAD.left + ((t - t0) / (t1 - t0 || 1)) * (w - PAD.left - PAD.right);
+    const y = (v: number) =>
+      PAD.top + (1 - (v - lo) / (hi - lo || 1)) * (height - PAD.top - PAD.bottom);
+    // posição dos rótulos de fim de linha, espaçados para não se pisarem
+    const fim = dados
+      .map((d) => ({ name: d.name, cor: d.cor, y: y(d.pts[d.pts.length - 1]?.v ?? lo), v: d.pts[d.pts.length - 1]?.v }))
+      .sort((a, b) => a.y - b.y);
+    let prev = -Infinity;
+    for (const f of fim) {
+      f.y = Math.max(f.y, prev + 15, PAD.top + 6);
+      prev = f.y;
+    }
+    return {
+      escala: { x, y },
+      xticks: yearTicks(t0, t1),
+      yticks: ticks,
+      fim,
     };
-  }, [series, yFormat]);
+  }, [dados, w, height]);
 
-  return <div ref={ref} style={{ height }} className="w-full" role="img" />;
+  const { x, y } = escala;
+  const plotW = w - PAD.left - PAD.right;
+  const plotH = height - PAD.top - PAD.bottom;
+
+  const onMove = (e: React.PointerEvent<SVGRectElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const frac = (e.clientX - rect.left - PAD.left) / plotW;
+    setHover(Math.max(0, Math.min(1, frac)));
+  };
+
+  // ponto mais próximo do cursor em cada série
+  const proximos = hover === null
+    ? null
+    : dados.map((d) => {
+        const t0 = d.pts[0].t;
+        const t1 = d.pts[d.pts.length - 1].t;
+        const alvo = t0 + hover * (t1 - t0);
+        let best = d.pts[0];
+        for (const p of d.pts) if (Math.abs(p.t - alvo) < Math.abs(best.t - alvo)) best = p;
+        return best;
+      });
+  const hoverX = proximos ? x(proximos[0].t) : null;
+
+  const descricao = dados
+    .map((d) => `${d.name}: ${yFormat(d.pts[d.pts.length - 1]?.v ?? 0)}`)
+    .join("; ");
+
+  return (
+    <div ref={wrap} className="relative w-full" role="img" aria-label={`Gráfico de linhas — ${descricao}`}>
+      <svg width={w} height={height} className="block">
+        {/* grelha horizontal + eixo y */}
+        {yticks.map((v) => (
+          <g key={v}>
+            <line
+              x1={PAD.left}
+              x2={w - PAD.right}
+              y1={y(v)}
+              y2={y(v)}
+              stroke="var(--color-line)"
+              strokeWidth={1}
+            />
+            <text
+              x={PAD.left - 8}
+              y={y(v) + 4}
+              textAnchor="end"
+              fontSize={11}
+              fill="var(--color-muted)"
+              fontFamily="var(--font-mono)"
+            >
+              {yFormat(v)}
+            </text>
+          </g>
+        ))}
+        {/* eixo x — anos */}
+        {xticks.map((t) => (
+          <text
+            key={t}
+            x={x(t)}
+            y={height - 8}
+            textAnchor="middle"
+            fontSize={11}
+            fill="var(--color-muted)"
+            fontFamily="var(--font-mono)"
+          >
+            {new Date(t).getUTCFullYear()}
+          </text>
+        ))}
+        {/* linhas */}
+        {dados.map((d) => (
+          <polyline
+            key={d.name}
+            fill="none"
+            stroke={d.cor}
+            strokeWidth={2}
+            strokeLinejoin="round"
+            points={d.pts.map((p) => `${x(p.t)},${y(p.v)}`).join(" ")}
+          />
+        ))}
+        {/* rótulos de fim de linha */}
+        {fim.map((f) => (
+          <text
+            key={f.name}
+            x={w - PAD.right + 8}
+            y={f.y + 4}
+            fontSize={11}
+            fill={f.cor}
+            fontFamily="var(--font-mono)"
+          >
+            {f.name}
+          </text>
+        ))}
+        {/* cursor */}
+        {hoverX !== null && proximos && (
+          <g>
+            <line
+              x1={hoverX}
+              x2={hoverX}
+              y1={PAD.top}
+              y2={PAD.top + plotH}
+              stroke="var(--color-line2)"
+              strokeWidth={1}
+              strokeDasharray="3 3"
+            />
+            {proximos.map((p, i) => (
+              <circle key={i} cx={x(p.t)} cy={y(p.v)} r={3.5} fill={dados[i].cor} />
+            ))}
+          </g>
+        )}
+        {/* zona de hover */}
+        <rect
+          x={PAD.left}
+          y={PAD.top}
+          width={plotW}
+          height={plotH}
+          fill="transparent"
+          onPointerMove={onMove}
+          onPointerLeave={() => setHover(null)}
+        />
+      </svg>
+      {/* tooltip */}
+      {proximos && hoverX !== null && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute top-2 z-10 border border-line bg-surface px-3 py-2 text-xs shadow-sm"
+          style={{
+            left: Math.min(Math.max(hoverX - 70, 0), w - 170),
+            fontFamily: "var(--font-mono)",
+          }}
+        >
+          <p className="text-muted">{fmtData(new Date(proximos[0].t).toISOString().slice(0, 10))}</p>
+          {proximos.map((p, i) => (
+            <p key={i} className="mt-0.5 flex items-center gap-2">
+              <span className="inline-block h-2 w-2" style={{ background: dados[i].cor }} />
+              <span className="text-ink2">{dados[i].name}</span>
+              <span className="ml-auto pl-3 font-medium">{yFormat(p.v)}</span>
+            </p>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
