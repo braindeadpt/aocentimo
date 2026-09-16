@@ -64,9 +64,10 @@ export default function CreditoPage() {
           </div>
         </dl>
         <p>
-          A série mensal da Euribor será ligada à API do Banco de Portugal
-          (BPstat) na fase seguinte — até lá, o simulador aceita qualquer
-          valor, para perceberes a sensibilidade da tua prestação.
+          A Euribor média mensal chega aqui da API do Banco de Portugal
+          (BPstat) — no simulador de <a href="/casa" className="underline decoration-line2 underline-offset-2">comprar casa</a> já
+          vem preenchida. Acima, muda-a à vontade para sentir a
+          sensibilidade da tua prestação.
         </p>
       </section>
     </div>

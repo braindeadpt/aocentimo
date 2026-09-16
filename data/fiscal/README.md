@@ -16,6 +16,10 @@ legislativa/oficial (DR, AT, OE, IGCP, Código do IVA).
 | `ca.json` | CA Série F: taxa base, prémios de permanência (`de`/`ate`/`pp`) | IGCP |
 | `capitais.json` | Retenção liberatória sobre rendimentos de capitais | CIRS art. 71.º-72.º |
 | `smn.json` | Salário mínimo nacional | DR |
+| `imt-YYYY.json` | IMT por escalões (HPP/secundária), IMT Jovem, IS de aquisição e crédito, registos | Ofício Circulado AT anual |
+| `irs-jovem.json` | Isenção por ano de gozo, limite 55×IAS, regras do regime | CIRS art. 12.º-B |
+| `desemprego.json` | % RR, limites IAS, tabela de duração, majoração/redução | DL 220/2006 + Guia Seg. Social |
+| `subsidio-alimentacao.json` | Limites isentos por dia (dinheiro/cartão) | Portaria anual AP + CIRS art. 2.º |
 
 ## Regras
 

@@ -31,6 +31,10 @@ const FREQUENCIA_POR_FICHEIRO: Record<string, string> = {
 const NOME_POR_FICHEIRO: Record<string, string> = {
   "ca": "IGCP — curado",
   "isp": "AT/DR — curado",
+  "imt-2026": "AT — Ofício 40129/2026 — curado",
+  "desemprego": "Seg. Social/DL 220/2006 — curado",
+  "subsidio-alimentacao": "Portaria 51-B/2026/1 — curado",
+  "irs-jovem": "Art. 12.º-B CIRS — curado",
 };
 
 function serieAte(vigencia: string, frequencia: string): string {

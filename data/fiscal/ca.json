@@ -17,5 +17,18 @@
     "prazo": "15 anos",
     "garantia": "Capital garantido pelo Estado",
     "tributacao": "Retenção liberatória sobre juros — ver data/fiscal/capitais.json"
+  },
+  "ctpc": {
+    "nota": "Certificados do Tesouro Poupança Crescimento — prazo 7 anos, juros anuais, taxa fixa crescente por ano de vida",
+    "taxasPorAno": [0.0075, 0.0075, 0.0105, 0.0135, 0.0165, 0.0195, 0.0225],
+    "premio": {
+      "atual": 0.0081,
+      "cap": 0.012,
+      "nota": "A partir do 2.º ano: 40 % do crescimento médio real do PIB (4 trimestres, INE), máx. 1,2 %. Valor em vigor setembro/2026: 0,810 % (IGCP, 28 ago 2026)",
+      "fonteUrl": "https://www.igcp.pt/pt/noticias/premio-de-remuneracao-dos-certificados-do-tesouro-poupanca-crescimento-17"
+    },
+    "prazo": "7 anos",
+    "fonteUrl": "https://www.igcp.pt/pt/ficha-tecnica-certificados-do-tesouro-poupanca-crescimento",
+    "tributacao": "Retenção liberatória sobre juros — ver data/fiscal/capitais.json"
   }
 }

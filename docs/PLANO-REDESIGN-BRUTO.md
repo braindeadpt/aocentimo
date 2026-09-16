@@ -2,8 +2,13 @@
 
 v0.2 · 2026-09-16 · Estado: **em execução** — Fase 0 ✓ · Fase 1 ✓ ·
 Fase 2 ✓ (pipeline + watchdog + motores + retenção na fonte 2026 +
-ingests BPstat/DGEG; IGCP fica curado em data/fiscal/ca.json).
-Próximo: Fase 3 — os 6 simuladores do §6 + «Explica-me o recibo».
+ingests BPstat/DGEG; IGCP fica curado em data/fiscal/ca.json) ·
+Fase 3 ✓ (recibo mensal com retenção real + «Explica-me o recibo» em cascata +
+dia da liberdade fiscal; /casa com IMT/IS/registos e Euribor BPstat;
+/irs com escalões + IRS Jovem; /trabalho com subs. desemprego;
+CTPC no comparador de poupança).
+Próximo: Fase 4 — IRS anual completo, mais-valias, PPR, recibos verdes,
+salário em termos reais.
 Documento irmão de `PLANO-LITERACIA-FINANCEIRA.md` (que fica como histórico).
 Síntese de 3 auditorias paralelas: inventário técnico, mercado PT, direcção visual.
 

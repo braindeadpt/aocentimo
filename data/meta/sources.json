@@ -334,5 +334,37 @@
     "recolhidoEm": "2026-01-01T00:00:00Z",
     "serieAte": "2026",
     "frequencia": "anual"
+  },
+  {
+    "id": "fiscal-desemprego",
+    "fonte": "Seg. Social/DL 220/2006 — curado",
+    "url": "https://www.seg-social.pt/subsidio-de-desemprego",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
+  },
+  {
+    "id": "fiscal-imt-2026",
+    "fonte": "AT — Ofício 40129/2026 — curado",
+    "url": "https://apcmc.pt/legislacao/imt-tabelas-praticas-em-vigor-2026/",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
+  },
+  {
+    "id": "fiscal-irs-jovem",
+    "fonte": "Art. 12.º-B CIRS — curado",
+    "url": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
+  },
+  {
+    "id": "fiscal-subsidio-alimentacao",
+    "fonte": "Portaria 51-B/2026/1 — curado",
+    "url": "https://diariodarepublica.pt",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
   }
 ]

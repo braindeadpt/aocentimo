@@ -1,0 +1,28 @@
+{
+  "vigencia": "2026-01-01",
+  "fonte": "DL n.º 220/2006 (regime de proteção no desemprego); Guia Prático Subsídio de Desemprego — seg-social.pt; IAS 2026 = 537,13 € (Portaria 480-A/2025/1); SMN 2026 = 920 €",
+  "fonteUrl": "https://www.seg-social.pt/subsidio-de-desemprego",
+  "prazoGarantia": { "dias": 360, "meses": 24, "nota": "360 dias de registo de salários nos últimos 24 meses antes do desemprego" },
+  "rr": "Remuneração de referência = remunerações dos primeiros 12 dos últimos 14 meses antes do desemprego, com subsídios de férias e de Natal, ÷ 12 (salário estável: bruto × 14/12)",
+  "montante": { "percentagemRR": 0.65, "base": "30 dias por mês" },
+  "limites": {
+    "maximoIas": 2.5,
+    "maximoRRliquida": 0.75,
+    "minimoIas": 1,
+    "minimoSeSalarioMinimoIas": 1.15,
+    "nota": "Máx. 2,5×IAS = 1 342,83 € e nunca acima de 75 % da RR líquida. Mín. 1×IAS = 537,13 € (ou RR líquida, se inferior); se o salário era ≥ SMN, o mínimo sobe para 1,15×IAS = 617,70 €"
+  },
+  "reducaoApos180Dias": 0.1,
+  "majoracao": { "taxa": 0.1, "nota": "+10 % se casal ambos desempregados com dependentes a cargo, ou agregado monoparental" },
+  "duracao": {
+    "nota": "Dias base por idade e meses de registo de salários desde a última situação de desemprego; acréscimo por cada 5 anos de carreira nos últimos 20 anos",
+    "linhas": [
+      { "idadeAte": 29, "duracao": [150, 210, 330], "acrescimoPorCincoAnos": 30 },
+      { "idadeAte": 39, "duracao": [180, 330, 420], "acrescimoPorCincoAnos": 30 },
+      { "idadeAte": 49, "duracao": [210, 360, 540], "acrescimoPorCincoAnos": 45 },
+      { "idadeAte": null, "duracao": [270, 480, 540], "acrescimoPorCincoAnos": 60 }
+    ],
+    "escaloesRegisto": [15, 24],
+    "escaloesNota": "índice 0 = <15 meses · 1 = 15–24 meses · 2 = ≥24 meses"
+  }
+}

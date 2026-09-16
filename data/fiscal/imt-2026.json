@@ -1,0 +1,43 @@
+{
+  "ano": 2026,
+  "vigencia": "2026-01-01",
+  "fonte": "Ofício Circulado n.º 40129/2026, de 6 de janeiro (AT) — tabelas práticas IMT 2026; art. 17.º CIMT, redação da Lei n.º 73-A/2025 (OE2026)",
+  "fonteUrl": "https://apcmc.pt/legislacao/imt-tabelas-praticas-em-vigor-2026/",
+  "nota": "IMT = valor × taxa − parcela a abater (incide sobre o maior de preço ou VPT). Continente; Açores e Madeira têm tabelas IV–VI próprias.",
+  "hpp": [
+    { "ate": 106346, "taxa": 0, "parcelaAbater": 0 },
+    { "ate": 145470, "taxa": 0.02, "parcelaAbater": 2126.92 },
+    { "ate": 198347, "taxa": 0.05, "parcelaAbater": 6491.02 },
+    { "ate": 330539, "taxa": 0.07, "parcelaAbater": 10457.96 },
+    { "ate": 660982, "taxa": 0.08, "parcelaAbater": 13763.35 },
+    { "ate": 1150853, "taxa": 0.06, "taxaUnica": true, "parcelaAbater": 0 },
+    { "ate": null, "taxa": 0.075, "taxaUnica": true, "parcelaAbater": 0 }
+  ],
+  "jovem": {
+    "nota": "IMT Jovem — ≤35 anos, 1.ª habitação própria e permanente (Tabela II): isento até 330 539 €; entre 330 539 € e 660 982 € paga-se 8 % só sobre o excedente; acima disso aplica-se a tabela geral.",
+    "idadeMax": 35,
+    "isentoAte": 330539,
+    "taxaExcedente": 0.08,
+    "parcelaAbater": 26443.12,
+    "limiteBeneficio": 660982
+  },
+  "secundaria": [
+    { "ate": 106346, "taxa": 0.01, "parcelaAbater": 0 },
+    { "ate": 145470, "taxa": 0.02, "parcelaAbater": 1063.46 },
+    { "ate": 198347, "taxa": 0.05, "parcelaAbater": 5427.56 },
+    { "ate": 330539, "taxa": 0.07, "parcelaAbater": 9394.5 },
+    { "ate": 633931, "taxa": 0.08, "parcelaAbater": 12699.89 },
+    { "ate": 1150853, "taxa": 0.06, "taxaUnica": true, "parcelaAbater": 0 },
+    { "ate": null, "taxa": 0.075, "taxaUnica": true, "parcelaAbater": 0 }
+  ],
+  "impostoSelo": {
+    "aquisicao": { "taxa": 0.008, "nota": "IS sobre a compra — 0,8 % do valor, art. 17.º CIS. No IMT Jovem: isento na mesma medida do IMT (8 % sobre o excedente aplica-se também ao IS)." },
+    "credito": { "taxa": 0.006, "nota": "IS sobre o crédito — 0,6 % do montante emprestado (prazo >5 anos, verba 17.1 TGIS)" }
+  },
+  "registos": {
+    "semCredito": 375,
+    "comCredito": 700,
+    "nota": "Valor típico Casa Pronta (escritura + registo de aquisição e mútuo) — indicativo; conservatórias avulsas podem diferir",
+    "fonteUrl": "https://eportugal.gov.pt/servicos/comprar-casa-atraves-do-balcao-casa-pronta"
+  }
+}

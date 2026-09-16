@@ -2,17 +2,53 @@
 
 import { useMemo, useState } from "react";
 import { simularSalario } from "@/lib/engines/irs";
+import { reciboMensal, FormaPagamentoSA } from "@/lib/engines/recibo";
+import { SituacaoRetencao } from "@/lib/engines/retencao";
 import { EuroBar } from "@/components/EuroBar";
-import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
+import { Cascata } from "@/components/Cascata";
+import { fmtEUR, fmtPct, fmtData } from "@/lib/format";
+import sa from "@data/fiscal/subsidio-alimentacao.json";
+import irsJovem from "@data/fiscal/irs-jovem.json";
 
 const inputCls =
   "w-full bg-surface border border-line px-3 py-2 num text-sm focus:outline-none focus:border-line2";
 
+type Situacao = "solteiro" | "casado2" | "casado1";
+const PARA_RETENCAO: Record<Situacao, SituacaoRetencao> = {
+  solteiro: "naoCasado",
+  casado2: "casadoDoisTitulares",
+  casado1: "casadoUnicoTitular",
+};
+
+/** Fração do ano → "15 mai 2026" (dia da liberdade fiscal). */
+function diaDoAno(fracao: number, ano: number): string {
+  const d = new Date(Date.UTC(ano, 0, 1));
+  d.setUTCDate(d.getUTCDate() + Math.round(fracao * 365));
+  return fmtData(d.toISOString().slice(0, 10));
+}
+
 export function CalculadoraSalario({ ano }: { ano: number }) {
   const [bruto, setBruto] = useState(1500);
-  const [situacao, setSituacao] = useState<"solteiro" | "casado2" | "casado1">("solteiro");
+  const [situacao, setSituacao] = useState<Situacao>("solteiro");
   const [conjuge, setConjuge] = useState(1500);
   const [dependentes, setDependentes] = useState(0);
+  const [saPorDia, setSaPorDia] = useState(0);
+  const [formaSA, setFormaSA] = useState<FormaPagamentoSA>("cartao");
+  const [anoJovem, setAnoJovem] = useState(0);
+
+  const recibo = useMemo(
+    () =>
+      reciboMensal({
+        bruto,
+        situacao: PARA_RETENCAO[situacao],
+        dependentes,
+        saPorDia,
+        formaSA,
+        anoIrsJovem: anoJovem,
+        ano,
+      }),
+    [bruto, situacao, dependentes, saPorDia, formaSA, anoJovem, ano]
+  );
 
   // Em "casado único titular" o cônjuge sem rendimentos conta para o
   // quociente conjugal (÷2) mas não tem dedução específica própria.
@@ -26,11 +62,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
     return simularSalario(brutos, dependentes, ano);
   }, [bruto, conjuge, situacao, dependentes, ano]);
 
-  const linhas = [
-    ["Salário bruto anual", resultado.brutoAnualTotal],
-    ["Segurança Social (11 %)", -resultado.ssAnual],
-    [`IRS ${ano} (estimativa)`, -resultado.irsAnual],
-  ];
+  const limiteSA = sa.isentoPorDia[formaSA];
 
   return (
     <div className="grid md:grid-cols-[1fr_1.2fr] gap-10">
@@ -58,7 +90,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
           <select
             id="situacao"
             value={situacao}
-            onChange={(e) => setSituacao(e.target.value as typeof situacao)}
+            onChange={(e) => setSituacao(e.target.value as Situacao)}
             className={inputCls}
           >
             <option value="solteiro">Não casado(a)</option>
@@ -84,45 +116,172 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
           </div>
         )}
 
-        <div>
-          <label className="kicker block mb-1.5" htmlFor="dep">
-            Dependentes
-          </label>
-          <input
-            id="dep"
-            type="number"
-            min={0}
-            max={10}
-            value={dependentes}
-            onChange={(e) => setDependentes(Math.max(0, Number(e.target.value) || 0))}
-            className={inputCls}
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="kicker block mb-1.5" htmlFor="dep">
+              Dependentes
+            </label>
+            <input
+              id="dep"
+              type="number"
+              min={0}
+              max={10}
+              value={dependentes}
+              onChange={(e) => setDependentes(Math.max(0, Number(e.target.value) || 0))}
+              className={inputCls}
+            />
+          </div>
+          <div>
+            <label className="kicker block mb-1.5" htmlFor="jovem">
+              IRS Jovem — ano
+            </label>
+            <select
+              id="jovem"
+              value={anoJovem}
+              onChange={(e) => setAnoJovem(Number(e.target.value))}
+              className={inputCls}
+            >
+              <option value={0}>Não</option>
+              {irsJovem.isencaoPorAno.map((p, i) => (
+                <option key={i + 1} value={i + 1}>
+                  {i + 1}.º ano — {fmtPct(p, 0)} isento
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="kicker block mb-1.5" htmlFor="sa">
+              Subs. alimentação (€/dia)
+            </label>
+            <input
+              id="sa"
+              type="number"
+              min={0}
+              step={0.5}
+              value={saPorDia}
+              onChange={(e) => setSaPorDia(Number(e.target.value) || 0)}
+              className={inputCls}
+            />
+          </div>
+          <div>
+            <label className="kicker block mb-1.5" htmlFor="formasa">
+              Pago em
+            </label>
+            <select
+              id="formasa"
+              value={formaSA}
+              onChange={(e) => setFormaSA(e.target.value as FormaPagamentoSA)}
+              className={inputCls}
+            >
+              <option value="cartao">Cartão/vale</option>
+              <option value="dinheiro">Dinheiro</option>
+            </select>
+          </div>
         </div>
 
         <p className="footnote">
-          Estimativa anual com os escalões de {ano}, dedução específica e
-          abatimento por mínimo de existência. Não é a retenção na fonte
-          mensal (essa usa as tabelas da AT). Continente; Açores e Madeira
-          têm tabelas próprias.
+          O recibo usa as <strong>tabelas de retenção reais de {ano}</strong>{" "}
+          (Despacho 233-A/2026). O subs. de alimentação é isento até{" "}
+          {fmtEUR(limiteSA)}/dia em {formaSA === "cartao" ? "cartão" : "dinheiro"} — o
+          excedente tributa como salário. O ano usa os escalões do IRS com
+          dedução específica e mínimo de existência.
         </p>
       </div>
 
       {/* output — recibo editorial */}
       <div className="bg-surface border border-line">
         <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
-          <span className="kicker">O teu ano em números</span>
-          <span className="num text-xs text-muted">regras {ano}</span>
+          <span className="kicker">O recibo do mês</span>
+          <span className="num text-xs text-muted">tabela {recibo.tabela} · {ano}</span>
         </div>
         <dl className="px-5 py-4 text-sm">
-          {linhas.map(([label, v]) => (
-            <div key={label as string} className="flex justify-between py-1.5 border-b border-line/60">
-              <dt className="text-ink2">{label}</dt>
-              <dd className={`num ${(v as number) < 0 ? "text-up" : ""}`}>
-                {fmtEUR(Math.abs(v as number))}
-                {(v as number) < 0 && " −"}
-              </dd>
+          <div className="flex justify-between py-1.5 border-b border-line/60">
+            <dt className="text-ink2">Salário bruto</dt>
+            <dd className="num">{fmtEUR(recibo.bruto)}</dd>
+          </div>
+          {recibo.saTotal > 0 && (
+            <div className="flex justify-between py-1.5 border-b border-line/60">
+              <dt className="text-ink2">
+                Subs. alimentação
+                {recibo.saTributavel > 0 && (
+                  <span className="block text-xs text-up">
+                    {fmtEUR(recibo.saTributavel)} tributáveis
+                  </span>
+                )}
+              </dt>
+              <dd className="num">{fmtEUR(recibo.saTotal)}</dd>
             </div>
-          ))}
+          )}
+          <div className="flex justify-between py-1.5 border-b border-line/60">
+            <dt className="text-ink2">Segurança Social (11 %)</dt>
+            <dd className="num text-up">{fmtEUR(recibo.ss)} −</dd>
+          </div>
+          <div className="flex justify-between py-1.5 border-b border-line/60">
+            <dt className="text-ink2">
+              IRS retido
+              <span className="block text-xs text-muted">
+                taxa efetiva {fmtPct(recibo.taxaEfetiva)}
+                {anoJovem > 0 && ` · IRS Jovem ${anoJovem}.º ano`}
+              </span>
+            </dt>
+            <dd className="num text-up">{fmtEUR(recibo.retencao)} −</dd>
+          </div>
+          <div className="flex justify-between py-2.5 mt-1 border-t-2 border-ink">
+            <dt className="font-medium">Líquido no fim do mês</dt>
+            <dd className="num font-medium text-lg">{fmtEUR(recibo.liquido)}</dd>
+          </div>
+          <div className="flex justify-between py-1 text-ink2">
+            <dt>A empresa paga, no total</dt>
+            <dd className="num">{fmtEUR(recibo.custoEmpresa)}/mês</dd>
+          </div>
+        </dl>
+        <p className="footnote px-5 pb-4">
+          A retenção é um adiantamento — o IRS certo acerta-se na liquidação
+          anual. Subsídios de férias e de Natal retêm em separado.
+        </p>
+      </div>
+
+      {/* a cascata — explica-me o recibo */}
+      <div className="md:col-span-2">
+        <p className="num mb-3 text-[0.65rem] uppercase tracking-[0.16em] text-muted">
+          Explica-me o recibo — para onde vai o bruto
+        </p>
+        <Cascata
+          passos={[
+            {
+              label: "Bruto + subsídios",
+              valor: recibo.bruto + recibo.saTotal,
+              tipo: "base",
+            },
+            { label: "Segurança Social", valor: -recibo.ss, tipo: "corte" },
+            { label: "IRS retido", valor: -recibo.retencao, tipo: "corte" },
+            { label: "Líquido", valor: recibo.liquido, tipo: "total" },
+          ]}
+        />
+      </div>
+
+      {/* o ano inteiro */}
+      <div className="md:col-span-2 bg-surface border border-line">
+        <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
+          <span className="kicker">O ano inteiro, a 14 meses</span>
+          <span className="num text-xs text-muted">estimativa IRS {ano}</span>
+        </div>
+        <dl className="px-5 py-4 text-sm">
+          <div className="flex justify-between py-1.5 border-b border-line/60">
+            <dt className="text-ink2">Salário bruto anual</dt>
+            <dd className="num">{fmtEUR(resultado.brutoAnualTotal)}</dd>
+          </div>
+          <div className="flex justify-between py-1.5 border-b border-line/60">
+            <dt className="text-ink2">Segurança Social (11 %)</dt>
+            <dd className="num text-up">{fmtEUR(resultado.ssAnual)} −</dd>
+          </div>
+          <div className="flex justify-between py-1.5 border-b border-line/60">
+            <dt className="text-ink2">IRS {ano} (estimativa)</dt>
+            <dd className="num text-up">{fmtEUR(resultado.irsAnual)} −</dd>
+          </div>
           <div className="flex justify-between py-2.5 mt-1 border-t-2 border-ink">
             <dt className="font-medium">Líquido anual</dt>
             <dd className="num font-medium text-lg">{fmtEUR(resultado.liquidoAnual)}</dd>
@@ -137,7 +296,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
           </div>
         </dl>
 
-        <div className="border-t border-line px-5 py-4 grid grid-cols-2 gap-4 text-sm">
+        <div className="border-t border-line px-5 py-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
           <div>
             <p className="kicker">Taxa efetiva IRS</p>
             <p className="num text-xl mt-1">{fmtPct(resultado.taxaEfetiva)}</p>
@@ -147,25 +306,26 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
             <p className="num text-xl mt-1">{fmtPct(resultado.taxaMarginal)}</p>
           </div>
           <div>
-            <p className="kicker">Custo para a empresa</p>
-            <p className="num text-xl mt-1">{fmtEUR0(resultado.custoEmpresaAnual)}/ano</p>
-          </div>
-          <div>
             <p className="kicker">Para o Estado, no total</p>
             <p className="num text-xl mt-1 text-up">{fmtPct(resultado.pesoEstado)}</p>
+          </div>
+          <div>
+            <p className="kicker">Dia da liberdade fiscal</p>
+            <p className="num text-xl mt-1">{diaDoAno(resultado.pesoEstado, ano)}</p>
           </div>
         </div>
         <p className="footnote px-5 pb-4">
           &ldquo;Para o Estado&rdquo; soma IRS, a tua SS (11 %) e a TSU da
-          empresa (23,75 %) sobre o custo total. É a fatia que nunca chega ao
-          teu bolso.
+          empresa (23,75 %) sobre o custo total. O <em>dia da liberdade
+          fiscal</em> marca a data em que, se trabalhasses primeiro só para
+          essa fatia, passavas a trabalhar para ti.
         </p>
       </div>
 
       {/* a barra do euro — sobre o custo total para a empresa */}
       <div className="md:col-span-2">
         <p className="num mb-3 text-[0.65rem] uppercase tracking-[0.16em] text-muted">
-          O custo total, partido em fatias
+          O custo total da empresa, partido em fatias
         </p>
         <EuroBar
           total={resultado.custoEmpresaAnual}

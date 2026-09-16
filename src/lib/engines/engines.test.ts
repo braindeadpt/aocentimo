@@ -1,10 +1,14 @@
 import { describe, it, expect } from "vitest";
 import { simularPrestacao } from "./prestacao";
-import { simularPoupanca, simularCA, taxaCAPorAno } from "./poupanca";
+import { simularPoupanca, simularCA, simularCTPC, taxaCAPorAno } from "./poupanca";
 import { decomporCombustivel, ivaContido } from "./impostos";
 import { contribuicoes, custoDoTrabalho } from "./seg-social";
 import { simularTaeg } from "./taeg";
 import { retencaoNaFonte, tabelaAplicavel } from "./retencao";
+import { imt, imtJovem, custoCompra } from "./imt";
+import { simularIrsJovem, pctIsencao } from "./irs-jovem";
+import { simularDesemprego, duracaoSubsidio } from "./desemprego";
+import { reciboMensal } from "./recibo";
 import ca from "@data/fiscal/ca.json";
 import capitais from "@data/fiscal/capitais.json";
 
@@ -161,6 +165,161 @@ describe("retencaoNaFonte", () => {
 
   it("retenção nunca é negativa", () => {
     expect(retencaoNaFonte(1000, "casadoUnicoTitular", 5).retencao).toBe(0);
+  });
+});
+
+describe("imt", () => {
+  // Casos golden: tabela I do Ofício Circulado 40129/2026 (continente, HPP)
+  it("escalões HPP 2026: taxa × valor − parcela a abater", () => {
+    expect(imt(100000, "hpp")).toBe(0);
+    expect(imt(120000, "hpp")).toBeCloseTo(120000 * 0.02 - 2126.92, 6); // 273,08
+    expect(imt(250000, "hpp")).toBeCloseTo(250000 * 0.07 - 10457.96, 6); // 7 042,04
+    expect(imt(500000, "hpp")).toBeCloseTo(500000 * 0.08 - 13763.35, 6); // 26 236,65
+  });
+
+  it("acima de 660 982 €: taxa única sobre todo o valor", () => {
+    expect(imt(700000, "hpp")).toBeCloseTo(42000, 6);
+    expect(imt(2000000, "hpp")).toBeCloseTo(150000, 6);
+  });
+
+  it("habitação secundária começa a 1 % sem isenção", () => {
+    expect(imt(100000, "secundaria")).toBeCloseTo(1000, 6);
+  });
+});
+
+describe("imtJovem", () => {
+  it("isento até 330 539 €; 8 % só sobre o excedente até 660 982 €", () => {
+    expect(imtJovem(330539)).toBe(0);
+    expect(imtJovem(300000)).toBe(0);
+    // 8 % sobre o excedente: 400 000 × 0,08 − 26 443,12 = 5 556,88
+    expect(imtJovem(400000)).toBeCloseTo(5556.88, 2);
+  });
+
+  it("acima de 660 982 € perde o benefício → tabela geral", () => {
+    expect(imtJovem(700000)).toBeCloseTo(imt(700000, "hpp"), 6);
+  });
+});
+
+describe("custoCompra", () => {
+  it("250 000 € HPP com crédito de 200 000 €: IMT + IS + registos", () => {
+    const r = custoCompra(250000, { montanteCredito: 200000 });
+    expect(r.imt).toBeCloseTo(7042.04, 2);
+    expect(r.isAquisicao).toBeCloseTo(2000, 6); // 0,8 %
+    expect(r.isCredito).toBeCloseTo(1200, 6); // 0,6 % do crédito
+    expect(r.registos).toBe(700);
+    expect(r.totalCustos).toBeCloseTo(10942.04, 2);
+  });
+
+  it("IMT Jovem isenta também o IS de aquisição até 330 539 €", () => {
+    const r = custoCompra(300000, { jovem: true, montanteCredito: 240000 });
+    expect(r.imt).toBe(0);
+    expect(r.isAquisicao).toBe(0);
+    expect(r.isCredito).toBeCloseTo(1440, 6); // IS do crédito mantém-se
+  });
+});
+
+describe("irs-jovem", () => {
+  it("percentagens por ano de gozo: 100/75/50/25 %", () => {
+    expect(pctIsencao(1)).toBe(1);
+    expect(pctIsencao(4)).toBe(0.75);
+    expect(pctIsencao(7)).toBe(0.5);
+    expect(pctIsencao(10)).toBe(0.25);
+    expect(pctIsencao(11)).toBe(0);
+  });
+
+  it("21 000 €/ano no 1.º ano: IRS zero (isenção total)", () => {
+    const r = simularIrsJovem(21000, 1);
+    expect(r.rendimentoIsento).toBe(21000);
+    expect(r.irsComJovem).toBe(0);
+    // sem jovem: coletável 16 412,91 → 2 520,30 − 250 = 2 270,30
+    expect(r.irsSemJovem).toBeCloseTo(2270.3, 0);
+    expect(r.poupancaAnual).toBeCloseTo(2270.3, 0);
+  });
+
+  it("5.º ano (50 %): tributa a parte não isenta à taxa média do total", () => {
+    const r = simularIrsJovem(21000, 5);
+    expect(r.rendimentoIsento).toBeCloseTo(10500, 6);
+    expect(r.irsComJovem).toBeCloseTo(657.9, 0);
+    expect(r.poupancaAnual).toBeGreaterThan(1600);
+  });
+
+  it("limite de 55×IAS trava a isenção em salários altos", () => {
+    const r = simularIrsJovem(60000, 2); // 75 % de 60 000 = 45 000 > 29 542,15
+    expect(r.rendimentoIsento).toBeCloseTo(29542.15, 2);
+  });
+});
+
+describe("desemprego", () => {
+  it("1 500 €/mês: RR 1 750 €, teto de 75 % da RR líquida domina", () => {
+    const r = simularDesemprego(1500, 35, 5);
+    expect(r.remReferencia).toBeCloseTo(1750, 6);
+    // RR líquida = 1 750 − 192,5 (SS) − 228,42 (retenção) = 1 329,08 → 75 % = 996,81
+    expect(r.mensal).toBeCloseTo(996.81, 0);
+    expect(r.apos180Dias).toBeCloseTo(r.mensal * 0.9, 6);
+  });
+
+  it("salário alto: teto de 2,5×IAS = 1 342,83 €", () => {
+    expect(simularDesemprego(5000, 40, 10).mensal).toBeCloseTo(1342.83, 2);
+  });
+
+  it("salário baixo: piso de 1×IAS se RR líquida o permitir", () => {
+    const r = simularDesemprego(600, 25, 1);
+    expect(r.mensal).toBeCloseTo(537.13, 2);
+  });
+
+  it("majoração de 10 % e duração por idade/descontos", () => {
+    expect(simularDesemprego(1500, 35, 5, { majoracao: true }).mensal)
+      .toBeCloseTo(996.81 * 1.1, 0);
+    expect(duracaoSubsidio(25, 1)).toBe(150);
+    expect(duracaoSubsidio(35, 2)).toBe(420);
+    expect(duracaoSubsidio(45, 10)).toBe(540 + 2 * 45);
+    expect(duracaoSubsidio(55, 20)).toBe(540 + 4 * 60);
+  });
+
+  it("sem prazo de garantia: não elegível", () => {
+    expect(simularDesemprego(1500, 30, 0).elegivel).toBe(false);
+  });
+});
+
+describe("reciboMensal", () => {
+  it("1 500 € com SA 8 €/dia em cartão: SA isento, retenção da tabela I", () => {
+    const r = reciboMensal({ bruto: 1500, saPorDia: 8, formaSA: "cartao" });
+    expect(r.saTotal).toBe(176);
+    expect(r.saTributavel).toBe(0);
+    expect(r.ss).toBeCloseTo(165, 6);
+    expect(r.retencao).toBeCloseTo(168.17, 2); // 1500×0,241 − 193,33
+    expect(r.liquido).toBeCloseTo(1342.83, 2);
+    expect(r.custoEmpresa).toBeCloseTo(1500 * 1.2375, 6);
+  });
+
+  it("SA em dinheiro acima de 6,15 €/dia tributa IRS + SS no excedente", () => {
+    const r = reciboMensal({ bruto: 1500, saPorDia: 8, formaSA: "dinheiro" });
+    expect(r.saIsento).toBeCloseTo(6.15 * 22, 6);
+    expect(r.saTributavel).toBeCloseTo(1.85 * 22, 6);
+    expect(r.ss).toBeCloseTo(1540.7 * 0.11, 4);
+    expect(r.retencao).toBeCloseTo(1540.7 * 0.241 - 193.33, 2);
+  });
+
+  it("IRS Jovem 1.º ano: retenção zero", () => {
+    const r = reciboMensal({ bruto: 1500, anoIrsJovem: 1 });
+    expect(r.retencao).toBe(0);
+    expect(r.liquido).toBeCloseTo(1500 - 165, 6);
+  });
+});
+
+describe("simularCTPC", () => {
+  const taxas = ca.ctpc.taxasPorAno;
+  const premio = ca.ctpc.premio.atual;
+  const imposto = capitais.retencaoLiberatoria.taxa;
+
+  it("10 000 € a 7 anos com prémio 0,81 %: ≈ 11 100 € líquidos", () => {
+    const r = simularCTPC(10000, 7, taxas, premio, imposto);
+    expect(r.capitalFinalLiquido).toBeCloseTo(11099.5, 0);
+  });
+
+  it("prémio só conta do 2.º ano; ano 1 = taxa fixa", () => {
+    const r = simularCTPC(10000, 1, taxas, premio, imposto);
+    expect(r.capitalFinalLiquido).toBeCloseTo(10000 * (1 + 0.0075 * (1 - imposto)), 4);
   });
 });
 

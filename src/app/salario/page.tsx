@@ -28,7 +28,7 @@ export default function SalarioPage() {
         recibo.
       </p>
 
-      <Figure n={1} title="Calculadora de salário líquido" source={`Escalões ${ANO} — art. 68.º CIRS (Lei 73-A/2025); TSU — seg-social.pt`}>
+      <Figure n={1} title="Calculadora de salário líquido" source={`Retenção ${ANO} — Despacho 233-A/2026; escalões — art. 68.º CIRS (Lei 73-A/2025); TSU — seg-social.pt`}>
         <CalculadoraSalario ano={ANO} />
       </Figure>
 
@@ -93,10 +93,12 @@ export default function SalarioPage() {
           por dependente.
         </p>
         <p>
-          O que falta de propósito: retenção na fonte mensal (tabelas AT com
-          dezenas de linhas), deduções de saúde/educação/rendas, IRS Jovem e
-          regimes especiais. O número certo é o da tua liquidação — esta é a
-          mecânica, não o teu caso particular.
+          O recibo mensal usa as <strong>tabelas de retenção na fonte</strong>{" "}
+          oficiais (continente, sem deficiência) e trata o excedente do
+          subsídio de alimentação como salário. O que fica de fora de
+          propósito: deduções de saúde/educação/rendas, subsídio de
+          desemprego, Açores e Madeira, e regimes especiais. O número certo é
+          o da tua liquidação — esta é a mecânica, não o teu caso particular.
         </p>
       </section>
     </div>

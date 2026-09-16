@@ -11,6 +11,9 @@
     "impostos": "Impostos",
     "inflacao": "Inflação",
     "credito": "Crédito",
+    "casa": "Casa",
+    "irs": "IRS",
+    "trabalho": "Desemprego",
     "poupanca": "Poupança",
     "precos": "Preços",
     "aprender": "Aprender"
@@ -99,6 +102,24 @@
         "titulo": "O LITRO",
         "tema": "Combustíveis",
         "descricao": "O euro na bomba, ao dia: a única família de bens essenciais com preço oficial quase diário em Portugal."
+      }
+    ],
+    "ferramentasTitulo": "AS FERRAMENTAS",
+    "ferramentas": [
+      {
+        "href": "/casa",
+        "titulo": "Comprar casa",
+        "descricao": "IMT, Imposto de Selo, registos e a prestação com a Euribor real."
+      },
+      {
+        "href": "/irs",
+        "titulo": "IRS e IRS Jovem",
+        "descricao": "Escalões, retenção mensal e quanto poupas em cada um dos 10 anos."
+      },
+      {
+        "href": "/trabalho",
+        "titulo": "Subsídio de desemprego",
+        "descricao": "65 % da remuneração de referência — quanto e por quanto tempo."
       }
     ],
     "manifesto1": "NEM CONSELHOS.",

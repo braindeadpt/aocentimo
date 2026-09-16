@@ -163,6 +163,29 @@ export default function Home() {
         </ol>
       </section>
 
+      {/* ferramentas — os simuladores novos */}
+      <section className="mt-20">
+        <div className="border-b-2 border-ink pb-3">
+          <h2 className="font-display text-2xl tracking-wide md:text-3xl">
+            {h.ferramentasTitulo}
+          </h2>
+        </div>
+        <ul className="grid gap-px border-b border-line md:grid-cols-3">
+          {h.ferramentas.map((f) => (
+            <li key={f.href} className="border-t border-line md:border-t-0 md:border-l md:first:border-l-0">
+              <Link href={f.href} className="group block px-0 py-6 md:px-6 md:first:pl-0">
+                <span className="font-display text-2xl tracking-wide text-ink transition-colors group-hover:text-accent">
+                  {f.titulo}
+                </span>
+                <span className="mt-2 block max-w-xs text-sm leading-relaxed text-ink2">
+                  {f.descricao}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
       {/* manifesto */}
       <section className="mt-20 grid gap-8 border-t-2 border-ink pt-8 pb-8 md:grid-cols-12">
         <p className="font-display text-3xl leading-tight tracking-wide text-ink md:col-span-5 md:text-4xl">

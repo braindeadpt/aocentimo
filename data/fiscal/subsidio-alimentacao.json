@@ -1,0 +1,10 @@
+{
+  "vigencia": "2026-01-01",
+  "fonte": "Portaria n.º 51-B/2026/1 (subsídio de refeição AP 6,15 €); CIRS art. 2.º n.º 3 al. b) — cartão isento até +70 %",
+  "fonteUrl": "https://diariodarepublica.pt",
+  "isentoPorDia": {
+    "dinheiro": 6.15,
+    "cartao": 10.455
+  },
+  "nota": "Isento de IRS e TSU até ao limite; o excedente tributa como salário. Pago só por dias efetivamente trabalhados (≈22/mês)."
+}

@@ -88,3 +88,40 @@ export function simularCA(
     valorReal: capLiquido / Math.pow(1 + inflacaoAnual, anos),
   };
 }
+
+/**
+ * Certificados do Tesouro Poupança Crescimento (7 anos, juros anuais):
+ * taxa fixa crescente por ano de vida; do 2.º ano soma-se o prémio de
+ * remuneração ligado ao PIB (40 % do crescimento real, máx. 1,2 %).
+ * Ver data/fiscal/ca.json → ctpc.
+ */
+export function simularCTPC(
+  capital: number,
+  anos: number,
+  taxasPorAno: number[],
+  premio: number,
+  taxaImposto: number,
+  inflacaoAnual = 0
+): ResultadoPoupanca {
+  const n = Math.min(Math.round(anos), taxasPorAno.length);
+  let capBruto = capital;
+  let capLiquido = capital;
+  let imposto = 0;
+
+  for (let a = 1; a <= n; a++) {
+    const taxa = taxasPorAno[a - 1] + (a >= 2 ? premio : 0);
+    const juro = capLiquido * taxa;
+    capBruto *= 1 + taxa;
+    capLiquido += juro * (1 - taxaImposto);
+    imposto += juro * taxaImposto;
+  }
+
+  return {
+    capitalFinalBruto: capBruto,
+    jurosBrutos: capBruto - capital,
+    imposto,
+    capitalFinalLiquido: capLiquido,
+    taxaLiquida: capLiquido / capital - 1,
+    valorReal: capLiquido / Math.pow(1 + inflacaoAnual, anos),
+  };
+}

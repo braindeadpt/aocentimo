@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { simularPoupanca, simularCA } from "@/lib/engines/poupanca";
+import { simularPoupanca, simularCA, simularCTPC } from "@/lib/engines/poupanca";
 import { fmtEUR0, fmtPct } from "@/lib/format";
 import ca from "@data/fiscal/ca.json";
 import capitais from "@data/fiscal/capitais.json";
@@ -27,6 +27,18 @@ export function ComparadorPoupanca() {
     () => simularCA(capital, anos, taxaCA, premios, taxaImposto, inflacao / 100),
     [capital, anos, taxaCA, premios, taxaImposto, inflacao]
   );
+  const ctpc = useMemo(
+    () =>
+      simularCTPC(
+        capital,
+        Math.min(anos, ca.ctpc.taxasPorAno.length),
+        ca.ctpc.taxasPorAno,
+        ca.ctpc.premio.atual,
+        taxaImposto,
+        inflacao / 100
+      ),
+    [capital, anos, taxaImposto, inflacao]
+  );
   const colchao = capital; // sem juros
 
   const linhas = [
@@ -41,6 +53,12 @@ export function ComparadorPoupanca() {
       final: dep.capitalFinalLiquido,
       real: dep.valorReal,
       taxa: dep.taxaLiquida,
+    },
+    {
+      nome: `Certificados do Tesouro PC${anos > 7 ? " (7 anos, na data)" : ""}`,
+      final: ctpc.capitalFinalLiquido,
+      real: ctpc.valorReal,
+      taxa: ctpc.taxaLiquida,
     },
     {
       nome: `Certificados de Aforro F (${fmtPct(taxaCA, 2)} brutos)`,
@@ -78,8 +96,10 @@ export function ComparadorPoupanca() {
         <p className="footnote">
           Juros tributados a {fmtPct(taxaImposto, 0)} (retenção liberatória).
           CA Série F: taxa base = média da Euribor 3M, limitada a 2,50 %,
-          capitalização trimestral e prémios de permanência incluídos —
-          simulado à taxa atual em todo o período.
+          capitalização trimestral e prémios de permanência incluídos. CTPC:
+          taxa crescente de 0,75 % a 2,25 % + prémio PIB atual de{" "}
+          {fmtPct(ca.ctpc.premio.atual, 2)}, prazo máximo de 7 anos — simulado
+          a taxas constantes, sem prever o PIB futuro.
         </p>
       </div>
 
