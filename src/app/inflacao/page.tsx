@@ -1,0 +1,155 @@
+import type { Metadata } from "next";
+import { Figure } from "@/components/Figure";
+import { Delta } from "@/components/Delta";
+import { LineChart } from "@/components/LineChart";
+import { PoderDeCompra } from "./PoderDeCompra";
+import { loadSerie, variacao, loadFontes, type Serie } from "@/lib/data";
+import { fmtData, fmtNum } from "@/lib/format";
+
+export const metadata: Metadata = {
+  title: "Inflação — quanto subiu o que compras",
+  description:
+    "IHPC em Portugal por categoria COICOP: alimentação, energia, habitação, transportes. Variação mensal e homóloga com dados Eurostat.",
+};
+
+const CATEGORIAS: [string, string][] = [
+  ["CP00", "Índice geral"],
+  ["CP01", "Alimentação e bebidas"],
+  ["CP0111", "Pão e cereais"],
+  ["CP0112", "Carne"],
+  ["CP0113", "Peixe"],
+  ["CP0114", "Leite, queijo e ovos"],
+  ["CP0115", "Óleos e gorduras"],
+  ["CP0116", "Fruta"],
+  ["CP0117", "Legumes"],
+  ["CP02", "Álcool e tabaco"],
+  ["CP04", "Habitação, água e energia"],
+  ["CP045", "Eletricidade e gás"],
+  ["CP07", "Transportes"],
+  ["CP0722", "Combustíveis"],
+  ["CP11", "Restaurantes e hotéis"],
+  ["NRG", "Energia (agregado)"],
+];
+
+function ultimoValor(s: Serie | null) {
+  return s ? s.series[s.series.length - 1].v : null;
+}
+
+export default function InflacaoPage() {
+  const cp00 = loadSerie("CP00");
+  const cp01 = loadSerie("CP01");
+  const nrg = loadSerie("NRG");
+  const fonte = loadFontes().find((f) => f.id === "hicp-pt-cp00");
+
+  const linhas = CATEGORIAS.map(([cod, nome]) => ({
+    cod,
+    nome,
+    serie: loadSerie(cod),
+  }));
+
+  const temDados = cp00 !== null;
+
+  return (
+    <div className="mx-auto max-w-5xl px-5 pt-14">
+      <p className="kicker">Módulo 02</p>
+      <h1 className="font-display text-4xl md:text-5xl tracking-tight mt-2">
+        Quanto subiu o que compras
+      </h1>
+      <p className="lede mt-5">
+        O índice de preços no consumidor é a medida oficial da inflação. Não é
+        o preço de um produto numa loja — é a média ponderada de um cabaz
+        representativo. Mostramos o IHPC (Eurostat, comparável com a Zona
+        Euro), por categoria, desde 2015.
+      </p>
+
+      <Figure
+        n={1}
+        title="Índice de preços, Portugal (2015 = 100)"
+        source={
+          fonte
+            ? `Eurostat, IHPC mensal · até ${fmtData(fonte.serieAte)} · ${fonte.url}`
+            : "Eurostat, IHPC mensal"
+        }
+      >
+        {temDados ? (
+          <LineChart
+            series={[
+              { name: "Índice geral", data: cp00!.series.map((p) => [p.t + "-01", p.v] as [string, number]) },
+              { name: "Alimentação", data: (cp01 ?? cp00!).series.map((p) => [p.t + "-01", p.v] as [string, number]) },
+              { name: "Energia", data: (nrg ?? cp00!).series.map((p) => [p.t + "-01", p.v] as [string, number]) },
+            ]}
+          />
+        ) : (
+          <div className="border border-line bg-surface px-5 py-10 text-center text-ink2">
+            <p className="num text-2xl">—</p>
+            <p className="footnote mt-2">
+              Dados ainda não carregados. Corre <code className="num">npm run ingest</code>{" "}
+              para puxar as séries do Eurostat.
+            </p>
+          </div>
+        )}
+      </Figure>
+
+      <Figure
+        n={2}
+        title="Variação por categoria"
+        source={temDados ? `Eurostat · valores de ${fmtData(cp00!.meta.serieAte)}` : "Eurostat"}
+      >
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left border-b-2 border-ink">
+                <th className="py-2 pr-4 font-medium">Categoria</th>
+                <th className="py-2 pr-4 font-medium text-right">Índice</th>
+                <th className="py-2 pr-4 font-medium text-right">Mês anterior</th>
+                <th className="py-2 font-medium text-right">Homóloga (12 m)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {linhas.map(({ cod, nome, serie }) => (
+                <tr key={cod} className="border-b border-line">
+                  <td className="py-2 pr-4 text-ink2">
+                    {nome}
+                    <span className="num text-xs text-muted ml-2">{cod}</span>
+                  </td>
+                  <td className="py-2 pr-4 text-right num">
+                    {serie ? fmtNum(ultimoValor(serie)!) : "—"}
+                  </td>
+                  <td className="py-2 pr-4 text-right">
+                    <Delta value={serie ? variacao(serie, 1) : null} casas={1} />
+                  </td>
+                  <td className="py-2 text-right">
+                    <Delta value={serie ? variacao(serie, 12) : null} casas={1} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="footnote mt-3">
+          ▲ a subir é mau para a carteira em preços; ▼ é bom. Índice 2015=100:
+          um valor de 130 significa +30 % face a 2015.
+        </p>
+      </Figure>
+
+      <Figure n={3} title="A máquina do tempo do euro" source="IHPC total, Eurostat">
+        {temDados ? (
+          <PoderDeCompra serie={cp00!.series} />
+        ) : (
+          <p className="footnote">Indisponível sem dados.</p>
+        )}
+      </Figure>
+
+      <section className="max-w-2xl py-8 text-ink2 text-[0.95rem] leading-relaxed space-y-4">
+        <h2 className="font-display text-2xl text-ink">Ler com honestidade</h2>
+        <p>
+          O IHPC mede um cabaz <em>médio</em>. O teu cabaz pessoal pode ter
+          subido mais ou menos — depende do que compras. E índice não é preço:
+          diz <em>quanto variou</em>, não quanto custa. Para preços em euros ao
+          litro, vê <a href="/precos" className="underline decoration-line2 underline-offset-2">combustíveis</a> —
+          a única família com dados diários oficiais em Portugal.
+        </p>
+      </section>
+    </div>
+  );
+}

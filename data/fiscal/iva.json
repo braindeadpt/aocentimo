@@ -1,0 +1,27 @@
+{
+  "vigencia": "2026-01-01",
+  "fonte": "Código do IVA — Listas I e II anexas; art. 18.º",
+  "fonteUrl": "https://info.portaldasfinancas.gov.pt",
+  "regiao": "Continente (Madeira e Açores têm taxas próprias, mais baixas)",
+  "taxas": [
+    {
+      "nome": "Reduzida",
+      "taxa": 0.06,
+      "exemplos": ["pão", "leite", "cereais", "fruta e legumes", "livros", "transportes de passageiros", "água"]
+    },
+    {
+      "nome": "Intermédia",
+      "taxa": 0.13,
+      "exemplos": ["restauração", "vinho", "conservas", "instrumentos musicais"]
+    },
+    {
+      "nome": "Normal",
+      "taxa": 0.23,
+      "exemplos": ["combustíveis", "eletrónica", "vestuário", "eletricidade e gás*", "serviços de telecomunicações"]
+    }
+  ],
+  "notas": [
+    "* Eletricidade: parte da fatura pode ter taxa reduzida em potências baixas; a fatura inclui ainda a contribuição audiovisual (CAV) e acessórios.",
+    "Cada exemplo é indicativo — a Lista I/II do CIVA define o enquadramento exato por produto."
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "vigencia": "2026-09",
+  "fonte": "IGCP — Ficha Técnica Certificados de Aforro Série F (Portaria 149-A/2023 e alterações); nota de taxas setembro/2026",
+  "fonteUrl": "https://www.igcp.pt/pt/aforristas/produtos-de-aforro/certificados-de-aforro",
+  "serieF": {
+    "taxaBrutaNovasSubscricoes": 0.025,
+    "taxaNota": "2,500 % em setembro/2026 (cap atingido); agosto: 2,474 %",
+    "base": "Média da Euribor 3M nos 10 dias úteis anteriores, arredondada ao milésimo; limitada a [0 %, 2,50 %]",
+    "juros": "Vencimento trimestral, capitalizados",
+    "premiosPermanencia": [
+      { "anos": "2.º ao 5.º", "pp": 0.25 },
+      { "anos": "6.º ao 9.º", "pp": 0.5 },
+      { "anos": "10.º e 11.º", "pp": 1.0 },
+      { "anos": "12.º e 13.º", "pp": 1.5 },
+      { "anos": "14.º e 15.º", "pp": 1.75 }
+    ],
+    "prazo": "15 anos",
+    "garantia": "Capital garantido pelo Estado"
+  },
+  "tributacaoCapitais": {
+    "taxa": 0.28,
+    "nota": "Retenção liberatória sobre juros (IRS cat. E); englobamento opcional"
+  }
+}

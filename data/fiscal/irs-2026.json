@@ -1,0 +1,35 @@
+{
+  "ano": 2026,
+  "vigencia": "2026-01-01",
+  "fonte": "Art. 68.º CIRS, redação da Lei n.º 73-A/2025 (OE2026); art. 70.º CIRS",
+  "fonteUrl": "https://info.portaldasfinancas.gov.pt",
+  "ias": 537.13,
+  "deducaoEspecificaFixa": 4587.09,
+  "deducaoEspecificaNota": "8,54 × IAS (537,13 €), art. 53.º/25.º CIRS; se as contribuições obrigatórias forem superiores, vale o maior",
+  "despesasGeraisPorTitular": 250,
+  "deducaoPorDependente": 726,
+  "deducaoPorDependenteNota": "Art. 78.º-A CIRS (valor 2025; confirmar atualização OE2026)",
+  "minimoExistencia": {
+    "valorReferencia": 12880,
+    "valorReferenciaNota": "max(14 × RMMG 920 €; 1,5 × 14 × IAS)",
+    "limite1Escalao": 8342,
+    "taxa1Escalao": 0.125,
+    "limiteDespesasGerais": 250,
+    "naoAplicaAcimaPorTitular": 16543.6
+  },
+  "solidariedade": [
+    { "de": 80000, "ate": 250000, "taxa": 0.025 },
+    { "de": 250000, "ate": null, "taxa": 0.05 }
+  ],
+  "escaloes": [
+    { "ate": 8342,   "taxa": 0.125, "taxaMedia": 0.125   },
+    { "ate": 12587,  "taxa": 0.157, "taxaMedia": 0.13579 },
+    { "ate": 17838,  "taxa": 0.212, "taxaMedia": 0.15823 },
+    { "ate": 23089,  "taxa": 0.241, "taxaMedia": 0.17705 },
+    { "ate": 29397,  "taxa": 0.311, "taxaMedia": 0.20579 },
+    { "ate": 43090,  "taxa": 0.349, "taxaMedia": 0.25130 },
+    { "ate": 46566,  "taxa": 0.431, "taxaMedia": 0.26472 },
+    { "ate": 86634,  "taxa": 0.446, "taxaMedia": 0.34856 },
+    { "ate": null,   "taxa": 0.48,  "taxaMedia": null    }
+  ]
+}

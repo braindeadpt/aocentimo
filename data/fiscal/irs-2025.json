@@ -1,0 +1,35 @@
+{
+  "ano": 2025,
+  "vigencia": "2025-01-01",
+  "fonte": "Art. 68.º CIRS, redação da Lei n.º 55-A/2025, de 22/07; tabelas AT 2025",
+  "fonteUrl": "https://info.portaldasfinancas.gov.pt",
+  "ias": 522.5,
+  "deducaoEspecificaFixa": 4462.15,
+  "deducaoEspecificaNota": "8,54 × IAS (522,50 €); se as contribuições obrigatórias forem superiores, vale o maior",
+  "despesasGeraisPorTitular": 250,
+  "deducaoPorDependente": 726,
+  "deducaoPorDependenteNota": "Art. 78.º-A CIRS",
+  "minimoExistencia": {
+    "valorReferencia": 12180,
+    "valorReferenciaNota": "max(14 × RMMG 870 €; 1,5 × 14 × IAS)",
+    "limite1Escalao": 8059,
+    "taxa1Escalao": 0.125,
+    "limiteDespesasGerais": 250,
+    "naoAplicaAcimaPorTitular": 16097.0
+  },
+  "solidariedade": [
+    { "de": 80000, "ate": 250000, "taxa": 0.025 },
+    { "de": 250000, "ate": null, "taxa": 0.05 }
+  ],
+  "escaloes": [
+    { "ate": 8059,   "taxa": 0.125, "taxaMedia": 0.125,   "parcelaAbater": 0 },
+    { "ate": 12160,  "taxa": 0.16,  "taxaMedia": 0.13680, "parcelaAbater": 282.07 },
+    { "ate": 17233,  "taxa": 0.215, "taxaMedia": 0.15982, "parcelaAbater": 950.91 },
+    { "ate": 22306,  "taxa": 0.244, "taxaMedia": 0.17897, "parcelaAbater": 1450.67 },
+    { "ate": 28400,  "taxa": 0.314, "taxaMedia": 0.20794, "parcelaAbater": 3011.98 },
+    { "ate": 41629,  "taxa": 0.349, "taxaMedia": 0.25277, "parcelaAbater": 4006.10 },
+    { "ate": 44987,  "taxa": 0.431, "taxaMedia": 0.26607, "parcelaAbater": 7419.54 },
+    { "ate": 83696,  "taxa": 0.446, "taxaMedia": 0.34929, "parcelaAbater": 8094.51 },
+    { "ate": null,   "taxa": 0.48,  "taxaMedia": null,    "parcelaAbater": 10939.90 }
+  ]
+}

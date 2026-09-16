@@ -1,0 +1,13 @@
+{
+  "vigencia": "2026-01-01",
+  "fonte": "Código dos Regimes Contributivos; Lei n.º 110/2009",
+  "fonteUrl": "https://www.seg-social.pt",
+  "trabalhador": {
+    "taxa": 0.11,
+    "nota": "TSU trabalhador por conta de outrem"
+  },
+  "entidadePatronal": {
+    "taxa": 0.2375,
+    "nota": "TSU entidade empregadora — custo que não aparece no recibo"
+  }
+}

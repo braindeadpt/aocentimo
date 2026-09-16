@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@theme {
+  /* Broadsheet financeiro: papel, tinta, um acento */
+  --color-paper: #faf8f2;
+  --color-surface: #fffdf8;
+  --color-ink: #1a1610;
+  --color-ink2: #4c4437;
+  --color-muted: #847a64;
+  --color-line: #e6dfcf;
+  --color-line2: #c6bb9f;
+
+  --color-accent: #14532d;
+  --color-accent-ink: #0d3a20;
+  --color-accent-soft: #e8f0e9;
+
+  --color-up: #b3401e;
+  --color-down: #0f6f66;
+
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-plex), ui-monospace, "SF Mono", Consolas, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-accent-soft);
+}
+
+/* utilidades editoriais */
+.lede {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: var(--color-ink2);
+  max-width: 42rem;
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.rule {
+  border-top: 1px solid var(--color-line);
+}
+
+.rule-strong {
+  border-top: 1.5px solid var(--color-ink);
+}
+
+.footnote {
+  font-size: 0.8125rem;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

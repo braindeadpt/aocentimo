@@ -1,0 +1,20 @@
+{
+  "vigencia": "2026-01-01",
+  "fonte": "Decreto-Lei n.º 139/2025, de 29 de dezembro (2026); valores históricos DR/MTSSS",
+  "fonteUrl": "https://diariodarepublica.pt",
+  "regioes": { "continente": 920, "acores": 966, "madeira": 980 },
+  "serie": [
+    { "ano": 2015, "valor": 505 },
+    { "ano": 2016, "valor": 530 },
+    { "ano": 2017, "valor": 557 },
+    { "ano": 2018, "valor": 580 },
+    { "ano": 2019, "valor": 600 },
+    { "ano": 2020, "valor": 635 },
+    { "ano": 2021, "valor": 665 },
+    { "ano": 2022, "valor": 705 },
+    { "ano": 2023, "valor": 760 },
+    { "ano": 2024, "valor": 820 },
+    { "ano": 2025, "valor": 870 },
+    { "ano": 2026, "valor": 920 }
+  ]
+}

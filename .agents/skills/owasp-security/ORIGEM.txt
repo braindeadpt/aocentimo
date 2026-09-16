@@ -1,0 +1,4 @@
+Origem: https://github.com/agamm/claude-code-owasp (.claude/skills/owasp-security)
+Licença: MIT (ver LICENSE)
+Commit: bfaf257b2859
+Copiado e revisto: 2026-09-15 — sem scripts; SKILL.md + reference/.

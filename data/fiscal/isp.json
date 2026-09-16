@@ -1,0 +1,17 @@
+{
+  "vigencia": "2026-08-24",
+  "fonte": "Portaria n.º 372-A/2026/1, de 21 de agosto (taxas efetivas com desconto extraordinário); taxa de carbono e valores de referência via impostos-combustiveis/AT",
+  "fonteUrl": "https://diariodarepublica.pt",
+  "nota": "O ISP é revisto por portaria, por vezes semanalmente (mecanismo de desconto extraordinário em vigor desde 2026). Valores indicativos — confirmar a portaria da semana.",
+  "iva": 0.23,
+  "gasolina95": {
+    "ispELitro": 0.44354,
+    "carbonoELitro": 0.159,
+    "nota": "Portaria 372-A/2026/1 fixou ISP em 443,54 €/1000 L, já com desconto de 53,98 €/1000 L"
+  },
+  "gasoleo": {
+    "ispELitro": 0.298,
+    "carbonoELitro": 0.173,
+    "nota": "Referência maio/2026; na semana de 24/08 o desconto extraordinário era 81,61 €/1000 L"
+  }
+}

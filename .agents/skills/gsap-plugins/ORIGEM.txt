@@ -1,0 +1,4 @@
+Origem: https://github.com/greensock/gsap-skills (skills/gsap-plugins)
+Licença: MIT (ver LICENSE)
+Commit: aed9cfd32777
+Copiado e revisto: 2026-09-15 — sem scripts; só instruções.
