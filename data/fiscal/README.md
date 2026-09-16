@@ -9,6 +9,7 @@ legislativa/oficial (DR, AT, OE, IGCP, Código do IVA).
 | Ficheiro | Conteúdo | Fonte típica |
 |---|---|---|
 | `irs-YYYY.json` | Escalões, deduções, mínimo de existência, sobretaxa — um ficheiro por ano fiscal | OE / CIRS |
+| `retencao-YYYY.json` | Tabelas de retenção na fonte mensais (continente, trabalho dependente) | Despacho AT anual (DR) |
 | `ss.json` | TSU trabalhador (11 %) e entidade (23,75 %) | Código dos Regimes Contributivos |
 | `iva.json` | Taxas reduzida/intermédia/normal + exemplos | CIVA |
 | `isp.json` | ISP e taxa de carbono por litro | Portarias semanais |

@@ -4,6 +4,7 @@ import { simularPoupanca, simularCA, taxaCAPorAno } from "./poupanca";
 import { decomporCombustivel, ivaContido } from "./impostos";
 import { contribuicoes, custoDoTrabalho } from "./seg-social";
 import { simularTaeg } from "./taeg";
+import { retencaoNaFonte, tabelaAplicavel } from "./retencao";
 import ca from "@data/fiscal/ca.json";
 import capitais from "@data/fiscal/capitais.json";
 
@@ -107,6 +108,59 @@ describe("simularTaeg", () => {
     expect(r.taeg).toBeGreaterThan(semCustos);
     expect(r.mtic).toBeCloseTo(360 * (r.prestacao + 30) + 2000, 4);
     expect(r.custosTotais).toBeCloseTo(r.mtic - 200000, 4);
+  });
+});
+
+describe("retencaoNaFonte", () => {
+  // Casos golden: taxa efetiva publicada no Despacho n.º 233-A/2026,
+  // coluna "taxa efetiva mensal de retenção no limite do escalão" (0 dependentes)
+  const casosTabI: [number, number][] = [
+    [920, 0], [1042, 0.053], [1108, 0.072], [1154, 0.075], [1212, 0.081],
+    [1819, 0.135], [2119, 0.16], [2499, 0.188], [3305, 0.236], [5547, 0.301],
+    [20221, 0.409],
+  ];
+  for (const [r, efetiva] of casosTabI) {
+    it(`Tabela I: ${r} € → taxa efetiva ≈ ${(efetiva * 100).toFixed(1)} %`, () => {
+      expect(retencaoNaFonte(r, "naoCasado", 0).taxaEfetiva).toBeCloseTo(efetiva, 3);
+      expect(retencaoNaFonte(r, "casadoDoisTitulares", 0).taxaEfetiva).toBeCloseTo(efetiva, 3);
+    });
+  }
+
+  const casosTabIII: [number, number][] = [
+    [991, 0], [1042, 0.022], [1108, 0.038], [1119, 0.039], [1432, 0.058],
+    [1962, 0.085], [2240, 0.098], [2773, 0.123], [3389, 0.148], [5965, 0.208],
+    [20265, 0.332],
+  ];
+  for (const [r, efetiva] of casosTabIII) {
+    it(`Tabela III: ${r} € → taxa efetiva ≈ ${(efetiva * 100).toFixed(1)} %`, () => {
+      expect(retencaoNaFonte(r, "casadoUnicoTitular", 0).taxaEfetiva).toBeCloseTo(efetiva, 3);
+    });
+  }
+
+  it("SMN 920 € não retém; casado único titular isento até 991 €", () => {
+    expect(retencaoNaFonte(920, "naoCasado").retencao).toBe(0);
+    expect(retencaoNaFonte(991, "casadoUnicoTitular").retencao).toBe(0);
+    expect(retencaoNaFonte(920.01, "naoCasado").retencao).toBeGreaterThanOrEqual(0);
+  });
+
+  it("dependentes baixam a retenção; tabela II só para não casado com dependentes", () => {
+    expect(tabelaAplicavel("naoCasado", 0)).toBe("I");
+    expect(tabelaAplicavel("naoCasado", 2)).toBe("II");
+    expect(tabelaAplicavel("casadoDoisTitulares", 2)).toBe("I");
+    const sem = retencaoNaFonte(1500, "naoCasado", 0);
+    const com2 = retencaoNaFonte(1500, "naoCasado", 2);
+    expect(sem.retencao).toBeCloseTo(1500 * 0.241 - 193.33, 6);
+    expect(com2.retencao).toBeCloseTo(sem.retencao - 2 * 34.29, 6);
+  });
+
+  it("3+ dependentes: −1 p.p. na marginal, parcelas inalteradas", () => {
+    const r = retencaoNaFonte(1500, "naoCasado", 3);
+    expect(r.taxaMarginal).toBeCloseTo(0.241 - 0.01, 6);
+    expect(r.retencao).toBeCloseTo(1500 * 0.231 - 193.33 - 3 * 34.29, 6);
+  });
+
+  it("retenção nunca é negativa", () => {
+    expect(retencaoNaFonte(1000, "casadoUnicoTitular", 5).retencao).toBe(0);
   });
 });
 

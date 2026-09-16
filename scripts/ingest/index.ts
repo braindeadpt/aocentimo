@@ -1,6 +1,8 @@
 import path from "path";
 import { writeFileSync, mkdirSync, readFileSync, existsSync } from "fs";
 import { runEurostat } from "./eurostat";
+import { runBpstat } from "./bpstat";
+import { runDgeg } from "./dgeg";
 
 const ROOT = path.resolve(__dirname, "..", "..");
 const DATA = path.join(ROOT, "data");
@@ -11,7 +13,7 @@ interface FonteMeta {
   url: string;
   recolhidoEm: string;
   serieAte: string;
-  frequencia: "diaria" | "mensal";
+  frequencia: string;
 }
 
 async function main() {
@@ -38,6 +40,32 @@ async function main() {
         recolhidoEm: d.meta.recolhidoEm,
         serieAte: d.meta.serieAte,
         frequencia: "mensal",
+      });
+    }
+  }
+
+  if (daily) {
+    // Euribor média mensal (atualiza ~1.º dia útil do mês) + PMD diário DGEG
+    const euribor = await runBpstat(path.join(DATA, "sources", "bpstat"));
+    for (const d of euribor) {
+      fontes.push({
+        id: d.meta.id,
+        fonte: d.meta.fonte,
+        url: d.meta.url,
+        recolhidoEm: d.meta.recolhidoEm,
+        serieAte: d.meta.serieAte,
+        frequencia: "mensal",
+      });
+    }
+    const pmd = await runDgeg(path.join(DATA, "sources", "dgeg"));
+    for (const d of pmd) {
+      fontes.push({
+        id: d.meta.id,
+        fonte: d.meta.fonte,
+        url: d.meta.url,
+        recolhidoEm: d.meta.recolhidoEm,
+        serieAte: d.meta.serieAte,
+        frequencia: "diaria",
       });
     }
   }

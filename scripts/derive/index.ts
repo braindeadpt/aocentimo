@@ -1,6 +1,7 @@
 import path from "path";
 import { runHicp } from "./hicp";
 import { runFreshness } from "./freshness";
+import { runFiscalFontes } from "./fiscal-fontes";
 
 const ROOT = path.resolve(__dirname, "..", "..");
 const DATA = path.join(ROOT, "data");
@@ -13,6 +14,9 @@ const DATA = path.join(ROOT, "data");
 function main() {
   const resumo = runHicp(DATA);
   console.log(`✓ hicp-resumo.json: ${resumo.series.length} séries derivadas`);
+
+  const fiscais = runFiscalFontes(DATA);
+  console.log(`✓ sources.json: ${fiscais.length} fontes fiscais registadas`);
 
   const frescura = runFreshness(path.join(DATA, "meta"));
   for (const s of frescura.series) {

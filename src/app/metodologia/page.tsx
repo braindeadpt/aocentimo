@@ -23,15 +23,15 @@ const FONTES_FIXAS = [
   },
   {
     nome: "Banco de Portugal — BPstat",
-    uso: "Euribor e taxas de juro",
+    uso: "Euribor média mensal (1, 3, 6 e 12 meses)",
     url: "https://bpstat.bportugal.pt",
-    nota: "API pública JSON.stat — ligação em preparação",
+    nota: "API pública, recolha automática diária — as médias mensais são as que os bancos aplicam às prestações",
   },
   {
     nome: "DGEG",
-    uso: "Preços de combustíveis (€/litro, quase diário)",
+    uso: "Preço médio nacional de combustíveis (€/litro, diário)",
     url: "https://precoscombustiveis.dgeg.gov.pt",
-    nota: "Ligação em preparação",
+    nota: "API pública do portal, recolha automática diária (incremental desde 2017)",
   },
   {
     nome: "AT / Diário da República",
@@ -141,7 +141,7 @@ export default function MetodologiaPage() {
         <h2 className="font-display text-2xl text-ink">Limitações honestas</h2>
         <ul className="list-disc pl-5 space-y-2">
           <li>A inflação oficial é um índice de cabaz médio — não o preço do teu cabaz.</li>
-          <li>O simulador de salário é uma estimativa anual: falta a retenção na fonte mensal (tabelas AT), deduções de saúde/educação, IRS Jovem e regimes especiais. Açores e Madeira têm regras próprias.</li>
+          <li>A retenção na fonte mensal segue as tabelas do Despacho n.º 233-A/2026 (continente, sem deficiência). Faltam deduções de saúde/educação, IRS Jovem, pensões e regimes especiais. Açores e Madeira têm regras próprias.</li>
           <li>O ISP muda por portaria, por vezes semanalmente — os valores mostrados têm data de vigência explícita.</li>
           <li>Simuladores não são aconselhamento. Para decisões fiscais, consulta um contabilista certificado.</li>
         </ul>

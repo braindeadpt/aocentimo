@@ -206,5 +206,133 @@
     "recolhidoEm": "2026-09-16T18:22:54.316Z",
     "serieAte": "2026-08",
     "frequencia": "mensal"
+  },
+  {
+    "id": "euribor-1m-mensal",
+    "fonte": "Banco de Portugal — BPstat",
+    "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168439&lang=PT",
+    "recolhidoEm": "2026-09-16T19:02:00.163Z",
+    "serieAte": "2026-08",
+    "frequencia": "mensal"
+  },
+  {
+    "id": "euribor-3m-mensal",
+    "fonte": "Banco de Portugal — BPstat",
+    "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168436&lang=PT",
+    "recolhidoEm": "2026-09-16T19:02:00.534Z",
+    "serieAte": "2026-08",
+    "frequencia": "mensal"
+  },
+  {
+    "id": "euribor-6m-mensal",
+    "fonte": "Banco de Portugal — BPstat",
+    "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168438&lang=PT",
+    "recolhidoEm": "2026-09-16T19:02:00.752Z",
+    "serieAte": "2026-08",
+    "frequencia": "mensal"
+  },
+  {
+    "id": "euribor-12m-mensal",
+    "fonte": "Banco de Portugal — BPstat",
+    "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168437&lang=PT",
+    "recolhidoEm": "2026-09-16T19:02:00.958Z",
+    "serieAte": "2026-08",
+    "frequencia": "mensal"
+  },
+  {
+    "id": "pmd-gasoleo-diario",
+    "fonte": "DGEG — Preços dos Combustíveis",
+    "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=2101&dataIni=2017-01-01&dataFim=2026-09-16",
+    "recolhidoEm": "2026-09-16T19:02:07.824Z",
+    "serieAte": "2026-09-15",
+    "frequencia": "diaria"
+  },
+  {
+    "id": "pmd-gasolina95-diario",
+    "fonte": "DGEG — Preços dos Combustíveis",
+    "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=3201&dataIni=2017-01-01&dataFim=2026-09-16",
+    "recolhidoEm": "2026-09-16T19:02:10.936Z",
+    "serieAte": "2026-09-15",
+    "frequencia": "diaria"
+  },
+  {
+    "id": "pmd-gpl-diario",
+    "fonte": "DGEG — Preços dos Combustíveis",
+    "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=1120&dataIni=2017-01-01&dataFim=2026-09-16",
+    "recolhidoEm": "2026-09-16T19:02:14.076Z",
+    "serieAte": "2026-09-15",
+    "frequencia": "diaria"
+  },
+  {
+    "id": "fiscal-ca",
+    "fonte": "IGCP — curado",
+    "url": "https://www.igcp.pt/pt/aforristas/produtos-de-aforro/certificados-de-aforro",
+    "recolhidoEm": "2026-09T00:00:00Z",
+    "serieAte": "2026-09",
+    "frequencia": "mensal"
+  },
+  {
+    "id": "fiscal-capitais",
+    "fonte": "OE/DR — curado",
+    "url": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
+  },
+  {
+    "id": "fiscal-irs-2025",
+    "fonte": "OE/DR — curado",
+    "url": "https://info.portaldasfinancas.gov.pt",
+    "recolhidoEm": "2025-01-01T00:00:00Z",
+    "serieAte": "2025",
+    "frequencia": "anual"
+  },
+  {
+    "id": "fiscal-irs-2026",
+    "fonte": "OE/DR — curado",
+    "url": "https://info.portaldasfinancas.gov.pt",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
+  },
+  {
+    "id": "fiscal-isp",
+    "fonte": "AT/DR — curado",
+    "url": "https://diariodarepublica.pt",
+    "recolhidoEm": "2026-08-24T00:00:00Z",
+    "serieAte": "2026-07",
+    "frequencia": "trimestral"
+  },
+  {
+    "id": "fiscal-iva",
+    "fonte": "OE/DR — curado",
+    "url": "https://info.portaldasfinancas.gov.pt",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
+  },
+  {
+    "id": "fiscal-retencao-2026",
+    "fonte": "OE/DR — curado",
+    "url": "https://files.diariodarepublica.pt/2s/2026/01/003000001/0000200010.pdf",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
+  },
+  {
+    "id": "fiscal-smn",
+    "fonte": "OE/DR — curado",
+    "url": "https://diariodarepublica.pt",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
+  },
+  {
+    "id": "fiscal-ss",
+    "fonte": "OE/DR — curado",
+    "url": "https://www.seg-social.pt",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
   }
 ]

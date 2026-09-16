@@ -1,0 +1,70 @@
+{
+  "ano": 2026,
+  "vigencia": "2026-01-01",
+  "fonte": "Despacho n.º 233-A/2026, de 6 de janeiro (DR, Suplemento 2.ª série, n.º 3) — rendimentos pagos a partir de 1 janeiro 2026",
+  "fonteUrl": "https://files.diariodarepublica.pt/2s/2026/01/003000001/0000200010.pdf",
+  "ambito": "Trabalho dependente (cat. A), titulares residentes no continente, sem deficiência. Açores/Madeira, deficiência e pensões: tabelas IV–XI do mesmo despacho — fora do âmbito deste ficheiro.",
+  "formula": "retencao = max(0, R × taxaMarginal − parcelaAbater − parcelaAdicionalDependente × nDependentes)",
+  "parcelaFormulaNota": "Nas linhas de transição a parcela a abater é ela própria uma fórmula: taxa × fator × (limiar − R). A 'taxa' guardada é o coeficiente publicado (não muda com a redução de 1 p.p. para 3+ dependentes — n.º 5.h do despacho).",
+  "regras": {
+    "tresOuMaisDependentes": { "reducaoTaxaMarginal": 0.01, "nota": "Trabalho dependente com 3+ dependentes: −1 p.p. na taxa marginal; parcelas inalteradas (n.º 5.h)" },
+    "dependenteDeficiencia60": { "naoCasadoOuCasadoUnicoTitular": 84.82, "casadoDoisTitulares": 42.41, "nota": "Valor a acrescer à parcela a abater por dependente com incapacidade ≥60 % (n.º 5.a)" },
+    "trabalhoSuplementar": { "fator": 0.5, "nota": "50 % da taxa efetiva do mês sobre remuneração de trabalho suplementar (n.º 5.f)" }
+  },
+  "tabelas": {
+    "I": {
+      "aplica": ["naoCasadoSemDependentes", "casadoDoisTitulares"],
+      "parcelaAdicionalDependente": 21.43,
+      "linhas": [
+        { "ate": 920, "taxaMarginal": 0, "parcelaAbater": 0 },
+        { "ate": 1042, "taxaMarginal": 0.125, "parcelaAbaterFormula": { "taxa": 0.125, "fator": 2.6, "limiar": 1273.85 } },
+        { "ate": 1108, "taxaMarginal": 0.157, "parcelaAbaterFormula": { "taxa": 0.157, "fator": 1.35, "limiar": 1554.83 } },
+        { "ate": 1154, "taxaMarginal": 0.157, "parcelaAbater": 94.71 },
+        { "ate": 1212, "taxaMarginal": 0.212, "parcelaAbater": 158.18 },
+        { "ate": 1819, "taxaMarginal": 0.241, "parcelaAbater": 193.33 },
+        { "ate": 2119, "taxaMarginal": 0.311, "parcelaAbater": 320.66 },
+        { "ate": 2499, "taxaMarginal": 0.349, "parcelaAbater": 401.19 },
+        { "ate": 3305, "taxaMarginal": 0.3836, "parcelaAbater": 487.66 },
+        { "ate": 5547, "taxaMarginal": 0.3969, "parcelaAbater": 531.62 },
+        { "ate": 20221, "taxaMarginal": 0.4495, "parcelaAbater": 823.4 },
+        { "ate": null, "taxaMarginal": 0.4717, "parcelaAbater": 1272.31 }
+      ]
+    },
+    "II": {
+      "aplica": ["naoCasadoComDependentes"],
+      "parcelaAdicionalDependente": 34.29,
+      "linhas": [
+        { "ate": 920, "taxaMarginal": 0, "parcelaAbater": 0 },
+        { "ate": 1042, "taxaMarginal": 0.125, "parcelaAbaterFormula": { "taxa": 0.125, "fator": 2.6, "limiar": 1273.85 } },
+        { "ate": 1108, "taxaMarginal": 0.157, "parcelaAbaterFormula": { "taxa": 0.157, "fator": 1.35, "limiar": 1554.83 } },
+        { "ate": 1154, "taxaMarginal": 0.157, "parcelaAbater": 94.71 },
+        { "ate": 1212, "taxaMarginal": 0.212, "parcelaAbater": 158.18 },
+        { "ate": 1819, "taxaMarginal": 0.241, "parcelaAbater": 193.33 },
+        { "ate": 2119, "taxaMarginal": 0.311, "parcelaAbater": 320.66 },
+        { "ate": 2499, "taxaMarginal": 0.349, "parcelaAbater": 401.19 },
+        { "ate": 3305, "taxaMarginal": 0.3836, "parcelaAbater": 487.66 },
+        { "ate": 5547, "taxaMarginal": 0.3969, "parcelaAbater": 531.62 },
+        { "ate": 20221, "taxaMarginal": 0.4495, "parcelaAbater": 823.4 },
+        { "ate": null, "taxaMarginal": 0.4717, "parcelaAbater": 1272.31 }
+      ]
+    },
+    "III": {
+      "aplica": ["casadoUnicoTitular"],
+      "parcelaAdicionalDependente": 42.86,
+      "linhas": [
+        { "ate": 991, "taxaMarginal": 0, "parcelaAbater": 0 },
+        { "ate": 1042, "taxaMarginal": 0.125, "parcelaAbaterFormula": { "taxa": 0.125, "fator": 2.6, "limiar": 1372.15 } },
+        { "ate": 1108, "taxaMarginal": 0.125, "parcelaAbaterFormula": { "taxa": 0.125, "fator": 1.35, "limiar": 1677.85 } },
+        { "ate": 1119, "taxaMarginal": 0.125, "parcelaAbater": 96.17 },
+        { "ate": 1432, "taxaMarginal": 0.1272, "parcelaAbater": 98.64 },
+        { "ate": 1962, "taxaMarginal": 0.157, "parcelaAbater": 141.32 },
+        { "ate": 2240, "taxaMarginal": 0.1938, "parcelaAbater": 213.53 },
+        { "ate": 2773, "taxaMarginal": 0.2277, "parcelaAbater": 289.47 },
+        { "ate": 3389, "taxaMarginal": 0.257, "parcelaAbater": 370.72 },
+        { "ate": 5965, "taxaMarginal": 0.2881, "parcelaAbater": 476.12 },
+        { "ate": 20265, "taxaMarginal": 0.3843, "parcelaAbater": 1049.96 },
+        { "ate": null, "taxaMarginal": 0.4717, "parcelaAbater": 2821.13 }
+      ]
+    }
+  }
+}
