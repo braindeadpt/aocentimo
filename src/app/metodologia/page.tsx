@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { loadFontes } from "@/lib/data";
+import { loadFontes, loadFreshness } from "@/lib/data";
 import { fmtData } from "@/lib/format";
 
 export const metadata: Metadata = {
@@ -49,6 +49,8 @@ const FONTES_FIXAS = [
 
 export default function MetodologiaPage() {
   const fontes = loadFontes();
+  const frescura = loadFreshness();
+  const porId = new Map(frescura?.series.map((s) => [s.id, s]) ?? []);
 
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
@@ -92,20 +94,46 @@ export default function MetodologiaPage() {
                 <th className="py-2 pr-4 font-medium">Série</th>
                 <th className="py-2 pr-4 font-medium">Fonte</th>
                 <th className="py-2 pr-4 font-medium">Dados até</th>
-                <th className="py-2 font-medium">Recolhido</th>
+                <th className="py-2 pr-4 font-medium">Recolhido</th>
+                <th className="py-2 font-medium">Estado</th>
               </tr>
             </thead>
             <tbody className="num text-ink2">
-              {fontes.map((f) => (
-                <tr key={f.id} className="border-b border-line">
-                  <td className="py-2 pr-4">{f.id}</td>
-                  <td className="py-2 pr-4">{f.fonte}</td>
-                  <td className="py-2 pr-4">{fmtData(f.serieAte)}</td>
-                  <td className="py-2">{fmtData(f.recolhidoEm.slice(0, 10))}</td>
-                </tr>
-              ))}
+              {fontes.map((f) => {
+                const s = porId.get(f.id);
+                return (
+                  <tr key={f.id} className="border-b border-line">
+                    <td className="py-2 pr-4">{f.id}</td>
+                    <td className="py-2 pr-4">{f.fonte}</td>
+                    <td className="py-2 pr-4">{fmtData(f.serieAte)}</td>
+                    <td className="py-2 pr-4">{fmtData(f.recolhidoEm.slice(0, 10))}</td>
+                    <td className="py-2">
+                      {!s ? (
+                        <span className="text-muted">—</span>
+                      ) : s.estado === "atrasada" ? (
+                        <span className="text-up">
+                          atrasada {s.atrasoPeriodos} {s.frequencia === "mensal" ? "mês" : "período"}
+                          {s.atrasoPeriodos !== 1 ? "es" : ""} — esperado {fmtData(s.esperadoAte)}
+                        </span>
+                      ) : (
+                        <span className="text-muted">em dia</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
+        )}
+        {frescura && (
+          <p className="footnote mt-3">
+            Frescura verificada {fmtData(frescura.verificadoEm.slice(0, 10))} pelo
+            watchdog do pipeline: uma série falha quando a fonte já devia ter
+            publicado o período seguinte e não publicou.
+            {frescura.estado === "atrasado" && (
+              <span className="text-up"> Há séries atrasadas.</span>
+            )}
+          </p>
         )}
       </section>
 

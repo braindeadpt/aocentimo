@@ -3,6 +3,7 @@ import { Figure } from "@/components/Figure";
 import { ComparadorPoupanca } from "./ComparadorPoupanca";
 import { fmtPct } from "@/lib/format";
 import ca from "@data/fiscal/ca.json";
+import capitais from "@data/fiscal/capitais.json";
 
 export const metadata: Metadata = {
   title: "Poupança — Certificados de Aforro, depósitos e inflação",
@@ -52,14 +53,15 @@ export default function PoupancaPage() {
         </div>
         <p className="footnote mt-3">
           {ca.serieF.juros} · {ca.serieF.garantia} · Prazo {ca.serieF.prazo} ·
-          Tributação: {fmtPct(ca.tributacaoCapitais.taxa, 0)} sobre os juros.
+          Tributação: {fmtPct(capitais.retencaoLiberatoria.taxa, 0)} sobre os juros.
         </p>
       </Figure>
 
       <section className="max-w-2xl py-8 text-ink2 text-[0.95rem] leading-relaxed space-y-4">
         <h2 className="font-display text-2xl text-ink">Três ideias que valem dinheiro</h2>
         <p>
-          <strong>1.</strong> Os juros de depósitos e CA pagam 28 % de imposto
+          <strong>1.</strong> Os juros de depósitos e CA pagam{" "}
+          {fmtPct(capitais.retencaoLiberatoria.taxa, 0)} de imposto
           logo à saída — a taxa anunciada pelo banco é sempre bruta.{" "}
           <strong>2.</strong> O dinheiro parado na conta à ordem rende 0 % e
           perde para a inflação todos os anos. <strong>3.</strong> Os CA têm

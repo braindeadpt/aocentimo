@@ -3,7 +3,7 @@
   "fonte": "Portaria n.º 372-A/2026/1, de 21 de agosto (taxas efetivas com desconto extraordinário); taxa de carbono e valores de referência via impostos-combustiveis/AT",
   "fonteUrl": "https://diariodarepublica.pt",
   "nota": "O ISP é revisto por portaria, por vezes semanalmente (mecanismo de desconto extraordinário em vigor desde 2026). Valores indicativos — confirmar a portaria da semana.",
-  "iva": 0.23,
+  "iva": "Taxa normal — ver data/fiscal/iva.json",
   "gasolina95": {
     "ispELitro": 0.44354,
     "carbonoELitro": 0.159,

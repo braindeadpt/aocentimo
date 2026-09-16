@@ -24,8 +24,25 @@ const fonteMetaSchema = z.object({
   frequencia: z.string(),
 });
 
+const freshnessSchema = z.object({
+  verificadoEm: z.string(),
+  estado: z.enum(["ok", "atrasado"]),
+  series: z.array(
+    z.object({
+      id: z.string(),
+      fonte: z.string(),
+      serieAte: z.string(),
+      esperadoAte: z.string(),
+      frequencia: z.string(),
+      estado: z.enum(["em-dia", "atrasada", "sem-sla"]),
+      atrasoPeriodos: z.number(),
+    })
+  ),
+});
+
 export type Serie = z.infer<typeof serieSchema>;
 export type FonteMeta = z.infer<typeof fonteMetaSchema>;
+export type Freshness = z.infer<typeof freshnessSchema>;
 
 const DATA = path.join(process.cwd(), "data");
 const cache = new Map<string, Serie | null>();
@@ -47,6 +64,12 @@ export function loadFontes(): FonteMeta[] {
   const file = path.join(DATA, "meta", "sources.json");
   if (!existsSync(file)) return [];
   return z.array(fonteMetaSchema).parse(JSON.parse(readFileSync(file, "utf8")));
+}
+
+export function loadFreshness(): Freshness | null {
+  const file = path.join(DATA, "meta", "freshness.json");
+  if (!existsSync(file)) return null;
+  return freshnessSchema.parse(JSON.parse(readFileSync(file, "utf8")));
 }
 
 export function listSeries(): string[] {

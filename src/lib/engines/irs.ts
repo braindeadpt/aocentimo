@@ -1,6 +1,6 @@
 import irs2025 from "@data/fiscal/irs-2025.json";
 import irs2026 from "@data/fiscal/irs-2026.json";
-import ss from "@data/fiscal/ss.json";
+import { TSU_TRABALHADOR, TSU_ENTIDADE } from "./seg-social";
 
 export interface EscalaoIRS {
   ate: number | null;
@@ -31,8 +31,8 @@ export const REGRAS_IRS: Record<number, RegrasIRS> = {
   2026: irs2026 as RegrasIRS,
 };
 
-export const SS_TRABALHADOR = ss.trabalhador.taxa;
-export const SS_ENTIDADE = ss.entidadePatronal.taxa;
+export const SS_TRABALHADOR = TSU_TRABALHADOR;
+export const SS_ENTIDADE = TSU_ENTIDADE;
 
 /** Imposto progressivo por fatias sobre o rendimento coletável. */
 export function impostoPorEscaloes(rc: number, regras: RegrasIRS): number {

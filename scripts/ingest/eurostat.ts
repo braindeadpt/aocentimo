@@ -3,13 +3,24 @@ import { writeFileSync, mkdirSync } from "fs";
 import path from "path";
 
 /**
- * Ingest Eurostat — IHPC (prc_hicp_*), JSON-stat 2.0.
- * Gratuito, sem chave. Escreve data/sources/eurostat/hicp-{coicop}.json
- * e atualiza data/meta/sources.json.
+ * Ingest Eurostat — IHPC (prc_hicp_minr, ECOICOP 2018), JSON-stat 2.0.
+ * O dataset prc_hicp_midx foi descontinuado pelo Eurostat (última atualização
+ * 2026-02); o substituto é prc_hicp_minr, com dimensão "coicop18", índice
+ * re-referenciado a 2025=100 (unit=I25) e o agregado total renomeado
+ * de CP00 para TOTAL. Gratuito, sem chave. Escreve
+ * data/sources/eurostat/hicp-{coicop}.json e atualiza data/meta/sources.json.
  */
 
 const BASE =
   "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data";
+
+const DATASET = "prc_hicp_minr";
+const UNIDADE = "Índice 2025=100";
+
+/** Código usado no pedido à API — CP00 chama-se TOTAL no ECOICOP 2018. */
+function apiCoicop(coicop: Coicop): string {
+  return coicop === "CP00" ? "TOTAL" : coicop;
+}
 
 export const COICOPS = [
   "CP00", // total
@@ -68,7 +79,7 @@ export function parseJsonStat(json: JsonStat): { t: string; v: number }[] {
 }
 
 export async function fetchCoicop(coicop: Coicop): Promise<SerieGuardada> {
-  const url = `${BASE}/prc_hicp_midx?format=JSON&geo=PT&coicop=${coicop}&unit=I15`;
+  const url = `${BASE}/${DATASET}?format=JSON&geo=PT&coicop18=${apiCoicop(coicop)}&unit=I25`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Eurostat ${coicop}: HTTP ${res.status}`);
 
@@ -80,9 +91,9 @@ export async function fetchCoicop(coicop: Coicop): Promise<SerieGuardada> {
     meta: {
       id: `hicp-pt-${coicop.toLowerCase()}`,
       fonte: "Eurostat",
-      dataset: "prc_hicp_midx",
+      dataset: DATASET,
       url,
-      unidade: "Índice 2015=100",
+      unidade: UNIDADE,
       recolhidoEm: new Date().toISOString(),
       serieAte: series[series.length - 1].t,
     },

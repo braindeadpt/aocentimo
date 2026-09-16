@@ -19,6 +19,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx tsx scripts/ingest/index.ts --daily
+      - run: npm run derive
       - name: Commit dados
         run: |
           git config user.name "bruto-bot"

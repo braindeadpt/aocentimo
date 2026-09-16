@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { ivaContido } from "@/lib/engines/impostos";
+import { ivaContido, IVA_NORMAL } from "@/lib/engines/impostos";
 import { fmtEUR, fmtPct } from "@/lib/format";
+import ivaData from "@data/fiscal/iva.json";
 
 export function CalculadoraIva() {
   const [preco, setPreco] = useState(10);
-  const [taxa, setTaxa] = useState(0.23);
+  const [taxa, setTaxa] = useState(IVA_NORMAL);
   const r = ivaContido(preco, taxa);
 
   return (
@@ -32,9 +33,11 @@ export function CalculadoraIva() {
             onChange={(e) => setTaxa(Number(e.target.value))}
             className="w-full bg-paper border border-line px-3 py-2 num text-sm focus:outline-none focus:border-line2"
           >
-            <option value={0.06}>6 % — reduzida</option>
-            <option value={0.13}>13 % — intermédia</option>
-            <option value={0.23}>23 % — normal</option>
+            {ivaData.taxas.map((t) => (
+              <option key={t.nome} value={t.taxa}>
+                {fmtPct(t.taxa, 0)} — {t.nome.toLowerCase()}
+              </option>
+            ))}
           </select>
         </div>
       </div>

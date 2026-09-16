@@ -1,0 +1,9 @@
+{
+  "vigencia": "2026-01-01",
+  "fonte": "CIRS art. 71.º-72.º — retenção liberatória sobre rendimentos de capitais (cat. E)",
+  "fonteUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/",
+  "retencaoLiberatoria": {
+    "taxa": 0.28,
+    "nota": "Juros de depósitos, certificados e obrigações; englobamento opcional. Açores: taxa inferior."
+  }
+}

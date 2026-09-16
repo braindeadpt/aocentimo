@@ -1,9 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { simularPoupanca } from "@/lib/engines/poupanca";
+import { simularPoupanca, simularCA } from "@/lib/engines/poupanca";
 import { fmtEUR0, fmtPct } from "@/lib/format";
 import ca from "@data/fiscal/ca.json";
+import capitais from "@data/fiscal/capitais.json";
 
 const inputCls =
   "w-full bg-paper border border-line px-3 py-2 num text-sm focus:outline-none focus:border-line2";
@@ -14,16 +15,17 @@ export function ComparadorPoupanca() {
   const [taxaDeposito, setTaxaDeposito] = useState(1.5);
   const [inflacao, setInflacao] = useState(2.0);
 
-  const taxaImposto = ca.tributacaoCapitais.taxa;
+  const taxaImposto = capitais.retencaoLiberatoria.taxa;
   const taxaCA = ca.serieF.taxaBrutaNovasSubscricoes;
+  const premios = ca.serieF.premiosPermanencia;
 
   const dep = useMemo(
     () => simularPoupanca(capital, anos, taxaDeposito / 100, taxaImposto, inflacao / 100),
     [capital, anos, taxaDeposito, taxaImposto, inflacao]
   );
   const caf = useMemo(
-    () => simularPoupanca(capital, anos, taxaCA, taxaImposto, inflacao / 100),
-    [capital, anos, taxaCA, taxaImposto, inflacao]
+    () => simularCA(capital, anos, taxaCA, premios, taxaImposto, inflacao / 100),
+    [capital, anos, taxaCA, premios, taxaImposto, inflacao]
   );
   const colchao = capital; // sem juros
 
@@ -76,7 +78,8 @@ export function ComparadorPoupanca() {
         <p className="footnote">
           Juros tributados a {fmtPct(taxaImposto, 0)} (retenção liberatória).
           CA Série F: taxa base = média da Euribor 3M, limitada a 2,50 %,
-          mais prémios de permanência — simulado aqui à taxa atual.
+          capitalização trimestral e prémios de permanência incluídos —
+          simulado à taxa atual em todo o período.
         </p>
       </div>
 

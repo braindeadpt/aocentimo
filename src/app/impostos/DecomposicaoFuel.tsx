@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { decomporCombustivel } from "@/lib/engines/impostos";
+import { decomporCombustivel, IVA_NORMAL } from "@/lib/engines/impostos";
 import { fmtEUR, fmtPct } from "@/lib/format";
 import isp from "@data/fiscal/isp.json";
 
@@ -12,11 +12,11 @@ export function DecomposicaoFuel() {
   const [preco, setPreco] = useState(1.65);
 
   const d = isp[fuel];
-  const r = decomporCombustivel(preco, d.ispELitro, d.carbonoELitro, isp.iva);
+  const r = decomporCombustivel(preco, d.ispELitro, d.carbonoELitro);
 
   const barras = [
     ["Produto + margens", r.produto, "bg-line2"],
-    ["IVA (23 %)", r.iva, "bg-up"],
+    [`IVA (${fmtPct(IVA_NORMAL, 0)})`, r.iva, "bg-up"],
     ["ISP", r.isp, "bg-up/80"],
     ["Taxa de carbono", r.carbono, "bg-up/60"],
   ] as const;
