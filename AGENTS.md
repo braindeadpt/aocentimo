@@ -13,7 +13,7 @@ trabalho.
 | Regras fiscais | JSON versionados por ano em `data/fiscal/` com fonte e vigência — nunca hardcoded |
 | Motores | `src/lib/engines/` = funções puras testadas (IRS, SS, prestação, TAEG, poupança, impostos) |
 | Voz | PT-PT europeu; strings em `messages/pt.json`; nunca "usuário/você/portfólio" |
-| Qualidade | `lint && typecheck && test:unit && build && test:e2e` verdes antes de merge |
+| Qualidade | `lint && typecheck && test:unit && validate:data && build && test:e2e` verdes antes de merge |
 | Produto | Read-only, gratuito, sem aconselhamento financeiro; cada número tem fonte + data |
 
 ## Regra nº1
@@ -42,7 +42,10 @@ npm run lint && npm run typecheck
 npm run test:unit      # vitest
 npm run build
 npm run test:e2e       # playwright smoke
-npm run ingest:daily   # scripts/ingest (local mirror do Actions)
+npm run ingest:daily   # scripts/ingest --daily (local mirror do Actions)
+npm run ingest:monthly # Eurostat mensal (prc_hicp_minr, ECOICOP 2018)
+npm run derive         # data/derived + watchdog de frescura
+npm run validate:data  # gate de frescura — falha se série oficial atrasar
 ```
 
 ## Limites
