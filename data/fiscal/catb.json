@@ -1,0 +1,22 @@
+{
+  "vigencia": "2026-01-01",
+  "fonte": "CIRS art. 31.º (coeficiente regime simplificado), art. 101.º (retenção 23 % em 2026); Código Contributivo art. 168.º (21,4 % sobre rendimento relevante)",
+  "fonteUrl": "https://info.portaldasfinancas.gov.pt",
+  "regimeSimplificado": {
+    "coeficienteServicos": 0.75,
+    "limiteAnual": 200000,
+    "nota": "Serviços profissionais (art. 151.º): 75 % do bruto é tributável; convém justificar 15 % de despesas no e-Fatura para o coeficiente não subir"
+  },
+  "segurancaSocial": {
+    "taxa": 0.214,
+    "rendimentoRelevante": 0.7,
+    "baseMinimaIas": 1.5,
+    "isencaoPrimeirosMeses": 12,
+    "nota": "21,4 % sobre 70 % do que faturas (serviços) ≈ 15 % do bruto; apuramento trimestral; base mínima 1,5×IAS = 805,70 €/mês em 2026"
+  },
+  "retencaoFonte": {
+    "tabela151": 0.23,
+    "outros": 0.115,
+    "nota": "23 % em 2026 (desceu de 25 %) para profissões do art. 151.º; 11,5 % outros rendimentos cat. B"
+  }
+}

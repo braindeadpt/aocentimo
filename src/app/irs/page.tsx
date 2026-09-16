@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Figure } from "@/components/Figure";
 import { SimuladorIrsJovem } from "./SimuladorIrsJovem";
+import { SimuladorAcerto } from "./SimuladorAcerto";
+import deducoes from "@data/fiscal/deducoes-2026.json";
 import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
 import irs from "@data/fiscal/irs-2026.json";
 import retencao from "@data/fiscal/retencao-2026.json";
@@ -111,7 +113,11 @@ export default function IrsPage() {
         </p>
       </Figure>
 
-      <Figure n={3} title="IRS Jovem — quanto vale, ano a ano" source={irsJovem.fonte}>
+      <Figure n={3} title="O acerto de contas — deduções à coleta" source={deducoes.fonte}>
+        <SimuladorAcerto ano={ANO} />
+      </Figure>
+
+      <Figure n={4} title="IRS Jovem — quanto vale, ano a ano" source={irsJovem.fonte}>
         <SimuladorIrsJovem ano={ANO} />
       </Figure>
 

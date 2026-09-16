@@ -366,5 +366,37 @@
     "recolhidoEm": "2026-01-01T00:00:00Z",
     "serieAte": "2026",
     "frequencia": "anual"
+  },
+  {
+    "id": "fiscal-catb",
+    "fonte": "OE/DR — curado",
+    "url": "https://info.portaldasfinancas.gov.pt",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
+  },
+  {
+    "id": "fiscal-deducoes-2026",
+    "fonte": "OE/DR — curado",
+    "url": "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/Deducoes_a_coleta/Paginas/default.aspx",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
+  },
+  {
+    "id": "fiscal-mais-valias",
+    "fonte": "OE/DR — curado",
+    "url": "https://info.portaldasfinancas.gov.pt",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
+  },
+  {
+    "id": "fiscal-ppr",
+    "fonte": "OE/DR — curado",
+    "url": "https://info.portaldasfinancas.gov.pt",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
   }
 ]

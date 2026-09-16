@@ -1,0 +1,27 @@
+{
+  "vigencia": "2026-01-01",
+  "fonte": "CIRS arts. 10.º, 22.º, 43.º, 72.º; Lei 31/2024 (exclusões por detenção); art. 10.º n.º 19 (cripto ≥365 dias)",
+  "fonteUrl": "https://info.portaldasfinancas.gov.pt",
+  "mobiliarios": {
+    "taxaAutonoma": 0.28,
+    "exclusoesDetencao": [
+      { "anosMin": 2, "exclusao": 0.1 },
+      { "anosMin": 5, "exclusao": 0.2 },
+      { "anosMin": 8, "exclusao": 0.3 }
+    ],
+    "exclusoesNota": "Valores mobiliários admitidos em mercado regulamentado UE/EEE: exclusão de 10 % (>2 anos), 20 % (≥5) ou 30 % (≥8) do ganho; fora deste regime, 100 % tributável. Englobamento facultativo.",
+    "perdasCompensaveisAnos": 5
+  },
+  "cripto": {
+    "isencaoDetencaoDias": 365,
+    "taxa": 0.28,
+    "nota": "Fora da atividade profissional: isento se detido ≥365 dias; caso contrário 28 %"
+  },
+  "imoveis": {
+    "percentagemEnglobada": 0.5,
+    "correcaoMonetaria": true,
+    "correcaoNota": "O valor de aquisição é atualizado por coeficiente anual de desvalorização da moeda (Portaria anual) — aqui não aplicado; a mais-valia real é ligeiramente menor",
+    "reinvestimento": "Venda de HPP com reinvestimento noutra HPP nos prazos legais: isenção total se integral, proporcional se parcial",
+    "nota": "Englobamento obrigatório para residentes; menos-valias imobiliárias abatem a mais-valias do mesmo tipo por 5 anos"
+  }
+}

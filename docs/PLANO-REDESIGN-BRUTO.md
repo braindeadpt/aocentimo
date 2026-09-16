@@ -6,9 +6,11 @@ ingests BPstat/DGEG; IGCP fica curado em data/fiscal/ca.json) ·
 Fase 3 ✓ (recibo mensal com retenção real + «Explica-me o recibo» em cascata +
 dia da liberdade fiscal; /casa com IMT/IS/registos e Euribor BPstat;
 /irs com escalões + IRS Jovem; /trabalho com subs. desemprego;
-CTPC no comparador de poupança).
-Próximo: Fase 4 — IRS anual completo, mais-valias, PPR, recibos verdes,
-salário em termos reais.
+CTPC no comparador de poupança) ·
+Fase 4 ✓ (IRS anual com deduções à coleta + limite global art. 78.º;
+PPR dedução+resgate; mais-valias mobiliárias/cripto/imóvel;
+recibos verdes cat. B; salário real por IHPC em /inflacao).
+Próximo: Fase 5 — a definir.
 Documento irmão de `PLANO-LITERACIA-FINANCEIRA.md` (que fica como histórico).
 Síntese de 3 auditorias paralelas: inventário técnico, mercado PT, direcção visual.
 

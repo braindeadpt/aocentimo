@@ -9,6 +9,10 @@ import { imt, imtJovem, custoCompra } from "./imt";
 import { simularIrsJovem, pctIsencao } from "./irs-jovem";
 import { simularDesemprego, duracaoSubsidio } from "./desemprego";
 import { reciboMensal } from "./recibo";
+import { simularIrsAnual, limiteGlobalDeducoes, limitePpr } from "./irs-anual";
+import { simularIndependente } from "./independente";
+import { simularMaisValia } from "./mais-valias";
+import { inflacionar, salarioReal } from "./deflator";
 import ca from "@data/fiscal/ca.json";
 import capitais from "@data/fiscal/capitais.json";
 
@@ -320,6 +324,99 @@ describe("simularCTPC", () => {
   it("prémio só conta do 2.º ano; ano 1 = taxa fixa", () => {
     const r = simularCTPC(10000, 1, taxas, premio, imposto);
     expect(r.capitalFinalLiquido).toBeCloseTo(10000 * (1 + 0.0075 * (1 - imposto)), 4);
+  });
+});
+
+describe("irs-anual (deduções à coleta)", () => {
+  const zero = { saude: 0, educacao: 0, rendas: 0, lares: 0, ivaFatura: 0, pprEntregas: 0 };
+
+  it("categorias com teto próprio: saúde 15 %, educação 30 %, rendas 15 % (máx 900)", () => {
+    const r = simularIrsAnual(1500, 0, {
+      ...zero, saude: 500, educacao: 1000, rendas: 6000, ivaFatura: 150,
+    });
+    const d = Object.fromEntries(r.linhasDeducao.map((l) => [l.categoria, l.deducao]));
+    expect(d["Saúde"]).toBeCloseTo(75, 6);
+    expect(d["Educação"]).toBeCloseTo(300, 6);
+    expect(d["Rendas"]).toBeCloseTo(900, 6); // 15 % de 6 000 = 900, no teto
+    expect(d["IVA das faturas"]).toBeCloseTo(150, 6);
+    // coleta 2 520,30 − 1 425 − 250 (gerais) = 845,30
+    expect(r.irsAnual).toBeCloseTo(845.3, 1);
+    // retido 168,17 × 14 = 2 354,38 → reembolso ≈ 1 509
+    expect(r.reembolsoEstimado).toBeCloseTo(1509, 0);
+  });
+
+  it("limite global do art. 78.º: interpolação e teto 1 000 € no último escalão", () => {
+    const lg = limiteGlobalDeducoes(16412.91, 0);
+    expect(lg).toBeCloseTo(2345, 0); // 1 000 + 1 500 × (86 634−RC)/(86 634−8 342)
+    expect(limiteGlobalDeducoes(5000, 0)).toBe(Infinity); // 1.º escalão
+    expect(limiteGlobalDeducoes(90000, 0)).toBe(1000);
+    const alto = simularIrsAnual(7000, 0, { ...zero, saude: 10000, educacao: 3000, ivaFatura: 250 });
+    expect(alto.dentroDoLimiteGlobal).toBe(1000);
+  });
+
+  it("PPR: 20 % das entregas com teto por idade", () => {
+    expect(limitePpr(30)).toBe(400);
+    expect(limitePpr(45)).toBe(350);
+    expect(limitePpr(60)).toBe(300);
+    const r = simularIrsAnual(1500, 0, { ...zero, pprEntregas: 2000, idadeTitular: 30 });
+    expect(r.deducaoPpr).toBe(400);
+  });
+});
+
+describe("independente (recibos verdes)", () => {
+  it("24 000 €/ano: SS ≈ 15 % do bruto, IRS sobre 75 %", () => {
+    const r = simularIndependente(24000);
+    expect(r.ss).toBeCloseTo(24000 * 0.7 * 0.214, 4); // 3 595,20
+    expect(r.coletavel).toBeCloseTo(18000, 6);
+    expect(r.irs).toBeCloseTo(2611.47, 1); // 2 861,47 por escalões − 250 gerais
+    expect(r.retido).toBeCloseTo(24000 * 0.23, 6);
+    expect(r.liquidoAnual).toBeCloseTo(17793.33, 1);
+  });
+
+  it("1.º ano de atividade isento de SS; base mínima 1,5×IAS", () => {
+    expect(simularIndependente(24000, { primeiroAno: true }).ss).toBe(0);
+    expect(simularIndependente(6000).ss).toBeCloseTo(805.7 * 12 * 0.214, 1);
+  });
+});
+
+describe("mais-valias", () => {
+  it("ações 3 anos: exclusão de 10 %, compara autónomo vs englobado", () => {
+    const r = simularMaisValia(15000, 10000, {
+      despesas: 50, anosDetencao: 3, coletavelOutros: 16412.91,
+    });
+    expect(r.maisValia).toBeCloseTo(4950, 6);
+    expect(r.tributavel).toBeCloseTo(4455, 6);
+    expect(r.impostoAutonomo).toBeCloseTo(1247.4, 1);
+    expect(r.impostoEnglobado).toBeCloseTo(1032.34, 1);
+    expect(r.melhor).toBe("englobado");
+  });
+
+  it("cripto ≥365 dias isenta; <365 paga 28 %", () => {
+    expect(simularMaisValia(20000, 10000, { tipo: "cripto", diasDetencao: 400 }).tributavel).toBe(0);
+    const r = simularMaisValia(20000, 10000, { tipo: "cripto", diasDetencao: 100 });
+    expect(r.impostoAutonomo).toBeCloseTo(2800, 6);
+  });
+
+  it("imóvel: engloba 50 %, reinvestimento reduz proporcionalmente", () => {
+    const r = simularMaisValia(200000, 150000, {
+      tipo: "imovel", despesas: 5000, pctReinvestida: 0.5,
+    });
+    expect(r.tributavel).toBeCloseTo(11250, 6); // 45 000 × 50 % × 50 %
+    expect(r.impostoAutonomo).toBeNull();
+    expect(r.melhor).toBe("impovel");
+  });
+});
+
+describe("deflator IHPC", () => {
+  const serie = [
+    { t: "2020-01", v: 50 },
+    { t: "2026-08", v: 60 },
+  ];
+  it("inflaciona pelo índice e compara salário real", () => {
+    expect(inflacionar(1000, "2020-01", serie)).toBeCloseTo(1200, 6);
+    const r = salarioReal(1000, 1100, "2020-01", serie);
+    expect(r!.equivalenteHoje).toBeCloseTo(1200, 6);
+    expect(r!.variacaoReal).toBeCloseTo(-0.0833, 3); // perdeu ~8,3 % reais
   });
 });
 

@@ -3,6 +3,7 @@ import { Figure } from "@/components/Figure";
 import { Delta } from "@/components/Delta";
 import { LineChart } from "@/components/LineChart";
 import { PoderDeCompra } from "./PoderDeCompra";
+import { SalarioReal } from "./SalarioReal";
 import { loadSerie, variacao, loadFontes, type Serie } from "@/lib/data";
 import { fmtData, fmtNum } from "@/lib/format";
 
@@ -135,6 +136,18 @@ export default function InflacaoPage() {
       <Figure n={3} title="A máquina do tempo do euro" source="IHPC total, Eurostat">
         {temDados ? (
           <PoderDeCompra serie={cp00!.series} />
+        ) : (
+          <p className="footnote">Indisponível sem dados.</p>
+        )}
+      </Figure>
+
+      <Figure
+        n={4}
+        title="O teu salário em termos reais"
+        source={temDados ? `IHPC total, Eurostat · até ${fmtData(cp00!.meta.serieAte)}` : "IHPC total, Eurostat"}
+      >
+        {temDados ? (
+          <SalarioReal serie={cp00!.series} />
         ) : (
           <p className="footnote">Indisponível sem dados.</p>
         )}

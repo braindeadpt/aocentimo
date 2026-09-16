@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import { Figure } from "@/components/Figure";
 import { ComparadorPoupanca } from "./ComparadorPoupanca";
+import { SimuladorPpr } from "./SimuladorPpr";
+import { SimuladorMaisValias } from "./SimuladorMaisValias";
 import { fmtPct } from "@/lib/format";
 import ca from "@data/fiscal/ca.json";
 import capitais from "@data/fiscal/capitais.json";
+import ppr from "@data/fiscal/ppr.json";
+import maisValias from "@data/fiscal/mais-valias.json";
 
 export const metadata: Metadata = {
   title: "Poupança — Certificados de Aforro, depósitos e inflação",
@@ -55,6 +59,14 @@ export default function PoupancaPage() {
           {ca.serieF.juros} · {ca.serieF.garantia} · Prazo {ca.serieF.prazo} ·
           Tributação: {fmtPct(capitais.retencaoLiberatoria.taxa, 0)} sobre os juros.
         </p>
+      </Figure>
+
+      <Figure n={3} title="PPR — o benefício fiscal, dos dois lados" source={`${ppr.fonte}`}>
+        <SimuladorPpr />
+      </Figure>
+
+      <Figure n={4} title="Mais-valias — o imposto sobre o ganho" source={`${maisValias.fonte}`}>
+        <SimuladorMaisValias />
       </Figure>
 
       <section className="max-w-2xl py-8 text-ink2 text-[0.95rem] leading-relaxed space-y-4">

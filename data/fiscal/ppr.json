@@ -1,0 +1,18 @@
+{
+  "vigencia": "2026-01-01",
+  "fonte": "Art. 21.º EBF (dedução à coleta) e taxa efetiva 8 % no reembolso dentro das condições legais (20 % sobre 40 % dos rendimentos)",
+  "fonteUrl": "https://info.portaldasfinancas.gov.pt",
+  "deducao": {
+    "pct": 0.2,
+    "limitesPorIdade": [
+      { "ate": 34, "limite": 400 },
+      { "ate": 50, "limite": 350 },
+      { "ate": null, "limite": 300 }
+    ],
+    "nota": "20 % das entregas do ano, por titular; idade a 1 de janeiro. Resgatar fora das condições legais obriga a devolver as deduções +10 % por cada ano."
+  },
+  "saida": {
+    "taxaEfetivaDentro": 0.08,
+    "nota": "Dentro das condições legais (reforma, ≥60 anos com 5 de contrato, desemprego longa duração, doença grave, prestações de CH, etc.): 20 % sobre 40 % dos rendimentos = 8 % efetiva. Fora das condições: taxa normal + devolução do benefício."
+  }
+}

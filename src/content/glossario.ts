@@ -112,4 +112,41 @@ export const GLOSSARIO: Termo[] = [
     definicao:
       "Os juros de depósitos e certificados pagam uma retenção liberatória de 28 % — descontada automaticamente antes de receberes. Quando a taxa anunciada é 2,5 %, a que chega à conta é 1,8 %.",
   },
+  {
+    slug: "deducao-coleta",
+    termo: "Dedução à coleta",
+    definicao:
+      "Despesa que baixa diretamente o IRS a pagar, euro a euro, depois de o imposto ser calculado pelos escalões: saúde (15 %, até 1 000 €), educação (30 %, até 800 €), rendas (15 %), PPR (20 %), IVA das faturas. O reembolso de IRS é, em grande parte, deduções à coleta a chegar.",
+  },
+  {
+    slug: "limite-deducoes",
+    termo: "Limite global das deduções",
+    definicao:
+      "Teto do art. 78.º do CIRS à soma de várias categorias de deduções: sem limite no 1.º escalão, 1 000 € no último, e um valor intermédio nos restantes — majorado em 5 % por dependente a partir do terceiro.",
+  },
+  {
+    slug: "ppr",
+    termo: "PPR",
+    definicao:
+      "Plano Poupança-Reforma. Deduzes ao IRS 20 % das entregas do ano (até 400 € se tiveres menos de 35 anos) e, no resgate dentro das condições legais, os rendimentos pagam só 8 % efetivos em vez de 28 %. Resgatar fora das condições obriga a devolver o benefício com penalização — é dinheiro preso.",
+  },
+  {
+    slug: "rendimento-relevante",
+    termo: "Rendimento relevante",
+    definicao:
+      "A base sobre a qual um trabalhador independente paga Segurança Social: 70 % do que faturas em serviços. Sobre esse valor aplica-se a taxa de 21,4 % — na prática, cerca de 15 % do teu bruto, apurado trimestralmente.",
+  },
+  {
+    slug: "englobamento",
+    termo: "Englobamento vs taxa autónoma",
+    definicao:
+      "Duas formas de tributar um rendimento. Taxa autónoma: um imposto fixo (ex.: 28 % nas mais-valias) que fecha a conta. Englobamento: somar esse rendimento ao resto e pagar a tua taxa marginal de IRS. Englobar compensa quando a tua marginal é menor que a autónoma — em imóveis é obrigatório.",
+  },
+  {
+    slug: "salario-real",
+    termo: "Salário real",
+    definicao:
+      "O salário corrigido pela inflação — o que ele compra de facto, não os euros que diz no recibo. Se o teu bruto subiu 5 % e os preços subiram 8 %, tiveste um aumento nominal e um corte real.",
+    exemplo: "1 200 € em 2020 valem ~1 440 € hoje; se agora ganhas 1 400 €, perdeste poder de compra.",
+  },
 ];

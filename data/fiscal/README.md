@@ -20,6 +20,10 @@ legislativa/oficial (DR, AT, OE, IGCP, Código do IVA).
 | `irs-jovem.json` | Isenção por ano de gozo, limite 55×IAS, regras do regime | CIRS art. 12.º-B |
 | `desemprego.json` | % RR, limites IAS, tabela de duração, majoração/redução | DL 220/2006 + Guia Seg. Social |
 | `subsidio-alimentacao.json` | Limites isentos por dia (dinheiro/cartão) | Portaria anual AP + CIRS art. 2.º |
+| `deducoes-YYYY.json` | Deduções à coleta por categoria + limite global do art. 78.º | CIRS arts. 78.º-84.º / AT |
+| `ppr.json` | Dedução à coleta por idade (20 %, tetos) + tributação no resgate | EBF art. 21.º |
+| `catb.json` | Recibos verdes: coeficiente 0,75, SS 21,4 % sobre rendimento relevante, retenção | CIRS + Código Contributivo |
+| `mais-valias.json` | Taxa autónoma, exclusões por detenção, cripto ≥365 dias, imóveis 50 % | CIRS arts. 10.º, 43.º, 72.º |
 
 ## Regras
 

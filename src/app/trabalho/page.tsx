@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Figure } from "@/components/Figure";
 import { SimuladorDesemprego } from "./SimuladorDesemprego";
+import { SimuladorIndependente } from "./SimuladorIndependente";
 import desemprego from "@data/fiscal/desemprego.json";
+import catb from "@data/fiscal/catb.json";
 
 export const metadata: Metadata = {
   title: "Subsídio de desemprego — quanto e por quanto tempo",
@@ -25,6 +27,10 @@ export default function TrabalhoPage() {
 
       <Figure n={1} title="Simulador de subsídio de desemprego" source={desemprego.fonte}>
         <SimuladorDesemprego />
+      </Figure>
+
+      <Figure n={2} title="Recibos verdes — da faturação ao bolso" source={catb.fonte}>
+        <SimuladorIndependente />
       </Figure>
 
       <section className="max-w-2xl py-8 space-y-4 text-ink2 text-[0.95rem] leading-relaxed">
