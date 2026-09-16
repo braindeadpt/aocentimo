@@ -1,35 +1,39 @@
 import type { Metadata } from "next";
-import { Anton, Inter, IBM_Plex_Mono } from "next/font/google";
+import { Archivo, Source_Serif_4, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 
-const anton = Anton({
+const archivo = Archivo({
   subsets: ["latin"],
-  weight: "400",
-  variable: "--font-anton",
+  axes: ["wdth"],
+  variable: "--font-archivo",
 });
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const plex = IBM_Plex_Mono({
+const serif = Source_Serif_4({
   subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-plex",
+  variable: "--font-serif",
+});
+const spaceMono = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-space",
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://bruto.pt"),
   title: {
-    default: "Cêntimo — para onde vai o teu dinheiro",
-    template: "%s · Cêntimo",
+    default: "BRUTO — literacia financeira para Portugal",
+    template: "%s · BRUTO",
   },
   description:
-    "Literacia financeira para Portugal: inflação por categoria, impostos sobre preços e salários, Euribor, spread e poupança — com fontes oficiais.",
+    "Simuladores e dados de literacia financeira para Portugal — salário líquido, IRS, crédito habitação, poupança e inflação. Cada número com fonte e data.",
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt" className={`${anton.variable} ${inter.variable} ${plex.variable}`}>
+    <html lang="pt" className={`${archivo.variable} ${serif.variable} ${spaceMono.variable}`}>
       <body className="min-h-screen flex flex-col">
         <SiteHeader />
         <main className="flex-1">{children}</main>

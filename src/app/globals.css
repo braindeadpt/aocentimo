@@ -1,25 +1,47 @@
 @import "tailwindcss";
 
 @theme {
-  /* Cartaz de contas: papel claro, tinta fria, vermelho-rubrica */
-  --color-paper: #fbfaf6;
+  /* Direcção C «A Conta» — neutros de papel, oxblood de assinatura,
+     verde-pinheiro reservado ao que é teu. Regras escritas em
+     docs/PLANO-REDESIGN-BRUTO.md §3 — amarelo = marcador de fonte,
+     nunca decoração. */
+  --color-paper: #faf7ee;
   --color-surface: #ffffff;
-  --color-ink: #161512;
-  --color-ink2: #4a463c;
-  --color-muted: #8b8471;
-  --color-line: #e4e0d2;
-  --color-line2: #b9b19c;
+  --color-ink: #221f19;
+  --color-ink2: #6b6455;
+  --color-muted: #948c79;
+  --color-line: #eae4d4;
+  --color-line2: #cfc6b0;
 
-  --color-accent: #b3261e;
-  --color-accent-ink: #7c1a12;
-  --color-accent-soft: #f7e9e5;
+  --color-accent: #7e2b1e;
+  --color-accent-ink: #5c1f15;
+  --color-accent-soft: #f3e5de;
 
-  --color-up: #b3261e;
-  --color-down: #0f7a66;
+  --color-keep: #2f5d46;
+  --color-keep-soft: #e3ece6;
+  --color-mark: #c99a2e;
 
-  --font-display: var(--font-anton), "Arial Narrow", sans-serif;
-  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
-  --font-mono: var(--font-plex), ui-monospace, "SF Mono", Consolas, monospace;
+  --color-up: #8f3120;
+  --color-down: #2f5d46;
+  --color-warn: #b07e17;
+
+  /* dark — tokens prontos, aplicação na Fase 1 */
+  --color-night: #1a1713;
+  --color-night-surface: #242019;
+  --color-night-ink: #f0e9da;
+  --color-night-ink2: #a89f8c;
+  --color-night-accent: #ce7a5e;
+  --color-night-keep: #8fbca0;
+
+  --font-display: var(--font-archivo), "Arial Black", sans-serif;
+  --font-sans: var(--font-serif), Georgia, "Times New Roman", serif;
+  --font-body: var(--font-serif), Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-space), "Courier New", monospace;
+}
+
+/* display = Archivo expandido */
+.font-display {
+  font-variation-settings: "wdth" 125;
 }
 
 html {
@@ -36,6 +58,12 @@ body {
 ::selection {
   background: var(--color-accent);
   color: var(--color-paper);
+}
+
+/* foco visível em torrado — precedente GOV.UK: o amarelo tem função */
+:focus-visible {
+  outline: 3px solid var(--color-mark);
+  outline-offset: 2px;
 }
 
 /* utilidades editoriais */
@@ -71,6 +99,11 @@ body {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--color-muted);
+}
+
+/* selo de evidência — marcador de fonte em torrado */
+.srcmark {
+  color: var(--color-mark);
 }
 
 /* a barra do euro — segmento que cresce ao carregar */

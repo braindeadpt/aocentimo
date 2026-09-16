@@ -6,7 +6,7 @@ import { EuroBar } from "@/components/EuroBar";
 
 export const metadata: Metadata = {
   title: "Sistema de design",
-  description: "Referência viva do design system do Cêntimo — tokens, tipografia e componentes.",
+  description: "Referência viva do design system do BRUTO — tokens, tipografia e componentes.",
 };
 
 const TOKENS = [

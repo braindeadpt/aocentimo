@@ -1,8 +1,8 @@
 {
-  "name": "centimo",
+  "name": "bruto",
   "version": "0.1.0",
   "private": true,
-  "description": "Cêntimo — literacia financeira para Portugal: inflação, impostos, salário líquido, juros e poupança.",
+  "description": "BRUTO — literacia financeira para Portugal: salário líquido, IRS, crédito habitação, poupança e inflação. Cada número com fonte e data.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

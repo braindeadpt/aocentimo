@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 132" role="img" aria-label="BRUTO">
+  <defs>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,800&amp;display=swap');</style>
+    <clipPath id="oin"><circle cx="406" cy="64" r="27"/></clipPath>
+  </defs>
+  <g fill="#221F19" font-family="Archivo, 'Arial Black', sans-serif" font-weight="800" font-size="100" style="font-variation-settings:'wdth' 125">
+    <text x="54" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">B</text>
+    <text x="142" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">R</text>
+    <text x="230" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">U</text>
+    <text x="318" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">T</text>
+  </g>
+  <g clip-path="url(#oin)"><rect x="372" y="57.5" width="68" height="33.5" fill="#2F5D46"/></g>
+  <circle cx="406" cy="64" r="34" fill="none" stroke="#221F19" stroke-width="14"/>
+</svg>

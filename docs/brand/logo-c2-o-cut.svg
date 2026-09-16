@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 132" role="img" aria-label="BRUTO">
+  <defs>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,800&amp;display=swap');</style>
+  </defs>
+  <g fill="#221F19" font-family="Archivo, 'Arial Black', sans-serif" font-weight="800" font-size="100" style="font-variation-settings:'wdth' 125">
+    <text x="54" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">B</text>
+    <text x="142" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">R</text>
+    <text x="230" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">U</text>
+    <text x="318" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">T</text>
+  </g>
+  <circle cx="406" cy="64" r="34" fill="none" stroke="#221F19" stroke-width="15" stroke-dasharray="132.4 81.2" transform="rotate(8.4 406 64)"/>
+  <rect x="417.5" y="29.1" width="11" height="11" fill="#7E2B1E" transform="rotate(45 423 34.6)"/>
+</svg>

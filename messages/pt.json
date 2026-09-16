@@ -1,0 +1,33 @@
+{
+  "brand": {
+    "name": "BRUTO",
+    "kicker": "Literacia monetária · Portugal",
+    "edition": "edição contínua",
+    "dataUntil": "dados até {date}"
+  },
+  "nav": {
+    "index": "Índice",
+    "salario": "Salário",
+    "impostos": "Impostos",
+    "inflacao": "Inflação",
+    "credito": "Crédito",
+    "poupanca": "Poupança",
+    "precos": "Preços",
+    "aprender": "Aprender"
+  },
+  "footer": {
+    "blurb": "Literacia financeira para Portugal. Projeto pessoal, gratuito, sem publicidade e sem rastreamento. Cada número mostra a fonte e a data — quando uma fonte falha, mostramos a falha.",
+    "indexTitle": "Índice",
+    "metodologia": "Metodologia e fontes",
+    "sobre": "Sobre",
+    "estilo": "Sistema de design",
+    "noticeTitle": "Aviso",
+    "notice": "Simuladores indicativos — não constituem aconselhamento financeiro, fiscal ou de crédito. Para decisões fiscais consulta um contabilista certificado.",
+    "madeIn": "feito em Portugal",
+    "sources": "eurostat · ine · bpstat · dgeg · at · igcp"
+  },
+  "meta": {
+    "title": "BRUTO — literacia financeira para Portugal",
+    "description": "Simuladores e dados de literacia financeira para Portugal — salário líquido, IRS, crédito habitação, poupança e inflação. Cada número com fonte e data."
+  }
+}

@@ -21,8 +21,8 @@ jobs:
       - run: npx tsx scripts/ingest/index.ts --daily
       - name: Commit dados
         run: |
-          git config user.name "centimo-bot"
-          git config user.email "bot@centimo.local"
+          git config user.name "bruto-bot"
+          git config user.email "bot@bruto.local"
           git add data/
           git diff --staged --quiet || git commit -m "data: ingest diária $(date +%Y-%m-%d)"
           git push

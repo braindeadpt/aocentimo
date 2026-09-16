@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BRUTO — conceitos de logotipo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Space+Mono:wght@400;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --areia:#FAF7EE; --card:#FFFFFF; --borda:#EAE4D4;
+    --tinta:#221F19; --sec:#6B6455;
+    --ox:#7E2B1E; --verde:#2F5D46; --torrado:#C99A2E;
+    --dark:#1A1713; --dark-card:#242019; --dark-txt:#F0E9DA;
+    --ox-claro:#CE7A5E; --salvia:#8FBCA0;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{background:var(--areia); color:var(--tinta); font-family:'Source Serif 4',Georgia,serif; padding:48px 24px 96px}
+  .wrap{max-width:920px; margin:0 auto}
+  .mono{font-family:'Space Mono',monospace}
+  header{margin-bottom:56px}
+  .kicker{font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--ox); margin-bottom:12px}
+  h1{font-family:'Archivo',sans-serif; font-variation-settings:'wdth' 125; font-weight:800; font-size:clamp(28px,5vw,44px); line-height:1.05; letter-spacing:-.01em}
+  header p{max-width:60ch; margin-top:16px; color:var(--sec); font-size:17px; line-height:1.55}
+  .rule{height:1px; background:var(--borda); margin:40px 0}
+
+  .concept{background:var(--card); border:1px solid var(--borda); border-radius:14px; padding:32px; margin-bottom:40px}
+  .c-head{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; margin-bottom:8px}
+  .c-num{font-family:'Space Mono',monospace; font-size:13px; color:var(--torrado); font-weight:700}
+  .c-name{font-family:'Archivo',sans-serif; font-variation-settings:'wdth' 125; font-weight:800; font-size:22px; letter-spacing:.02em}
+  .c-tag{color:var(--sec); font-size:15px; font-style:italic}
+  .stage{background:var(--areia); border:1px solid var(--borda); border-radius:10px; padding:56px 24px; display:flex; justify-content:center; margin:20px 0 16px}
+  .stage svg{width:min(560px,100%); height:auto}
+  .variants{display:grid; grid-template-columns:1fr auto; gap:16px; align-items:stretch}
+  @media(max-width:640px){.variants{grid-template-columns:1fr}}
+  .dark{background:var(--dark); border-radius:10px; padding:28px 24px; display:flex; align-items:center; justify-content:center}
+  .dark svg{width:min(300px,100%); height:auto}
+  .icons{background:var(--areia); border:1px solid var(--borda); border-radius:10px; padding:20px; display:flex; flex-direction:column; gap:14px; align-items:center; justify-content:center; min-width:150px}
+  .icons .lbl{font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.1em; color:var(--sec); text-transform:uppercase}
+  .icons svg{display:block}
+  .notes{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; margin-top:20px; font-size:15px; line-height:1.5}
+  .notes h3{font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ox); margin-bottom:6px}
+  .notes p, .notes li{color:var(--tinta)}
+  .notes ul{padding-left:18px}
+  .notes li{margin-bottom:4px}
+  .rec{display:inline-block; font-family:'Space Mono',monospace; font-size:11px; font-weight:700; letter-spacing:.08em; background:var(--verde); color:#fff; border-radius:4px; padding:3px 8px; text-transform:uppercase}
+
+  .swatches{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; margin:20px 0}
+  .sw{border:1px solid var(--borda); border-radius:8px; overflow:hidden; font-family:'Space Mono',monospace; font-size:11px}
+  .sw .chip{height:56px}
+  .sw .meta{padding:8px 10px; background:var(--card)}
+  .sw .meta b{display:block; font-weight:700}
+  .sw .meta span{color:var(--sec)}
+  section h2{font-family:'Archivo',sans-serif; font-variation-settings:'wdth' 125; font-weight:800; font-size:20px; margin-bottom:6px}
+  section>p{color:var(--sec); font-size:15px; margin-bottom:16px; max-width:70ch}
+  .bans{columns:2; column-gap:32px; font-size:14.5px; line-height:1.5; padding-left:18px}
+  @media(max-width:640px){.bans{columns:1}}
+  .bans li{margin-bottom:6px; color:var(--tinta)}
+  footer{font-family:'Space Mono',monospace; font-size:12px; color:var(--sec); margin-top:48px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="kicker">Exploração de identidade — rascunhos, não final</div>
+  <h1>BRUTO — 3 conceitos de logotipo</h1>
+  <p>Direcção C «A Conta»: neutros de papel, oxblood como assinatura, verde-pinheiro reservado ao que é teu. Os três conceitos exploram a mesma ideia — <em>bruto → líquido</em> — dentro da forma da palavra. O nível de ~62% não é arbitrário: é o que fica do <strong>custo total do trabalho</strong> (bruto + TSU da empresa de 23,75%) num salário médio de ~1.700 € — o Estado leva ~38% entre o que tu descontas e o que a empresa desconta por ti (motor verificado, regras 2026). A faixa real é 50–72%: de 5.000 € ao salário mínimo.</p>
+</header>
+
+<!-- ══════════ CONCEITO 1 ══════════ -->
+<div class="concept">
+  <div class="c-head">
+    <span class="c-num">C1</span>
+    <span class="c-name">O NÍVEL</span>
+    <span class="c-tag">o U como recipiente — cheio a 72%, o líquido</span>
+    <span class="rec">recomendado</span>
+  </div>
+  <div class="stage">
+    <svg viewBox="0 0 480 132" role="img" aria-label="BRUTO — conceito U recipiente">
+      <defs><clipPath id="uclip1"><path d="M0 0h18v50q0 16 18 16t18-16V0h18v52q0 32-36 32T0 52Z"/></clipPath></defs>
+      <g fill="#221F19" font-family="Archivo, 'Arial Black', sans-serif" font-weight="800" font-size="100" style="font-variation-settings:'wdth' 125">
+        <text x="54" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">B</text>
+        <text x="142" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">R</text>
+        <text x="318" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">T</text>
+        <text x="406" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">O</text>
+      </g>
+      <g transform="translate(199.14 28) scale(0.857143)">
+        <path d="M0 0h18v50q0 16 18 16t18-16V0h18v52q0 32-36 32T0 52Z" fill="#221F19"/>
+        <g clip-path="url(#uclip1)"><rect x="0" y="31.9" width="72" height="52.1" fill="#2F5D46"/></g>
+      </g>
+    </svg>
+  </div>
+  <div class="variants">
+    <div class="dark">
+      <svg viewBox="0 0 480 132" role="img" aria-label="BRUTO dark — U recipiente">
+        <defs><clipPath id="uclip1d"><path d="M0 0h18v50q0 16 18 16t18-16V0h18v52q0 32-36 32T0 52Z"/></clipPath></defs>
+        <g fill="#F0E9DA" font-family="Archivo, 'Arial Black', sans-serif" font-weight="800" font-size="100" style="font-variation-settings:'wdth' 125">
+          <text x="54" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">B</text>
+          <text x="142" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">R</text>
+          <text x="318" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">T</text>
+          <text x="406" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">O</text>
+        </g>
+        <g transform="translate(199.14 28) scale(0.857143)">
+          <path d="M0 0h18v50q0 16 18 16t18-16V0h18v52q0 32-36 32T0 52Z" fill="#F0E9DA"/>
+          <g clip-path="url(#uclip1d)"><rect x="0" y="31.9" width="72" height="52.1" fill="#8FBCA0"/></g>
+        </g>
+      </svg>
+    </div>
+    <div class="icons">
+      <span class="lbl">app icon / favicon</span>
+      <svg width="56" height="56" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#221F19"/><g transform="translate(14 10) scale(0.5238)"><defs><clipPath id="uf1"><path d="M0 0h18v50q0 16 18 16t18-16V0h18v52q0 32-36 32T0 52Z"/></clipPath></defs><path d="M0 0h18v50q0 16 18 16t18-16V0h18v52q0 32-36 32T0 52Z" fill="#F0E9DA"/><g clip-path="url(#uf1)"><rect x="0" y="31.9" width="72" height="52.1" fill="#8FBCA0"/></g></g></svg>
+      <svg width="28" height="28" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#221F19"/><g transform="translate(14 10) scale(0.5238)"><path d="M0 0h18v50q0 16 18 16t18-16V0h18v52q0 32-36 32T0 52Z" fill="#F0E9DA"/><rect x="0" y="31.9" width="72" height="52.1" fill="#8FBCA0" clip-path="url(#uf1)"/></g></svg>
+      <svg width="16" height="16" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#221F19"/><g transform="translate(14 10) scale(0.5238)"><path d="M0 0h18v50q0 16 18 16t18-16V0h18v52q0 32-36 32T0 52Z" fill="#F0E9DA"/><rect x="0" y="31.9" width="72" height="52.1" fill="#8FBCA0" clip-path="url(#uf1)"/></g></svg>
+    </div>
+  </div>
+  <div class="notes">
+    <div><h3>Leitura</h3><p>O U é a letra menos óbvia da palavra — torná-la a assinatura é a jogada distintiva. O enchimento lê-se instantaneamente: <em>líquido</em> = o que fica = liquid. A percentagem é literal (~62% = o que fica do custo total do trabalho: bruto + TSU 23,75% da empresa, salário médio ~1.700 €).</p></div>
+    <div><h3>Sistema</h3><ul><li>O motivo «nível de enchimento» estende-se a gráficos, barras e estados</li><li>Em motion: o nível sobe ao carregar a página</li><li>Favicon = U sozinho, lê-se a 16px</li></ul></div>
+    <div><h3>Riscos</h3><ul><li>A geometria do U tem de ser revista quando a fonte final for fixada (agora é forma própria)</li><li>Usar o truque <strong>uma só vez</strong> — mais que isso vira gimmick</li></ul></div>
+  </div>
+</div>
+
+<!-- ══════════ CONCEITO 2 ══════════ -->
+<div class="concept">
+  <div class="c-head">
+    <span class="c-num">C2</span>
+    <span class="c-name">O CORTE</span>
+    <span class="c-tag">o O com a fatia que sai — os impostos</span>
+  </div>
+  <div class="stage">
+    <svg viewBox="0 0 480 132" role="img" aria-label="BRUTO — conceito O cortado">
+      <g fill="#221F19" font-family="Archivo, 'Arial Black', sans-serif" font-weight="800" font-size="100" style="font-variation-settings:'wdth' 125">
+        <text x="54" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">B</text>
+        <text x="142" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">R</text>
+        <text x="230" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">U</text>
+        <text x="318" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">T</text>
+      </g>
+      <circle cx="406" cy="64" r="34" fill="none" stroke="#221F19" stroke-width="15" stroke-dasharray="132.4 81.2" transform="rotate(8.4 406 64)"/>
+      <rect x="417.5" y="29.1" width="11" height="11" fill="#7E2B1E" transform="rotate(45 423 34.6)"/>
+    </svg>
+  </div>
+  <div class="variants">
+    <div class="dark">
+      <svg viewBox="0 0 480 132" role="img" aria-label="BRUTO dark — O cortado">
+        <g fill="#F0E9DA" font-family="Archivo, 'Arial Black', sans-serif" font-weight="800" font-size="100" style="font-variation-settings:'wdth' 125">
+          <text x="54" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">B</text>
+          <text x="142" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">R</text>
+          <text x="230" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">U</text>
+          <text x="318" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">T</text>
+        </g>
+        <circle cx="406" cy="64" r="34" fill="none" stroke="#F0E9DA" stroke-width="15" stroke-dasharray="132.4 81.2" transform="rotate(8.4 406 64)"/>
+        <rect x="417.5" y="29.1" width="11" height="11" fill="#CE7A5E" transform="rotate(45 423 34.6)"/>
+      </svg>
+    </div>
+    <div class="icons">
+      <span class="lbl">app icon / favicon</span>
+      <svg width="56" height="56" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#221F19"/><circle cx="32" cy="33" r="15" fill="none" stroke="#F0E9DA" stroke-width="7" stroke-dasharray="58.4 35.8" transform="rotate(8.4 32 33)"/><rect x="40.5" y="11" width="5" height="5" fill="#CE7A5E" transform="rotate(45 43 13.5)"/></svg>
+      <svg width="28" height="28" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#221F19"/><circle cx="32" cy="33" r="15" fill="none" stroke="#F0E9DA" stroke-width="7" stroke-dasharray="58.4 35.8" transform="rotate(8.4 32 33)"/></svg>
+      <svg width="16" height="16" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#221F19"/><circle cx="32" cy="33" r="15" fill="none" stroke="#F0E9DA" stroke-width="7" stroke-dasharray="58.4 35.8" transform="rotate(8.4 32 33)"/></svg>
+    </div>
+  </div>
+  <div class="notes">
+    <div><h3>Leitura</h3><p>A metáfora mais literal: o anel é o bruto, a fatia em oxblood é o que o Estado leva. O diamante solto é «a peça que saiu». Gráfico, memorável, instantaneamente reutilizável.</p></div>
+    <div><h3>Sistema</h3><ul><li>O anel cortado vira ícone de percentagem em todo o site (qualquer % pode usar a mesma forma)</li><li>Funciona lindamente como loader/progresso</li><li>A fatia pode «cair» em motion</li></ul></div>
+    <div><h3>Riscos</h3><ul><li>Pode ler-se «spinner» ou «gráfico» antes de «O»</li><li>Donut charts são comuns — menos único que o U-recipiente</li><li>O diamante é o elemento mais frágil: testar sem ele</li></ul></div>
+  </div>
+</div>
+
+<!-- ══════════ CONCEITO 3 ══════════ -->
+<div class="concept">
+  <div class="c-head">
+    <span class="c-num">C3</span>
+    <span class="c-name">O COPO</span>
+    <span class="c-tag">o O como copo — o que fica é teu</span>
+  </div>
+  <div class="stage">
+    <svg viewBox="0 0 480 132" role="img" aria-label="BRUTO — conceito O copo">
+      <defs><clipPath id="oin3"><circle cx="406" cy="64" r="27"/></clipPath></defs>
+      <g fill="#221F19" font-family="Archivo, 'Arial Black', sans-serif" font-weight="800" font-size="100" style="font-variation-settings:'wdth' 125">
+        <text x="54" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">B</text>
+        <text x="142" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">R</text>
+        <text x="230" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">U</text>
+        <text x="318" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">T</text>
+      </g>
+      <g clip-path="url(#oin3)"><rect x="372" y="57.5" width="68" height="33.5" fill="#2F5D46"/></g>
+      <circle cx="406" cy="64" r="34" fill="none" stroke="#221F19" stroke-width="14"/>
+    </svg>
+  </div>
+  <div class="variants">
+    <div class="dark">
+      <svg viewBox="0 0 480 132" role="img" aria-label="BRUTO dark — O copo">
+        <defs><clipPath id="oin3d"><circle cx="406" cy="64" r="27"/></clipPath></defs>
+        <g fill="#F0E9DA" font-family="Archivo, 'Arial Black', sans-serif" font-weight="800" font-size="100" style="font-variation-settings:'wdth' 125">
+          <text x="54" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">B</text>
+          <text x="142" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">R</text>
+          <text x="230" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">U</text>
+          <text x="318" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">T</text>
+        </g>
+        <g clip-path="url(#oin3d)"><rect x="372" y="57.5" width="68" height="33.5" fill="#8FBCA0"/></g>
+        <circle cx="406" cy="64" r="34" fill="none" stroke="#F0E9DA" stroke-width="14"/>
+      </svg>
+    </div>
+    <div class="icons">
+      <span class="lbl">app icon / favicon</span>
+      <svg width="56" height="56" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#221F19"/><defs><clipPath id="of3"><circle cx="32" cy="32" r="11.5"/></clipPath></defs><g clip-path="url(#of3)"><rect x="14" y="29.2" width="36" height="14.3" fill="#8FBCA0"/></g><circle cx="32" cy="32" r="15" fill="none" stroke="#F0E9DA" stroke-width="6"/></svg>
+      <svg width="28" height="28" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#221F19"/><g clip-path="url(#of3)"><rect x="14" y="29.2" width="36" height="14.3" fill="#8FBCA0"/></g><circle cx="32" cy="32" r="15" fill="none" stroke="#F0E9DA" stroke-width="6"/></svg>
+      <svg width="16" height="16" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#221F19"/><g clip-path="url(#of3)"><rect x="14" y="29.2" width="36" height="14.3" fill="#8FBCA0"/></g><circle cx="32" cy="32" r="15" fill="none" stroke="#F0E9DA" stroke-width="6"/></svg>
+    </div>
+  </div>
+  <div class="notes">
+    <div><h3>Leitura</h3><p>A mesma lógica de C1 mas no O: o anel é o recipiente, o verde é o que fica — «o teu dinheiro». Mais calmo que C2, mais legível que C1 à distância.</p></div>
+    <div><h3>Sistema</h3><ul><li>Motion natural: o copo «enche» no load ou em transições</li><li>O cheio/vazio vira linguagem para comparações (bruto vs líquido em qualquer gráfico)</li><li>Favicon mais simples dos três</li></ul></div>
+    <div><h3>Riscos</h3><ul><li>Primo de C1 — escolher <strong>um</strong> dos dois como sistema, não ambos</li><li>O copo pode ler-se «bateria» ou «nível de bateria»</li></ul></div>
+  </div>
+</div>
+
+<div class="rule"></div>
+
+<!-- ══════════ SISTEMA ══════════ -->
+<section>
+  <h2>Sistema de cor — direcção C</h2>
+  <p>Regra escrita: <strong>verde = o que é teu</strong> (líquido, ganhos, positivo). <strong>Oxblood = assinatura e o que sai</strong>. <strong>Torrado = marcador de fonte/citação, nunca decoração</strong> (máx. ~5% do ecrã).</p>
+  <div class="swatches">
+    <div class="sw"><div class="chip" style="background:#FAF7EE"></div><div class="meta"><b>Areia</b><span>#FAF7EE fundo</span></div></div>
+    <div class="sw"><div class="chip" style="background:#221F19"></div><div class="meta"><b>Tinta</b><span>#221F19 texto</span></div></div>
+    <div class="sw"><div class="chip" style="background:#7E2B1E"></div><div class="meta"><b>Oxblood</b><span>#7E2B1E acento</span></div></div>
+    <div class="sw"><div class="chip" style="background:#2F5D46"></div><div class="meta"><b>Pinheiro</b><span>#2F5D46 «teu»</span></div></div>
+    <div class="sw"><div class="chip" style="background:#C99A2E"></div><div class="meta"><b>Torrado</b><span>#C99A2E micro</span></div></div>
+    <div class="sw"><div class="chip" style="background:#1A1713"></div><div class="meta"><b>Dark</b><span>#1A1713 fundo</span></div></div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<section>
+  <h2>Banido em qualquer conceito</h2>
+  <ul class="bans">
+    <li>Bandeira literal: blocos verde+vermelho adjacentes, esfera armilar, quinas</li>
+    <li>Gradientes fintech (azul→roxo), roxo «AI», neon, glow</li>
+    <li>Glassmorphism e sombras difusas pesadas</li>
+    <li>Stock de «pessoas felizes com moedas», porquinhos-mealheiro, mãos+moedas</li>
+    <li>Amarelo puro sobre branco como fundo ou texto</li>
+    <li>Gráficos decorativos sem fonte + data</li>
+    <li>O truque do logotipo repetido — um motivo, executado bem</li>
+  </ul>
+</section>
+
+<footer>
+  <p>BRUTO · conceitos C1/C2/C3 · ficheiros SVG em docs/brand/ · tipografia: Archivo (display), Source Serif 4 (texto), Space Mono (dados) · gerado para decisão, não final</p>
+</footer>
+</div>
+</body>
+</html>

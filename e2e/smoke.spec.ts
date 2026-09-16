@@ -2,8 +2,8 @@ import { test, expect } from "@playwright/test";
 
 test("home renderiza com os números-chave", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Para onde vai o teu dinheiro");
-  await expect(page.getByText("Salário mínimo 2026")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(/para onde vai o teu dinheiro/i);
+  await expect(page.getByText("Salário mínimo")).toBeVisible();
 });
 
 test("calculadora de salário produz resultado", async ({ page }) => {

@@ -74,9 +74,9 @@ export default function Home() {
       <section className="grid gap-10 pt-12 md:grid-cols-12 md:pt-16">
         <div className="md:col-span-8">
           <h1 className="font-display text-[3.4rem] leading-[0.95] tracking-wide text-ink sm:text-7xl lg:text-[6.5rem]">
-            PARA ONDE
+            PARA ONDE{" "}
             <br />
-            VAI O TEU
+            VAI O TEU{" "}
             <br />
             <span className="text-accent">DINHEIRO</span>
           </h1>
@@ -212,9 +212,9 @@ export default function Home() {
       {/* manifesto */}
       <section className="mt-20 grid gap-8 border-t-2 border-ink pt-8 pb-8 md:grid-cols-12">
         <p className="font-display text-3xl leading-tight tracking-wide text-ink md:col-span-5 md:text-4xl">
-          NEM CONSELHOS.
+          NEM CONSELHOS.{" "}
           <br />
-          NEM PUBLICIDADE.
+          NEM PUBLICIDADE.{" "}
           <br />
           <span className="text-accent">SÓ A MECÂNICA.</span>
         </p>
