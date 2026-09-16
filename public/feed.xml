@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>BRUTO — mudanças fiscais</title>
+    <link>https://bruto.pt</link>
+    <description>Quando uma regra, taxa ou teto muda em Portugal, anotamos aqui — com fonte.</description>
+    <language>pt-PT</language>
+    <item>
+      <title>Taxas máximas de crédito ao consumo — 4.º trimestre de 2026</title>
+      <link>https://bruto.pt/dados</link>
+      <guid>https://bruto.pt/feed.xml#2026-09-16</guid>
+      <pubDate>Wed, 16 Sep 2026 12:00:00 GMT</pubDate>
+      <description>O Banco de Portugal publicou os tetos de TAEG para outubro–dezembro: crédito pessoal educação/saúde desce para 8,2 %, cartões e descobertos mantêm-se em 18,5 %.</description>
+    </item>
+    <item>
+      <title>Taxa base dos CA Série F no teto — 2,500 % em setembro</title>
+      <link>https://bruto.pt/poupanca</link>
+      <guid>https://bruto.pt/feed.xml#2026-09-01</guid>
+      <pubDate>Tue, 01 Sep 2026 12:00:00 GMT</pubDate>
+      <description>A média da Euribor 3M ultrapassou o limite legal de 2,50 %; a taxa base fica fixada no cap pelo segundo mês consecutivo.</description>
+    </item>
+    <item>
+      <title>Tabelas de retenção na fonte 2026</title>
+      <link>https://bruto.pt/salario</link>
+      <guid>https://bruto.pt/feed.xml#2026-01-06</guid>
+      <pubDate>Tue, 06 Jan 2026 12:00:00 GMT</pubDate>
+      <description>Despacho n.º 233-A/2026 publica as novas tabelas mensais de retenção de IRS — já aplicadas no simulador de salário.</description>
+    </item>
+  </channel>
+</rss>

@@ -13,6 +13,7 @@ import { simularIrsAnual, limiteGlobalDeducoes, limitePpr } from "./irs-anual";
 import { simularIndependente } from "./independente";
 import { simularMaisValia } from "./mais-valias";
 import { inflacionar, salarioReal } from "./deflator";
+import { taxaBaseCA } from "./ca-base";
 import ca from "@data/fiscal/ca.json";
 import capitais from "@data/fiscal/capitais.json";
 
@@ -417,6 +418,14 @@ describe("deflator IHPC", () => {
     const r = salarioReal(1000, 1100, "2020-01", serie);
     expect(r!.equivalenteHoje).toBeCloseTo(1200, 6);
     expect(r!.variacaoReal).toBeCloseTo(-0.0833, 3); // perdeu ~8,3 % reais
+  });
+});
+
+describe("taxa base CA (série F)", () => {
+  it("Euribor 3M abaixo do cap passa direta; acima corta a 2,5 %", () => {
+    expect(taxaBaseCA(2.474)).toBeCloseTo(2.474, 6);
+    expect(taxaBaseCA(2.5131)).toBe(2.5);
+    expect(taxaBaseCA(-0.5)).toBe(0);
   });
 });
 

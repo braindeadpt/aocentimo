@@ -23,8 +23,28 @@ export const SERIES_EURIBOR = {
 
 export type PrazoEuribor = keyof typeof SERIES_EURIBOR;
 
+/**
+ * TAEG média de novos contratos de crédito aos consumidores
+ * (domínio 209) — o que o mercado efetivamente cobra, por categoria.
+ * O teto legal (usura) é a média do trimestre + 1/4, curado em
+ * data/fiscal/usura-*.json.
+ */
+export const SERIES_TAEG = {
+  "pessoal": 13168963,
+  "pessoal-educacao-saude-energia": 13168938,
+  "pessoal-outros": 13168943,
+  "automovel": 13168944,
+  "automovel-novo": 13168942,
+  "automovel-usado": 13168941,
+  "automovel-ald": 13168939,
+  "renovavel": 13168964,
+} as const;
+
+export type CategoriaTaeg = keyof typeof SERIES_TAEG;
+
 const observacaoSchema = z.object({
   value: z.string(),
+  series_id: z.number().optional(),
   reference_date: z.string(),
 });
 const respostaSchema = z.object({ data: z.array(observacaoSchema) });
@@ -69,6 +89,33 @@ export async function fetchEuribor(prazo: PrazoEuribor): Promise<SerieGuardada> 
   return serieSchema.parse(doc);
 }
 
+export async function fetchTaeg(categoria: CategoriaTaeg): Promise<SerieGuardada> {
+  const id = SERIES_TAEG[categoria];
+  const url = `${BASE}?series_ids=${id}&lang=PT`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`BPstat TAEG ${categoria}: HTTP ${res.status}`);
+
+  const { data } = respostaSchema.parse(await res.json());
+  const series = data
+    .map((o) => ({ t: o.reference_date.slice(0, 7), v: Number(o.value) }))
+    .filter((p) => Number.isFinite(p.v));
+  if (series.length === 0) throw new Error(`BPstat TAEG ${categoria}: série vazia`);
+
+  const doc: SerieGuardada = {
+    meta: {
+      id: `taeg-${categoria}-mensal`,
+      fonte: "Banco de Portugal — BPstat",
+      dataset: `serie ${id} (Crédito aos consumidores)`,
+      url,
+      unidade: "percentagem_media_mensal",
+      recolhidoEm: new Date().toISOString(),
+      serieAte: series[series.length - 1].t,
+    },
+    series,
+  };
+  return serieSchema.parse(doc);
+}
+
 export async function runBpstat(outDir: string): Promise<SerieGuardada[]> {
   mkdirSync(outDir, { recursive: true });
   const docs: SerieGuardada[] = [];
@@ -80,6 +127,15 @@ export async function runBpstat(outDir: string): Promise<SerieGuardada[]> {
     );
     docs.push(doc);
     console.log(`✓ Euribor ${prazo}: ${doc.series.length} pontos até ${doc.meta.serieAte}`);
+  }
+  for (const categoria of Object.keys(SERIES_TAEG) as CategoriaTaeg[]) {
+    const doc = await fetchTaeg(categoria);
+    writeFileSync(
+      path.join(outDir, `taeg-${categoria}-mensal.json`),
+      JSON.stringify(doc, null, 2)
+    );
+    docs.push(doc);
+    console.log(`✓ TAEG ${categoria}: ${doc.series.length} pontos até ${doc.meta.serieAte}`);
   }
   return docs;
 }

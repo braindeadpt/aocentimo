@@ -170,3 +170,47 @@ body {
     animation: none;
   }
 }
+
+/* ————— Impressão — o relatório imprimível ————— */
+@media print {
+  header,
+  footer,
+  nav,
+  input,
+  select,
+  button,
+  .btn-primary {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #000;
+    font-size: 11pt;
+  }
+  .font-display,
+  h1, h2, h3 {
+    color: #000;
+  }
+  figure {
+    break-inside: avoid;
+    border-top: 1.5pt solid #000;
+  }
+  a {
+    color: #000;
+    text-decoration: underline;
+  }
+  /* mostra o destino dos links externos no papel */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #444;
+  }
+  /* simuladores: imprime o estado atual dos resultados, sem os controlos */
+  input[type="checkbox"] + span,
+  label:has(input) {
+    display: none;
+  }
+  @page {
+    margin: 18mm;
+  }
+}

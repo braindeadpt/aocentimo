@@ -1,0 +1,187 @@
+{
+  "nome": "BRUTO — dados abertos",
+  "descricao": "Séries estáticas geradas a partir de fontes oficiais (Eurostat, BPstat, DGEG, IGCP, AT). Atualizadas a cada build.",
+  "geradoEm": "2026-09-16T21:34:36.200Z",
+  "endpoints": [
+    {
+      "path": "/api/euribor-12m-mensal.json",
+      "descricao": "Série euribor-12m-mensal (bpstat)"
+    },
+    {
+      "path": "/api/euribor-1m-mensal.json",
+      "descricao": "Série euribor-1m-mensal (bpstat)"
+    },
+    {
+      "path": "/api/euribor-3m-mensal.json",
+      "descricao": "Série euribor-3m-mensal (bpstat)"
+    },
+    {
+      "path": "/api/euribor-6m-mensal.json",
+      "descricao": "Série euribor-6m-mensal (bpstat)"
+    },
+    {
+      "path": "/api/taeg-automovel-ald-mensal.json",
+      "descricao": "Série taeg-automovel-ald-mensal (bpstat)"
+    },
+    {
+      "path": "/api/taeg-automovel-mensal.json",
+      "descricao": "Série taeg-automovel-mensal (bpstat)"
+    },
+    {
+      "path": "/api/taeg-automovel-novo-mensal.json",
+      "descricao": "Série taeg-automovel-novo-mensal (bpstat)"
+    },
+    {
+      "path": "/api/taeg-automovel-usado-mensal.json",
+      "descricao": "Série taeg-automovel-usado-mensal (bpstat)"
+    },
+    {
+      "path": "/api/taeg-pessoal-educacao-saude-energia-mensal.json",
+      "descricao": "Série taeg-pessoal-educacao-saude-energia-mensal (bpstat)"
+    },
+    {
+      "path": "/api/taeg-pessoal-mensal.json",
+      "descricao": "Série taeg-pessoal-mensal (bpstat)"
+    },
+    {
+      "path": "/api/taeg-pessoal-outros-mensal.json",
+      "descricao": "Série taeg-pessoal-outros-mensal (bpstat)"
+    },
+    {
+      "path": "/api/taeg-renovavel-mensal.json",
+      "descricao": "Série taeg-renovavel-mensal (bpstat)"
+    },
+    {
+      "path": "/api/pmd-gasoleo-diario.json",
+      "descricao": "Série pmd-gasoleo-diario (dgeg)"
+    },
+    {
+      "path": "/api/pmd-gasolina95-diario.json",
+      "descricao": "Série pmd-gasolina95-diario (dgeg)"
+    },
+    {
+      "path": "/api/pmd-gpl-diario.json",
+      "descricao": "Série pmd-gpl-diario (dgeg)"
+    },
+    {
+      "path": "/api/hicp-pt-cp00.json",
+      "descricao": "Série hicp-pt-cp00 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp01.json",
+      "descricao": "Série hicp-pt-cp01 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp0111.json",
+      "descricao": "Série hicp-pt-cp0111 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp0112.json",
+      "descricao": "Série hicp-pt-cp0112 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp0113.json",
+      "descricao": "Série hicp-pt-cp0113 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp0114.json",
+      "descricao": "Série hicp-pt-cp0114 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp0115.json",
+      "descricao": "Série hicp-pt-cp0115 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp0116.json",
+      "descricao": "Série hicp-pt-cp0116 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp0117.json",
+      "descricao": "Série hicp-pt-cp0117 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp0118.json",
+      "descricao": "Série hicp-pt-cp0118 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp02.json",
+      "descricao": "Série hicp-pt-cp02 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp03.json",
+      "descricao": "Série hicp-pt-cp03 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp04.json",
+      "descricao": "Série hicp-pt-cp04 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp045.json",
+      "descricao": "Série hicp-pt-cp045 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp05.json",
+      "descricao": "Série hicp-pt-cp05 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp06.json",
+      "descricao": "Série hicp-pt-cp06 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp07.json",
+      "descricao": "Série hicp-pt-cp07 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp0722.json",
+      "descricao": "Série hicp-pt-cp0722 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp08.json",
+      "descricao": "Série hicp-pt-cp08 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp09.json",
+      "descricao": "Série hicp-pt-cp09 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp10.json",
+      "descricao": "Série hicp-pt-cp10 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp11.json",
+      "descricao": "Série hicp-pt-cp11 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-cp12.json",
+      "descricao": "Série hicp-pt-cp12 (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-food.json",
+      "descricao": "Série hicp-pt-food (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-nrg.json",
+      "descricao": "Série hicp-pt-nrg (eurostat)"
+    },
+    {
+      "path": "/api/hicp-pt-tot_x_nrg_food.json",
+      "descricao": "Série hicp-pt-tot_x_nrg_food (eurostat)"
+    },
+    {
+      "path": "/api/ihpc-resumo.json",
+      "descricao": "IHPC resumido por categoria"
+    },
+    {
+      "path": "/api/ca-base.json",
+      "descricao": "Taxa base CA Série F — indicativa e oficial"
+    },
+    {
+      "path": "/api/freshness.json",
+      "descricao": "Estado de frescura de todas as fontes"
+    },
+    {
+      "path": "/api/sources.json",
+      "descricao": "Registo de fontes e datas das séries"
+    }
+  ]
+}

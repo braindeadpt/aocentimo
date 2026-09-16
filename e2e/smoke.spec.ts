@@ -14,7 +14,7 @@ test("calculadora de salário produz resultado", async ({ page }) => {
 });
 
 test("páginas principais respondem", async ({ page }) => {
-  for (const path of ["/inflacao", "/impostos", "/credito", "/casa", "/irs", "/trabalho", "/poupanca", "/precos", "/aprender", "/metodologia", "/sobre", "/estilo"]) {
+  for (const path of ["/inflacao", "/impostos", "/credito", "/casa", "/irs", "/trabalho", "/poupanca", "/precos", "/dados", "/aprender", "/metodologia", "/sobre", "/estilo"]) {
     const res = await page.goto(path);
     expect(res?.status(), `${path} deve responder 200`).toBe(200);
   }
@@ -30,4 +30,19 @@ test("simuladores novos produzem resultado", async ({ page }) => {
   await page.goto("/trabalho");
   await page.getByLabel("A tua idade").fill("35");
   await expect(page.getByText("O teu subsídio")).toBeVisible();
+});
+
+test("painéis de dados, API e feed servem", async ({ page }) => {
+  await page.goto("/dados");
+  await expect(page.getByText("Euribor — médias mensais")).toBeVisible();
+  await expect(page.getByText("Calendário fiscal 2026")).toBeVisible();
+
+  await page.goto("/precos");
+  await expect(page.getByText("Preço médio nacional, por litro")).toBeVisible();
+  await expect(page.getByText("Gasóleo simples").first()).toBeVisible();
+
+  const api = await page.goto("/api/index.json");
+  expect(api?.status()).toBe(200);
+  const feed = await page.goto("/feed.xml");
+  expect(feed?.status()).toBe(200);
 });

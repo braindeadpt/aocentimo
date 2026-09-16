@@ -14,6 +14,7 @@ const NAV = [
   ["trabalho", "/trabalho"],
   ["poupanca", "/poupanca"],
   ["precos", "/precos"],
+  ["dados", "/dados"],
   ["aprender", "/aprender"],
 ] as const;
 

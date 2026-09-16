@@ -60,6 +60,28 @@ export function loadSerie(coicop: string): Serie | null {
   return parsed;
 }
 
+/** Carrega uma série de data/sources/{dir}/{nome}.json (bpstat, dgeg, eurostat). */
+export function loadFonte(dir: string, nome: string): Serie | null {
+  const file = path.join(DATA, "sources", dir, `${nome}.json`);
+  if (!existsSync(file)) return null;
+  try {
+    return serieSchema.parse(JSON.parse(readFileSync(file, "utf8")));
+  } catch {
+    return null;
+  }
+}
+
+/** Carrega um derivado de data/derived/{nome}.json (sem validação de série). */
+export function loadDerivado<T>(nome: string): T | null {
+  const file = path.join(DATA, "derived", `${nome}.json`);
+  if (!existsSync(file)) return null;
+  try {
+    return JSON.parse(readFileSync(file, "utf8")) as T;
+  } catch {
+    return null;
+  }
+}
+
 export function loadFontes(): FonteMeta[] {
   const file = path.join(DATA, "meta", "sources.json");
   if (!existsSync(file)) return [];

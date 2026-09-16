@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/trabalho",
     "/poupanca",
     "/precos",
+    "/dados",
     "/aprender",
     "/metodologia",
     "/sobre",

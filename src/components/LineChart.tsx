@@ -13,7 +13,8 @@ interface SerieIn {
 interface Props {
   series: SerieIn[];
   height?: number;
-  yFormat?: (v: number) => string;
+  /** Sufixo dos valores do eixo e do tooltip ("%", "€", …). */
+  unidade?: string;
 }
 
 const CORES = [
@@ -59,7 +60,8 @@ function yearTicks(t0: number, t1: number): number[] {
  * Rótulos no fim da linha (à maneira do FT), tooltip ao hover/focus,
  * números mono tabulares. `prefers-reduced-motion`: estado final já.
  */
-export function LineChart({ series, height = 360, yFormat = fmtNum }: Props) {
+export function LineChart({ series, height = 360, unidade = "" }: Props) {
+  const yFormat = (v: number) => (unidade ? `${fmtNum(v)} ${unidade}` : fmtNum(v));
   const wrap = useRef<HTMLDivElement>(null);
   const [w, setW] = useState(720);
   const [hover, setHover] = useState<number | null>(null);

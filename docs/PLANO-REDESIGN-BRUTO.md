@@ -9,8 +9,14 @@ dia da liberdade fiscal; /casa com IMT/IS/registos e Euribor BPstat;
 CTPC no comparador de poupança) ·
 Fase 4 ✓ (IRS anual com deduções à coleta + limite global art. 78.º;
 PPR dedução+resgate; mais-valias mobiliárias/cripto/imóvel;
-recibos verdes cat. B; salário real por IHPC em /inflacao).
-Próximo: Fase 5 — a definir.
+recibos verdes cat. B; salário real por IHPC em /inflacao) ·
+Fase 5 ✓ (/dados: Euribor, TAEG mercado vs usura, taxa base CA,
+calendário fiscal; /precos com série diária DGEG; API estática
+public/api/*.json; RSS /feed.xml; print stylesheet; e2e no CI.
+Comparador de comissões BdP fica como link-out — a app não expõe
+endpoint público estável; IGCP continua curado).
+Próximo: pós-MVP — verificador de recibo real; itens transversais
+(estado na URL, dark mode, JSON-LD, OG por rota, output:export).
 Documento irmão de `PLANO-LITERACIA-FINANCEIRA.md` (que fica como histórico).
 Síntese de 3 auditorias paralelas: inventário técnico, mercado PT, direcção visual.
 
