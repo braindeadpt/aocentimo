@@ -58,7 +58,7 @@ export function SiteNav() {
 
   return (
     <>
-      <nav aria-label="Principal" className="hidden items-center gap-5 lg:flex">
+      <nav aria-label="Principal" className="hidden items-center gap-5 xl:flex">
         {NAV.map(([key, href]) => (
           <Link
             key={href}
@@ -82,7 +82,7 @@ export function SiteNav() {
           </Link>
         ))}
       </nav>
-      <div className="flex items-center gap-3 lg:hidden">
+      <div className="flex items-center gap-3 xl:hidden">
         <details ref={detalhes} className="relative">
           <summary className="num cursor-pointer list-none text-[0.72rem] uppercase tracking-[0.12em] text-ink2">
             {m.nav.index}
