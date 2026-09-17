@@ -267,7 +267,7 @@
     "id": "fiscal-ca",
     "fonte": "IGCP — curado",
     "url": "https://www.igcp.pt/pt/aforristas/produtos-de-aforro/certificados-de-aforro",
-    "recolhidoEm": "2026-09T00:00:00Z",
+    "recolhidoEm": "2026-09-01T00:00:00Z",
     "serieAte": "2026-09",
     "frequencia": "mensal"
   },

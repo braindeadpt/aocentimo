@@ -37,6 +37,16 @@ const NOME_POR_FICHEIRO: Record<string, string> = {
   "irs-jovem": "Art. 12.º-B CIRS — curado",
 };
 
+/** Normaliza "YYYY" | "YYYY-MM" | "YYYY-MM-DD" para data completa ISO. */
+function normalizaVigencia(vigencia: string, id: string): string {
+  const m = /^(\d{4})(?:-(\d{2}))?(?:-(\d{2}))?$/.exec(vigencia.trim());
+  if (!m) throw new Error(`fiscal-fontes: vigencia inválida em ${id}: "${vigencia}"`);
+  const [, y, mm = "01", dd = "01"] = m;
+  if (Number(mm) < 1 || Number(mm) > 12 || Number(dd) < 1 || Number(dd) > 31)
+    throw new Error(`fiscal-fontes: vigencia fora de intervalo em ${id}: "${vigencia}"`);
+  return `${y}-${mm}-${dd}`;
+}
+
 function serieAte(vigencia: string, frequencia: string): string {
   const [y, m] = vigencia.split("-").map(Number);
   switch (frequencia) {
@@ -64,12 +74,13 @@ export function runFiscalFontes(dataDir: string): FonteMeta[] {
     if (!doc.vigencia) continue;
 
     const frequencia = FREQUENCIA_POR_FICHEIRO[base] ?? "anual";
+    const vigencia = normalizaVigencia(doc.vigencia, `fiscal-${base}`);
     fontes.push({
       id: `fiscal-${base}`,
       fonte: NOME_POR_FICHEIRO[base] ?? "OE/DR — curado",
       url: doc.fonteUrl ?? "https://diariodarepublica.pt",
-      recolhidoEm: `${doc.vigencia.slice(0, 10)}T00:00:00Z`,
-      serieAte: serieAte(doc.vigencia, frequencia),
+      recolhidoEm: `${vigencia}T00:00:00Z`,
+      serieAte: serieAte(vigencia, frequencia),
       frequencia,
     });
   }

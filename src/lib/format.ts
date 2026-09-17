@@ -17,16 +17,25 @@ const MESES = [
   "jul", "ago", "set", "out", "nov", "dez",
 ];
 
-export const fmtEUR = (v: number) => eur.format(v);
-export const fmtEUR0 = (v: number) => eur0.format(v);
-export const fmtNum = (v: number) => num.format(v);
+const FALHOU = "—";
+const finito = (v: number) => Number.isFinite(v);
+
+export const fmtEUR = (v: number) => (finito(v) ? eur.format(v) : FALHOU);
+export const fmtEUR0 = (v: number) => (finito(v) ? eur0.format(v) : FALHOU);
+export const fmtNum = (v: number) => (finito(v) ? num.format(v) : FALHOU);
 
 export const fmtPct = (v: number, casas = 1) =>
-  `${(v * 100).toFixed(casas).replace(".", ",")} %`;
+  finito(v) ? `${(v * 100).toFixed(casas).replace(".", ",")} %` : FALHOU;
 
-/** "2026-08" → "ago 2026"; "2026-08-15" → "15 ago 2026". */
+/** "2026-08" → "ago 2026"; "2026-08-15" → "15 ago 2026"; malformado → "—". */
 export function fmtData(iso: string): string {
-  const [y, m, d] = iso.split("-").map(Number);
-  const mes = MESES[(m ?? 1) - 1];
-  return d ? `${d} ${mes} ${y}` : `${mes} ${y}`;
+  const partes = /^(\d{4})(?:-(\d{1,2})(?:-(\d{1,2}))?)?$/.exec(iso.trim());
+  if (!partes) return FALHOU;
+  const [, y, m, d] = partes;
+  const mes = m === undefined ? null : Number(m);
+  const dia = d === undefined ? null : Number(d);
+  if (mes !== null && (mes < 1 || mes > 12)) return FALHOU;
+  if (dia !== null && (dia < 1 || dia > 31)) return FALHOU;
+  if (mes === null) return y;
+  return dia !== null ? `${dia} ${MESES[mes - 1]} ${y}` : `${MESES[mes - 1]} ${y}`;
 }

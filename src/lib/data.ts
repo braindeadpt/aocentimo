@@ -9,7 +9,7 @@ const serieSchema = z.object({
     dataset: z.string(),
     url: z.string(),
     unidade: z.string(),
-    recolhidoEm: z.string(),
+    recolhidoEm: z.iso.datetime(),
     serieAte: z.string(),
   }),
   series: z.array(z.object({ t: z.string(), v: z.number() })),
@@ -19,7 +19,7 @@ const fonteMetaSchema = z.object({
   id: z.string(),
   fonte: z.string(),
   url: z.string(),
-  recolhidoEm: z.string(),
+  recolhidoEm: z.iso.datetime(),
   serieAte: z.string(),
   frequencia: z.string(),
 });

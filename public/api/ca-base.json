@@ -5,9 +5,9 @@
     "url": "https://www.igcp.pt/pt/aforristas/produtos-de-aforro/certificados-de-aforro",
     "nota": "Oficial = média da Euribor 3M nos 10 dias úteis, cap 2,50 %. Indicativa usa a média mensal — pode diferir dias dentro do mês.",
     "oficialPct": 2.5,
-    "vigenciaOficial": "2026-09",
+    "vigenciaOficial": "2026-09-01",
     "serieAte": "2026-08",
-    "recolhidoEm": "2026-09-17T16:27:15.766Z"
+    "recolhidoEm": "2026-09-17T19:22:22.637Z"
   },
   "series": [
     {
