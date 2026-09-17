@@ -612,9 +612,18 @@ body::before {
   }
 }
 
+/* reduced-motion = estado final, não animação atenuada: corta TODAS as
+   transições (body, .btn, .skip-link, .fluxo-passo, .chapter-arrow e os
+   utilitários Tailwind transition-*) e desliga explicitamente as
+   animações — o estado base de cada uma já é o final */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  *,
+  ::before,
+  ::after {
+    transition: none !important;
   }
   .eurobar-seg {
     animation: none;
@@ -625,9 +634,6 @@ body::before {
   .ticker {
     overflow-x: auto;
     mask-image: none;
-  }
-  .chapter-row::after {
-    transition: none;
   }
   .fluxo-barra {
     animation: none;
