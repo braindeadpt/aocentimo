@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Figure } from "@/components/Figure";
 import { CalculadoraIva } from "./CalculadoraIva";
 import { DecomposicaoFuel } from "./DecomposicaoFuel";
+import { Source } from "@/components/Source";
 import { fmtPct } from "@/lib/format";
 import iva from "@data/fiscal/iva.json";
 import isp from "@data/fiscal/isp.json";
@@ -24,7 +25,11 @@ export default function ImpostosPage() {
         telemóvel 23 %, na gasolina mais de metade do litro é Estado.
       </p>
 
-      <Figure n={1} title="As três taxas de IVA no continente" source={`${iva.fonte} · vigente ${iva.vigencia}`}>
+      <Figure
+        n={1}
+        title="As três taxas de IVA no continente"
+        source={<Source nome={iva.fonte} vigencia={iva.vigencia} />}
+      >
         <div className="grid md:grid-cols-3 gap-4">
           {iva.taxas.map((t) => (
             <div key={t.nome} className="bg-surface border border-line px-5 py-4">
@@ -39,14 +44,23 @@ export default function ImpostosPage() {
         ))}
       </Figure>
 
-      <Figure n={2} title="Quanto do preço é IVA?" source="Cálculo próprio sobre as taxas em vigor">
+      <Figure
+        n={2}
+        title="Quanto do preço é IVA?"
+        source={
+          <Source
+            nome="Cálculo próprio sobre as taxas de IVA"
+            vigencia={iva.vigencia}
+          />
+        }
+      >
         <CalculadoraIva />
       </Figure>
 
       <Figure
         n={3}
         title="Um litro de combustível, desmontado"
-        source={`${isp.fonte} · vigente ${isp.vigencia}`}
+        source={<Source nome={isp.fonte} vigencia={isp.vigencia} />}
       >
         <DecomposicaoFuel />
       </Figure>

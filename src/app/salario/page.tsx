@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { CalculadoraSalario } from "./CalculadoraSalario";
 import { Figure } from "@/components/Figure";
+import { Source } from "@/components/Source";
 import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
 import irs from "@data/fiscal/irs-2026.json";
 import ss from "@data/fiscal/ss.json";
@@ -28,14 +29,28 @@ export default function SalarioPage() {
         recibo.
       </p>
 
-      <Figure n={1} title="Calculadora de salário líquido" source={`Retenção ${ANO} — Despacho 233-A/2026; escalões — art. 68.º CIRS (Lei 73-A/2025); TSU — seg-social.pt`}>
+      <Figure
+        n={1}
+        title="Calculadora de salário líquido"
+        source={
+          <Source
+            nome="Retenção — Despacho n.º 233-A/2026; escalões — art. 68.º CIRS (Lei 73-A/2025); TSU — seg-social.pt"
+            vigencia={irs.vigencia}
+          />
+        }
+      >
         <CalculadoraSalario ano={ANO} />
       </Figure>
 
       <Figure
         n={2}
         title={`Os nove escalões de IRS em ${ANO}`}
-        source="Art. 68.º CIRS, redação da Lei n.º 73-A/2025 (OE2026)"
+        source={
+          <Source
+            nome="Art. 68.º CIRS, redação da Lei n.º 73-A/2025 (OE2026)"
+            vigencia={irs.vigencia}
+          />
+        }
       >
         <div className="overflow-x-auto">
           <table className="w-full text-sm">

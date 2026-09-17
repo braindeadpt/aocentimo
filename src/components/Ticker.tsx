@@ -1,7 +1,5 @@
 import { loadFonte, loadSerie, variacao } from "@/lib/data";
-import { fmtData, fmtNum, fmtPct } from "@/lib/format";
-
-const fmtLitro = (v: number) => `${v.toFixed(3).replace(".", ",")} €/L`;
+import { fmtData, fmtLitro, fmtNum, fmtPct } from "@/lib/format";
 import { m } from "@/lib/messages";
 import smn from "@data/fiscal/smn.json";
 import ca from "@data/fiscal/ca.json";
@@ -25,7 +23,7 @@ export function Ticker() {
     const ultimo = eur3.series[eur3.series.length - 1];
     itens.push({
       label: m.ticker.euribor3m,
-      valor: `${fmtNum(ultimo.v)} %`,
+      valor: `${fmtNum(ultimo.v, 2)} %`,
       detalhe: fmtData(ultimo.t),
     });
   }

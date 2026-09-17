@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Figure } from "@/components/Figure";
+import { Source } from "@/components/Source";
 import { ComparadorPoupanca } from "./ComparadorPoupanca";
 import { SimuladorPpr } from "./SimuladorPpr";
 import { SimuladorMaisValias } from "./SimuladorMaisValias";
-import { fmtPct } from "@/lib/format";
+import { fmtData, fmtPct } from "@/lib/format";
 import ca from "@data/fiscal/ca.json";
 import capitais from "@data/fiscal/capitais.json";
 import ppr from "@data/fiscal/ppr.json";
@@ -28,14 +29,24 @@ export default function PoupancaPage() {
         menos imposto menos inflação.
       </p>
 
-      <Figure n={1} title="Comparador de poupança" source="Cálculo próprio · taxas IGCP e CIRS">
+      <Figure
+        n={1}
+        title="Comparador de poupança"
+        source={
+          <Source
+            nome="Cálculo próprio — taxas CA (IGCP) e retenção CIRS"
+            vigencia={ca.vigencia}
+            nota={`${capitais.fonte} · vigente ${fmtData(capitais.vigencia)}`}
+          />
+        }
+      >
         <ComparadorPoupanca />
       </Figure>
 
       <Figure
         n={2}
         title="Certificados de Aforro, Série F"
-        source={`${ca.fonte} · ${ca.vigencia}`}
+        source={<Source nome={ca.fonte} vigencia={ca.vigencia} />}
       >
         <div className="bg-surface border border-line px-5 py-5 grid md:grid-cols-2 gap-6 text-sm">
           <div>
@@ -61,11 +72,19 @@ export default function PoupancaPage() {
         </p>
       </Figure>
 
-      <Figure n={3} title="PPR — o benefício fiscal, dos dois lados" source={`${ppr.fonte}`}>
+      <Figure
+        n={3}
+        title="PPR — o benefício fiscal, dos dois lados"
+        source={<Source nome={ppr.fonte} vigencia={ppr.vigencia} />}
+      >
         <SimuladorPpr />
       </Figure>
 
-      <Figure n={4} title="Mais-valias — o imposto sobre o ganho" source={`${maisValias.fonte}`}>
+      <Figure
+        n={4}
+        title="Mais-valias — o imposto sobre o ganho"
+        source={<Source nome={maisValias.fonte} vigencia={maisValias.vigencia} />}
+      >
         <SimuladorMaisValias />
       </Figure>
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Figure } from "@/components/Figure";
+import { Source } from "@/components/Source";
 import { SimuladorIrsJovem } from "./SimuladorIrsJovem";
 import { SimuladorAcerto } from "./SimuladorAcerto";
 import deducoes from "@data/fiscal/deducoes-2026.json";
@@ -36,7 +37,11 @@ export default function IrsPage() {
         Estado.
       </p>
 
-      <Figure n={1} title={`Escalões de IRS ${ANO}`} source={irs.fonte}>
+      <Figure
+        n={1}
+        title={`Escalões de IRS ${ANO}`}
+        source={<Source nome={irs.fonte} vigencia={irs.vigencia} />}
+      >
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -75,7 +80,11 @@ export default function IrsPage() {
         </p>
       </Figure>
 
-      <Figure n={2} title="Retenção na fonte — a fatia de cada mês" source={retencao.fonte}>
+      <Figure
+        n={2}
+        title="Retenção na fonte — a fatia de cada mês"
+        source={<Source nome={retencao.fonte} vigencia={retencao.vigencia} />}
+      >
         <p className="text-sm text-ink2 mb-4">
           A fórmula de {ANO} é progressiva ao cêntimo:{" "}
           <span className="num">retenção = bruto × taxa marginal − parcela a
@@ -113,11 +122,19 @@ export default function IrsPage() {
         </p>
       </Figure>
 
-      <Figure n={3} title="O acerto de contas — deduções à coleta" source={deducoes.fonte}>
+      <Figure
+        n={3}
+        title="O acerto de contas — deduções à coleta"
+        source={<Source nome={deducoes.fonte} vigencia={deducoes.vigencia} />}
+      >
         <SimuladorAcerto ano={ANO} />
       </Figure>
 
-      <Figure n={4} title="IRS Jovem — quanto vale, ano a ano" source={irsJovem.fonte}>
+      <Figure
+        n={4}
+        title="IRS Jovem — quanto vale, ano a ano"
+        source={<Source nome={irsJovem.fonte} vigencia={irsJovem.vigencia} />}
+      >
         <SimuladorIrsJovem ano={ANO} />
       </Figure>
 

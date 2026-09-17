@@ -6,7 +6,7 @@ import { Source } from "@/components/Source";
 import { PoderDeCompra } from "./PoderDeCompra";
 import { SalarioReal } from "./SalarioReal";
 import { loadSerie, variacao, loadFontes, type Serie } from "@/lib/data";
-import { fmtData, fmtNum } from "@/lib/format";
+import { fmtNum } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "Inflação — quanto subiu o que compras",
@@ -111,7 +111,14 @@ export default function InflacaoPage() {
       <Figure
         n={2}
         title="Variação por categoria"
-        source={temDados ? `Eurostat · valores de ${fmtData(cp00!.meta.serieAte)}` : "Eurostat"}
+        source={
+          <Source
+            nome="Eurostat, IHPC mensal"
+            url={fonte?.url}
+            serieAte={cp00?.meta.serieAte}
+            recolhidoEm={fonte?.recolhidoEm}
+          />
+        }
       >
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -131,7 +138,7 @@ export default function InflacaoPage() {
                     <span className="num text-xs text-muted ml-2">{cod}</span>
                   </td>
                   <td className="py-2 pr-4 text-right num">
-                    {serie ? fmtNum(ultimoValor(serie)!) : "—"}
+                    {serie ? fmtNum(ultimoValor(serie)!, 2) : "—"}
                   </td>
                   <td className="py-2 pr-4 text-right">
                     <Delta value={serie ? variacao(serie, 1) : null} casas={1} />
@@ -152,7 +159,17 @@ export default function InflacaoPage() {
         </p>
       </Figure>
 
-      <Figure n={3} title="A máquina do tempo do euro" source="IHPC total, Eurostat">
+      <Figure
+        n={3}
+        title="A máquina do tempo do euro"
+        source={
+          <Source
+            nome="IHPC total, Eurostat"
+            url={fonte?.url}
+            serieAte={cp00?.meta.serieAte}
+          />
+        }
+      >
         {temDados ? (
           <PoderDeCompra serie={cp00!.series} />
         ) : (
@@ -163,7 +180,13 @@ export default function InflacaoPage() {
       <Figure
         n={4}
         title="O teu salário em termos reais"
-        source={temDados ? `IHPC total, Eurostat · até ${fmtData(cp00!.meta.serieAte)}` : "IHPC total, Eurostat"}
+        source={
+          <Source
+            nome="IHPC total, Eurostat"
+            url={fonte?.url}
+            serieAte={cp00?.meta.serieAte}
+          />
+        }
       >
         {temDados ? (
           <SalarioReal serie={cp00!.series} />

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Figure } from "@/components/Figure";
+import { Source } from "@/components/Source";
 import { SimuladorPrestacao } from "./SimuladorPrestacao";
 import { readFileSync } from "fs";
 import path from "path";
@@ -37,7 +38,16 @@ export default function CreditoPage() {
         não se negoceia; o spread, sim.
       </p>
 
-      <Figure n={1} title="Simulador de prestação" source="Cálculo próprio — sistema de amortização francês">
+      <Figure
+        n={1}
+        title="Simulador de prestação"
+        source={
+          <Source
+            nome="Cálculo próprio — sistema de amortização francês · Euribor 3M, BPstat"
+            serieAte={eur?.ate}
+          />
+        }
+      >
         <SimuladorPrestacao euriborAtual={eur?.valor ?? null} euriborAte={eur?.ate ?? null} />
       </Figure>
 

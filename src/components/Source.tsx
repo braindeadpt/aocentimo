@@ -7,7 +7,7 @@ interface SourceProps {
   nome: string;
   /** Link para a fonte (API, DR, ficha técnica). */
   url?: string;
-  /** Vigência declarada — regras fiscais: "2026". */
+  /** Vigência declarada — regras fiscais: "2026" ou ISO "2026-01-01". */
   vigencia?: string;
   /** Fim da série — dados: "2025-12" → "série até dez 2025". */
   serieAte?: string;
@@ -24,7 +24,7 @@ interface SourceProps {
  */
 export function Source({ nome, url, vigencia, serieAte, recolhidoEm, nota }: SourceProps) {
   const partes: ReactNode[] = [];
-  if (vigencia) partes.push(`vigente ${vigencia}`);
+  if (vigencia) partes.push(`vigente ${fmtData(vigencia)}`);
   if (serieAte) partes.push(`série até ${fmtData(serieAte)}`);
   if (recolhidoEm) partes.push(`recolhido ${fmtData(recolhidoEm.slice(0, 10))}`);
   if (nota) partes.push(nota);

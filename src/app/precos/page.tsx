@@ -3,8 +3,11 @@ import { Figure } from "@/components/Figure";
 import { Delta } from "@/components/Delta";
 import { LineChart } from "@/components/LineChart";
 import { DecomposicaoFuel } from "../impostos/DecomposicaoFuel";
+import { Source } from "@/components/Source";
 import { loadFonte, type Serie } from "@/lib/data";
-import { fmtData, fmtNum } from "@/lib/format";
+import { fmtData, fmtLitro } from "@/lib/format";
+import isp from "@data/fiscal/isp.json";
+import iva from "@data/fiscal/iva.json";
 
 export const metadata: Metadata = {
   title: "Preços — combustíveis dia a dia",
@@ -58,7 +61,13 @@ export default function PrecosPage() {
       <Figure
         n={1}
         title="Preço médio nacional, por litro"
-        source={ultimo ? `DGEG, preços médios diários · até ${fmtData(ultimo)}` : "DGEG, precoscombustiveis.dgeg.gov.pt"}
+        source={
+          <Source
+            nome="DGEG — preços médios diários"
+            url={series[0].serie?.meta.url ?? "https://precoscombustiveis.dgeg.gov.pt"}
+            serieAte={ultimo}
+          />
+        }
       >
         {temDados ? (
           <>
@@ -68,7 +77,7 @@ export default function PrecosPage() {
                 return (
                   <div key={id} className="bg-surface px-4 py-4">
                     <p className="kicker">{nome}</p>
-                    <p className="num text-3xl mt-1">{fmtNum(p.v)} €</p>
+                    <p className="num text-3xl mt-1">{fmtLitro(p.v)}</p>
                     <p className="text-xs text-muted mt-1 flex gap-3">
                       <span>sem <Delta value={varDias(serie!, 7)} casas={1} /></span>
                       <span>ano <Delta value={varDias(serie!, 365)} casas={1} /></span>
@@ -99,7 +108,17 @@ export default function PrecosPage() {
         )}
       </Figure>
 
-      <Figure n={2} title="Enquanto isso: quanto do litro é imposto?" source="Portaria ISP vigente + CIVA">
+      <Figure
+        n={2}
+        title="Enquanto isso: quanto do litro é imposto?"
+        source={
+          <Source
+            nome={isp.fonte}
+            vigencia={isp.vigencia}
+            nota={`IVA — ${iva.fonte} · vigente ${fmtData(iva.vigencia)}`}
+          />
+        }
+      >
         <DecomposicaoFuel />
       </Figure>
 

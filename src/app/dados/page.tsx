@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Figure } from "@/components/Figure";
+import { Source } from "@/components/Source";
 import { LineChart } from "@/components/LineChart";
 import { Delta } from "@/components/Delta";
 import { loadFonte, loadDerivado, variacao, type Serie } from "@/lib/data";
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
 };
 
 interface CaBase {
-  meta: { oficialPct: number; vigenciaOficial: string; serieAte: string };
+  meta: { oficialPct: number; vigenciaOficial: string; serieAte: string; url?: string };
   series: { t: string; v: number }[];
 }
 
@@ -39,6 +40,7 @@ export default function DadosPage() {
   };
   const temEuribor = euribor["3M"] !== null;
   const caBase = loadDerivado<CaBase>("ca-base");
+  const taegAte = loadFonte("bpstat", "taeg-pessoal-outros-mensal")?.meta.serieAte;
 
   const [qAtual, qProx] = usura.trimestres;
   const hoje = new Date().toISOString().slice(0, 10);
@@ -63,9 +65,12 @@ export default function DadosPage() {
         n={1}
         title="Euribor — médias mensais (as das prestações)"
         source={
-          temEuribor
-            ? `Banco de Portugal, BPstat · até ${fmtData(euribor["3M"]!.meta.serieAte)}`
-            : "Banco de Portugal, BPstat"
+          <Source
+            nome="Banco de Portugal, BPstat"
+            url={euribor["3M"]?.meta.url}
+            serieAte={euribor["3M"]?.meta.serieAte}
+            recolhidoEm={euribor["3M"]?.meta.recolhidoEm}
+          />
         }
       >
         {temEuribor ? (
@@ -83,7 +88,7 @@ export default function DadosPage() {
                 return (
                   <div key={k} className="bg-surface px-4 py-3">
                     <p className="kicker">{k}</p>
-                    <p className="num text-2xl mt-1">{p ? `${fmtNum(p.v)} %` : "—"}</p>
+                    <p className="num text-2xl mt-1">{p ? `${fmtNum(p.v, 2)} %` : "—"}</p>
                     <p className="text-xs text-muted mt-0.5">
                       <Delta value={euribor[k] ? variacao(euribor[k]!, 1) : null} casas={2} />
                       <span className="ml-1">no mês</span>
@@ -103,7 +108,13 @@ export default function DadosPage() {
       <Figure
         n={2}
         title="Crédito ao consumo — o que o mercado cobra vs o teto legal"
-        source={`BPstat (médias praticadas) + ${usura.fonte}`}
+        source={
+          <Source
+            nome={`BPstat (médias praticadas) + ${usura.fonte}`}
+            vigencia={usura.vigencia}
+            serieAte={taegAte}
+          />
+        }
       >
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -128,12 +139,12 @@ export default function DadosPage() {
                   <tr key={l.capKey} className="border-b border-line">
                     <td className="py-2 pr-4 text-ink2">{l.rotulo}</td>
                     <td className="py-2 pr-4 text-right num">
-                      {p ? `${fmtNum(p.v)} %` : "—"}
+                      {p ? `${fmtNum(p.v, 1)} %` : "—"}
                       {p && <span className="block text-xs text-muted">{fmtData(p.t)}</span>}
                     </td>
-                    <td className="py-2 pr-4 text-right num font-medium">{fmtNum(cap)} %</td>
+                    <td className="py-2 pr-4 text-right num font-medium">{fmtNum(cap, 1)} %</td>
                     {proximo && (
-                      <td className="py-2 pr-4 text-right num text-ink2">{capProx !== null ? `${fmtNum(capProx)} %` : "—"}</td>
+                      <td className="py-2 pr-4 text-right num text-ink2">{capProx !== null ? `${fmtNum(capProx, 1)} %` : "—"}</td>
                     )}
                     <td className="py-2">
                       {p && cap ? (
@@ -150,7 +161,7 @@ export default function DadosPage() {
                             <span className="absolute inset-y-0 right-0 w-px bg-ink" />
                           </span>
                           <span className="num w-14 text-right text-xs text-muted">
-                            {fmtNum(cap - p.v)} pp
+                            {fmtNum(cap - p.v, 1)} pp
                           </span>
                         </div>
                       ) : (
@@ -167,14 +178,25 @@ export default function DadosPage() {
           O teto é a TAEG média do trimestre anterior + 1/4 — por isso os dois
           números andam juntos. «Mercado» é a média dos novos contratos, não a
           melhor oferta. Ultrapassagens de crédito: TAN máxima{" "}
-          {fmtNum(vigente.tanMaximaUltrapassagem)} %.
+          {fmtNum(vigente.tanMaximaUltrapassagem, 1)} %.
         </p>
       </Figure>
 
       <Figure
         n={3}
         title="Taxa base dos Certificados de Aforro — Série F"
-        source={caBase ? `IGCP (oficial ${caBase.meta.vigenciaOficial}) + BPstat Euribor 3M` : "IGCP"}
+        source={
+          <Source
+            nome="IGCP + BPstat Euribor 3M"
+            url={caBase?.meta.url}
+            serieAte={caBase?.meta.serieAte}
+            nota={
+              caBase
+                ? `oficial IGCP — ${fmtData(caBase.meta.vigenciaOficial)}`
+                : undefined
+            }
+          />
+        }
       >
         {caBase ? (
           <div className="grid md:grid-cols-2 gap-px bg-line border border-line">
@@ -202,7 +224,11 @@ export default function DadosPage() {
         )}
       </Figure>
 
-      <Figure n={4} title="Calendário fiscal 2026" source={calendario.fonte}>
+      <Figure
+        n={4}
+        title="Calendário fiscal 2026"
+        source={<Source nome={calendario.fonte} vigencia={calendario.vigencia} />}
+      >
         <ol className="border border-line divide-y divide-line">
           {prazos.map((p) => {
             const passou = p.mes < hoje.slice(0, 7);
@@ -222,7 +248,16 @@ export default function DadosPage() {
         <p className="footnote mt-3">{calendario.nota}</p>
       </Figure>
 
-      <Figure n={5} title="Comissões bancárias — o que ainda não conseguimos" source="Banco de Portugal, Portal do Cliente Bancário">
+      <Figure
+        n={5}
+        title="Comissões bancárias — o que ainda não conseguimos"
+        source={
+          <Source
+            nome="Banco de Portugal, Portal do Cliente Bancário"
+            url="https://clientebancario.bportugal.pt/pt-pt/aplicacao/comparador-de-comissoes"
+          />
+        }
+      >
         <div className="border border-line bg-surface px-5 py-6 text-sm text-ink2 space-y-3">
           <p>
             O Banco de Portugal publica diariamente o comparador de comissões de

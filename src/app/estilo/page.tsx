@@ -192,7 +192,18 @@ export default function EstiloPage() {
           <Stat label="Variação" value={<Delta value={-0.015} />} hint="preço a descer" />
           <Stat label="Poupança" value={<Delta value={0.018} goodWhenUp />} hint="taxa a subir é bom" />
         </div>
-        <Figure n={1} title="Figura numerada com fonte" source="Exemplo — Eurostat">
+        <Figure
+          n={1}
+          title="Figura numerada com fonte"
+          source={
+            <Source
+              nome="Eurostat, IHPC mensal"
+              url="https://ec.europa.eu/eurostat"
+              serieAte="2026-08"
+              recolhidoEm="2026-09-17"
+            />
+          }
+        >
           <div className="border border-line bg-surface px-5 py-8 text-center text-muted">
             conteúdo da figura (gráfico, tabela, calculadora)
           </div>

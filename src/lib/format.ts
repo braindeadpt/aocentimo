@@ -11,6 +11,18 @@ const eur0 = new Intl.NumberFormat("pt-PT", {
 });
 
 const num = new Intl.NumberFormat("pt-PT", { maximumFractionDigits: 2 });
+const numFixos = new Map<number, Intl.NumberFormat>();
+function numFixo(casas: number): Intl.NumberFormat {
+  let f = numFixos.get(casas);
+  if (!f) {
+    f = new Intl.NumberFormat("pt-PT", {
+      minimumFractionDigits: casas,
+      maximumFractionDigits: casas,
+    });
+    numFixos.set(casas, f);
+  }
+  return f;
+}
 
 const MESES = [
   "jan", "fev", "mar", "abr", "mai", "jun",
@@ -22,7 +34,17 @@ const finito = (v: number) => Number.isFinite(v);
 
 export const fmtEUR = (v: number) => (finito(v) ? eur.format(v) : FALHOU);
 export const fmtEUR0 = (v: number) => (finito(v) ? eur0.format(v) : FALHOU);
-export const fmtNum = (v: number) => (finito(v) ? num.format(v) : FALHOU);
+/**
+ * Número em pt-PT. Sem `casas`, corta no máximo em 2 decimais;
+ * com `casas`, fixa as decimais — usa-a em colunas/tabelas para o
+ * tabular-nums alinhar (ex.: "0,90" ao lado de "2,16").
+ */
+export const fmtNum = (v: number, casas?: number) =>
+  finito(v) ? (casas === undefined ? num : numFixo(casas)).format(v) : FALHOU;
+
+/** €/litro — a DGEG publica os PMD com 3 casas decimais. */
+export const fmtLitro = (v: number) =>
+  finito(v) ? `${v.toFixed(3).replace(".", ",")} €/L` : FALHOU;
 
 export const fmtPct = (v: number, casas = 1) =>
   finito(v) ? `${(v * 100).toFixed(casas).replace(".", ",")} %` : FALHOU;

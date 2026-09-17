@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Figure } from "@/components/Figure";
+import { Source } from "@/components/Source";
 import { SimuladorCasa } from "./SimuladorCasa";
 import { fmtEUR0 } from "@/lib/format";
 import { readFileSync } from "fs";
@@ -12,12 +13,13 @@ export const metadata: Metadata = {
     "O custo real de comprar casa em Portugal: IMT, Imposto de Selo, registos e a prestação com a Euribor atual do Banco de Portugal.",
 };
 
-/** Último valor da Euribor 3M mensal recolhido do BPstat. */
-function euriborAtual(): number | null {
+/** Último ponto da Euribor 3M mensal recolhido do BPstat. */
+function euriborAtual(): { valor: number; ate: string } | null {
   try {
     const p = path.join(process.cwd(), "data/sources/bpstat/euribor-3m-mensal.json");
     const d = JSON.parse(readFileSync(p, "utf8")) as { series: { t: string; v: number }[] };
-    return d.series.at(-1)?.v ?? null;
+    const u = d.series.at(-1);
+    return u ? { valor: u.v, ate: u.t } : null;
   } catch {
     return null;
   }
@@ -41,9 +43,15 @@ export default function CasaPage() {
       <Figure
         n={1}
         title="Simulador de compra"
-        source={`IMT ${imt.ano} — ${imt.fonte}; Euribor — BPstat (Banco de Portugal)`}
+        source={
+          <Source
+            nome={`IMT — ${imt.fonte}; Euribor 3M — BPstat (Banco de Portugal)`}
+            vigencia={imt.vigencia}
+            serieAte={eur?.ate}
+          />
+        }
       >
-        <SimuladorCasa euriborAtual={eur} />
+        <SimuladorCasa euriborAtual={eur?.valor ?? null} />
       </Figure>
 
       <section className="body-copy max-w-2xl py-8 space-y-4">

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Figure } from "@/components/Figure";
+import { Source } from "@/components/Source";
 import { SimuladorDesemprego } from "./SimuladorDesemprego";
 import { SimuladorIndependente } from "./SimuladorIndependente";
 import desemprego from "@data/fiscal/desemprego.json";
@@ -25,11 +26,19 @@ export default function TrabalhoPage() {
         contado.
       </p>
 
-      <Figure n={1} title="Simulador de subsídio de desemprego" source={desemprego.fonte}>
+      <Figure
+        n={1}
+        title="Simulador de subsídio de desemprego"
+        source={<Source nome={desemprego.fonte} vigencia={desemprego.vigencia} />}
+      >
         <SimuladorDesemprego />
       </Figure>
 
-      <Figure n={2} title="Recibos verdes — da faturação ao bolso" source={catb.fonte}>
+      <Figure
+        n={2}
+        title="Recibos verdes — da faturação ao bolso"
+        source={<Source nome={catb.fonte} vigencia={catb.vigencia} />}
+      >
         <SimuladorIndependente />
       </Figure>
 
