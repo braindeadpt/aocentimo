@@ -36,6 +36,12 @@ function ultimoValor(s: Serie | null) {
   return s ? s.series[s.series.length - 1].v : null;
 }
 
+/** Ano-base do índice, derivado de meta.unidade ("Índice 2025=100" → "2025"). */
+function anoBase(s: Serie | null): string | null {
+  const m = s?.meta.unidade.match(/(\d{4})\s*=\s*100/);
+  return m ? m[1] : null;
+}
+
 export default function InflacaoPage() {
   const cp00 = loadSerie("CP00");
   const cp01 = loadSerie("CP01");
@@ -49,6 +55,9 @@ export default function InflacaoPage() {
   }));
 
   const temDados = cp00 !== null;
+  const base = anoBase(cp00);
+  const baseLabel = base ?? cp00?.meta.unidade ?? null;
+  const desde = cp00?.series[0]?.t.slice(0, 4) ?? "1996";
 
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
@@ -60,12 +69,12 @@ export default function InflacaoPage() {
         O índice de preços no consumidor é a medida oficial da inflação. Não é
         o preço de um produto numa loja — é a média ponderada de um cabaz
         representativo. Mostramos o IHPC (Eurostat, comparável com a Zona
-        Euro), por categoria, desde 2015.
+        Euro), por categoria, desde {desde}.
       </p>
 
       <Figure
         n={1}
-        title="Índice de preços, Portugal (2015 = 100)"
+        title={`Índice de preços, Portugal${baseLabel ? ` (${baseLabel}${base ? " = 100" : ""})` : ""}`}
         source={
           fonte
             ? `Eurostat, IHPC mensal · até ${fmtData(fonte.serieAte)} · ${fonte.url}`
@@ -128,8 +137,10 @@ export default function InflacaoPage() {
           </table>
         </div>
         <p className="footnote mt-3">
-          ▲ a subir é mau para a carteira em preços; ▼ é bom. Índice 2015=100:
-          um valor de 130 significa +30 % face a 2015.
+          ▲ a subir é mau para a carteira em preços; ▼ é bom.{" "}
+          {base
+            ? `Índice ${base}=100: um valor de 130 significa +30 % face a ${base}.`
+            : `Índice ${cp00?.meta.unidade ?? "—"}: um valor de 130 significa +30 % face ao ano-base.`}
         </p>
       </Figure>
 
