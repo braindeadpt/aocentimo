@@ -6,9 +6,6 @@ import { custoCompra } from "@/lib/engines/imt";
 import { EuroBar } from "@/components/EuroBar";
 import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
 
-const inputCls =
-  "w-full bg-paper border border-line px-3 py-2 num text-sm focus:outline-none focus:border-line2";
-
 export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null }) {
   const [preco, setPreco] = useState(200000);
   const [tipo, setTipo] = useState<"hpp" | "secundaria">("hpp");
@@ -37,13 +34,13 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
         <div>
           <label className="kicker block mb-1.5" htmlFor="preco">Preço da casa</label>
           <input id="preco" type="number" min={0} step={5000} value={preco}
-            onChange={(e) => setPreco(Number(e.target.value) || 0)} className={inputCls} />
+            onChange={(e) => setPreco(Number(e.target.value) || 0)} className="field" />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="kicker block mb-1.5" htmlFor="tipo">Finalidade</label>
             <select id="tipo" value={tipo}
-              onChange={(e) => setTipo(e.target.value as typeof tipo)} className={inputCls}>
+              onChange={(e) => setTipo(e.target.value as typeof tipo)} className="field">
               <option value="hpp">Habitação própria e permanente</option>
               <option value="secundaria">Secundária / investimento</option>
             </select>
@@ -60,7 +57,7 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
         <div>
           <label className="kicker block mb-1.5" htmlFor="entrada">Entrada</label>
           <input id="entrada" type="number" min={0} step={1000} value={entrada}
-            onChange={(e) => setEntrada(Number(e.target.value) || 0)} className={inputCls} />
+            onChange={(e) => setEntrada(Number(e.target.value) || 0)} className="field" />
           <p className="footnote mt-1">
             {fmtPct(preco > 0 ? entrada / preco : 0, 0)} do preço · crédito de{" "}
             {fmtEUR0(credito)}
@@ -70,17 +67,17 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
           <div>
             <label className="kicker block mb-1.5" htmlFor="prazo">Prazo (anos)</label>
             <input id="prazo" type="number" min={1} max={50} value={anos}
-              onChange={(e) => setAnos(Number(e.target.value) || 1)} className={inputCls} />
+              onChange={(e) => setAnos(Number(e.target.value) || 1)} className="field" />
           </div>
           <div>
             <label className="kicker block mb-1.5" htmlFor="eur">Euribor (%)</label>
             <input id="eur" type="number" step={0.1} value={euribor}
-              onChange={(e) => setEuribor(Number(e.target.value) || 0)} className={inputCls} />
+              onChange={(e) => setEuribor(Number(e.target.value) || 0)} className="field" />
           </div>
           <div>
             <label className="kicker block mb-1.5" htmlFor="spr">Spread (%)</label>
             <input id="spr" type="number" step={0.1} min={0} value={spread}
-              onChange={(e) => setSpread(Number(e.target.value) || 0)} className={inputCls} />
+              onChange={(e) => setSpread(Number(e.target.value) || 0)} className="field" />
           </div>
         </div>
         <p className="footnote">
@@ -90,7 +87,7 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
         </p>
       </div>
 
-      <div className="space-y-8">
+      <div className="space-y-8" aria-live="polite">
         <div className="bg-surface border border-line">
           <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
             <span className="kicker">No dia da escritura</span>

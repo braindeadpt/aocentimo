@@ -11,7 +11,7 @@ export function CalculadoraIva() {
   const r = ivaContido(preco, taxa);
 
   return (
-    <div className="bg-surface border border-line px-5 py-5">
+    <div className="bg-surface border border-line px-5 py-5" aria-live="polite">
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="kicker block mb-1.5" htmlFor="iva-preco">Preço com IVA</label>
@@ -22,7 +22,7 @@ export function CalculadoraIva() {
             step={0.5}
             value={preco}
             onChange={(e) => setPreco(Number(e.target.value) || 0)}
-            className="w-full bg-paper border border-line px-3 py-2 num text-sm focus:outline-none focus:border-line2"
+            className="field"
           />
         </div>
         <div>
@@ -31,7 +31,7 @@ export function CalculadoraIva() {
             id="iva-taxa"
             value={taxa}
             onChange={(e) => setTaxa(Number(e.target.value))}
-            className="w-full bg-paper border border-line px-3 py-2 num text-sm focus:outline-none focus:border-line2"
+            className="field"
           >
             {ivaData.taxas.map((t) => (
               <option key={t.nome} value={t.taxa}>

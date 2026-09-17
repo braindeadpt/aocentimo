@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { fmtData, fmtNum } from "@/lib/format";
+import { EmptyState } from "@/components/EmptyState";
 
 interface SerieIn {
   name: string;
@@ -76,13 +77,15 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
 
   const dados = useMemo(
     () =>
-      series.map((s, i) => ({
-        name: s.name,
-        cor: s.cor ?? CORES[i % CORES.length],
-        pts: s.data
-          .map(([t, v]) => ({ t: toMs(t), v }))
-          .sort((a, b) => a.t - b.t),
-      })),
+      series
+        .map((s, i) => ({
+          name: s.name,
+          cor: s.cor ?? CORES[i % CORES.length],
+          pts: s.data
+            .map(([t, v]) => ({ t: toMs(t), v }))
+            .sort((a, b) => a.t - b.t),
+        }))
+        .filter((d) => d.pts.length > 0),
     [series]
   );
 
@@ -96,7 +99,9 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
       PAD.left + ((t - t0) / (t1 - t0 || 1)) * (w - PAD.left - PAD.right);
     const y = (v: number) =>
       PAD.top + (1 - (v - lo) / (hi - lo || 1)) * (height - PAD.top - PAD.bottom);
-    // posição dos rótulos de fim de linha, espaçados para não se pisarem
+    // posição dos rótulos de fim de linha — relaxação em duas passagens:
+    // empurra para baixo, e se a fila transbordar o fim do gráfico,
+    // sobe o bloco inteiro para dentro da área útil
     const fim = dados
       .map((d) => ({ name: d.name, cor: d.cor, y: y(d.pts[d.pts.length - 1]?.v ?? lo), v: d.pts[d.pts.length - 1]?.v }))
       .sort((a, b) => a.y - b.y);
@@ -104,6 +109,14 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
     for (const f of fim) {
       f.y = Math.max(f.y, prev + 15, PAD.top + 6);
       prev = f.y;
+    }
+    const limite = PAD.top + (height - PAD.top - PAD.bottom) - 6;
+    const excesso = fim.length ? fim[fim.length - 1].y - limite : 0;
+    if (excesso > 0) {
+      for (let i = fim.length - 1; i >= 0; i--) {
+        const teto = i === fim.length - 1 ? limite : fim[i + 1].y - 15;
+        fim[i].y = Math.min(fim[i].y, teto);
+      }
     }
     return {
       escala: { x, y },
@@ -140,9 +153,43 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
     .map((d) => `${d.name}: ${yFormat(d.pts[d.pts.length - 1]?.v ?? 0)}`)
     .join("; ");
 
+  // regra nº1 a nível de componente: sem dados → estado explícito, nunca NaN
+  if (dados.length === 0) {
+    return <EmptyState titulo="Série indisponível" />;
+  }
+
   return (
     <div ref={wrap} className="relative w-full" role="img" aria-label={`Gráfico de linhas — ${descricao}`}>
-      <svg width={w} height={height} className="block">
+      {/* equivalente tabular para leitores de ecrã — últimos 24 pontos */}
+      <table className="sr-only">
+        <caption>Valores recentes do gráfico</caption>
+        <thead>
+          <tr>
+            <th scope="col">Data</th>
+            {dados.map((d) => (
+              <th key={d.name} scope="col">{d.name}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {Array.from({ length: 24 }, (_, i) => {
+            const idx = dados[0].pts.length - 24 + i;
+            const p0 = dados[0].pts[idx];
+            if (!p0) return null;
+            return (
+              <tr key={p0.t}>
+                <td>{new Date(p0.t).toISOString().slice(0, 10)}</td>
+                {dados.map((d) => (
+                  <td key={d.name}>
+                    {d.pts[idx] ? yFormat(d.pts[idx].v) : "—"}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      <svg width={w} height={height} className="block" aria-hidden>
         {/* grelha horizontal + eixo y */}
         {yticks.map((v) => (
           <g key={v}>
@@ -225,8 +272,8 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
         <rect
           x={PAD.left}
           y={PAD.top}
-          width={plotW}
-          height={plotH}
+          width={Math.max(0, plotW)}
+          height={Math.max(0, plotH)}
           fill="transparent"
           onPointerMove={onMove}
           onPointerLeave={() => setHover(null)}

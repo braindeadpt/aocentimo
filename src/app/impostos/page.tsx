@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function ImpostosPage() {
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
-      <p className="kicker">Módulo 03</p>
+      <p className="kicker">Módulo 02</p>
       <h1 className="font-display text-4xl md:text-6xl tracking-wide mt-2 uppercase">
         O imposto dentro do preço
       </h1>

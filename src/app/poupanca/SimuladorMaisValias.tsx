@@ -5,9 +5,6 @@ import { simularMaisValia, TipoAtivo } from "@/lib/engines/mais-valias";
 import { simularSalario } from "@/lib/engines/irs";
 import { fmtEUR, fmtPct } from "@/lib/format";
 
-const inputCls =
-  "w-full bg-paper border border-line px-3 py-2 num text-sm focus:outline-none focus:border-line2";
-
 export function SimuladorMaisValias() {
   const [tipo, setTipo] = useState<TipoAtivo>("mobiliarios");
   const [compra, setCompra] = useState(10000);
@@ -46,7 +43,7 @@ export function SimuladorMaisValias() {
         <div>
           <label className="kicker block mb-1.5" htmlFor="mv-tipo">O que vendeste</label>
           <select id="mv-tipo" value={tipo} onChange={(e) => setTipo(e.target.value as TipoAtivo)}
-            className={inputCls}>
+            className="field">
             <option value="mobiliarios">Ações / ETF / fundos</option>
             <option value="cripto">Cripto</option>
             <option value="imovel">Imóvel</option>
@@ -56,42 +53,42 @@ export function SimuladorMaisValias() {
           <div>
             <label className="kicker block mb-1.5" htmlFor="mv-compra">Compraste por</label>
             <input id="mv-compra" type="number" min={0} step={500} value={compra}
-              onChange={(e) => setCompra(Number(e.target.value) || 0)} className={inputCls} />
+              onChange={(e) => setCompra(Number(e.target.value) || 0)} className="field" />
           </div>
           <div>
             <label className="kicker block mb-1.5" htmlFor="mv-venda">Vendeste por</label>
             <input id="mv-venda" type="number" min={0} step={500} value={venda}
-              onChange={(e) => setVenda(Number(e.target.value) || 0)} className={inputCls} />
+              onChange={(e) => setVenda(Number(e.target.value) || 0)} className="field" />
           </div>
           <div>
             <label className="kicker block mb-1.5" htmlFor="mv-desp">Despesas (comissões, obras)</label>
             <input id="mv-desp" type="number" min={0} step={50} value={despesas}
-              onChange={(e) => setDespesas(Number(e.target.value) || 0)} className={inputCls} />
+              onChange={(e) => setDespesas(Number(e.target.value) || 0)} className="field" />
           </div>
           {tipo === "cripto" ? (
             <div>
               <label className="kicker block mb-1.5" htmlFor="mv-dias">Dias na carteira</label>
               <input id="mv-dias" type="number" min={0} value={dias}
-                onChange={(e) => setDias(Number(e.target.value) || 0)} className={inputCls} />
+                onChange={(e) => setDias(Number(e.target.value) || 0)} className="field" />
             </div>
           ) : (
             <div>
               <label className="kicker block mb-1.5" htmlFor="mv-anos">Anos de detenção</label>
               <input id="mv-anos" type="number" min={0} max={40} value={anos}
-                onChange={(e) => setAnos(Number(e.target.value) || 0)} className={inputCls} />
+                onChange={(e) => setAnos(Number(e.target.value) || 0)} className="field" />
             </div>
           )}
           {tipo === "imovel" && (
             <div>
               <label className="kicker block mb-1.5" htmlFor="mv-reinv">% reinvestida noutra HPP</label>
               <input id="mv-reinv" type="number" min={0} max={100} value={reinvestida}
-                onChange={(e) => setReinvestida(Number(e.target.value) || 0)} className={inputCls} />
+                onChange={(e) => setReinvestida(Number(e.target.value) || 0)} className="field" />
             </div>
           )}
           <div>
             <label className="kicker block mb-1.5" htmlFor="mv-sal">O teu bruto mensal (p/ englobar)</label>
             <input id="mv-sal" type="number" min={0} step={100} value={salario}
-              onChange={(e) => setSalario(Number(e.target.value) || 0)} className={inputCls} />
+              onChange={(e) => setSalario(Number(e.target.value) || 0)} className="field" />
           </div>
         </div>
         <p className="footnote">
@@ -102,7 +99,7 @@ export function SimuladorMaisValias() {
         </p>
       </div>
 
-      <div className="bg-surface border border-line self-start">
+      <div className="bg-surface border border-line self-start" aria-live="polite">
         <div className="border-b border-line px-5 py-3">
           <span className="kicker">O imposto sobre o ganho</span>
         </div>

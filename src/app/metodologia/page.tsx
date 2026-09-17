@@ -88,14 +88,15 @@ export default function MetodologiaPage() {
         {fontes.length === 0 ? (
           <p className="footnote">Pipeline ainda não executada.</p>
         ) : (
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left border-b-2 border-ink">
-                <th className="py-2 pr-4 font-medium">Série</th>
-                <th className="py-2 pr-4 font-medium">Fonte</th>
-                <th className="py-2 pr-4 font-medium">Dados até</th>
-                <th className="py-2 pr-4 font-medium">Recolhido</th>
-                <th className="py-2 font-medium">Estado</th>
+                <th scope="col" className="py-2 pr-4 font-medium">Série</th>
+                <th scope="col" className="py-2 pr-4 font-medium">Fonte</th>
+                <th scope="col" className="py-2 pr-4 font-medium">Dados até</th>
+                <th scope="col" className="py-2 pr-4 font-medium">Recolhido</th>
+                <th scope="col" className="py-2 font-medium">Estado</th>
               </tr>
             </thead>
             <tbody className="num text-ink2">
@@ -124,6 +125,7 @@ export default function MetodologiaPage() {
               })}
             </tbody>
           </table>
+          </div>
         )}
         {frescura && (
           <p className="footnote mt-3">

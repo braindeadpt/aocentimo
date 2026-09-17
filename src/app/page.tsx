@@ -1,11 +1,11 @@
 import Link from "next/link";
+import { CountUp } from "@/components/CountUp";
 import { Delta } from "@/components/Delta";
-import { EuroBar } from "@/components/EuroBar";
+import { Fluxo } from "@/components/Fluxo";
 import { Source } from "@/components/Source";
 import { loadSerie, variacao, loadFontes } from "@/lib/data";
-import { simularSalario } from "@/lib/engines/irs";
-import { fmtEUR, fmtEUR0, fmtPct, fmtData } from "@/lib/format";
-import { m, t } from "@/lib/messages";
+import { fmtPct, fmtData } from "@/lib/format";
+import { m } from "@/lib/messages";
 import smn from "@data/fiscal/smn.json";
 import ca from "@data/fiscal/ca.json";
 
@@ -15,122 +15,82 @@ export default function Home() {
   const alim = loadSerie("CP01");
   const fonteIpc = loadFontes().find((f) => f.id === "hicp-pt-cp00");
 
-  // salário mediano de referência: 1 500 € brutos, solteiro — números do motor
-  const med = simularSalario([1500], 0, 2026);
-  const custo = med.custoEmpresaAnual;
-  const tsu = med.brutoAnualTotal * 0.2375;
-
   return (
     <div className="mx-auto max-w-6xl px-5">
-      {/* manchete */}
-      <section className="grid gap-10 pt-12 md:grid-cols-12 md:pt-16">
+      {/* manchete compacta — o herói é o diagrama, não o titular */}
+      <section className="grid items-end gap-6 pt-12 md:grid-cols-12 md:pt-14">
         <div className="md:col-span-8">
-          <h1 className="font-display text-[3.4rem] leading-[0.95] tracking-wide text-ink sm:text-7xl lg:text-[6.5rem]">
-            {h.h1a}{" "}
-            <br />
-            {h.h1b}{" "}
-            <br />
+          <h1 className="font-display text-5xl leading-[0.95] tracking-wide text-ink sm:text-6xl lg:text-7xl">
+            {h.h1a} {h.h1b}{" "}
             <span className="text-accent">{h.h1c}</span>
           </h1>
-          <p className="lede mt-7 max-w-xl">{h.lede}</p>
-          <Link href="/salario" className="btn btn-primary mt-8">
+        </div>
+        <div className="md:col-span-4">
+          <p className="lede !mt-0 text-base">{h.lede}</p>
+          <Link href="/salario" className="btn btn-primary mt-5">
             {h.cta}
           </Link>
         </div>
-
-        {/* quadro do dia — ledger estreito */}
-        <aside className="md:col-span-4 md:border-l md:border-line md:pl-8">
-          <p className="num text-[0.65rem] uppercase tracking-[0.16em] text-muted">
-            {h.hoje}
-          </p>
-          <dl className="mt-4 divide-y divide-line border-y border-line">
-            <div className="flex items-baseline justify-between py-3">
-              <dt className="text-sm text-ink2">
-                {h.inflacaoHomologa}
-                {ipc && (
-                  <span className="block text-xs text-muted">{fmtData(ipc.meta.serieAte)}</span>
-                )}
-              </dt>
-              <dd className="num text-xl">
-                {ipc ? <Delta value={variacao(ipc, 12)} /> : "—"}
-              </dd>
-            </div>
-            <div className="flex items-baseline justify-between py-3">
-              <dt className="text-sm text-ink2">
-                {h.alimentacao}
-                <span className="block text-xs text-muted">{h.ihpcCP01}</span>
-              </dt>
-              <dd className="num text-xl">
-                {alim ? <Delta value={variacao(alim, 12)} /> : "—"}
-              </dd>
-            </div>
-            <div className="flex items-baseline justify-between py-3">
-              <dt className="text-sm text-ink2">
-                {h.salarioMinimo}
-                <span className="block text-xs text-muted">{h.smnNota}</span>
-              </dt>
-              <dd className="num text-xl">{fmtEUR0(smn.serie[smn.serie.length - 1].valor)}</dd>
-            </div>
-            <div className="flex items-baseline justify-between py-3">
-              <dt className="text-sm text-ink2">
-                {h.ca}
-                <span className="block text-xs text-muted">{h.caNota}</span>
-              </dt>
-              <dd className="num text-xl">{fmtPct(ca.serieF.taxaBrutaNovasSubscricoes, 2)}</dd>
-            </div>
-          </dl>
-          {fonteIpc && (
-            <div className="mt-3">
-              <Source
-                nome={fonteIpc.fonte}
-                url={fonteIpc.url}
-                serieAte={fonteIpc.serieAte}
-                nota="IGCP · DL 139/2025"
-              />
-            </div>
-          )}
-        </aside>
       </section>
 
-      {/* a barra do euro — assinatura */}
-      <section className="mt-16 border-t-2 border-ink pt-6">
-        <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <h2 className="font-display text-2xl tracking-wide md:text-3xl">
-            {h.barraTitulo}
-          </h2>
-          <p className="num text-xs text-muted">{h.barraNota}</p>
+      {/* o instrumento — um euro a fluir da empresa para ti */}
+      <section className="blueprint mt-10 border border-line bg-surface px-5 py-6 md:px-8 md:py-8">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <p className="num text-[0.65rem] uppercase tracking-[0.16em] text-muted">
+            {h.euroTitulo}
+          </p>
+          <p className="num text-xs text-muted">{h.euroNota}</p>
         </div>
-        <div className="mt-6">
-          <EuroBar
-            total={custo}
-            segmentos={[
-              {
-                label: h.segLiquido,
-                valor: med.liquidoAnual,
-                cor: "var(--color-keep)",
-              },
-              { label: h.segIrs, valor: med.irsAnual, cor: "var(--color-accent)" },
-              { label: h.segSs, valor: med.ssAnual, cor: "var(--color-accent-ink)" },
-              {
-                label: h.segTsu,
-                valor: tsu,
-                cor: "var(--color-ink2)",
-              },
-            ]}
+        <Fluxo className="mt-2" />
+      </section>
+
+      {/* quadro do dia — fila de instrumentos */}
+      <section className="mt-16 grid grid-cols-2 border border-line bg-surface md:grid-cols-4">
+        <div className="border-b border-r border-line px-5 py-5 md:border-b-0">
+          <p className="num text-[0.62rem] uppercase tracking-[0.14em] text-muted">
+            {h.inflacaoHomologa}
+          </p>
+          <p className="num mt-2 text-3xl text-ink">
+            {ipc ? <Delta value={variacao(ipc, 12)} /> : "—"}
+          </p>
+          {ipc && <p className="footnote mt-1">{fmtData(ipc.meta.serieAte)}</p>}
+        </div>
+        <div className="border-b border-line px-5 py-5 md:border-b-0 md:border-r">
+          <p className="num text-[0.62rem] uppercase tracking-[0.14em] text-muted">
+            {h.alimentacao}
+          </p>
+          <p className="num mt-2 text-3xl text-ink">
+            {alim ? <Delta value={variacao(alim, 12)} /> : "—"}
+          </p>
+          <p className="footnote mt-1">{h.ihpcCP01}</p>
+        </div>
+        <div className="border-r border-line px-5 py-5">
+          <p className="num text-[0.62rem] uppercase tracking-[0.14em] text-muted">
+            {h.salarioMinimo}
+          </p>
+          <p className="num mt-2 text-3xl text-ink">
+            <CountUp valor={smn.serie[smn.serie.length - 1].valor} sufixo=" €" dur={1400} />
+          </p>
+          <p className="footnote mt-1">{h.smnNota}</p>
+        </div>
+        <div className="px-5 py-5">
+          <p className="num text-[0.62rem] uppercase tracking-[0.14em] text-muted">{h.ca}</p>
+          <p className="num mt-2 text-3xl text-ink">
+            {fmtPct(ca.serieF.taxaBrutaNovasSubscricoes, 2)}
+          </p>
+          <p className="footnote mt-1">{h.caNota}</p>
+        </div>
+      </section>
+      {fonteIpc && (
+        <div className="mt-3">
+          <Source
+            nome={fonteIpc.fonte}
+            url={fonteIpc.url}
+            serieAte={fonteIpc.serieAte}
+            nota="IGCP · DL 139/2025"
           />
         </div>
-        <p className="footnote mt-4">
-          {t(h.barraFoot, {
-            custo: fmtEUR(custo),
-            bruto: fmtEUR0(1500),
-            peso: fmtPct(med.pesoEstado, 0),
-          })}{" "}
-          <Link href="/salario" className="text-accent underline underline-offset-2">
-            {m.common.calculaOTeu}
-          </Link>
-          .
-        </p>
-      </section>
+      )}
 
       {/* capítulos — o percurso do euro */}
       <section className="mt-20">
@@ -145,16 +105,16 @@ export default function Home() {
             <li key={c.n} className="border-b border-line">
               <Link
                 href={c.href}
-                className="group grid grid-cols-[3.5rem_1fr] items-baseline gap-4 py-6 transition-colors hover:bg-surface md:grid-cols-[5rem_16rem_1fr_2rem] md:gap-8"
+                className="chapter-row group grid grid-cols-[3.5rem_1fr] items-baseline gap-4 px-2 py-6 md:grid-cols-[5rem_16rem_1fr_2rem] md:gap-8 md:px-4"
               >
-                <span className="num text-sm text-muted">{c.n}</span>
-                <span className="font-display text-3xl tracking-wide text-ink transition-colors group-hover:text-accent md:text-4xl">
+                <span className="chapter-dim num text-sm text-muted transition-colors">{c.n}</span>
+                <span className="font-display text-3xl tracking-wide transition-colors md:text-4xl">
                   {c.titulo}
                 </span>
-                <span className="col-span-2 mt-2 max-w-xl text-sm leading-relaxed text-ink2 md:col-span-1 md:mt-0">
+                <span className="chapter-dim col-span-2 mt-2 max-w-xl text-sm leading-relaxed text-ink2 transition-colors md:col-span-1 md:mt-0">
                   {c.descricao}
                 </span>
-                <span className="hidden text-right font-display text-2xl text-line2 transition-colors group-hover:text-accent md:block">
+                <span className="chapter-arrow hidden text-right font-display text-2xl text-line2 md:block">
                   →
                 </span>
               </Link>

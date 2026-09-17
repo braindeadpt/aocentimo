@@ -5,9 +5,6 @@ import { simularIndependente } from "@/lib/engines/independente";
 import { Cascata } from "@/components/Cascata";
 import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
 
-const inputCls =
-  "w-full bg-paper border border-line px-3 py-2 num text-sm focus:outline-none focus:border-line2";
-
 export function SimuladorIndependente() {
   const [faturacao, setFaturacao] = useState(2000);
   const [primeiroAno, setPrimeiroAno] = useState(false);
@@ -24,7 +21,7 @@ export function SimuladorIndependente() {
         <div>
           <label className="kicker block mb-1.5" htmlFor="fat">Faturação média mensal</label>
           <input id="fat" type="number" min={0} step={100} value={faturacao}
-            onChange={(e) => setFaturacao(Number(e.target.value) || 0)} className={inputCls} />
+            onChange={(e) => setFaturacao(Number(e.target.value) || 0)} className="field" />
         </div>
         <label className="flex items-center gap-2 text-sm text-ink2">
           <input type="checkbox" checked={primeiroAno}
@@ -40,7 +37,7 @@ export function SimuladorIndependente() {
         </p>
       </div>
 
-      <div className="space-y-8">
+      <div className="space-y-8" aria-live="polite">
         <div className="bg-surface border border-line">
           <div className="border-b border-line px-5 py-3">
             <span className="kicker">Por ano, em {fmtEUR0(anual)} faturados</span>

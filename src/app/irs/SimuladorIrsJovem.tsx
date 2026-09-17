@@ -2,11 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { simularIrsJovem, REGRAS_IRS_JOVEM } from "@/lib/engines/irs-jovem";
+import { REGRAS_IRS } from "@/lib/engines/irs";
 import { retencaoNaFonte } from "@/lib/engines/retencao";
 import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
-
-const inputCls =
-  "w-full bg-paper border border-line px-3 py-2 num text-sm focus:outline-none focus:border-line2";
 
 export function SimuladorIrsJovem({ ano }: { ano: number }) {
   const [bruto, setBruto] = useState(1500);
@@ -30,12 +28,12 @@ export function SimuladorIrsJovem({ ano }: { ano: number }) {
         <div>
           <label className="kicker block mb-1.5" htmlFor="bruto-j">Salário bruto mensal</label>
           <input id="bruto-j" type="number" min={0} step={50} value={bruto}
-            onChange={(e) => setBruto(Number(e.target.value) || 0)} className={inputCls} />
+            onChange={(e) => setBruto(Number(e.target.value) || 0)} className="field" />
         </div>
         <div>
           <label className="kicker block mb-1.5" htmlFor="ano-j">Ano de gozo do IRS Jovem</label>
           <select id="ano-j" value={anoGozo}
-            onChange={(e) => setAnoGozo(Number(e.target.value))} className={inputCls}>
+            onChange={(e) => setAnoGozo(Number(e.target.value))} className="field">
             {REGRAS_IRS_JOVEM.isencaoPorAno.map((p, i) => (
               <option key={i + 1} value={i + 1}>
                 {i + 1}.º ano — {fmtPct(p, 0)} de isenção
@@ -47,12 +45,13 @@ export function SimuladorIrsJovem({ ano }: { ano: number }) {
           Conta a partir do primeiro ano em que entregas IRS sozinho —
           {REGRAS_IRS_JOVEM.anosMax} anos no máximo, até fazeres{" "}
           {REGRAS_IRS_JOVEM.idadeMax}. A isenção tem teto de{" "}
-          {fmtEUR0(REGRAS_IRS_JOVEM.limiteIsencaoIas * 537.13)}/ano (55×IAS) e o
+          {fmtEUR0(REGRAS_IRS_JOVEM.limiteIsencaoIas * REGRAS_IRS[2026].ias)}/ano
+          (55×IAS) e o
           rendimento isento ainda conta para fixar o teu escalão.
         </p>
       </div>
 
-      <div className="space-y-8">
+      <div className="space-y-8" aria-live="polite">
         <div className="bg-surface border border-line">
           <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
             <span className="kicker">No {anoGozo}.º ano de gozo</span>
@@ -91,9 +90,9 @@ export function SimuladorIrsJovem({ ano }: { ano: number }) {
           <table className="w-full text-sm bg-surface border border-line">
             <thead>
               <tr className="text-left border-b-2 border-ink">
-                <th className="px-4 py-2 font-medium">Ano de gozo</th>
-                <th className="px-4 py-2 font-medium text-right">Isenção</th>
-                <th className="px-4 py-2 font-medium text-right">Poupas</th>
+                <th scope="col" className="px-4 py-2 font-medium">Ano de gozo</th>
+                <th scope="col" className="px-4 py-2 font-medium text-right">Isenção</th>
+                <th scope="col" className="px-4 py-2 font-medium text-right">Poupas</th>
               </tr>
             </thead>
             <tbody>

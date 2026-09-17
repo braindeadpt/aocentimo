@@ -4,9 +4,6 @@ import { useMemo, useState } from "react";
 import { simularIrsAnual, limitePpr } from "@/lib/engines/irs-anual";
 import { fmtEUR, fmtEUR0 } from "@/lib/format";
 
-const inputCls =
-  "w-full bg-paper border border-line px-3 py-2 num text-sm focus:outline-none focus:border-line2";
-
 function Campo({ id, label, valor, onChange, nota }: {
   id: string; label: string; valor: number; onChange: (v: number) => void; nota?: string;
 }) {
@@ -14,7 +11,7 @@ function Campo({ id, label, valor, onChange, nota }: {
     <div>
       <label className="kicker block mb-1.5" htmlFor={id}>{label}</label>
       <input id={id} type="number" min={0} step={50} value={valor}
-        onChange={(e) => onChange(Number(e.target.value) || 0)} className={inputCls} />
+        onChange={(e) => onChange(Number(e.target.value) || 0)} className="field" />
       {nota && <p className="footnote mt-1">{nota}</p>}
     </div>
   );
@@ -69,7 +66,7 @@ export function SimuladorAcerto({ ano }: { ano: number }) {
         </p>
       </div>
 
-      <div className="space-y-8">
+      <div className="space-y-8" aria-live="polite">
         <div className="bg-surface border border-line">
           <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
             <span className="kicker">O acerto de contas</span>

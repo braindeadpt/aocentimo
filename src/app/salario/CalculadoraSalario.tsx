@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { simularSalario } from "@/lib/engines/irs";
+import { TSU_ENTIDADE } from "@/lib/engines/seg-social";
 import { reciboMensal, FormaPagamentoSA } from "@/lib/engines/recibo";
 import { SituacaoRetencao } from "@/lib/engines/retencao";
 import { EuroBar } from "@/components/EuroBar";
@@ -9,9 +10,6 @@ import { Cascata } from "@/components/Cascata";
 import { fmtEUR, fmtPct, fmtData } from "@/lib/format";
 import sa from "@data/fiscal/subsidio-alimentacao.json";
 import irsJovem from "@data/fiscal/irs-jovem.json";
-
-const inputCls =
-  "w-full bg-surface border border-line px-3 py-2 num text-sm focus:outline-none focus:border-line2";
 
 type Situacao = "solteiro" | "casado2" | "casado1";
 const PARA_RETENCAO: Record<Situacao, SituacaoRetencao> = {
@@ -79,7 +77,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
             step={50}
             value={bruto}
             onChange={(e) => setBruto(Number(e.target.value) || 0)}
-            className={inputCls}
+            className="field"
           />
         </div>
 
@@ -91,7 +89,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
             id="situacao"
             value={situacao}
             onChange={(e) => setSituacao(e.target.value as Situacao)}
-            className={inputCls}
+            className="field"
           >
             <option value="solteiro">Não casado(a)</option>
             <option value="casado2">Casado(a) — dois titulares</option>
@@ -111,7 +109,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
               step={50}
               value={conjuge}
               onChange={(e) => setConjuge(Number(e.target.value) || 0)}
-              className={inputCls}
+              className="field"
             />
           </div>
         )}
@@ -128,7 +126,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
               max={10}
               value={dependentes}
               onChange={(e) => setDependentes(Math.max(0, Number(e.target.value) || 0))}
-              className={inputCls}
+              className="field"
             />
           </div>
           <div>
@@ -139,7 +137,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
               id="jovem"
               value={anoJovem}
               onChange={(e) => setAnoJovem(Number(e.target.value))}
-              className={inputCls}
+              className="field"
             >
               <option value={0}>Não</option>
               {irsJovem.isencaoPorAno.map((p, i) => (
@@ -163,7 +161,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
               step={0.5}
               value={saPorDia}
               onChange={(e) => setSaPorDia(Number(e.target.value) || 0)}
-              className={inputCls}
+              className="field"
             />
           </div>
           <div>
@@ -174,7 +172,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
               id="formasa"
               value={formaSA}
               onChange={(e) => setFormaSA(e.target.value as FormaPagamentoSA)}
-              className={inputCls}
+              className="field"
             >
               <option value="cartao">Cartão/vale</option>
               <option value="dinheiro">Dinheiro</option>
@@ -192,7 +190,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
       </div>
 
       {/* output — recibo editorial */}
-      <div className="bg-surface border border-line">
+      <div className="bg-surface border border-line" aria-live="polite">
         <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
           <span className="kicker">O recibo do mês</span>
           <span className="num text-xs text-muted">tabela {recibo.tabela} · {ano}</span>
@@ -264,7 +262,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
       </div>
 
       {/* o ano inteiro */}
-      <div className="md:col-span-2 bg-surface border border-line">
+      <div className="md:col-span-2 bg-surface border border-line" aria-live="polite">
         <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
           <span className="kicker">O ano inteiro, a 14 meses</span>
           <span className="num text-xs text-muted">estimativa IRS {ano}</span>
@@ -334,8 +332,8 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
             { label: "IRS", valor: resultado.irsAnual, cor: "var(--color-accent)" },
             { label: "A tua SS (11 %)", valor: resultado.ssAnual, cor: "var(--color-accent-ink)" },
             {
-              label: "TSU da empresa (23,75 %)",
-              valor: resultado.brutoAnualTotal * 0.2375,
+              label: `TSU da empresa (${fmtPct(TSU_ENTIDADE, 2)})`,
+              valor: resultado.brutoAnualTotal * TSU_ENTIDADE,
               cor: "var(--color-ink2)",
             },
           ]}

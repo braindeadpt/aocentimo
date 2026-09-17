@@ -38,6 +38,36 @@
     "fonte": "Fonte",
     "calculaOTeu": "Calcula o teu"
   },
+  "fluxo": {
+    "aria": "A empresa paga {custo} por mês; chegam-te {liquido} líquidos.",
+    "empresa": "A empresa paga",
+    "bruto": "salário bruto {valor}",
+    "tsu": "TSU · {taxa}",
+    "irs": "IRS · retenção",
+    "ss": "Seg. Social · {taxa}",
+    "liquido": "líquido → {valor}",
+    "porMes": "por mês",
+    "pctCusto": "{pct} % do custo",
+    "brutoLabel": "salário bruto",
+    "estado": "o Estado leva {valor} /mês",
+    "estadoLabel": "Total para o Estado",
+    "tu": "Tu",
+    "linkEstado": "o que o Estado leva",
+    "linkTu": "o teu recibo",
+    "linkBanco": "e o banco?",
+    "linkBomba": "e na bomba?"
+  },
+  "ticker": {
+    "label": "Dados em direto",
+    "euribor3m": "EURIBOR 3M",
+    "inflacao": "INFLAÇÃO HOMÓLOGA",
+    "gasoleo": "GASÓLEO",
+    "gasolina": "GASOLINA 95",
+    "smn": "SALÁRIO MÍNIMO",
+    "smnNota": "2026",
+    "ca": "CERTIFICADOS AFORRO F",
+    "caNota": "bruta"
+  },
   "home": {
     "h1a": "PARA ONDE",
     "h1b": "VAI O TEU",
@@ -59,6 +89,9 @@
     "segSs": "A tua Seg. Social (11 %)",
     "segTsu": "TSU da empresa (23,75 %)",
     "barraFoot": "A empresa paga {custo} por ano para te pagar {bruto} brutos por mês — {peso} desse custo vai para o Estado antes de chegar ao teu bolso.",
+    "euroTitulo": "DE CADA 1,00 € QUE A EMPRESA GASTA CONTIGO",
+    "euroNota": "salário de 1 500 € · solteiro · regras 2026",
+    "euroFoot": "{keep} chegam ao teu bolso. O resto é IRS, Segurança Social e a TSU que a empresa paga e nunca aparece no recibo.",
     "capitulosTitulo": "O PERCURSO DE UM EURO",
     "capitulosNota": "seis capítulos",
     "capitulos": [

@@ -109,10 +109,10 @@ export default function DadosPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left border-b-2 border-ink">
-                <th className="py-2 pr-4 font-medium">Tipo de crédito</th>
-                <th className="py-2 pr-4 font-medium text-right">Mercado (média)</th>
-                <th className="py-2 pr-4 font-medium text-right">Teto {vigente.trimestre}</th>
-                {proximo && <th className="py-2 font-medium text-right">Teto {proximo.trimestre}</th>}
+                <th scope="col" className="py-2 pr-4 font-medium">Tipo de crédito</th>
+                <th scope="col" className="py-2 pr-4 font-medium text-right">Mercado (média)</th>
+                <th scope="col" className="py-2 pr-4 font-medium text-right">Teto {vigente.trimestre}</th>
+                {proximo && <th scope="col" className="py-2 font-medium text-right">Teto {proximo.trimestre}</th>}
               </tr>
             </thead>
             <tbody>

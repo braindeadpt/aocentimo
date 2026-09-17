@@ -13,29 +13,29 @@ export const metadata: Metadata = {
 };
 
 const TOKENS: [string, string, string][] = [
-  ["paper", "bg-paper", "#faf7ee — fundo areia"],
-  ["surface", "bg-surface", "#ffffff — cartões"],
-  ["ink", "bg-ink", "#221f19 — tinta"],
-  ["ink2", "bg-ink2", "#6b6455 — secundário"],
-  ["muted", "bg-muted", "#948c79 — meta"],
-  ["line", "bg-line", "#eae4d4 — hairline"],
-  ["line2", "bg-line2", "#cfc6b0 — regra"],
-  ["accent", "bg-accent", "#7e2b1e — oxblood, o que sai"],
-  ["accent-ink", "bg-accent-ink", "#5c1f15 — oxblood fundo"],
-  ["accent-soft", "bg-accent-soft", "#f3e5de — destaque"],
-  ["keep", "bg-keep", "#2f5d46 — verde-pinheiro, o que é teu"],
-  ["keep-soft", "bg-keep-soft", "#e3ece6 — verde suave"],
-  ["mark", "bg-mark", "#c99a2e — torrado, só marcador de fonte"],
-  ["warn", "bg-warn", "#b07e17 — aviso"],
-  ["up", "bg-up", "#8f3120 — sobe (mau em preços)"],
-  ["down", "bg-down", "#2f5d46 — desce (bom em preços)"],
+  ["paper", "bg-paper", "#f2f1ea / #0e0c09 — fundo"],
+  ["surface", "bg-surface", "#faf9f4 / #16130f — painéis"],
+  ["ink", "bg-ink", "#1b1811 / #f2ecdd — tinta"],
+  ["ink2", "bg-ink2", "#57534a / #aba28c — secundário"],
+  ["muted", "bg-muted", "#6f6a58 / #8f8878 — meta (AA nos dois temas)"],
+  ["line", "bg-line", "#e0dcc9 / #2c271e — hairline"],
+  ["line2", "bg-line2", "#b7b19d / #57503c — regra, borda de campo"],
+  ["accent", "bg-accent", "#b93a17 / #ff6133 — vermilhão-sinal, o que sai"],
+  ["accent-ink", "bg-accent-ink", "#8f2a10 / #a03012 — corte mais fundo"],
+  ["accent-soft", "bg-accent-soft", "#f6e3db / #331b0d — destaque"],
+  ["keep", "bg-keep", "#1f6b4d / #63d6a4 — o que é teu"],
+  ["keep-soft", "bg-keep-soft", "#dfece4 / #16281f — verde suave"],
+  ["mark", "bg-mark", "#a07c17 / #f0c468 — torrado, fonte e foco"],
+  ["warn", "bg-warn", "#a3720a / #f0c468 — aviso"],
+  ["up", "bg-up", "#b03016 / #ff6133 — sobe (mau em preços)"],
+  ["down", "bg-down", "#1f6b4d / #63d6a4 — desce (bom em preços)"],
 ];
 
 const REGRAS = [
   "Verde só para «o teu dinheiro» — nunca decoração nem fundo genérico.",
-  "Torrado só como marcador funcional: fonte, citação, foco.",
-  "Verde e oxblood nunca saturados em contacto directo.",
-  "Bandeira evocada, nunca citada — verde-floresta + oxblood + torrado.",
+  "Torrado só como marcador funcional: fonte, citação, anel de foco.",
+  "Vermilhão-sinal para tudo o que sai do bolso — legível nos dois temas.",
+  "Dois temas de raiz: claro frio de papel técnico, escuro de instrumento.",
 ];
 
 export default function EstiloPage() {
@@ -46,9 +46,11 @@ export default function EstiloPage() {
         Sistema de design
       </h1>
       <p className="lede mt-5">
-        Direcção C — «A Conta»: quente, cívica, humana. Archivo expandido para
-        manchetes, Source Serif para a voz, Space Mono para os números. Oxblood
-        é o que sai, verde-pinheiro é o que fica — e o torrado marca a fonte.
+        Direcção «Observatório»: um painel de instrumentos sobre o dinheiro.
+        Archivo expandido para manchetes, Space Grotesk para a interface,
+        Source Serif para a voz editorial, Space Mono para os números.
+        Vermilhão-sinal é o que sai, verde é o que fica — e o torrado marca
+        sempre a fonte. Tudo vive em dois temas: claro e escuro.
       </p>
 
       <section className="mt-10">
@@ -65,7 +67,11 @@ export default function EstiloPage() {
       </section>
 
       <section className="mt-10">
-        <h2 className="kicker mb-4">Tokens de cor</h2>
+        <h2 className="kicker mb-4">Tokens de cor — claro / escuro</h2>
+        <p className="footnote mb-4 max-w-xl">
+          Os swatches são ao vivo: mudam com o tema activo (botão no topo da
+          página). Os valores listados são claro / escuro.
+        </p>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {TOKENS.map(([nome, cls, desc]) => (
             <div key={nome} className="border border-line bg-surface">
@@ -95,7 +101,14 @@ export default function EstiloPage() {
             </p>
           </div>
           <div className="py-5">
-            <p className="kicker mb-2">Corpo — Source Serif 4</p>
+            <p className="kicker mb-2">Interface — Space Grotesk</p>
+            <p className="body-copy">
+              O corpo da interface e das páginas. Neutro, técnico, sem ser
+              genérico — o par natural do Space Mono dos números.
+            </p>
+          </div>
+          <div className="py-5">
+            <p className="kicker mb-2">Editorial — Source Serif 4 (só ledes)</p>
             <p className="lede">
               Entre o que a empresa paga e o que tu recebes há três cortes:
               Segurança Social, IRS e a TSU que nunca vês no recibo.
@@ -120,7 +133,13 @@ export default function EstiloPage() {
           <div className="card px-5 py-3 text-sm text-ink2">
             .card — superfície limpa com hairline
           </div>
+          <input className="field max-w-56" defaultValue="1 500" aria-label="exemplo de campo" />
         </div>
+        <p className="footnote mt-3">
+          <code className="num">.field</code> é o único campo de formulário —
+          fundo surface, borda line2, foco pelo anel torrado global. Todos os
+          simuladores usam esta classe.
+        </p>
       </section>
 
       <section className="mt-12">
@@ -136,7 +155,7 @@ export default function EstiloPage() {
         />
         <p className="footnote mt-3">
           Verde só para o que fica contigo; tudo o que sai vive na família
-          oxblood/tinta.
+          vermilhão/tinta.
         </p>
       </section>
 

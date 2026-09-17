@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
-import { Archivo, Source_Serif_4, Space_Mono } from "next/font/google";
+import { Archivo, Source_Serif_4, Space_Grotesk, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { Ticker } from "@/components/Ticker";
 
 const archivo = Archivo({
   subsets: ["latin"],
   axes: ["wdth"],
   variable: "--font-archivo",
+});
+const grotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-grotesk",
 });
 const serif = Source_Serif_4({
   subsets: ["latin"],
@@ -32,13 +37,24 @@ export const metadata: Metadata = {
   },
 };
 
+/** Resolve o tema antes da primeira pintura: localStorage → preferência do SO. */
+const themeInit = `(function(){try{var t=localStorage.getItem("bruto-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t;}catch(e){}})()`;
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt" className={`${archivo.variable} ${serif.variable} ${spaceMono.variable}`}>
+    <html
+      lang="pt"
+      suppressHydrationWarning
+      className={`${archivo.variable} ${grotesk.variable} ${serif.variable} ${spaceMono.variable}`}
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInit }} />
+      </head>
       <body className="min-h-screen flex flex-col">
         <SiteHeader />
+        <Ticker />
         <main className="flex-1">{children}</main>
         <SiteFooter />
       </body>

@@ -52,7 +52,7 @@ export default function InflacaoPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
-      <p className="kicker">Módulo 02</p>
+      <p className="kicker">Módulo 03</p>
       <h1 className="font-display text-4xl md:text-6xl tracking-wide mt-2 uppercase">
         Quanto subiu o que compras
       </h1>
@@ -100,10 +100,10 @@ export default function InflacaoPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left border-b-2 border-ink">
-                <th className="py-2 pr-4 font-medium">Categoria</th>
-                <th className="py-2 pr-4 font-medium text-right">Índice</th>
-                <th className="py-2 pr-4 font-medium text-right">Mês anterior</th>
-                <th className="py-2 font-medium text-right">Homóloga (12 m)</th>
+                <th scope="col" className="py-2 pr-4 font-medium">Categoria</th>
+                <th scope="col" className="py-2 pr-4 font-medium text-right">Índice</th>
+                <th scope="col" className="py-2 pr-4 font-medium text-right">Mês anterior</th>
+                <th scope="col" className="py-2 font-medium text-right">Homóloga (12 m)</th>
               </tr>
             </thead>
             <tbody>

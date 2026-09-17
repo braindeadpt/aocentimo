@@ -4,9 +4,6 @@ import { useMemo, useState } from "react";
 import { salarioReal, type PontoSerie } from "@/lib/engines/deflator";
 import { fmtEUR, fmtPct } from "@/lib/format";
 
-const inputCls =
-  "w-full bg-paper border border-line px-3 py-2 num text-sm focus:outline-none focus:border-line2";
-
 /** "O salário congelou?" — compara o bruto de hoje com o antigo corrigido pelo IHPC. */
 export function SalarioReal({ serie }: { serie: PontoSerie[] }) {
   const anos = useMemo(
@@ -33,7 +30,7 @@ export function SalarioReal({ serie }: { serie: PontoSerie[] }) {
           <div>
             <label className="kicker block mb-1.5" htmlFor="sr-ano">Em finais de</label>
             <select id="sr-ano" value={anoInicio} onChange={(e) => setAnoInicio(e.target.value)}
-              className={inputCls}>
+              className="field">
               {anos.map((a) => (
                 <option key={a} value={a}>{a}</option>
               ))}
@@ -42,12 +39,12 @@ export function SalarioReal({ serie }: { serie: PontoSerie[] }) {
           <div>
             <label className="kicker block mb-1.5" htmlFor="sr-ant">ganhavas, brutos</label>
             <input id="sr-ant" type="number" min={0} step={50} value={salarioAntigo}
-              onChange={(e) => setSalarioAntigo(Number(e.target.value) || 0)} className={inputCls} />
+              onChange={(e) => setSalarioAntigo(Number(e.target.value) || 0)} className="field" />
           </div>
           <div>
             <label className="kicker block mb-1.5" htmlFor="sr-hoje">hoje ganhas</label>
             <input id="sr-hoje" type="number" min={0} step={50} value={salarioHoje}
-              onChange={(e) => setSalarioHoje(Number(e.target.value) || 0)} className={inputCls} />
+              onChange={(e) => setSalarioHoje(Number(e.target.value) || 0)} className="field" />
           </div>
         </div>
         <p className="footnote">
@@ -57,7 +54,7 @@ export function SalarioReal({ serie }: { serie: PontoSerie[] }) {
         </p>
       </div>
 
-      <div className="bg-surface border border-line self-start">
+      <div className="bg-surface border border-line self-start" aria-live="polite">
         <div className="border-b border-line px-5 py-3">
           <span className="kicker">Poder de compra {r ? `· ${r.mes} → ${ultimo}` : ""}</span>
         </div>

@@ -5,9 +5,6 @@ import { REGRAS_PPR, limitePpr } from "@/lib/engines/irs-anual";
 import capitais from "@data/fiscal/capitais.json";
 import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
 
-const inputCls =
-  "w-full bg-paper border border-line px-3 py-2 num text-sm focus:outline-none focus:border-line2";
-
 export function SimuladorPpr() {
   const [entregas, setEntregas] = useState(2000);
   const [idade, setIdade] = useState(30);
@@ -42,22 +39,22 @@ export function SimuladorPpr() {
           <div>
             <label className="kicker block mb-1.5" htmlFor="ppr-ent">Entregas por ano</label>
             <input id="ppr-ent" type="number" min={0} step={100} value={entregas}
-              onChange={(e) => setEntregas(Number(e.target.value) || 0)} className={inputCls} />
+              onChange={(e) => setEntregas(Number(e.target.value) || 0)} className="field" />
           </div>
           <div>
             <label className="kicker block mb-1.5" htmlFor="ppr-idade">A tua idade</label>
             <input id="ppr-idade" type="number" min={18} max={66} value={idade}
-              onChange={(e) => setIdade(Number(e.target.value) || 18)} className={inputCls} />
+              onChange={(e) => setIdade(Number(e.target.value) || 18)} className="field" />
           </div>
           <div>
             <label className="kicker block mb-1.5" htmlFor="ppr-anos">Anos até resgatar</label>
             <input id="ppr-anos" type="number" min={1} max={40} value={anos}
-              onChange={(e) => setAnos(Number(e.target.value) || 1)} className={inputCls} />
+              onChange={(e) => setAnos(Number(e.target.value) || 1)} className="field" />
           </div>
           <div>
             <label className="kicker block mb-1.5" htmlFor="ppr-taxa">Rentabilidade (%/ano)</label>
             <input id="ppr-taxa" type="number" step={0.5} value={taxa}
-              onChange={(e) => setTaxa(Number(e.target.value) || 0)} className={inputCls} />
+              onChange={(e) => setTaxa(Number(e.target.value) || 0)} className="field" />
           </div>
         </div>
         <p className="footnote">
@@ -69,7 +66,7 @@ export function SimuladorPpr() {
         </p>
       </div>
 
-      <div className="bg-surface border border-line self-start">
+      <div className="bg-surface border border-line self-start" aria-live="polite">
         <div className="border-b border-line px-5 py-3">
           <span className="kicker">O benefício, dos dois lados</span>
         </div>

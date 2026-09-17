@@ -41,9 +41,9 @@ export default function IrsPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left border-b-2 border-ink">
-                <th className="py-2 pr-4 font-medium">Rendimento coletável</th>
-                <th className="py-2 pr-4 font-medium text-right">Taxa normal</th>
-                <th className="py-2 font-medium text-right">Taxa média</th>
+                <th scope="col" className="py-2 pr-4 font-medium">Rendimento coletável</th>
+                <th scope="col" className="py-2 pr-4 font-medium text-right">Taxa normal</th>
+                <th scope="col" className="py-2 font-medium text-right">Taxa média</th>
               </tr>
             </thead>
             <tbody className="num">
@@ -86,9 +86,9 @@ export default function IrsPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left border-b-2 border-ink">
-                <th className="py-2 pr-4 font-medium">Bruto mensal até</th>
-                <th className="py-2 pr-4 font-medium text-right">Taxa marginal</th>
-                <th className="py-2 font-medium text-right">Parcela a abater</th>
+                <th scope="col" className="py-2 pr-4 font-medium">Bruto mensal até</th>
+                <th scope="col" className="py-2 pr-4 font-medium text-right">Taxa marginal</th>
+                <th scope="col" className="py-2 font-medium text-right">Parcela a abater</th>
               </tr>
             </thead>
             <tbody className="num">

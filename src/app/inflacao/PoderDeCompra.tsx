@@ -25,7 +25,7 @@ export function PoderDeCompra({ serie }: Props) {
   }, [serie, ano, valor]);
 
   return (
-    <div className="bg-surface border border-line px-5 py-5">
+    <div className="bg-surface border border-line px-5 py-5" aria-live="polite">
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="kicker block mb-1.5" htmlFor="pd-valor">Valor</label>
@@ -36,7 +36,7 @@ export function PoderDeCompra({ serie }: Props) {
             step={50}
             value={valor}
             onChange={(e) => setValor(Number(e.target.value) || 0)}
-            className="w-full bg-paper border border-line px-3 py-2 num text-sm focus:outline-none focus:border-line2"
+            className="field"
           />
         </div>
         <div>
@@ -45,7 +45,7 @@ export function PoderDeCompra({ serie }: Props) {
             id="pd-ano"
             value={ano}
             onChange={(e) => setAno(e.target.value)}
-            className="w-full bg-paper border border-line px-3 py-2 num text-sm focus:outline-none focus:border-line2"
+            className="field"
           >
             {anos.map((a) => (
               <option key={a} value={a}>{a}</option>

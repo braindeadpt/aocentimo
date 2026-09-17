@@ -1,41 +1,86 @@
 @import "tailwindcss";
 
-@theme {
-  /* Direcção C «A Conta» — neutros de papel, oxblood de assinatura,
-     verde-pinheiro reservado ao que é teu. Regras escritas em
-     docs/PLANO-REDESIGN-BRUTO.md §3 — amarelo = marcador de fonte,
-     nunca decoração. */
-  --color-paper: #faf7ee;
-  --color-surface: #ffffff;
-  --color-ink: #221f19;
-  --color-ink2: #6b6455;
-  --color-muted: #948c79;
-  --color-line: #eae4d4;
-  --color-line2: #cfc6b0;
+/* ————— Direcção «Observatório» — painel de instrumentos, dois temas —————
+   As cores vivem em variáveis CSS que trocam com [data-theme]; os tokens
+   Tailwind apontam para elas via @theme inline. Acento vermilhão-sinal;
+   verde reservado ao que é teu; torrado = marcador de fonte, nunca
+   decoração. */
 
-  --color-accent: #7e2b1e;
-  --color-accent-ink: #5c1f15;
-  --color-accent-soft: #f3e5de;
+:root {
+  color-scheme: light;
+  --paper: #f2f1ea;
+  --surface: #faf9f4;
+  --ink: #1b1811;
+  --ink2: #57534a;
+  --muted: #6f6a58;
+  --line: #e0dcc9;
+  --line2: #b7b19d;
 
-  --color-keep: #2f5d46;
-  --color-keep-soft: #e3ece6;
-  --color-mark: #c99a2e;
+  --accent: #b93a17;
+  --accent-ink: #8f2a10;
+  --accent-soft: #f6e3db;
 
-  --color-up: #8f3120;
-  --color-down: #2f5d46;
-  --color-warn: #b07e17;
+  --keep: #1f6b4d;
+  --keep-soft: #dfece4;
+  --mark: #a07c17;
 
-  /* dark — tokens prontos, aplicação na Fase 1 */
-  --color-night: #1a1713;
-  --color-night-surface: #242019;
-  --color-night-ink: #f0e9da;
-  --color-night-ink2: #a89f8c;
-  --color-night-accent: #ce7a5e;
-  --color-night-keep: #8fbca0;
+  --up: #b03016;
+  --down: #1f6b4d;
+  --warn: #a3720a;
+
+  --grain-opacity: 0.05;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #0e0c09;
+  --surface: #16130f;
+  --ink: #f2ecdd;
+  --ink2: #aba28c;
+  --muted: #8f8878;
+  --line: #2c271e;
+  --line2: #57503c;
+
+  --accent: #ff6133;
+  --accent-ink: #a03012;
+  --accent-soft: #331b0d;
+
+  --keep: #63d6a4;
+  --keep-soft: #16281f;
+  --mark: #f0c468;
+
+  --up: #ff6133;
+  --down: #63d6a4;
+  --warn: #f0c468;
+
+  --grain-opacity: 0.08;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink2: var(--ink2);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line2: var(--line2);
+
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+
+  --color-keep: var(--keep);
+  --color-keep-soft: var(--keep-soft);
+  --color-mark: var(--mark);
+
+  --color-up: var(--up);
+  --color-down: var(--down);
+  --color-warn: var(--warn);
 
   --font-display: var(--font-archivo), "Arial Black", sans-serif;
-  --font-sans: var(--font-serif), Georgia, "Times New Roman", serif;
-  --font-body: var(--font-serif), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-grotesk), "Segoe UI", system-ui, sans-serif;
+  --font-body: var(--font-grotesk), "Segoe UI", system-ui, sans-serif;
+  --font-editorial: var(--font-serif), Georgia, "Times New Roman", serif;
   --font-mono: var(--font-space), "Courier New", monospace;
 }
 
@@ -49,28 +94,41 @@ html {
 }
 
 body {
-  background: var(--color-paper);
-  color: var(--color-ink);
-  font-family: var(--font-sans);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* grão — textura fina que tira o aspecto "flat" aos dois temas */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 ::selection {
-  background: var(--color-accent);
-  color: var(--color-paper);
+  background: var(--accent);
+  color: var(--paper);
 }
 
-/* foco visível em torrado — precedente GOV.UK: o amarelo tem função */
+/* foco visível em torrado — o amarelo tem função, não é decoração */
 :focus-visible {
-  outline: 3px solid var(--color-mark);
+  outline: 3px solid var(--mark);
   outline-offset: 2px;
 }
 
 /* utilidades editoriais */
 .lede {
+  font-family: var(--font-editorial);
   font-size: 1.125rem;
   line-height: 1.7;
-  color: var(--color-ink2);
+  color: var(--ink2);
   max-width: 42rem;
 }
 
@@ -80,16 +138,16 @@ body {
 }
 
 .rule {
-  border-top: 1px solid var(--color-line);
+  border-top: 1px solid var(--line);
 }
 
 .rule-strong {
-  border-top: 2px solid var(--color-ink);
+  border-top: 2px solid var(--ink);
 }
 
 .footnote {
   font-size: 0.8125rem;
-  color: var(--color-muted);
+  color: var(--muted);
   line-height: 1.5;
 }
 
@@ -98,16 +156,15 @@ body {
   font-size: 0.6875rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  color: var(--muted);
 }
 
 /* selo de evidência — marcador de fonte em torrado */
 .srcmark {
-  color: var(--color-mark);
+  color: var(--mark);
 }
 
-/* botões — rectângulos de tinta, mono maiúsculo (o site é um ledger,
-   não uma app) */
+/* botões — rectângulos de tinta, mono maiúsculo */
 .btn {
   display: inline-flex;
   align-items: baseline;
@@ -117,34 +174,80 @@ body {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   padding: 0.7rem 1.1rem;
-  border: 1px solid var(--color-ink);
-  color: var(--color-ink);
+  border: 1px solid var(--ink);
+  color: var(--ink);
   background: transparent;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .btn:hover {
-  background: var(--color-ink);
-  color: var(--color-paper);
+  background: var(--ink);
+  color: var(--paper);
 }
 
 .btn-primary {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-  color: var(--color-paper);
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
 }
 
 .btn-primary:hover {
-  background: var(--color-accent-ink);
-  border-color: var(--color-accent-ink);
-  color: var(--color-paper);
+  background: var(--accent-ink);
+  border-color: var(--accent-ink);
+  color: var(--paper);
 }
 
 /* superfície — card limpo para blocos flutuantes */
 .card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-line);
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+/* campo de formulário — uma só classe, usada por todos os simuladores.
+   Fundo surface (visível sobre paper), foco pelo ring torrado global. */
+.field {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line2);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0;
+}
+.field:hover {
+  border-color: var(--ink2);
+}
+
+/* corpo editorial repetido nas páginas */
+.body-copy {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--ink2);
+}
+
+/* ————— o ticker — fio de dados vivos, assinatura do observatório ————— */
+.ticker {
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+}
+
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker-scroll 55s linear infinite;
+}
+
+.ticker:hover .ticker-track,
+.ticker:focus-within .ticker-track {
+  animation-play-state: paused;
+}
+
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 
 /* a barra do euro — segmento que cresce ao carregar */
@@ -154,11 +257,103 @@ body {
 }
 
 @keyframes eurobar-grow {
-  from {
-    transform: scaleX(0);
-  }
-  to {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* ————— a escada do euro — waterfall editorial —————
+   Barras totais crescem da base; os cortes do Estado crescem para
+   baixo, suspensos do nível anterior — o dinheiro literalmente cai. */
+.fluxo-barra {
+  animation: fluxo-cresce 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.fluxo-barra-baixo {
+  transform-box: fill-box;
+  transform-origin: bottom;
+}
+
+.fluxo-barra-cima {
+  transform-box: fill-box;
+  transform-origin: top;
+}
+
+@keyframes fluxo-cresce {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+/* painel-blueprint: grelha de pontos atrás do diagrama */
+.blueprint {
+  background-image: radial-gradient(var(--line2) 1px, transparent 1px);
+  background-size: 22px 22px;
+  background-position: center;
+}
+
+.fluxo-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.fluxo-valor-mini {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.fluxo-valor {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* capítulos — hover inverte a linha inteira, como um instrumento
+   que acende ao toque */
+.chapter-row {
+  position: relative;
+  isolation: isolate;
+}
+.chapter-row::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.28s cubic-bezier(0.23, 1, 0.32, 1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .chapter-row:hover::after {
     transform: scaleX(1);
+  }
+  .chapter-row:hover {
+    color: var(--paper);
+  }
+  .chapter-row:hover .chapter-dim {
+    color: var(--paper);
+    opacity: 0.7;
+  }
+  .chapter-row:hover .chapter-arrow {
+    transform: translateX(0.35rem);
+    color: var(--accent);
+  }
+}
+.chapter-arrow {
+  transition: transform 0.28s cubic-bezier(0.23, 1, 0.32, 1), color 0.2s ease;
+}
+
+/* transição de tema — suave, sem flash; o atributo é removido pelo
+   toggle após a transição e o bloco inteiro desliga-se em reduced-motion */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-theme-anim] body,
+  html[data-theme-anim] body * {
+    transition: background-color 0.3s ease, color 0.3s ease,
+      border-color 0.3s ease !important;
   }
 }
 
@@ -169,18 +364,53 @@ body {
   .eurobar-seg {
     animation: none;
   }
+  .ticker-track {
+    animation: none;
+  }
+  .ticker {
+    overflow-x: auto;
+    mask-image: none;
+  }
+  .chapter-row::after {
+    transition: none;
+  }
+  .fluxo-barra {
+    animation: none;
+  }
 }
 
 /* ————— Impressão — o relatório imprimível ————— */
 @media print {
+  /* tokens revertidos para a palete clara — imprimir em dark saía ilegível
+     (a lista de seletores garante especificidade ≥ [data-theme="dark"]) */
+  :root, :root[data-theme="dark"] {
+    --paper: #ffffff;
+    --surface: #ffffff;
+    --ink: #000000;
+    --ink2: #333333;
+    --muted: #555555;
+    --line: #cccccc;
+    --line2: #888888;
+    --accent: #8f2a10;
+    --accent-ink: #8f2a10;
+    --keep: #1f6b4d;
+    --mark: #6b5410;
+    --up: #8f2a10;
+    --down: #1f6b4d;
+    --warn: #6b5410;
+  }
   header,
   footer,
   nav,
   input,
   select,
   button,
+  .ticker,
   .btn-primary {
     display: none !important;
+  }
+  body::before {
+    display: none;
   }
   body {
     background: #fff;

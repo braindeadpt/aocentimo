@@ -2,10 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { simularDesemprego } from "@/lib/engines/desemprego";
+import { REGRAS_IRS } from "@/lib/engines/irs";
 import { fmtEUR } from "@/lib/format";
-
-const inputCls =
-  "w-full bg-paper border border-line px-3 py-2 num text-sm focus:outline-none focus:border-line2";
 
 export function SimuladorDesemprego() {
   const [bruto, setBruto] = useState(1500);
@@ -26,18 +24,18 @@ export function SimuladorDesemprego() {
         <div>
           <label className="kicker block mb-1.5" htmlFor="bruto-d">Salário bruto mensal (antes do desemprego)</label>
           <input id="bruto-d" type="number" min={0} step={50} value={bruto}
-            onChange={(e) => setBruto(Number(e.target.value) || 0)} className={inputCls} />
+            onChange={(e) => setBruto(Number(e.target.value) || 0)} className="field" />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="kicker block mb-1.5" htmlFor="idade">A tua idade</label>
             <input id="idade" type="number" min={16} max={66} value={idade}
-              onChange={(e) => setIdade(Number(e.target.value) || 16)} className={inputCls} />
+              onChange={(e) => setIdade(Number(e.target.value) || 16)} className="field" />
           </div>
           <div>
             <label className="kicker block mb-1.5" htmlFor="desc">Anos de descontos</label>
             <input id="desc" type="number" min={0} max={40} value={anosDescontos}
-              onChange={(e) => setAnosDescontos(Number(e.target.value) || 0)} className={inputCls} />
+              onChange={(e) => setAnosDescontos(Number(e.target.value) || 0)} className="field" />
           </div>
         </div>
         <label className="flex items-center gap-2 text-sm text-ink2">
@@ -54,7 +52,7 @@ export function SimuladorDesemprego() {
         </p>
       </div>
 
-      <div className="bg-surface border border-line self-start">
+      <div className="bg-surface border border-line self-start" aria-live="polite">
         <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
           <span className="kicker">O teu subsídio</span>
           <span className="num text-xs text-muted">65 % da remuneração de referência</span>
@@ -88,7 +86,8 @@ export function SimuladorDesemprego() {
               </dl>
             </div>
             <p className="footnote px-5 pb-4">
-              Limites: entre {fmtEUR(537.13)} e {fmtEUR(1342.83)} (1–2,5×IAS), e
+              Limites: entre {fmtEUR(REGRAS_IRS[2026].ias)} e{" "}
+              {fmtEUR(REGRAS_IRS[2026].ias * 2.5)} (1–2,5×IAS), e
               nunca acima de 75 % da remuneração líquida de referência. Pedido
               no IEFP até 90 dias após o fim do contrato.
             </p>
