@@ -101,14 +101,23 @@
   display: inline-block;
   white-space: nowrap;
 }
+/* o ¢ desenhado: viewBox 0 -6 30 34 — o arco ocupa a cap height (0–22),
+   a haste trespassa acima e abaixo como no sinal real */
 .logo-cent {
-  color: var(--keep);
+  display: inline-block;
+  height: 1.11em;
+  width: auto;
+  vertical-align: -0.2em;
+  margin-right: 0.04em;
+}
+.logo-cent-bar {
+  fill: var(--keep);
 }
 .logo-word--paper {
   color: #f0e9da;
 }
-.logo-word--paper .logo-cent {
-  color: #63d6a4;
+.logo-word--paper .logo-cent-bar {
+  fill: #63d6a4;
 }
 
 html {

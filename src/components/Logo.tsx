@@ -8,11 +8,10 @@ interface LogoProps {
 }
 
 /**
- * Wordmark AO CÊNTIMO — texto real (Archivo expandido), o C é o sinal
- * de cêntimo em verde-keep. Nada de letras posicionadas à mão em SVG:
- * escala com a fonte e adapta-se ao tema pelos tokens.
- * O tamanho controla-se com classes de font-size no call site
- * (ex.: text-3xl), não com alturas fixas.
+ * Wordmark AO CÊNTIMO — texto real (Archivo expandido). O C é o sinal
+ * de cêntimo desenhado à mão: arco à altura de cap em tinta (igual às
+ * letras — o glifo ¢ da fonte é minúsculo e desafinava) atravessado
+ * pela haste verde, «o que é teu». Escala com a fonte via em.
  */
 export function Logo({ variant = "ink", className }: LogoProps) {
   return (
@@ -21,7 +20,17 @@ export function Logo({ variant = "ink", className }: LogoProps) {
       aria-label="AO CÊNTIMO"
       className={`logo-word ${variant === "paper" ? "logo-word--paper" : ""} ${className ?? ""}`}
     >
-      AO&nbsp;<span className="logo-cent">¢</span>ÊNTIMO
+      AO&nbsp;
+      <svg viewBox="0 -6 30 34" aria-hidden className="logo-cent">
+        <path
+          d="M23.4 3.9 A11 11 0 1 0 23.4 18.1"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="3.8"
+        />
+        <rect x="12.9" y="-6" width="4.2" height="34" className="logo-cent-bar" />
+      </svg>
+      ÊNTIMO
     </span>
   );
 }
