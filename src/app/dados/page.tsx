@@ -112,7 +112,8 @@ export default function DadosPage() {
                 <th scope="col" className="py-2 pr-4 font-medium">Tipo de crédito</th>
                 <th scope="col" className="py-2 pr-4 font-medium text-right">Mercado (média)</th>
                 <th scope="col" className="py-2 pr-4 font-medium text-right">Teto {vigente.trimestre}</th>
-                {proximo && <th scope="col" className="py-2 font-medium text-right">Teto {proximo.trimestre}</th>}
+                {proximo && <th scope="col" className="py-2 pr-4 font-medium text-right">Teto {proximo.trimestre}</th>}
+                <th scope="col" className="py-2 font-medium text-right">Margem p/ teto</th>
               </tr>
             </thead>
             <tbody>
@@ -132,8 +133,30 @@ export default function DadosPage() {
                     </td>
                     <td className="py-2 pr-4 text-right num font-medium">{fmtNum(cap)} %</td>
                     {proximo && (
-                      <td className="py-2 text-right num text-ink2">{capProx !== null ? `${fmtNum(capProx)} %` : "—"}</td>
+                      <td className="py-2 pr-4 text-right num text-ink2">{capProx !== null ? `${fmtNum(capProx)} %` : "—"}</td>
                     )}
+                    <td className="py-2">
+                      {p && cap ? (
+                        <div className="flex items-center justify-end gap-2">
+                          <span
+                            className="relative inline-block h-2 w-20 bg-line"
+                            role="img"
+                            aria-label={`Mercado a ${fmtPct(p.v / cap, 0)} do teto legal`}
+                          >
+                            <span
+                              className="absolute inset-y-0 left-0 bg-accent"
+                              style={{ width: `${Math.min(100, (p.v / cap) * 100)}%` }}
+                            />
+                            <span className="absolute inset-y-0 right-0 w-px bg-ink" />
+                          </span>
+                          <span className="num w-14 text-right text-xs text-muted">
+                            {fmtNum(cap - p.v)} pp
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="num text-xs text-muted">—</span>
+                      )}
+                    </td>
                   </tr>
                 );
               })}

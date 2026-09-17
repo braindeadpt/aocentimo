@@ -83,7 +83,9 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
           cor: s.cor ?? CORES[i % CORES.length],
           pts: s.data
             .map(([t, v]) => ({ t: toMs(t), v }))
-            .sort((a, b) => a.t - b.t),
+            .sort((a, b) => a.t - b.t)
+            // datas repetidas (revisões na fonte): fica a última
+            .filter((p, i, arr) => i === arr.length - 1 || arr[i + 1].t !== p.t),
         }))
         .filter((d) => d.pts.length > 0),
     [series]

@@ -62,6 +62,19 @@ const serieSchema = z.object({
   series: z.array(z.object({ t: z.string(), v: z.number() })),
 });
 
+/**
+ * A API do BPstat devolve por vezes várias observações para o mesmo mês
+ * (revisões da série). Deduplicamos por `t`, ficando a última — a mais
+ * recente — e reordenamos.
+ */
+function dedupeMes(series: { t: string; v: number }[]) {
+  const porMes = new Map<string, number>();
+  for (const p of series) porMes.set(p.t, p.v);
+  return [...porMes.entries()]
+    .map(([t, v]) => ({ t, v }))
+    .sort((a, b) => a.t.localeCompare(b.t));
+}
+
 export async function fetchEuribor(prazo: PrazoEuribor): Promise<SerieGuardada> {
   const id = SERIES_EURIBOR[prazo];
   const url = `${BASE}?series_ids=${id}&lang=PT`;
@@ -69,9 +82,11 @@ export async function fetchEuribor(prazo: PrazoEuribor): Promise<SerieGuardada> 
   if (!res.ok) throw new Error(`BPstat Euribor ${prazo}: HTTP ${res.status}`);
 
   const { data } = respostaSchema.parse(await res.json());
-  const series = data
-    .map((o) => ({ t: o.reference_date.slice(0, 7), v: Number(o.value) }))
-    .filter((p) => Number.isFinite(p.v));
+  const series = dedupeMes(
+    data
+      .map((o) => ({ t: o.reference_date.slice(0, 7), v: Number(o.value) }))
+      .filter((p) => Number.isFinite(p.v))
+  );
   if (series.length === 0) throw new Error(`BPstat Euribor ${prazo}: série vazia`);
 
   const doc: SerieGuardada = {
@@ -96,9 +111,11 @@ export async function fetchTaeg(categoria: CategoriaTaeg): Promise<SerieGuardada
   if (!res.ok) throw new Error(`BPstat TAEG ${categoria}: HTTP ${res.status}`);
 
   const { data } = respostaSchema.parse(await res.json());
-  const series = data
-    .map((o) => ({ t: o.reference_date.slice(0, 7), v: Number(o.value) }))
-    .filter((p) => Number.isFinite(p.v));
+  const series = dedupeMes(
+    data
+      .map((o) => ({ t: o.reference_date.slice(0, 7), v: Number(o.value) }))
+      .filter((p) => Number.isFinite(p.v))
+  );
   if (series.length === 0) throw new Error(`BPstat TAEG ${categoria}: série vazia`);
 
   const doc: SerieGuardada = {
