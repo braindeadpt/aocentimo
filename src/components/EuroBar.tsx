@@ -4,7 +4,6 @@ export interface Segmento {
   label: string;
   valor: number;
   cor: string;
-  texto?: string; // cor do texto dentro do segmento
 }
 
 /**
@@ -42,7 +41,7 @@ export function EuroBar({
               {w >= 12 && (
                 <span
                   className="num absolute inset-0 flex items-center justify-center text-xs md:text-sm"
-                  style={{ color: s.texto ?? "var(--color-paper)" }}
+                  style={{ color: "var(--color-paper)" }}
                 >
                   {fmtPct(s.valor / total, 0)}
                 </span>

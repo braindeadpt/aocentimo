@@ -3,7 +3,6 @@
 // em que contamos cada euro que te chega. Verde = o que é teu.
 
 interface LogoProps {
-  variant?: "ink" | "paper";
   className?: string;
 }
 
@@ -13,12 +12,12 @@ interface LogoProps {
  * letras — o glifo ¢ da fonte é minúsculo e desafinava) atravessado
  * pela haste verde, «o que é teu». Escala com a fonte via em.
  */
-export function Logo({ variant = "ink", className }: LogoProps) {
+export function Logo({ className }: LogoProps) {
   return (
     <span
       role="img"
       aria-label="AO CÊNTIMO"
-      className={`logo-word ${variant === "paper" ? "logo-word--paper" : ""} ${className ?? ""}`}
+      className={`logo-word ${className ?? ""}`}
     >
       AO&nbsp;
       <svg viewBox="0 -6 30 34" aria-hidden className="logo-cent">
@@ -36,10 +35,10 @@ export function Logo({ variant = "ink", className }: LogoProps) {
 }
 
 /** Marca reduzida — o ¢ desenhado (arco de C + haste verde), para favicon/app icon. */
-export function LogoMark({ variant = "ink", className }: LogoProps) {
-  const bg = variant === "ink" ? "var(--ink)" : "#F0E9DA";
-  const fg = variant === "ink" ? "var(--paper)" : "#221F19";
-  const keep = variant === "ink" ? "#63D6A4" : "#1F6B4D";
+export function LogoMark({ className }: LogoProps) {
+  const bg = "var(--ink)";
+  const fg = "var(--paper)";
+  const keep = "#63D6A4";
   return (
     <svg viewBox="0 0 64 64" role="img" aria-label="AO CÊNTIMO" className={className}>
       <rect width="64" height="64" rx="14" fill={bg} />

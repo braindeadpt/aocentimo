@@ -18,10 +18,8 @@
 
   --accent: #b93a17;
   --accent-ink: #8f2a10;
-  --accent-soft: #f6e3db;
 
   --keep: #1f6b4d;
-  --keep-soft: #dfece4;
   --mark: #a07c17;
 
   --up: #b03016;
@@ -43,10 +41,8 @@
 
   --accent: #ff6133;
   --accent-ink: #a03012;
-  --accent-soft: #331b0d;
 
   --keep: #63d6a4;
-  --keep-soft: #16281f;
   --mark: #f0c468;
 
   --up: #ff6133;
@@ -67,10 +63,8 @@
 
   --color-accent: var(--accent);
   --color-accent-ink: var(--accent-ink);
-  --color-accent-soft: var(--accent-soft);
 
   --color-keep: var(--keep);
-  --color-keep-soft: var(--keep-soft);
   --color-mark: var(--mark);
 
   --color-up: var(--up);
@@ -79,7 +73,6 @@
 
   --font-display: var(--font-archivo), "Arial Black", sans-serif;
   --font-sans: var(--font-grotesk), "Segoe UI", system-ui, sans-serif;
-  --font-body: var(--font-grotesk), "Segoe UI", system-ui, sans-serif;
   --font-editorial: var(--font-serif), Georgia, "Times New Roman", serif;
   --font-mono: var(--font-space), "Courier New", monospace;
 }
@@ -113,13 +106,6 @@
 .logo-cent-bar {
   fill: var(--keep);
 }
-.logo-word--paper {
-  color: #f0e9da;
-}
-.logo-word--paper .logo-cent-bar {
-  fill: #63d6a4;
-}
-
 html {
   scroll-behavior: smooth;
 }
@@ -127,7 +113,7 @@ html {
 body {
   background: var(--paper);
   color: var(--ink);
-  font-family: var(--font-body);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.25s ease, color 0.25s ease;
 }
@@ -241,11 +227,6 @@ body::before {
     font-size: 0.6rem;
     letter-spacing: 0.14em;
   }
-}
-
-/* selo de evidência — marcador de fonte em torrado */
-.srcmark {
-  color: var(--mark);
 }
 
 /* botões — rectângulos de tinta, mono maiúsculo */
