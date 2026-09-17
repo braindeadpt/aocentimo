@@ -24,12 +24,44 @@ export default function SobrePage() {
         <p>
           É um projeto pessoal, sem publicidade e sem rastreamento. O código e
           os dados são abertos: cada número pode ser verificado na fonte, e cada
-          fórmula pode ser lida no repositório.
+          fórmula pode ser lida{" "}
+          <a
+            href="https://github.com/braindeadpt/aocentimo"
+            className="underline decoration-line2 underline-offset-2"
+          >
+            no repositório
+          </a>
+          .
         </p>
         <p>
           O desenho segue uma regra simples: se parecer gerado automaticamente,
           falhou. Um site sobre dinheiro público merece o cuidado de uma
           publicação de referência.
+        </p>
+      </div>
+
+      {/* autor + contacto — o plano §7 define a página como
+          "Autor, propósito, contacto"; os links são reais, nunca placeholder */}
+      <div className="body-copy mt-10 space-y-5 border-t border-line pt-6">
+        <p>
+          Autor —{" "}
+          <a
+            href="https://github.com/braindeadpt"
+            className="underline decoration-line2 underline-offset-2"
+          >
+            braindeadpt
+          </a>
+          .
+        </p>
+        <p>
+          Erros, sugestões e termos em falta para o glossário:{" "}
+          <a
+            href="https://github.com/braindeadpt/aocentimo/issues"
+            className="underline decoration-line2 underline-offset-2"
+          >
+            GitHub Issues
+          </a>
+          .
         </p>
       </div>
     </div>

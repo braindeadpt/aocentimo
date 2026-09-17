@@ -91,7 +91,14 @@ export default function DadosPage() {
       <p className="lede mt-5">
         Tudo o que muda por decreto ou por mercado, num só sítio: taxas de juro,
         tetos legais e prazos fiscais — com a data e a fonte à vista. Os mesmos
-        ficheiros estão abertos em <code className="num">/api/</code>.
+        ficheiros estão abertos em{" "}
+        <a
+          href="/api/index.json"
+          className="num underline decoration-line2 underline-offset-2"
+        >
+          /api/
+        </a>
+        .
       </p>
 
       <Figure
