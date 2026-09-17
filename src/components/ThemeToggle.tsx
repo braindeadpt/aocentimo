@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef, useSyncExternalStore } from "react";
+import { useSyncExternalStore } from "react";
 
 /**
- * Alternador claro/escuro. O tema vive em <html data-theme> e em
- * localStorage("bruto-theme"); a preferência inicial é resolvida por um
- * script inline no layout, antes da primeira pintura. O rótulo lê o DOM
- * via useSyncExternalStore — sem efeitos, sem estado duplicado.
+ * Alternador claro/escuro — apenas apresentação.
+ * O clique é tratado por um listener delegado no script inline do layout
+ * (vanilla JS, antes de qualquer hidratação): funciona mesmo numa página
+ * com React morto. Aqui só lemos data-theme via useSyncExternalStore para
+ * manter o rótulo e o aria-pressed sincronizados.
  */
 export function ThemeToggle() {
   const tema = useSyncExternalStore(
@@ -23,35 +24,11 @@ export function ThemeToggle() {
     () => "light"
   );
 
-  const animTimer = useRef(0);
-
-  function alternar() {
-    const proximo = tema === "dark" ? "light" : "dark";
-    const root = document.documentElement;
-    // transição suave só se o utilizador não pediu movimento reduzido;
-    // o atributo sai ao fim da transição para não prender transições
-    // globais !important para sempre
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      root.setAttribute("data-theme-anim", "");
-      clearTimeout(animTimer.current);
-      animTimer.current = window.setTimeout(
-        () => root.removeAttribute("data-theme-anim"),
-        400
-      );
-    }
-    root.dataset.theme = proximo;
-    try {
-      localStorage.setItem("bruto-theme", proximo);
-    } catch {
-      /* modo privado — a preferência não persiste, aceitável */
-    }
-  }
-
   const escuro = tema === "dark";
   return (
     <button
       type="button"
-      onClick={alternar}
+      data-theme-toggle
       aria-label={escuro ? "Mudar para tema claro" : "Mudar para tema escuro"}
       title={escuro ? "Mudar para tema claro" : "Mudar para tema escuro"}
       aria-pressed={escuro}

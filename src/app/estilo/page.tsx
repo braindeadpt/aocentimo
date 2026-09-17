@@ -56,7 +56,7 @@ export default function EstiloPage() {
       <section className="mt-10">
         <h2 className="kicker mb-4">Marca — «O Nível»</h2>
         <div className="card flex flex-wrap items-center gap-10 p-8">
-          <Logo className="h-12 w-auto" />
+          <Logo className="text-6xl" />
           <LogoMark className="h-16 w-16" />
           <p className="footnote max-w-sm">
             O U é um recipiente cheio a ~62 %: o que fica do custo total do

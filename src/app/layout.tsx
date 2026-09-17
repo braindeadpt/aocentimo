@@ -37,8 +37,12 @@ export const metadata: Metadata = {
   },
 };
 
-/** Resolve o tema antes da primeira pintura: localStorage → preferência do SO. */
-const themeInit = `(function(){try{var t=localStorage.getItem("bruto-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t;}catch(e){}})()`;
+/** Resolve o tema antes da primeira pintura: localStorage → preferência do SO.
+ *  E liga o toggle por delegação de eventos em vanilla JS — funciona mesmo
+ *  numa página que nunca hidratou (React morto, cache velha). O React só
+ *  sincroniza o rótulo do botão via MutationObserver no data-theme. */
+const themeInit = `(function(){try{var r=document.documentElement;var t=localStorage.getItem("bruto-theme");if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";r.dataset.theme=t;}catch(e){}
+document.addEventListener("click",function(e){var b=e.target&&e.target.closest?e.target.closest("[data-theme-toggle]"):null;if(!b)return;var root=document.documentElement;var next=root.dataset.theme==="dark"?"light":"dark";if(!matchMedia("(prefers-reduced-motion: reduce)").matches){root.setAttribute("data-theme-anim","");setTimeout(function(){root.removeAttribute("data-theme-anim")},400);}root.dataset.theme=next;try{localStorage.setItem("bruto-theme",next);}catch(x){}});})()`;
 
 export default function RootLayout({
   children,

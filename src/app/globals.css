@@ -8,8 +8,8 @@
 
 :root {
   color-scheme: light;
-  --paper: #f2f1ea;
-  --surface: #faf9f4;
+  --paper: #f4f3ec;
+  --surface: #fbfaf6;
   --ink: #1b1811;
   --ink2: #57534a;
   --muted: #6f6a58;
@@ -89,6 +89,36 @@
   font-variation-settings: "wdth" 125;
 }
 
+/* ————— wordmark — texto real; o U é um recipiente cheio a ~62 % ————— */
+.logo-word {
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-variation-settings: "wdth" 125;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  color: var(--ink);
+  text-transform: uppercase;
+  display: inline-block;
+  white-space: nowrap;
+}
+.logo-u {
+  background-image: linear-gradient(
+    to top,
+    var(--keep) 0%,
+    var(--keep) 58%,
+    var(--ink) 62%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.logo-word--paper {
+  color: #f0e9da;
+}
+.logo-word--paper .logo-u {
+  background-image: linear-gradient(to top, #8fbca0 0%, #8fbca0 58%, #f0e9da 62%);
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -99,6 +129,18 @@ body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* ————— tema claro = «o documento»: papel milimetrado de worksheet —————
+   a grelha de engenharia esbatida cobre a página inteira e mata o look
+   editorial-creme genérico; no escuro (o instrumento) não existe */
+:root:not([data-theme="dark"]) body {
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(to right, color-mix(in srgb, var(--ink) 9%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--ink) 9%, transparent) 1px, transparent 1px);
+  background-size: 28px 28px, 28px 28px, 140px 140px, 140px 140px;
 }
 
 /* grão — textura fina que tira o aspecto "flat" aos dois temas */
