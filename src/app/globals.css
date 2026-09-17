@@ -425,6 +425,15 @@ body::before {
   border-radius: 2px;
   pointer-events: none;
 }
+/* ecrã estreito: junto ao código de barras — espaço livre; em cima
+   colidia com o título. O efeito de carimbo (rotação, borda, tinta) fica. */
+@media (max-width: 480px) {
+  .carimbo {
+    top: auto;
+    bottom: 4.4rem;
+    right: 0.7rem;
+  }
+}
 /* código de barras — duas camadas de riscas sobrepostas */
 .talao-barras {
   height: 34px;

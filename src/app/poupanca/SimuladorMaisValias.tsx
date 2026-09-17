@@ -122,9 +122,9 @@ export function SimuladorMaisValias() {
             <dt className="text-ink2">Englobado nos teus escalões</dt>
             <dd className="num">{fmtEUR(r.impostoEnglobado)}</dd>
           </div>
-          <div className="flex justify-between py-2.5 mt-1 border-t-2 border-ink">
-            <dt className="font-medium">Pagas</dt>
-            <dd className="num font-medium text-lg text-up">
+          <div className="mt-1 flex items-baseline justify-between gap-4 border-t-2 border-ink py-2.5">
+            <dt className="shrink-0 font-medium">Pagas</dt>
+            <dd className="num text-right text-lg font-medium text-up">
               {fmtEUR(imposto)}
               <span className="block text-xs font-normal text-muted">
                 {r.melhor === "autonomo"

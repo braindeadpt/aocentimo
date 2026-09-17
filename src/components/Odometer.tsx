@@ -29,7 +29,11 @@ export function Odometer({
 
   let rodas = 0;
   return (
-    <span className={`odometer ${className ?? ""}`} aria-label={texto}>
+    <>
+      {/* (b) texto real em sr-only — dentro de aria-live um nome acessível
+          via aria-label num <span> genérico não é exposto; o texto é */}
+      <span className="sr-only">{texto}</span>
+      <span className={`odometer ${className ?? ""}`} aria-hidden="true">
       {texto.split("").map((ch, i) => {
         if (/\d/.test(ch)) {
           const d = Number(ch);
@@ -61,6 +65,7 @@ export function Odometer({
           </span>
         );
       })}
-    </span>
+      </span>
+    </>
   );
 }
