@@ -166,6 +166,29 @@ body::before {
   outline-offset: 2px;
 }
 
+/* skip-link — invisível até ao primeiro Tab; papel/tinta garantem AA nos
+   dois temas; z 70 fica acima do grão (body::before, z 60) */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 70;
+  transform: translateY(-300%);
+  padding: 0.55rem 0.9rem;
+  background: var(--paper);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform 120ms ease-out;
+}
+.skip-link:focus-visible {
+  transform: none;
+}
+
 /* utilidades editoriais */
 .lede {
   font-family: var(--font-editorial);

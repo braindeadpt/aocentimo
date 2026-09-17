@@ -59,9 +59,12 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
       <body className="min-h-screen flex flex-col">
+        <a href="#conteudo" className="skip-link">
+          Saltar para o conteúdo
+        </a>
         <SiteHeader />
         <Ticker />
-        <main className="flex-1">
+        <main id="conteudo" tabIndex={-1} className="flex-1">
           {/* cross-fade de página nas navegações — nav é lateral,
               sem deslizes direcionais falsos */}
           <ViewTransition>{children}</ViewTransition>
