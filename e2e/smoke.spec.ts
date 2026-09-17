@@ -63,6 +63,41 @@ test("nenhuma rota transborda na horizontal a 375 px", async ({ page }) => {
   }
 });
 
+test("nenhuma página mostra undefined, NaN ou Invalid Date", async ({ page }) => {
+  const rotas = [
+    "/",
+    "/salario",
+    "/inflacao",
+    "/impostos",
+    "/credito",
+    "/casa",
+    "/irs",
+    "/trabalho",
+    "/poupanca",
+    "/precos",
+    "/dados",
+    "/aprender",
+    "/metodologia",
+    "/sobre",
+  ];
+  const proibidas = ["undefined", "NaN", "Invalid Date"];
+  for (const path of rotas) {
+    await page.goto(path);
+    const texto = await page.locator("body").innerText();
+    for (const s of proibidas) {
+      expect(texto, `${path} mostra "${s}" no texto visível`).not.toContain(s);
+    }
+  }
+});
+
+test("o primeiro Tab foca o skip-link", async ({ page }) => {
+  await page.goto("/");
+  await page.keyboard.press("Tab");
+  const focado = page.locator(":focus");
+  await expect(focado).toHaveClass(/skip-link/);
+  await expect(focado).toHaveAttribute("href", "#conteudo");
+});
+
 test("painéis de dados, API e feed servem", async ({ page }) => {
   await page.goto("/dados");
   await expect(page.getByText("Euribor — médias mensais")).toBeVisible();
