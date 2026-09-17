@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Figure } from "@/components/Figure";
 import { SimuladorPrestacao } from "./SimuladorPrestacao";
+import { readFileSync } from "fs";
+import path from "path";
 
 export const metadata: Metadata = {
   title: "Crédito — Euribor, spread e prestação",
@@ -8,7 +10,20 @@ export const metadata: Metadata = {
     "O que é a Euribor, como o spread forma a TAN, e simulador de prestação de crédito habitação com custo total do empréstimo.",
 };
 
+/** Último valor e fim de série da Euribor 3M mensal recolhido do BPstat. */
+function euriborAtual(): { valor: number; ate: string } | null {
+  try {
+    const p = path.join(process.cwd(), "data/sources/bpstat/euribor-3m-mensal.json");
+    const d = JSON.parse(readFileSync(p, "utf8")) as { series: { t: string; v: number }[] };
+    const u = d.series.at(-1);
+    return u ? { valor: u.v, ate: u.t } : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function CreditoPage() {
+  const eur = euriborAtual();
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
       <p className="kicker">Módulo 04</p>
@@ -23,7 +38,7 @@ export default function CreditoPage() {
       </p>
 
       <Figure n={1} title="Simulador de prestação" source="Cálculo próprio — sistema de amortização francês">
-        <SimuladorPrestacao />
+        <SimuladorPrestacao euriborAtual={eur?.valor ?? null} euriborAte={eur?.ate ?? null} />
       </Figure>
 
       <section className="max-w-2xl py-8 text-ink2 text-[0.95rem] leading-relaxed space-y-4">
@@ -65,8 +80,9 @@ export default function CreditoPage() {
         </dl>
         <p>
           A Euribor média mensal chega aqui da API do Banco de Portugal
-          (BPstat) — no simulador de <a href="/casa" className="underline decoration-line2 underline-offset-2">comprar casa</a> já
-          vem preenchida. Acima, muda-a à vontade para sentir a
+          (BPstat) — vem preenchida neste simulador e no de{" "}
+          <a href="/casa" className="underline decoration-line2 underline-offset-2">comprar casa</a>.
+          Acima, muda-a à vontade para sentir a
           sensibilidade da tua prestação.
         </p>
       </section>
