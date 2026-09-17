@@ -162,5 +162,27 @@
     "manifestoLede": "Este site não te diz onde investir nem compara bancos. Mostra como o dinheiro funciona em Portugal — escalões, taxas, spreads, prémios — para perceberes as regras do jogo.",
     "manifestoFoot": "Quem percebe as regras, decide melhor. Simuladores indicativos ·",
     "metodologia": "metodologia e fontes"
+  },
+  "guess": {
+    "kicker": "adivinha primeiro",
+    "pergunta": "De cada 1,00 € que a empresa paga por ti, quantos cêntimos achas que te chegam?",
+    "inputLabel": "a tua aposta, em cêntimos",
+    "botao": "revelar",
+    "disseste": "disseste {aposta}",
+    "realidade": "a realidade",
+    "estadoFica": "o Estado fica com os outros {valor} — cada degrau abaixo é um corte",
+    "certeiro": "quase certeiro — raro",
+    "perto": "perto",
+    "longe": "longe — a maioria erra para cima",
+    "centimos": "cêntimos"
+  },
+  "escada": {
+    "titulo": "a escada, degrau a degrau",
+    "p0": "A empresa paga {valor} por mês por ti — mais do que o teu bruto.",
+    "p1": "Antes do recibo existir, o Estado já cortou {valor} — a TSU que a entidade paga ({taxa}).",
+    "p2": "O teu bruto: {valor}. É daqui que partem os teus descontos.",
+    "p3": "IRS retido na fonte: {valor} por mês.",
+    "p4": "A tua Segurança Social: {valor} ({taxa}).",
+    "p5": "Chegam-te {valor}. Dos {custo} que a empresa gastou, o Estado ficou com {estado}."
   }
 }

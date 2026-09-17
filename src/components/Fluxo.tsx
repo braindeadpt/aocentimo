@@ -11,7 +11,14 @@ import { m, t } from "@/lib/messages";
  * Números do motor fiscal: salário de 1 500 €, solteiro, 2026,
  * valores mensais. Largura = presença; nenhum rótulo toca uma barra.
  */
-export function Fluxo({ className }: { className?: string }) {
+export function Fluxo({
+  className,
+  destaque,
+}: {
+  className?: string;
+  /** índice da barra em foco no scrolly; as outras esbatem-se */
+  destaque?: number | null;
+}) {
   const med = simularSalario([1500], 0, 2026);
   const mensal = (v: number) => v / 14;
 
@@ -85,8 +92,11 @@ export function Fluxo({ className }: { className?: string }) {
 
   return (
     <div className={className}>
-      {/* equivalente tabular para leitores de ecrã — a escada em texto */}
-      <table className="sr-only">
+      {/* equivalente tabular para leitores de ecrã — a escada em texto.
+          sr-only no wrapper: uma <table> ignora width:1px (largura é do
+          conteúdo) e transbordava a página em mobile */}
+      <div className="sr-only">
+        <table>
         <caption>
           {t(m.fluxo.aria, { custo: fmtEUR0(custo), liquido: fmtEUR0(liquido) })}
         </caption>
@@ -102,7 +112,8 @@ export function Fluxo({ className }: { className?: string }) {
             <td>{fmtEUR0(estado)}</td>
           </tr>
         </tbody>
-      </table>
+        </table>
+      </div>
       <div className="overflow-x-auto">
         <svg
           viewBox="0 0 1000 440"
@@ -148,7 +159,12 @@ export function Fluxo({ className }: { className?: string }) {
             const top = y(b.top);
             const h = (b.top - b.bot) * k;
             return (
-              <g key={b.nome}>
+              <g
+                key={b.nome}
+                className={
+                  destaque == null || destaque === i ? "fluxo-passo" : "fluxo-passo fluxo-off"
+                }
+              >
                 <rect
                   className={`fluxo-barra fluxo-barra-${b.cresce}`}
                   x={b.x}

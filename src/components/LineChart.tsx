@@ -160,8 +160,10 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
 
   return (
     <div ref={wrap} className="relative w-full" role="img" aria-label={`Gráfico de linhas — ${descricao}`}>
-      {/* equivalente tabular para leitores de ecrã — últimos 24 pontos */}
-      <table className="sr-only">
+      {/* equivalente tabular para leitores de ecrã — últimos 24 pontos;
+          sr-only no wrapper porque uma <table> ignora width:1px */}
+      <div className="sr-only">
+        <table>
         <caption>Valores recentes do gráfico</caption>
         <thead>
           <tr>
@@ -187,8 +189,9 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
               </tr>
             );
           })}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
       <svg width={w} height={height} className="block" aria-hidden>
         {/* grelha horizontal + eixo y */}
         {yticks.map((v) => (

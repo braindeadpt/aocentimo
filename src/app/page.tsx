@@ -1,7 +1,8 @@
 import Link from "next/link";
+import { Adivinha } from "@/components/Adivinha";
 import { CountUp } from "@/components/CountUp";
 import { Delta } from "@/components/Delta";
-import { Fluxo } from "@/components/Fluxo";
+import { Escada } from "@/components/Escada";
 import { Source } from "@/components/Source";
 import { loadSerie, variacao, loadFontes } from "@/lib/data";
 import { fmtPct, fmtData } from "@/lib/format";
@@ -33,15 +34,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* o instrumento — um euro a fluir da empresa para ti */}
+      {/* o instrumento — adivinha primeiro, depois a escada revela */}
       <section className="blueprint mt-10 border border-line bg-surface px-5 py-6 md:px-8 md:py-8">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <p className="num text-[0.65rem] uppercase tracking-[0.16em] text-muted">
-            {h.euroTitulo}
-          </p>
+        <div className="flex justify-end">
           <p className="num text-xs text-muted">{h.euroNota}</p>
         </div>
-        <Fluxo className="mt-2" />
+        <Adivinha>
+          <Escada />
+        </Adivinha>
       </section>
 
       {/* quadro do dia — fila de instrumentos */}

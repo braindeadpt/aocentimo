@@ -66,18 +66,21 @@ export function Cascata({ passos }: { passos: Passo[] }) {
         })}
       </div>
 
-      <table className="sr-only">
-        <caption>Decomposição em cascata</caption>
-        <tbody>
-          {linhas.map((l) => (
-            <tr key={l.label}>
-              <td>{l.label}</td>
-              <td>{fmtEUR(l.valor)}</td>
-              <td>{fmtPct(total > 0 ? l.depois / total : 0)} do total</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {/* sr-only no wrapper: uma <table> ignora width:1px */}
+      <div className="sr-only">
+        <table>
+          <caption>Decomposição em cascata</caption>
+          <tbody>
+            {linhas.map((l) => (
+              <tr key={l.label}>
+                <td>{l.label}</td>
+                <td>{fmtEUR(l.valor)}</td>
+                <td>{fmtPct(total > 0 ? l.depois / total : 0)} do total</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

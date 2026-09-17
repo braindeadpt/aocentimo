@@ -325,6 +325,40 @@ body::before {
   to { transform: scaleY(1); }
 }
 
+/* ————— odometer — rodas de dígitos —————
+   O transform base é já a posição final (--d); a animação parte de 0 e
+   chega lá. Sem animação (reduced-motion) o valor final fica correto. */
+.od-wheel {
+  display: inline-block;
+  height: 1em;
+  overflow: hidden;
+  vertical-align: baseline;
+}
+.od-strip {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(calc(var(--d) * -1em));
+  animation: od-roll var(--dur, 1.4s) cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+.od-digit {
+  height: 1em;
+  line-height: 1;
+  text-align: center;
+}
+@keyframes od-roll {
+  from { transform: translateY(0); }
+  to { transform: translateY(calc(var(--d) * -1em)); }
+}
+
+/* scrolly da escada — barras fora de foco esbatem-se */
+.fluxo-passo {
+  transition: opacity 0.45s ease;
+}
+.fluxo-passo.fluxo-off {
+  opacity: 0.16;
+}
+
 /* painel-blueprint: grelha de pontos atrás do diagrama */
 .blueprint {
   background-image: radial-gradient(var(--line2) 1px, transparent 1px);
@@ -417,6 +451,9 @@ body::before {
     transition: none;
   }
   .fluxo-barra {
+    animation: none;
+  }
+  .od-strip {
     animation: none;
   }
 }
