@@ -1,5 +1,5 @@
 {
-  "verificadoEm": "2026-09-17T11:17:49.603Z",
+  "verificadoEm": "2026-09-17T16:27:15.780Z",
   "estado": "ok",
   "series": [
     {
@@ -233,6 +233,312 @@
       "serieAte": "2026-08",
       "esperadoAte": "2026-07",
       "frequencia": "mensal",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "euribor-1m-mensal",
+      "fonte": "Banco de Portugal — BPstat",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-07",
+      "frequencia": "mensal",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "euribor-3m-mensal",
+      "fonte": "Banco de Portugal — BPstat",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-07",
+      "frequencia": "mensal",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "euribor-6m-mensal",
+      "fonte": "Banco de Portugal — BPstat",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-07",
+      "frequencia": "mensal",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "euribor-12m-mensal",
+      "fonte": "Banco de Portugal — BPstat",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-07",
+      "frequencia": "mensal",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "pmd-gasoleo-diario",
+      "fonte": "DGEG — Preços dos Combustíveis",
+      "serieAte": "2026-09-15",
+      "esperadoAte": "2026-09-14",
+      "frequencia": "diaria",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "pmd-gasolina95-diario",
+      "fonte": "DGEG — Preços dos Combustíveis",
+      "serieAte": "2026-09-15",
+      "esperadoAte": "2026-09-14",
+      "frequencia": "diaria",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "pmd-gpl-diario",
+      "fonte": "DGEG — Preços dos Combustíveis",
+      "serieAte": "2026-09-15",
+      "esperadoAte": "2026-09-14",
+      "frequencia": "diaria",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-ca",
+      "fonte": "IGCP — curado",
+      "serieAte": "2026-09",
+      "esperadoAte": "2026-07",
+      "frequencia": "mensal",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-capitais",
+      "fonte": "OE/DR — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-irs-2025",
+      "fonte": "OE/DR — curado",
+      "serieAte": "2025",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-irs-2026",
+      "fonte": "OE/DR — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-isp",
+      "fonte": "AT/DR — curado",
+      "serieAte": "2026-07",
+      "esperadoAte": "2026-01",
+      "frequencia": "trimestral",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-iva",
+      "fonte": "OE/DR — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-retencao-2026",
+      "fonte": "OE/DR — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-smn",
+      "fonte": "OE/DR — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-ss",
+      "fonte": "OE/DR — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-desemprego",
+      "fonte": "Seg. Social/DL 220/2006 — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-imt-2026",
+      "fonte": "AT — Ofício 40129/2026 — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-irs-jovem",
+      "fonte": "Art. 12.º-B CIRS — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-subsidio-alimentacao",
+      "fonte": "Portaria 51-B/2026/1 — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-catb",
+      "fonte": "OE/DR — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-deducoes-2026",
+      "fonte": "OE/DR — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-mais-valias",
+      "fonte": "OE/DR — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-ppr",
+      "fonte": "OE/DR — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "taeg-pessoal-mensal",
+      "fonte": "Banco de Portugal — BPstat",
+      "serieAte": "2026-07",
+      "esperadoAte": "2026-07",
+      "frequencia": "mensal",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "taeg-pessoal-educacao-saude-energia-mensal",
+      "fonte": "Banco de Portugal — BPstat",
+      "serieAte": "2026-07",
+      "esperadoAte": "2026-07",
+      "frequencia": "mensal",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "taeg-pessoal-outros-mensal",
+      "fonte": "Banco de Portugal — BPstat",
+      "serieAte": "2026-07",
+      "esperadoAte": "2026-07",
+      "frequencia": "mensal",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "taeg-automovel-mensal",
+      "fonte": "Banco de Portugal — BPstat",
+      "serieAte": "2026-07",
+      "esperadoAte": "2026-07",
+      "frequencia": "mensal",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "taeg-automovel-novo-mensal",
+      "fonte": "Banco de Portugal — BPstat",
+      "serieAte": "2026-07",
+      "esperadoAte": "2026-07",
+      "frequencia": "mensal",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "taeg-automovel-usado-mensal",
+      "fonte": "Banco de Portugal — BPstat",
+      "serieAte": "2026-07",
+      "esperadoAte": "2026-07",
+      "frequencia": "mensal",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "taeg-automovel-ald-mensal",
+      "fonte": "Banco de Portugal — BPstat",
+      "serieAte": "2026-07",
+      "esperadoAte": "2026-07",
+      "frequencia": "mensal",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "taeg-renovavel-mensal",
+      "fonte": "Banco de Portugal — BPstat",
+      "serieAte": "2026-07",
+      "esperadoAte": "2026-07",
+      "frequencia": "mensal",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-calendario-2026",
+      "fonte": "OE/DR — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-usura-2026",
+      "fonte": "OE/DR — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
       "estado": "em-dia",
       "atrasoPeriodos": 0
     }
