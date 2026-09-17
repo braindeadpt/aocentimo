@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, ViewTransition } from "react";
 import { m } from "@/lib/messages";
 
 const NAV = [
@@ -64,13 +64,21 @@ export function SiteNav() {
             key={href}
             href={href}
             aria-current={ativo(href) ? "page" : undefined}
-            className={`num whitespace-nowrap text-[0.7rem] uppercase tracking-[0.1em] transition-colors ${
+            className={`num relative whitespace-nowrap text-[0.7rem] uppercase tracking-[0.1em] transition-colors ${
               ativo(href)
                 ? "text-accent"
                 : "text-ink2 hover:text-accent"
             }`}
           >
             {m.nav[key]}
+            {ativo(href) && (
+              <ViewTransition name="nav-ind" share="auto" default="none">
+                <span
+                  aria-hidden
+                  className="absolute inset-x-0 -bottom-1 h-[2px] bg-accent"
+                />
+              </ViewTransition>
+            )}
           </Link>
         ))}
       </nav>

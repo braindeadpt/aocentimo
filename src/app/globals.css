@@ -441,6 +441,42 @@ body::before {
     );
 }
 
+/* ————— view transitions — cross-fade de página, rápido e quieto ————— */
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: 0.24s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* o indicador da nav morfa posição/tamanho entre itens ativos */
+::view-transition-group(nav-ind) {
+  animation-duration: 0.35s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+::view-transition-old(nav-ind),
+::view-transition-new(nav-ind) {
+  animation: none;
+}
+
+/* kinetic type — palavras sobem de trás de uma máscara de linha */
+.kin-line {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.kin-word {
+  display: inline-block;
+  animation: kin-up 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i) * 60ms);
+}
+@keyframes kin-up {
+  from {
+    transform: translateY(110%);
+  }
+  to {
+    transform: none;
+  }
+}
+
 /* painel-blueprint: grelha de pontos atrás do diagrama */
 .blueprint {
   background-image: radial-gradient(var(--line2) 1px, transparent 1px);
@@ -537,6 +573,14 @@ body::before {
   }
   .od-strip {
     animation: none;
+  }
+  .kin-word {
+    animation: none;
+  }
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation: none !important;
   }
 }
 

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ViewTransition } from "react";
 import { Archivo, Source_Serif_4, Space_Grotesk, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -51,6 +52,7 @@ export default function RootLayout({
     <html
       lang="pt"
       suppressHydrationWarning
+      data-scroll-behavior="smooth"
       className={`${archivo.variable} ${grotesk.variable} ${serif.variable} ${spaceMono.variable}`}
     >
       <head>
@@ -59,7 +61,11 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col">
         <SiteHeader />
         <Ticker />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1">
+          {/* cross-fade de página nas navegações — nav é lateral,
+              sem deslizes direcionais falsos */}
+          <ViewTransition>{children}</ViewTransition>
+        </main>
         <SiteFooter />
       </body>
     </html>

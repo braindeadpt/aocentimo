@@ -3,6 +3,7 @@ import { Adivinha } from "@/components/Adivinha";
 import { CountUp } from "@/components/CountUp";
 import { Delta } from "@/components/Delta";
 import { Escada } from "@/components/Escada";
+import { Kinetic } from "@/components/Kinetic";
 import { Source } from "@/components/Source";
 import { loadSerie, variacao, loadFontes } from "@/lib/data";
 import { fmtPct, fmtData } from "@/lib/format";
@@ -22,8 +23,8 @@ export default function Home() {
       <section className="grid items-end gap-6 pt-12 md:grid-cols-12 md:pt-14">
         <div className="md:col-span-8">
           <h1 className="font-display text-5xl leading-[0.95] tracking-wide text-ink sm:text-6xl lg:text-7xl">
-            {h.h1a} {h.h1b}{" "}
-            <span className="text-accent">{h.h1c}</span>
+            <Kinetic texto={`${h.h1a} ${h.h1b}`} />{" "}
+            <Kinetic texto={h.h1c} desde={4} className="text-accent" />
           </h1>
         </div>
         <div className="md:col-span-4">
