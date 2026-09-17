@@ -17,8 +17,22 @@ export default function Home() {
   const alim = loadSerie("CP01");
   const fonteIpc = loadFontes().find((f) => f.id === "hicp-pt-cp00");
 
+  const ld = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "BRUTO",
+    url: "https://bruto.pt",
+    inLanguage: "pt-PT",
+    description:
+      "Literacia financeira para Portugal — seguimos 1 € do salário bruto até ao fim do mês. Simuladores e dados oficiais, cada número com fonte e data.",
+  };
+
   return (
     <div className="mx-auto max-w-6xl px-5">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
+      />
       {/* manchete compacta — o herói é o diagrama, não o titular */}
       <section className="grid items-end gap-6 pt-12 md:grid-cols-12 md:pt-14">
         <div className="md:col-span-8">
