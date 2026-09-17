@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Ticker } from "@/components/Ticker";
 import { ALT_FEED } from "@/lib/meta";
+import { SITE_URL } from "@/lib/site";
 
 const archivo = Archivo({
   subsets: ["latin"],
@@ -28,7 +29,7 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://aocentimo.js.org"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "AO CÊNTIMO — literacia financeira para Portugal",
     template: "%s · AO CÊNTIMO",

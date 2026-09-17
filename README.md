@@ -7,7 +7,7 @@ do salário bruto até ao fim do mês e mostramos quem fica com o quê — Estad
 banco, seguradora, supermercado. Cada número mostra a fonte e a data; quando
 uma fonte falha, mostramos a falha — nunca um número inventado.
 
-🔗 **https://aocentimo.js.org** (via GitHub Pages)
+🔗 **https://aocentimo.pt** (via GitHub Pages)
 
 ## O que tem
 

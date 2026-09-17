@@ -1,3 +1,5 @@
+import { SITE_URL } from "@/lib/site";
+
 /**
  * JSON-LD estruturado (schema.org) — um <script> por página, derivado de
  * conteúdo e dados reais. REGRA Nº1 aplica-se também aqui: nenhuma data
@@ -13,7 +15,7 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
 }
 
 const ORG = { "@type": "Organization", name: "AO CÊNTIMO" } as const;
-const BASE = "https://aocentimo.js.org";
+const BASE = SITE_URL;
 
 /** Simuladores — rotas com ferramenta interativa. */
 export function webApplication(nome: string, rota: string, descricao: string) {

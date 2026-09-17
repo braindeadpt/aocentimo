@@ -10,6 +10,7 @@ import { simularSalario } from "@/lib/engines/irs";
 import { TSU_ENTIDADE, TSU_TRABALHADOR } from "@/lib/engines/seg-social";
 import { fmtPct, fmtData } from "@/lib/format";
 import { m } from "@/lib/messages";
+import { SITE_URL } from "@/lib/site";
 import smn from "@data/fiscal/smn.json";
 import ca from "@data/fiscal/ca.json";
 
@@ -42,7 +43,7 @@ export default function Home() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "AO CÊNTIMO",
-    url: "https://aocentimo.js.org",
+    url: SITE_URL,
     inLanguage: "pt-PT",
     description:
       "Literacia financeira para Portugal — seguimos 1 € do salário bruto até ao fim do mês. Simuladores e dados oficiais, cada número com fonte e data.",

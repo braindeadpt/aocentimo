@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { readFileSync } from "fs";
 
 test("home renderiza com os números-chave", async ({ page }) => {
   await page.goto("/");
@@ -87,6 +88,37 @@ test("nenhuma página mostra undefined, NaN ou Invalid Date", async ({ page }) =
     for (const s of proibidas) {
       expect(texto, `${path} mostra "${s}" no texto visível`).not.toContain(s);
     }
+  }
+});
+
+test("canonical de cada página bate certo com o CNAME", async ({ page }) => {
+  // o domínio declarado em public/CNAME é a fonte de verdade do deploy —
+  // se divergir do canonical gerado, o SEO aponta para um domínio que
+  // não serve o site (defeito real que já aconteceu)
+  const host = readFileSync("public/CNAME", "utf8").trim();
+  const rotas = [
+    "/",
+    "/salario",
+    "/inflacao",
+    "/impostos",
+    "/credito",
+    "/casa",
+    "/irs",
+    "/trabalho",
+    "/poupanca",
+    "/precos",
+    "/dados",
+    "/aprender",
+    "/metodologia",
+    "/sobre",
+    "/estilo",
+  ];
+  for (const path of rotas) {
+    await page.goto(path);
+    const canon = await page
+      .locator('link[rel="canonical"]')
+      .getAttribute("href");
+    expect(canon, `${path}`).toBe(`https://${host}${path === "/" ? "" : path}`);
   }
 });
 

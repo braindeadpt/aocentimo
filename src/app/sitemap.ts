@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { loadFontes, loadDerivado } from "@/lib/data";
+import { SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-static";
 
@@ -18,7 +19,7 @@ function ultimaRecolha(ids: string[]): Date | undefined {
 }
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://aocentimo.js.org";
+  const base = SITE_URL;
   const fontes = loadFontes();
   const hicp = fontes.filter((f) => f.id.startsWith("hicp-pt-")).map((f) => f.id);
   const pmd = fontes.filter((f) => f.id.startsWith("pmd-")).map((f) => f.id);
