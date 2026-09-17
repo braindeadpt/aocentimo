@@ -15,11 +15,11 @@ export function SiteHeader() {
       {/* fio de cabeçalho: meta de edição + tema */}
       <div className="border-b border-line">
         <div className="mx-auto flex max-w-6xl items-baseline justify-between px-5 py-1.5">
-          <span className="num text-[0.65rem] uppercase tracking-[0.16em] text-muted">
+          <span className="kicker-sm">
             {m.brand.kicker}
           </span>
           <span className="flex items-center gap-4">
-            <span className="num hidden text-[0.65rem] uppercase tracking-[0.16em] text-muted sm:block">
+            <span className="kicker-sm hidden sm:block">
               {serieAte ? t(m.brand.dataUntil, { date: fmtData(serieAte) }) : m.brand.edition}
             </span>
             <ThemeToggle />

@@ -200,16 +200,16 @@ export function Fluxo({
 
       {/* portas para os capítulos */}
       <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t border-line pt-4">
-        <Link href="/impostos" className="num text-[0.68rem] uppercase tracking-[0.12em] text-ink2 transition-colors hover:text-accent">
+        <Link href="/impostos" className="kicker text-ink2 transition-colors hover:text-accent">
           {m.fluxo.linkEstado} →
         </Link>
-        <Link href="/salario" className="num text-[0.68rem] uppercase tracking-[0.12em] text-ink2 transition-colors hover:text-keep">
+        <Link href="/salario" className="kicker text-ink2 transition-colors hover:text-keep">
           {m.fluxo.linkTu} →
         </Link>
-        <Link href="/casa" className="num text-[0.68rem] uppercase tracking-[0.12em] text-ink2 transition-colors hover:text-accent">
+        <Link href="/casa" className="kicker text-ink2 transition-colors hover:text-accent">
           {m.fluxo.linkBanco} →
         </Link>
-        <Link href="/precos" className="num text-[0.68rem] uppercase tracking-[0.12em] text-ink2 transition-colors hover:text-accent">
+        <Link href="/precos" className="kicker text-ink2 transition-colors hover:text-accent">
           {m.fluxo.linkBomba} →
         </Link>
       </div>

@@ -194,13 +194,13 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
         <div className="talao">
           <span className="carimbo">simulação</span>
           <div className="talao-face px-6 pb-5 pt-7">
-            <p className="text-center text-[0.7rem] uppercase tracking-[0.3em]">
+            <p className="talao-head text-center">
               Recibo de vencimento
             </p>
-            <p className="mt-1 text-center text-[0.62rem] talao-dim">
+            <p className="talao-sub mt-1 text-center talao-dim">
               * * * simulado * * *
             </p>
-            <dl className="mt-4 text-[0.82rem] leading-relaxed">
+            <dl className="talao-body mt-4">
               <div className="talao-sep flex justify-between gap-4 py-1.5">
                 <dt className="talao-dim">SALÁRIO BRUTO</dt>
                 <dd>{fmtEUR(recibo.bruto)}</dd>
@@ -210,7 +210,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
                   <dt className="talao-dim">
                     SUBS. ALIMENTAÇÃO
                     {recibo.saTributavel > 0 && (
-                      <span className="block text-[0.68rem]">
+                      <span className="talao-note block">
                         {fmtEUR(recibo.saTributavel)} TRIBUTÁVEIS
                       </span>
                     )}
@@ -225,7 +225,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
               <div className="talao-sep flex justify-between gap-4 py-1.5">
                 <dt className="talao-dim">
                   IRS RETIDO
-                  <span className="block text-[0.68rem]">
+                  <span className="talao-note block">
                     TAXA EFETIVA {fmtPct(recibo.taxaEfetiva)}
                     {anoJovem > 0 && ` · JOVEM ${anoJovem}.º ANO`}
                   </span>
@@ -233,7 +233,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
                 <dd>{fmtEUR(recibo.retencao)} −</dd>
               </div>
               <div className="talao-cut mt-1 flex items-baseline justify-between gap-4 py-3">
-                <dt className="text-[0.72rem] uppercase tracking-[0.14em]">
+                <dt className="talao-total">
                   Líquido no fim do mês
                 </dt>
                 <dd className="text-2xl font-bold">{fmtEUR(recibo.liquido)}</dd>
@@ -244,7 +244,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
               </div>
             </dl>
             <div className="talao-barras mt-5" aria-hidden />
-            <p className="mt-2 flex justify-between text-[0.6rem] talao-dim">
+            <p className="talao-meta mt-2 flex justify-between talao-dim">
               <span>TABELA {recibo.tabela} · {ano}</span>
               <span>AOCENTIMO.JS.ORG</span>
             </p>
@@ -258,7 +258,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
 
       {/* a cascata — explica-me o recibo */}
       <div className="md:col-span-2">
-        <p className="num mb-3 text-[0.65rem] uppercase tracking-[0.16em] text-muted">
+        <p className="kicker-sm mb-3">
           Explica-me o recibo — para onde vai o bruto
         </p>
         <Cascata
@@ -336,7 +336,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
 
       {/* a barra do euro — sobre o custo total para a empresa */}
       <div className="md:col-span-2">
-        <p className="num mb-3 text-[0.65rem] uppercase tracking-[0.16em] text-muted">
+        <p className="kicker-sm mb-3">
           O custo total da empresa, partido em fatias
         </p>
         <EuroBar

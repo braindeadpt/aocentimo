@@ -17,7 +17,7 @@ export function EmptyState({
       role="status"
       className={`flex min-h-24 flex-col items-center justify-center gap-1 border border-dashed border-line2 px-4 py-6 text-center ${className}`}
     >
-      <p className="num text-[0.7rem] uppercase tracking-[0.14em] text-warn">
+      <p className="kicker text-warn">
         {titulo}
       </p>
       <p className="footnote max-w-sm">{detalhe}</p>

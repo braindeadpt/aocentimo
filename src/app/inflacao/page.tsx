@@ -172,7 +172,7 @@ export default function InflacaoPage() {
         )}
       </Figure>
 
-      <section className="max-w-2xl py-8 text-ink2 text-[0.95rem] leading-relaxed space-y-4">
+      <section className="body-copy max-w-2xl py-8 space-y-4">
         <h2 className="font-display text-2xl text-ink">Ler com honestidade</h2>
         <p>
           O IHPC mede um cabaz <em>médio</em>. O teu cabaz pessoal pode ter

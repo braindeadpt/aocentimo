@@ -152,7 +152,7 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
         </div>
 
         <div>
-          <p className="num mb-3 text-[0.65rem] uppercase tracking-[0.16em] text-muted">
+          <p className="kicker-sm mb-3">
             O dinheiro da escritura, partido
           </p>
           <EuroBar

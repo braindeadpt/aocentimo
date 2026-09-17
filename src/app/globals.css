@@ -217,12 +217,30 @@ body::before {
   line-height: 1.5;
 }
 
-.kicker {
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
+/* rótulos eyebrow — escala canónica: .kicker + duas variantes densas.
+   Em @layer components para que utilitários (text-accent, text-ink2,
+   text-warn…) sobreponham a cor contextualmente. */
+@layer components {
+  .kicker,
+  .kicker-sm,
+  .kicker-xs {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .kicker {
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+  }
+  .kicker-sm {
+    font-size: 0.65rem;
+    letter-spacing: 0.16em;
+  }
+  .kicker-xs {
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+  }
 }
 
 /* selo de evidência — marcador de fonte em torrado */
@@ -289,7 +307,7 @@ body::before {
 /* corpo editorial repetido nas páginas */
 .body-copy {
   font-size: 0.95rem;
-  line-height: 1.65;
+  line-height: 1.625;
   color: var(--ink2);
 }
 
@@ -300,6 +318,10 @@ body::before {
   mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
 }
 
+.ticker-item {
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+}
 .ticker-track {
   display: flex;
   width: max-content;
@@ -431,6 +453,31 @@ body::before {
 }
 .talao-dim {
   color: rgba(44, 36, 19, 0.62);
+}
+/* micro-escala própria do talão — typesetting de impressora térmica,
+   independente da escala de rótulos do site */
+.talao-head {
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+.talao-sub {
+  font-size: 0.62rem;
+}
+.talao-body {
+  font-size: 0.82rem;
+  line-height: 1.625;
+}
+.talao-note {
+  font-size: 0.68rem;
+}
+.talao-total {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.talao-meta {
+  font-size: 0.6rem;
 }
 /* carimbo — SIMULAÇÃO, rodado como tinta de borracha */
 .carimbo {

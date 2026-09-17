@@ -103,7 +103,7 @@ export default function PrecosPage() {
         <DecomposicaoFuel />
       </Figure>
 
-      <section className="max-w-2xl py-8 text-ink2 text-[0.95rem] leading-relaxed space-y-4">
+      <section className="body-copy max-w-2xl py-8 space-y-4">
         <h2 className="font-display text-2xl text-ink">Porque não há preços de supermercado aqui</h2>
         <p>
           Não existe uma API oficial com o preço do leite ou do pão em cada

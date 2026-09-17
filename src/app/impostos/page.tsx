@@ -51,7 +51,7 @@ export default function ImpostosPage() {
         <DecomposicaoFuel />
       </Figure>
 
-      <section className="max-w-2xl py-8 text-ink2 text-[0.95rem] leading-relaxed space-y-4">
+      <section className="body-copy max-w-2xl py-8 space-y-4">
         <h2 className="font-display text-2xl text-ink">A cascata que ninguém vê</h2>
         <p>
           No combustível acontece uma coisa peculiar: o IVA de 23 % incide sobre

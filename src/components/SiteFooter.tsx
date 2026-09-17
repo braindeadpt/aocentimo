@@ -12,7 +12,7 @@ export function SiteFooter() {
             <p className="footnote mt-3 max-w-sm">{m.footer.blurb}</p>
           </div>
           <div className="text-sm text-ink2">
-            <p className="num mb-3 text-[0.65rem] uppercase tracking-[0.16em] text-muted">
+            <p className="kicker-sm mb-3">
               {m.footer.indexTitle}
             </p>
             <ul className="space-y-1.5">
@@ -22,17 +22,17 @@ export function SiteFooter() {
             </ul>
           </div>
           <div>
-            <p className="num mb-3 text-[0.65rem] uppercase tracking-[0.16em] text-muted">
+            <p className="kicker-sm mb-3">
               {m.footer.noticeTitle}
             </p>
             <p className="footnote">{m.footer.notice}</p>
           </div>
         </div>
         <div className="rule mt-10 pt-4 flex flex-wrap items-baseline justify-between gap-3">
-          <p className="num text-[0.65rem] uppercase tracking-[0.16em] text-muted">
+          <p className="kicker-sm">
             {new Date().getFullYear()} · {m.footer.madeIn}
           </p>
-          <p className="num text-[0.65rem] uppercase tracking-[0.16em] text-muted">
+          <p className="kicker-sm">
             {m.footer.sources}
           </p>
         </div>

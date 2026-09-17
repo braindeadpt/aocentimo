@@ -121,7 +121,7 @@ export default function IrsPage() {
         <SimuladorIrsJovem ano={ANO} />
       </Figure>
 
-      <section className="max-w-2xl py-8 space-y-4 text-ink2 text-[0.95rem] leading-relaxed">
+      <section className="body-copy max-w-2xl py-8 space-y-4">
         <h2 className="font-display text-2xl text-ink">O que contar ao IRS Jovem</h2>
         <p>
           Até aos {irsJovem.idadeMax} anos, nos primeiros{" "}

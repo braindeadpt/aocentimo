@@ -62,7 +62,7 @@ export default function Home() {
       {/* quadro do dia — fila de instrumentos */}
       <section className="mt-16 grid grid-cols-2 border border-line bg-surface md:grid-cols-4">
         <div className="border-b border-r border-line px-5 py-5 md:border-b-0">
-          <p className="num text-[0.62rem] uppercase tracking-[0.14em] text-muted">
+          <p className="kicker-xs">
             {h.inflacaoHomologa}
           </p>
           <p className="num mt-2 text-3xl text-ink">
@@ -71,7 +71,7 @@ export default function Home() {
           {ipc && <p className="footnote mt-1">{fmtData(ipc.meta.serieAte)}</p>}
         </div>
         <div className="border-b border-line px-5 py-5 md:border-b-0 md:border-r">
-          <p className="num text-[0.62rem] uppercase tracking-[0.14em] text-muted">
+          <p className="kicker-xs">
             {h.alimentacao}
           </p>
           <p className="num mt-2 text-3xl text-ink">
@@ -80,7 +80,7 @@ export default function Home() {
           <p className="footnote mt-1">{h.ihpcCP01}</p>
         </div>
         <div className="border-r border-line px-5 py-5">
-          <p className="num text-[0.62rem] uppercase tracking-[0.14em] text-muted">
+          <p className="kicker-xs">
             {h.salarioMinimo}
           </p>
           <p className="num mt-2 text-3xl text-ink">
@@ -89,7 +89,7 @@ export default function Home() {
           <p className="footnote mt-1">{h.smnNota}</p>
         </div>
         <div className="px-5 py-5">
-          <p className="num text-[0.62rem] uppercase tracking-[0.14em] text-muted">{h.ca}</p>
+          <p className="kicker-xs">{h.ca}</p>
           <p className="num mt-2 text-3xl text-ink">
             {fmtPct(ca.serieF.taxaBrutaNovasSubscricoes, 2)}
           </p>

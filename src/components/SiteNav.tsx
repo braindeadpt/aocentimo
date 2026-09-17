@@ -64,7 +64,7 @@ export function SiteNav() {
             key={href}
             href={href}
             aria-current={ativo(href) ? "page" : undefined}
-            className={`num relative whitespace-nowrap text-[0.7rem] uppercase tracking-[0.1em] transition-colors ${
+            className={`kicker relative whitespace-nowrap transition-colors ${
               ativo(href)
                 ? "text-accent"
                 : "text-ink2 hover:text-accent"
@@ -84,7 +84,7 @@ export function SiteNav() {
       </nav>
       <div className="flex items-center gap-3 xl:hidden">
         <details ref={detalhes} className="relative">
-          <summary className="num cursor-pointer list-none text-[0.72rem] uppercase tracking-[0.12em] text-ink2">
+          <summary className="kicker cursor-pointer list-none text-ink2">
             {m.nav.index}
           </summary>
           <nav aria-label="Principal" className="absolute right-0 top-7 z-50 flex w-44 flex-col border border-ink bg-surface">

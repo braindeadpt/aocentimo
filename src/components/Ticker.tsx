@@ -82,7 +82,7 @@ export function Ticker() {
           <span
             key={`${it.label}-${i}`}
             aria-hidden={i >= itens.length}
-            className="num inline-flex items-baseline gap-2 whitespace-nowrap px-6 py-1.5 text-[0.68rem] tracking-[0.06em]"
+            className="num ticker-item inline-flex items-baseline gap-2 whitespace-nowrap px-6 py-1.5"
           >
             <span className="text-muted">{it.label}</span>
             <span className="text-ink">{it.valor}</span>

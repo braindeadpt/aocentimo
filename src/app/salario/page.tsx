@@ -77,7 +77,7 @@ export default function SalarioPage() {
         </p>
       </Figure>
 
-      <section className="max-w-2xl py-8 space-y-4 text-ink2 text-[0.95rem] leading-relaxed">
+      <section className="body-copy max-w-2xl py-8 space-y-4">
         <h2 className="font-display text-2xl text-ink">O que a calculadora faz</h2>
         <p>
           1. Soma os 14 meses (salário + subsídios de férias e Natal).{" "}

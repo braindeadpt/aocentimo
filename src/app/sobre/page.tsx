@@ -12,7 +12,7 @@ export default function SobrePage() {
       <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
         Porque existe o AO CÊNTIMO
       </h1>
-      <div className="mt-8 space-y-5 text-ink2 text-[0.95rem] leading-relaxed">
+      <div className="body-copy mt-8 space-y-5">
         <p>
           Em Portugal fala-se de dinheiro todos os dias — escalões, Euribor,
           spread, retenção — mas poucos sítios explicam a mecânica por trás das

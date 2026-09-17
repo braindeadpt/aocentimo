@@ -60,7 +60,7 @@ export function Escada() {
         <Fluxo destaque={ativo} />
       </div>
       <div className="lg:col-span-4">
-        <p className="num text-[0.62rem] uppercase tracking-[0.16em] text-muted">
+        <p className="kicker-xs">
           {m.escada.titulo}
         </p>
         {passos.map((p, i) => (

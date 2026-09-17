@@ -84,7 +84,7 @@ export function SimuladorIrsJovem({ ano }: { ano: number }) {
         </div>
 
         <div>
-          <p className="num mb-3 text-[0.65rem] uppercase tracking-[0.16em] text-muted">
+          <p className="kicker-sm mb-3">
             Os 10 anos, um a um
           </p>
           <table className="w-full text-sm bg-surface border border-line">

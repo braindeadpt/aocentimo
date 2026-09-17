@@ -25,7 +25,7 @@ export default function AprenderPage() {
         {GLOSSARIO.map((t) => (
           <article key={t.slug} id={t.slug} className="py-6 grid md:grid-cols-[220px_1fr] gap-2 md:gap-8">
             <h2 className="font-display text-xl text-ink">{t.termo}</h2>
-            <div className="text-ink2 text-[0.95rem] leading-relaxed">
+            <div className="body-copy">
               <p>{t.definicao}</p>
               {t.exemplo && (
                 <p className="footnote mt-2">

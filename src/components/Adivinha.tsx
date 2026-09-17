@@ -38,7 +38,7 @@ export function Adivinha({ children }: { children: React.ReactNode }) {
         }}
       >
         <div className="min-w-0 flex-1 basis-64">
-          <p className="num text-[0.62rem] uppercase tracking-[0.16em] text-accent">
+          <p className="kicker-xs text-accent">
             {m.guess.kicker}
           </p>
           <p className="mt-1 font-display text-xl leading-snug tracking-wide text-ink md:text-2xl">
@@ -47,7 +47,7 @@ export function Adivinha({ children }: { children: React.ReactNode }) {
         </div>
         <div className="flex items-end gap-3">
           <label className="block w-24">
-            <span className="num text-[0.6rem] uppercase tracking-[0.14em] text-muted">
+            <span className="kicker-xs">
               {m.guess.inputLabel}
             </span>
             <input
@@ -74,7 +74,7 @@ export function Adivinha({ children }: { children: React.ReactNode }) {
             <span className="num text-sm text-muted">
               {t(m.guess.disseste, { aposta: String(Math.round(aposta)) })} · {veredicto}
             </span>
-            <span className="num text-sm uppercase tracking-[0.14em] text-muted">
+            <span className="kicker text-sm">
               {m.guess.realidade}
             </span>
             <Odometer

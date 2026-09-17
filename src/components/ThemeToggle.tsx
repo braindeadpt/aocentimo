@@ -32,7 +32,7 @@ export function ThemeToggle() {
       aria-label={escuro ? "Mudar para tema claro" : "Mudar para tema escuro"}
       title={escuro ? "Mudar para tema claro" : "Mudar para tema escuro"}
       aria-pressed={escuro}
-      className="num inline-flex items-center gap-1.5 border border-line2 px-2 py-1 text-[0.65rem] uppercase tracking-[0.12em] text-ink2 transition-colors hover:border-ink hover:text-ink"
+      className="kicker-sm inline-flex items-center gap-1.5 border border-line2 px-2 py-1 text-ink2 transition-colors hover:border-ink hover:text-ink"
     >
       {/* círculo: cheio no escuro, vazado no claro — mostra o estado */}
       <span

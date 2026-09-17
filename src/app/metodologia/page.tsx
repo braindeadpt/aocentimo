@@ -139,7 +139,7 @@ export default function MetodologiaPage() {
         )}
       </section>
 
-      <section className="mt-12 max-w-2xl space-y-4 text-ink2 text-[0.95rem] leading-relaxed pb-8">
+      <section className="body-copy mt-12 max-w-2xl space-y-4 pb-8">
         <h2 className="font-display text-2xl text-ink">Limitações honestas</h2>
         <ul className="list-disc pl-5 space-y-2">
           <li>A inflação oficial é um índice de cabaz médio — não o preço do teu cabaz.</li>

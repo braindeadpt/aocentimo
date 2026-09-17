@@ -46,7 +46,7 @@ export default function CasaPage() {
         <SimuladorCasa euriborAtual={eur} />
       </Figure>
 
-      <section className="max-w-2xl py-8 space-y-4 text-ink2 text-[0.95rem] leading-relaxed">
+      <section className="body-copy max-w-2xl py-8 space-y-4">
         <h2 className="font-display text-2xl text-ink">Os impostos da escritura</h2>
         <p>
           <strong>IMT</strong> incide sobre o maior valor entre preço e VPT, em

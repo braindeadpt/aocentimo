@@ -101,10 +101,23 @@ export default function EstiloPage() {
             </p>
           </div>
           <div className="py-5">
-            <p className="kicker mb-2">Interface — Space Grotesk</p>
+            <p className="kicker mb-2">Interface — Space Grotesk · .body-copy</p>
             <p className="body-copy">
               O corpo da interface e das páginas. Neutro, técnico, sem ser
               genérico — o par natural do Space Mono dos números.
+            </p>
+          </div>
+          <div className="py-5">
+            <p className="kicker mb-2">Rótulos — .kicker, mono maiúsculo</p>
+            <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
+              <p className="kicker">.kicker · 0.6875rem / 0.14em</p>
+              <p className="kicker-sm">.kicker-sm · 0.65rem / 0.16em</p>
+              <p className="kicker-xs">.kicker-xs · 0.6rem / 0.14em</p>
+            </div>
+            <p className="footnote mt-2">
+              A cor por defeito é muted; contextos com outra cor sobrepõem com
+              text-* (acento, tinta, aviso). O talão tem escala própria
+              (talao-*) — é um documento, não chrome do site.
             </p>
           </div>
           <div className="py-5">
