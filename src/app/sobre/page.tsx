@@ -9,7 +9,7 @@ export default function SobrePage() {
   return (
     <div className="mx-auto max-w-2xl px-5 pt-14 pb-10">
       <p className="kicker">Sobre</p>
-      <h1 className="font-display text-4xl md:text-6xl tracking-wide mt-2 uppercase">
+      <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
         Porque existe o AO CÊNTIMO
       </h1>
       <div className="mt-8 space-y-5 text-ink2 text-[0.95rem] leading-relaxed">

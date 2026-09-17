@@ -30,7 +30,7 @@ export function Source({ nome, url, vigencia, serieAte, recolhidoEm, nota }: Sou
   if (nota) partes.push(nota);
 
   return (
-    <p className="footnote">
+    <p className="footnote wrap-break-word">
       <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-mark align-middle" />
       {m.common.fonte}:{" "}
       {url ? (

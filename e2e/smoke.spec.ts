@@ -34,6 +34,35 @@ test("simuladores novos produzem resultado", async ({ page }) => {
   await expect(page.getByText("O teu subsídio")).toBeVisible();
 });
 
+test("nenhuma rota transborda na horizontal a 375 px", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 800 });
+  const rotas = [
+    "/",
+    "/salario",
+    "/inflacao",
+    "/impostos",
+    "/credito",
+    "/casa",
+    "/irs",
+    "/trabalho",
+    "/poupanca",
+    "/precos",
+    "/dados",
+    "/aprender",
+    "/metodologia",
+    "/sobre",
+    "/estilo",
+    "/rota-que-nao-existe", // 404
+  ];
+  for (const path of rotas) {
+    await page.goto(path);
+    const excesso = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+    );
+    expect(excesso, `${path} tem overflow horizontal`).toBeLessThanOrEqual(1);
+  }
+});
+
 test("painéis de dados, API e feed servem", async ({ page }) => {
   await page.goto("/dados");
   await expect(page.getByText("Euribor — médias mensais")).toBeVisible();

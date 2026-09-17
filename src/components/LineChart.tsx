@@ -26,6 +26,13 @@ const CORES = [
 ];
 
 const PAD = { top: 16, right: 132, bottom: 30, left: 46 };
+/** ecrã estreito: sem rótulos de fim — o espaço é todo para a curva */
+const PAD_SM = { top: 16, right: 8, bottom: 30, left: 46 };
+/** abaixo desta largura: legenda em linha por baixo em vez de rótulos de fim */
+const COMPACTO = 560;
+
+/** 1 casa decimal chega — o SVG está em unidades de pixel. */
+const r1 = (n: number) => Math.round(n * 10) / 10;
 
 function toMs(iso: string): number {
   const [y, m, d] = iso.split("-").map(Number);
@@ -46,11 +53,11 @@ function niceTicks(min: number, max: number, count = 4) {
   return { ticks, lo, hi };
 }
 
-function yearTicks(t0: number, t1: number): number[] {
+function yearTicks(t0: number, t1: number, maxTicks: number): number[] {
   const y0 = new Date(t0).getUTCFullYear();
   const y1 = new Date(t1).getUTCFullYear();
   const n = y1 - y0 + 1;
-  const step = Math.ceil(n / 8);
+  const step = Math.ceil(n / maxTicks);
   const ticks: number[] = [];
   for (let y = y0; y <= y1; y += step) ticks.push(Date.UTC(y, 0, 1));
   return ticks;
@@ -58,8 +65,15 @@ function yearTicks(t0: number, t1: number): number[] {
 
 /**
  * Gráfico de linhas editorial — SVG próprio, sem biblioteca.
- * Rótulos no fim da linha (à maneira do FT), tooltip ao hover/focus,
- * números mono tabulares. `prefers-reduced-motion`: estado final já.
+ * Rótulos no fim da linha (à maneira do FT); em ecrã estreito, legenda em
+ * linha por baixo. Tooltip ao hover/focus, números mono tabulares.
+ * `prefers-reduced-motion`: estado final já.
+ *
+ * Responsivo sem salto: o <svg> tem caixa CSS final (w-full × height) e
+ * viewBox com preserveAspectRatio="none" — o primeiro paint preenche já o
+ * contentor; o ResizeObserver recalcula a geometria em px antes do paint,
+ * corrigindo qualquer deformação transitória. A alternativa (viewBox com
+ * aspecto fixo) mudava a altura renderizada consoante a largura — CLS.
  */
 export function LineChart({ series, height = 360, unidade = "" }: Props) {
   const yFormat = (v: number) => (unidade ? `${fmtNum(v)} ${unidade}` : fmtNum(v));
@@ -74,6 +88,9 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
+
+  const compacto = w < COMPACTO;
+  const pad = compacto ? PAD_SM : PAD;
 
   const dados = useMemo(
     () =>
@@ -97,10 +114,11 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
     const t0 = Math.min(...ts);
     const t1 = Math.max(...ts);
     const { ticks, lo, hi } = niceTicks(Math.min(...vs), Math.max(...vs));
+    const plotW = w - pad.left - pad.right;
     const x = (t: number) =>
-      PAD.left + ((t - t0) / (t1 - t0 || 1)) * (w - PAD.left - PAD.right);
+      r1(pad.left + ((t - t0) / (t1 - t0 || 1)) * plotW);
     const y = (v: number) =>
-      PAD.top + (1 - (v - lo) / (hi - lo || 1)) * (height - PAD.top - PAD.bottom);
+      r1(pad.top + (1 - (v - lo) / (hi - lo || 1)) * (height - pad.top - pad.bottom));
     // posição dos rótulos de fim de linha — relaxação em duas passagens:
     // empurra para baixo, e se a fila transbordar o fim do gráfico,
     // sobe o bloco inteiro para dentro da área útil
@@ -109,10 +127,10 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
       .sort((a, b) => a.y - b.y);
     let prev = -Infinity;
     for (const f of fim) {
-      f.y = Math.max(f.y, prev + 15, PAD.top + 6);
+      f.y = Math.max(f.y, prev + 15, pad.top + 6);
       prev = f.y;
     }
-    const limite = PAD.top + (height - PAD.top - PAD.bottom) - 6;
+    const limite = pad.top + (height - pad.top - pad.bottom) - 6;
     const excesso = fim.length ? fim[fim.length - 1].y - limite : 0;
     if (excesso > 0) {
       for (let i = fim.length - 1; i >= 0; i--) {
@@ -122,20 +140,20 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
     }
     return {
       escala: { x, y },
-      xticks: yearTicks(t0, t1),
+      xticks: yearTicks(t0, t1, Math.max(2, Math.floor(plotW / 56))),
       yticks: ticks,
       fim,
     };
-  }, [dados, w, height]);
+  }, [dados, w, height, pad]);
 
   const { x, y } = escala;
-  const plotW = w - PAD.left - PAD.right;
-  const plotH = height - PAD.top - PAD.bottom;
+  const plotW = w - pad.left - pad.right;
+  const plotH = height - pad.top - pad.bottom;
 
   const onMove = (e: React.PointerEvent<SVGRectElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const frac = (e.clientX - rect.left - PAD.left) / plotW;
-    setHover(Math.max(0, Math.min(1, frac)));
+    // fração dentro da zona de hover — imune à escala transitória do viewBox
+    setHover(Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)));
   };
 
   // ponto mais próximo do cursor em cada série
@@ -151,19 +169,16 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
       });
   const hoverX = proximos ? x(proximos[0].t) : null;
 
-  const descricao = dados
-    .map((d) => `${d.name}: ${yFormat(d.pts[d.pts.length - 1]?.v ?? 0)}`)
-    .join("; ");
-
   // regra nº1 a nível de componente: sem dados → estado explícito, nunca NaN
   if (dados.length === 0) {
     return <EmptyState titulo="Série indisponível" />;
   }
 
   return (
-    <div ref={wrap} className="relative w-full" role="img" aria-label={`Gráfico de linhas — ${descricao}`}>
+    <div ref={wrap} className="relative w-full">
       {/* equivalente tabular para leitores de ecrã — últimos 24 pontos;
-          sr-only no wrapper porque uma <table> ignora width:1px */}
+          irmão do <svg> (aria-hidden): role="img" no wrapper escondia a
+          tabela — descendentes de role="img" não são expostos */}
       <div className="sr-only">
         <table>
         <caption>Valores recentes do gráfico</caption>
@@ -194,20 +209,27 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
           </tbody>
         </table>
       </div>
-      <svg width={w} height={height} className="block" aria-hidden>
+      <svg
+        viewBox={`0 0 ${w} ${height}`}
+        preserveAspectRatio="none"
+        height={height}
+        className="block w-full"
+        aria-hidden
+      >
         {/* grelha horizontal + eixo y */}
         {yticks.map((v) => (
           <g key={v}>
             <line
-              x1={PAD.left}
-              x2={w - PAD.right}
+              x1={pad.left}
+              x2={w - pad.right}
               y1={y(v)}
               y2={y(v)}
               stroke="var(--color-line)"
               strokeWidth={1}
+              vectorEffect="non-scaling-stroke"
             />
             <text
-              x={PAD.left - 8}
+              x={pad.left - 8}
               y={y(v) + 4}
               textAnchor="end"
               fontSize={11}
@@ -240,33 +262,36 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
             stroke={d.cor}
             strokeWidth={2}
             strokeLinejoin="round"
+            vectorEffect="non-scaling-stroke"
             points={d.pts.map((p) => `${x(p.t)},${y(p.v)}`).join(" ")}
           />
         ))}
-        {/* rótulos de fim de linha */}
-        {fim.map((f) => (
-          <text
-            key={f.name}
-            x={w - PAD.right + 8}
-            y={f.y + 4}
-            fontSize={11}
-            fill={f.cor}
-            fontFamily="var(--font-mono)"
-          >
-            {f.name}
-          </text>
-        ))}
+        {/* rótulos de fim de linha — só com espaço; em compacto há legenda */}
+        {!compacto &&
+          fim.map((f) => (
+            <text
+              key={f.name}
+              x={w - pad.right + 8}
+              y={f.y + 4}
+              fontSize={11}
+              fill={f.cor}
+              fontFamily="var(--font-mono)"
+            >
+              {f.name}
+            </text>
+          ))}
         {/* cursor */}
         {hoverX !== null && proximos && (
           <g>
             <line
               x1={hoverX}
               x2={hoverX}
-              y1={PAD.top}
-              y2={PAD.top + plotH}
+              y1={pad.top}
+              y2={pad.top + plotH}
               stroke="var(--color-line2)"
               strokeWidth={1}
               strokeDasharray="3 3"
+              vectorEffect="non-scaling-stroke"
             />
             {proximos.map((p, i) => (
               <circle key={i} cx={x(p.t)} cy={y(p.v)} r={3.5} fill={dados[i].cor} />
@@ -275,8 +300,8 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
         )}
         {/* zona de hover */}
         <rect
-          x={PAD.left}
-          y={PAD.top}
+          x={pad.left}
+          y={pad.top}
           width={Math.max(0, plotW)}
           height={Math.max(0, plotH)}
           fill="transparent"
@@ -284,6 +309,21 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
           onPointerLeave={() => setHover(null)}
         />
       </svg>
+      {/* legenda em linha por baixo — regime compacto (nomes já na tabela) */}
+      {compacto && (
+        <div aria-hidden className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
+          {dados.map((d) => (
+            <span
+              key={d.name}
+              className="flex items-center gap-1.5 text-[11px]"
+              style={{ color: d.cor, fontFamily: "var(--font-mono)" }}
+            >
+              <span className="inline-block h-2 w-2" style={{ background: d.cor }} />
+              {d.name}
+            </span>
+          ))}
+        </div>
+      )}
       {/* tooltip */}
       {proximos && hoverX !== null && (
         <div

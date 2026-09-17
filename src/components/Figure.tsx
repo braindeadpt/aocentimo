@@ -21,12 +21,15 @@ export function Figure({
         <span className="font-display text-lg text-ink">{title}</span>
       </figcaption>
       {children}
-      {source && (
-        <p className="footnote mt-3">
-          <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-mark align-middle" />
-          {m.common.fonte}: {source}
-        </p>
-      )}
+      {source &&
+        (typeof source === "string" ? (
+          <p className="footnote mt-3 wrap-break-word">
+            <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-mark align-middle" />
+            {m.common.fonte}: {source}
+          </p>
+        ) : (
+          <div className="mt-3">{source}</div>
+        ))}
     </figure>
   );
 }

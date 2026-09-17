@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Figure } from "@/components/Figure";
 import { Delta } from "@/components/Delta";
 import { LineChart } from "@/components/LineChart";
+import { Source } from "@/components/Source";
 import { PoderDeCompra } from "./PoderDeCompra";
 import { SalarioReal } from "./SalarioReal";
 import { loadSerie, variacao, loadFontes, type Serie } from "@/lib/data";
@@ -62,7 +63,7 @@ export default function InflacaoPage() {
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
       <p className="kicker">Módulo 03</p>
-      <h1 className="font-display text-4xl md:text-6xl tracking-wide mt-2 uppercase">
+      <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
         Quanto subiu o que compras
       </h1>
       <p className="lede mt-5">
@@ -76,9 +77,16 @@ export default function InflacaoPage() {
         n={1}
         title={`Índice de preços, Portugal${baseLabel ? ` (${baseLabel}${base ? " = 100" : ""})` : ""}`}
         source={
-          fonte
-            ? `Eurostat, IHPC mensal · até ${fmtData(fonte.serieAte)} · ${fonte.url}`
-            : "Eurostat, IHPC mensal"
+          fonte ? (
+            <Source
+              nome="Eurostat, IHPC mensal"
+              url={fonte.url}
+              serieAte={fonte.serieAte}
+              recolhidoEm={fonte.recolhidoEm}
+            />
+          ) : (
+            "Eurostat, IHPC mensal"
+          )
         }
       >
         {temDados ? (

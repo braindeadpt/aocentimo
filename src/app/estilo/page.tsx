@@ -42,7 +42,7 @@ export default function EstiloPage() {
   return (
     <div className="mx-auto max-w-6xl px-5 pt-14 pb-10">
       <p className="kicker">Referência viva</p>
-      <h1 className="font-display mt-2 text-4xl uppercase tracking-wide md:text-6xl">
+      <h1 className="font-display mt-2 text-3xl uppercase tracking-wide hyphens-auto sm:text-4xl md:text-6xl">
         Sistema de design
       </h1>
       <p className="lede mt-5">
@@ -56,7 +56,7 @@ export default function EstiloPage() {
       <section className="mt-10">
         <h2 className="kicker mb-4">Marca — «o cêntimo»</h2>
         <div className="card flex flex-wrap items-center gap-10 p-8">
-          <Logo className="text-6xl" />
+          <Logo className="text-2xl sm:text-5xl lg:text-6xl" />
           <LogoMark className="h-16 w-16" />
           <p className="footnote max-w-sm">
             O C do wordmark é o sinal de cêntimo — ¢ — cortado por uma haste

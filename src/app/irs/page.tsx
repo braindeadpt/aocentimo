@@ -25,7 +25,7 @@ export default function IrsPage() {
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
       <p className="kicker">Imposto sobre o rendimento</p>
-      <h1 className="font-display text-4xl md:text-6xl tracking-wide mt-2 uppercase">
+      <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
         IRS — os dois impostos que pagas
       </h1>
       <p className="lede mt-5">
