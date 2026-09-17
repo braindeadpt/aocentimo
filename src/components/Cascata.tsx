@@ -11,7 +11,9 @@ export interface Passo {
 /**
  * A cascata — anatomia de um montante que vai sendo cortado.
  * Cada linha mostra a fatia que sai (acento) e o que continua (tinta),
- * proporcionais ao total inicial. Tabela semântica por baixo.
+ * proporcionais ao total inicial. Padrão canónico de gráficos: o bloco
+ * visual é aria-hidden e o equivalente textual é a tabela sr-only irmã —
+ * nunca os dois (role="img" + tabela anunciava a informação duas vezes).
  */
 export function Cascata({ passos }: { passos: Passo[] }) {
   const total = passos.find((p) => p.tipo === "base")?.valor ?? 0;
@@ -31,8 +33,7 @@ export function Cascata({ passos }: { passos: Passo[] }) {
 
   return (
     <div>
-      <div className="space-y-1.5" role="img"
-        aria-label={linhas.map((l) => `${l.label}: ${fmtEUR(Math.abs(l.valor))}`).join(", ")}>
+      <div className="space-y-1.5" aria-hidden="true">
         {linhas.map((l) => {
           const fica = total > 0 ? (l.depois / total) * 100 : 0;
           const sai = total > 0 ? (Math.abs(l.tipo === "corte" ? l.valor : 0) / total) * 100 : 0;

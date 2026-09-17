@@ -209,6 +209,23 @@ export default function EstiloPage() {
           </div>
         </Figure>
       </section>
+
+      <section className="mt-12">
+        <h2 className="kicker mb-4">Gráficos — um equivalente, não dois</h2>
+        <ul className="space-y-1 max-w-2xl">
+          {[
+            "O elemento visual leva aria-hidden — seja <svg>, cascata ou barra proporcional.",
+            "O equivalente textual é um irmão <table>: .sr-only quando é só para leitores de ecrã (Fluxo, Cascata, LineChart), visível quando já faz parte do desenho (EuroBar).",
+            "Nunca role=\"img\" com aria-label E equivalente ao mesmo tempo — o leitor de ecrã anuncia a mesma informação duas vezes.",
+            "O próximo gráfico nasce assim.",
+          ].map((r) => (
+            <li key={r} className="footnote">
+              <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-mark align-middle" />
+              {r}
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 }

@@ -21,10 +21,11 @@ export function EuroBar({
 }) {
   return (
     <div>
+      {/* a barra é decorativa — a tabela visível por baixo já é o
+          equivalente textual; role="img" + label aqui anunciava tudo 2× */}
       <div
         className="flex h-16 md:h-20 w-full overflow-hidden border border-ink"
-        role="img"
-        aria-label={segmentos.map((s) => `${s.label}: ${fmtEUR(s.valor)}`).join(", ")}
+        aria-hidden="true"
       >
         {segmentos.map((s, i) => {
           const w = total > 0 ? (s.valor / total) * 100 : 0;
