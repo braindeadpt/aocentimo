@@ -246,7 +246,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
             <div className="talao-barras mt-5" aria-hidden />
             <p className="mt-2 flex justify-between text-[0.6rem] talao-dim">
               <span>TABELA {recibo.tabela} · {ano}</span>
-              <span>BRUTO.PT</span>
+              <span>AOCENTIMO.JS.ORG</span>
             </p>
           </div>
         </div>

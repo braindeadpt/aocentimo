@@ -89,7 +89,7 @@
   font-variation-settings: "wdth" 125;
 }
 
-/* ————— wordmark — texto real; o U é um recipiente cheio a ~62 % ————— */
+/* ————— wordmark — texto real; o C é o sinal de cêntimo, em verde-keep ————— */
 .logo-word {
   font-family: var(--font-archivo), "Arial Black", sans-serif;
   font-variation-settings: "wdth" 125;
@@ -101,22 +101,14 @@
   display: inline-block;
   white-space: nowrap;
 }
-.logo-u {
-  background-image: linear-gradient(
-    to top,
-    var(--keep) 0%,
-    var(--keep) 58%,
-    var(--ink) 62%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.logo-cent {
+  color: var(--keep);
 }
 .logo-word--paper {
   color: #f0e9da;
 }
-.logo-word--paper .logo-u {
-  background-image: linear-gradient(to top, #8fbca0 0%, #8fbca0 58%, #f0e9da 62%);
+.logo-word--paper .logo-cent {
+  color: #63d6a4;
 }
 
 html {

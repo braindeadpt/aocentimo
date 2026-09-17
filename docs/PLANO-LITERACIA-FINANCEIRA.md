@@ -48,14 +48,21 @@ num só lugar com fontes citadas.
 
 ## 3. Identidade & naming
 
-Working title: **BRUTO** — o conceito que toda a gente conhece ("ganho X brutos")
-e a primeira palavra de todo o pipeline de dinheiro do site. Domínio a validar.
+Nome final: **AO CÊNTIMO** — «seguimos o teu dinheiro ao cêntimo». O projeto
+cresceu para além do salário (impostos, inflação, crédito, casa, poupança,
+preços) e a unidade que atravessa todos os módulos é o cêntimo. Domínio de
+lançamento: `aocentimo.js.org` (subdomínio comunitário gratuito para projetos
+open source no GitHub Pages). `aocentimo.eu.org` pedido em paralelo como
+zona DNS própria futura.
 
-Alternativas: `cêntimo.pt` · `contasclaras.pt` · `omeueuro.pt` · `escalao.pt`
+Marca: o C do wordmark é o sinal de cêntimo — ¢ — cortado por uma haste
+verde («o que é teu»). Histórico: começou como **BRUTO** (o conceito
+«ganho X brutos», a primeira palavra do pipeline) — o nome mudou quando o
+âmbito alargou.
 
-Tagline de trabalho: *"Do bruto ao líquido — para onde vai o teu dinheiro."*
+Tagline: *"Seguimos o teu dinheiro ao cêntimo."*
 
-Decisão final de nome: **aberta** (ver §18).
+Decisão final de nome: **fechada — AO CÊNTIMO** (2026).
 
 ---
 

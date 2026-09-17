@@ -17,7 +17,7 @@ export function runFeed(rootDir: string) {
   if (!existsSync(src)) return;
   const { entradas } = JSON.parse(readFileSync(src, "utf8")) as { entradas: Entrada[] };
 
-  const base = "https://bruto.pt";
+  const base = "https://aocentimo.js.org";
   const esc = (s: string) =>
     s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
@@ -36,7 +36,7 @@ export function runFeed(rootDir: string) {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>BRUTO — mudanças fiscais</title>
+    <title>AO CÊNTIMO — mudanças fiscais</title>
     <link>${base}</link>
     <description>Quando uma regra, taxa ou teto muda em Portugal, anotamos aqui — com fonte.</description>
     <language>pt-PT</language>

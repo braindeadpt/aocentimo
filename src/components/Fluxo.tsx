@@ -5,7 +5,7 @@ import { fmtEUR0, fmtPct } from "@/lib/format";
 import { m, t } from "@/lib/messages";
 
 /**
- * A escada do euro — a assinatura do BRUTO.
+ * A escada do euro — a assinatura do AO CÊNTIMO.
  * Waterfall editorial: o que a empresa paga desce em degraus — cada
  * corte do Estado é uma barra suspensa — até sobrar o líquido.
  * Números do motor fiscal: salário de 1 500 €, solteiro, 2026,

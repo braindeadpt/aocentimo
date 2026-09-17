@@ -20,8 +20,8 @@ export default function Home() {
   const ld = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "BRUTO",
-    url: "https://bruto.pt",
+    name: "AO CÊNTIMO",
+    url: "https://aocentimo.js.org",
     inLanguage: "pt-PT",
     description:
       "Literacia financeira para Portugal — seguimos 1 € do salário bruto até ao fim do mês. Simuladores e dados oficiais, cada número com fonte e data.",

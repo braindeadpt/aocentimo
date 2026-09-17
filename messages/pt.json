@@ -1,6 +1,6 @@
 {
   "brand": {
-    "name": "BRUTO",
+    "name": "AO CÊNTIMO",
     "kicker": "Literacia monetária · Portugal",
     "edition": "edição contínua",
     "dataUntil": "dados até {date}"
@@ -31,7 +31,7 @@
     "sources": "eurostat · ine · bpstat · dgeg · at · igcp"
   },
   "meta": {
-    "title": "BRUTO — literacia financeira para Portugal",
+    "title": "AO CÊNTIMO — literacia financeira para Portugal",
     "description": "Simuladores e dados de literacia financeira para Portugal — salário líquido, IRS, crédito habitação, poupança e inflação. Cada número com fonte e data."
   },
   "common": {

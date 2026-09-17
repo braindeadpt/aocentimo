@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { ImageResponse } from "next/og";
 
 export const dynamic = "force-static";
-export const alt = "BRUTO — literacia financeira para Portugal";
+export const alt = "AO CÊNTIMO — literacia financeira para Portugal";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -27,32 +27,28 @@ export default async function OpengraphImage() {
           fontFamily: "Archivo",
         }}
       >
-        <div style={{ display: "flex", alignItems: "flex-end", gap: "24px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "36px" }}>
+          {/* a marca — o ¢: arco de C em tinta, haste verde (o que é teu) */}
+          <svg width="170" height="170" viewBox="0 0 64 64">
+            <rect width="64" height="64" rx="14" fill="#221F19" />
+            <path
+              d="M44.2 20.6 A16 16 0 1 0 44.2 43.4"
+              fill="none"
+              stroke="#F0E9DA"
+              strokeWidth="9"
+            />
+            <rect x="29" y="10" width="6" height="44" fill="#63D6A4" />
+          </svg>
           <div
             style={{
-              fontSize: 200,
+              fontSize: 128,
               fontWeight: 800,
               color: "#221F19",
               letterSpacing: "-0.01em",
               lineHeight: 1,
             }}
           >
-            BRUTO
-          </div>
-          {/* o nível — 62% do custo total do trabalho é teu */}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-end",
-              width: 46,
-              height: 170,
-              border: "14px solid #221F19",
-              borderTop: "none",
-              borderRadius: "0 0 28px 28px",
-            }}
-          >
-            <div style={{ width: "100%", height: "62%", background: "#2F5D46" }} />
+            AO CÊNTIMO
           </div>
         </div>
         <div

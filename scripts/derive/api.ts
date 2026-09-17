@@ -35,7 +35,7 @@ export function runApi(rootDir: string) {
 
   // Índice
   const indice = {
-    nome: "BRUTO — dados abertos",
+    nome: "AO CÊNTIMO — dados abertos",
     descricao:
       "Séries estáticas geradas a partir de fontes oficiais (Eurostat, BPstat, DGEG, IGCP, AT). Atualizadas a cada build.",
     geradoEm: new Date().toISOString(),

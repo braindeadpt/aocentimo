@@ -7,7 +7,9 @@ export default defineConfig({
     baseURL: "http://localhost:3100",
   },
   webServer: {
-    command: "npm run build && npm run start -- -p 3100",
+    // o site é export estático (output: "export") — testa-se o out/
+    // tal como o GitHub Pages o serve, não `next start`
+    command: "npm run build && npx serve out -l 3100",
     url: "http://localhost:3100",
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,

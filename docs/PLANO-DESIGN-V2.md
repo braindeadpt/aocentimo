@@ -1,4 +1,6 @@
-# PLANO-DESIGN-V2 — BRUTO «O Terminal do Salário»
+# PLANO-DESIGN-V2 — AO CÊNTIMO «O Terminal do Salário»
+
+> Nota de rename: o projeto chamava-se BRUTO na altura deste plano; hoje é AO CÊNTIMO (`aocentimo.js.org`).
 
 Auditoria total de 2026-09-16: 3 agentes (código/UX, tokens/contraste, pesquisa
 criativa externa) + auditoria visual por screenshots (todas as rotas, 2 temas).

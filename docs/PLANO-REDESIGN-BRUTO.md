@@ -1,4 +1,6 @@
-# PLANO — REDESIGN TOTAL BRUTO
+# PLANO — REDESIGN TOTAL (era: BRUTO)
+
+> Nota de rename: o projeto chamava-se BRUTO na altura deste plano; hoje é AO CÊNTIMO (`aocentimo.js.org`).
 
 v0.2 · 2026-09-16 · Estado: **em execução** — Fase 0 ✓ · Fase 1 ✓ ·
 Fase 2 ✓ (pipeline + watchdog + motores + retenção na fonte 2026 +

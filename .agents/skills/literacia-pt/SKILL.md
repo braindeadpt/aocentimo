@@ -1,6 +1,6 @@
 ---
 name: literacia-pt
-description: Regras de produto do site de literacia financeira para Portugal (working title BRUTO). Usar sempre que se edite copy, dados, simuladores, layout ou se adicionem features a este repo.
+description: Regras de produto do site de literacia financeira para Portugal (AO CÊNTIMO). Usar sempre que se edite copy, dados, simuladores, layout ou se adicionem features a este repo.
 ---
 
 # Regras de produto — Literacia Financeira PT

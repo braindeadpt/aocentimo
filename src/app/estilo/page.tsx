@@ -9,7 +9,7 @@ import { Logo, LogoMark } from "@/components/Logo";
 
 export const metadata: Metadata = {
   title: "Sistema de design",
-  description: "Referência viva do design system do BRUTO — tokens, tipografia e componentes.",
+  description: "Referência viva do design system do AO CÊNTIMO — tokens, tipografia e componentes.",
 };
 
 const TOKENS: [string, string, string][] = [
@@ -54,14 +54,14 @@ export default function EstiloPage() {
       </p>
 
       <section className="mt-10">
-        <h2 className="kicker mb-4">Marca — «O Nível»</h2>
+        <h2 className="kicker mb-4">Marca — «o cêntimo»</h2>
         <div className="card flex flex-wrap items-center gap-10 p-8">
           <Logo className="text-6xl" />
           <LogoMark className="h-16 w-16" />
           <p className="footnote max-w-sm">
-            O U é um recipiente cheio a ~62 %: o que fica do custo total do
-            trabalho (bruto + TSU da empresa) num salário médio. Um motivo só —
-            o mesmo nível aparece no gráfico-assinatura do site.
+            O C do wordmark é o sinal de cêntimo — ¢ — cortado por uma haste
+            verde. A marca promete o que o site faz: seguir cada euro ao
+            cêntimo, do salário à bomba. Verde é sempre o que é teu.
           </p>
         </div>
       </section>

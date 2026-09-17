@@ -1,16 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 132" role="img" aria-label="BRUTO">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 132" role="img" aria-label="AO CÊNTIMO">
   <defs>
     <style>@import url('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,800&amp;display=swap');</style>
-    <clipPath id="uclip"><path d="M0 0h18v50q0 16 18 16t18-16V0h18v52q0 32-36 32T0 52Z"/></clipPath>
   </defs>
-  <g fill="#221F19" font-family="Archivo, 'Arial Black', sans-serif" font-weight="800" font-size="100" style="font-variation-settings:'wdth' 125">
-    <text x="54" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">B</text>
-    <text x="142" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">R</text>
-    <text x="318" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">T</text>
-    <text x="406" y="100" text-anchor="middle" textLength="70" lengthAdjust="spacingAndGlyphs">O</text>
+  <g transform="translate(10 10)">
+    <rect width="112" height="112" rx="24" fill="#221F19"/>
+    <path d="M75.9 39.3 A26 26 0 1 0 75.9 72.7" fill="none" stroke="#F0E9DA" stroke-width="14"/>
+    <rect x="51" y="18" width="10" height="76" fill="#63D6A4"/>
   </g>
-  <g transform="translate(199.14 28) scale(0.857143)">
-    <path d="M0 0h18v50q0 16 18 16t18-16V0h18v52q0 32-36 32T0 52Z" fill="#221F19"/>
-    <g clip-path="url(#uclip)"><rect x="0" y="31.9" width="72" height="52.1" fill="#2F5D46"/></g>
-  </g>
+  <text x="150" y="98" font-family="Archivo, 'Arial Black', sans-serif" font-weight="800" font-size="72" style="font-variation-settings:'wdth' 125" letter-spacing="4">
+    <tspan fill="#221F19">AO </tspan><tspan fill="#1F6B4D">¢</tspan><tspan fill="#221F19">ÊNTIMO</tspan>
+  </text>
 </svg>
