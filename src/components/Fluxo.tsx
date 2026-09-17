@@ -1,33 +1,43 @@
 import Link from "next/link";
-import { simularSalario } from "@/lib/engines/irs";
-import { TSU_ENTIDADE, TSU_TRABALHADOR } from "@/lib/engines/seg-social";
 import { fmtEUR0, fmtPct } from "@/lib/format";
 import { m, t } from "@/lib/messages";
+
+/**
+ * Medidas da escada do euro, mensais — calculadas UMA vez no servidor
+ * (src/app/page.tsx, via simularSalario) e passadas por props. Os
+ * componentes recebem números prontos: nenhum importa o motor fiscal
+ * nem os JSON de data/fiscal — que assim nunca chegam ao bundle do
+ * browser.
+ */
+export interface MedidasEuro {
+  custo: number; // custo mensal para a empresa (bruto + TSU entidade)
+  tsu: number; // TSU da entidade patronal
+  irs: number; // retenção de IRS
+  ss: number; // TSU do trabalhador
+  liquido: number; // o que chega à conta
+  estado: number; // tsu + irs + ss
+  taxaTsu: number; // taxa da entidade (rótulos)
+  taxaSs: number; // taxa do trabalhador (rótulos)
+}
 
 /**
  * A escada do euro — a assinatura do AO CÊNTIMO.
  * Waterfall editorial: o que a empresa paga desce em degraus — cada
  * corte do Estado é uma barra suspensa — até sobrar o líquido.
- * Números do motor fiscal: salário de 1 500 €, solteiro, 2026,
- * valores mensais. Largura = presença; nenhum rótulo toca uma barra.
+ * Salário de 1 500 €, solteiro, 2026, valores mensais.
+ * Largura = presença; nenhum rótulo toca uma barra.
  */
 export function Fluxo({
   className,
   destaque,
+  medidas,
 }: {
   className?: string;
   /** índice da barra em foco no scrolly; as outras esbatem-se */
   destaque?: number | null;
+  medidas: MedidasEuro;
 }) {
-  const med = simularSalario([1500], 0, 2026);
-  const mensal = (v: number) => v / 14;
-
-  const custo = mensal(med.custoEmpresaAnual);
-  const tsu = mensal(med.brutoAnualTotal * TSU_ENTIDADE);
-  const irs = mensal(med.irsAnual);
-  const ss = mensal(med.ssAnual);
-  const liquido = mensal(med.liquidoAnual);
-  const estado = tsu + irs + ss;
+  const { custo, tsu, irs, ss, liquido, estado, taxaTsu, taxaSs } = medidas;
 
   // geometria — eixo vertical = euros, base em y=380
   const Y0 = 380;
@@ -56,7 +66,7 @@ export function Fluxo({
     },
     {
       x: xs[1], top: custo, bot: custo - tsu, cor: "var(--accent)", cresce: "cima",
-      valor: `−${fmtEUR0(tsu)}`, nome: t(m.fluxo.tsu, { taxa: fmtPct(TSU_ENTIDADE, 2) }),
+      valor: `−${fmtEUR0(tsu)}`, nome: t(m.fluxo.tsu, { taxa: fmtPct(taxaTsu, 2) }),
     },
     {
       x: xs[2], top: custo - tsu, bot: 0, cor: "var(--ink2)", cresce: "baixo",
@@ -68,7 +78,7 @@ export function Fluxo({
     },
     {
       x: xs[4], top: custo - tsu - irs, bot: custo - tsu - irs - ss, cor: "var(--accent)", cresce: "cima",
-      valor: `−${fmtEUR0(ss)}`, nome: t(m.fluxo.ss, { taxa: fmtPct(TSU_TRABALHADOR, 0) }),
+      valor: `−${fmtEUR0(ss)}`, nome: t(m.fluxo.ss, { taxa: fmtPct(taxaSs, 0) }),
     },
     {
       x: xs[5], top: custo - tsu - irs - ss, bot: 0, cor: "var(--keep)", cresce: "baixo",

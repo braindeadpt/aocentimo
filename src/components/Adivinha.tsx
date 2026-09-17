@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Odometer } from "@/components/Odometer";
-import { simularSalario } from "@/lib/engines/irs";
 import { m, t } from "@/lib/messages";
 
 /**
@@ -11,9 +10,15 @@ import { m, t } from "@/lib/messages";
  * odometer mostra a realidade e a escada volta a desenhar-se (remount
  * por key = replay da animação). Números do motor fiscal, não literais.
  */
-export function Adivinha({ children }: { children: React.ReactNode }) {
-  const med = simularSalario([1500], 0, 2026);
-  const real = (med.liquidoAnual / med.custoEmpresaAnual) * 100;
+export function Adivinha({
+  real,
+  children,
+}: {
+  /** cêntimos de cada euro de custo da empresa que chegam ao trabalhador
+   *  — calculado no servidor (page.tsx), aqui só se compara com a aposta */
+  real: number;
+  children: React.ReactNode;
+}) {
   const estado = 100 - real;
 
   const [aposta, setAposta] = useState<number | null>(null);

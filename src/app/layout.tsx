@@ -18,6 +18,7 @@ const grotesk = Space_Grotesk({
 });
 const serif = Source_Serif_4({
   subsets: ["latin"],
+  weight: "400", // .lede é sempre regular — o variável trazia 200–900 por um parágrafo
   variable: "--font-serif",
 });
 const spaceMono = Space_Mono({

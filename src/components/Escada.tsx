@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Fluxo } from "@/components/Fluxo";
-import { simularSalario } from "@/lib/engines/irs";
-import { TSU_ENTIDADE, TSU_TRABALHADOR } from "@/lib/engines/seg-social";
+import { Fluxo, type MedidasEuro } from "@/components/Fluxo";
 import { fmtEUR0, fmtPct } from "@/lib/format";
 import { m, t } from "@/lib/messages";
 
@@ -16,22 +14,15 @@ import { m, t } from "@/lib/messages";
  * uma mudança de estado desencadeada por scroll — o estado final é todas
  * as barras a opacidade plena e todos os passos legíveis.
  */
-export function Escada() {
-  const med = simularSalario([1500], 0, 2026);
-  const mensal = (v: number) => v / 14;
-  const custo = mensal(med.custoEmpresaAnual);
-  const tsu = mensal(med.brutoAnualTotal * TSU_ENTIDADE);
-  const irs = mensal(med.irsAnual);
-  const ss = mensal(med.ssAnual);
-  const liquido = mensal(med.liquidoAnual);
-  const estado = tsu + irs + ss;
+export function Escada({ medidas }: { medidas: MedidasEuro }) {
+  const { custo, tsu, irs, ss, liquido, estado, taxaTsu, taxaSs } = medidas;
 
   const passos = [
     t(m.escada.p0, { valor: fmtEUR0(custo) }),
-    t(m.escada.p1, { valor: fmtEUR0(tsu), taxa: fmtPct(TSU_ENTIDADE, 2) }),
+    t(m.escada.p1, { valor: fmtEUR0(tsu), taxa: fmtPct(taxaTsu, 2) }),
     t(m.escada.p2, { valor: fmtEUR0(custo - tsu) }),
     t(m.escada.p3, { valor: `−${fmtEUR0(irs)}` }),
-    t(m.escada.p4, { valor: `−${fmtEUR0(ss)}`, taxa: fmtPct(TSU_TRABALHADOR, 0) }),
+    t(m.escada.p4, { valor: `−${fmtEUR0(ss)}`, taxa: fmtPct(taxaSs, 0) }),
     t(m.escada.p5, {
       valor: fmtEUR0(liquido),
       custo: fmtEUR0(custo),
@@ -70,7 +61,7 @@ export function Escada() {
   return (
     <div className="mt-8 border-t border-dashed border-line2 pt-6 lg:grid lg:grid-cols-12 lg:gap-8">
       <div className="self-start lg:sticky lg:top-28 lg:col-span-8">
-        <Fluxo destaque={ativo} />
+        <Fluxo destaque={ativo} medidas={medidas} />
       </div>
       <div className="lg:col-span-4">
         <p className="kicker-xs">

@@ -6,6 +6,8 @@ import { Escada } from "@/components/Escada";
 import { Kinetic } from "@/components/Kinetic";
 import { Source } from "@/components/Source";
 import { loadSerie, variacao, loadFontes } from "@/lib/data";
+import { simularSalario } from "@/lib/engines/irs";
+import { TSU_ENTIDADE, TSU_TRABALHADOR } from "@/lib/engines/seg-social";
 import { fmtPct, fmtData } from "@/lib/format";
 import { m } from "@/lib/messages";
 import smn from "@data/fiscal/smn.json";
@@ -16,6 +18,25 @@ export default function Home() {
   const ipc = loadSerie("CP00");
   const alim = loadSerie("CP01");
   const fonteIpc = loadFontes().find((f) => f.id === "hicp-pt-cp00");
+
+  // Fronteira servidor/cliente: o motor fiscal corre UMA vez aqui —
+  // simularSalario puxa os JSON de data/fiscal (IRS, retenção, SS) que
+  // assim nunca entram no bundle do browser. Adivinha/Escada/Fluxo
+  // recebem números prontos por props (serializáveis); interactivos
+  // ficam só o form da aposta e o observer do scrolly.
+  const med = simularSalario([1500], 0, 2026);
+  const mensal = (v: number) => v / 14;
+  const medidas = {
+    custo: mensal(med.custoEmpresaAnual),
+    tsu: mensal(med.brutoAnualTotal * TSU_ENTIDADE),
+    irs: mensal(med.irsAnual),
+    ss: mensal(med.ssAnual),
+    liquido: mensal(med.liquidoAnual),
+    estado: mensal(med.brutoAnualTotal * TSU_ENTIDADE + med.irsAnual + med.ssAnual),
+    taxaTsu: TSU_ENTIDADE,
+    taxaSs: TSU_TRABALHADOR,
+  };
+  const real = (med.liquidoAnual / med.custoEmpresaAnual) * 100;
 
   const ld = {
     "@context": "https://schema.org",
@@ -54,8 +75,8 @@ export default function Home() {
         <div className="flex justify-end">
           <p className="num text-xs text-muted">{h.euroNota}</p>
         </div>
-        <Adivinha>
-          <Escada />
+        <Adivinha real={real}>
+          <Escada medidas={medidas} />
         </Adivinha>
       </section>
 
