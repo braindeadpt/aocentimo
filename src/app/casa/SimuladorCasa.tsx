@@ -12,7 +12,10 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
   const [jovem, setJovem] = useState(false);
   const [entrada, setEntrada] = useState(20000);
   const [anos, setAnos] = useState(30);
-  const [euribor, setEuribor] = useState(euriborAtual ?? 2.5);
+  // valor inicial arredondado a 2 casas — a mesma precisão do resto do site
+  const [euribor, setEuribor] = useState(
+    euriborAtual !== null ? Math.round(euriborAtual * 100) / 100 : 2.5
+  );
   const [spread, setSpread] = useState(1.0);
 
   const credito = Math.max(0, preco - entrada);
@@ -36,23 +39,21 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
           <input id="preco" type="number" min={0} step={5000} value={preco}
             onChange={(e) => setPreco(Number(e.target.value) || 0)} className="field" />
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="kicker block mb-1.5" htmlFor="tipo">Finalidade</label>
-            <select id="tipo" value={tipo}
-              onChange={(e) => setTipo(e.target.value as typeof tipo)} className="field">
-              <option value="hpp">Habitação própria e permanente</option>
-              <option value="secundaria">Secundária / investimento</option>
-            </select>
-          </div>
-          <div className="flex items-end pb-1">
-            <label className="flex items-center gap-2 text-sm text-ink2">
-              <input type="checkbox" checked={jovem} disabled={tipo !== "hpp"}
-                onChange={(e) => setJovem(e.target.checked)}
-                className="h-4 w-4 accent-[var(--color-accent)]" />
-              IMT Jovem (≤35 anos, 1.ª casa)
-            </label>
-          </div>
+        <div>
+          <label className="kicker block mb-1.5" htmlFor="tipo">Finalidade</label>
+          <select id="tipo" value={tipo}
+            onChange={(e) => setTipo(e.target.value as typeof tipo)} className="field w-full">
+            <option value="hpp">Habitação própria e permanente</option>
+            <option value="secundaria">Secundária / investimento</option>
+          </select>
+        </div>
+        <div>
+          <label className="flex items-center gap-2 text-sm text-ink2">
+            <input type="checkbox" checked={jovem} disabled={tipo !== "hpp"}
+              onChange={(e) => setJovem(e.target.checked)}
+              className="h-4 w-4 accent-[var(--color-accent)]" />
+            IMT Jovem (≤35 anos, 1.ª casa)
+          </label>
         </div>
         <div>
           <label className="kicker block mb-1.5" htmlFor="entrada">Entrada</label>
