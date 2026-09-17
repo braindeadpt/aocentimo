@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Delta } from "@/components/Delta";
 import { LineChart } from "@/components/LineChart";
 import { Source } from "@/components/Source";
+import { JsonLd, dataset } from "@/lib/jsonld";
 import { PoderDeCompra } from "./PoderDeCompra";
 import { SalarioReal } from "./SalarioReal";
 import { loadSerie, variacao, loadFontes, type Serie } from "@/lib/data";
@@ -12,6 +14,7 @@ export const metadata: Metadata = {
   title: "Inflação — quanto subiu o que compras",
   description:
     "IHPC em Portugal por categoria COICOP: alimentação, energia, habitação, transportes. Variação mensal e homóloga com dados Eurostat.",
+  alternates: { canonical: "/inflacao", types: ALT_FEED },
 };
 
 const CATEGORIAS: [string, string][] = [
@@ -62,6 +65,20 @@ export default function InflacaoPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
+      {cp00 && (
+        <JsonLd
+          data={dataset({
+            nome: "IHPC — Portugal, por categoria COICOP 2018",
+            descricao:
+              "Índice harmonizado de preços no consumidor para Portugal, por categoria COICOP 2018 — série mensal Eurostat (prc_hicp_minr).",
+            fontes: [{ nome: "Eurostat", url: fonte?.url }],
+            atualizadoEm: cp00.meta.serieAte,
+            licenca:
+              "https://ec.europa.eu/eurostat/about/policies/copyright",
+            cobertura: `${cp00.series[0]?.t}/${cp00.meta.serieAte}`,
+          })}
+        />
+      )}
       <p className="kicker">Módulo 03</p>
       <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
         Quanto subiu o que compras

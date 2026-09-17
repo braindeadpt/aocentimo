@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
+import { JsonLd, dataset } from "@/lib/jsonld";
 import { LineChart } from "@/components/LineChart";
 import { Delta } from "@/components/Delta";
 import { loadFonte, loadDerivado, variacao, type Serie } from "@/lib/data";
@@ -12,6 +14,7 @@ export const metadata: Metadata = {
   title: "Dados — painéis vivos de fontes oficiais",
   description:
     "Euribor, TAEG do crédito ao consumo vs teto legal de usura, taxa base dos Certificados de Aforro e o calendário fiscal — direto das fontes oficiais.",
+  alternates: { canonical: "/dados", types: ALT_FEED },
 };
 
 interface CaBase {
@@ -49,8 +52,38 @@ export default function DadosPage() {
 
   const prazos = [...calendario.prazos].sort((a, b) => a.mes.localeCompare(b.mes));
 
+  // Dataset com proveniência real — data = fim de série mais recente
+  const serieFim = [
+    ...Object.values(euribor).map((s) => s?.meta.serieAte),
+    taegAte,
+    caBase?.meta.serieAte,
+  ]
+    .filter((d): d is string => !!d)
+    .sort()
+    .pop();
+
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
+      {serieFim && (
+        <JsonLd
+          data={dataset({
+            nome: "Painéis de dados financeiros — Portugal",
+            descricao:
+              "Euribor (médias mensais), TAEG de novos créditos ao consumo vs teto legal de usura, e taxa base dos Certificados de Aforro — séries do Banco de Portugal (BPstat) e do IGCP.",
+            fontes: [
+              {
+                nome: "Banco de Portugal — BPstat",
+                url: "https://bpstat.bportugal.pt",
+              },
+              {
+                nome: "IGCP — Agência de Gestão da Tesouraria e da Dívida Pública",
+                url: caBase?.meta.url,
+              },
+            ],
+            atualizadoEm: serieFim,
+          })}
+        />
+      )}
       <p className="kicker">Painéis</p>
       <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
         Os números, direto da fonte

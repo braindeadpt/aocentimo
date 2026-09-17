@@ -5,6 +5,7 @@ import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Ticker } from "@/components/Ticker";
+import { ALT_FEED } from "@/lib/meta";
 
 const archivo = Archivo({
   subsets: ["latin"],
@@ -34,7 +35,8 @@ export const metadata: Metadata = {
   description:
     "Simuladores e dados de literacia financeira para Portugal — salário líquido, IRS, crédito habitação, poupança e inflação. Cada número com fonte e data.",
   alternates: {
-    types: { "application/rss+xml": "/feed.xml" },
+    canonical: "/",
+    types: ALT_FEED,
   },
 };
 

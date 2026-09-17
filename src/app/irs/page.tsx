@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { SimuladorIrsJovem } from "./SimuladorIrsJovem";
@@ -8,11 +9,13 @@ import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
 import irs from "@data/fiscal/irs-2026.json";
 import retencao from "@data/fiscal/retencao-2026.json";
 import irsJovem from "@data/fiscal/irs-jovem.json";
+import { JsonLd, webApplication } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
   title: "IRS — escalões, retenção e IRS Jovem",
   description:
     "Os escalões de IRS em Portugal, a retenção na fonte mensal e o simulador de IRS Jovem: quanto poupas em cada um dos 10 anos.",
+  alternates: { canonical: "/irs", types: ALT_FEED },
 };
 
 const ANO = irs.ano;
@@ -25,6 +28,13 @@ export default function IrsPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
+      <JsonLd
+        data={webApplication(
+          "Simulador de IRS e IRS Jovem",
+          "/irs",
+          "Escalões de IRS, retenção na fonte e simulador de IRS Jovem em Portugal: quanto poupas em cada um dos 10 anos."
+        )}
+      />
       <p className="kicker">Imposto sobre o rendimento</p>
       <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
         IRS — os dois impostos que pagas

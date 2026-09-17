@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { ALT_FEED } from "@/lib/meta";
 
 export const metadata: Metadata = {
   title: "Sobre",
   description: "O que é o AO CÊNTIMO e porquê existe.",
+  alternates: { canonical: "/sobre", types: ALT_FEED },
 };
 
 export default function SobrePage() {

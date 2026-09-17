@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { SimuladorCasa } from "./SimuladorCasa";
@@ -6,11 +7,13 @@ import { fmtEUR0 } from "@/lib/format";
 import { readFileSync } from "fs";
 import path from "path";
 import imt from "@data/fiscal/imt-2026.json";
+import { JsonLd, webApplication } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
   title: "Comprar casa — IMT, Imposto de Selo e prestação",
   description:
     "O custo real de comprar casa em Portugal: IMT, Imposto de Selo, registos e a prestação com a Euribor atual do Banco de Portugal.",
+  alternates: { canonical: "/casa", types: ALT_FEED },
 };
 
 /** Último ponto da Euribor 3M mensal recolhido do BPstat. */
@@ -29,6 +32,13 @@ export default function CasaPage() {
   const eur = euriborAtual();
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
+      <JsonLd
+        data={webApplication(
+          "Custo de comprar casa — simulador",
+          "/casa",
+          "O custo real de comprar casa em Portugal: IMT, Imposto de Selo, registos e a prestação com a Euribor atual."
+        )}
+      />
       <p className="kicker">Comprar casa</p>
       <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
         O que a casa custa de verdade

@@ -1,20 +1,30 @@
 import type { Metadata } from "next";
+import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { SimuladorDesemprego } from "./SimuladorDesemprego";
 import { SimuladorIndependente } from "./SimuladorIndependente";
 import desemprego from "@data/fiscal/desemprego.json";
 import catb from "@data/fiscal/catb.json";
+import { JsonLd, webApplication } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
   title: "Subsídio de desemprego — quanto e por quanto tempo",
   description:
     "Simulador do subsídio de desemprego em Portugal: 65% da remuneração de referência, limites do IAS, duração por idade e descontos.",
+  alternates: { canonical: "/trabalho", types: ALT_FEED },
 };
 
 export default function TrabalhoPage() {
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
+      <JsonLd
+        data={webApplication(
+          "Simuladores de trabalho — desemprego e recibos verdes",
+          "/trabalho",
+          "Simulador do subsídio de desemprego e do trabalho independente em Portugal: quanto recebes e por quanto tempo."
+        )}
+      />
       <p className="kicker">Proteção no desemprego</p>
       <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
         Se ficares sem trabalho

@@ -1,16 +1,29 @@
 import type { Metadata } from "next";
+import { ALT_FEED } from "@/lib/meta";
 import Link from "next/link";
 import { GLOSSARIO } from "@/content/glossario";
+import { JsonLd, faqPage } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
   title: "Aprender — glossário de dinheiro",
   description:
     "Euribor, spread, TAN, TAEG, MTIC, escalões, retenção na fonte: os termos do dinheiro em Portugal explicados em português simples, com exemplos.",
+  alternates: { canonical: "/aprender", types: ALT_FEED },
 };
 
 export default function AprenderPage() {
+  // FAQPage derivada do glossário — mesma fonte, sem duplicação
+  const ld = faqPage(
+    GLOSSARIO.map((t) => ({
+      pergunta: `O que é ${t.termo}?`,
+      resposta: t.exemplo
+        ? `${t.definicao} Exemplo: ${t.exemplo}`
+        : t.definicao,
+    }))
+  );
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
+      <JsonLd data={ld} />
       <p className="kicker">Glossário</p>
       <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
         Os termos, explicados

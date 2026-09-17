@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Delta } from "@/components/Delta";
 import { LineChart } from "@/components/LineChart";
@@ -8,11 +9,13 @@ import { loadFonte, type Serie } from "@/lib/data";
 import { fmtData, fmtLitro } from "@/lib/format";
 import isp from "@data/fiscal/isp.json";
 import iva from "@data/fiscal/iva.json";
+import { JsonLd, webApplication } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
   title: "Preços — combustíveis dia a dia",
   description:
     "Preços dos combustíveis em Portugal em euros por litro, com variações diária, semanal, mensal e anual — dados DGEG.",
+  alternates: { canonical: "/precos", types: ALT_FEED },
 };
 
 const COMBUSTIVEIS: [string, string][] = [
@@ -47,6 +50,13 @@ export default function PrecosPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
+      <JsonLd
+        data={webApplication(
+          "Decomposição do preço dos combustíveis",
+          "/precos",
+          "Decomposição do preço dos combustíveis em Portugal: ISP, taxa de carbono, IVA e margens — dados DGEG."
+        )}
+      />
       <p className="kicker">Módulo 06</p>
       <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
         Combustíveis, dia a dia

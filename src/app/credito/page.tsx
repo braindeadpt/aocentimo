@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
+import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { SimuladorPrestacao } from "./SimuladorPrestacao";
 import { readFileSync } from "fs";
 import path from "path";
+import { JsonLd, webApplication } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
   title: "Crédito — Euribor, spread e prestação",
   description:
     "O que é a Euribor, como o spread forma a TAN, e simulador de prestação de crédito habitação com custo total do empréstimo.",
+  alternates: { canonical: "/credito", types: ALT_FEED },
 };
 
 /** Último valor e fim de série da Euribor 3M mensal recolhido do BPstat. */
@@ -27,6 +30,13 @@ export default function CreditoPage() {
   const eur = euriborAtual();
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
+      <JsonLd
+        data={webApplication(
+          "Simulador de prestação de crédito habitação",
+          "/credito",
+          "Simulador de prestação de crédito habitação em Portugal: Euribor, spread, TAN e custo total do empréstimo."
+        )}
+      />
       <p className="kicker">Módulo 04</p>
       <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
         Euribor, spread e a tua prestação

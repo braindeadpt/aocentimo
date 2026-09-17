@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ALT_FEED } from "@/lib/meta";
 import Link from "next/link";
 import { Delta } from "@/components/Delta";
 import { Stat } from "@/components/Stat";
@@ -10,6 +11,8 @@ import { Logo, LogoMark } from "@/components/Logo";
 export const metadata: Metadata = {
   title: "Sistema de design",
   description: "Referência viva do design system do AO CÊNTIMO — tokens, tipografia e componentes.",
+  alternates: { canonical: "/estilo", types: ALT_FEED },
+  robots: { index: false },
 };
 
 const TOKENS: [string, string, string][] = [

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { CalculadoraIva } from "./CalculadoraIva";
 import { DecomposicaoFuel } from "./DecomposicaoFuel";
@@ -6,16 +7,25 @@ import { Source } from "@/components/Source";
 import { fmtPct } from "@/lib/format";
 import iva from "@data/fiscal/iva.json";
 import isp from "@data/fiscal/isp.json";
+import { JsonLd, webApplication } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
   title: "Impostos — o imposto dentro do preço",
   description:
     "IVA por produto em Portugal e a decomposição do preço dos combustíveis: ISP, taxa de carbono e a cascata do IVA sobre impostos.",
+  alternates: { canonical: "/impostos", types: ALT_FEED },
 };
 
 export default function ImpostosPage() {
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
+      <JsonLd
+        data={webApplication(
+          "Impostos dentro do preço — Portugal",
+          "/impostos",
+          "O imposto dentro do preço: IVA por produto e decomposição do preço dos combustíveis (ISP, taxa de carbono, IVA sobre impostos)."
+        )}
+      />
       <p className="kicker">Módulo 02</p>
       <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
         O imposto dentro do preço

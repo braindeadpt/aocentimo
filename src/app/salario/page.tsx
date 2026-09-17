@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
+import { ALT_FEED } from "@/lib/meta";
 import { CalculadoraSalario } from "./CalculadoraSalario";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
 import irs from "@data/fiscal/irs-2026.json";
 import ss from "@data/fiscal/ss.json";
+import { JsonLd, webApplication } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
   title: "Do bruto ao líquido — salário e IRS",
   description:
     "Calculadora de salário líquido em Portugal: Segurança Social, IRS por escalões, deduções e o custo real para a empresa.",
+  alternates: { canonical: "/salario", types: ALT_FEED },
 };
 
 const ANO = irs.ano;
@@ -17,6 +20,13 @@ const ANO = irs.ano;
 export default function SalarioPage() {
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
+      <JsonLd
+        data={webApplication(
+          "Calculadora de salário líquido — Portugal",
+          "/salario",
+          "Do salário bruto ao líquido em Portugal: Segurança Social, retenção de IRS, deduções e o custo total para a empresa."
+        )}
+      />
       <p className="kicker">Módulo 01</p>
       <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
         Do bruto ao líquido

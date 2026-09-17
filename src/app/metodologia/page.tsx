@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ALT_FEED } from "@/lib/meta";
 import { loadFontes, loadFreshness } from "@/lib/data";
 import { fmtData } from "@/lib/format";
 
@@ -6,6 +7,7 @@ export const metadata: Metadata = {
   title: "Metodologia e fontes",
   description:
     "De onde vêm os números do AO CÊNTIMO: fontes oficiais, frequência de atualização e limitações dos simuladores.",
+  alternates: { canonical: "/metodologia", types: ALT_FEED },
 };
 
 const FONTES_FIXAS = [

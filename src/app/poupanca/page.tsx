@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { ComparadorPoupanca } from "./ComparadorPoupanca";
@@ -9,16 +10,25 @@ import ca from "@data/fiscal/ca.json";
 import capitais from "@data/fiscal/capitais.json";
 import ppr from "@data/fiscal/ppr.json";
 import maisValias from "@data/fiscal/mais-valias.json";
+import { JsonLd, webApplication } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
   title: "Poupança — Certificados de Aforro, depósitos e inflação",
   description:
     "Como funcionam os Certificados de Aforro, a tributação de 28 % sobre juros, e porque a taxa que importa é a real, não a nominal.",
+  alternates: { canonical: "/poupanca", types: ALT_FEED },
 };
 
 export default function PoupancaPage() {
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
+      <JsonLd
+        data={webApplication(
+          "Comparador de poupança — Portugal",
+          "/poupanca",
+          "Comparador de poupança em Portugal: Certificados de Aforro, depósitos, PPR e mais-valias — a taxa real, não só a nominal."
+        )}
+      />
       <p className="kicker">Módulo 05</p>
       <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
         Onde rende o que poupas
