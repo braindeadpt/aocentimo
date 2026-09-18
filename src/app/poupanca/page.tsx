@@ -40,7 +40,6 @@ export default function PoupancaPage() {
       </p>
 
       <Figure
-        n={1}
         title="Comparador de poupança"
         source={
           <Source
@@ -54,7 +53,6 @@ export default function PoupancaPage() {
       </Figure>
 
       <Figure
-        n={2}
         title="A caderneta — Certificados de Aforro, Série F"
         source={<Source nome={ca.fonte} vigencia={ca.vigencia} />}
       >
@@ -62,7 +60,6 @@ export default function PoupancaPage() {
       </Figure>
 
       <Figure
-        n={3}
         title="PPR — o benefício fiscal, dos dois lados"
         source={<Source nome={ppr.fonte} vigencia={ppr.vigencia} />}
       >
@@ -70,7 +67,6 @@ export default function PoupancaPage() {
       </Figure>
 
       <Figure
-        n={4}
         title="Mais-valias — o imposto sobre o ganho"
         source={<Source nome={maisValias.fonte} vigencia={maisValias.vigencia} />}
       >

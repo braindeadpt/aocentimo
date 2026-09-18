@@ -36,7 +36,6 @@ export default function ImpostosPage() {
       </p>
 
       <Figure
-        n={1}
         title="As três taxas de IVA no continente"
         source={<Source nome={iva.fonte} vigencia={iva.vigencia} />}
       >
@@ -55,7 +54,6 @@ export default function ImpostosPage() {
       </Figure>
 
       <Figure
-        n={2}
         title="Quanto do preço é IVA?"
         source={
           <Source
@@ -68,7 +66,6 @@ export default function ImpostosPage() {
       </Figure>
 
       <Figure
-        n={3}
         title="Um talão de supermercado, lido por dentro"
         source={
           <Source
@@ -81,7 +78,6 @@ export default function ImpostosPage() {
       </Figure>
 
       <Figure
-        n={4}
         title="Um litro de combustível, desmontado"
         source={<Source nome={isp.fonte} vigencia={isp.vigencia} />}
       >

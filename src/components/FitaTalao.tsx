@@ -204,6 +204,7 @@ export function FitaTalao({
         viewBox="0 0 560 680"
         aria-hidden="true"
         className="mt-3 w-full"
+        data-papel
       >
         <defs>
           {/* máscara da fita — os furos são buracos a sério: mostra-se

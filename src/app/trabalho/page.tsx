@@ -37,7 +37,6 @@ export default function TrabalhoPage() {
       </p>
 
       <Figure
-        n={1}
         title="Simulador de subsídio de desemprego"
         source={<Source nome={desemprego.fonte} vigencia={desemprego.vigencia} />}
       >
@@ -45,7 +44,6 @@ export default function TrabalhoPage() {
       </Figure>
 
       <Figure
-        n={2}
         title="Recibos verdes — da faturação ao bolso"
         source={<Source nome={catb.fonte} vigencia={catb.vigencia} />}
       >

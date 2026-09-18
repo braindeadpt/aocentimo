@@ -39,7 +39,6 @@ export default function SalarioPage() {
       </p>
 
       <Figure
-        n={1}
         title="Calculadora de salário líquido"
         source={
           <Source
@@ -52,7 +51,6 @@ export default function SalarioPage() {
       </Figure>
 
       <Figure
-        n={2}
         title="Os nove escalões — rendimento a rendimento"
         source={
           <Source

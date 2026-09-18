@@ -29,8 +29,8 @@ const H = 150;
 
 const SERIES = [
   { id: "ca", nome: "Certificados de Aforro", cor: "var(--color-ink)" },
-  { id: "ctpc", nome: "Certificados do Tesouro", cor: "var(--color-seq-2)" },
-  { id: "dep", nome: "Depósito a prazo", cor: "var(--color-seq-4)" },
+  { id: "ctpc", nome: "Certificados do Tesouro", cor: "var(--seq-2)" },
+  { id: "dep", nome: "Depósito a prazo", cor: "var(--seq-4)" },
   { id: "colchao", nome: "Debaixo do colchão", cor: "var(--color-muted)" },
 ] as const;
 

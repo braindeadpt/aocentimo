@@ -42,11 +42,15 @@ interface Props {
    accent/keep/warn têm significado (sai / fica / aviso) — nunca são
    cor de série arbitrária. Séries ordinais (Euribor por prazo, escalões)
    passam a rampa seq-1…4 explicitamente via `cor`. */
+/* paleta directa — não os aliases --color-* de @theme inline: esses só
+   existem quando uma utilidade Tailwind correspondente é usada; em SVG
+   inline (fill/stroke) o alias pode resolver a vazio. --seq-* vive em
+   :root e troca com o tema, sempre emitido */
 const CORES = [
-  "var(--color-ink)",
-  "var(--color-seq-2)",
-  "var(--color-seq-4)",
-  "var(--color-muted)",
+  "var(--ink)",
+  "var(--seq-2)",
+  "var(--seq-4)",
+  "var(--muted)",
 ];
 
 const PAD = { top: 26, right: 132, bottom: 30, left: 46 };
@@ -542,7 +546,7 @@ export function LineChart({
         ))}
         {/* banda de dispersão — a distância entre o melhor e o pior da família */}
         {banda && (
-          <polygon className="lc-banda" points={banda} fill="var(--color-seq-2)" fillOpacity={0.1} stroke="none" />
+          <polygon className="lc-banda" points={banda} fill="var(--seq-2)" fillOpacity={0.1} stroke="none" />
         )}
         {/* linhas */}
         {dados.map((d, i) => (
@@ -563,19 +567,30 @@ export function LineChart({
             }
           />
         ))}
-        {/* rótulos de fim de linha — só com espaço; em compacto há legenda */}
+        {/* rótulos de fim de linha — só com espaço; em compacto há
+            legenda. A cor da série vai no tick, o nome fica em tinta —
+            texto nunca carrega cor de rampa (AA) */}
         {!compacto &&
           fim.map((f) => (
-            <text
-              key={f.name}
-              x={w - pad.right + 8}
-              y={f.y + 4}
-              fontSize={11}
-              fill={f.cor}
-              fontFamily="var(--font-mono)"
-            >
-              {f.name}
-            </text>
+            <g key={f.name}>
+              <line
+                x1={w - pad.right + 4}
+                x2={w - pad.right + 12}
+                y1={f.y}
+                y2={f.y}
+                stroke={f.cor}
+                strokeWidth={2}
+              />
+              <text
+                x={w - pad.right + 16}
+                y={f.y + 4}
+                fontSize={11}
+                fill="var(--ink2)"
+                fontFamily="var(--font-mono)"
+              >
+                {f.name}
+              </text>
+            </g>
           ))}
         {/* cursor de interrogação */}
         {ativo !== null && cursorX !== null && lidos && (
@@ -637,8 +652,8 @@ export function LineChart({
           {dados.map((d) => (
             <span
               key={d.name}
-              className="flex items-center gap-1.5 text-[11px]"
-              style={{ color: d.cor, fontFamily: "var(--font-mono)" }}
+              className="flex items-center gap-1.5 text-[11px] text-ink2"
+              style={{ fontFamily: "var(--font-mono)" }}
             >
               <span className="inline-block h-2 w-2" style={{ background: d.cor }} />
               {d.name}

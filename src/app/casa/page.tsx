@@ -51,7 +51,6 @@ export default function CasaPage() {
       </p>
 
       <Figure
-        n={1}
         title="Simulador de compra"
         source={
           <Source

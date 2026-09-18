@@ -254,7 +254,7 @@ export default function EstiloPage() {
                 <defs>
                   <linearGradient id="proibido-grad" x1="0" x2="1">
                     <stop offset="0" stopColor="var(--color-accent)" />
-                    <stop offset="1" stopColor="var(--color-seq-1)" />
+                    <stop offset="1" stopColor="var(--seq-1)" />
                   </linearGradient>
                 </defs>
                 <rect x="8" y="8" width="184" height="44" fill="url(#proibido-grad)" />
@@ -763,7 +763,6 @@ export default function EstiloPage() {
           <Stat label="Poupança" value={<Delta value={0.018} goodWhenUp />} hint="taxa a subir é bom" />
         </div>
         <Figure
-          n={1}
           title="Figura numerada com fonte"
           source={
             <Source

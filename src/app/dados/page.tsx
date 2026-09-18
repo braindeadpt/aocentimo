@@ -228,7 +228,6 @@ export default function DadosPage() {
       </section>
 
       <Figure
-        n={1}
         title="Euribor — médias mensais (as das prestações)"
         source={
           <Source
@@ -245,7 +244,7 @@ export default function DadosPage() {
               series={(Object.keys(euribor) as (keyof typeof euribor)[]).map((k, i) => ({
                 name: `Euribor ${k}`,
                 // família ordinal: rampa seq — prazo mais curto, mais tinta
-                cor: `var(--color-seq-${i + 1})`,
+                cor: `var(--seq-${i + 1})`,
                 data: euribor[k]!.series.map((p) => [p.t + "-01", p.v] as [string, number]),
               }))}
               unidade="%"
@@ -291,7 +290,6 @@ export default function DadosPage() {
       </Figure>
 
       <Figure
-        n={2}
         title="Crédito ao consumo — o que o mercado cobra vs o teto legal"
         source={
           <Source
@@ -413,7 +411,6 @@ export default function DadosPage() {
       </Figure>
 
       <Figure
-        n={3}
         title="Taxa base dos Certificados de Aforro — Série F"
         source={
           <Source
@@ -455,7 +452,6 @@ export default function DadosPage() {
       </Figure>
 
       <Figure
-        n={4}
         title="Calendário fiscal 2026"
         source={<Source nome={calendario.fonte} vigencia={calendario.vigencia} />}
       >
@@ -505,7 +501,6 @@ export default function DadosPage() {
       </Figure>
 
       <Figure
-        n={5}
         title="Comissões bancárias — o que ainda não conseguimos"
         source={
           <Source

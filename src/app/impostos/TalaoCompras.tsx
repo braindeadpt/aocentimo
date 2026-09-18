@@ -254,9 +254,9 @@ export function TalaoCompras() {
               <tbody>
                 {resumo.map((r, i) => (
                   <tr key={r.taxa} className="talao-sep">
-                    <td className="py-1">{fmtPct(r.taxa, 0)}</td>
-                    <td className="py-1 text-right">{fmtEUR(r.base)}</td>
-                    <td className="py-1 text-right">{fmtEUR(r.iva)}</td>
+                    <td className="py-1 tabular-nums">{fmtPct(r.taxa, 0)}</td>
+                    <td className="py-1 text-right tabular-nums">{fmtEUR(r.base)}</td>
+                    <td className="py-1 text-right tabular-nums">{fmtEUR(r.iva)}</td>
                     <td className="py-1 pl-2">
                       <span className="iva-barra" aria-hidden>
                         <span

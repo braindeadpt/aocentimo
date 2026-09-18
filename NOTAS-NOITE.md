@@ -751,3 +751,66 @@ playwright.config no M-21.
 
 **Gates** — lint ✓ typecheck ✓ unit 185 ✓ data 60 ✓ build 58 ✓ e2e
 16/16 ✓.
+
+---
+
+## M-20 — varrimento de qualidade (a–j)
+
+**(a) Matéria** — fita a 400% lê-se como papel (rasgo, fibra, perfuração,
+peças arrancadas com sombra própria). `data-papel` marca o svg da fita.
+
+**(b) Gramática** — `casca-brace` tinha 420ms fora dos tokens →
+`--dur-media`. Os delays 300/580ms da cascata são coreografia, não
+duração — ficam. JS: `TweenNum` 320 (--dur-curta) e `Odometer` 1200
+(--dur-longa) são os defaults; nenhum call site override.
+
+**(c) Números** — `--ink3` estava referenciado em 5 sítios e não existia
+(var vazio → herança inesperada) → `--muted`/`--ink2`. `tabular-nums`
+adicionado às células numéricas de TalaoCompras e da tabela de escalões
+do /irs. Figuras: chip "Fig. N" removido — nada no texto remete para
+ele; o componente fica título+fonte.
+
+**(d) Mobile 375** — e2e cobre overflow em todas as rotas; shots
+manuais de /salario, /irs, /dados, /metodologia: nada ilegível ou
+tapado.
+
+**(e) Temas — AA medido, não presumido** (`_aa-probe.mjs`, 36 rotas × 2
+temas):
+- BUG real: `var(--color-seq-3)` em SVG inline resolvia a vazio no tema
+  escuro — `@theme inline` só emite a var quando existe utilidade
+  Tailwind correspondente. Todas as referências SVG/cor-prop trocadas
+  para `var(--seq-N)`/`var(--ink)`/`var(--muted)` directos (CORES do
+  LineChart, /dados, /poupanca, /estilo).
+- Legendas de série coloridas falhavam AA → tick colorido + nome em
+  `--ink2` (a cor fica no traço, nunca no texto).
+- `--accent`/`--keep`/`--muted` de tema sobre papel fixo falhavam →
+  `papel-sai-tinta`, `papel-fica-tinta`, `talao-dim` subido para 0.72.
+- `.talao-recebe` → borda+tinta `papel-fica-tinta` (verde de papel).
+- `.num-unit` dentro de `.talao` → tinta de papel.
+- `.qcell-id`/`.qcell-folga` → `--ink2` (muted ficava a 4.46:1).
+- Resultado: **zero falhas AA nas 36 rotas nos dois temas**.
+
+**(f) Reduced-motion** — e2e existente cobre; probe corre com
+`reducedMotion: reduce`.
+
+**(g) Teclado** — e2e: skip-link foca, inputs/ranges alcançáveis, Esc
+fecha o cursor do gráfico.
+
+**(h) Leitor de ecrã** — sonda DOM: cada svg é `aria-hidden` com irmão
+`.sr-only`/`<dl>`/tabela, ou `role="img"` com `aria-label` único
+(cascata /impostos ↔ dl de legenda; divergências /poupanca ↔ aria-label).
+Sem anúncio duplo.
+
+**(i) Desempenho** (medido com PerformanceObserver buffered, `serve`
+local): LCP 164–480ms em todas as rotas; CLS máx 0.069 (/impostos);
+JS 486–531KB por rota (chunks partilhados — medido encodedBodySize,
+não transfer). Rede local, não Lighthouse — registar como indicativo.
+
+**(j) Copy** — zero brasileirismos (grep usuário/você/tela/senha/
+portfólio/aplicativo). "Módulo NN" fora desde M-11. Links do /sobre
+contra o remote real.
+
+**Sondas novas**: `scripts/_sweep.mjs` (AA+LCP/CLS/JS+svg por rota via
+sitemap), `scripts/_aa-probe.mjs` (falhas AA com fg/bg medidos;
+fundo SVG por isPointInFill com getScreenCTM — papel pointer-events:none
+e fills transparentes não contaminam).

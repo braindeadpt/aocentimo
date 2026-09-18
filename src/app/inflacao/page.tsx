@@ -96,7 +96,6 @@ export default function InflacaoPage() {
       </p>
 
       <Figure
-        n={1}
         title={`Índice de preços, Portugal${baseLabel ? ` (${baseLabel}${base ? " = 100" : ""})` : ""}`}
         source={
           fonte ? (
@@ -133,7 +132,6 @@ export default function InflacaoPage() {
       </Figure>
 
       <Figure
-        n={2}
         title="Variação por categoria"
         source={
           <Source
@@ -184,7 +182,6 @@ export default function InflacaoPage() {
       </Figure>
 
       <Figure
-        n={3}
         title="A máquina do tempo do euro"
         source={
           <Source
@@ -202,7 +199,6 @@ export default function InflacaoPage() {
       </Figure>
 
       <Figure
-        n={4}
         title="O teu salário em termos reais"
         source={
           <Source

@@ -49,7 +49,6 @@ export default function IrsPage() {
       </p>
 
       <Figure
-        n={1}
         title={`Os escalões enchem — IRS ${ANO}`}
         source={<Source nome={irs.fonte} vigencia={irs.vigencia} />}
       >
@@ -61,7 +60,6 @@ export default function IrsPage() {
       </Figure>
 
       <Figure
-        n={2}
         title="Retenção na fonte — a fatia de cada mês"
         source={<Source nome={retencao.fonte} vigencia={retencao.vigencia} />}
       >
@@ -83,11 +81,11 @@ export default function IrsPage() {
             <tbody className="num">
               {amostra.map((l, i) => (
                 <tr key={i} className="border-b border-line">
-                  <td className="py-2 pr-4 text-ink2">
+                  <td className="py-2 pr-4 text-ink2 tabular-nums">
                     {l.ate === null ? "Sem limite" : fmtEUR(l.ate)}
                   </td>
-                  <td className="py-2 pr-4 text-right">{fmtPct(l.taxaMarginal, 2)}</td>
-                  <td className="py-2 text-right">
+                  <td className="py-2 pr-4 text-right tabular-nums">{fmtPct(l.taxaMarginal, 2)}</td>
+                  <td className="py-2 text-right tabular-nums">
                     {l.parcelaAbater !== undefined ? fmtEUR(l.parcelaAbater) : "fórmula de transição"}
                   </td>
                 </tr>
@@ -103,7 +101,6 @@ export default function IrsPage() {
       </Figure>
 
       <Figure
-        n={3}
         title="A nota de liquidação — o acerto de contas"
         source={<Source nome={deducoes.fonte} vigencia={deducoes.vigencia} />}
       >
@@ -111,7 +108,6 @@ export default function IrsPage() {
       </Figure>
 
       <Figure
-        n={4}
         title="IRS Jovem — dez anos em sequência"
         source={<Source nome={irsJovem.fonte} vigencia={irsJovem.vigencia} />}
       >

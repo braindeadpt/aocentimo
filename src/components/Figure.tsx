@@ -1,14 +1,13 @@
 import type { ReactNode } from "react";
 import { m } from "@/lib/messages";
 
-/** Figura numerada, à maneira de publicação de referência. */
+/** Figura com título e fonte — a legenda identifica a peça; nada no
+    texto remete para "Fig. N", logo a numeração saiu (M-20). */
 export function Figure({
-  n,
   title,
   source,
   children,
 }: {
-  n: number;
   title: string;
   /** Texto livre ou um <Source/> estruturado. */
   source?: ReactNode;
@@ -17,7 +16,6 @@ export function Figure({
   return (
     <figure className="stack-fig">
       <figcaption className="flex items-baseline gap-3 border-t-2 border-ink pt-2 mb-4">
-        <span className="num text-xs text-muted">Fig. {n}</span>
         <span className="font-display text-lg text-ink">{title}</span>
       </figcaption>
       {children}

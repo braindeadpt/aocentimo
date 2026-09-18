@@ -765,7 +765,12 @@ html[data-theme="dark"] .tema-ponto {
   border-top: 2px solid var(--talao-ink);
 }
 .talao-dim {
-  color: rgba(44, 36, 19, 0.62);
+  color: rgba(44, 36, 19, 0.72);
+}
+/* dentro do papel, a unidade do número-herói é tinta de papel — o --ink2
+   do tema em escuro é claro e falhava AA sobre o creme (M-20) */
+.talao .num-unit {
+  color: rgba(44, 36, 19, 0.72);
 }
 /* declaração SS (/trabalho) — a linha do tempo: cada mês um pilar de
    tinta; do 7.º em diante o pilar desce (a altura é o valor, −10 % de
@@ -841,7 +846,7 @@ html[data-theme="dark"] .tema-ponto {
   font-size: 10px;
   line-height: 1.4;
   letter-spacing: 0.02em;
-  color: var(--ink3);
+  color: var(--muted);
 }
 .md-barras {
   display: grid;
@@ -852,7 +857,7 @@ html[data-theme="dark"] .tema-ponto {
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.02em;
-  color: var(--ink3);
+  color: var(--muted);
   margin-bottom: 2px;
 }
 .md-linha-trilho {
@@ -889,7 +894,7 @@ html[data-theme="dark"] .tema-ponto {
   margin-top: 3px;
   font-family: var(--font-mono);
   font-size: 10px;
-  color: var(--ink3);
+  color: var(--muted);
   text-align: center;
 }
 .md-fill {
@@ -917,7 +922,7 @@ html[data-theme="dark"] .tema-ponto {
   margin-top: 3px;
   font-family: var(--font-mono);
   font-size: 10px;
-  color: var(--ink3);
+  color: var(--muted);
   text-align: center;
 }
 /* as classes animadas só existem quando o useArmado arma — abaixo da
@@ -1181,9 +1186,9 @@ html[data-theme="dark"] .tema-ponto {
   display: inline-block;
   margin-left: 0.5rem;
   padding: 0 0.3rem;
-  border: 1.5px solid var(--color-keep);
+  border: 1.5px solid var(--papel-fica-tinta);
   border-radius: 2px;
-  color: var(--color-keep);
+  color: var(--papel-fica-tinta);
   font-size: 0.58rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -1341,7 +1346,7 @@ html[data-theme="dark"] .tema-ponto {
    antes do IVA */
 .casca-brace {
   stroke-dasharray: 1;
-  animation: casca-mede 420ms var(--ease-lin) both;
+  animation: casca-mede var(--dur-media) var(--ease-lin) both;
   animation-delay: 300ms;
 }
 @keyframes casca-mede {
@@ -1575,7 +1580,8 @@ html[data-theme="dark"] .tema-ponto {
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.02em;
-  color: var(--ink3);
+  /* id de série a 10px — muted (4.46:1) fica a um fio do AA; ink2 passa */
+  color: var(--ink2);
   overflow-wrap: anywhere;
 }
 .qcell-meta {
@@ -1593,7 +1599,7 @@ html[data-theme="dark"] .tema-ponto {
   background: color-mix(in srgb, var(--warn) 9%, var(--panel));
 }
 .qcell-folga {
-  color: var(--muted);
+  color: var(--ink2);
 }
 
 /* spark — micro-série de célula: sem JS/reduced-motion vem já desenhada;

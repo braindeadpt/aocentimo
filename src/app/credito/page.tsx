@@ -43,7 +43,6 @@ export default function CreditoPage() {
       </p>
 
       <Figure
-        n={1}
         title="Simulador de prestação"
         source={
           <Source
@@ -56,7 +55,6 @@ export default function CreditoPage() {
       </Figure>
 
       <Figure
-        n={2}
         title="A Euribor desde 1994"
         source={
           <Source

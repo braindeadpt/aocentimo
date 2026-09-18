@@ -70,7 +70,6 @@ export default function PrecosPage() {
       </p>
 
       <Figure
-        n={1}
         title="Preço médio nacional, por litro"
         source={
           <Source
@@ -125,7 +124,6 @@ export default function PrecosPage() {
       </Figure>
 
       <Figure
-        n={2}
         title="Enquanto isso: quanto do litro é imposto?"
         source={
           <Source
