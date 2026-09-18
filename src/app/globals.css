@@ -984,18 +984,21 @@ html[data-theme="dark"] .tema-ponto {
    escoar (o benefício esgota-se). Clicável e percorrível por teclado */
 .jovem-passos {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 6px;
   list-style: none;
   margin: 0;
   padding: 0;
 }
-@media (min-width: 640px) {
+/* 10 colunas só quando a coluna-mãe as comporta — a 768 px o simulador
+   tem ~340 px e o min-content dos passos estourava o viewport */
+@media (min-width: 1100px) {
   .jovem-passos {
-    grid-template-columns: repeat(10, 1fr);
+    grid-template-columns: repeat(10, minmax(0, 1fr));
   }
 }
 .jovem-passo {
+  min-width: 0;
   display: flex;
   width: 100%;
   flex-direction: column;

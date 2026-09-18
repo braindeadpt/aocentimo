@@ -63,6 +63,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // termos do glossário — derivados do conteúdo, nunca escritos à mão
     ...GLOSSARIO.map((t) => ({ path: `/aprender/${t.slug}` })),
     { path: "/metodologia" },
+    { path: "/estilo" },
     { path: "/sobre" },
   ];
 

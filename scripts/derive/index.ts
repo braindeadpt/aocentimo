@@ -4,7 +4,6 @@ import { runFreshness } from "./freshness";
 import { runFiscalFontes } from "./fiscal-fontes";
 import { runCaBase } from "./paineis";
 import { runApi } from "./api";
-import { runFeed } from "./feed";
 
 const ROOT = path.resolve(__dirname, "..", "..");
 const DATA = path.join(ROOT, "data");
@@ -14,7 +13,7 @@ const DATA = path.join(ROOT, "data");
  * 1. Resume as séries brutas para data/derived/
  * 2. Taxa base CA indicativa (Euribor 3M → cap 2,5 %)
  * 3. Watchdog de frescura → data/meta/freshness.json (falha ruidosamente)
- * 4. API estática public/api/*.json + RSS public/feed.xml
+ * 4. API estática public/api/*.json (o RSS vive na route app/feed.xml)
  */
 function main() {
   const resumo = runHicp(DATA);
@@ -35,7 +34,6 @@ function main() {
   }
 
   runApi(ROOT);
-  runFeed(ROOT);
 
   if (frescura.estado === "atrasado") {
     console.error("\nFALHA: há séries atrasadas — ver data/meta/freshness.json");

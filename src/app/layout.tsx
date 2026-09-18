@@ -40,6 +40,16 @@ export const metadata: Metadata = {
     canonical: "/",
     types: ALT_FEED,
   },
+  openGraph: {
+    type: "website",
+    locale: "pt_PT",
+    siteName: "AO CÊNTIMO",
+  },
+};
+
+export const viewport = {
+  // o tema por omissão é escuro — a barra do browser acompanha
+  themeColor: "#0d0b08",
 };
 
 /** Resolve o tema antes da primeira pintura: escolha guardada → escuro.
@@ -63,7 +73,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
-      lang="pt"
+      lang="pt-PT"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
       data-theme="dark"

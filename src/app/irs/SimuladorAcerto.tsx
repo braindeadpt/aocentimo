@@ -169,11 +169,12 @@ export function SimuladorAcerto({ ano }: { ano: number }) {
                     valor={fmtEUR(Math.abs(r.reembolsoEstimado))}
                     animar={Math.abs(r.reembolsoEstimado)}
                     sinal={r.reembolsoEstimado >= 0 ? "+" : "−"}
-                    className="text-2xl"
+                    className="min-w-0 flex-1 text-2xl"
                   />
                   <span
                     className={
                       (r.reembolsoEstimado >= 0 ? "talao-recebe " : "talao-retido ") +
+                      "shrink-0 " +
                       notaArm("talao-carimbo-anim")
                     }
                     aria-hidden
