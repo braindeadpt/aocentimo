@@ -119,8 +119,21 @@ não porque fica bonito. Três tipos, e só dois existem:
 **Um escalonamento:** `--stagger` (90ms) entre irmãos — sempre o mesmo,
 em cascatas, barras, sparks e odómetro.
 
-**Nunca anima:** números que a pessoa precisa de ler já; conteúdo acima
-da dobra ao carregar.
+**Orquestra de estado (M-09)** — quando um input muda, o que muda no
+ecrã transita como uma coisa só: o número (`TweenNum`), a barra e a
+cascata partilham o mesmo tempo — `--dur-curta` (320ms), a duração de
+"muda de estado". O que é revelação ou explicação (`--dur-media`,
+`--dur-longa`) não entra na resposta ao input.
+
+**Nunca anima — três regras de código, não intenções:**
+
+1. o número herói nunca fica ilegível durante a transição — os valores
+   mudam já; só a forma (barra, segmento, dígito que desliza) transita;
+2. nada acima da dobra entra com fade ao carregar — a animação de
+   entrada é armada por JS apenas em elementos nascidos abaixo da
+   primeira dobra (`Kinetic`, `Spark`, `LineChart` seguem esta regra);
+3. nenhum estado de carregamento decorativo — não existem spinners nem
+   esqueletos; o SSR traz sempre o valor final.
 
 **`prefers-reduced-motion` = estado final imediato**, nunca animação
 atenuada — corta todas as transições e animações (`!important`,

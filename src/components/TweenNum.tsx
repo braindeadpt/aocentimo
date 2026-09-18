@@ -21,7 +21,7 @@ export function TweenNum({
   casas = 2,
   texto,
   sufixo = "",
-  dur = 600,
+  dur = 320,
 }: {
   /** valor actual — o alvo da interpolação */
   valor: number;
@@ -32,7 +32,9 @@ export function TweenNum({
   texto: string;
   /** unidade estática dentro do span visual — nunca interpola */
   sufixo?: string;
-  /** ms — da gramática (--dur-media por defeito) */
+  /** ms — da gramática (--dur-curta 320 por defeito: a resposta a um
+      input é "muda de estado", orquestrada com as barras/segmentos que
+      transitam sobre o mesmo token — M-09) */
   dur?: number;
 }) {
   const animado = useValorAnimado(valor, { dur });

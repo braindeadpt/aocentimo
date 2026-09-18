@@ -221,6 +221,46 @@ test("com reduced-motion o número-herói mostra o valor final sem interpolaçã
   expect(await hero.innerText()).toBe(texto);
 });
 
+test("nada acima da dobra entra com animação ao carregar", async ({
+  page,
+}) => {
+  test.setTimeout(120_000);
+  // contrato M-09: animações de ENTRADA (iterações finitas) não podem
+  // correr em elementos visíveis no primeiro viewport ao carregar.
+  // Loops contínuos (ticker) têm iterações infinitas e não são entrada.
+  for (const path of rotasDoSite()) {
+    await page.goto(path, { waitUntil: "domcontentloaded" });
+    // duas amostras: apanha entradas curtas e longas a meio do voo
+    for (const espera of [120, 420]) {
+      await page.waitForTimeout(espera);
+      const violadores = await page.evaluate(() => {
+        const vh = window.innerHeight;
+        const vistos: string[] = [];
+        for (const el of Array.from(document.querySelectorAll("*"))) {
+          const r = el.getBoundingClientRect();
+          if (r.top >= vh || r.bottom <= 0) continue;
+          const finita = el
+            .getAnimations()
+            .some(
+              (a) =>
+                a.playState === "running" &&
+                Number(a.effect?.getComputedTiming().iterations ?? 1) === 1
+            );
+          if (finita) {
+            vistos.push(
+              `${el.tagName.toLowerCase()}.${String(el.getAttribute("class") ?? "").slice(0, 50)}`
+            );
+          }
+        }
+        return vistos.slice(0, 8);
+      });
+      expect(violadores, `${path} anima acima da dobra ao carregar`).toEqual(
+        []
+      );
+    }
+  }
+});
+
 test("o primeiro Tab foca o skip-link", async ({ page }) => {
   await page.goto("/");
   await page.keyboard.press("Tab");

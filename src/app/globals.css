@@ -355,6 +355,26 @@ body::before {
   transform: none;
 }
 
+/* ponto do alternador de tema — o estado vem do atributo data-theme
+   (posto pelo script inline antes do primeiro paint): nunca há flip
+   pós-hidratação nem transição ao carregar; a transição só corre quando
+   a pessoa muda o tema */
+.tema-ponto {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid var(--ink2);
+  background: transparent;
+  transition:
+    background-color var(--dur-micro) var(--ease-entra),
+    border-color var(--dur-micro) var(--ease-entra);
+}
+html[data-theme="dark"] .tema-ponto {
+  background: var(--mark);
+  border-color: transparent;
+}
+
 /* utilidades editoriais */
 .lede {
   font-family: var(--font-editorial);
@@ -1027,6 +1047,10 @@ body::before {
 }
 .kin-word {
   display: inline-block;
+}
+/* a animação só existe quando o JS a arma (elemento nascido abaixo da
+   dobra) — acima da dobra nada entra com fade ao carregar (M-09) */
+.kin-on .kin-word {
   animation: kin-up var(--dur-media) var(--ease-entra) both;
   animation-delay: calc(var(--i) * var(--stagger));
 }

@@ -1,7 +1,14 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+
 /**
  * Kinetic — divide texto em palavras que sobem de trás de uma máscara.
- * CSS puro: a animação vai de translateY(110%) para o estado normal;
- * com reduced-motion a animação não corre e o texto fica visível.
+ * REGRA M-09: nada acima da dobra entra com fade ao carregar. A animação
+ * é armada por JS apenas quando o elemento COMEÇA abaixo da primeira
+ * dobra — então sobe ao entrar no viewport. Se já está visível ao
+ * carregar, nasce no estado final e nunca anima. Sem JS ou com
+ * reduced-motion: texto sempre visível.
  */
 export function Kinetic({
   texto,
@@ -12,9 +19,31 @@ export function Kinetic({
   desde?: number;
   className?: string;
 }) {
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (typeof IntersectionObserver === "undefined") return;
+    // a regra: só anima o que nasce fora da primeira dobra
+    if (el.getBoundingClientRect().top < window.innerHeight) return;
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          el.classList.add("kin-on");
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
   const palavras = texto.split(" ");
   return (
-    <span className={className}>
+    <span ref={ref} className={className}>
       {palavras.map((palavra, i) => (
         <span key={i}>
           <span className="kin-line">

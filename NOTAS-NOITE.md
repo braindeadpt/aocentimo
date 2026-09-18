@@ -357,3 +357,50 @@ forçar a metáfora era decoração. Registado em comentário no CSS
   série inteira — é o que o desenho mostra.
 
 **Gates** — lint ✓ typecheck ✓ unit 178 ✓ data ✓ build 58 ✓ e2e 15/15 ✓.
+
+---
+
+## M-09 — transições entre estados de página (orquestra única)
+
+**Entregue**
+
+- **Orquestra (a):** a resposta a um input passou a ter UM tempo —
+  `--dur-curta` (320ms, a duração de "muda de estado" da gramática).
+  `TweenNum` tinha default 600ms enquanto `EuroBar`/`Cascata`
+  transitavam a 320ms — o herói e as barras mexiam-se fora de fase.
+  Default do `TweenNum` → 320ms com a razão escrita no prop.
+- **Regra de código (b):** as três proibições passaram de intenção a
+  mecanismo —
+  1. nada acima da dobra entra a animar ao carregar: `Kinetic`,
+     `Spark`, `LineChart` e `Odometer` só armam a animação se o
+     elemento nascer ABAIXO da primeira dobra
+     (`getBoundingClientRect().top >= innerHeight`); visível ao
+     carregar → nasce no estado final;
+  2. número herói sempre legível — os valores mudam já, só a forma
+     transita (já era o contrato M-03, agora escrito);
+  3. estados de carregamento decorativos — proibidos na gramática.
+- **Violação real apanhada pelo teste novo:** o ponto do `ThemeToggle`
+  transitava cor em TODAS as cargas — o SSR adivinha "light", a
+  hidratação corrige para o tema real e a `transition-colors` disparava.
+  Corrigido de raiz: `.tema-ponto` deriva do atributo `data-theme` em
+  CSS (posto pelo script inline antes do paint) — não há flip de classe
+  no React para transitar.
+- `Odometer`: o roll de entrada passou a disparar no scroll-in
+  (IntersectionObserver) em vez de ao montar — antes corria invisível.
+- e2e novo: percorre todas as rotas e falha se algum elemento visível
+  no primeiro viewport tiver animação/transição de iteração finita a
+  correr ao carregar (duas amostras, 120ms e 420ms — loops infinitos
+  como o ticker não são entrada).
+- PRODUTO.md §Motion: bloco "Orquestra de estado" + as três regras
+  escritas como regras de código.
+
+**Decisões**
+
+- Morph do `LineChart` (mudança de janela em /precos) ficou a 600ms —
+  é "explica a transformação", não resposta instantânea; documentado.
+- A orquestra é por convenção de token (um tempo, um início — o input),
+  não por um componente coordenador: os apresentadores já partilham o
+  motor e a gramática; um maestro extra não acrescentava nada.
+
+**Gates** — lint ✓ typecheck ✓ unit 178 ✓ data ✓ build 58 ✓
+e2e 16/16 ✓ (teste novo incluído).

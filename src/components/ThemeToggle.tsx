@@ -34,13 +34,10 @@ export function ThemeToggle() {
       aria-pressed={escuro}
       className="kicker-sm inline-flex items-center gap-1.5 border border-line2 px-2 py-1 text-ink2 transition-colors hover:border-ink hover:text-ink"
     >
-      {/* círculo: cheio no escuro, vazado no claro — mostra o estado */}
-      <span
-        aria-hidden
-        className={`inline-block h-2 w-2 rounded-full transition-colors ${
-          escuro ? "bg-mark" : "border border-ink2 bg-transparent"
-        }`}
-      />
+      {/* círculo: cheio no escuro, vazado no claro — o aspecto vem do
+          data-theme em CSS (posto pelo script inline ANTES do primeiro
+          paint): não há flip pós-hidratação nem transição ao carregar */}
+      <span aria-hidden className="tema-ponto" />
       {escuro ? "claro" : "escuro"}
     </button>
   );

@@ -44,6 +44,9 @@ export function Spark({
     };
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     if (typeof IntersectionObserver === "undefined") return;
+    // M-09: acima da dobra nada entra a desenhar-se ao carregar — se já
+    // está visível no primeiro viewport, nasce no estado final
+    if (el.getBoundingClientRect().top < window.innerHeight) return;
     arm();
     const obs = new IntersectionObserver(
       ([e]) => {

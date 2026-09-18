@@ -33,16 +33,29 @@ export function Odometer({
     maximumFractionDigits: casas,
   }).format(valor)}${sufixo}`;
 
-  // roll de entrada — só uma vez, só com motion; o .od-zero sai depois
-  // de o browser pintar o 0, e a transição faz o resto
+  // roll de entrada — só uma vez, só com motion, e só quando nasce
+  // abaixo da primeira dobra (M-09: acima da dobra nada entra a animar
+  // ao carregar); o .od-zero sai depois de o browser pintar o 0, e a
+  // transição faz o resto
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    el.classList.add("od-zero");
-    // força a composição do estado zero antes de soltar as rodas
-    void el.offsetWidth;
-    el.classList.remove("od-zero");
+    if (typeof IntersectionObserver === "undefined") return;
+    if (el.getBoundingClientRect().top < window.innerHeight) return;
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        obs.disconnect();
+        el.classList.add("od-zero");
+        // força a composição do estado zero antes de soltar as rodas
+        void el.offsetWidth;
+        el.classList.remove("od-zero");
+      },
+      { threshold: 0.5 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
   }, []);
 
   let rodas = 0;
