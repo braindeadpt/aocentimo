@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Adivinha } from "@/components/Adivinha";
 import { Odometer } from "@/components/Odometer";
 import { Delta } from "@/components/Delta";
-import { Escada } from "@/components/Escada";
+import { FitaTalao } from "@/components/FitaTalao";
 import { Kinetic } from "@/components/Kinetic";
 import { Source } from "@/components/Source";
 import { Instrumento } from "@/components/Instrumento";
@@ -15,8 +15,8 @@ import {
 } from "@/lib/data";
 import { simularSalario } from "@/lib/engines/irs";
 import { TSU_ENTIDADE, TSU_TRABALHADOR } from "@/lib/engines/seg-social";
-import { fmtPct, fmtData } from "@/lib/format";
-import { m } from "@/lib/messages";
+import { fmtPct, fmtData, fmtEUR0 } from "@/lib/format";
+import { m, t } from "@/lib/messages";
 import { SITE_URL } from "@/lib/site";
 import smn from "@data/fiscal/smn.json";
 import ca from "@data/fiscal/ca.json";
@@ -38,7 +38,7 @@ export default function Home() {
 
   // Fronteira servidor/cliente: o motor fiscal corre UMA vez aqui —
   // simularSalario puxa os JSON de data/fiscal (IRS, retenção, SS) que
-  // assim nunca entram no bundle do browser. Adivinha/Escada/FitaTalao
+  // assim nunca entram no bundle do browser. Adivinha/FitaTalao
   // recebem números prontos por props (serializáveis); interactivos
   // ficam só o form da aposta e o observer do scrolly.
   const med = simularSalario([1500], 0, 2026);
@@ -54,6 +54,22 @@ export default function Home() {
     taxaSs: TSU_TRABALHADOR,
   };
   const real = (med.liquidoAnual / med.custoEmpresaAnual) * 100;
+
+  // a escada narrada, comprimida a legenda plana — a fita já conta a
+  // história; estas frases ficam como notas de leitura (M-10)
+  const { custo, tsu, irs, ss, liquido, estado, taxaTsu, taxaSs } = medidas;
+  const passos = [
+    t(m.escada.p0, { valor: fmtEUR0(custo) }),
+    t(m.escada.p1, { valor: fmtEUR0(tsu), taxa: fmtPct(taxaTsu, 2) }),
+    t(m.escada.p2, { valor: fmtEUR0(custo - tsu) }),
+    t(m.escada.p3, { valor: `−${fmtEUR0(irs)}` }),
+    t(m.escada.p4, { valor: `−${fmtEUR0(ss)}`, taxa: fmtPct(taxaSs, 0) }),
+    t(m.escada.p5, {
+      valor: fmtEUR0(liquido),
+      custo: fmtEUR0(custo),
+      estado: fmtEUR0(estado),
+    }),
+  ];
 
   const ld = {
     "@context": "https://schema.org",
@@ -71,17 +87,18 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
       />
-      {/* manchete compacta — o herói é o diagrama, não o titular */}
-      <section className="grid items-end gap-6 pt-12 md:grid-cols-12 md:pt-14">
+      {/* manchete compacta — o herói é o instrumento, não o titular;
+          comprimida para o quadro do mês entrar na primeira dobra a 375 */}
+      <section className="grid items-end gap-4 pt-6 md:grid-cols-12 md:pt-12">
         <div className="md:col-span-8">
-          <h1 className="font-display text-5xl leading-[0.95] tracking-wide text-ink sm:text-6xl lg:text-7xl">
+          <h1 className="font-display text-4xl leading-[0.95] tracking-wide text-ink sm:text-6xl lg:text-7xl">
             <Kinetic texto={`${h.h1a} ${h.h1b}`} />{" "}
             <Kinetic texto={h.h1c} desde={4} className="text-accent" />
           </h1>
         </div>
         <div className="md:col-span-4">
-          <p className="lede !mt-0 text-base">{h.lede}</p>
-          <Link href="/salario" className="btn btn-primary mt-5">
+          <p className="lede !mt-0 text-sm md:text-base">{h.lede}</p>
+          <Link href="/salario" className="btn btn-primary mt-4">
             {h.cta}
           </Link>
         </div>
@@ -89,20 +106,25 @@ export default function Home() {
 
       {/* os números do mês — primeira dobra: cada célula com a micro-série
           de 24 meses, último ponto a torrado, fonte e data */}
-      <section className="mt-8 border border-line bg-panel" aria-labelledby="quadro-mes">
-        <div className="flex items-baseline justify-between border-b border-line px-5 py-3">
+      <section className="mt-5 border border-line bg-panel md:mt-8" aria-labelledby="quadro-mes">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-line px-5 py-3">
           <h2 id="quadro-mes" className="kicker">
             {h.hoje}
           </h2>
-          {ipc && (
-            <span className="num text-xs text-muted">
-              {fmtData(ipc.meta.serieAte)}
-            </span>
+          {/* fonte e data no topo do quadro — a evidência entra na
+              primeira dobra com os números, não escondida no fim */}
+          {fonteIpc && (
+            <Source
+              nome={fonteIpc.fonte}
+              url={fonteIpc.url}
+              serieAte={fonteIpc.serieAte}
+              nota="IGCP · DL 139/2025"
+            />
           )}
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4">
           <Instrumento
-            className="border-b border-r border-line px-5 py-4 md:border-b-0"
+            className="border-b border-r border-line px-5 py-3 md:border-b-0 md:py-4"
             rotulo={h.inflacaoHomologa}
             estado={estadoDe("hicp-pt-cp00")}
             atraso={0}
@@ -112,7 +134,7 @@ export default function Home() {
             meta={ipc ? fmtData(ipc.meta.serieAte) : "—"}
           />
           <Instrumento
-            className="border-b border-line px-5 py-4 md:border-b-0 md:border-r"
+            className="border-b border-line px-5 py-3 md:border-b-0 md:border-r md:py-4"
             rotulo={h.alimentacao}
             estado={estadoDe("hicp-pt-cp01")}
             atraso={1}
@@ -122,7 +144,7 @@ export default function Home() {
             meta={h.ihpcCP01}
           />
           <Instrumento
-            className="border-r border-line px-5 py-4"
+            className="border-r border-line px-5 py-3 md:py-4"
             rotulo={h.salarioMinimo}
             estado={estadoDe("fiscal-smn")}
             atraso={2}
@@ -137,7 +159,7 @@ export default function Home() {
             meta={h.smnNota}
           />
           <Instrumento
-            className="px-5 py-4"
+            className="px-5 py-3 md:py-4"
             rotulo={h.ca}
             estado={estadoDe("fiscal-ca")}
             atraso={3}
@@ -148,27 +170,33 @@ export default function Home() {
           />
         </div>
       </section>
-      {fonteIpc && (
-        <div className="mt-3">
-          <Source
-            nome={fonteIpc.fonte}
-            url={fonteIpc.url}
-            serieAte={fonteIpc.serieAte}
-            nota="IGCP · DL 139/2025"
-          />
-        </div>
-      )}
 
-      {/* o instrumento — adivinha primeiro, depois a escada revela.
-          blueprint = textura da zona de medição: fica só atrás do
-          diagrama (na Escada), não atrás do texto da aposta */}
-      <section className="stack-sec border border-line bg-panel px-5 py-6 md:px-8 md:py-8">
+      {/* o instrumento — a pergunta primeiro, a fita depois: ao revelar,
+          a FitaTalao reimprime-se e rasga-se (remount por ronda). Em
+          largura total — é a peça-assinatura. A escada do scrolly foi
+          comprimida a legenda plana: a fita já narra sozinha. */}
+      <section
+        aria-labelledby="instrumento"
+        className="stack-sec border border-line bg-panel px-5 py-6 md:px-8 md:py-8"
+      >
         <div className="flex items-baseline justify-between gap-4">
-          <h2 className="kicker">{h.euroTitulo}</h2>
+          <h2 id="instrumento" className="kicker">{h.euroTitulo}</h2>
           <p className="num text-right text-xs text-muted">{h.euroNota}</p>
         </div>
         <Adivinha real={real}>
-          <Escada medidas={medidas} />
+          <div className="blueprint mt-6 border-t border-dashed border-line2 px-3 py-6">
+            <FitaTalao medidas={medidas} />
+          </div>
+          <ol className="mt-5 grid gap-x-8 gap-y-2 md:grid-cols-2">
+            {passos.map((p, i) => (
+              <li
+                key={i}
+                className="border-l-2 border-line pl-4 text-sm leading-relaxed text-ink2"
+              >
+                {p}
+              </li>
+            ))}
+          </ol>
         </Adivinha>
       </section>
 
@@ -182,12 +210,11 @@ export default function Home() {
         </div>
         <ol>
           {h.capitulos.map((c) => (
-            <li key={c.n} className="border-b border-line">
+            <li key={c.href} className="border-b border-line">
               <Link
                 href={c.href}
-                className="chapter-row group grid grid-cols-[3.5rem_1fr] items-baseline gap-4 px-2 py-6 md:grid-cols-[5rem_16rem_1fr_2rem] md:gap-8 md:px-4"
+                className="chapter-row group grid grid-cols-[1fr] items-baseline gap-4 px-2 py-6 md:grid-cols-[16rem_1fr_2rem] md:gap-8 md:px-4"
               >
-                <span className="chapter-dim num text-sm text-muted transition-colors">{c.n}</span>
                 <span className="font-display text-3xl tracking-wide transition-colors md:text-4xl">
                   {c.titulo}
                 </span>

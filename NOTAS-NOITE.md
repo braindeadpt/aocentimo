@@ -404,3 +404,46 @@ forçar a metáfora era decoração. Registado em comentário no CSS
 
 **Gates** — lint ✓ typecheck ✓ unit 178 ✓ data ✓ build 58 ✓
 e2e 16/16 ✓ (teste novo incluído).
+
+---
+
+## M-10 — Home: fita herói, adivinha, números na 1ª dobra
+
+**Entregue**
+
+- `FitaTalao` é o herói da secção do instrumento, em **largura total**
+  (saiu da grelha 8/12 do scrolly). A adivinha fica por cima — pergunta
+  primeiro, revelação depois; o remount por `key={ronda}` re-imprime e
+  rasga a fita a cada aposta — o momento de assinatura.
+- **Escada avaliada → comprimida a legenda plana** (decisão: não
+  remover). O scrolly (sticky + IntersectionObserver + passos a 34vh)
+  morreu — a fita já conta a história sozinha (imprime valores, tem
+  readout e interrogação por teclado). As seis frases narradas ficam
+  como `<ol>` plano de duas colunas por baixo da fita — a voz editorial
+  não se perde, o sequestro de scroll sim. `Escada.tsx` apagado.
+- **Quadro do mês na primeira dobra, com fonte e data no topo**: a
+  `Source` (Eurostat · série até · IGCP) subiu para o cabeçalho da
+  secção — a evidência entra na dobra com os números. Manchete
+  comprimida (pt-12→pt-6, h1 5xl→4xl em <sm, lede text-sm, gaps).
+- Numeração de figuras fora: a coluna `01–06` dos capítulos saiu (a
+  grid passou a `[1fr]`/`[16rem_1fr_2rem]`); "MÓDULO 01" não existia
+  — verificado. Chaves mortas `barra*`/`seg*` em pt.json ficam (copy,
+  decisão do dono).
+- Hierarquia: H1 → H2 quadro (`#quadro-mes` + `aria-labelledby`) →
+  H2 instrumento (`#instrumento`) → H2 capítulos/ferramentas.
+
+**Medições (scripts/_lcp.mjs, temporário)**
+
+- Antes: 1440px LCP 388ms · num 547 · fonte 616 (vh 900);
+  375px LCP 304ms · num 754 · fonte 823 — **FALHAVA** (vh 667).
+- Depois: 1440px LCP ~400ms · num 538 · fonte 461;
+  375px LCP ~300-480ms · **num 665 · fonte 578 — passa** (vh 667).
+- LCP: variância ±50% entre corridas no `serve` local (ruído de fonte/
+  rede); o elemento LCP é o mesmo H1 e o DOM acima da dobra só
+  encolheu — sem regressão detectável.
+- Fronteira servidor/cliente intacta: `simularSalario` corre em
+  page.tsx; `FitaTalao`/`Adivinha` recebem números prontos.
+
+**Screenshots** — `.screenshots/m10/` {home,instrumento}×{1440,375}.
+
+**Gates** — lint ✓ typecheck ✓ unit 178 ✓ data ✓ build 58 ✓ e2e 16/16 ✓.

@@ -272,8 +272,8 @@ test("o primeiro Tab foca o skip-link", async ({ page }) => {
 test("a fita do salário interroga-se por teclado e tem equivalente textual", async ({
   page,
 }) => {
-  // M-05: reduced-motion → Escada não observa → destaque=null → leitura
-  // determinística; a fita nasce já no estado final
+  // M-05/M-10: reduced-motion → a fita nasce já no estado final, sem
+  // destaques — leitura determinística
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   const zona = page.locator(".blueprint").first();

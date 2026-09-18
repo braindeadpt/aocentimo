@@ -5,10 +5,10 @@ import { Odometer } from "@/components/Odometer";
 import { m, t } from "@/lib/messages";
 
 /**
- * Guess-first — antes de mostrar a escada, o visitante aposta quantos
+ * Guess-first — antes de mostrar a fita, o visitante aposta quantos
  * cêntimos de cada euro de custo da empresa lhe chegam. Ao revelar, o
- * odometer mostra a realidade e a escada volta a desenhar-se (remount
- * por key = replay da animação). Números do motor fiscal, não literais.
+ * odometer mostra a realidade e a fita volta a imprimir-se e a rasgar-se
+ * (remount por key = replay da sequência). Números do motor fiscal.
  */
 export function Adivinha({
   real,
@@ -95,7 +95,8 @@ export function Adivinha({
         )}
       </div>
 
-      {/* a escada — remount rejoga a animação das barras a cada aposta */}
+      {/* a fita — remount rejoga a sequência impressão→rasgo a cada
+          aposta; é o momento de assinatura do site */}
       <div key={ronda}>{children}</div>
     </div>
   );
