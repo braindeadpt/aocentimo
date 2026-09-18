@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Adivinha } from "@/components/Adivinha";
-import { CountUp } from "@/components/CountUp";
+import { Odometer } from "@/components/Odometer";
 import { Delta } from "@/components/Delta";
 import { Escada } from "@/components/Escada";
 import { Kinetic } from "@/components/Kinetic";
@@ -119,7 +119,7 @@ export default function Home() {
           <div className="border-r border-line px-5 py-4">
             <p className="kicker-xs">{h.salarioMinimo}</p>
             <p className="num mt-1.5 text-3xl text-ink">
-              <CountUp valor={smn.serie[smn.serie.length - 1].valor} sufixo=" €" dur={1400} />
+              <Odometer valor={smn.serie[smn.serie.length - 1].valor} sufixo=" €" />
             </p>
             <div className="mt-2 text-muted">
               <Spark

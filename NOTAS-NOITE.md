@@ -92,3 +92,46 @@ da lista final.
 
 **Screenshots** — `.screenshots/M-02/depois-*` (o "antes" é o estado
 de `/estilo` nos shots de M-01).
+
+---
+
+## M-03 · motor de valores animados
+
+**Entregue**
+
+- `src/lib/useValorAnimado.ts` — UM hook de interpolação (rAF,
+  cancelável, curva easeEntra da gramática). Máquina pura exportada
+  (`valorEm`, `retarget`, `terminado`, `easeEntra`) — testável em node.
+- Dois apresentadores, nada mais:
+  - `Odometer` — dígitos que rolam, para o momento de revelação
+    (agora com `aria-live="polite"` no sr-only);
+  - `TweenNum` — contagem simples, reescrito sobre o motor: visual
+    `aria-hidden` + `tabular-nums`, sr-only `aria-live` anuncia o valor
+    final UMA vez; prop `sufixo` para a unidade estática.
+- `CountUp` removido — a única utilização (SMN na home) passou para
+  `Odometer`, que é o apresentador de revelação por definição.
+- `animar` já estava em todos os heróis de simulador; o líquido do
+  talão de `/salario` (que não animava) passou a `TweenNum`.
+- `src/lib/animado.test.tsx` — 11 testes: curva monótona, extremos,
+  retarget a meio (o `de` é a posição actual — nunca salta), cadeia de
+  retargets, contrato SSR (valor final no primeiro paint, aria-live,
+  tabular-nums) dos dois apresentadores.
+- e2e novo: com reduced-motion, o herói mostra o valor final de imediato
+  e ESTÁVEL (leitura dupla a 700ms — interpolação denunciar-se-ia).
+
+**Decisões**
+
+- SSR/first-paint: o estado inicial do hook é sempre o alvo — o valor
+  final está no HTML mesmo sem JS; `retarget` garante que mudar o input
+  a meio da animação parte da posição visível, nunca do valor anterior.
+- O `Odometer` não usa o hook — a interpolação dele vive na transição
+  CSS das rodas (é o apresentador, não um segundo motor). Documentado.
+
+**Nota de infra** — o `serve` manual a correr em background morre a
+meio do e2e no Windows; o `webServer` do playwright.config gere o
+processo sozinho e é estável — não arrancar `serve` à mão antes do
+`npm run test:e2e` (excepto para screenshots via `_shots.mjs`).
+
+**Copy a rever** — nenhuma.
+
+**Screenshots** — `.screenshots/M-03/depois-salario-*`.

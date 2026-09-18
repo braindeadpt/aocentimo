@@ -201,6 +201,26 @@ test("com reduced-motion nenhuma rota tem animação nem transição activa", as
   }
 });
 
+test("com reduced-motion o número-herói mostra o valor final sem interpolação", async ({
+  page,
+}) => {
+  // contrato M-03: mudar o input com reduce → o herói mostra já o valor
+  // final — nunca um intermédio nem um zero
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/salario");
+  // o número-herói de /salario é o líquido impresso no talão
+  const hero = page.locator(".talao-cut dd").first();
+  await page.locator("#bruto").fill("2000");
+  // imediatamente depois do input: o texto é já o valor final — e fica
+  // estável; com interpolação, uma segunda leitura passados 700ms
+  // (> --dur-media) mostraria outro número
+  const texto = await hero.innerText();
+  expect(texto).toMatch(/\d/);
+  expect(texto).not.toContain("0,00");
+  await page.waitForTimeout(700);
+  expect(await hero.innerText()).toBe(texto);
+});
+
 test("o primeiro Tab foca o skip-link", async ({ page }) => {
   await page.goto("/");
   await page.keyboard.press("Tab");

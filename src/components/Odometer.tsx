@@ -48,9 +48,11 @@ export function Odometer({
   let rodas = 0;
   return (
     <>
-      {/* (b) texto real em sr-only — dentro de aria-live um nome acessível
-          via aria-label num <span> genérico não é exposto; o texto é */}
-      <span className="sr-only">{texto}</span>
+      {/* texto real em sr-only com aria-live — anuncia o valor FINAL uma
+          vez, nunca as rodas a meio; o visual é aria-hidden */}
+      <span className="sr-only" aria-live="polite">
+        {texto}
+      </span>
       <span ref={ref} className={`odometer ${className ?? ""}`} aria-hidden="true">
       {texto.split("").map((ch, i) => {
         if (/\d/.test(ch)) {

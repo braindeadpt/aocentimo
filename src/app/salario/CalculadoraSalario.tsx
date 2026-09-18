@@ -6,6 +6,7 @@ import { TSU_ENTIDADE } from "@/lib/engines/seg-social";
 import { reciboMensal, FormaPagamentoSA } from "@/lib/engines/recibo";
 import { SituacaoRetencao } from "@/lib/engines/retencao";
 import { EuroBar } from "@/components/EuroBar";
+import { TweenNum } from "@/components/TweenNum";
 import { SITE_URL } from "@/lib/site";
 import { Cascata } from "@/components/Cascata";
 import { fmtEUR, fmtPct, fmtData } from "@/lib/format";
@@ -238,7 +239,14 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
                 <dt className="talao-total">
                   Líquido no fim do mês
                 </dt>
-                <dd className="text-4xl font-bold">{fmtEUR(recibo.liquido)}</dd>
+                <dd className="text-4xl font-bold">
+                  <TweenNum
+                    valor={recibo.liquido}
+                    casas={2}
+                    texto={fmtEUR(recibo.liquido)}
+                    sufixo=" €"
+                  />
+                </dd>
               </div>
               <div className="talao-sep flex justify-between gap-4 py-1.5">
                 <dt className="talao-dim">CUSTO TOTAL P/ A EMPRESA</dt>
