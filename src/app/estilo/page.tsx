@@ -806,6 +806,88 @@ export default function EstiloPage() {
           ))}
         </ul>
       </section>
+
+      {/* M-22: os casos proibidos mostrados — cada um foi um defeito real
+          apanhado no varrimento, com a forma correcta ao lado */}
+      <section className="stack-sec">
+        <h2 className="kicker mb-4">Proibido — os defeitos que já aconteceram</h2>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="border border-line px-4 py-3">
+            <p className="kicker-xs mb-2">✗ borda serrilhada a fingir papel</p>
+            <div
+              aria-hidden
+              className="h-10 w-full"
+              style={{
+                background: "var(--talao-paper)",
+                clipPath:
+                  "polygon(0 0,100% 0,100% 100%,97% 92%,94% 100%,91% 92%,88% 100%,85% 92%,82% 100%,79% 92%,76% 100%,73% 92%,70% 100%,67% 92%,64% 100%,61% 92%,58% 100%,55% 92%,52% 100%,49% 92%,46% 100%,43% 92%,40% 100%,37% 92%,34% 100%,31% 92%,28% 100%,25% 92%,22% 100%,19% 92%,16% 100%,13% 92%,10% 100%,7% 92%,4% 100%,1% 92%,0 100%)",
+              }}
+            />
+            <p className="footnote mt-2">
+              Zig-zag regular = decoração, não matéria. O papel rasga num
+              trajecto determinista e irregular (materia.ts).
+            </p>
+          </div>
+          <div className="border border-line px-4 py-3">
+            <p className="kicker-xs mb-2">✓ rasgo determinista + sombra própria</p>
+            <div className="h-10 w-full talao-face" aria-hidden />
+            <p className="footnote mt-2">
+              A peça de papel tem face, fibra, espessura e sombra que a
+              acompanha — vê a fita em /salario a 400%.
+            </p>
+          </div>
+          <div className="border border-line px-4 py-3">
+            <p className="kicker-xs mb-2">✗ nome de série pintado com a cor da rampa</p>
+            <p className="footnote">
+              <code className="num">&lt;text fill=&quot;var(--seq-2)&quot;&gt;Euribor 12M&lt;/text&gt;</code>
+            </p>
+            <p className="footnote mt-2">
+              Cor de rampa em texto falha AA nos dois temas (1.8–3.6:1
+              medido). A cor vai no traço/tick; o nome fica em tinta.
+            </p>
+          </div>
+          <div className="border border-line px-4 py-3">
+            <p className="kicker-xs mb-2">✓ tick com a cor da série, nome em tinta</p>
+            <p aria-hidden className="num text-sm text-ink2 flex items-center gap-2">
+              <span className="inline-block h-0.5 w-3" style={{ background: "var(--seq-2)" }} />
+              Euribor 12M — 2,95 %
+            </p>
+            <p className="footnote mt-2">
+              A legibilidade nunca depende da rampa — a cor é redundância,
+              não o único canal.
+            </p>
+          </div>
+          <div className="border border-line px-4 py-3">
+            <p className="kicker-xs mb-2">✗ duração inventada fora da gramática</p>
+            <p className="footnote">
+              <code className="num">animation: x 420ms ease</code> — 420ms não
+              significa nada na gramática. Toda a duração é um dos quatro
+              tokens; toda a curva é um dos quatro easings.
+            </p>
+          </div>
+          <div className="border border-line px-4 py-3">
+            <p className="kicker-xs mb-2">✓ duração = significado</p>
+            <p className="footnote">
+              <code className="num">--dur-media var(--ease-lin)</code> — a
+              chaveta que mede a base tributável: transformação explicada,
+              linear porque é medição.
+            </p>
+          </div>
+        </div>
+        <ul className="mt-4 space-y-1">
+          {[
+            "Sem \"Fig. N\" onde nada remete para a figura — a legenda identifica, o número decorava.",
+            "Sem aliases --color-seq-* em SVG inline: @theme inline só emite a var quando há utilidade — em fill/stroke usa-se --seq-* directo.",
+            "Sem tinta de tema sobre papel fixo — o papel tem a sua tinta (--talao-ink, papel-sai-tinta, papel-fica-tinta).",
+            "Sem número herói vazio à espera de JS — o SSR traz o valor final.",
+          ].map((r) => (
+            <li key={r} className="footnote">
+              <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-mark align-middle" />
+              {r}
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 }

@@ -40,9 +40,14 @@ não são light+dark: são **o documento** (claro — papel de worksheet,
 grelha milimetrada) e **o instrumento** (escuro — ecrã de registo, a mesma
 malha em fósforo).
 
-**O talão de `/salario` é o único artefacto de papel do produto.** O
-contraste entre o instrumento frio e o recibo quente é deliberado — é a
-tese visual.
+**O papel é a matéria dos artefactos — não do chrome.** Cada documento
+fiscal é uma peça física: o recibo de `/salario`, o talão de compras em
+duas peças de `/impostos`, a escritura de `/casa`, a declaração da
+Segurança Social de `/trabalho`, a caderneta de Aforro de `/poupanca`,
+a nota de liquidação de `/irs`. O contraste entre o instrumento frio e
+o papel quente é deliberado — é a tese visual. O papel tem paleta fixa
+(`--talao-paper`, `--talao-ink`, `papel-sai`/`papel-fica`) que **não
+troca com o tema** — um recibo é um recibo, no escuro e no claro.
 
 ## 3. Sistema visual
 
@@ -143,6 +148,29 @@ as rotas e falha se algum elemento animar.
 
 O número nunca espera pela animação — o valor final está no DOM desde o
 primeiro paint.
+
+### Matéria — papel determinista (M-01)
+
+As peças de papel nascem de `src/lib/materia.ts`: rasgo determinista
+(irregular, nunca serrilhado), perfurações a sério (buracos que mostram
+o fundo), sombra própria por peça. `PecaPapel` e `FitaTalao` são as
+primitivas; o painel de instrumento (`Instrumento`) e o `Spark` são os
+componentes únicos de leitura de séries.
+
+### Motor de valores (M-03)
+
+`useValorAnimado` é o único motor: interpola do valor anterior, nunca de
+zero. `TweenNum` (texto) e `Odometer` (dígitos que rodam) são os dois
+apresentadores; o contrato é SSR com valor final + `aria-live` num
+só readout.
+
+### Rampas sequenciais (M-04)
+
+Séries ordinais usam `--seq-1…4` (azul-aço). Em SVG inline referem-se
+sempre como `var(--seq-N)` directo — os aliases `--color-*` de
+`@theme inline` só existem quando há utilidade Tailwind correspondente.
+A rampa candidata `seqb` (âmbar escurecido) está desenhada em `/estilo`
+à espera da decisão do dono (ver DECISOES.md — pergunta em aberto).
 
 ## 4. Intocável
 

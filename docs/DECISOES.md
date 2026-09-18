@@ -163,7 +163,63 @@ camada — não por regressão, por decisão. Os inputs manuais recorrentes
 são a revisão fiscal anual e a curadoria IGCP, documentados em
 `data/fiscal/README.md`.
 
-## Perguntas em aberto
+
+## 2026-09-19 — Noite de execução M-01…M-22 (sistema completo)
+
+**Contexto.** O pack de noite (PACK-NOITE.md) executou o redesenho
+completo: matéria, gramática, motor de valores, rampas, e o redesenho de
+cada rota como artefacto documental.
+**Escolhas.**
+
+- **Papel como matéria transversal** — a decisão «o talão de /salario é o
+  único artefacto de papel» (2026-09-17) fica superada: o papel passa a
+  ser a matéria de todos os documentos fiscais do site (recibo, talão de
+  compras, escritura, declaração SS, caderneta, nota de liquidação). O
+  chrome continua instrumento — o contraste mantém-se porque o papel
+  tem paleta fixa que não troca com o tema.
+- **Rasgo determinista, nunca serrilhado** (`materia.ts`): zig-zag
+  regular é decoração e está proibido — mostrado em /estilo §Proibido.
+- **`useArmado` é a regra da dobra em código**: nasce visível → estado
+  final; abaixo da dobra → anima ao entrar no viewport; reduced-motion
+  → sempre final. Substitui `animation-timeline: view()` (que animava
+  o já-visível) e o gate por intenção.
+- **`--seq-*` directo em SVG inline** — `var(--color-seq-3)` resolvia a
+  vazio em escuro: `@theme inline` só emite a var quando existe a
+  utilidade Tailwind correspondente. Em `fill`/`stroke`/props de cor
+  usa-se a paleta `:root` directa. Alternativa considerada: emitir todas
+  as vars sem `inline` — rejeitada, muda a semântica do theme inteiro.
+- **Texto nunca carrega cor de rampa** — legendas de série passaram a
+  tick colorido + nome em `--ink2`. A cor é redundância, não canal único.
+- **«Fig. N» removido** — nada no texto remetia para a numeração; a
+  Figure fica título+fonte.
+- **Nav `/trabalho`** — a rota cobre desemprego e trabalho independente;
+  «Desemprego» na nav mentia metade da página. «Trabalho» bate com a
+  rota e cobre os dois.
+- **`scripts/_serve-static.mjs`** — `npx serve` morre a meio do e2e
+  nesta máquina (≥4×); o servidor estático mínimo aguentou a suite toda.
+
+**Consequência.** `/estilo` documenta o sistema completo com exemplos
+vivos e os casos proibidos mostrados; o e2e passou de 16 para 18 testes
+(AA em todas as rotas nos dois temas — medido, não presumido —,
+equivalente único por gráfico, herói no HTML sem JS).
+
+## Perguntas ao dono (em aberto — não decididas)
+
+- **Rampa sequencial (M-04b)**: `seq` azul-aço (actual) vs `seqb` âmbar
+  escurecido (proposta) — as duas estão desenhadas lado a lado em
+  `/estilo` com Euribor real. Falta a decisão.
+- **Copy novo da noite para revisão**: `/salario` (entrada por pergunta
+  «Quanto vais receber mesmo?»), `/irs` (nota de liquidação, sequência
+  IRS Jovem), `/trabalho` (declaração SS), `/poupanca` (caderneta),
+  `/impostos` (talão em duas peças), `/metodologia` (quadro vivo) —
+  texto novo escrito por agente, sujeito à regra «copy é do dono».
+- **JS ~500KB/rota**: medido encodedBodySize sobre build estático local;
+  sem análise de cobertura por rota. Vale uma sessão de dieta?
+- **`npx serve` instável** — substituir o webServer do playwright.config
+  por `_serve-static.mjs` permanentemente?
+- **«Observatório»** — pergunta anterior continua por responder.
+
+## Perguntas em aberto (arquivo)
 
 - «Observatório»: o código chama assim ao sistema atual (comentário de
   `globals.css`, `/estilo`); o V2 diz que substituiu uma direção

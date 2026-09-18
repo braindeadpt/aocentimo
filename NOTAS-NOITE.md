@@ -814,3 +814,31 @@ contra o remote real.
 sitemap), `scripts/_aa-probe.mjs` (falhas AA com fg/bg medidos;
 fundo SVG por isPointInFill com getScreenCTM — papel pointer-events:none
 e fills transparentes não contaminam).
+
+---
+
+## Fecho da noite (M-22)
+
+**Medições de desempenho** (build estático local, `serve`, Chromium;
+valores indicativos — rede local, não Lighthouse):
+- LCP: 164–480 ms por rota (pior: /salario 480, /irs 448, /impostos 440;
+  melhor: /aprender/mtic 164, /metodologia 196, /aprender 192)
+- CLS: 0 na maioria; máximo 0.069 em /impostos
+- JS: 486–531 KB por rota (encodedBodySize de todos os chunks —
+  o bundle é maioritariamente partilhado; não é transfer size)
+
+**Ficou por fazer / por decidir**:
+- M-04b: escolha da rampa sequencial — `seq` azul-aço vs `seqb` âmbar
+  escurecido, lado a lado em /estilo. Decisão do dono.
+- Copy novo da noite (ver lista em DECISOES.md §2026-09-19) precisa de
+  revisão do dono — regra «copy é do dono».
+- JS por rota merece sessão de dieta (~500 KB encoded; grande parte
+  partilhada, mas nunca foi auditado por rota).
+- webServer do Playwright: `npx serve` instável nesta máquina — propor
+  `_serve-static.mjs` como servidor da suite.
+
+**Perguntas ao dono** — consolidadas em `docs/DECISOES.md` (secção
+«Perguntas ao dono», 2026-09-19).
+
+**Gates finais**: lint ✓ typecheck ✓ unit 185 ✓ validate:data 60 séries
+em dia ✓ build 58 rotas ✓ e2e 18/18 ✓ AA 0 falhas em 36 rotas × 2 temas ✓
