@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "descricao": "Eventos curados para anotação nos gráficos. Cada evento tem fonte oficial e URL — nunca se anota sem fonte (regra nº 1 aplicada a anotações).",
+    "nota": "alvo = contexto do gráfico onde o evento aparece: euribor, combustiveis, ihpc.",
+    "curadoria": "2026-09"
+  },
+  "eventos": [
+    {
+      "id": "bce-ciclo-subidas",
+      "alvo": "euribor",
+      "t": "2022-07-27",
+      "rotulo": "BCE começa a subir juros",
+      "detalhe": "+50 pb — a primeira subida em 11 anos; a taxa de depósito sai do negativo",
+      "fonte": "BCE — decisão de política monetária de 21 jul 2022, efeitos a 27 jul 2022",
+      "url": "https://www.ecb.europa.eu/press/pr/date/2022/html/ecb.mp220721~53e5bdd317.en.html"
+    },
+    {
+      "id": "bce-pico",
+      "alvo": "euribor",
+      "t": "2023-09-20",
+      "rotulo": "Pico do ciclo — depósito a 4 %",
+      "detalhe": "10.ª subida consecutiva (+25 pb); 450 pb desde jul 2022, o ciclo mais rápido da zona euro",
+      "fonte": "BCE — decisão de 14 set 2023, efeitos a 20 set 2023",
+      "url": "https://www.ecb.europa.eu/press/pr/date/2023/html/ecb.mp230914~aab39f8c21.en.html"
+    },
+    {
+      "id": "isp-desconto",
+      "alvo": "combustiveis",
+      "t": "2022-03-11",
+      "rotulo": "Desconto extraordinário do ISP",
+      "detalhe": "devolução da receita adicional do IVA via ISP — mecanismo de mitigação do choque de preços, revisto semanalmente",
+      "fonte": "Portaria n.º 111-A/2022, de 11 de março",
+      "url": "https://files.dre.pt/1s/2022/03/05002/0000800011.pdf"
+    },
+    {
+      "id": "iva-zero",
+      "alvo": "ihpc",
+      "t": "2023-04-18",
+      "tFim": "2024-01-04",
+      "rotulo": "IVA zero no cabaz essencial",
+      "detalhe": "isenção com direito a dedução nos 46 bens do cabaz alimentar essencial saudável — medida excecional e temporária",
+      "fonte": "Lei n.º 17/2023, de 14 de abril",
+      "url": "https://files.dre.pt/1s/2023/04/07400/0000200004.pdf"
+    }
+  ]
+}

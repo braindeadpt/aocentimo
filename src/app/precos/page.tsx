@@ -9,6 +9,7 @@ import { loadFonte, type Serie } from "@/lib/data";
 import { fmtData, fmtLitro } from "@/lib/format";
 import isp from "@data/fiscal/isp.json";
 import iva from "@data/fiscal/iva.json";
+import eventos from "@data/fiscal/eventos.json";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
@@ -43,10 +44,9 @@ export default function PrecosPage() {
   }));
   const temDados = series.every((s) => s.serie !== null);
   const ultimo = series[0].serie?.meta.serieAte;
-  // janela do gráfico: últimos 12 meses
-  const corte = ultimo
-    ? new Date(Date.parse(ultimo) - 366 * 86_400_000).toISOString().slice(0, 10)
-    : null;
+  // janela do gráfico: desde 2022 — a guerra, o desconto do ISP e o
+  // pico são a história; 12 meses escondiam os eventos que a explicam
+  const corte = "2022-01-01";
 
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
@@ -104,6 +104,7 @@ export default function PrecosPage() {
                   .map((p) => [p.t, p.v] as [string, number]),
               }))}
               unidade="€"
+              eventos={eventos.eventos.filter((e) => e.alvo === "combustiveis")}
             />
           </>
         ) : (

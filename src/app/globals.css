@@ -944,6 +944,52 @@ body::before {
     calc(var(--spark-delay, 0) * var(--stagger) + var(--dur-media));
 }
 
+/* linechart — a série desenha-se UMA vez ao entrar no viewport,
+   escalonada entre séries por --lc-delay × --stagger; a banda de
+   dispersão esbate-se depois do traço. Sem JS/reduced-motion: estado
+   final já (o armamento é feito por JS — .lc-armed só existe com JS) */
+.lc-armed .lc-line {
+  stroke-dasharray: var(--lc-len);
+  stroke-dashoffset: var(--lc-len);
+}
+.lc-on .lc-line {
+  animation: spark-draw var(--dur-longa) var(--ease-entra)
+    calc(var(--lc-delay, 0) * var(--stagger)) forwards;
+}
+/* depois de desenhada a linha é um traço normal — sem restos de dash */
+.lc-done .lc-line {
+  stroke-dasharray: none;
+  stroke-dashoffset: 0;
+}
+.lc-armed .lc-banda {
+  opacity: 0;
+}
+.lc-on .lc-banda {
+  transition: opacity var(--dur-curta) var(--ease-entra)
+    calc(var(--lc-delay, 0) * var(--stagger) + var(--dur-media));
+}
+/* eventos — o carimbo do observatório: tracejado fino, quadrado
+   torrado no topo (o mesmo marcador de evidência do Spark) */
+.lc-evento {
+  stroke: var(--line2);
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+  vector-effect: non-scaling-stroke;
+}
+.lc-evento-marca {
+  fill: var(--mark);
+}
+.lc-evento-rot {
+  fill: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+.lc-evento-faixa {
+  fill: var(--mark);
+  opacity: 0.08;
+}
+
 /* kinetic type — palavras sobem de trás de uma máscara de linha */
 .kin-line {
   display: inline-block;
@@ -1064,6 +1110,13 @@ body::before {
   }
   .spark-armed .spark-area {
     opacity: 0.09;
+  }
+  .lc-armed .lc-line {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+  .lc-armed .lc-banda {
+    opacity: 1;
   }
   .ticker {
     overflow-x: auto;

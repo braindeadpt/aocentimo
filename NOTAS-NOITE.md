@@ -239,3 +239,55 @@ build 58 ✓ e2e 15/15 ✓.
 "EMISSÃO", "cêntimos de cada euro", nota `†`, caption aria).
 
 **Screenshots** — `.screenshots/m05/` {dark,light,mobile}.
+
+---
+
+## M-06 — LineChart: desenho, eventos, morph, série atrasada
+
+**Entregue**
+
+- `data/fiscal/eventos.json` — 4 eventos CURADOS, cada um com fonte
+  oficial e URL verificada:
+  - `bce-ciclo-subidas` (2022-07-27) — decisão BCE 21 jul 2022, +50 pb,
+    ecb.europa.eu;
+  - `bce-pico` (2023-09-20) — decisão BCE 14 set 2023, depósito 4 %,
+    ecb.europa.eu;
+  - `isp-desconto` (2022-03-11) — Portaria 111-A/2022, dre.pt;
+  - `iva-zero` (2023-04-18 → 2024-01-04) — Lei 17/2023, dre.pt —
+    evento COM duração → faixa sombreada, não linha.
+- `eventos` prop no LineChart: tracejado + quadrado torrado no eixo,
+  rótulos em duas filas com inversão na borda direita, faixa para
+  medidas com `tFim`. Lista de citações por baixo (link → fonte) —
+  o SVG é aria-hidden, sem a lista o evento não existia para leitores.
+- Desenho animado: cada série mede `--lc-len` no DOM e desenha-se por
+  dashoffset à entrada no viewport, escalonada por `--stagger`; banda
+  esbate-se depois; `lc-done` limpa o dash no fim (redimensionar não
+  deixa lacres). Sem JS/reduced-motion: estado final.
+- Morph de dados (e): `grafico.ts` puro — `interpDom`, `interpPts`
+  (cauda nova nasce da cauda velha), `chaveSeries` (identidade barata:
+  arrays reconstruídos iguais não animam). rAF 600 ms easeEntra;
+  interrupções partem do frame actual via `renderedRef`.
+- Estado "atrasada": prop `estado` → quadrado de aviso + palavra no
+  readout (o mesmo vocabulário do Ticker/Celula). Ligado em `/dados`
+  (Euribor) e `/inflacao` (IHPC); `/precos` sem selo por agora.
+- `/precos` — janela do gráfico alargada de 12 meses para desde 2022:
+  a história (guerra → desconto → normalização) precisa dos eventos.
+
+**LACUNA registada** — a SAÍDA do desconto do ISP não é um dia, é um
+desmame por portarias mensais (última confirmada: Portaria
+288-A/2023, de 25 set — redução ~15-16 cêntimos). Não encontrei a
+portaria que a extingue definitivamente → NÃO criei o evento de saída;
+o dono confirma a última portaria e data.
+
+**Lint** — `set-state-in-effect` evitado: a armadura entra por
+`classList` no effect; o state só muda em callbacks (IO/animationend).
+
+**Testes** — 9 novos (interpolação + disciplina de fonte: nenhum
+evento sem data ISO, rótulo, fonte e URL https). Gates: lint ✓
+typecheck ✓ unit 178 ✓ data ✓ build 58 ✓ e2e 15/15 ✓.
+
+**Copy a rever** — rótulos/detalhes dos eventos em `eventos.json`
+("Pico do ciclo — depósito a 4 %", etc.).
+
+**Screenshots** — verificados `/dados`, `/precos`, `/inflacao`
+(1440 + 375): marcadores e faixa alinham com a história real.

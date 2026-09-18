@@ -7,8 +7,9 @@ import { Source } from "@/components/Source";
 import { JsonLd, dataset } from "@/lib/jsonld";
 import { PoderDeCompra } from "./PoderDeCompra";
 import { SalarioReal } from "./SalarioReal";
-import { loadSerie, variacao, loadFontes, type Serie } from "@/lib/data";
+import { loadSerie, variacao, loadFontes, loadFreshness, type Serie } from "@/lib/data";
 import { fmtNum } from "@/lib/format";
+import eventos from "@data/fiscal/eventos.json";
 
 export const metadata: Metadata = {
   title: "Inflação — quanto subiu o que compras",
@@ -51,6 +52,10 @@ export default function InflacaoPage() {
   const cp01 = loadSerie("CP01");
   const nrg = loadSerie("NRG");
   const fonte = loadFontes().find((f) => f.id === "hicp-pt-cp00");
+  const fresh = loadFreshness();
+  const ihpcAtrasada = ["hicp-pt-cp00", "hicp-pt-cp01", "hicp-pt-nrg"].some(
+    (id) => fresh?.series.find((s) => s.id === id)?.estado === "atrasada"
+  );
 
   const linhas = CATEGORIAS.map(([cod, nome]) => ({
     cod,
@@ -113,6 +118,8 @@ export default function InflacaoPage() {
               { name: "Alimentação", data: (cp01 ?? cp00!).series.map((p) => [p.t + "-01", p.v] as [string, number]) },
               { name: "Energia", data: (nrg ?? cp00!).series.map((p) => [p.t + "-01", p.v] as [string, number]) },
             ]}
+            eventos={eventos.eventos.filter((e) => e.alvo === "ihpc")}
+            estado={ihpcAtrasada ? "atrasada" : "em-dia"}
           />
         ) : (
           <div className="border border-line bg-panel px-5 py-10 text-center text-ink2">

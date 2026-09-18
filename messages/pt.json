@@ -42,7 +42,8 @@
     "scrubAria": "Régua de interrogação — as setas percorrem, Home e End vão aos extremos, Escape limpa",
     "ultimo": "último",
     "doCusto": "do custo",
-    "atrasada": "atrasada"
+    "atrasada": "atrasada",
+    "eventosAria": "Eventos marcados no gráfico — cada um abre a fonte oficial"
   },
   "fluxo": {
     "aria": "A empresa paga {custo} por mês; chegam-te {liquido} líquidos.",

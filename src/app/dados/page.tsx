@@ -19,6 +19,7 @@ import { fmtData, fmtNum, fmtPct } from "@/lib/format";
 import { m } from "@/lib/messages";
 import usura from "@data/fiscal/usura-2026.json";
 import calendario from "@data/fiscal/calendario-2026.json";
+import eventos from "@data/fiscal/eventos.json";
 
 export const metadata: Metadata = {
   title: "Dados — painéis vivos de fontes oficiais",
@@ -279,6 +280,14 @@ export default function DadosPage() {
                 data: euribor[k]!.series.map((p) => [p.t + "-01", p.v] as [string, number]),
               }))}
               unidade="%"
+              eventos={eventos.eventos.filter((e) => e.alvo === "euribor")}
+              estado={
+                (Object.keys(euribor) as (keyof typeof euribor)[]).some(
+                  (k) => estadoDe(`euribor-${k.toLowerCase()}-mensal`) === "atrasada"
+                )
+                  ? "atrasada"
+                  : "em-dia"
+              }
             />
             <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-px bg-line border border-line">
               {(Object.keys(euribor) as (keyof typeof euribor)[]).map((k) => {
