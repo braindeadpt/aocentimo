@@ -16,7 +16,7 @@ for (const rota of rotas) {
         viewport: { width: w, height: 900 },
         reducedMotion: "reduce",
       });
-      await page.addInitScript((t) => localStorage.setItem("theme", t), tema);
+      await page.addInitScript((t) => localStorage.setItem("aocentimo-theme", t), tema);
       await page.goto(`http://localhost:3100${rota}`, { waitUntil: "networkidle" });
       await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight / 2));
       await page.waitForTimeout(400);

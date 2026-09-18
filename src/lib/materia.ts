@@ -150,6 +150,42 @@ export function pecaRasgada(
   return d.join(" ");
 }
 
+/**
+ * Canto de rasgo em L — a linha de separação entre a fita e o pedaço
+ * que sai para a direita: um troço HORIZONTAL rasgado (dentes para
+ * baixo, lado=1) seguido de um VERTICAL (dentes para a direita).
+ *
+ * Pontos de (comp,0) até (0,alt), em ordem de percurso. A MESMA
+ * polyline serve os dois lados — a fita desenha-a como notch na sua
+ * aresta direita e o pedaço como o seu bordo superior-esquerdo: a
+ * correspondência rasgo↔falta é perfeita por construção, não por
+ * aproximação de semente.
+ */
+export function rasgoCantoPts(
+  comp: number,
+  alt: number,
+  o: RasgoOpts
+): [number, number][] {
+  const g = o.grosseria ?? 0.55;
+  // horizontal: gerado esq→dir com dentes para baixo, depois invertido —
+  // o percurso é da direita (comp,0) para a esquina (0,0)
+  const h = arestaRasgadaPts(comp, {
+    semente: o.semente,
+    grosseria: g,
+    lado: 1,
+  }).reverse() as [number, number][];
+  // vertical: gerado esq→dir com dentes para baixo e rodado 90° —
+  // (x,y) → (y,x): fica de (0,0) a (0,alt) com dentes para +x
+  const v = arestaRasgadaPts(alt, {
+    semente: o.semente + 0x9e3779b9,
+    grosseria: g,
+    lado: 1,
+  })
+    .slice(1)
+    .map(([x, y]) => [r1(y), r1(x)] as [number, number]);
+  return [...h, ...v];
+}
+
 /** Profundidade máxima que os dentes atingem para uma dada grosseria —
  *  útil para dimensionar margens do viewBox. */
 export function profundidadeRasgo(grosseria: number): number {

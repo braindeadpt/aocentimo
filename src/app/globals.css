@@ -561,27 +561,93 @@ body::before {
   to { transform: scaleX(1); }
 }
 
-/* ————— a escada do euro — waterfall editorial —————
-   Barras totais crescem da base; os cortes do Estado crescem para
-   baixo, suspensos do nível anterior — o dinheiro literalmente cai. */
-.fluxo-barra {
-  animation: fluxo-cresce var(--dur-media) var(--ease-entra) both;
+/* ————— a fita do salário — a peça-assinatura (M-05) —————
+   A sequência lê-se como uma coisa só: a cabeça de impressão marca o
+   topo, a fita emerge de cima para baixo, cada pedaço resiste um
+   instante e rasga-se quando a aresta passa a sua perfuração, os
+   valores contam ao aparecer, o troço final acende. Todos os estados
+   base são o estado FINAL — reduced-motion mostra a fita impressa. */
+.fita-wipe {
+  animation: fita-sair var(--dur-longa) var(--ease-entra) both;
+}
+@keyframes fita-sair {
+  from { transform: translateY(-740px); }
+  to { transform: translateY(0); }
 }
 
-.fluxo-barra-baixo {
-  transform-box: fill-box;
-  transform-origin: bottom;
+.fita-cabeca {
+  animation: fita-aparece var(--dur-micro) var(--ease-entra) both;
+}
+@keyframes fita-aparece {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.fluxo-barra-cima {
-  transform-box: fill-box;
-  transform-origin: top;
+/* o pedaço nasce anexado ao seu notch (a fita ainda o inclui), resiste
+   um instante, solta-se, roda e cai na pilha à direita — --ax/--ay é a
+   posição anexada, --fx/--fy a aterragem, --r a rotação final */
+.fita-pedaco {
+  transform: translate(var(--fx), var(--fy)) rotate(var(--r));
+  animation: fita-rasga var(--dur-media) var(--ease-rasgo) backwards;
+  animation-delay: var(--d, 0ms);
+}
+@keyframes fita-rasga {
+  0% {
+    opacity: 0;
+    transform: translate(var(--ax), var(--ay)) rotate(0deg);
+  }
+  12% {
+    opacity: 1;
+    transform: translate(var(--ax), var(--ay)) rotate(0deg);
+  }
+  26% {
+    transform: translate(calc(var(--ax) + 1.5px), var(--ay))
+      rotate(-1.4deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(var(--fx), var(--fy)) rotate(var(--r));
+  }
 }
 
-@keyframes fluxo-cresce {
-  from { transform: scaleY(0); }
-  to { transform: scaleY(1); }
+/* sombra pintada do pedaço — aparece no voo; transform/opacity apenas
+   (orçamento M-01: filtros só em estático) */
+.fita-sombra {
+  opacity: 0.5;
+  animation: fita-sombra var(--dur-media) var(--ease-entra) backwards;
+  animation-delay: var(--d, 0ms);
 }
+@keyframes fita-sombra {
+  0%,
+  55% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}
+
+/* textos que aterrissam com o pedaço ou marcam um corte de 0 € */
+.fita-atraso {
+  animation: fita-aparece var(--dur-curta) var(--ease-entra) backwards;
+  animation-delay: var(--d, 0ms);
+}
+
+/* realce do troço final — acende depois da última perfuração */
+.fita-brilho {
+  animation: fita-aparece var(--dur-curta) var(--ease-entra) backwards;
+  animation-delay: var(--d, 0ms);
+}
+
+/* interrogação — o elemento lido fica pleno, os irmãos recuam */
+.fita-passo {
+  transition: opacity var(--dur-curta) var(--ease-entra);
+}
+.fita-passo.fita-off {
+  opacity: 0.16;
+}
+
+/* ————— tipografia impressa da fita (e do talão) ————— */
 
 /* ————— odometer — rodas de dígitos, reactivas —————
    O transform base é a posição final (--d) e a TRANSIÇÃO faz o resto:
@@ -609,23 +675,6 @@ body::before {
   height: 1em;
   line-height: 1;
   text-align: center;
-}
-
-/* escada em ecrã estreito: a pista desliza — a borda direita esbate-se
-   para sinalizar que há mais (a mesma máscara do ticker) */
-@media (max-width: 680px) {
-  .fluxo-scroll {
-    -webkit-mask-image: linear-gradient(to right, #000 82%, transparent);
-    mask-image: linear-gradient(to right, #000 82%, transparent);
-  }
-}
-
-/* scrolly da escada — barras fora de foco esbatem-se */
-.fluxo-passo {
-  transition: opacity var(--dur-curta) var(--ease-entra);
-}
-.fluxo-passo.fluxo-off {
-  opacity: 0.16;
 }
 
 /* ————— talão — o recibo como objeto físico —————

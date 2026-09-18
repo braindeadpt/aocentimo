@@ -29,7 +29,7 @@ export default function Home() {
 
   // Fronteira servidor/cliente: o motor fiscal corre UMA vez aqui —
   // simularSalario puxa os JSON de data/fiscal (IRS, retenção, SS) que
-  // assim nunca entram no bundle do browser. Adivinha/Escada/Fluxo
+  // assim nunca entram no bundle do browser. Adivinha/Escada/FitaTalao
   // recebem números prontos por props (serializáveis); interactivos
   // ficam só o form da aposta e o observer do scrolly.
   const med = simularSalario([1500], 0, 2026);

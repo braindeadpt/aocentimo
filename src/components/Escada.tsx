@@ -1,18 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Fluxo, type MedidasEuro } from "@/components/Fluxo";
+import { FitaTalao, type MedidasEuro } from "@/components/FitaTalao";
 import { fmtEUR0, fmtPct } from "@/lib/format";
 import { m, t } from "@/lib/messages";
 
 /**
- * Scrollytelling da escada do euro: o diagrama fica sticky enquanto cada
- * degrau é narrado. O passo activo (IntersectionObserver, centro do ecrã)
- * passa a `destaque` do Fluxo e esbate os outros. Sem JS tudo se lê na
- * mesma — o diagrama fica no lugar e os passos em lista. Com
- * prefers-reduced-motion o observer nem liga: esbater barras ao rolar é
- * uma mudança de estado desencadeada por scroll — o estado final é todas
- * as barras a opacidade plena e todos os passos legíveis.
+ * Scrollytelling da fita do salário: a fita fica sticky enquanto cada
+ * corte é narrado. O passo activo (IntersectionObserver, centro do ecrã)
+ * passa a `destaque` da FitaTalao e recua os outros. Sem JS tudo se lê
+ * na mesma — a fita fica no lugar e os passos em lista. Com
+ * prefers-reduced-motion o observer nem liga: recuar troços ao rolar é
+ * uma mudança de estado desencadeada por scroll — o estado final é a
+ * fita inteira a opacidade plena e todos os passos legíveis.
  */
 export function Escada({ medidas }: { medidas: MedidasEuro }) {
   const { custo, tsu, irs, ss, liquido, estado, taxaTsu, taxaSs } = medidas;
@@ -63,7 +63,7 @@ export function Escada({ medidas }: { medidas: MedidasEuro }) {
       {/* blueprint = a textura da zona de medição — só atrás do diagrama,
           nunca atrás do texto da aposta (a malha estragava o mono de 12px) */}
       <div className="blueprint self-start px-3 py-6 lg:sticky lg:top-24 lg:col-span-8">
-        <Fluxo destaque={ativo} medidas={medidas} />
+        <FitaTalao destaque={ativo} medidas={medidas} />
       </div>
       <div className="lg:col-span-4">
         <p className="kicker-xs">

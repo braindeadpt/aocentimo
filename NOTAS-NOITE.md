@@ -187,3 +187,55 @@ com os números.
 
 **Screenshots** — `.screenshots/m04/depois-estilo-*` ×{dark,light}×
 {1440,375}.
+
+---
+
+## M-05 — `<FitaTalao>` (peça-assinatura, substitui `Fluxo`)
+
+**Entregue**
+
+- `src/lib/fita.ts` — geometria pura e testável da fita: aresta esquerda
+  fixa, direita encolhe por degraus proporcionais ao valor (uma só
+  escala para fita e pedaços), perfurações a sério (máscara — o fundo
+  vê-se), pilha à direita. `ok:false` para total inválido/zero/∞ →
+  `EmptyState`, nunca fita inventada.
+- `materia.ts` + `rasgoCantoPts` — o rasgo em L é partilhado entre o
+  entalhe da fita e o pedaço arrancado: correspondência perfeita por
+  construção, semente derivada do valor.
+- `FitaTalao.tsx` — sequência única: cabeça de impressão → wipe de
+  cima para baixo → cada pedaço resiste, rasga, roda e cai na pilha →
+  valores imprimem ao revelar o troço (`useValorAnimado` + `revelar`
+  e `atraso`) → troço final `papel-fica` acende.
+- Interrogação: readout fixo (`chart-readout`, aria-live) + régua
+  range 0–6 (setas/Home/End/Escape); hover/focus/touch realçam o
+  troço; `destaque` da Escada recua os outros ao narrar.
+- Casos-limite: pedaço zero imprime `0 €` e "não te toca" (não rasga);
+  pedaços em largura mínima marcam `†` + nota "o desenho já não é
+  proporcional aí" — a desonestidade é explicada, não escondida.
+- Equivalente `<table>` sr-only + SVG aria-hidden; 4 links de
+  capítulo do Fluxo mantidos; sem overflow a 375px.
+- Reimpressão: `key` derivada dos valores → a sequência reexecuta-se
+  inteira, nunca um corte seco.
+
+**Decisões/assunções**
+
+- Orientação vertical apenas — a variante horizontal da spec ficou
+  avaliada e descartada: o scrolly da Escada já é vertical e a fita
+  lê-se como recibo (a spec permite avaliar, não obriga).
+- Notch da fita usa a diferença REAL de largura; só o pedaço clampa à
+  largura mínima — a fita é sempre honesta, o pedaço declara-se com `†`.
+- `estado` na régua (posição 6) acende os três pedaços — o total é
+  a soma dos arrancados.
+- Bailout `custo≤0` ANTES de gerar caminhos: sem ele `k` explodia e o
+  gerador de rasgo iterava ~27 mil milhões de vezes (OOM no Vitest).
+
+**Testes** — `fita.test.ts` 45 casos (escala única, aresta fixa,
+correspondência pedaço/entalhe, zero, enormes, mínimos, inválidos);
+e2e novo: teclado nas 7 paradas, Escape, tabela sr-only, aria-hidden,
+links de capítulo. Gates: lint ✓ typecheck ✓ unit 169 ✓ data ✓
+build 58 ✓ e2e 15/15 ✓.
+
+**Copy a rever** — `fita.*` em `messages/pt.json` ("não te toca",
+"EMISSÃO", "cêntimos de cada euro", nota `†`, caption aria).
+
+**Screenshots** — `.screenshots/m05/` {dark,light,mobile}.

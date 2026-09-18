@@ -46,17 +46,30 @@ export function retarget(a: Animado, para: number, t: number): Animado {
   return { de: valorEm(a, t), para, t0: t, dur: a.dur };
 }
 
+export interface OpcoesAnimado {
+  /** ms — da gramática (--dur-media por defeito nos apresentadores) */
+  dur?: number;
+  /** primeira aparição: conta de 0 — a única situação em que a partida
+      é zero (a fita imprime os valores enquanto emerge). O primeiro
+      render continua a devolver `valor`: o SSR mostra sempre o final. */
+  revelar?: boolean;
+  /** ms antes da interpolação começar — entra na partitura de uma
+      sequência (o número só conta quando o seu troço aparece). */
+  atraso?: number;
+}
+
 /**
  * O hook. Devolve o valor a mostrar AGORA; o primeiro render (SSR e
  * cliente) devolve `valor` — o número certo está sempre no HTML.
  */
 export function useValorAnimado(
   valor: number,
-  { dur = 600 }: { dur?: number } = {}
+  { dur = 600, revelar = false, atraso = 0 }: OpcoesAnimado = {}
 ): number {
   const [atual, setAtual] = useState(valor);
   const maq = useRef<Animado | null>(null);
   const alvo = useRef(valor);
+  const primeiro = useRef(true);
 
   useEffect(() => {
     const reduzir = window.matchMedia(
@@ -64,15 +77,22 @@ export function useValorAnimado(
     ).matches;
     const t = performance.now();
     // a partida é a posição visível agora: a meio duma animação é
-    // valorEm(maquina); parada, é o último alvo — nunca zero
-    const de = maq.current ? valorEm(maq.current, t) : alvo.current;
+    // valorEm(maquina); parada, é o último alvo — nunca zero, excepto
+    // na primeira aparição duma sequência de revelação (revelar)
+    const de =
+      revelar && primeiro.current
+        ? 0
+        : maq.current
+          ? valorEm(maq.current, t)
+          : alvo.current;
+    primeiro.current = false;
     alvo.current = valor;
     if (reduzir || de === valor) {
       maq.current = null;
       setAtual(valor);
       return;
     }
-    maq.current = { de, para: valor, t0: t, dur };
+    maq.current = { de, para: valor, t0: t + atraso, dur };
     let raf = 0;
     const tick = (agora: number) => {
       const m = maq.current;

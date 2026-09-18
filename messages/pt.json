@@ -63,6 +63,16 @@
     "linkBanco": "e o banco?",
     "linkBomba": "e na bomba?"
   },
+  "fita": {
+    "emissao": "EMISSÃO",
+    "ficaContigo": "FICA CONTIGO",
+    "centimos": "cêntimos de cada euro",
+    "arrancados": "{valor} arrancados",
+    "antesDaConta": "todos os meses, antes da tua conta",
+    "naoToca": "não te toca",
+    "naoProp": "pedaço em largura mínima — o desenho já não é proporcional aí",
+    "aria": "A fita do salário: a empresa paga {custo}; saem {tsu} de TSU, {irs} de IRS e {ss} de Segurança Social. Ficam contigo {liquido}."
+  },
   "ticker": {
     "label": "Dados em direto",
     "euribor3m": "EURIBOR 3M",

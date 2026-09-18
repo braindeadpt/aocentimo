@@ -796,7 +796,7 @@ export default function EstiloPage() {
         <ul className="space-y-1 max-w-2xl">
           {[
             "O elemento visual leva aria-hidden — seja <svg>, cascata ou barra proporcional.",
-            "O equivalente textual é um irmão <table>: .sr-only quando é só para leitores de ecrã (Fluxo, Cascata, LineChart), visível quando já faz parte do desenho (EuroBar).",
+            "O equivalente textual é um irmão <table>: .sr-only quando é só para leitores de ecrã (FitaTalao, Cascata, LineChart), visível quando já faz parte do desenho (EuroBar).",
             "Nunca role=\"img\" com aria-label E equivalente ao mesmo tempo — o leitor de ecrã anuncia a mesma informação duas vezes.",
             "O próximo gráfico nasce assim.",
           ].map((r) => (

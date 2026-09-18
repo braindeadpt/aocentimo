@@ -229,6 +229,59 @@ test("o primeiro Tab foca o skip-link", async ({ page }) => {
   await expect(focado).toHaveAttribute("href", "#conteudo");
 });
 
+test("a fita do salário interroga-se por teclado e tem equivalente textual", async ({
+  page,
+}) => {
+  // M-05: reduced-motion → Escada não observa → destaque=null → leitura
+  // determinística; a fita nasce já no estado final
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  const zona = page.locator(".blueprint").first();
+
+  // o desenho é decorativo; a viagem do euro existe em texto
+  await expect(zona.locator("svg").first()).toHaveAttribute(
+    "aria-hidden",
+    "true"
+  );
+  const tabela = zona.locator("table");
+  await expect(tabela.locator("caption")).toContainText("A fita do salário");
+  await expect(tabela).toContainText("Total para o Estado");
+
+  // leitura por omissão: o resumo empresa → tu
+  const readout = zona.locator(".chart-readout");
+  const titulo = readout.locator(".chart-readout-t");
+  const valor = readout.locator(".chart-readout-v");
+  await expect(titulo).toContainText("A empresa paga");
+  await expect(valor).toContainText("Tu");
+
+  // a régua percorre as 7 paradas: End → Estado, Home → empresa,
+  // setas andam parada a parada
+  const scrub = zona.locator(".chart-scrub");
+  await scrub.focus();
+  await page.keyboard.press("ArrowLeft");
+  await expect(titulo).toContainText("Tu");
+  await expect(valor).toContainText("do custo");
+  await page.keyboard.press("ArrowLeft");
+  await expect(titulo).toContainText("Seg. Social");
+  await page.keyboard.press("Home");
+  await expect(titulo).toContainText("A empresa paga");
+  await expect(valor).toContainText("do custo");
+  await page.keyboard.press("End");
+  await expect(titulo).toContainText("Estado leva");
+  await page.keyboard.press("Escape");
+  await expect(valor).toContainText("Tu");
+
+  // os links de capítulo do antigo Fluxo continuam cá
+  await expect(zona.getByRole("link", { name: /o que o Estado leva/ })).toHaveAttribute(
+    "href",
+    "/impostos"
+  );
+  await expect(zona.getByRole("link", { name: /o teu recibo/ })).toHaveAttribute(
+    "href",
+    "/salario"
+  );
+});
+
 test("painéis de dados, API e feed servem", async ({ page }) => {
   await page.goto("/dados");
   await expect(page.getByText("Euribor — médias mensais")).toBeVisible();
