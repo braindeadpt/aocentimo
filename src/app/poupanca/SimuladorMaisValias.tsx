@@ -123,17 +123,17 @@ export function SimuladorMaisValias() {
             <dt className="text-ink2">Englobado nos teus escalões</dt>
             <dd className="num">{fmtEUR(r.impostoEnglobado)}</dd>
           </div>
-          <div className="mt-1 flex items-baseline justify-between gap-4 border-t-2 border-ink py-2.5">
-            <dt className="shrink-0 font-medium">Pagas</dt>
-            <dd className="num-read text-right font-medium text-up">
-              {fmtEUR(imposto)}
-              <span className="block text-xs font-normal text-muted">
-                {r.melhor === "autonomo"
-                  ? "a taxa autónoma é a que fica mais barata"
-                  : r.melhor === "englobado"
-                    ? "englobar compensa — a tua taxa marginal é menor que 28 %"
-                    : "englobamento obrigatório em imóveis"}
-              </span>
+          <div className="mt-1 border-t-2 border-ink py-2.5">
+            <div className="flex items-baseline justify-between gap-4">
+              <dt className="font-medium">Pagas</dt>
+              <dd className="num-read font-medium text-up">{fmtEUR(imposto)}</dd>
+            </div>
+            <dd className="mt-1 text-xs text-muted">
+              {r.melhor === "autonomo"
+                ? "a taxa autónoma é a que fica mais barata"
+                : r.melhor === "englobado"
+                  ? "englobar compensa — a tua taxa marginal é menor que 28 %"
+                  : "englobamento obrigatório em imóveis"}
             </dd>
           </div>
         </dl>

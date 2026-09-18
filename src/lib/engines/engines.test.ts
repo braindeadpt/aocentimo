@@ -1,6 +1,15 @@
 import { describe, it, expect } from "vitest";
 import { simularPrestacao } from "./prestacao";
-import { simularPoupanca, simularCA, simularCTPC, taxaCAPorAno } from "./poupanca";
+import {
+  simularPoupanca,
+  simularCA,
+  simularCTPC,
+  taxaCAPorAno,
+  trajetoriaDeposito,
+  trajetoriaCA,
+  trajetoriaCTPC,
+  trajetoriaColchao,
+} from "./poupanca";
 import { decomporCombustivel, ivaContido } from "./impostos";
 import { contribuicoes, custoDoTrabalho } from "./seg-social";
 import { simularTaeg } from "./taeg";
@@ -325,6 +334,49 @@ describe("simularCTPC", () => {
   it("prémio só conta do 2.º ano; ano 1 = taxa fixa", () => {
     const r = simularCTPC(10000, 1, taxas, premio, imposto);
     expect(r.capitalFinalLiquido).toBeCloseTo(10000 * (1 + 0.0075 * (1 - imposto)), 4);
+  });
+});
+
+describe("trajetorias de poupança", () => {
+  const imposto = capitais.retencaoLiberatoria.taxa;
+  const premios = ca.serieF.premiosPermanencia;
+
+  it("depósito: último ponto bate com simularPoupanca, juro cresce por ano", () => {
+    const t = trajetoriaDeposito(10000, 10, 0.025, imposto, 0.02);
+    const r = simularPoupanca(10000, 10, 0.025, imposto, 0.02);
+    expect(t).toHaveLength(10);
+    expect(t[9].saldo).toBeCloseTo(r.capitalFinalLiquido, 6);
+    expect(t[9].real).toBeCloseTo(r.valorReal, 6);
+    expect(t[1].juro).toBeGreaterThan(t[0].juro); // juro composto
+    expect(t[0].juro).toBeCloseTo(250, 6);
+    expect(t[0].imposto).toBeCloseTo(70, 6);
+  });
+
+  it("CA: último ponto bate com simularCA mesmo capitalizando por trimestre", () => {
+    const t = trajetoriaCA(10000, 15, ca.serieF.taxaBrutaNovasSubscricoes, premios, imposto, 0.02);
+    const r = simularCA(10000, 15, ca.serieF.taxaBrutaNovasSubscricoes, premios, imposto, 0.02);
+    expect(t).toHaveLength(15);
+    expect(t[14].saldo).toBeCloseTo(r.capitalFinalLiquido, 6);
+    expect(t[14].real).toBeCloseTo(r.valorReal, 6);
+    // o imposto acumulado do caminho bate com o total do simular
+    const impostoTotal = t.reduce((a, p) => a + p.imposto, 0);
+    expect(impostoTotal).toBeCloseTo(r.imposto, 6);
+  });
+
+  it("CTPC: último ponto bate com simularCTPC; não passa dos 7 anos", () => {
+    const t = trajetoriaCTPC(10000, 10, ca.ctpc.taxasPorAno, ca.ctpc.premio.atual, imposto);
+    const r = simularCTPC(10000, 10, ca.ctpc.taxasPorAno, ca.ctpc.premio.atual, imposto);
+    expect(t).toHaveLength(7);
+    expect(t[6].saldo).toBeCloseTo(r.capitalFinalLiquido, 6);
+    expect(t[1].juro / t[0].juro).toBeGreaterThan(1); // taxa sobe + prémio
+  });
+
+  it("colchão: nominal parado, real a escorregar", () => {
+    const t = trajetoriaColchao(10000, 10, 0.02);
+    expect(t).toHaveLength(10);
+    expect(t[9].saldo).toBe(10000);
+    expect(t[9].real).toBeCloseTo(10000 / Math.pow(1.02, 10), 6);
+    expect(t.every((p) => p.juro === 0 && p.imposto === 0)).toBe(true);
   });
 });
 

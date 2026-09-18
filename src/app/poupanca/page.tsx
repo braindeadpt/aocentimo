@@ -3,6 +3,7 @@ import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { ComparadorPoupanca } from "./ComparadorPoupanca";
+import { CadernetaAforro } from "./CadernetaAforro";
 import { SimuladorPpr } from "./SimuladorPpr";
 import { SimuladorMaisValias } from "./SimuladorMaisValias";
 import { fmtData, fmtPct } from "@/lib/format";
@@ -29,9 +30,8 @@ export default function PoupancaPage() {
           "Comparador de poupança em Portugal: Certificados de Aforro, depósitos, PPR e mais-valias — a taxa real, não só a nominal."
         )}
       />
-      <p className="kicker">Módulo 05</p>
       <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
-        Onde rende o que poupas
+        O que sobra do que poupas
       </h1>
       <p className="lede mt-5">
         Um depósito a 1,5 % com inflação a 3 % faz-te perder dinheiro — devagar
@@ -55,31 +55,10 @@ export default function PoupancaPage() {
 
       <Figure
         n={2}
-        title="Certificados de Aforro, Série F"
+        title="A caderneta — Certificados de Aforro, Série F"
         source={<Source nome={ca.fonte} vigencia={ca.vigencia} />}
       >
-        <div className="bg-panel border border-line px-5 py-5 grid md:grid-cols-2 gap-6 text-sm">
-          <div>
-            <p className="kicker">Taxa bruta (novas subscrições)</p>
-            <p className="num-read mt-1">{fmtPct(ca.serieF.taxaBrutaNovasSubscricoes, 2)}</p>
-            <p className="footnote mt-2">{ca.serieF.base}</p>
-          </div>
-          <div>
-            <p className="kicker">Prémios de permanência</p>
-            <ul className="mt-2 space-y-1 num text-ink2">
-              {ca.serieF.premiosPermanencia.map((p) => (
-                <li key={p.anos} className="flex justify-between border-b border-line/60 pb-1">
-                  <span>{p.anos} ano</span>
-                  <span>+{p.pp.toFixed(2).replace(".", ",")} p.p.</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-        <p className="footnote mt-3">
-          {ca.serieF.juros} · {ca.serieF.garantia} · Prazo {ca.serieF.prazo} ·
-          Tributação: {fmtPct(capitais.retencaoLiberatoria.taxa, 0)} sobre os juros.
-        </p>
+        <CadernetaAforro />
       </Figure>
 
       <Figure

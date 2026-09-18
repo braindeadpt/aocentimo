@@ -577,3 +577,32 @@ e2e 16/16 ✓ (teste novo incluído).
 **Screenshots** — `.screenshots/m14/` {topo,mapa,choque,euribor}×{1440,375}.
 
 **Gates** — lint ✓ (só warning postcss) typecheck ✓ unit 178 ✓ data 60 ✓ build 58 ✓ e2e 16/16 ✓.
+
+## M-15 — /poupanca: a divergência no tempo + a caderneta de Aforro
+
+- Entra por pergunta ("O que sobra do que poupas"); "Módulo 05" fora.
+- Motor: `trajetoriaDeposito/CA/CTPC/Colchao` em engines/poupanca.ts —
+  ponto por ano {ano, saldo, real, juro, imposto}. CA capitaliza por
+  trimestre como simularCA (coerência provada em teste: último ponto
+  === capitalFinalLiquido/valorReal/imposto do simular). 4 testes novos
+  — 182 unit total.
+- Comparador: a tabela de quatro números ganhou a divergência por cima
+  — 4 linhas nominais (CA ink, CTPC seq-2, depósito seq-4, colchão
+  muted) + real em tracejado da mesma cor. Cheio/tracejado = distinção
+  nominal/real sem ler texto. Revelação esq→dir (tempo-revela + gate),
+  régua por ano com readout dos 4 saldos, Escape limpa. Tabela fica
+  como equivalente textual.
+- Fig. 2 virou a CADERNETA DE AFORRO (CadernetaAforro.tsx): papel M-01
+  (rasgo + carimbo AFORRO), 15 linhas que imprimem ano a ano — "ano n ·
+  +juro · −fisco → saldo" com o juro a engordar (composto) e o fisco a
+  reter em cada vencimento; faixa nominal-vs-real com o intervalo
+  sombreado (a inflação a comer); "VALE MESMO" = o real.
+- Bug "Pagas" do mais-valias: a nota vivia dentro do dd right-aligned
+  ao lado do número grande — esmagava-se a 375px. Estrutura nova:
+  linha flex (Pagas/valor) + dd próprio full-width por baixo.
+- CTPC no gráfico para aos 7 anos (prazo real) — não se inventa
+  trajectória para lá do produto.
+
+**Screenshots** — `.screenshots/m15/` (topo + caderneta, 1440/375).
+
+**Gates** — lint ✓ typecheck ✓ unit 182 ✓ data 60 ✓ build 58 ✓ e2e 16/16 ✓.
