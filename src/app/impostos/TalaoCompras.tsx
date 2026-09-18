@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { ivaContido } from "@/lib/engines/impostos";
 import { fmtEUR, fmtPct } from "@/lib/format";
+import { mascaraFaixaRasgo, r1, sementeDe } from "@/lib/materia";
 import { m } from "@/lib/messages";
 
 /**
@@ -12,6 +13,13 @@ import { m } from "@/lib/messages";
  * e o IVA de cada linha e o RESUMO IVA por taxa saem do motor real
  * (ivaContido + taxas de data/fiscal/iva.json). Carimbado SIMULAÇÃO
  * porque os preços de exemplo são isso mesmo; as taxas são as legais.
+ *
+ * Matéria (M-12): o talão são DUAS peças de papel — o corpo de compras
+ * e o cupão RESUMO IVA — separadas por uma linha de perfuração a sério
+ * (furos alpha, não pontos pintados) e fechadas por arestas rasgadas
+ * deterministas. A transformação da página: ao mudar um preço, a fatia
+ * IVA de cada linha separa-se visualmente e cai para o cupão, onde as
+ * barras por taxa a recebem — a separação lê-se sem legenda escrita.
  *
  * Interrogável como os outros instrumentos (D-04): readout fixo em
  * cima, linhas ao ponteiro, régua com setas para teclado.
@@ -35,6 +43,11 @@ const CABAZ: Item[] = [
   { nome: "CHAMPÔ 400ML", preco: 3.29, taxa: 0.23 },
   { nome: "T-SHIRT ALGODÃO", preco: 9.99, taxa: 0.23 },
 ];
+
+/** largura de referência da silhueta rasgada (max-w-80 = 320px);
+ *  mask-size 100% 100% acompanha a largura real */
+const COMP = 320;
+const SEMENTE = sementeDe(20260918);
 
 export function TalaoCompras() {
   const [precos, setPrecos] = useState<number[]>(CABAZ.map((i) => i.preco));
@@ -69,6 +82,21 @@ export function TalaoCompras() {
   const total = linhas.reduce((a, l) => a + l.preco, 0);
   const totalIva = linhas.reduce((a, l) => a + l.iva, 0);
   const lida = ativo !== null ? linhas[ativo] : null;
+  // a cada mudança de preço a fita de IVA re-separa: fatias saem das
+  // linhas e as barras do cupão recebem-nas — key só em spans efémeros,
+  // nunca nos inputs (o foco não se perde)
+  const runId = precos.map((p) => r1(p)).join("|");
+
+  const arestaTopo = mascaraFaixaRasgo(COMP, {
+    semente: SEMENTE,
+    ponta: "topo",
+    grosseria: 0.45,
+  });
+  const arestaFundo = mascaraFaixaRasgo(COMP, {
+    semente: SEMENTE + 7,
+    ponta: "fundo",
+    grosseria: 0.45,
+  });
 
   return (
     <div className="grid items-start gap-10 md:grid-cols-[1fr_auto]">
@@ -119,9 +147,15 @@ export function TalaoCompras() {
         </p>
       </div>
 
-      {/* o talão — papel fixo nos dois temas, como o do salário */}
+      {/* o talão — duas peças: compras + cupão IVA, separadas por
+          perfuração a sério; arestas rasgadas fecham o conjunto */}
       <div className="talao-wrap w-full max-w-80 justify-self-center" aria-live="polite">
-        <div className="talao">
+        <div
+          className="talao-aresta talao-aresta-t"
+          style={{ maskImage: arestaTopo, WebkitMaskImage: arestaTopo }}
+          aria-hidden
+        />
+        <div className="talao talao-mat">
           <span className="carimbo">simulação</span>
           <div className="talao-face px-6 pb-5 pt-7">
             <p className="talao-head text-center">Talão de compras</p>
@@ -132,33 +166,61 @@ export function TalaoCompras() {
               {linhas.map((l, i) => (
                 <li
                   key={l.nome}
-                  className={`talao-sep chart-hit flex items-baseline justify-between gap-3 py-1.5 ${
+                  className={`talao-sep chart-hit py-1.5 ${
                     ativo !== null && ativo !== i ? "chart-hit-off" : ""
                   }`}
                   onPointerEnter={() => setAtivo(i)}
                   onPointerLeave={() => setAtivo(null)}
                 >
-                  <span className="talao-dim min-w-0">
-                    {l.nome}
-                    <span className="talao-note block">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <span className="talao-dim min-w-0">{l.nome}</span>
+                    <label className="flex items-baseline gap-1">
+                      <input
+                        type="number"
+                        min={0}
+                        step={0.1}
+                        value={precos[i]}
+                        aria-label={`Preço de ${l.nome.toLowerCase()}`}
+                        onChange={(e) => {
+                          const v = Number(e.target.value);
+                          setPrecos((p) => p.map((x, j) => (j === i ? v : x)));
+                        }}
+                        className="talao-field w-16 text-right"
+                      />
+                      <span aria-hidden>€</span>
+                    </label>
+                  </div>
+                  <div className="mt-0.5 flex items-baseline justify-between gap-3">
+                    <span className="talao-note talao-dim">
                       IVA {fmtPct(l.taxa, 0)} · contém {fmtEUR(l.iva)}
                     </span>
-                  </span>
-                  <label className="flex items-baseline gap-1">
-                    <input
-                      type="number"
-                      min={0}
-                      step={0.1}
-                      value={precos[i]}
-                      aria-label={`Preço de ${l.nome.toLowerCase()}`}
-                      onChange={(e) => {
-                        const v = Number(e.target.value);
-                        setPrecos((p) => p.map((x, j) => (j === i ? v : x)));
-                      }}
-                      className="talao-field w-16 text-right"
-                    />
-                    <span aria-hidden>€</span>
-                  </label>
+                    <span className="iva-mini" aria-hidden>
+                      <span
+                        className="iva-mini-base"
+                        style={{
+                          width: `${l.preco > 0 ? (l.semIva / l.preco) * 100 : 0}%`,
+                        }}
+                      />
+                      <span
+                        className="iva-mini-fatia"
+                        style={{
+                          width: `${l.preco > 0 ? (l.iva / l.preco) * 100 : 0}%`,
+                        }}
+                      />
+                      {/* a fatia que se separa — clone efémero, cai para
+                          o cupão; remonta por mudança de valor */}
+                      <span
+                        key={runId}
+                        className="iva-voa"
+                        style={
+                          {
+                            width: `${l.preco > 0 ? (l.iva / l.preco) * 100 : 0}%`,
+                            "--linha": i,
+                          } as React.CSSProperties
+                        }
+                      />
+                    </span>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -167,28 +229,52 @@ export function TalaoCompras() {
               <span className="talao-total">Total</span>
               <span className="text-3xl font-bold">{fmtEUR(total)}</span>
             </div>
+          </div>
+        </div>
 
-            {/* RESUMO IVA — o bloco que o talão real traz, por taxa */}
+        {/* a linha por onde o cupão se destaca — furos a sério */}
+        <div className="talao-perf" aria-hidden />
+
+        {/* peça II — o cupão RESUMO IVA, o que se separou das linhas */}
+        <div className="talao talao-mat">
+          <div className="talao-face px-6 pb-5 pt-4">
             <table className="talao-body talao-dim mt-1 w-full">
               <thead>
                 <tr className="talao-note text-left uppercase">
                   <th scope="col" className="py-1 font-normal">Resumo IVA</th>
                   <th scope="col" className="py-1 text-right font-normal">base</th>
                   <th scope="col" className="py-1 text-right font-normal">imposto</th>
+                  <th scope="col" className="py-1 font-normal">
+                    <span className="sr-only">peso no IVA</span>
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {resumo.map((r) => (
+                {resumo.map((r, i) => (
                   <tr key={r.taxa} className="talao-sep">
                     <td className="py-1">{fmtPct(r.taxa, 0)}</td>
                     <td className="py-1 text-right">{fmtEUR(r.base)}</td>
                     <td className="py-1 text-right">{fmtEUR(r.iva)}</td>
+                    <td className="py-1 pl-2">
+                      <span className="iva-barra" aria-hidden>
+                        <span
+                          key={runId}
+                          className="iva-barra-f"
+                          style={
+                            {
+                              width: `${totalIva > 0 ? (r.iva / totalIva) * 100 : 0}%`,
+                              "--linha": i,
+                            } as React.CSSProperties
+                          }
+                        />
+                      </span>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
 
-            <div className="talao-sep mt-1 flex items-baseline justify-between gap-4 py-1.5">
+            <div className="talao-cut mt-1 flex items-baseline justify-between gap-4 py-1.5">
               <span className="talao-total">Deste total é IVA</span>
               <span className="whitespace-nowrap text-lg font-bold">
                 {fmtEUR(totalIva)}
@@ -205,6 +291,11 @@ export function TalaoCompras() {
             </p>
           </div>
         </div>
+        <div
+          className="talao-aresta talao-aresta-b"
+          style={{ maskImage: arestaFundo, WebkitMaskImage: arestaFundo }}
+          aria-hidden
+        />
       </div>
     </div>
   );

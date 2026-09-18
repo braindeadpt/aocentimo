@@ -471,3 +471,32 @@ e2e 16/16 ✓ (teste novo incluído).
 **Screenshots** — `.screenshots/m11/` {topo,reimprime,fita}×{1440,375}.
 
 **Gates** — lint ✓ typecheck ✓ unit 178 ✓ data ✓ build 58 ✓ e2e 16/16 ✓.
+
+## M-12 — /impostos: o IVA separa-se do preço
+
+- Talão de compras ao padrão de matéria M-01: zig-zag regular fora;
+  arestas rasgadas deterministas via `mascaraFaixaRasgo` (materia.ts —
+  mask-image SVG, a versão HTML da silhueta para artefactos de altura
+  dinâmica). O talão passa a ser DUAS peças — compras e cupão RESUMO
+  IVA — separadas por perfuração a sério (furos alpha por máscara,
+  vê-se o fundo da página através deles).
+- Separação animada: cada linha ganha a mini-decomposição
+  [sem IVA | IVA] permanente; ao mudar um preço, um clone da fatia IVA
+  desce da linha (iva-voa, --dur-curta, stagger 35ms) e as barras do
+  cupão recebem-na (iva-chega, scaleX, atraso compensado). Sem legenda
+  escrita — a cor torrada liga linha → cupão. Remount só em spans
+  efémeros (runId): os inputs nunca perdem o foco.
+- DecomposicaoFuel: barra empilhada → cascata vertical. A pilha
+  produto→carbono→ISP sobe por degraus (--dur-curta, stagger 80ms),
+  a chaveta "BASE DO IVA" desenha-se a medi-la (stroke-dash, pathLength
+  normalizado) e o IVA pousa por cima com ease-rasgo — imposto sobre
+  imposto visto, não só escrito. Re-anima por mudança (key fuel+preço).
+- Legenda de cor nos números (swatch .sw por linha) — hoje inexistente.
+- Reduced-motion verificado: estado base = completo (iva-voa base
+  opacity 0; casca-brace desenhada por defeito — o from esconde-a só
+  durante o delay); kill universal cobre o resto.
+- "Módulo 02" fora — o mesmo rótulo genérico que M-11 removeu.
+
+**Screenshots** — `.screenshots/m12/` {talao,separacao,cascata-meio,cascata-fim}×{1440,375}.
+
+**Gates** — lint ✓ typecheck ✓ unit 178 ✓ data ✓ build 58 ✓ e2e 16/16 ✓.

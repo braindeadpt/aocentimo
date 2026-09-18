@@ -194,6 +194,31 @@ export function profundidadeRasgo(grosseria: number): number {
 }
 
 /**
+ * Faixa de papel com uma aresta rasgada, como `mask-image` CSS — a versão
+ * HTML da matéria, para artefactos de altura dinâmica onde um SVG de
+ * viewBox fixo não serve. A silhueta vem de pecaRasgada: mesma semente,
+ * mesmo rasgo.
+ *   ponta "topo"  → dentes em cima, base recta (cola ao corpo do papel)
+ *   ponta "fundo" → topo recto, dentes em baixo
+ * Devolve o valor completo de mask-image: url("data:image/svg+xml,…").
+ * Aplicar com mask-size 100% 100% numa faixa de altura profundidadeRasgo+2.
+ */
+export function mascaraFaixaRasgo(
+  comp: number,
+  o: { semente: number; grosseria?: number; ponta: "topo" | "fundo" }
+): string {
+  const h = Math.ceil(profundidadeRasgo(o.grosseria ?? 0.55)) + 2;
+  const d = pecaRasgada(comp, h, {
+    semente: o.semente,
+    grosseria: o.grosseria,
+    rasgoTopo: o.ponta === "topo",
+    rasgoFundo: o.ponta === "fundo",
+  });
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${comp} ${h}"><path d="${d}"/></svg>`;
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+}
+
+/**
  * Furos de perfuração — centros em x. Espaçamento REGULAR de máquina, ao
  * contrário do rasgo feito à mão: este contraste é a ideia.
  * O buraco real faz-se por máscara no desenho — o furo mostra o fundo da

@@ -27,7 +27,6 @@ export default function ImpostosPage() {
           "O imposto dentro do preço: IVA por produto e decomposição do preço dos combustíveis (ISP, taxa de carbono, IVA sobre impostos)."
         )}
       />
-      <p className="kicker">Módulo 02</p>
       <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
         O imposto dentro do preço
       </h1>

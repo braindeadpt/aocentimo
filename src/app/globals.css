@@ -892,6 +892,164 @@ html[data-theme="dark"] .tema-ponto {
   font-size: 0.95rem;
 }
 
+/* ————— talão de compras: matéria + separação do IVA (M-12) ————— */
+/* aresta rasgada — a silhueta vem de mascaraFaixaRasgo (materia.ts):
+   dentes irregulares deterministas, não o zig-zag regular da versão
+   anterior. A faixa é papel recortado pela máscara — o fundo da página
+   aparece nos vales, como no rasgo físico */
+.talao-aresta {
+  height: 15px;
+  background: var(--talao-paper);
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+}
+.talao-aresta-t {
+  margin-bottom: -1px;
+}
+.talao-aresta-b {
+  margin-top: -1px;
+}
+/* neste talão o picotado regular some-se — as faixas rasgadas é que
+   fecham a peça */
+.talao-mat::before,
+.talao-mat::after {
+  content: none;
+}
+/* linha de perfuração a sério entre o corpo e o cupão — furos alpha:
+   através deles vê-se a página, não uma tinta */
+.talao-perf {
+  height: 15px;
+  background: var(--talao-paper);
+  mask-image: radial-gradient(circle 1.8px, transparent 1.8px, #000 2.1px);
+  mask-size: 15px 15px;
+  mask-repeat: repeat-x;
+  mask-position: center;
+  -webkit-mask-image: radial-gradient(circle 1.8px, transparent 1.8px, #000 2.1px);
+  -webkit-mask-size: 15px 15px;
+  -webkit-mask-repeat: repeat-x;
+  -webkit-mask-position: center;
+}
+/* mini-decomposição por linha — o preço como barra [sem IVA | IVA]:
+   a estrutura é permanente (não é decoração de transição) */
+.iva-mini {
+  position: relative;
+  display: flex;
+  height: 3px;
+  margin-top: 4px;
+  max-width: 11rem;
+  background: rgba(44, 36, 19, 0.1);
+}
+.iva-mini-base {
+  background: rgba(44, 36, 19, 0.32);
+}
+.iva-mini-fatia {
+  background: rgba(157, 42, 13, 0.8);
+}
+/* a fatia que sai — clone efémero da fatia IVA: desce da linha e
+   esbate-se, o gesto "o imposto sai do preço". Remonta-se por mudança
+   de valor (key), nunca remonta os inputs */
+.iva-voa {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  background: rgba(157, 42, 13, 0.85);
+  opacity: 0;
+  animation: iva-voa var(--dur-curta) var(--ease-sai) both;
+  animation-delay: calc(var(--linha, 0) * 35ms);
+}
+@keyframes iva-voa {
+  from {
+    opacity: 0.9;
+    transform: translateY(0) scaleY(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(42px) scaleY(1.8);
+  }
+}
+/* no cupão, a barra recebe o que desceu — cresce da esquerda depois
+   das fatias saírem das linhas */
+.iva-barra {
+  display: block;
+  width: 4.5rem;
+  height: 4px;
+  background: rgba(44, 36, 19, 0.12);
+}
+.iva-barra-f {
+  display: block;
+  height: 100%;
+  transform-origin: left;
+  background: rgba(157, 42, 13, 0.8);
+  animation: iva-chega var(--dur-curta) var(--ease-entra) both;
+  animation-delay: calc(240ms + var(--linha, 0) * 80ms);
+}
+@keyframes iva-chega {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ————— litro de combustível: a cascata ISP→IVA (M-12) ————— */
+/* coluna única: produto+carbono+ISP empilham (a base tributável), a
+   chaveta mede essa pilha inteira, e só então o IVA pousa por cima —
+   "imposto sobre imposto" visto, não só dito */
+.casca-seg {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: casca-sobe var(--dur-curta) var(--ease-entra) both;
+  animation-delay: calc(var(--seg, 0) * 80ms);
+}
+@keyframes casca-sobe {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+/* a chaveta desenha-se a medir a pilha — depois dos três segmentos,
+   antes do IVA */
+.casca-brace {
+  stroke-dasharray: 1;
+  animation: casca-mede 420ms var(--ease-lin) both;
+  animation-delay: 300ms;
+}
+@keyframes casca-mede {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.casca-iva {
+  transform-box: fill-box;
+  animation: casca-iva var(--dur-curta) var(--ease-rasgo) both;
+  animation-delay: 580ms;
+}
+@keyframes casca-iva {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* swatch de legenda — a cor liga o número ao segmento */
+.sw {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+  flex-shrink: 0;
+}
+
 /* código de barras — duas camadas de riscas sobrepostas */
 .talao-barras {
   height: 34px;
