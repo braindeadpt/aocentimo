@@ -77,7 +77,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
     recibo.liquido,
     recibo.custoEmpresa,
   ].join("-");
-  const talao = useArmado<HTMLDivElement>();
+  const { ref: talaoRef, arm: talaoArm } = useArmado<HTMLDivElement>(reciboKey);
   let linha = -1;
   const prox = () => ++linha;
 
@@ -241,7 +241,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
             recibo em baixo, o custo total na fita
           </p>
         </div>
-        <div className="talao-wrap mt-6 self-start md:sticky md:top-6" ref={talao.ref}>
+        <div className="talao-wrap mt-6 self-start md:sticky md:top-6" ref={talaoRef}>
           <div className="talao">
             <span className="carimbo">simulação</span>
             <div className="talao-face px-6 pb-5 pt-7">
@@ -254,7 +254,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
               <dl className="talao-body mt-4">
                 <Fragment key={reciboKey}>
                 <div
-                  className={talao.arm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
+                  className={talaoArm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
                   style={{ "--linha": prox() } as React.CSSProperties}
                 >
                   <dt className="talao-dim">SALÁRIO BRUTO</dt>
@@ -262,7 +262,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
                 </div>
                 {recibo.saTotal > 0 && (
                   <div
-                    className={talao.arm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
+                    className={talaoArm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
                     style={{ "--linha": prox() } as React.CSSProperties}
                   >
                     <dt className="talao-dim">
@@ -277,17 +277,17 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
                   </div>
                 )}
                 <div
-                  className={talao.arm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
+                  className={talaoArm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
                   style={{ "--linha": prox() } as React.CSSProperties}
                 >
                   <dt className="talao-dim">SEG. SOCIAL 11%</dt>
                   <dd>
                     {fmtEUR(recibo.ss)} −
-                    <span className={"talao-retido " + talao.arm("talao-carimbo-anim")} aria-hidden>Retido</span>
+                    <span className={"talao-retido " + talaoArm("talao-carimbo-anim")} aria-hidden>Retido</span>
                   </dd>
                 </div>
                 <div
-                  className={talao.arm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
+                  className={talaoArm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
                   style={{ "--linha": prox() } as React.CSSProperties}
                 >
                   <dt className="talao-dim">
@@ -299,11 +299,11 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
                   </dt>
                   <dd>
                     {fmtEUR(recibo.retencao)} −
-                    <span className={"talao-retido " + talao.arm("talao-carimbo-anim")} aria-hidden>Retido</span>
+                    <span className={"talao-retido " + talaoArm("talao-carimbo-anim")} aria-hidden>Retido</span>
                   </dd>
                 </div>
                 <div
-                  className={talao.arm("talao-linha") + " talao-cut mt-1 flex items-baseline justify-between gap-4 py-3"}
+                  className={talaoArm("talao-linha") + " talao-cut mt-1 flex items-baseline justify-between gap-4 py-3"}
                   style={{ "--linha": prox() } as React.CSSProperties}
                 >
                   <dt className="talao-total">
@@ -314,7 +314,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
                   </dd>
                 </div>
                 <div
-                  className={talao.arm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
+                  className={talaoArm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
                   style={{ "--linha": prox() } as React.CSSProperties}
                 >
                   <dt className="talao-dim">CUSTO TOTAL P/ A EMPRESA</dt>

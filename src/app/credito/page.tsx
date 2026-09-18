@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
+import { LineChart } from "@/components/LineChart";
 import { SimuladorPrestacao } from "./SimuladorPrestacao";
-import { readFileSync } from "fs";
-import path from "path";
+import { loadFonte, loadFreshness } from "@/lib/data";
 import { JsonLd, webApplication } from "@/lib/jsonld";
+import eventos from "@data/fiscal/eventos.json";
 
 export const metadata: Metadata = {
   title: "Crédito — Euribor, spread e prestação",
@@ -14,20 +15,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/credito", types: ALT_FEED },
 };
 
-/** Último valor e fim de série da Euribor 3M mensal recolhido do BPstat. */
-function euriborAtual(): { valor: number; ate: string } | null {
-  try {
-    const p = path.join(process.cwd(), "data/sources/bpstat/euribor-3m-mensal.json");
-    const d = JSON.parse(readFileSync(p, "utf8")) as { series: { t: string; v: number }[] };
-    const u = d.series.at(-1);
-    return u ? { valor: u.v, ate: u.t } : null;
-  } catch {
-    return null;
-  }
-}
-
 export default function CreditoPage() {
-  const eur = euriborAtual();
+  const eur = loadFonte("bpstat", "euribor-3m-mensal");
+  const ultimo = eur?.series.at(-1) ?? null;
+  const fresh = loadFreshness();
+  const estado =
+    fresh?.series.find((s) => s.id === "euribor-3m-mensal")?.estado ?? "sem-sla";
+
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
       <JsonLd
@@ -37,15 +31,15 @@ export default function CreditoPage() {
           "Simulador de prestação de crédito habitação em Portugal: Euribor, spread, TAN e custo total do empréstimo."
         )}
       />
-      <p className="kicker">Módulo 04</p>
       <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
-        Euribor, spread e a tua prestação
+        O que a tua prestação esconde
       </h1>
       <p className="lede mt-5">
         A Euribor é a taxa a que os bancos europeus se emprestam dinheiro entre
         si — e é o chão sobre o qual o teu banco constrói a tua prestação. A
         fórmula é simples: <strong>TAN = Euribor + spread</strong>. A Euribor
-        não se negoceia; o spread, sim.
+        não se negoceia; o spread, sim. E dentro de cada prestação esconde-se
+        uma divisão — no início pagas sobretudo juro, no fim sobretudo capital.
       </p>
 
       <Figure
@@ -54,11 +48,42 @@ export default function CreditoPage() {
         source={
           <Source
             nome="Cálculo próprio — sistema de amortização francês · Euribor 3M, BPstat"
-            serieAte={eur?.ate}
+            serieAte={ultimo?.t}
           />
         }
       >
-        <SimuladorPrestacao euriborAtual={eur?.valor ?? null} euriborAte={eur?.ate ?? null} />
+        <SimuladorPrestacao euriborAtual={ultimo?.v ?? null} euriborAte={ultimo?.t ?? null} />
+      </Figure>
+
+      <Figure
+        n={2}
+        title="A Euribor desde 1994"
+        source={
+          <Source
+            nome="Banco de Portugal — BPstat · Euribor 3M, média mensal"
+            serieAte={ultimo?.t}
+          />
+        }
+      >
+        {eur ? (
+          <LineChart
+            series={[
+              {
+                name: "Euribor 3M",
+                data: eur.series.map((p) => [p.t, p.v]),
+                cor: "var(--color-ink)",
+              },
+            ]}
+            unidade="%"
+            eventos={eventos.eventos.filter((e) => e.alvo === "euribor")}
+            estado={estado}
+          />
+        ) : (
+          <p className="footnote">
+            Série da Euribor indisponível — a recolha do BPstat falhou; sem
+            dados oficiais não há gráfico.
+          </p>
+        )}
       </Figure>
 
       <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">

@@ -87,7 +87,7 @@ export function TalaoCompras() {
   // linhas e as barras do cupão recebem-nas — key só em spans efémeros,
   // nunca nos inputs (o foco não se perde)
   const runId = precos.map((p) => r1(p)).join("|");
-  const talao = useArmado<HTMLDivElement>();
+  const { ref: talaoRef, arm: talaoArm } = useArmado<HTMLDivElement>(runId);
 
   const arestaTopo = mascaraFaixaRasgo(COMP, {
     semente: SEMENTE,
@@ -151,7 +151,7 @@ export function TalaoCompras() {
 
       {/* o talão — duas peças: compras + cupão IVA, separadas por
           perfuração a sério; arestas rasgadas fecham o conjunto */}
-      <div className="talao-wrap w-full max-w-80 justify-self-center" aria-live="polite" ref={talao.ref}>
+      <div className="talao-wrap w-full max-w-80 justify-self-center" aria-live="polite" ref={talaoRef}>
         <div
           className="talao-aresta talao-aresta-t"
           style={{ maskImage: arestaTopo, WebkitMaskImage: arestaTopo }}
@@ -213,7 +213,7 @@ export function TalaoCompras() {
                           o cupão; remonta por mudança de valor */}
                       <span
                         key={runId}
-                        className={"iva-voa " + talao.arm("iva-voa-anim")}
+                        className={"iva-voa " + talaoArm("iva-voa-anim")}
                         style={
                           {
                             width: `${l.preco > 0 ? (l.iva / l.preco) * 100 : 0}%`,
@@ -261,7 +261,7 @@ export function TalaoCompras() {
                       <span className="iva-barra" aria-hidden>
                         <span
                           key={runId}
-                          className={"iva-barra-f " + talao.arm("iva-barra-anim")}
+                          className={"iva-barra-f " + talaoArm("iva-barra-anim")}
                           style={
                             {
                               width: `${totalIva > 0 ? (r.iva / totalIva) * 100 : 0}%`,

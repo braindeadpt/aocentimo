@@ -4,9 +4,10 @@ import { Fragment, useMemo, useState } from "react";
 import { simularPrestacao } from "@/lib/engines/prestacao";
 import { custoCompra } from "@/lib/engines/imt";
 import { EuroBar } from "@/components/EuroBar";
+import { JuroCapital } from "@/components/JuroCapital";
 import { NumHero } from "@/components/NumHero";
 import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
-import { mascaraFaixaRasgo, r1, sementeDe } from "@/lib/materia";
+import { mascaraFaixaRasgo, sementeDe } from "@/lib/materia";
 import { useArmado } from "@/lib/useArmado";
 
 /**
@@ -38,7 +39,6 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
   const [jovem, setJovem] = useState(false);
   const [entrada, setEntrada] = useState(20000);
   const [anos, setAnos] = useState(30);
-  const [anoLido, setAnoLido] = useState<number | null>(null);
   // valor inicial arredondado a 2 casas — a mesma precisão do resto do site
   const [euribor, setEuribor] = useState(
     euriborAtual !== null ? Math.round(euriborAtual * 100) / 100 : 2.5
@@ -58,10 +58,13 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
 
   const dinheiroEntrada = entrada + compra.totalCustos;
 
+  // re-animações por mudança de valores — spans/grupos efémeros, nunca inputs
+  const runEscritura = `${preco}-${tipo}-${jovem}-${credito}`;
+  const runTempo = `${credito}-${anos}-${euribor}-${spread}`;
+
   // gates de dobra (M-09): nascer à vista = nascer impresso; abaixo
   // da dobra, a primeira impressão/revelação acontece ao entrar
-  const talao = useArmado<HTMLDivElement>();
-  const tempo = useArmado<SVGSVGElement>();
+  const { ref: talaoRef, arm: talaoArm } = useArmado<HTMLDivElement>(runEscritura);
 
   // camadas da acreção — a ordem é a da escritura
   const camadas = [
@@ -72,38 +75,6 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
     { nome: "Escritura e registos (Casa Pronta)", v: compra.registos, cor: `${TINTA}0.35)`, txt: `${TINTA}0.7)` },
   ];
   const realEscritura = preco + compra.totalCustos;
-
-  // juro vs capital por ano — a divisória que troca de peso
-  const planoAnual = useMemo(() => {
-    const anosArr: { juro: number; capital: number }[] = [];
-    for (const l of prest.linhas) {
-      const a = Math.floor((l.mes - 1) / 12);
-      if (!anosArr[a]) anosArr[a] = { juro: 0, capital: 0 };
-      anosArr[a].juro += l.juro;
-      anosArr[a].capital += l.capital;
-    }
-    return anosArr;
-  }, [prest]);
-
-  // geometria da faixa anual — a soma juro+capital é ~constante,
-  // a divisória desce: no início é quase tudo juro
-  const W = 300;
-  const H = 96;
-  const pts = planoAnual.map((a, i) => {
-    const tot = a.juro + a.capital;
-    const x = planoAnual.length > 1 ? (i / (planoAnual.length - 1)) * W : W;
-    const yCap = tot > 0 ? H - (a.capital / tot) * H : H;
-    return { x: r1(x), yCap: r1(yCap), ano: i + 1, ...a };
-  });
-  const divPts = pts.map((p) => `${p.x},${p.yCap}`).join(" ");
-  const capArea = pts.length
-    ? `M0,${H} L${divPts.replaceAll(" ", " L")} L${W},${H} Z`
-    : "";
-  const lido = anoLido !== null ? pts[Math.min(anoLido, pts.length - 1)] : null;
-
-  // re-animações por mudança de valores — spans/grupos efémeros, nunca inputs
-  const runEscritura = `${preco}-${tipo}-${jovem}-${credito}`;
-  const runTempo = `${credito}-${anos}-${euribor}-${spread}`;
 
   const arestaTopo = mascaraFaixaRasgo(COMP, { semente: SEMENTE, ponta: "topo", grosseria: 0.35 });
   const arestaFundo = mascaraFaixaRasgo(COMP, { semente: SEMENTE + 3, ponta: "fundo", grosseria: 0.35 });
@@ -168,7 +139,7 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
       {/* resultado pegajoso — acompanha o scroll dos inputs */}
       <div className="space-y-8 self-start md:sticky md:top-6" aria-live="polite">
         {/* a escritura — papel, linhas que se imprimem, camada a camada */}
-        <div className="talao-wrap" ref={talao.ref}>
+        <div className="talao-wrap" ref={talaoRef}>
           <div
             className="talao-aresta talao-aresta-t"
             style={{ maskImage: arestaTopo, WebkitMaskImage: arestaTopo }}
@@ -186,7 +157,7 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
                   {camadas.map((c, i) => (
                     <div
                       key={c.nome}
-                      className={talao.arm("talao-linha") + " talao-sep flex items-baseline justify-between gap-3 py-1.5"}
+                      className={talaoArm("talao-linha") + " talao-sep flex items-baseline justify-between gap-3 py-1.5"}
                       style={{ "--linha": i } as React.CSSProperties}
                     >
                       <dt className="talao-dim flex items-center gap-2">
@@ -207,7 +178,7 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
                 {camadas.map((c, i) => (
                   <span
                     key={c.nome}
-                    className={"acre-seg " + talao.arm("acre-anim")}
+                    className={"acre-seg " + talaoArm("acre-anim")}
                     style={
                       {
                         width: `${realEscritura > 0 ? (c.v / realEscritura) * 100 : 0}%`,
@@ -219,7 +190,7 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
                 ))}
               </div>
               <div
-                className={talao.arm("talao-linha") + " talao-cut mt-1 flex items-baseline justify-between gap-4 py-2.5"}
+                className={talaoArm("talao-linha") + " talao-cut mt-1 flex items-baseline justify-between gap-4 py-2.5"}
                 style={{ "--linha": camadas.length } as React.CSSProperties}
                 key={`cut-${runEscritura}`}
               >
@@ -227,7 +198,7 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
                 <span className="text-2xl font-bold">{fmtEUR0(realEscritura)}</span>
               </div>
               <p
-                className={talao.arm("talao-linha") + " talao-note talao-dim"}
+                className={talaoArm("talao-linha") + " talao-note talao-dim"}
                 style={{ "--linha": camadas.length + 1 } as React.CSSProperties}
                 key={`note-${runEscritura}`}
               >
@@ -268,81 +239,7 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
 
             {/* juro vs capital — a divisória que troca de peso:
                 capital (keep) fica teu, juro (up) sai para o banco */}
-            <div className="mt-5 border-t border-line pt-4">
-              <div className="chart-readout" aria-live="polite">
-                {lido ? (
-                  <>
-                    <span className="chart-readout-t">Ano {lido.ano}</span>
-                    <span className="chart-readout-v">
-                      {fmtEUR0(lido.capital)} capital · {fmtEUR0(lido.juro)} juro
-                    </span>
-                  </>
-                ) : (
-                  <span className="chart-readout-t">
-                    O que cada ano paga — capital a ganhar peso ao juro
-                  </span>
-                )}
-                <input
-                  type="range"
-                  className="chart-scrub"
-                  min={0}
-                  max={Math.max(0, pts.length - 1)}
-                  value={anoLido ?? pts.length - 1}
-                  aria-label="Percorrer os anos do crédito"
-                  aria-valuetext={
-                    lido
-                      ? `Ano ${lido.ano}: ${fmtEUR0(lido.capital)} capital, ${fmtEUR0(lido.juro)} juro`
-                      : undefined
-                  }
-                  onChange={(e) => setAnoLido(Number(e.target.value))}
-                  onKeyDown={(e) => {
-                    if (e.key === "Escape") setAnoLido(null);
-                  }}
-                  onBlur={() => setAnoLido(null)}
-                />
-              </div>
-              <svg
-                ref={tempo.ref}
-                viewBox={`0 0 ${W} ${H}`}
-                className="mt-2 h-24 w-full"
-                preserveAspectRatio="none"
-                role="img"
-                aria-label="Divisão entre capital e juro em cada ano do crédito"
-              >
-                <g className={tempo.arm("tempo-revela")} key={runTempo}>
-                  {/* juro — a faixa inteira; a área keep tapa a parte
-                      que é capital */}
-                  <rect x={0} y={0} width={W} height={H} fill="var(--color-up)" opacity={0.16} />
-                  <path d={capArea} fill="var(--color-keep)" opacity={0.7} />
-                  <polyline
-                    points={divPts}
-                    fill="none"
-                    stroke="var(--color-ink2)"
-                    strokeWidth={1.5}
-                  />
-                </g>
-                {lido && (
-                  <line
-                    x1={lido.x}
-                    x2={lido.x}
-                    y1={0}
-                    y2={H}
-                    stroke="var(--color-ink)"
-                    strokeWidth={1}
-                  />
-                )}
-              </svg>
-              <div className="mt-1 flex items-center gap-4 text-xs text-muted">
-                <span className="flex items-center gap-1.5">
-                  <span className="sw" style={{ background: "var(--color-keep)", opacity: 0.7 }} aria-hidden />
-                  capital — fica teu
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="sw" style={{ background: "var(--color-up)", opacity: 0.5 }} aria-hidden />
-                  juro — vai para o banco
-                </span>
-              </div>
-            </div>
+            <JuroCapital linhas={prest.linhas} runKey={runTempo} />
           </div>
         </div>
 

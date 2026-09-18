@@ -541,3 +541,39 @@ e2e 16/16 ✓ (teste novo incluído).
 **Screenshots** — `.screenshots/m13/` {escritura,acrecao,tempo,scrub}×{1440,375}.
 
 **Gates** — lint ✓ typecheck ✓ unit 178 ✓ data ✓ build 58 ✓ e2e 16/16 ✓.
+
+## M-14 — /credito: mapa de amortização + Euribor real + choque +1pp
+
+- A página deixou de ser "simulador + glossário": entra pela pergunta
+  ("O que a tua prestação esconde"), o simulador ganhou o mapa de
+  amortização e a Euribor real está AQUI (não só em /dados).
+- `src/components/JuroCapital.tsx` — a faixa juro/capital por ano
+  extraída de /casa para componente de sistema (agregação anual,
+  divisória que troca de peso, revelação esq→dir, régua por ano +
+  readout + Escape). Usado em /casa e /credito.
+- Choque +1 p.p. é um interruptor, não uma linha de texto: ao ligar,
+  NumHero desliza para a prestação chocada, juros/MTIC interpolam a
+  inchar (TweenNum), o mapa re-desenha, e "O choque custa" dá o delta
+  em €/mês e € juros. Um tempo, uma intenção (M-09).
+- Fig. 2: "A Euribor desde 1994" — LineChart com a série 3M completa
+  do BPstat (392 pontos), eventos M-06 (BCE jul-2022, pico set-2023) e
+  selo de frescura (em-dia/atrasada/sem-sla). Falha do BPstat → texto
+  de falha, nunca número inventado.
+- Euribor real continua a vir do BPstat via loadFonte (zod-validado)
+  — substituiu o readFileSync manual; mesmo valor que alimenta o
+  simulador.
+
+**useArmado v2 — redesenho por causa de react-hooks/refs**
+- A regra nova proíbe ler `ref.current` no render — `arm()` lia
+  `impresso.current`. API nova: `useArmado<T>(runKey)` devolve
+  `{ ref, arm }` para DESTRUIR nos call sites (`{ ref: x, arm: y }`).
+- `ref` é callback-ref: decide no attach (antes do paint) — visível →
+  silêncio; escondido → IntersectionObserver → `setRevelou` ao entrar.
+- `arm` lê só state: `revelou || run !== mountRun` (mountRun = runKey
+  do primeiro render, capturada via useState lazy). Nascido-visível:
+  run0 nunca anima, runs novos animam. Nascido-escondido: ao entrar,
+  revelou arma tudo. Lint limpo, comportamento idêntico (16/16 e2e).
+
+**Screenshots** — `.screenshots/m14/` {topo,mapa,choque,euribor}×{1440,375}.
+
+**Gates** — lint ✓ (só warning postcss) typecheck ✓ unit 178 ✓ data 60 ✓ build 58 ✓ e2e 16/16 ✓.
