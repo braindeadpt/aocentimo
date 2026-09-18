@@ -680,3 +680,36 @@ série DGEG; 1440/375).
 
 **Gates** — lint ✓ typecheck ✓ unit 185 ✓ data 60 ✓ build 58 ✓ e2e
 16/16 ✓.
+
+---
+
+## M-18 — /trabalho e /dados: a declaração e o quadro de instrumentos
+
+**O problema de nome** — a rota `/trabalho` dizia "Desemprego" na nav,
+mas a página tem dois temas (subsídio de desemprego + trabalho
+independente). Opções: (a) renomear a rota para `/desemprego` e dividir
+os recibos verdes — quebra URLs e cria uma página órfã; (b) manter a
+rota e alinhar a nav — mínimo e honesto. Escolhida (b), a mais
+conservadora: nav "Trabalho" bate com a rota e cobre os dois temas;
+o título da página continua a nomear o conteúdo forte ("Subsídio de
+desemprego — quanto e por quanto tempo").
+
+**O que mudou**
+- `SimuladorDesemprego`: o resultado virou a **declaração da Segurança
+  Social** — papel rasgado, carimbo SIMULAÇÃO, linhas impressas
+  (remuneração de referência → líquida → mensalidade 65 % → o corte).
+  O "−10 %" chega com carimbo RETIDO na linha "DO 7.º MÊS EM DIANTE".
+- **A linha do tempo** (`.decl-tempo`): cada mês de subsídio é um pilar
+  de tinta — sobem mês a mês na revelação (stagger 26 ms). Do 7.º mês
+  em diante o pilar desce para `apos180Dias/mensal` (~90 %) e a tinta
+  rala (hachura) — a descida acontece na linha, não numa nota. Eixo
+  com "1.º mês · 7.º −10 % · N.º"; `role="img"` com o resumo verbal
+  completo (valor, meses, corte).
+- `/dados`: revisto — já cumpre a spec (quadro `Instrumento` M-08 com
+  selo de frescura + data por painel; tabela TAEG de 6 colunas
+  transforma-se em cartões com barra mercado-vs-teto a 375 px; o
+  calendário marca o "próximo" e esvazia o passado; Fig. 5 mantém o
+  painel do que o site não consegue). Sem mexer.
+- e2e: rótulo da nav actualizado ("Desemprego" → "Trabalho").
+
+**Gates** — lint ✓ typecheck ✓ unit ✓ data ✓ build ✓ e2e ✓.

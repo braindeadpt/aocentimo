@@ -1,10 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { simularDesemprego } from "@/lib/engines/desemprego";
 import { REGRAS_IRS } from "@/lib/engines/irs";
 import { NumHero } from "@/components/NumHero";
 import { fmtEUR } from "@/lib/format";
+import { useArmado } from "@/lib/useArmado";
+import { mascaraFaixaRasgo, sementeDe } from "@/lib/materia";
 
 export function SimuladorDesemprego() {
   const [bruto, setBruto] = useState(1500);
@@ -18,6 +20,17 @@ export function SimuladorDesemprego() {
   );
 
   const meses = Math.round(r.duracaoDias / 30);
+  const temCorte = r.duracaoDias > 180;
+
+  // a declaração reimprime-se a cada mudança — as linhas novas entram
+  // por ordem, como na impressora; a linha do tempo sobe mês a mês
+  const declKey = `${bruto}-${idade}-${anosDescontos}-${majoracao}`;
+  const { ref: declRef, arm: declArm } = useArmado<HTMLDivElement>(declKey);
+  let linha = -1;
+  const prox = () => ++linha;
+
+  const arestaTopo = mascaraFaixaRasgo(320, { semente: sementeDe(20260214), ponta: "topo", grosseria: 0.4 });
+  const arestaFundo = mascaraFaixaRasgo(320, { semente: sementeDe(20260221), ponta: "fundo", grosseria: 0.4 });
 
   return (
     <div className="grid md:grid-cols-2 gap-10">
@@ -53,46 +66,128 @@ export function SimuladorDesemprego() {
         </p>
       </div>
 
-      {/* resultado pegajoso — acompanha o scroll dos inputs */}
-      <div className="bg-raised border border-line shadow-raised self-start md:sticky md:top-6" aria-live="polite">
-        <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
-          <span className="kicker">O teu subsídio</span>
-          <span className="num text-xs text-muted">65 % da remuneração de referência</span>
-        </div>
-        {r.elegivel ? (
-          <>
-            <div className="px-5 py-5">
-              <NumHero valor={fmtEUR(r.mensal)} sufixo="/mês" animar={r.mensal} />
-              <dl className="mt-4 text-sm space-y-2">
-                <div className="flex justify-between border-b border-line/60 pb-1.5">
-                  <dt className="text-ink2">Remuneração de referência</dt>
-                  <dd className="num">{fmtEUR(r.remReferencia)}</dd>
-                </div>
-                <div className="flex justify-between border-b border-line/60 pb-1.5">
-                  <dt className="text-ink2">… líquida (após SS + retenção)</dt>
-                  <dd className="num">{fmtEUR(r.remReferenciaLiquida)}</dd>
-                </div>
-                <div className="flex justify-between border-b border-line/60 pb-1.5">
-                  <dt className="text-ink2">Do 7.º mês em diante (−10 %)</dt>
-                  <dd className="num text-up">{fmtEUR(r.apos180Dias)}</dd>
-                </div>
-                <div className="flex justify-between pb-1.5">
-                  <dt className="text-ink2">Duração</dt>
-                  <dd className="num font-medium">
-                    {r.duracaoDias} dias <span className="text-muted">(~{meses} meses)</span>
-                  </dd>
-                </div>
-              </dl>
+      {/* a declaração — o artefacto da Segurança Social: o que descontaste
+          devolve-se linha a linha, e a duração vê-se a escoar em meses
+          (M-18) */}
+      <div className="self-start md:sticky md:top-6" aria-live="polite">
+        <div className="talao-wrap w-full max-w-96 justify-self-center" ref={declRef}>
+          <div
+            className="talao-aresta talao-aresta-t"
+            style={{ maskImage: arestaTopo, WebkitMaskImage: arestaTopo }}
+            aria-hidden
+          />
+          <div className="talao talao-mat">
+            <span className="carimbo">simulação</span>
+            <div className="talao-face px-6 pb-5 pt-7">
+              <p className="talao-head text-center">Declaração de desemprego</p>
+              <p className="talao-sub talao-dim mt-1 text-center">
+                * * * segurança social · simulado * * *
+              </p>
+              {r.elegivel ? (
+                <>
+                  <dl className="talao-body mt-4">
+                    <Fragment key={declKey}>
+                      <div
+                        className={declArm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
+                        style={{ "--linha": prox() } as React.CSSProperties}
+                      >
+                        <dt className="talao-dim">REMUNERAÇÃO DE REFERÊNCIA</dt>
+                        <dd>{fmtEUR(r.remReferencia)}</dd>
+                      </div>
+                      <div
+                        className={declArm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
+                        style={{ "--linha": prox() } as React.CSSProperties}
+                      >
+                        <dt className="talao-dim">… LÍQUIDA (SS + RETENÇÃO)</dt>
+                        <dd>{fmtEUR(r.remReferenciaLiquida)}</dd>
+                      </div>
+                      <div
+                        className={declArm("talao-linha") + " talao-cut mt-1 py-2.5"}
+                        style={{ "--linha": prox() } as React.CSSProperties}
+                      >
+                        <dt className="talao-total">Mensalidade · 65 %</dt>
+                        <dd className="mt-1">
+                          <NumHero valor={fmtEUR(r.mensal)} sufixo="/mês" compacto animar={r.mensal} />
+                        </dd>
+                      </div>
+                      {temCorte && (
+                        <div
+                          className={declArm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
+                          style={{ "--linha": prox() } as React.CSSProperties}
+                        >
+                          <dt className="talao-dim">DO 7.º MÊS EM DIANTE</dt>
+                          <dd>
+                            {fmtEUR(r.apos180Dias)}
+                            <span className={"talao-retido " + declArm("talao-carimbo-anim")} aria-hidden>
+                              −10 %
+                            </span>
+                          </dd>
+                        </div>
+                      )}
+                      <div
+                        className={declArm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
+                        style={{ "--linha": prox() } as React.CSSProperties}
+                      >
+                        <dt className="talao-dim">DURAÇÃO</dt>
+                        <dd>
+                          {r.duracaoDias} dias <span className="talao-dim">(~{meses} meses)</span>
+                        </dd>
+                      </div>
+                    </Fragment>
+                  </dl>
+
+                  {/* a linha do tempo: cada mês um pilar de tinta; a descida
+                      ao 7.º mês acontece na própria linha — altura e tinta
+                      baixam juntas */}
+                  <div
+                    className="mt-5"
+                    role="img"
+                    aria-label={
+                      temCorte
+                        ? `${meses} meses de subsídio: ${fmtEUR(r.mensal)} por mês até ao 6.º mês, ${fmtEUR(r.apos180Dias)} do 7.º mês até ao fim`
+                        : `${meses} meses de subsídio a ${fmtEUR(r.mensal)} por mês`
+                    }
+                  >
+                    <div className="decl-tempo" aria-hidden>
+                      {Array.from({ length: meses }, (_, i) => (
+                        <span
+                          key={`${declKey}-m${i}`}
+                          className={`decl-mes ${i >= 6 ? "decl-mes-cut" : ""} ${declArm("decl-mes-anim")}`}
+                          style={{
+                            "--linha": i,
+                            height: `${r.mensal > 0 ? ((i < 6 ? r.mensal : r.apos180Dias) / r.mensal) * 100 : 100}%`,
+                          } as React.CSSProperties}
+                        />
+                      ))}
+                    </div>
+                    <div className="mt-1.5 flex justify-between text-[10px] uppercase tracking-wider talao-dim">
+                      <span>1.º mês</span>
+                      {temCorte && <span>7.º −10 %</span>}
+                      <span>{meses}.º</span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <p className="py-6 text-sm talao-dim">{r.nota}</p>
+              )}
+              <p className="talao-sub talao-dim mt-4 text-center">
+                * * * * *
+              </p>
             </div>
-            <p className="footnote px-5 pb-4">
-              Limites: entre {fmtEUR(REGRAS_IRS[2026].ias)} e{" "}
-              {fmtEUR(REGRAS_IRS[2026].ias * 2.5)} (1–2,5×IAS), e
-              nunca acima de 75 % da remuneração líquida de referência. Pedido
-              no IEFP até 90 dias após o fim do contrato.
-            </p>
-          </>
-        ) : (
-          <p className="px-5 py-6 text-sm text-up">{r.nota}</p>
+          </div>
+          <div
+            className="talao-aresta talao-aresta-b"
+            style={{ maskImage: arestaFundo, WebkitMaskImage: arestaFundo }}
+            aria-hidden
+          />
+        </div>
+        {r.elegivel && (
+          <p className="footnote mt-4 px-1">
+            Limites: entre {fmtEUR(REGRAS_IRS[2026].ias)} e{" "}
+            {fmtEUR(REGRAS_IRS[2026].ias * 2.5)} (1–2,5×IAS), e
+            nunca acima de 75 % da remuneração líquida de referência. Pedido
+            no IEFP até 90 dias após o fim do contrato.
+          </p>
         )}
       </div>
     </div>

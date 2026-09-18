@@ -72,7 +72,7 @@ test("simuladores novos produzem resultado", async ({ page }) => {
 
   await page.goto("/trabalho");
   await page.getByLabel("A tua idade").fill("35");
-  await expect(page.getByText("O teu subsídio")).toBeVisible();
+  await expect(page.getByText("Declaração de desemprego")).toBeVisible();
 });
 
 test("nenhuma rota transborda na horizontal a 375 px", async ({ page }) => {

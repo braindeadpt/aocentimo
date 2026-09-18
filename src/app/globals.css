@@ -767,6 +767,42 @@ html[data-theme="dark"] .tema-ponto {
 .talao-dim {
   color: rgba(44, 36, 19, 0.62);
 }
+/* declaração SS (/trabalho) — a linha do tempo: cada mês um pilar de
+   tinta; do 7.º em diante o pilar desce (a altura é o valor, −10 % de
+   lei) e a tinta rala — o subsídio escoa-se */
+.decl-tempo {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 44px;
+}
+.decl-mes {
+  flex: 1 1 0;
+  min-width: 2px;
+  background: var(--talao-ink);
+  transform-origin: bottom;
+}
+.decl-mes-cut {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--talao-ink) 0 2px,
+    transparent 2px 4px
+  );
+  opacity: 0.7;
+}
+.decl-mes-anim {
+  animation: decl-mes-sobe var(--dur-curta) var(--ease-entra) both;
+  animation-delay: calc(var(--linha) * 26ms);
+}
+@keyframes decl-mes-sobe {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
 /* escalões-recipiente (/irs) — cada escalão é um tanque que enche com a
    fatia de rendimento que lá cabe; o enchimento é a transição de
    largura (muda de estado → --dur-media, a orquestra do input) */
