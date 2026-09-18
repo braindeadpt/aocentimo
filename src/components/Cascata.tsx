@@ -105,8 +105,9 @@ export function Cascata({ passos }: { passos: Passo[] }) {
                         animationDelay: `calc(${i} * var(--stagger))`,
                       }}
                     />
+                    {/* o corte CAI — é dinheiro que sai, não barra que cresce */}
                     <div
-                      className="eurobar-seg h-full"
+                      className="eurobar-cai h-full"
                       style={{
                         width: `${sai}%`,
                         backgroundColor: "var(--color-accent)",

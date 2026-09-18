@@ -549,11 +549,34 @@ body::before {
 
 /* a barra do euro — segmento que cresce ao carregar; quando os dados
    mudam, a largura transita — a barra reparte-se, não salta */
+/* EuroBar/Cascata — o ato manda na curva: as fatias encaixam com o
+   snap do rasgo (overshoot leve), não com um scaleX genérico; na
+   Cascata, o que sai CAÍ de cima para o lugar — é um corte, não um
+   crescimento. Geométrico e limpo: a metáfora de papel não encaixa
+   numa barra proporcional — forçá-la era decoração, não matéria. */
 .eurobar-seg {
   transform-origin: left;
-  animation: eurobar-grow var(--dur-media) var(--ease-entra) both;
+  animation: eurobar-grow var(--dur-media) var(--ease-rasgo) both;
   transition: width var(--dur-curta) var(--ease-entra),
     background-color var(--dur-curta) var(--ease-entra);
+}
+
+.eurobar-cai {
+  transform-origin: top;
+  animation: cascata-cai var(--dur-media) var(--ease-rasgo) both;
+  transition: width var(--dur-curta) var(--ease-entra),
+    background-color var(--dur-curta) var(--ease-entra);
+}
+
+@keyframes cascata-cai {
+  from {
+    transform: translateY(-10px) scaleX(0.4);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scaleX(1);
+    opacity: 1;
+  }
 }
 
 @keyframes eurobar-grow {

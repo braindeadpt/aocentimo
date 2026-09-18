@@ -291,3 +291,32 @@ typecheck ✓ unit 178 ✓ data ✓ build 58 ✓ e2e 15/15 ✓.
 
 **Screenshots** — verificados `/dados`, `/precos`, `/inflacao`
 (1440 + 375): marcadores e faixa alinham com a história real.
+
+---
+
+## M-07 — Cascata + EuroBar na gramática e na matéria
+
+**Entregue**
+
+- O CUIDADO da spec já estava resolvido (sessão anterior): Cascata e
+  EuroBar estão no padrão canónico — bloco visual `aria-hidden` +
+  tabela irmã (sr-only na Cascata, visível na EuroBar). Nenhuma
+  informação anunciada duas vezes — verificado no DOM.
+- Curva do ato físico, não scaleX genérico:
+  - fatias encaixam com `--ease-rasgo` (overshoot leve = o snap de
+    uma peça a assentar) — `.eurobar-seg` deixou `ease-entra`;
+  - na Cascata, o que sai usa a nova `.eurobar-cai` + keyframe
+    `cascata-cai` (translateY−10→0 com ease-rasgo): o corte CAÍ de
+    cima para o lugar — é dinheiro que sai, não barra que cresce.
+- Transição de valores: `transition: width` já existia e foi estendida
+  à `.eurobar-cai` — nos três simuladores (/salario, /casa,
+  /trabalho) as fatias repartem-se por transição, nunca por corte.
+- Interrogação: já estava no padrão M-05 (readout fixo + régua +
+  Escape + blur) — confirmado, sem mudança necessária.
+
+**Decisão** — ficaram geométricos e limpos, SEM matéria de papel:
+uma barra proporcional e uma cascata não são papel nem talão;
+forçar a metáfora era decoração. Registado em comentário no CSS
+(`globals.css`, bloco `.eurobar-seg`).
+
+**Gates** — lint ✓ typecheck ✓ unit 178 ✓ data ✓ build 58 ✓ e2e 15/15 ✓.
