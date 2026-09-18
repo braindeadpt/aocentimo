@@ -1,19 +1,13 @@
 # AGENTS — Literacia Financeira PT
 
 > **Estado: VIGENTE — este ficheiro é o contrato operacional da casa.**
-> Última revisão do conteúdo: 2026-09-16; cabeçalho acrescentado 2026-09-18.
-> Não substitui nenhum documento — rege como se trabalha no repo.
-> Ressalva: a referência a `docs/PLANO-LITERACIA-FINANCEIRA.md` como
-> «documento canónico», que este ficheiro tinha na introdução, está
-> superada — os planos em `docs/` são históricos; a direção em vigor é a
-> decisão do dono de 2026-09-17 (escuro por omissão, «instrumento vivo»)
-> e o documento canónico que a regista está a ser escrito.
+> Última revisão: 2026-09-18. Não substitui nenhum documento — rege como
+> se trabalha no repo.
 
-Site público de literacia financeira para Portugal. Os planos em `docs/`
-são históricos (ver cabeçalho acima): a direção em vigor é a decisão do
-dono de 2026-09-17 e o documento canónico de planeamento está a ser
-escrito — até lá, este ficheiro e a skill `literacia-pt` são a referência
-de trabalho.
+Site público de literacia financeira para Portugal. Documento canónico:
+`docs/PRODUTO.md` — direção, sistema visual e regras de produto; ler antes
+de qualquer trabalho. Decisões datadas: `docs/DECISOES.md`. Os três
+planos em `docs/` são históricos — registo, não contrato.
 
 ## Contrato rápido
 

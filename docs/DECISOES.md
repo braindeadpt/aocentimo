@@ -169,6 +169,8 @@ são a revisão fiscal anual e a curadoria IGCP, documentados em
   do `.pt`?
 - Porquê GitHub Pages em vez do Vercel Hobby recomendado no REDESIGN
   §12.1 — custo, simplicidade de CNAME, ou outro motivo?
-- «Observatório» era uma direção própria ou o enquadramento do plano
-  master que o V2 diz ter substituído parcialmente?
+- «Observatório»: o código chama assim ao sistema atual (comentário de
+  `globals.css`, `/estilo`); o V2 diz que substituiu uma direção
+  «Observatório» parcial. Fica por confirmar se era direção formal antes
+  do V2 ou o enquadramento do plano master que o código adotou depois.
 - Vídeo educativo: que mudança de prioridade o traria de volta?
