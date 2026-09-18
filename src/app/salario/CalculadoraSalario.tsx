@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { simularSalario } from "@/lib/engines/irs";
 import { TSU_ENTIDADE, TSU_TRABALHADOR } from "@/lib/engines/seg-social";
 import { reciboMensal, FormaPagamentoSA } from "@/lib/engines/recibo";
@@ -8,6 +8,7 @@ import { SituacaoRetencao } from "@/lib/engines/retencao";
 import { FitaTalao } from "@/components/FitaTalao";
 import { TweenNum } from "@/components/TweenNum";
 import { SITE_URL } from "@/lib/site";
+import { useArmado } from "@/lib/useArmado";
 import { Cascata } from "@/components/Cascata";
 import { fmtEUR, fmtPct, fmtData } from "@/lib/format";
 import sa from "@data/fiscal/subsidio-alimentacao.json";
@@ -76,6 +77,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
     recibo.liquido,
     recibo.custoEmpresa,
   ].join("-");
+  const talao = useArmado<HTMLDivElement>();
   let linha = -1;
   const prox = () => ++linha;
 
@@ -239,7 +241,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
             recibo em baixo, o custo total na fita
           </p>
         </div>
-        <div className="talao-wrap mt-6 self-start md:sticky md:top-6">
+        <div className="talao-wrap mt-6 self-start md:sticky md:top-6" ref={talao.ref}>
           <div className="talao">
             <span className="carimbo">simulação</span>
             <div className="talao-face px-6 pb-5 pt-7">
@@ -249,9 +251,10 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
               <p className="talao-sub mt-1 text-center talao-dim">
                 * * * simulado * * *
               </p>
-              <dl key={reciboKey} className="talao-body mt-4">
+              <dl className="talao-body mt-4">
+                <Fragment key={reciboKey}>
                 <div
-                  className="talao-linha talao-sep flex justify-between gap-4 py-1.5"
+                  className={talao.arm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
                   style={{ "--linha": prox() } as React.CSSProperties}
                 >
                   <dt className="talao-dim">SALÁRIO BRUTO</dt>
@@ -259,7 +262,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
                 </div>
                 {recibo.saTotal > 0 && (
                   <div
-                    className="talao-linha talao-sep flex justify-between gap-4 py-1.5"
+                    className={talao.arm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
                     style={{ "--linha": prox() } as React.CSSProperties}
                   >
                     <dt className="talao-dim">
@@ -274,17 +277,17 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
                   </div>
                 )}
                 <div
-                  className="talao-linha talao-sep flex justify-between gap-4 py-1.5"
+                  className={talao.arm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
                   style={{ "--linha": prox() } as React.CSSProperties}
                 >
                   <dt className="talao-dim">SEG. SOCIAL 11%</dt>
                   <dd>
                     {fmtEUR(recibo.ss)} −
-                    <span className="talao-retido" aria-hidden>Retido</span>
+                    <span className={"talao-retido " + talao.arm("talao-carimbo-anim")} aria-hidden>Retido</span>
                   </dd>
                 </div>
                 <div
-                  className="talao-linha talao-sep flex justify-between gap-4 py-1.5"
+                  className={talao.arm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
                   style={{ "--linha": prox() } as React.CSSProperties}
                 >
                   <dt className="talao-dim">
@@ -296,11 +299,11 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
                   </dt>
                   <dd>
                     {fmtEUR(recibo.retencao)} −
-                    <span className="talao-retido" aria-hidden>Retido</span>
+                    <span className={"talao-retido " + talao.arm("talao-carimbo-anim")} aria-hidden>Retido</span>
                   </dd>
                 </div>
                 <div
-                  className="talao-linha talao-cut mt-1 flex items-baseline justify-between gap-4 py-3"
+                  className={talao.arm("talao-linha") + " talao-cut mt-1 flex items-baseline justify-between gap-4 py-3"}
                   style={{ "--linha": prox() } as React.CSSProperties}
                 >
                   <dt className="talao-total">
@@ -311,12 +314,13 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
                   </dd>
                 </div>
                 <div
-                  className="talao-linha talao-sep flex justify-between gap-4 py-1.5"
+                  className={talao.arm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
                   style={{ "--linha": prox() } as React.CSSProperties}
                 >
                   <dt className="talao-dim">CUSTO TOTAL P/ A EMPRESA</dt>
                   <dd className="talao-dim">{fmtEUR(recibo.custoEmpresa)}/mês</dd>
                 </div>
+                </Fragment>
               </dl>
               <div className="talao-barras mt-5" aria-hidden />
               <p className="talao-meta mt-2 flex justify-between talao-dim">

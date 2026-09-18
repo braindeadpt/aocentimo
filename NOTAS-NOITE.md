@@ -500,3 +500,44 @@ e2e 16/16 ✓ (teste novo incluído).
 **Screenshots** — `.screenshots/m12/` {talao,separacao,cascata-meio,cascata-fim}×{1440,375}.
 
 **Gates** — lint ✓ typecheck ✓ unit 178 ✓ data ✓ build 58 ✓ e2e 16/16 ✓.
+
+## M-13 — /casa: a escritura em papel + a troca juro/capital
+
+- Painel "No dia da escritura" → papel M-01 (talao + arestas rasgadas
+  via mascaraFaixaRasgo + carimbo). Linhas com swatch de cor ligado à
+  barra de acreção — cada custo tem a sua tinta (família torrada do
+  "sai") e a sua camada na pilha.
+- Acreção animada duas vezes: as linhas imprimem-se uma a uma
+  (talao-linha, --stagger) e a barra .acre empilha uma camada por custo
+  ao mesmo ritmo (delay = i×stagger + 80ms).
+- Juro vs capital: faixa anual (agregação de prest.linhas por ano) —
+  capital em keep ("fica teu", é património), juro em up ("vai para o
+  banco"). A divisória troca de peso ao longo dos anos; revelação
+  esq→dir (clip-path, --dur-longa) = a passagem do tempo. Régua por ano
+  + readout + marcador.
+- Regra do verde: varrimento color-keep/color-down — zero violações
+  ("A casa (preço)" já usava --color-ink desde a faixa A). O select de
+  finalidade já não truncava (corrigido antes).
+- "Módulo"-style kicker já não existia aqui ("Comprar casa" — editorial).
+
+**Bug encontrado e corrigido (também em M-11)**
+- `<dl key={reciboKey}>` com filhos `<div>/<dt>/<dd>` NÃO remonta —
+  duplica: o dl antigo ficava no DOM ao lado do novo (verificado:
+  2 dl, 12 linhas). Padrão correcto: `<Fragment key>` dentro do dl
+  estável — remonta os filhos, o dl fica. Aplicado em /casa e /salario.
+
+**Gate de dobra — src/lib/useArmado.ts**
+- Novo hook partilhado: `arm(cls)` só devolve a classe animada depois
+  de o elemento entrar no viewport. Nascer à vista = nascer impresso
+  (flag em silêncio; as MUDANÇAS animam). Abaixo da dobra, a primeira
+  impressão acontece como revelação ao entrar.
+- Aparência separada de animação: .talao-retido/.iva-voa/.iva-barra-f/
+  .acre-seg ficam sempre; as animações passaram para -anim
+  (.talao-carimbo-anim, .iva-voa-anim, .iva-barra-anim, .acre-anim).
+- Aplicado em /casa (escritura+tempo), /salario (recibo+retido),
+  /impostos (iva-voa/barra, cascata). FitaTalao mantém o seu sistema
+  próprio (está sempre abaixo da dobra nos contextos actuais).
+
+**Screenshots** — `.screenshots/m13/` {escritura,acrecao,tempo,scrub}×{1440,375}.
+
+**Gates** — lint ✓ typecheck ✓ unit 178 ✓ data ✓ build 58 ✓ e2e 16/16 ✓.

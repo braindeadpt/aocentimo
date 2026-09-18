@@ -6,6 +6,7 @@ import { NumHero } from "@/components/NumHero";
 import { fmtEUR, fmtPct } from "@/lib/format";
 import { r1 } from "@/lib/materia";
 import isp from "@data/fiscal/isp.json";
+import { useArmado } from "@/lib/useArmado";
 
 type Fuel = "gasolina95" | "gasoleo";
 
@@ -52,6 +53,7 @@ export function DecomposicaoFuel() {
 
   // re-anima a cascata quando a conta muda — remonta-se só o desenho
   const cascaKey = `${fuel}-${r1(preco)}`;
+  const casca = useArmado<SVGSVGElement>();
 
   return (
     <div className="bg-raised border border-line shadow-raised px-5 py-5" aria-live="polite">
@@ -86,6 +88,7 @@ export function DecomposicaoFuel() {
         {/* a cascata — a base tributável sobe, a chaveta mede-a toda,
             e o IVA pousa sobre ela: imposto sobre imposto, visto */}
         <svg
+          ref={casca.ref}
           key={cascaKey}
           viewBox="0 0 150 210"
           className="h-56 w-40 justify-self-center"
@@ -94,7 +97,7 @@ export function DecomposicaoFuel() {
           {/* chaveta: mede a pilha produto+carbono+ISP — é sobre ISTO
               que o IVA se calcula */}
           <path
-            className="casca-brace"
+            className={casca.arm("casca-brace")}
             pathLength={1}
             d={`M40,${yBase} H32 V${yTopoBase} H40`}
             fill="none"
@@ -115,7 +118,7 @@ export function DecomposicaoFuel() {
           {pilha.map((s, i) => (
             <rect
               key={s.nome}
-              className="casca-seg"
+              className={casca.arm("casca-seg")}
               style={{ "--seg": i } as React.CSSProperties}
               x={48}
               y={s.y}
@@ -126,7 +129,7 @@ export function DecomposicaoFuel() {
             />
           ))}
           <rect
-            className="casca-iva"
+            className={casca.arm("casca-iva")}
             x={48}
             y={ivaY}
             width={60}

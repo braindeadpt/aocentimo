@@ -65,7 +65,7 @@ test("todas as rotas respondem", async ({ page }) => {
 
 test("simuladores novos produzem resultado", async ({ page }) => {
   await page.goto("/casa");
-  await expect(page.getByText("Precisas à entrada")).toBeVisible();
+  await expect(page.getByText("Custa mesmo")).toBeVisible();
 
   await page.goto("/irs");
   await expect(page.getByText("Poupança por ano")).toBeVisible();

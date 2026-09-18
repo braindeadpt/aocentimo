@@ -869,6 +869,8 @@ html[data-theme="dark"] .tema-ponto {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   transform: rotate(-3deg);
+}
+.talao-carimbo-anim {
   animation: talao-carimbo var(--dur-micro) var(--ease-rasgo) both;
   animation-delay: calc(var(--linha, 0) * var(--stagger) + 220ms);
 }
@@ -956,6 +958,8 @@ html[data-theme="dark"] .tema-ponto {
   inset-inline-end: 0;
   background: rgba(157, 42, 13, 0.85);
   opacity: 0;
+}
+.iva-voa-anim {
   animation: iva-voa var(--dur-curta) var(--ease-sai) both;
   animation-delay: calc(var(--linha, 0) * 35ms);
 }
@@ -982,6 +986,8 @@ html[data-theme="dark"] .tema-ponto {
   height: 100%;
   transform-origin: left;
   background: rgba(157, 42, 13, 0.8);
+}
+.iva-barra-anim {
   animation: iva-chega var(--dur-curta) var(--ease-entra) both;
   animation-delay: calc(240ms + var(--linha, 0) * 80ms);
 }
@@ -1048,6 +1054,45 @@ html[data-theme="dark"] .tema-ponto {
   width: 0.65rem;
   height: 0.65rem;
   flex-shrink: 0;
+}
+
+/* ————— escritura: acreção + passagem do tempo (M-13) ————— */
+/* barra de acreção — camadas que empilham da esquerda para a direita,
+   cada uma quando a sua linha imprime (mesmo --stagger + folga) */
+.acre {
+  display: flex;
+  height: 8px;
+  overflow: hidden;
+  background: rgba(44, 36, 19, 0.08);
+}
+.acre-seg {
+  transform-origin: left;
+}
+.acre-anim {
+  animation: acre-cresce var(--dur-curta) var(--ease-entra) both;
+  animation-delay: calc(var(--cam, 0) * var(--stagger) + 80ms);
+}
+@keyframes acre-cresce {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+/* a passagem do tempo — o gráfico juro/capital revela-se da esquerda
+   para a direita, os anos a acontecer. Estado base = tudo visível;
+   o clip só existe dentro da animação */
+.tempo-revela {
+  animation: tempo-passar var(--dur-longa) var(--ease-lin) both;
+}
+@keyframes tempo-passar {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
 }
 
 /* código de barras — duas camadas de riscas sobrepostas */
