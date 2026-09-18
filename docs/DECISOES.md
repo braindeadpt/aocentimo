@@ -85,8 +85,7 @@ recomendava Vercel Hobby mantendo o build exportável.
 endpoints dinâmicos (a «API» é JSON estático em `public/api/`); zero
 servidor = zero custo e zero superfície de ataque; migrar de host é
 trivial.
-**Em aberto:** porquê Pages em vez do Vercel recomendado — o repo não
-regista o motivo (ver «Perguntas em aberto»).
+**Motivo** (dono, 2026-09-18): Pages era mais prático e simples.
 
 ## 2026-09-17 — Direção «O Terminal do Salário»
 
@@ -137,8 +136,8 @@ pendente de aprovação) com `eu.org` em paralelo;
 **Escolha.** `aocentimo.pt` como fonte única de verdade — CNAME,
 canonical, OG e sitemap convergem (commit `9725e85`).
 **Consequência.** Um domínio só em todo o lado; o e2e verifica
-canonical = CNAME.
-**Em aberto:** estado do pedido js.org — não registado no repo.
+canonical = CNAME. O pedido `aocentimo.js.org` continua pendente mas está
+decidido que morre — o `.pt` é o canónico definitivo (dono, 2026-09-18).
 
 ## 2026-09-17 — Vídeo educativo: avaliado e adiado
 
@@ -148,7 +147,8 @@ prioridades atuais (decisão do dono, 2026-09-17; não há registo no repo —
 fonte: comunicação em sessão).
 **Consequência.** Conteúdo editorial continua em texto
 (glossário/artigos).
-**Em aberto:** que mudança de prioridade o traria de volta.
+**Critério de retorno** (dono, 2026-09-18): volta se for automatizável —
+não há tempo disponível para produção editorial recorrente de vídeo.
 
 ---
 
@@ -165,12 +165,7 @@ são a revisão fiscal anual e a curadoria IGCP, documentados em
 
 ## Perguntas em aberto
 
-- O pedido `aocentimo.js.org` continua pendente ou foi abandonado a favor
-  do `.pt`?
-- Porquê GitHub Pages em vez do Vercel Hobby recomendado no REDESIGN
-  §12.1 — custo, simplicidade de CNAME, ou outro motivo?
 - «Observatório»: o código chama assim ao sistema atual (comentário de
   `globals.css`, `/estilo`); o V2 diz que substituiu uma direção
   «Observatório» parcial. Fica por confirmar se era direção formal antes
   do V2 ou o enquadramento do plano master que o código adotou depois.
-- Vídeo educativo: que mudança de prioridade o traria de volta?
