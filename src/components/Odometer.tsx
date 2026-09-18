@@ -16,7 +16,7 @@ export function Odometer({
   casas = 0,
   prefixo = "",
   sufixo = "",
-  dur = 1400,
+  dur = 1200,
   className,
 }: {
   valor: number;
@@ -55,7 +55,7 @@ export function Odometer({
       {texto.split("").map((ch, i) => {
         if (/\d/.test(ch)) {
           const d = Number(ch);
-          const atraso = rodas++ * 90; // as rodas da direita chegam por último
+          const atraso = `calc(${rodas++} * var(--stagger))`; // as rodas da direita chegam por último
           return (
             <span key={i} aria-hidden className="od-wheel">
               <span
@@ -63,7 +63,7 @@ export function Odometer({
                 style={
                   {
                     "--d": d,
-                    "--delay": `${atraso}ms`,
+                    "--delay": atraso,
                     "--dur": `${dur}ms`,
                   } as React.CSSProperties
                 }

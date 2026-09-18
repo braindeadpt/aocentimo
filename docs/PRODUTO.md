@@ -86,12 +86,50 @@ Source Serif 4 só para ledes/prosa editorial. Escala canónica de
 micro-tipografia: `.kicker` / `.kicker-sm` / `.kicker-xs` (mono
 maiúsculo, `muted` por defeito — contextos sobrepõem com `text-*`).
 
-### Motion
+### Motion — gramática (M-02)
 
-Mínimo e significativo: view transitions nativas, odometer nos pontos
-de assinatura, kinetic type na manchete. `prefers-reduced-motion` =
-estado final, não animação atenuada. O número nunca espera pela
-animação.
+O site tem movimento porque o movimento **explica transformações** —
+não porque fica bonito. Três tipos, e só dois existem:
+
+1. **QUE EXPLICA** — a transformação dos dados acontece à vista: a fita
+   rasga, a barra parte-se, a série desenha-se, o número desliza do
+   valor anterior para o novo. É o motivo do movimento existir.
+2. **QUE RESPONDE** — hover, foco, o gráfico a reagir ao cursor. É o
+   que dá sensação de instrumento.
+3. **QUE DECORA** — lista negra. Não existe.
+
+**Quatro durações. Só estas** — uma duração é um significado:
+
+| Token | Valor | Significado |
+|---|---|---|
+| `--dur-micro` | 120ms | resposta ao toque (tipo 2) |
+| `--dur-curta` | 320ms | mudança de estado — tema, painel, barra que reparte |
+| `--dur-media` | 600ms | transformação explicada (tipo 1) |
+| `--dur-longa` | 1200ms | sequência orquestrada — irmãos escalonados |
+
+**Três curvas + linear:**
+
+| Token | Uso |
+|---|---|
+| `--ease-entra` | o que chega — default |
+| `--ease-sai` | o que parte |
+| `--ease-rasgo` | o acto físico — elástica contida; só o rasgo |
+| `--ease-lin` | só movimento contínuo (ticker); proibida em transições |
+
+**Um escalonamento:** `--stagger` (90ms) entre irmãos — sempre o mesmo,
+em cascatas, barras, sparks e odómetro.
+
+**Nunca anima:** números que a pessoa precisa de ler já; conteúdo acima
+da dobra ao carregar.
+
+**`prefers-reduced-motion` = estado final imediato**, nunca animação
+atenuada — corta todas as transições e animações (`!important`,
+universal — uma animação nova nasce coberta). O tipo 2 mantém-se:
+hover/focus não são motion. O contrato tem teste e2e que percorre todas
+as rotas e falha se algum elemento animar.
+
+O número nunca espera pela animação — o valor final está no DOM desde o
+primeiro paint.
 
 ## 4. Intocável
 

@@ -48,3 +48,47 @@ abertura ("A linguagem material do site é o talão…") e as cinco regras
 da lista final.
 
 **Incerteza** — nenhuma pendente.
+
+---
+
+## M-02 · gramática de movimento
+
+**Entregue**
+
+- Gramática escrita em `docs/PRODUTO.md` §Motion e demonstrada em
+  `/estilo` (tabelas de tokens ao vivo + MotionDemo).
+- Quatro durações: `--dur-micro` 120ms (responde), `--dur-curta` 320ms
+  (muda de estado), `--dur-media` 600ms (explica), `--dur-longa` 1200ms
+  (orquestra). Três curvas + linear: `--ease-entra`, `--ease-sai`,
+  `--ease-rasgo`, `--ease-lin` (só o ticker). Um escalonamento:
+  `--stagger` 90ms.
+- Varredura completa: os tokens antigos (`--dur-res/mov/in`, `--ease`)
+  e TODOS os literais (0.15s, 0.25s, 0.28s, 0.45s, 0.8s, 60/90/110/130/
+  140ms, duration-300, cubic-bezier avulsos, 55s) substituídos pelos
+  tokens. `Spark atraso` passou de ms a índice de stagger (callers
+  0/1/2/3).
+- Reduced-motion reforçado: kill universal `animation:none !important`
+  — uma animação nova nasce coberta, não precisa de opt-out listado.
+  Overrides explícitos dos estados armados por JS (`.spark-armed`
+  repõe dashoffset/área no estado final).
+- Teste e2e novo: percorre TODAS as rotas derivadas com
+  `reducedMotion:'reduce'` e falha se algum elemento tiver
+  animation-name≠none ou transition-duration>0.
+
+**Decisões**
+
+- O escalar `--stagger` é o mesmo para irmãos e para os dígitos do
+  odómetro (já era 90ms — confirmou a escolha).
+- O ciclo do ticker (`--dur-ticker` 55s) é velocidade de loop contínuo,
+  fora da escala — documentado como tal.
+- Atrasos inline passaram a `calc(i * var(--stagger))` — o token fica
+  na casca CSS, os componentes passam só o índice.
+
+**Mutação** — sem `animation:none` universal, o teste falha com
+`ticker-scroll`, `kin-up`, `fluxo-cresce` na home. Restaurado.
+
+**Copy a rever** — texto da secção "Movimento — a gramática" em
+`/estilo` e a tabela §Motion de PRODUTO.md.
+
+**Screenshots** — `.screenshots/M-02/depois-*` (o "antes" é o estado
+de `/estilo` nos shots de M-01).

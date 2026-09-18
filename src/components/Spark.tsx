@@ -18,7 +18,7 @@ export function Spark({
   /** pontos {t, v} — usa-se a cauda (últimos 24) */
   pts: { t: string; v: number }[];
   className?: string;
-  /** escalonamento entre células, em ms */
+  /** índice de escalonamento entre células — multiplica --stagger */
   atraso?: number;
 }) {
   const svg = useRef<SVGSVGElement>(null);
@@ -70,7 +70,7 @@ export function Spark({
       preserveAspectRatio="none"
       aria-hidden="true"
       className={`spark block h-9 w-full ${on ? "spark-on" : ""} ${className}`}
-      style={{ "--spark-delay": `${atraso}ms` } as React.CSSProperties}
+      style={{ "--spark-delay": `${atraso}` } as React.CSSProperties}
     >
       {/* área sob a linha — massa que torna a forma legível a esta escala */}
       <polygon

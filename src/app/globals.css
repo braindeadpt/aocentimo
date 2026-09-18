@@ -74,15 +74,33 @@
   --talao-paper: #f7f1e1;
   --talao-ink: #2c2413;
 
-  /* ————— gramática de motion — três durações, uma curva —————
-     res  resposta a hover/focus/interrogação — instantânea mas não abrupta
-     mov  mudança de estado: um valor que muda, uma barra que se reparte
-     in   entrada — corre UMA vez, à montagem, nunca em loop
-     a mesma curva em todo o lado: arranca rápido, pousa devagar */
-  --ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --dur-res: 0.18s;
-  --dur-mov: 0.55s;
-  --dur-in: 0.9s;
+  /* ————— gramática de movimento (M-02) —————
+     QUATRO durações. Só estas — uma duração é um significado, não um gosto:
+       micro  resposta ao toque — hover, foco, o gráfico a reagir ao cursor
+       curta  mudança de estado — tema, painel que abre, barra que reparte
+       média  transformação explicada — a série desenha-se, o degrau cresce
+       longa  sequência orquestrada — vários irmãos a entrar escalonados
+     TRÊS curvas + linear:
+       entra  o que chega — arranca rápido, pousa devagar (default)
+       sai    o que parte — sai depressa
+       rasgo  o acto físico — elástica contida, um overshoot curto; só
+              para o rasgo/arrancar, nunca para fades
+       lin    só movimento contínuo (o ticker); proibida em transições
+     UM escalonamento entre irmãos: sempre --stagger.
+     O que NUNCA anima: números que a pessoa precisa de ler já; conteúdo
+     acima da dobra ao carregar; qualquer coisa do tipo 3 (decorar). */
+  --dur-micro: 120ms;
+  --dur-curta: 320ms;
+  --dur-media: 600ms;
+  --dur-longa: 1200ms;
+  --ease-entra: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-sai: cubic-bezier(0.55, 0, 0.85, 0.36);
+  --ease-rasgo: cubic-bezier(0.34, 1.45, 0.64, 1);
+  --ease-lin: linear;
+  --stagger: 90ms;
+  /* ciclo do ticker — loop contínuo de velocidade editorial, não é uma
+     transição e não faz parte da escala */
+  --dur-ticker: 55s;
 }
 
 :root[data-theme="dark"] {
@@ -214,7 +232,8 @@ body {
   color: var(--ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color var(--dur-curta) var(--ease-entra),
+    color var(--dur-curta) var(--ease-entra);
 }
 
 /* ————— textura de fundo — só no nível 0 (floor) —————
@@ -298,7 +317,7 @@ body::before {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   text-decoration: none;
-  transition: transform 120ms ease-out;
+  transition: transform var(--dur-micro) var(--ease-entra);
 }
 .skip-link:focus-visible {
   transform: none;
@@ -423,7 +442,8 @@ body::before {
   color: var(--ink);
   background: transparent;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: background-color var(--dur-micro) var(--ease-entra),
+    color var(--dur-micro) var(--ease-entra);
 }
 
 .btn:hover {
@@ -482,7 +502,7 @@ body::before {
 .ticker-track {
   display: flex;
   width: max-content;
-  animation: ticker-scroll 55s linear infinite;
+  animation: ticker-scroll var(--dur-ticker) var(--ease-lin) infinite;
 }
 
 .ticker:hover .ticker-track,
@@ -499,8 +519,9 @@ body::before {
    mudam, a largura transita — a barra reparte-se, não salta */
 .eurobar-seg {
   transform-origin: left;
-  animation: eurobar-grow var(--dur-in) var(--ease) both;
-  transition: width var(--dur-mov) var(--ease), background-color var(--dur-mov) var(--ease);
+  animation: eurobar-grow var(--dur-media) var(--ease-entra) both;
+  transition: width var(--dur-curta) var(--ease-entra),
+    background-color var(--dur-curta) var(--ease-entra);
 }
 
 @keyframes eurobar-grow {
@@ -512,7 +533,7 @@ body::before {
    Barras totais crescem da base; os cortes do Estado crescem para
    baixo, suspensos do nível anterior — o dinheiro literalmente cai. */
 .fluxo-barra {
-  animation: fluxo-cresce 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: fluxo-cresce var(--dur-media) var(--ease-entra) both;
 }
 
 .fluxo-barra-baixo {
@@ -545,7 +566,8 @@ body::before {
   display: flex;
   flex-direction: column;
   transform: translateY(calc(var(--d) * -1em));
-  transition: transform var(--dur, 1.4s) var(--ease) var(--delay, 0ms);
+  transition: transform var(--dur, var(--dur-longa)) var(--ease-entra)
+    var(--delay, 0ms);
 }
 .od-zero .od-strip {
   transform: translateY(0);
@@ -568,7 +590,7 @@ body::before {
 
 /* scrolly da escada — barras fora de foco esbatem-se */
 .fluxo-passo {
-  transition: opacity 0.45s ease;
+  transition: opacity var(--dur-curta) var(--ease-entra);
 }
 .fluxo-passo.fluxo-off {
   opacity: 0.16;
@@ -712,13 +734,13 @@ body::before {
 /* ————— view transitions — cross-fade de página, rápido e quieto ————— */
 ::view-transition-old(*),
 ::view-transition-new(*) {
-  animation-duration: 0.24s;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-duration: var(--dur-curta);
+  animation-timing-function: var(--ease-entra);
 }
 /* o indicador da nav morfa posição/tamanho entre itens ativos */
 ::view-transition-group(nav-ind) {
-  animation-duration: 0.35s;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-duration: var(--dur-curta);
+  animation-timing-function: var(--ease-entra);
 }
 ::view-transition-old(nav-ind),
 ::view-transition-new(nav-ind) {
@@ -790,7 +812,7 @@ body::before {
 }
 /* marca interrogada: acende; as irmãs recuam */
 .chart-hit {
-  transition: opacity var(--dur-res) var(--ease);
+  transition: opacity var(--dur-micro) var(--ease-entra);
 }
 .chart-hit-off {
   opacity: 0.3;
@@ -819,7 +841,8 @@ body::before {
 }
 .spark-on .spark-line {
   stroke-dasharray: var(--spark-len);
-  animation: spark-draw var(--dur-in) var(--ease) var(--spark-delay, 0s) forwards;
+  animation: spark-draw var(--dur-media) var(--ease-entra)
+    calc(var(--spark-delay, 0) * var(--stagger)) forwards;
 }
 @keyframes spark-draw {
   to {
@@ -836,7 +859,8 @@ body::before {
 }
 .spark-on .spark-area {
   opacity: 0.09;
-  transition: opacity var(--dur-mov) var(--ease) calc(var(--spark-delay, 0ms) + var(--dur-in));
+  transition: opacity var(--dur-curta) var(--ease-entra)
+    calc(var(--spark-delay, 0) * var(--stagger) + var(--dur-media));
 }
 
 /* kinetic type — palavras sobem de trás de uma máscara de linha */
@@ -847,8 +871,8 @@ body::before {
 }
 .kin-word {
   display: inline-block;
-  animation: kin-up 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: calc(var(--i) * 60ms);
+  animation: kin-up var(--dur-media) var(--ease-entra) both;
+  animation-delay: calc(var(--i) * var(--stagger));
 }
 @keyframes kin-up {
   from {
@@ -901,7 +925,7 @@ body::before {
   background: var(--ink);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.28s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: transform var(--dur-curta) var(--ease-entra);
 }
 @media (hover: hover) and (pointer: fine) {
   .chapter-row:hover::after {
@@ -920,7 +944,8 @@ body::before {
   }
 }
 .chapter-arrow {
-  transition: transform 0.28s cubic-bezier(0.23, 1, 0.32, 1), color 0.2s ease;
+  transition: transform var(--dur-curta) var(--ease-entra),
+    color var(--dur-micro) var(--ease-entra);
 }
 
 /* transição de tema — suave, sem flash; o atributo é removido pelo
@@ -928,15 +953,20 @@ body::before {
 @media (prefers-reduced-motion: no-preference) {
   html[data-theme-anim] body,
   html[data-theme-anim] body * {
-    transition: background-color 0.3s ease, color 0.3s ease,
-      border-color 0.3s ease !important;
+    transition: background-color var(--dur-curta) var(--ease-entra),
+      color var(--dur-curta) var(--ease-entra),
+      border-color var(--dur-curta) var(--ease-entra) !important;
   }
 }
 
-/* reduced-motion = estado final, não animação atenuada: corta TODAS as
-   transições (body, .btn, .skip-link, .fluxo-passo, .chapter-arrow e os
-   utilitários Tailwind transition-*) e desliga explicitamente as
-   animações — o estado base de cada uma já é o final */
+/* reduced-motion = estado final, não animação atenuada (contrato M-02):
+   TODAS as transições e TODAS as animações cortadas de uma vez — uma
+   animação nova nasce já coberta, não precisa de ser listada aqui.
+   O estado base de cada animação é o final (keyframes partem do estado
+   colapsado); o tipo 2 — responder — mantém-se: hover/focus não são
+   motion, são leitura instantânea. Os estados armados por JS
+   (.spark-armed) escondem-se atrás de dashoffset/opacity — aqui
+   repõe-se o estado final explicitamente. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -945,22 +975,18 @@ body::before {
   ::before,
   ::after {
     transition: none !important;
+    animation: none !important;
   }
-  .eurobar-seg {
-    animation: none;
+  .spark-armed .spark-line {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
   }
-  .ticker-track {
-    animation: none;
+  .spark-armed .spark-area {
+    opacity: 0.09;
   }
   .ticker {
     overflow-x: auto;
     mask-image: none;
-  }
-  .fluxo-barra {
-    animation: none;
-  }
-  .kin-word {
-    animation: none;
   }
   ::view-transition-old(*),
   ::view-transition-new(*),

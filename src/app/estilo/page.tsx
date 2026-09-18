@@ -471,22 +471,56 @@ export default function EstiloPage() {
       </section>
 
       <section className="stack-sec">
-        <h2 className="kicker mb-4">Motion — transformação, não decoração</h2>
+        <h2 className="kicker mb-4">Movimento — a gramática</h2>
         <p className="footnote mb-4 max-w-xl">
-          O motion conta uma transformação: o número desliza do valor
-          anterior para o novo quando o input muda, a cascata acumula
-          degrau a degrau, a sparkline desenha-se uma vez ao entrar no
-          ecrã. Três durações — resposta 180ms, movimento 550ms, entrada
-          900ms — e uma curva. Nada se mexe sem explicar; com
-          prefers-reduced-motion, todos entregam o estado final de
-          imediato. Ao vivo:
+          Três tipos de movimento: o que <em>explica</em> (a transformação
+          dos dados à vista — a fita a rasgar, a série a desenhar-se), o
+          que <em>responde</em> (hover, foco, o gráfico ao cursor — a
+          sensação de instrumento) e o que <em>decora</em> — na lista
+          negra, não existe. Uma duração é um significado, não um gosto:
         </p>
-        <MotionDemo />
+        <div className="grid gap-px border border-line bg-line md:grid-cols-4">
+          {[
+            ["--dur-micro", "120ms", "resposta ao toque"],
+            ["--dur-curta", "320ms", "mudança de estado"],
+            ["--dur-media", "600ms", "transformação explicada"],
+            ["--dur-longa", "1200ms", "sequência orquestrada"],
+          ].map(([tok, ms, uso]) => (
+            <div key={tok} className="bg-panel px-4 py-3">
+              <p className="num text-sm text-ink">{ms}</p>
+              <p className="kicker-xs mt-1">{tok}</p>
+              <p className="footnote mt-1">{uso}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-4 grid gap-px border border-line bg-line md:grid-cols-4">
+          {[
+            ["--ease-entra", "o que chega — arranca rápido, pousa devagar"],
+            ["--ease-sai", "o que parte — sai depressa"],
+            ["--ease-rasgo", "o acto físico — elástica contida, só o rasgo"],
+            ["--ease-lin", "só movimento contínuo (ticker); nunca em transições"],
+          ].map(([tok, uso]) => (
+            <div key={tok} className="bg-panel px-4 py-3">
+              <p className="kicker-xs">{tok}</p>
+              <p className="footnote mt-1">{uso}</p>
+            </div>
+          ))}
+        </div>
+        <p className="footnote mt-4 max-w-xl">
+          Um escalonamento entre irmãos — <span className="num">--stagger</span> (90ms)
+          em cascatas, barras, sparks e odómetro. Nunca anima: números que a
+          pessoa precisa de ler já; conteúdo acima da dobra ao carregar.
+          Com prefers-reduced-motion o estado final é imediato — corta-se
+          tudo, e um teste e2e percorre todas as rotas a verificar que
+          nada anima. Ao vivo — o número desliza do valor anterior:
+        </p>
+        <div className="mt-4">
+          <MotionDemo />
+        </div>
         <ul className="mt-4 space-y-1">
           {[
-            "dur-res 180ms — hover e interrogação; dur-mov 550ms — valores e geometria; dur-in 900ms — entrada única duma figura.",
             "O número nunca salta nem reparte de zero: TweenNum interpola do valor anterior; Odometer roda só os dígitos que mudam.",
-            "Sem motion decorativo: se não explica uma transformação, não se move.",
+            "Sem movimento decorativo: se não explica uma transformação, não se move.",
           ].map((r) => (
             <li key={r} className="footnote">
               <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-mark align-middle" />

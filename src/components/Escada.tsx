@@ -79,7 +79,7 @@ export function Escada({ medidas }: { medidas: MedidasEuro }) {
             className="flex items-center py-10 lg:min-h-[34vh] lg:py-0"
           >
             <p
-              className={`border-l-2 pl-5 font-display text-xl leading-snug tracking-wide transition-colors duration-300 md:text-2xl ${
+              className={`border-l-2 pl-5 font-display text-xl leading-snug tracking-wide transition-colors duration-[var(--dur-curta)] md:text-2xl ${
                 reduz
                   ? "border-line text-ink"
                   : ativo === i

@@ -14,7 +14,7 @@ export function TweenNum({
   valor,
   casas = 2,
   texto,
-  dur = 550,
+  dur = 600,
 }: {
   /** valor actual — o alvo da interpolação */
   valor: number;

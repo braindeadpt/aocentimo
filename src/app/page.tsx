@@ -111,7 +111,7 @@ export default function Home() {
             </p>
             {alim && (
               <div className="mt-2 text-muted">
-                <Spark pts={alim.series} atraso={120} />
+                <Spark pts={alim.series} atraso={1} />
               </div>
             )}
             <p className="footnote mt-1.5">{h.ihpcCP01}</p>
@@ -124,7 +124,7 @@ export default function Home() {
             <div className="mt-2 text-muted">
               <Spark
                 pts={smn.serie.map((s) => ({ t: String(s.ano), v: s.valor }))}
-                atraso={240}
+                atraso={2}
               />
             </div>
             <p className="footnote mt-1.5">{h.smnNota}</p>
@@ -136,7 +136,7 @@ export default function Home() {
             </p>
             {caBase && (
               <div className="mt-2 text-muted">
-                <Spark pts={caBase.series} atraso={360} />
+                <Spark pts={caBase.series} atraso={3} />
               </div>
             )}
             <p className="footnote mt-1.5">{h.caNota}</p>

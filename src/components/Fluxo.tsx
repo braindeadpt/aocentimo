@@ -251,7 +251,7 @@ export function Fluxo({
                     width={BW}
                     height={h}
                     fill={b.cor}
-                    style={{ animationDelay: `${i * 130}ms` }}
+                    style={{ animationDelay: `calc(${i} * var(--stagger))` }}
                   />
                   <text
                     x={b.x + BW / 2}

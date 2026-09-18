@@ -171,6 +171,36 @@ test("o /estilo cumpre contraste AA nos dois temas", async ({ page }) => {
   }
 });
 
+test("com reduced-motion nenhuma rota tem animação nem transição activa", async ({
+  page,
+}) => {
+  test.setTimeout(120_000);
+  // contrato M-02: estado final imediato — animation-name:none e
+  // transition-duration:0 em TODO o elemento, em todas as rotas
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  for (const path of rotasDoSite()) {
+    await page.goto(path, { waitUntil: "domcontentloaded" });
+    const violadores = await page.evaluate(() => {
+      const vistos: string[] = [];
+      for (const el of Array.from(document.querySelectorAll("*"))) {
+        const cs = getComputedStyle(el);
+        const anima = cs.animationName !== "none";
+        const transita = cs.transitionDuration
+          .split(",")
+          .some((d) => parseFloat(d) > 0);
+        if (anima || transita) {
+          vistos.push(
+            `${el.tagName.toLowerCase()}.${String(el.getAttribute("class") ?? "").slice(0, 40)} ` +
+              `animation=${cs.animationName} transition=${cs.transitionDuration}`
+          );
+        }
+      }
+      return vistos.slice(0, 8);
+    });
+    expect(violadores, `${path} anima com reduced-motion`).toEqual([]);
+  }
+});
+
 test("o primeiro Tab foca o skip-link", async ({ page }) => {
   await page.goto("/");
   await page.keyboard.press("Tab");

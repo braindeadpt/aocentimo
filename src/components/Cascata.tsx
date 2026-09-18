@@ -102,7 +102,7 @@ export function Cascata({ passos }: { passos: Passo[] }) {
                       style={{
                         width: `${fica}%`,
                         backgroundColor: "var(--color-keep)",
-                        animationDelay: `${i * 110}ms`,
+                        animationDelay: `calc(${i} * var(--stagger))`,
                       }}
                     />
                     <div
@@ -110,7 +110,7 @@ export function Cascata({ passos }: { passos: Passo[] }) {
                       style={{
                         width: `${sai}%`,
                         backgroundColor: "var(--color-accent)",
-                        animationDelay: `${i * 110}ms`,
+                        animationDelay: `calc(${i} * var(--stagger))`,
                       }}
                     />
                   </>
@@ -120,7 +120,7 @@ export function Cascata({ passos }: { passos: Passo[] }) {
                     style={{
                       width: `${fica}%`,
                       backgroundColor: l.tipo === "total" ? "var(--color-keep)" : "var(--color-ink2)",
-                      animationDelay: `${i * 110}ms`,
+                      animationDelay: `calc(${i} * var(--stagger))`,
                     }}
                   />
                 )}
