@@ -10,7 +10,7 @@ import {
   termoPorSlug,
 } from "@/content/glossario";
 import { JsonLd, definedTerm } from "@/lib/jsonld";
-import { TermoRef } from "../TermoRef";
+import { TermoRef } from "@/components/TermoRef";
 
 export const dynamicParams = false;
 

@@ -11,7 +11,8 @@ description: Regras de produto do site de literacia financeira para Portugal (AO
   impostos sobre preços e salários, Euribor/spread/crédito, poupança (CA).
 - **Não é** tracker de preços, comparador comercial, ou ferramenta de
   aconselhamento. Nunca sinais de compra, nunca conselho financeiro.
-- Documento canónico: `docs/PLANO-LITERACIA-FINANCEIRA.md`.
+- Documento vigente: `docs/PRODUTO.md` (os três planos em `docs/` são
+  históricos; decisões em `docs/DECISOES.md`).
 
 ## Regra nº1 — nunca inventar dados
 
@@ -38,13 +39,18 @@ description: Regras de produto do site de literacia financeira para Portugal (AO
   portfólio (é portefólio), "descobre/potencia" e copy genérica de marketing.
 - Termos técnicos sempre explicados com exemplo numérico; cada conceito tem
   entrada no glossário (`/aprender`).
-- Strings em `messages/pt.json` (next-intl); sem texto hardcoded em JSX.
+- Strings em `messages/pt.json`, lidas via `src/lib/messages.ts` (`m`,
+  `t()`) — sem next-intl; sem texto hardcoded em JSX.
 
 ## Design — "sem cara de IA"
 
-- Direção: broadsheet financeiro português — papel claro, tinta escura, serif
-  display + mono tabular para números, 1 acento só. Grelha editorial
-  assimétrica, notas de rodapé com fontes, tabelas com regras finas.
+- Direção: «Observatório» — instrumento vivo, escuro por omissão (o claro
+  é o documento). Escala de elevação floor/panel/raised/overlay; textura
+  só no floor; radius 0. `/salario` é o único artefacto de papel (talão
+  físico). Serif editorial + mono tabular para números (escala
+  num-hero/num-read/num-dense), 1 acento só.
+- Cor semântica: verde = dinheiro que fica; vermilhão = o que sai; torrado
+  = fonte/foco. Verde nunca é decoração.
 - Proibido: gradientes hero, glassmorphism, grelhas de cards idênticos,
   emoji-bullets, iconografia stock, sombras grossas.
 - Variações sempre com ▲/▼ + cor semântica (nunca só cor).
