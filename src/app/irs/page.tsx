@@ -4,6 +4,7 @@ import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { SimuladorIrsJovem } from "./SimuladorIrsJovem";
 import { SimuladorAcerto } from "./SimuladorAcerto";
+import { EscaloesEnchem } from "./EscaloesEnchem";
 import deducoes from "@data/fiscal/deducoes-2026.json";
 import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
 import irs from "@data/fiscal/irs-2026.json";
@@ -37,57 +38,26 @@ export default function IrsPage() {
       />
       <p className="kicker">Imposto sobre o rendimento</p>
       <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
-        IRS — os dois impostos que pagas
+        Subir de escalão faz-te perder dinheiro?
       </h1>
       <p className="lede mt-5">
-        Pagas IRS duas vezes sem dar por isso: todos os meses, como{" "}
+        <strong>Não.</strong> Cada escalão tributa só a fatia de rendimento
+        que lá cabe — os euros anteriores continuam na taxa deles. E pagas
+        IRS duas vezes sem dar por isso: todos os meses, como{" "}
         <strong>retenção na fonte</strong> que o patrão desconta do recibo; e
         uma vez por ano, na <strong>liquidação</strong> que acerta as contas.
-        Se retiveste a mais, recebes reembolso — foi um empréstimo grátis ao
-        Estado.
       </p>
 
       <Figure
         n={1}
-        title={`Escalões de IRS ${ANO}`}
+        title={`Os escalões enchem — IRS ${ANO}`}
         source={<Source nome={irs.fonte} vigencia={irs.vigencia} />}
       >
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left border-b-2 border-ink">
-                <th scope="col" className="py-2 pr-4 font-medium">Rendimento coletável</th>
-                <th scope="col" className="py-2 pr-4 font-medium text-right">Taxa normal</th>
-                <th scope="col" className="py-2 font-medium text-right">Taxa média</th>
-              </tr>
-            </thead>
-            <tbody className="num">
-              {irs.escaloes.map((e, i) => {
-                const de = i === 0 ? 0 : (irs.escaloes[i - 1].ate ?? 0);
-                return (
-                  <tr key={i} className="border-b border-line">
-                    <td className="py-2 pr-4 text-ink2">
-                      {e.ate === null
-                        ? `Mais de ${fmtEUR(de)}`
-                        : de === 0
-                          ? `Até ${fmtEUR(e.ate)}`
-                          : `${fmtEUR(de)} – ${fmtEUR(e.ate)}`}
-                    </td>
-                    <td className="py-2 pr-4 text-right">{fmtPct(e.taxa)}</td>
-                    <td className="py-2 text-right">
-                      {e.taxaMedia === null ? "—" : fmtPct(e.taxaMedia, 2)}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-        <p className="footnote mt-3">
-          A taxa <em>normal</em> aplica-se só à fatia dentro do escalão —
-          subir de escalão nunca te faz perder dinheiro. Acima de{" "}
-          {fmtEUR0(irs.solidariedade[0].de)} acresce a taxa de solidariedade.
+        <p className="text-sm text-ink2 mb-5">
+          Põe o teu rendimento coletável e vê os nove recipientes a encher
+          por ordem: cada um cobra a sua taxa só sobre a fatia que recebe.
         </p>
+        <EscaloesEnchem ano={ANO} />
       </Figure>
 
       <Figure
@@ -134,7 +104,7 @@ export default function IrsPage() {
 
       <Figure
         n={3}
-        title="O acerto de contas — deduções à coleta"
+        title="A nota de liquidação — o acerto de contas"
         source={<Source nome={deducoes.fonte} vigencia={deducoes.vigencia} />}
       >
         <SimuladorAcerto ano={ANO} />
@@ -142,7 +112,7 @@ export default function IrsPage() {
 
       <Figure
         n={4}
-        title="IRS Jovem — quanto vale, ano a ano"
+        title="IRS Jovem — dez anos em sequência"
         source={<Source nome={irsJovem.fonte} vigencia={irsJovem.vigencia} />}
       >
         <SimuladorIrsJovem ano={ANO} />

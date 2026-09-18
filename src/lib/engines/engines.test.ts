@@ -16,6 +16,7 @@ import { simularTaeg } from "./taeg";
 import { retencaoNaFonte, tabelaAplicavel } from "./retencao";
 import { imt, imtJovem, custoCompra } from "./imt";
 import { simularIrsJovem, pctIsencao } from "./irs-jovem";
+import { REGRAS_IRS, impostoPorEscaloes, repartePorEscaloes } from "./irs";
 import { simularDesemprego, duracaoSubsidio } from "./desemprego";
 import { reciboMensal } from "./recibo";
 import { simularIrsAnual, limiteGlobalDeducoes, limitePpr } from "./irs-anual";
@@ -334,6 +335,43 @@ describe("simularCTPC", () => {
   it("prémio só conta do 2.º ano; ano 1 = taxa fixa", () => {
     const r = simularCTPC(10000, 1, taxas, premio, imposto);
     expect(r.capitalFinalLiquido).toBeCloseTo(10000 * (1 + 0.0075 * (1 - imposto)), 4);
+  });
+});
+
+describe("repartePorEscaloes", () => {
+  const regras = REGRAS_IRS[2026];
+
+  it("a soma das fatias é o rendimento e a soma dos impostos é a coleta", () => {
+    for (const rc of [5000, 14000, 30000, 50000, 120000]) {
+      const f = repartePorEscaloes(rc, regras);
+      expect(f.reduce((a, x) => a + x.fatia, 0)).toBeCloseTo(rc, 6);
+      // a coleta por escalões do motor (sem solidariedade nestes valores <80k)
+      if (rc <= 80000) {
+        expect(f.reduce((a, x) => a + x.imposto, 0)).toBeCloseTo(
+          impostoPorEscaloes(rc, regras),
+          6
+        );
+      }
+    }
+  });
+
+  it("o mito desmonta-se: 1 € a mais nunca sobe o imposto de tudo", () => {
+    const f1 = repartePorEscaloes(8342, regras);
+    const f2 = repartePorEscaloes(8343, regras);
+    const i1 = f1.reduce((a, x) => a + x.imposto, 0);
+    const i2 = f2.reduce((a, x) => a + x.imposto, 0);
+    // ao cruzar o limite do 1.º escalão, o imposto sobe cêntimos — não salta
+    expect(i2 - i1).toBeLessThan(0.5);
+    expect(f2[0].ocupacao).toBeCloseTo(1, 6);
+    expect(f2[1].fatia).toBeCloseTo(1, 6);
+  });
+
+  it("ocupação: escalão cheio a 1, vazio a 0, parcial no meio", () => {
+    const f = repartePorEscaloes(10000, regras);
+    expect(f[0].ocupacao).toBeCloseTo(1, 6); // 1.º cheio
+    expect(f[1].ocupacao).toBeGreaterThan(0);
+    expect(f[1].ocupacao).toBeLessThan(1); // 2.º parcial
+    expect(f[2].ocupacao).toBe(0); // 3.º vazio
   });
 });
 

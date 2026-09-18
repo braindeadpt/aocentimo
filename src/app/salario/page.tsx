@@ -3,7 +3,7 @@ import { ALT_FEED } from "@/lib/meta";
 import { CalculadoraSalario } from "./CalculadoraSalario";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
-import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
+import { fmtEUR, fmtPct } from "@/lib/format";
 import irs from "@data/fiscal/irs-2026.json";
 import ss from "@data/fiscal/ss.json";
 import { JsonLd, webApplication } from "@/lib/jsonld";
@@ -53,7 +53,7 @@ export default function SalarioPage() {
 
       <Figure
         n={2}
-        title={`Os nove escalões de IRS em ${ANO}`}
+        title="Os nove escalões — rendimento a rendimento"
         source={
           <Source
             nome="Art. 68.º CIRS, redação da Lei n.º 73-A/2025 (OE2026)"
@@ -61,43 +61,15 @@ export default function SalarioPage() {
           />
         }
       >
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left border-b-2 border-ink">
-                <th scope="col" className="py-2 pr-4 font-medium">Rendimento coletável</th>
-                <th scope="col" className="py-2 pr-4 font-medium text-right">Taxa normal</th>
-                <th scope="col" className="py-2 font-medium text-right">Taxa média</th>
-              </tr>
-            </thead>
-            <tbody className="num">
-              {irs.escaloes.map((e, i) => {
-                const de = i === 0 ? 0 : (irs.escaloes[i - 1].ate ?? 0);
-                return (
-                  <tr key={i} className="border-b border-line">
-                    <td className="py-2 pr-4 text-ink2">
-                      {e.ate === null
-                        ? `Mais de ${fmtEUR(de)}`
-                        : de === 0
-                          ? `Até ${fmtEUR(e.ate)}`
-                          : `${fmtEUR(de)} – ${fmtEUR(e.ate)}`}
-                    </td>
-                    <td className="py-2 pr-4 text-right">{fmtPct(e.taxa)}</td>
-                    <td className="py-2 text-right">
-                      {e.taxaMedia === null ? "—" : fmtPct(e.taxaMedia, 2)}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-        <p className="footnote mt-3">
-          A taxa <em>normal</em> aplica-se só à fatia dentro do escalão — passar
-          de escalão nunca te faz perder dinheiro. A <em>taxa média</em> é o que
-          pagas, em média, por todo o rendimento até esse limite. Acima de{" "}
-          {fmtEUR0(80000)} acresce a taxa de solidariedade (2,5 %; 5 % acima de{" "}
-          {fmtEUR0(250000)}).
+        <p className="body-copy">
+          A taxa efetiva que a calculadora acima aplica sai destes nove
+          escalões — cada um tributa só a fatia de rendimento que lá cabe,
+          por isso subir de escalão nunca te faz perder dinheiro. A tabela
+          canónica vive na página do IRS, onde os escalões{" "}
+          <a href="/irs" className="underline decoration-line2 underline-offset-2">
+            enchem-se à medida que o rendimento sobe
+          </a>{" "}
+          — e onde o mito se desfaz em números.
         </p>
       </Figure>
 

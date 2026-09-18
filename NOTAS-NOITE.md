@@ -606,3 +606,51 @@ e2e 16/16 ✓ (teste novo incluído).
 **Screenshots** — `.screenshots/m15/` (topo + caderneta, 1440/375).
 
 **Gates** — lint ✓ typecheck ✓ unit 182 ✓ data 60 ✓ build 58 ✓ e2e 16/16 ✓.
+
+---
+
+## M-16 — /irs: nota de liquidação, escalões que enchem, IRS Jovem em sequência
+
+**O que mudou**
+- `repartePorEscaloes(rc, regras)` em `engines/irs.ts` — devolve a fatia
+  do rendimento coletável em cada escalão (n, de, ate, taxa, fatia,
+  imposto, ocupacao 0–1). A soma dos `imposto` bate com
+  `impostoPorEscaloes` menos a solidariedade — testado.
+- `EscaloesEnchem.tsx` — Fig. 1 nova: os nove escalões como recipientes
+  que enchem por ordem (`.esc-vessel`/`.esc-fill`, transição de largura
+  --dur-media a cada mudança do input). Tinta torrada que engrossa com
+  a taxa; o 9.º (sem teto) abre em seta (`esc-aberto`) — "cheio" ali não
+  significa "acabou". O desmentido ao mito está no painel: taxa do
+  último escalão tocado, "se o mito fosse verdade" riscado, coleta real
+  e taxa média. O enchimento desfaz o mito sem o explicar.
+- `SimuladorAcerto` — a saída virou a NOTA DE LIQUIDAÇÃO: papel M-01
+  (arestas rasgadas `talao-aresta`, `talao-mat`), cabeçalho de
+  impressora, linhas que reimprimem a cada mudança (`talao-linha` +
+  Fragment key — dl estável), "ADIANTADO" carimbado na retenção,
+  veredito "A RECEBER" (`.talao-recebe`, carimbo verde — variante "fica"
+  do RETIDO) / "A PAGAR". Código de barras + meta CIRS.
+- `SimuladorIrsJovem` — os 10 anos viraram SEQUÊNCIA: `ol.jovem-passos`
+  com 10 botões (ano + medidor vertical da isenção a escoar 100→75→50→
+  25% + poupança €). Clicar escolhe o ano de gozo (aria-pressed,
+  aria-label com os números — equivalente textual). Reimprimem em
+  cadeia quando o salário muda.
+- Dedup da tabela de escalões: `/irs` é canónica (recipientes + painel
+  do mito); `/salario` perdeu a tabela idêntica — remissão editorial com
+  link para /irs (a taxa efetiva continua no recibo).
+- H1 virou a pergunta que a página responde: "Subir de escalão faz-te
+  perder dinheiro?" — lede abre com "Não."
+
+**Bug sério apanhado pelo e2e (M-09):** a reconciliação do `<html>` na
+hidratação REMOVIA o `data-theme` posto pelo script inline (React/Next
+reescreve atributos do html contra o SSR) — o site ficava sempre claro
+depois de hidratar e o flip disparava transições de cor no body/toggle.
+Fix: `data-theme="dark"` declarado no JSX (escuro por omissão = SSR) +
+`useLayoutEffect` no ThemeToggle que repõe a escolha guardada antes do
+paint pós-hidratação (os dois writes caem na mesma frame — sem flash,
+sem transição). Verificado: dark persiste, light restaura-se.
+
+**Screenshots** — `.screenshots/m16/` (escalões 14k/90k, nota, jovem,
+topo; 1440/375; tema escuro real).
+
+**Gates** — lint ✓ typecheck ✓ unit 185 ✓ data 60 ✓ build 58 ✓ e2e
+16/16 ✓.

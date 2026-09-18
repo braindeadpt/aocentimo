@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { simularIrsJovem, REGRAS_IRS_JOVEM } from "@/lib/engines/irs-jovem";
 import { REGRAS_IRS } from "@/lib/engines/irs";
 import { retencaoNaFonte } from "@/lib/engines/retencao";
 import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
+import { useArmado } from "@/lib/useArmado";
 
 export function SimuladorIrsJovem({ ano }: { ano: number }) {
   const [bruto, setBruto] = useState(1500);
@@ -21,6 +22,11 @@ export function SimuladorIrsJovem({ ano }: { ano: number }) {
     return { ano: i + 1, pct, poupanca: s.poupancaAnual };
   });
   const poupanca10 = linhas.reduce((a, l) => a + l.poupanca, 0);
+
+  // a sequência reimprime-se passo a passo quando o salário muda —
+  // key num Fragment dentro do <ol> estável (M-13 fix)
+  const runJov = `${bruto}`;
+  const { ref: passosRef, arm: passosArm } = useArmado<HTMLOListElement>(runJov);
 
   return (
     <div className="grid md:grid-cols-2 gap-10">
@@ -84,33 +90,44 @@ export function SimuladorIrsJovem({ ano }: { ano: number }) {
           </dl>
         </div>
 
+        {/* os 10 anos como sequência — cada passo é um botão que escolhe
+            o ano de gozo; o medidor mostra a isenção a escoar
+            (100 → 75 → 50 → 25 %). Reimprimem-se em cadeia quando o
+            salário muda: a poupança percorre os dez anos outra vez */}
         <div>
-          <p className="kicker-sm mb-3">
-            Os 10 anos, um a um
-          </p>
-          <table className="w-full text-sm bg-panel border border-line">
-            <thead>
-              <tr className="text-left border-b-2 border-ink">
-                <th scope="col" className="px-4 py-2 font-medium">Ano de gozo</th>
-                <th scope="col" className="px-4 py-2 font-medium text-right">Isenção</th>
-                <th scope="col" className="px-4 py-2 font-medium text-right">Poupas</th>
-              </tr>
-            </thead>
-            <tbody>
-              {linhas.map((l) => (
-                <tr key={l.ano}
-                  className={`border-b border-line last:border-0 ${l.ano === anoGozo ? "bg-floor" : ""}`}>
-                  <td className="px-4 py-2 text-ink2">{l.ano}.º ano</td>
-                  <td className="px-4 py-2 text-right num">{fmtPct(l.pct, 0)}</td>
-                  <td className="px-4 py-2 text-right num">{fmtEUR0(l.poupanca)}</td>
-                </tr>
+          <p className="kicker-sm mb-3">Os 10 anos, um a um</p>
+          <ol className="jovem-passos" ref={passosRef}>
+            <Fragment key={runJov}>
+              {linhas.map((l, i) => (
+                <li key={l.ano}>
+                  <button
+                    type="button"
+                    onClick={() => setAnoGozo(l.ano)}
+                    aria-pressed={l.ano === anoGozo}
+                    aria-label={`${l.ano}.º ano: ${fmtPct(l.pct, 0)} de isenção — poupas ${fmtEUR0(l.poupanca)}`}
+                    className={
+                      "jovem-passo " + passosArm("talao-linha") +
+                      (l.ano === anoGozo ? " jovem-passo-ativo" : "")
+                    }
+                    style={{ "--linha": i } as React.CSSProperties}
+                  >
+                    <span className="jovem-passo-ano">{l.ano}.º</span>
+                    <span className="jovem-gauge" aria-hidden>
+                      <span
+                        className="jovem-gauge-f"
+                        style={{ height: `${l.pct * 100}%` }}
+                      />
+                    </span>
+                    <span className="jovem-passo-val">{fmtEUR0(l.poupanca)}</span>
+                  </button>
+                </li>
               ))}
-              <tr className="border-t-2 border-ink">
-                <td className="px-4 py-2 font-medium" colSpan={2}>Total em 10 anos</td>
-                <td className="px-4 py-2 text-right num font-medium">{fmtEUR0(poupanca10)}</td>
-              </tr>
-            </tbody>
-          </table>
+            </Fragment>
+          </ol>
+          <p className="mt-3 flex items-baseline justify-between border-t-2 border-ink pt-2 text-sm">
+            <span className="font-medium text-ink">Total em 10 anos</span>
+            <span className="num font-medium text-keep">{fmtEUR0(poupanca10)}</span>
+          </p>
         </div>
       </div>
     </div>

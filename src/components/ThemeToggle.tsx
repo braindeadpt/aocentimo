@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useLayoutEffect, useSyncExternalStore } from "react";
 
 /**
  * Alternador claro/escuro — apenas apresentação.
@@ -8,8 +8,24 @@ import { useSyncExternalStore } from "react";
  * (vanilla JS, antes de qualquer hidratação): funciona mesmo numa página
  * com React morto. Aqui só lemos data-theme via useSyncExternalStore para
  * manter o rótulo e o aria-pressed sincronizados.
+ *
+ * M-16: a reconciliação do <html> pode repor o data-theme do SSR ("dark")
+ * sobre a escolha clara que o script inline já tinha posto. O layout
+ * effect corre antes do paint pós-hidratação e repõe a escolha guardada —
+ * sem frame errado, sem transição (os dois writes caem na mesma frame).
  */
 export function ThemeToggle() {
+  useLayoutEffect(() => {
+    try {
+      const t = localStorage.getItem("aocentimo-theme") ?? "dark";
+      if (document.documentElement.dataset.theme !== t) {
+        document.documentElement.dataset.theme = t;
+      }
+    } catch {
+      /* localStorage indisponível — fica o tema do documento */
+    }
+  }, []);
+
   const tema = useSyncExternalStore(
     (onChange) => {
       const obs = new MutationObserver(onChange);

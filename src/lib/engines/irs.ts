@@ -63,6 +63,51 @@ export function escalaoMarginal(rc: number, regras: RegrasIRS): EscalaoIRS {
   return regras.escaloes[regras.escaloes.length - 1];
 }
 
+/** Uma fatia do rendimento coletável dentro de um escalão. */
+export interface FatiaEscalao {
+  n: number; // 1.º, 2.º, …
+  de: number;
+  ate: number | null;
+  taxa: number;
+  /** quanto do rendimento cai neste escalão (0 = o rendimento não chega aqui) */
+  fatia: number;
+  /** imposto desta fatia (fatia × taxa) */
+  imposto: number;
+  /** ocupação do escalão: 0–1 (o último, sem teto, fica sempre < 1) */
+  ocupacao: number;
+}
+
+/**
+ * Reparte o rendimento coletável pelos escalões — a peça do "enchimento":
+ * cada escalão é um recipiente que só cobra a sua fatia. A soma dos
+ * `imposto` bate com `impostoPorEscaloes` (sem a taxa de solidariedade,
+ * que é sobre o total).
+ */
+export function repartePorEscaloes(rc: number, regras: RegrasIRS): FatiaEscalao[] {
+  let restante = rc;
+  let anterior = 0;
+  return regras.escaloes.map((e, i) => {
+    const limite = e.ate ?? Infinity;
+    const capacidade = limite - anterior;
+    const fatia = Math.min(Math.max(restante, 0), capacidade);
+    restante -= fatia;
+    // o último escalão não tem teto — a "ocupação" mede-se contra a
+    // largura do escalão anterior (referência de leitura, não teto real)
+    const ref = capacidade === Infinity ? rc - anterior || 1 : capacidade;
+    const f: FatiaEscalao = {
+      n: i + 1,
+      de: anterior,
+      ate: e.ate,
+      taxa: e.taxa,
+      fatia,
+      imposto: fatia * e.taxa,
+      ocupacao: fatia / ref,
+    };
+    anterior = limite;
+    return f;
+  });
+}
+
 /** Abatimento por mínimo de existência, art. 70.º CIRS (por titular). */
 export function abatimentoMinimoExistencia(rb: number, de: number, regras: RegrasIRS): number {
   const me = regras.minimoExistencia;

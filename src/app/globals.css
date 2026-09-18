@@ -767,6 +767,99 @@ html[data-theme="dark"] .tema-ponto {
 .talao-dim {
   color: rgba(44, 36, 19, 0.62);
 }
+/* escalões-recipiente (/irs) — cada escalão é um tanque que enche com a
+   fatia de rendimento que lá cabe; o enchimento é a transição de
+   largura (muda de estado → --dur-media, a orquestra do input) */
+.esc-vessel {
+  height: 10px;
+  margin: 3px 0 2px;
+  background: var(--panel);
+  border: 1px solid var(--line2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+/* o último escalão não tem teto — o recipiente abre em seta: "cheio"
+   aqui não significa "acabou", significa "tudo o resto está aqui" */
+.esc-aberto {
+  clip-path: polygon(
+    0 0, calc(100% - 9px) 0, 100% 50%,
+    calc(100% - 9px) 100%, 0 100%
+  );
+  border-right-color: transparent;
+}
+.esc-fill {
+  height: 100%;
+  transition: width var(--dur-media) var(--ease-entra);
+}
+/* IRS Jovem — os 10 anos como sequência (M-16): cada passo é um botão
+   que escolhe o ano de gozo; o medidor vertical mostra a isenção a
+   escoar (o benefício esgota-se). Clicável e percorrível por teclado */
+.jovem-passos {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+@media (min-width: 640px) {
+  .jovem-passos {
+    grid-template-columns: repeat(10, 1fr);
+  }
+}
+.jovem-passo {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 2px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--panel);
+  color: var(--ink2);
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: border-color var(--dur-micro) var(--ease-entra),
+    background-color var(--dur-micro) var(--ease-entra);
+}
+.jovem-passo:hover {
+  border-color: var(--line2);
+}
+.jovem-passo:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+.jovem-passo-ativo {
+  border-color: var(--ink);
+  background: var(--raised);
+  color: var(--ink);
+}
+.jovem-passo-ano {
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+}
+.jovem-gauge {
+  display: block;
+  height: 26px;
+  width: 8px;
+  border: 1px solid var(--line2);
+  border-radius: 2px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column-reverse;
+}
+.jovem-gauge-f {
+  display: block;
+  width: 100%;
+  background: var(--color-keep);
+  opacity: 0.75;
+  transition: height var(--dur-media) var(--ease-entra);
+}
+.jovem-passo-val {
+  font-size: 0.6rem;
+  font-variant-numeric: tabular-nums;
+}
 /* micro-escala própria do talão — typesetting de impressora térmica,
    independente da escala de rótulos do site */
 .talao-head {
@@ -865,6 +958,20 @@ html[data-theme="dark"] .tema-ponto {
   border: 1.5px solid rgba(157, 42, 13, 0.8);
   border-radius: 2px;
   color: rgba(157, 42, 13, 0.85);
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transform: rotate(-3deg);
+}
+/* carimbo na cor "fica" — o veredito positivo da nota de liquidação:
+   tinta de borracha verde, mesmo gesto do RETIDO */
+.talao-recebe {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0 0.3rem;
+  border: 1.5px solid var(--color-keep);
+  border-radius: 2px;
+  color: var(--color-keep);
   font-size: 0.58rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
