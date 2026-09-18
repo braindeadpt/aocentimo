@@ -5,7 +5,8 @@ import { Delta } from "@/components/Delta";
 import { Escada } from "@/components/Escada";
 import { Kinetic } from "@/components/Kinetic";
 import { Source } from "@/components/Source";
-import { loadSerie, variacao, loadFontes } from "@/lib/data";
+import { Spark } from "@/components/Spark";
+import { loadSerie, variacao, loadFontes, loadDerivado } from "@/lib/data";
 import { simularSalario } from "@/lib/engines/irs";
 import { TSU_ENTIDADE, TSU_TRABALHADOR } from "@/lib/engines/seg-social";
 import { fmtPct, fmtData } from "@/lib/format";
@@ -14,10 +15,16 @@ import { SITE_URL } from "@/lib/site";
 import smn from "@data/fiscal/smn.json";
 import ca from "@data/fiscal/ca.json";
 
+interface CaBase {
+  meta: { oficialPct: number; vigenciaOficial: string; serieAte: string; url?: string };
+  series: { t: string; v: number }[];
+}
+
 export default function Home() {
   const h = m.home;
   const ipc = loadSerie("CP00");
   const alim = loadSerie("CP01");
+  const caBase = loadDerivado<CaBase>("ca-base");
   const fonteIpc = loadFontes().find((f) => f.id === "hicp-pt-cp00");
 
   // Fronteira servidor/cliente: o motor fiscal corre UMA vez aqui —
@@ -71,51 +78,69 @@ export default function Home() {
         </div>
       </section>
 
-      {/* o instrumento — adivinha primeiro, depois a escada revela */}
-      <section className="blueprint mt-10 border border-line bg-panel px-5 py-6 md:px-8 md:py-8">
-        <div className="flex justify-end">
-          <p className="num text-xs text-muted">{h.euroNota}</p>
+      {/* os números do mês — primeira dobra: cada célula com a micro-série
+          de 24 meses, último ponto a torrado, fonte e data */}
+      <section className="mt-8 border border-line bg-panel" aria-labelledby="quadro-mes">
+        <div className="flex items-baseline justify-between border-b border-line px-5 py-3">
+          <h2 id="quadro-mes" className="kicker">
+            {h.hoje}
+          </h2>
+          {ipc && (
+            <span className="num text-xs text-muted">
+              {fmtData(ipc.meta.serieAte)}
+            </span>
+          )}
         </div>
-        <Adivinha real={real}>
-          <Escada medidas={medidas} />
-        </Adivinha>
-      </section>
-
-      {/* quadro do dia — fila de instrumentos */}
-      <section className="mt-16 grid grid-cols-2 border border-line bg-panel md:grid-cols-4">
-        <div className="border-b border-r border-line px-5 py-5 md:border-b-0">
-          <p className="kicker-xs">
-            {h.inflacaoHomologa}
-          </p>
-          <p className="num mt-2 text-3xl text-ink">
-            {ipc ? <Delta value={variacao(ipc, 12)} /> : "—"}
-          </p>
-          {ipc && <p className="footnote mt-1">{fmtData(ipc.meta.serieAte)}</p>}
-        </div>
-        <div className="border-b border-line px-5 py-5 md:border-b-0 md:border-r">
-          <p className="kicker-xs">
-            {h.alimentacao}
-          </p>
-          <p className="num mt-2 text-3xl text-ink">
-            {alim ? <Delta value={variacao(alim, 12)} /> : "—"}
-          </p>
-          <p className="footnote mt-1">{h.ihpcCP01}</p>
-        </div>
-        <div className="border-r border-line px-5 py-5">
-          <p className="kicker-xs">
-            {h.salarioMinimo}
-          </p>
-          <p className="num mt-2 text-3xl text-ink">
-            <CountUp valor={smn.serie[smn.serie.length - 1].valor} sufixo=" €" dur={1400} />
-          </p>
-          <p className="footnote mt-1">{h.smnNota}</p>
-        </div>
-        <div className="px-5 py-5">
-          <p className="kicker-xs">{h.ca}</p>
-          <p className="num mt-2 text-3xl text-ink">
-            {fmtPct(ca.serieF.taxaBrutaNovasSubscricoes, 2)}
-          </p>
-          <p className="footnote mt-1">{h.caNota}</p>
+        <div className="grid grid-cols-2 md:grid-cols-4">
+          <div className="border-b border-r border-line px-5 py-4 md:border-b-0">
+            <p className="kicker-xs">{h.inflacaoHomologa}</p>
+            <p className="num mt-1.5 text-3xl text-ink">
+              {ipc ? <Delta value={variacao(ipc, 12)} /> : "—"}
+            </p>
+            {ipc && (
+              <div className="mt-2 text-muted">
+                <Spark pts={ipc.series} atraso={0} />
+              </div>
+            )}
+            <p className="footnote mt-1.5">{ipc ? fmtData(ipc.meta.serieAte) : "—"}</p>
+          </div>
+          <div className="border-b border-line px-5 py-4 md:border-b-0 md:border-r">
+            <p className="kicker-xs">{h.alimentacao}</p>
+            <p className="num mt-1.5 text-3xl text-ink">
+              {alim ? <Delta value={variacao(alim, 12)} /> : "—"}
+            </p>
+            {alim && (
+              <div className="mt-2 text-muted">
+                <Spark pts={alim.series} atraso={120} />
+              </div>
+            )}
+            <p className="footnote mt-1.5">{h.ihpcCP01}</p>
+          </div>
+          <div className="border-r border-line px-5 py-4">
+            <p className="kicker-xs">{h.salarioMinimo}</p>
+            <p className="num mt-1.5 text-3xl text-ink">
+              <CountUp valor={smn.serie[smn.serie.length - 1].valor} sufixo=" €" dur={1400} />
+            </p>
+            <div className="mt-2 text-muted">
+              <Spark
+                pts={smn.serie.map((s) => ({ t: String(s.ano), v: s.valor }))}
+                atraso={240}
+              />
+            </div>
+            <p className="footnote mt-1.5">{h.smnNota}</p>
+          </div>
+          <div className="px-5 py-4">
+            <p className="kicker-xs">{h.ca}</p>
+            <p className="num mt-1.5 text-3xl text-ink">
+              {fmtPct(ca.serieF.taxaBrutaNovasSubscricoes, 2)}
+            </p>
+            {caBase && (
+              <div className="mt-2 text-muted">
+                <Spark pts={caBase.series} atraso={360} />
+              </div>
+            )}
+            <p className="footnote mt-1.5">{h.caNota}</p>
+          </div>
         </div>
       </section>
       {fonteIpc && (
@@ -129,8 +154,21 @@ export default function Home() {
         </div>
       )}
 
+      {/* o instrumento — adivinha primeiro, depois a escada revela.
+          blueprint = textura da zona de medição: fica só atrás do
+          diagrama (na Escada), não atrás do texto da aposta */}
+      <section className="stack-sec border border-line bg-panel px-5 py-6 md:px-8 md:py-8">
+        <div className="flex items-baseline justify-between gap-4">
+          <h2 className="kicker">{h.euroTitulo}</h2>
+          <p className="num text-right text-xs text-muted">{h.euroNota}</p>
+        </div>
+        <Adivinha real={real}>
+          <Escada medidas={medidas} />
+        </Adivinha>
+      </section>
+
       {/* capítulos — o percurso do euro */}
-      <section className="mt-20">
+      <section className="stack-cap">
         <div className="flex items-baseline justify-between border-b-2 border-ink pb-3">
           <h2 className="font-display text-2xl tracking-wide md:text-3xl">
             {h.capitulosTitulo}
@@ -161,7 +199,7 @@ export default function Home() {
       </section>
 
       {/* ferramentas — os simuladores novos */}
-      <section className="mt-20">
+      <section className="stack-cap">
         <div className="border-b-2 border-ink pb-3">
           <h2 className="font-display text-2xl tracking-wide md:text-3xl">
             {h.ferramentasTitulo}
@@ -184,7 +222,7 @@ export default function Home() {
       </section>
 
       {/* manifesto */}
-      <section className="mt-20 grid gap-8 border-t-2 border-ink pt-8 pb-8 md:grid-cols-12">
+      <section className="stack-cap grid gap-8 border-t-2 border-ink pt-8 pb-8 md:grid-cols-12">
         <p className="font-display text-3xl leading-tight tracking-wide text-ink md:col-span-5 md:text-4xl">
           {h.manifesto1}{" "}
           <br />

@@ -66,7 +66,7 @@ export default function MetodologiaPage() {
         a falha em vez de um valor fabricado.
       </p>
 
-      <section className="mt-12">
+      <section className="stack-sec">
         <h2 className="font-display text-2xl mb-6">Fontes</h2>
         <div className="divide-y divide-line border-y border-line">
           {FONTES_FIXAS.map((f) => (
@@ -85,7 +85,7 @@ export default function MetodologiaPage() {
         </div>
       </section>
 
-      <section className="mt-12">
+      <section className="stack-sec">
         <h2 className="font-display text-2xl mb-6">Estado dos dados</h2>
         {fontes.length === 0 ? (
           <p className="footnote">Pipeline ainda não executada.</p>
@@ -141,7 +141,7 @@ export default function MetodologiaPage() {
         )}
       </section>
 
-      <section className="body-copy mt-12 max-w-2xl space-y-4 pb-8">
+      <section className="body-copy stack-sec max-w-2xl space-y-4 pb-8">
         <h2 className="font-display text-2xl text-ink">Limitações honestas</h2>
         <ul className="list-disc pl-5 space-y-2">
           <li>A inflação oficial é um índice de cabaz médio — não o preço do teu cabaz.</li>

@@ -190,7 +190,8 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
       </div>
 
       {/* output — o talão físico: papel que não muda com o tema */}
-      <div className="talao-wrap" aria-live="polite">
+      {/* o talão é o resultado — pegajoso como os outros painéis */}
+      <div className="talao-wrap self-start md:sticky md:top-6" aria-live="polite">
         <div className="talao">
           <span className="carimbo">simulação</span>
           <div className="talao-face px-6 pb-5 pt-7">
@@ -236,7 +237,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
                 <dt className="talao-total">
                   Líquido no fim do mês
                 </dt>
-                <dd className="text-2xl font-bold">{fmtEUR(recibo.liquido)}</dd>
+                <dd className="text-4xl font-bold">{fmtEUR(recibo.liquido)}</dd>
               </div>
               <div className="talao-sep flex justify-between gap-4 py-1.5">
                 <dt className="talao-dim">CUSTO TOTAL P/ A EMPRESA</dt>
@@ -296,7 +297,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
           </div>
           <div className="flex justify-between py-2.5 mt-1 border-t-2 border-ink">
             <dt className="font-medium">Líquido anual</dt>
-            <dd className="num font-medium text-lg">{fmtEUR(resultado.liquidoAnual)}</dd>
+            <dd className="num-read font-medium">{fmtEUR(resultado.liquidoAnual)}</dd>
           </div>
           <div className="flex justify-between py-1 text-ink2">
             <dt>Líquido por mês (14 meses)</dt>
@@ -311,19 +312,19 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
         <div className="border-t border-line px-5 py-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
           <div>
             <p className="kicker">Taxa efetiva IRS</p>
-            <p className="num text-xl mt-1">{fmtPct(resultado.taxaEfetiva)}</p>
+            <p className="num-read mt-1">{fmtPct(resultado.taxaEfetiva)}</p>
           </div>
           <div>
             <p className="kicker">Taxa marginal</p>
-            <p className="num text-xl mt-1">{fmtPct(resultado.taxaMarginal)}</p>
+            <p className="num-read mt-1">{fmtPct(resultado.taxaMarginal)}</p>
           </div>
           <div>
             <p className="kicker">Para o Estado, no total</p>
-            <p className="num text-xl mt-1 text-up">{fmtPct(resultado.pesoEstado)}</p>
+            <p className="num-read mt-1 text-up">{fmtPct(resultado.pesoEstado)}</p>
           </div>
           <div>
             <p className="kicker">Dia da liberdade fiscal</p>
-            <p className="num text-xl mt-1">{diaDoAno(resultado.pesoEstado, ano)}</p>
+            <p className="num-read mt-1">{diaDoAno(resultado.pesoEstado, ano)}</p>
           </div>
         </div>
         <p className="footnote px-5 pb-4">

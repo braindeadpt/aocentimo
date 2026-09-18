@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { fmtData, fmtNum } from "@/lib/format";
 import { EmptyState } from "@/components/EmptyState";
+import { m } from "@/lib/messages";
 
 interface SerieIn {
   name: string;
@@ -14,15 +15,19 @@ interface SerieIn {
 interface Props {
   series: SerieIn[];
   height?: number;
-  /** Sufixo dos valores do eixo e do tooltip ("%", "€", …). */
+  /** Sufixo dos valores do eixo e do readout ("%", "€", …). */
   unidade?: string;
 }
 
+/* paleta por defeito SEM cores semânticas: tinta + rampa azul-aço.
+   accent/keep/warn têm significado (sai / fica / aviso) — nunca são
+   cor de série arbitrária. Séries ordinais (Euribor por prazo, escalões)
+   passam a rampa seq-1…4 explicitamente via `cor`. */
 const CORES = [
   "var(--color-ink)",
-  "var(--color-accent)",
-  "var(--color-warn)",
-  "var(--color-keep)",
+  "var(--color-seq-2)",
+  "var(--color-seq-4)",
+  "var(--color-muted)",
 ];
 
 const PAD = { top: 16, right: 132, bottom: 30, left: 46 };
@@ -66,7 +71,15 @@ function yearTicks(t0: number, t1: number, maxTicks: number): number[] {
 /**
  * Gráfico de linhas editorial — SVG próprio, sem biblioteca.
  * Rótulos no fim da linha (à maneira do FT); em ecrã estreito, legenda em
- * linha por baixo. Tooltip ao hover/focus, números mono tabulares.
+ * linha por baixo. A banda sombreada entre o mínimo e o máximo das séries
+ * codifica dispersão — é dado (o spread da família), não ornamento.
+ *
+ * Gramática de interrogação (a mesma nos quatro instrumentos):
+ * · o readout fixo por cima mostra sempre o ponto em leitura — nunca um
+ *   tooltip flutuante que tapa dados;
+ * · rato e toque apontam às marcas; a régua do readout percorre por
+ *   teclado (setas, Home/End, Escape limpa) e por arrasto preciso;
+ * · sem dados → EmptyState; o equivalente tabular fica em tabela irmã.
  * `prefers-reduced-motion`: estado final já.
  *
  * Responsivo sem salto: o <svg> tem caixa CSS final (w-full × height) e
@@ -79,7 +92,8 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
   const yFormat = (v: number) => (unidade ? `${fmtNum(v)} ${unidade}` : fmtNum(v));
   const wrap = useRef<HTMLDivElement>(null);
   const [w, setW] = useState(720);
-  const [hover, setHover] = useState<number | null>(null);
+  /** índice interrogado na série primária — null = repouso (mostra o último) */
+  const [ativo, setAtivo] = useState<number | null>(null);
 
   useEffect(() => {
     const el = wrap.current;
@@ -108,17 +122,52 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
     [series]
   );
 
-  const { escala, xticks, yticks, fim } = useMemo(() => {
+  const { escala, xticks, yticks, fim, banda, cruzaZero } = useMemo(() => {
     const ts = dados.flatMap((d) => d.pts.map((p) => p.t));
     const vs = dados.flatMap((d) => d.pts.map((p) => p.v));
     const t0 = Math.min(...ts);
     const t1 = Math.max(...ts);
-    const { ticks, lo, hi } = niceTicks(Math.min(...vs), Math.max(...vs));
+    const vMin = Math.min(...vs);
+    const vMax = Math.max(...vs);
+    // o domínio nasce dos dados com folga proporcional — não do
+    // arredondamento do passo (niceTicks arredondava o lo para baixo e
+    // deixava metade do plot vazia). O zero não entra à força: numa série
+    // de taxas, quando a série o atravessa vê-se a linha; quando não,
+    // não rouba espaço.
+    const span = vMax - vMin || 1;
+    const lo = vMin - span * 0.09;
+    const hi = vMax + span * 0.09;
+    const ticks = niceTicks(lo, hi).ticks.filter((v) => v >= lo && v <= hi);
+    const cruzaZero = vMin < 0 && vMax > 0;
     const plotW = w - pad.left - pad.right;
     const x = (t: number) =>
       r1(pad.left + ((t - t0) / (t1 - t0 || 1)) * plotW);
     const y = (v: number) =>
       r1(pad.top + (1 - (v - lo) / (hi - lo || 1)) * (height - pad.top - pad.bottom));
+
+    // banda de dispersão — entre o mínimo e o máximo da família em cada
+    // ponto do eixo primário: o spread é dado, não decoração
+    let banda: string | null = null;
+    if (dados.length >= 2) {
+      const base = dados[0].pts;
+      const topo: string[] = [];
+      const fundo: string[] = [];
+      for (const pb of base) {
+        let mn = Infinity;
+        let mx = -Infinity;
+        for (const d of dados) {
+          let best = d.pts[0];
+          for (const p of d.pts)
+            if (Math.abs(p.t - pb.t) < Math.abs(best.t - pb.t)) best = p;
+          if (best.v < mn) mn = best.v;
+          if (best.v > mx) mx = best.v;
+        }
+        topo.push(`${x(pb.t)},${y(mx)}`);
+        fundo.unshift(`${x(pb.t)},${y(mn)}`);
+      }
+      banda = `${topo.join(" ")} ${fundo.join(" ")}`;
+    }
+
     // posição dos rótulos de fim de linha — relaxação em duas passagens:
     // empurra para baixo, e se a fila transbordar o fim do gráfico,
     // sobe o bloco inteiro para dentro da área útil
@@ -143,31 +192,35 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
       xticks: yearTicks(t0, t1, Math.max(2, Math.floor(plotW / 56))),
       yticks: ticks,
       fim,
+      banda,
+      cruzaZero,
     };
   }, [dados, w, height, pad]);
 
   const { x, y } = escala;
   const plotW = w - pad.left - pad.right;
   const plotH = height - pad.top - pad.bottom;
+  const nPts = dados[0]?.pts.length ?? 0;
+  const idx = ativo ?? nPts - 1;
 
   const onMove = (e: React.PointerEvent<SVGRectElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    // fração dentro da zona de hover — imune à escala transitória do viewBox
-    setHover(Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)));
+    const f = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    setAtivo(Math.round(f * (nPts - 1)));
   };
 
-  // ponto mais próximo do cursor em cada série
-  const proximos = hover === null
-    ? null
-    : dados.map((d) => {
-        const t0 = d.pts[0].t;
-        const t1 = d.pts[d.pts.length - 1].t;
-        const alvo = t0 + hover * (t1 - t0);
-        let best = d.pts[0];
-        for (const p of d.pts) if (Math.abs(p.t - alvo) < Math.abs(best.t - alvo)) best = p;
-        return best;
-      });
-  const hoverX = proximos ? x(proximos[0].t) : null;
+  // ponto mais próximo do instante interrogado em cada série
+  const alvo = dados[0]?.pts[idx]?.t ?? null;
+  const lidos =
+    alvo === null
+      ? null
+      : dados.map((d) => {
+          let best = d.pts[0];
+          for (const p of d.pts)
+            if (Math.abs(p.t - alvo) < Math.abs(best.t - alvo)) best = p;
+          return best;
+        });
+  const cursorX = alvo !== null ? x(alvo) : null;
 
   // regra nº1 a nível de componente: sem dados → estado explícito, nunca NaN
   if (dados.length === 0) {
@@ -192,15 +245,15 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
         </thead>
         <tbody>
           {Array.from({ length: 24 }, (_, i) => {
-            const idx = dados[0].pts.length - 24 + i;
-            const p0 = dados[0].pts[idx];
+            const pIdx = dados[0].pts.length - 24 + i;
+            const p0 = dados[0].pts[pIdx];
             if (!p0) return null;
             return (
               <tr key={p0.t}>
                 <td>{new Date(p0.t).toISOString().slice(0, 10)}</td>
                 {dados.map((d) => (
                   <td key={d.name}>
-                    {d.pts[idx] ? yFormat(d.pts[idx].v) : "—"}
+                    {d.pts[pIdx] ? yFormat(d.pts[pIdx].v) : "—"}
                   </td>
                 ))}
               </tr>
@@ -209,6 +262,43 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
           </tbody>
         </table>
       </div>
+
+      {/* readout fixo — o mostrador: o valor interrogado vive aqui,
+          nunca num tooltip flutuante; a régua é o controlo de teclado */}
+      <div className="chart-readout" aria-live="polite">
+        <span className="chart-readout-t">
+          {ativo === null ? `${m.chart.ultimo} · ` : ""}
+          {alvo !== null ? fmtData(new Date(alvo).toISOString().slice(0, 10)) : ""}
+        </span>
+        {lidos?.map((p, i) => (
+          <span key={dados[i].name} className="inline-flex items-baseline gap-1.5">
+            <span
+              aria-hidden
+              className="inline-block h-2 w-2 self-center"
+              style={{ background: dados[i].cor }}
+            />
+            <span className="chart-readout-t">{dados[i].name}</span>
+            <span className="chart-readout-v">{yFormat(p.v)}</span>
+          </span>
+        ))}
+        <input
+          type="range"
+          className="chart-scrub"
+          min={0}
+          max={Math.max(0, nPts - 1)}
+          value={idx}
+          aria-label={m.chart.scrubAria}
+          aria-valuetext={
+            alvo !== null ? fmtData(new Date(alvo).toISOString().slice(0, 10)) : undefined
+          }
+          onChange={(e) => setAtivo(Number(e.target.value))}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") setAtivo(null);
+          }}
+          onBlur={() => setAtivo(null)}
+        />
+      </div>
+
       <svg
         viewBox={`0 0 ${w} ${height}`}
         preserveAspectRatio="none"
@@ -254,6 +344,23 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
             {new Date(t).getUTCFullYear()}
           </text>
         ))}
+        {/* linha de zero — só quando a série a atravessa: é a fronteira
+            histórica das taxas negativas, não uma referência forçada */}
+        {cruzaZero && (
+          <line
+            x1={pad.left}
+            x2={w - pad.right}
+            y1={y(0)}
+            y2={y(0)}
+            stroke="var(--color-line2)"
+            strokeWidth={1}
+            vectorEffect="non-scaling-stroke"
+          />
+        )}
+        {/* banda de dispersão — a distância entre o melhor e o pior da família */}
+        {banda && (
+          <polygon points={banda} fill="var(--color-seq-2)" fillOpacity={0.1} stroke="none" />
+        )}
         {/* linhas */}
         {dados.map((d) => (
           <polyline
@@ -280,12 +387,12 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
               {f.name}
             </text>
           ))}
-        {/* cursor */}
-        {hoverX !== null && proximos && (
+        {/* cursor de interrogação */}
+        {ativo !== null && cursorX !== null && lidos && (
           <g>
             <line
-              x1={hoverX}
-              x2={hoverX}
+              x1={cursorX}
+              x2={cursorX}
               y1={pad.top}
               y2={pad.top + plotH}
               stroke="var(--color-line2)"
@@ -293,20 +400,22 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
               strokeDasharray="3 3"
               vectorEffect="non-scaling-stroke"
             />
-            {proximos.map((p, i) => (
+            {lidos.map((p, i) => (
               <circle key={i} cx={x(p.t)} cy={y(p.v)} r={3.5} fill={dados[i].cor} />
             ))}
           </g>
         )}
-        {/* zona de hover */}
+        {/* zona de hover — rato e toque apontam às marcas */}
         <rect
           x={pad.left}
           y={pad.top}
           width={Math.max(0, plotW)}
           height={Math.max(0, plotH)}
           fill="transparent"
+          style={{ touchAction: "pan-y" }}
           onPointerMove={onMove}
-          onPointerLeave={() => setHover(null)}
+          onPointerDown={onMove}
+          onPointerLeave={() => setAtivo(null)}
         />
       </svg>
       {/* legenda em linha por baixo — regime compacto (nomes já na tabela) */}
@@ -321,26 +430,6 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
               <span className="inline-block h-2 w-2" style={{ background: d.cor }} />
               {d.name}
             </span>
-          ))}
-        </div>
-      )}
-      {/* tooltip */}
-      {proximos && hoverX !== null && (
-        <div
-          aria-hidden
-          className="pointer-events-none absolute top-2 z-10 border border-line bg-overlay px-3 py-2 text-xs shadow-overlay"
-          style={{
-            left: Math.min(Math.max(hoverX - 70, 0), w - 170),
-            fontFamily: "var(--font-mono)",
-          }}
-        >
-          <p className="text-ink2">{fmtData(new Date(proximos[0].t).toISOString().slice(0, 10))}</p>
-          {proximos.map((p, i) => (
-            <p key={i} className="mt-0.5 flex items-center gap-2">
-              <span className="inline-block h-2 w-2" style={{ background: dados[i].cor }} />
-              <span className="text-ink2">{dados[i].name}</span>
-              <span className="ml-auto pl-3 font-medium">{yFormat(p.v)}</span>
-            </p>
           ))}
         </div>
       )}

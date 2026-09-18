@@ -51,7 +51,8 @@ export function SimuladorIrsJovem({ ano }: { ano: number }) {
         </p>
       </div>
 
-      <div className="space-y-8" aria-live="polite">
+      {/* resultado pegajoso — acompanha o scroll dos inputs */}
+      <div className="space-y-8 self-start md:sticky md:top-6" aria-live="polite">
         <div className="bg-raised border border-line shadow-raised">
           <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
             <span className="kicker">No {anoGozo}.º ano de gozo</span>
@@ -78,7 +79,7 @@ export function SimuladorIrsJovem({ ano }: { ano: number }) {
             </div>
             <div className="flex justify-between py-2.5 mt-1 border-t-2 border-ink">
               <dt className="font-medium">Poupança por ano</dt>
-              <dd className="num font-medium text-lg text-keep">{fmtEUR(r.poupancaAnual)}</dd>
+              <dd className="num-read font-medium text-keep">{fmtEUR(r.poupancaAnual)}</dd>
             </div>
           </dl>
         </div>

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { simularPrestacao } from "@/lib/engines/prestacao";
+import { NumHero } from "@/components/NumHero";
 import { fmtData, fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
 
 export function SimuladorPrestacao({
@@ -73,12 +74,13 @@ export function SimuladorPrestacao({
         </p>
       </div>
 
-      <div className="bg-raised border border-line shadow-raised" aria-live="polite">
+      {/* resultado pegajoso — acompanha o scroll dos inputs */}
+      <div className="bg-raised border border-line shadow-raised self-start md:sticky md:top-6" aria-live="polite">
         <div className="border-b border-line px-5 py-3">
           <span className="kicker">A tua prestação</span>
         </div>
         <div className="px-5 py-5">
-          <p className="num text-4xl">{r ? fmtEUR(r.prestacao) : "—"}<span className="text-base text-muted">{r ? "/mês" : ""}</span></p>
+          <NumHero valor={r ? fmtEUR(r.prestacao) : "—"} sufixo={r ? "/mês" : undefined} animar={r?.prestacao} />
           <dl className="mt-5 text-sm space-y-2">
             <div className="flex justify-between border-b border-line/60 pb-1.5">
               <dt className="text-ink2">Juros totais em {anos} anos</dt>

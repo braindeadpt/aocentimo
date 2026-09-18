@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { CalculadoraIva } from "./CalculadoraIva";
+import { TalaoCompras } from "./TalaoCompras";
 import { DecomposicaoFuel } from "./DecomposicaoFuel";
 import { Source } from "@/components/Source";
 import { fmtPct } from "@/lib/format";
@@ -44,7 +45,7 @@ export default function ImpostosPage() {
           {iva.taxas.map((t) => (
             <div key={t.nome} className="bg-panel border border-line px-5 py-4">
               <p className="kicker">{t.nome}</p>
-              <p className="num text-3xl mt-1">{fmtPct(t.taxa, 0)}</p>
+              <p className="num-read mt-1">{fmtPct(t.taxa, 0)}</p>
               <p className="footnote mt-2">{t.exemplos.join(", ")}</p>
             </div>
           ))}
@@ -69,13 +70,26 @@ export default function ImpostosPage() {
 
       <Figure
         n={3}
+        title="Um talão de supermercado, lido por dentro"
+        source={
+          <Source
+            nome="Cálculo próprio sobre as taxas de IVA"
+            vigencia={iva.vigencia}
+          />
+        }
+      >
+        <TalaoCompras />
+      </Figure>
+
+      <Figure
+        n={4}
         title="Um litro de combustível, desmontado"
         source={<Source nome={isp.fonte} vigencia={isp.vigencia} />}
       >
         <DecomposicaoFuel />
       </Figure>
 
-      <section className="body-copy max-w-2xl py-8 space-y-4">
+      <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
         <h2 className="font-display text-2xl text-ink">A cascata que ninguém vê</h2>
         <p>
           No combustível acontece uma coisa peculiar: o IVA de 23 % incide sobre

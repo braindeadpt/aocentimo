@@ -52,7 +52,7 @@ export default function TrabalhoPage() {
         <SimuladorIndependente />
       </Figure>
 
-      <section className="body-copy max-w-2xl py-8 space-y-4">
+      <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
         <h2 className="font-display text-2xl text-ink">O que a simulação simplifica</h2>
         <p>
           Assume salário estável nos últimos 14 meses e descontos contínuos —

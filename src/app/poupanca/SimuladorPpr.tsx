@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { REGRAS_PPR, limitePpr } from "@/lib/engines/irs-anual";
+import { NumHero } from "@/components/NumHero";
 import capitais from "@data/fiscal/capitais.json";
 import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
 
@@ -66,7 +67,8 @@ export function SimuladorPpr() {
         </p>
       </div>
 
-      <div className="bg-raised border border-line shadow-raised self-start" aria-live="polite">
+      {/* resultado pegajoso — acompanha o scroll dos inputs */}
+      <div className="bg-raised border border-line shadow-raised self-start md:sticky md:top-6" aria-live="polite">
         <div className="border-b border-line px-5 py-3">
           <span className="kicker">O benefício, dos dois lados</span>
         </div>
@@ -90,11 +92,16 @@ export function SimuladorPpr() {
             </dt>
             <dd className="num">{fmtEUR(r.impostoSaida)} <span className="text-muted">({fmtEUR(r.impostoNormal)})</span></dd>
           </div>
-          <div className="flex justify-between py-2.5 mt-1 border-t-2 border-ink">
-            <dt className="font-medium">Vantagem fiscal total</dt>
-            <dd className="num font-medium text-lg text-keep">{fmtEUR0(r.poupancaTotal)}</dd>
-          </div>
         </dl>
+        <div className="border-t border-line px-5 py-4">
+          <p className="kicker">Vantagem fiscal total</p>
+          <NumHero valor={fmtEUR0(r.poupancaTotal)} animar={r.poupancaTotal} casas={0} className="mt-1 text-keep" />
+          <p className="footnote mt-2">
+            Deduções à coleta ao longo de {anos} anos + a diferença de imposto
+            na saída. O PPR é dinheiro preso — a vantagem só vale dentro das
+            condições legais.
+          </p>
+        </div>
       </div>
     </div>
   );

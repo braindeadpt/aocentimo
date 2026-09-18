@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { simularIrsAnual, limitePpr } from "@/lib/engines/irs-anual";
+import { NumHero } from "@/components/NumHero";
 import { fmtEUR, fmtEUR0 } from "@/lib/format";
 
 function Campo({ id, label, valor, onChange, nota }: {
@@ -66,7 +67,9 @@ export function SimuladorAcerto({ ano }: { ano: number }) {
         </p>
       </div>
 
-      <div className="space-y-8" aria-live="polite">
+      {/* resultado pegajoso: acompanha o scroll dos inputs — a coluna
+          nunca fica morta por baixo dos campos */}
+      <div className="space-y-8 self-start md:sticky md:top-6" aria-live="polite">
         <div className="bg-raised border border-line shadow-raised">
           <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
             <span className="kicker">O acerto de contas</span>
@@ -108,9 +111,12 @@ export function SimuladorAcerto({ ano }: { ano: number }) {
             <p className="kicker">
               {r.reembolsoEstimado >= 0 ? "O Estado devolve-te" : "Ainda tens a pagar"}
             </p>
-            <p className={`num text-3xl mt-1 ${r.reembolsoEstimado >= 0 ? "text-keep" : "text-up"}`}>
-              {fmtEUR(Math.abs(r.reembolsoEstimado))}
-            </p>
+            <NumHero
+              valor={fmtEUR(Math.abs(r.reembolsoEstimado))}
+              animar={Math.abs(r.reembolsoEstimado)}
+              sinal={r.reembolsoEstimado >= 0 ? "+" : "−"}
+              className={`mt-1 ${r.reembolsoEstimado >= 0 ? "text-keep" : "text-up"}`}
+            />
             <p className="footnote mt-2">
               {r.reembolsoEstimado >= 0
                 ? "Reembolso — foi um empréstimo grátis que fizeste ao Estado, mês a mês."

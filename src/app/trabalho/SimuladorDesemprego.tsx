@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { simularDesemprego } from "@/lib/engines/desemprego";
 import { REGRAS_IRS } from "@/lib/engines/irs";
+import { NumHero } from "@/components/NumHero";
 import { fmtEUR } from "@/lib/format";
 
 export function SimuladorDesemprego() {
@@ -52,7 +53,8 @@ export function SimuladorDesemprego() {
         </p>
       </div>
 
-      <div className="bg-raised border border-line shadow-raised self-start" aria-live="polite">
+      {/* resultado pegajoso — acompanha o scroll dos inputs */}
+      <div className="bg-raised border border-line shadow-raised self-start md:sticky md:top-6" aria-live="polite">
         <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
           <span className="kicker">O teu subsídio</span>
           <span className="num text-xs text-muted">65 % da remuneração de referência</span>
@@ -60,10 +62,7 @@ export function SimuladorDesemprego() {
         {r.elegivel ? (
           <>
             <div className="px-5 py-5">
-              <p className="num text-4xl">
-                {fmtEUR(r.mensal)}
-                <span className="text-base text-muted">/mês</span>
-              </p>
+              <NumHero valor={fmtEUR(r.mensal)} sufixo="/mês" animar={r.mensal} />
               <dl className="mt-4 text-sm space-y-2">
                 <div className="flex justify-between border-b border-line/60 pb-1.5">
                   <dt className="text-ink2">Remuneração de referência</dt>

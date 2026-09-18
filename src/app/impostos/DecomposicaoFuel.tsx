@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { decomporCombustivel, IVA_NORMAL } from "@/lib/engines/impostos";
+import { NumHero } from "@/components/NumHero";
 import { fmtEUR, fmtPct } from "@/lib/format";
 import isp from "@data/fiscal/isp.json";
 
@@ -71,12 +72,14 @@ export function DecomposicaoFuel() {
         ))}
       </dl>
 
-      <p className="mt-4 text-sm text-ink2">
-        Impostos no total:{" "}
-        <span className="num font-medium text-up">{fmtPct(r.pesoImpostos)}</span> do
-        preço. O IVA incide sobre o preço que já inclui ISP e carbono —
-        pagas imposto sobre imposto.
-      </p>
+      <div className="mt-5 border-t-2 border-ink pt-4">
+        <p className="kicker">Impostos no total — do preço por litro</p>
+        <NumHero valor={fmtPct(r.pesoImpostos)} animar={r.pesoImpostos * 100} casas={1} className="mt-1 text-up" />
+        <p className="footnote mt-2">
+          O IVA incide sobre o preço que já inclui ISP e carbono — pagas
+          imposto sobre imposto.
+        </p>
+      </div>
       <p className="footnote mt-2">
         ISP e carbono vigentes em {isp.vigencia} · {isp.nota}
       </p>

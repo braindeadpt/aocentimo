@@ -54,7 +54,8 @@ export function SalarioReal({ serie }: { serie: PontoSerie[] }) {
         </p>
       </div>
 
-      <div className="bg-raised border border-line shadow-raised self-start" aria-live="polite">
+      {/* resultado pegajoso — acompanha o scroll dos inputs */}
+      <div className="bg-raised border border-line shadow-raised self-start md:sticky md:top-6" aria-live="polite">
         <div className="border-b border-line px-5 py-3">
           <span className="kicker">Poder de compra {r ? `· ${r.mes} → ${ultimo}` : ""}</span>
         </div>
@@ -66,7 +67,7 @@ export function SalarioReal({ serie }: { serie: PontoSerie[] }) {
             </div>
             <div className="flex justify-between py-2.5 mt-1 border-t-2 border-ink">
               <dt className="font-medium">Variação real do teu salário</dt>
-              <dd className={`num font-medium text-2xl ${r.variacaoReal >= 0 ? "text-keep" : "text-up"}`}>
+              <dd className={`num-read font-medium ${r.variacaoReal >= 0 ? "text-keep" : "text-up"}`}>
                 {r.variacaoReal >= 0 ? "+" : "−"}{fmtPct(Math.abs(r.variacaoReal))}
               </dd>
             </div>

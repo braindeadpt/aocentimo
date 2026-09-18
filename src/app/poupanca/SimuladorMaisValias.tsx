@@ -99,7 +99,8 @@ export function SimuladorMaisValias() {
         </p>
       </div>
 
-      <div className="bg-raised border border-line shadow-raised self-start" aria-live="polite">
+      {/* resultado pegajoso — acompanha o scroll dos inputs */}
+      <div className="bg-raised border border-line shadow-raised self-start md:sticky md:top-6" aria-live="polite">
         <div className="border-b border-line px-5 py-3">
           <span className="kicker">O imposto sobre o ganho</span>
         </div>
@@ -124,7 +125,7 @@ export function SimuladorMaisValias() {
           </div>
           <div className="mt-1 flex items-baseline justify-between gap-4 border-t-2 border-ink py-2.5">
             <dt className="shrink-0 font-medium">Pagas</dt>
-            <dd className="num text-right text-lg font-medium text-up">
+            <dd className="num-read text-right font-medium text-up">
               {fmtEUR(imposto)}
               <span className="block text-xs font-normal text-muted">
                 {r.melhor === "autonomo"

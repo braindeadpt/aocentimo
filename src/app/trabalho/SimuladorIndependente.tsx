@@ -37,7 +37,8 @@ export function SimuladorIndependente() {
         </p>
       </div>
 
-      <div className="space-y-8" aria-live="polite">
+      {/* resultado pegajoso — acompanha o scroll dos inputs */}
+      <div className="space-y-8 self-start md:sticky md:top-6" aria-live="polite">
         <div className="bg-raised border border-line shadow-raised">
           <div className="border-b border-line px-5 py-3">
             <span className="kicker">Por ano, em {fmtEUR0(anual)} faturados</span>
@@ -53,7 +54,7 @@ export function SimuladorIndependente() {
             </div>
             <div className="flex justify-between py-2.5 mt-1 border-t-2 border-ink">
               <dt className="font-medium">Líquido anual</dt>
-              <dd className="num font-medium text-lg">{fmtEUR(r.liquidoAnual)}</dd>
+              <dd className="num-read font-medium">{fmtEUR(r.liquidoAnual)}</dd>
             </div>
             <div className="flex justify-between py-1 text-ink2">
               <dt>Por mês (12)</dt>

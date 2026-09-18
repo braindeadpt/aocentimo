@@ -44,15 +44,15 @@ export function CalculadoraIva() {
       <div className="mt-5 flex items-baseline gap-8">
         <div>
           <p className="kicker">Imposto no preço</p>
-          <p className="num text-2xl mt-1 text-up">{fmtEUR(r.iva)}</p>
+          <p className="num-read mt-1 text-up">{fmtEUR(r.iva)}</p>
         </div>
         <div>
           <p className="kicker">Preço sem IVA</p>
-          <p className="num text-2xl mt-1">{fmtEUR(r.semIva)}</p>
+          <p className="num-read mt-1">{fmtEUR(r.semIva)}</p>
         </div>
         <div>
           <p className="kicker">Peso do IVA</p>
-          <p className="num text-2xl mt-1">{fmtPct(r.pesoIva)}</p>
+          <p className="num-read mt-1">{fmtPct(r.pesoIva)}</p>
         </div>
       </div>
     </div>

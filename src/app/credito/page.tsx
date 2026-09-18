@@ -61,7 +61,7 @@ export default function CreditoPage() {
         <SimuladorPrestacao euriborAtual={eur?.valor ?? null} euriborAte={eur?.ate ?? null} />
       </Figure>
 
-      <section className="body-copy max-w-2xl py-8 space-y-4">
+      <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
         <h2 className="font-display text-2xl text-ink">Os cinco termos que interessam</h2>
         <dl className="space-y-3">
           <div>

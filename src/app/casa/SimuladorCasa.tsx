@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { simularPrestacao } from "@/lib/engines/prestacao";
 import { custoCompra } from "@/lib/engines/imt";
 import { EuroBar } from "@/components/EuroBar";
+import { NumHero } from "@/components/NumHero";
 import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
 
 export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null }) {
@@ -88,7 +89,8 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
         </p>
       </div>
 
-      <div className="space-y-8" aria-live="polite">
+      {/* resultado pegajoso — acompanha o scroll dos inputs */}
+      <div className="space-y-8 self-start md:sticky md:top-6" aria-live="polite">
         <div className="bg-raised border border-line shadow-raised">
           <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
             <span className="kicker">No dia da escritura</span>
@@ -128,10 +130,7 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
             <span className="kicker">Todos os meses</span>
           </div>
           <div className="px-5 py-5">
-            <p className="num text-4xl">
-              {fmtEUR(prest.prestacao)}
-              <span className="text-base text-muted">/mês</span>
-            </p>
+            <NumHero valor={fmtEUR(prest.prestacao)} sufixo="/mês" animar={prest.prestacao} />
             <dl className="mt-4 text-sm space-y-2">
               <div className="flex justify-between border-b border-line/60 pb-1.5">
                 <dt className="text-ink2">TAN (Euribor + spread)</dt>
@@ -158,7 +157,7 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
           <EuroBar
             total={preco + compra.totalCustos}
             segmentos={[
-              { label: "A casa (preço)", valor: preco, cor: "var(--color-keep)" },
+              { label: "A casa (preço)", valor: preco, cor: "var(--color-ink)" },
               { label: "IMT + IS", valor: compra.imt + compra.isAquisicao + compra.isCredito, cor: "var(--color-accent)" },
               { label: "Registos", valor: compra.registos, cor: "var(--color-ink2)" },
             ]}

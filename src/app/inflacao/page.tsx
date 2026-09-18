@@ -116,7 +116,7 @@ export default function InflacaoPage() {
           />
         ) : (
           <div className="border border-line bg-panel px-5 py-10 text-center text-ink2">
-            <p className="num text-2xl">—</p>
+            <p className="num-read">—</p>
             <p className="footnote mt-2">
               Dados ainda não carregados. Corre <code className="num">npm run ingest</code>{" "}
               para puxar as séries do Eurostat.
@@ -212,7 +212,7 @@ export default function InflacaoPage() {
         )}
       </Figure>
 
-      <section className="body-copy max-w-2xl py-8 space-y-4">
+      <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
         <h2 className="font-display text-2xl text-ink">Ler com honestidade</h2>
         <p>
           O IHPC mede um cabaz <em>médio</em>. O teu cabaz pessoal pode ter

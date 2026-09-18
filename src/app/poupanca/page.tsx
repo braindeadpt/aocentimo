@@ -61,7 +61,7 @@ export default function PoupancaPage() {
         <div className="bg-panel border border-line px-5 py-5 grid md:grid-cols-2 gap-6 text-sm">
           <div>
             <p className="kicker">Taxa bruta (novas subscrições)</p>
-            <p className="num text-3xl mt-1">{fmtPct(ca.serieF.taxaBrutaNovasSubscricoes, 2)}</p>
+            <p className="num-read mt-1">{fmtPct(ca.serieF.taxaBrutaNovasSubscricoes, 2)}</p>
             <p className="footnote mt-2">{ca.serieF.base}</p>
           </div>
           <div>
@@ -98,7 +98,7 @@ export default function PoupancaPage() {
         <SimuladorMaisValias />
       </Figure>
 
-      <section className="body-copy max-w-2xl py-8 space-y-4">
+      <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
         <h2 className="font-display text-2xl text-ink">Três ideias que valem dinheiro</h2>
         <p>
           <strong>1.</strong> Os juros de depósitos e CA pagam{" "}

@@ -1,12 +1,22 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { JsonLd, dataset } from "@/lib/jsonld";
 import { LineChart } from "@/components/LineChart";
 import { Delta } from "@/components/Delta";
-import { loadFonte, loadDerivado, variacao, type Serie } from "@/lib/data";
+import { Spark } from "@/components/Spark";
+import {
+  loadFonte,
+  loadDerivado,
+  loadFreshness,
+  loadSerie,
+  variacao,
+  type Serie,
+} from "@/lib/data";
 import { fmtData, fmtNum, fmtPct } from "@/lib/format";
+import { m } from "@/lib/messages";
 import usura from "@data/fiscal/usura-2026.json";
 import calendario from "@data/fiscal/calendario-2026.json";
 
@@ -34,6 +44,49 @@ const LINHAS_TAEG: { rotulo: string; capKey: string; serie: string }[] = [
   { rotulo: "Cartões, linhas e descobertos", capKey: "renovavel", serie: "taeg-renovavel-mensal" },
 ];
 
+/** Célula do quadro de instrumentos — valor, meta e selo de frescura.
+ *  O quadrado torrado marca série verificada em dia; o de aviso + a
+ *  palavra «atrasada» marca a falha — nunca se esconde. */
+function Celula({
+  rotulo,
+  valor,
+  meta,
+  estado,
+  spark,
+}: {
+  rotulo: string;
+  valor: ReactNode;
+  meta: ReactNode;
+  estado?: "em-dia" | "atrasada" | "sem-sla";
+  spark?: { t: string; v: number }[];
+}) {
+  return (
+    <div className="bg-panel px-4 py-4">
+      <p className="kicker-xs flex items-center">
+        {estado && (
+          <span
+            aria-hidden
+            className={`serie-estado ${estado === "atrasada" ? "atrasada" : "em-dia"}`}
+          />
+        )}
+        {rotulo}
+      </p>
+      <p className="num-read mt-2">{valor}</p>
+      {spark && spark.length > 1 && (
+        <div className="mt-2 text-muted">
+          <Spark pts={spark} />
+        </div>
+      )}
+      <p className="footnote mt-1.5">
+        {estado === "atrasada" && (
+          <span className="text-warn">{m.chart.atrasada} · </span>
+        )}
+        {meta}
+      </p>
+    </div>
+  );
+}
+
 export default function DadosPage() {
   const euribor = {
     "1M": loadFonte("bpstat", "euribor-1m-mensal"),
@@ -43,7 +96,12 @@ export default function DadosPage() {
   };
   const temEuribor = euribor["3M"] !== null;
   const caBase = loadDerivado<CaBase>("ca-base");
-  const taegAte = loadFonte("bpstat", "taeg-pessoal-outros-mensal")?.meta.serieAte;
+  const taeg = loadFonte("bpstat", "taeg-pessoal-outros-mensal");
+  const taegAte = taeg?.meta.serieAte;
+  const ipc = loadSerie("CP00");
+  const fresh = loadFreshness();
+  const estadoDe = (id: string) =>
+    fresh?.series.find((s) => s.id === id)?.estado;
 
   const [qAtual, qProx] = usura.trimestres;
   const hoje = new Date().toISOString().slice(0, 10);
@@ -101,6 +159,104 @@ export default function DadosPage() {
         .
       </p>
 
+      {/* quadro de instrumentos — o estado das fontes num relance:
+          torrado = verificada em dia, aviso + «atrasada» = falhou o SLA */}
+      <section className="mt-8" aria-label="Quadro de instrumentos">
+        <div className="flex items-baseline justify-between">
+          <p className="kicker">O observatório agora</p>
+          {fresh && (
+            <p className="num text-xs text-muted">
+              verificado {fmtData(fresh.verificadoEm.slice(0, 10))}
+            </p>
+          )}
+        </div>
+        <div className="mt-3 grid grid-cols-2 gap-px border border-line bg-line md:grid-cols-3">
+          <Celula
+            rotulo="Euribor 3M"
+            estado={estadoDe("euribor-3m-mensal")}
+            spark={euribor["3M"]?.series}
+            valor={
+              ultimo(euribor["3M"]) ? `${fmtNum(ultimo(euribor["3M"])!.v, 2)} %` : "—"
+            }
+            meta={
+              <>
+                {ultimo(euribor["3M"]) ? fmtData(ultimo(euribor["3M"])!.t) : ""}
+                {euribor["3M"] && (
+                  <>
+                    {" · "}
+                    <Delta value={variacao(euribor["3M"], 1)} casas={2} /> no mês
+                  </>
+                )}
+              </>
+            }
+          />
+          <Celula
+            rotulo="Euribor 12M"
+            estado={estadoDe("euribor-12m-mensal")}
+            spark={euribor["12M"]?.series}
+            valor={
+              ultimo(euribor["12M"]) ? `${fmtNum(ultimo(euribor["12M"])!.v, 2)} %` : "—"
+            }
+            meta={
+              <>
+                {ultimo(euribor["12M"]) ? fmtData(ultimo(euribor["12M"])!.t) : ""}
+                {euribor["12M"] && (
+                  <>
+                    {" · "}
+                    <Delta value={variacao(euribor["12M"], 1)} casas={2} /> no mês
+                  </>
+                )}
+              </>
+            }
+          />
+          <Celula
+            rotulo="TAEG pessoal · outros"
+            estado={estadoDe("taeg-pessoal-outros-mensal")}
+            spark={taeg?.series}
+            valor={ultimo(taeg) ? `${fmtNum(ultimo(taeg)!.v, 1)} %` : "—"}
+            meta={
+              ultimo(taeg)
+                ? `teto ${vigente.trimestre} ${fmtNum(
+                    (vigente.taegMaxima as Record<string, number>)["pessoal-outros"],
+                    1
+                  )} % · ${fmtData(ultimo(taeg)!.t)}`
+                : "—"
+            }
+          />
+          <Celula
+            rotulo="Certificados Aforro F"
+            estado={estadoDe("fiscal-ca")}
+            spark={caBase?.series}
+            valor={
+              caBase ? fmtPct(caBase.meta.oficialPct / 100, 3) : "—"
+            }
+            meta={
+              caBase
+                ? `oficial · ${caBase.meta.vigenciaOficial}`
+                : "série não recolhida"
+            }
+          />
+          <Celula
+            rotulo="Inflação homóloga"
+            estado={estadoDe("hicp-pt-cp00")}
+            spark={ipc?.series}
+            valor={
+              ipc ? <Delta value={variacao(ipc, 12)} /> : "—"
+            }
+            meta={ipc ? `IHPC · ${fmtData(ipc.meta.serieAte)}` : "série não recolhida"}
+          />
+          <Celula
+            rotulo="Próximo prazo fiscal"
+            valor={
+              prazos.find((p) => p.mes >= hoje.slice(0, 7))
+                ? fmtData(prazos.find((p) => p.mes >= hoje.slice(0, 7))!.mes)
+                : "—"
+            }
+            meta={prazos.find((p) => p.mes >= hoje.slice(0, 7))?.titulo ?? "calendário 2026"}
+          />
+        </div>
+      </section>
+
       <Figure
         n={1}
         title="Euribor — médias mensais (as das prestações)"
@@ -116,8 +272,10 @@ export default function DadosPage() {
         {temEuribor ? (
           <>
             <LineChart
-              series={(Object.keys(euribor) as (keyof typeof euribor)[]).map((k) => ({
+              series={(Object.keys(euribor) as (keyof typeof euribor)[]).map((k, i) => ({
                 name: `Euribor ${k}`,
+                // família ordinal: rampa seq — prazo mais curto, mais tinta
+                cor: `var(--color-seq-${i + 1})`,
                 data: euribor[k]!.series.map((p) => [p.t + "-01", p.v] as [string, number]),
               }))}
               unidade="%"
@@ -125,10 +283,19 @@ export default function DadosPage() {
             <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-px bg-line border border-line">
               {(Object.keys(euribor) as (keyof typeof euribor)[]).map((k) => {
                 const p = ultimo(euribor[k]);
+                const est = estadoDe(`euribor-${k.toLowerCase()}-mensal`);
                 return (
                   <div key={k} className="bg-panel px-4 py-3">
-                    <p className="kicker">{k}</p>
-                    <p className="num text-2xl mt-1">{p ? `${fmtNum(p.v, 2)} %` : "—"}</p>
+                    <p className="kicker flex items-center">
+                      {est && (
+                        <span
+                          aria-hidden
+                          className={`serie-estado ${est === "atrasada" ? "atrasada" : "em-dia"}`}
+                        />
+                      )}
+                      {k}
+                    </p>
+                    <p className="num-read mt-1">{p ? `${fmtNum(p.v, 2)} %` : "—"}</p>
                     <p className="text-xs text-muted mt-0.5">
                       <Delta value={euribor[k] ? variacao(euribor[k]!, 1) : null} casas={2} />
                       <span className="ml-1">no mês</span>
@@ -156,7 +323,52 @@ export default function DadosPage() {
           />
         }
       >
-        <div className="overflow-x-auto">
+        {/* mobile: a tabela transforma-se — um cartão por tipo de crédito
+            com o essencial (mercado, teto, margem); desktop: a tabela */}
+        <div className="md:hidden divide-y divide-line border border-line">
+          {LINHAS_TAEG.map((l) => {
+            const s = loadFonte("bpstat", l.serie);
+            const p = ultimo(s);
+            const cap = (vigente.taegMaxima as Record<string, number>)[l.capKey];
+            return (
+              <div key={l.capKey} className="bg-panel px-4 py-3">
+                <p className="text-sm font-medium">{l.rotulo}</p>
+                <div className="mt-1.5 flex items-baseline justify-between gap-4">
+                  <span className="num text-sm">
+                    {p ? `${fmtNum(p.v, 1)} %` : "—"}
+                    {p && (
+                      <span className="block text-xs text-muted">{fmtData(p.t)}</span>
+                    )}
+                  </span>
+                  <span className="num text-xs text-muted">
+                    teto {fmtNum(cap, 1)} %
+                  </span>
+                </div>
+                {p && cap ? (
+                  <div className="mt-2 flex items-center gap-2">
+                    <span
+                      className="relative inline-block h-2 flex-1 bg-line"
+                      role="img"
+                      aria-label={`Mercado a ${fmtPct(p.v / cap, 0)} do teto legal`}
+                    >
+                      <span
+                        className="absolute inset-y-0 left-0 bg-accent"
+                        style={{ width: `${Math.min(100, (p.v / cap) * 100)}%` }}
+                      />
+                      <span className="absolute inset-y-0 right-0 w-px bg-ink" />
+                    </span>
+                    <span className="num text-xs text-muted">
+                      {fmtNum(cap - p.v, 1)} pp p/ teto
+                    </span>
+                  </div>
+                ) : (
+                  <p className="num mt-2 text-xs text-muted">—</p>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left border-b-2 border-ink">
@@ -242,14 +454,14 @@ export default function DadosPage() {
           <div className="grid md:grid-cols-2 gap-px bg-line border border-line">
             <div className="bg-panel px-5 py-5">
               <p className="kicker">Oficial IGCP — {caBase.meta.vigenciaOficial}</p>
-              <p className="num text-3xl mt-1">{fmtPct(caBase.meta.oficialPct / 100, 3)}</p>
+              <p className="num-read mt-1">{fmtPct(caBase.meta.oficialPct / 100, 3)}</p>
               <p className="footnote mt-2">
                 Média da Euribor 3M nos 10 dias úteis anteriores, limitada a 2,50 %.
               </p>
             </div>
             <div className="bg-panel px-5 py-5">
               <p className="kicker">Indicativa — média mensal {caBase.meta.serieAte}</p>
-              <p className="num text-3xl mt-1">
+              <p className="num-read mt-1">
                 {fmtPct(caBase.series[caBase.series.length - 1].v / 100, 3)}
               </p>
               <p className="footnote mt-2">
@@ -269,16 +481,42 @@ export default function DadosPage() {
         title="Calendário fiscal 2026"
         source={<Source nome={calendario.fonte} vigencia={calendario.vigencia} />}
       >
+        {/* linha do tempo: o próximo prazo é a informação com valor —
+            marcador em acento e etiqueta; o passado esvazia-se (oco) e
+            o futuro fica em tinta */}
         <ol className="border border-line divide-y divide-line">
-          {prazos.map((p) => {
-            const passou = p.mes < hoje.slice(0, 7);
+          {prazos.map((p, idx) => {
+            const mesAtual = hoje.slice(0, 7);
+            const passou = p.mes < mesAtual;
+            const proximo =
+              !passou && (idx === 0 || prazos[idx - 1].mes < mesAtual);
             return (
-              <li key={p.id} className={`flex gap-4 px-5 py-4 ${passou ? "opacity-50" : "bg-panel"}`}>
-                <span className="num text-xs text-muted w-16 shrink-0 pt-1 uppercase">
+              <li
+                key={p.id}
+                className={`flex gap-4 px-5 py-4 ${
+                  passou ? "opacity-50" : proximo ? "bg-raised" : "bg-panel"
+                }`}
+              >
+                <span
+                  aria-hidden
+                  className={`mt-1 h-2.5 w-2.5 shrink-0 ${
+                    passou
+                      ? "border border-line2"
+                      : proximo
+                        ? "bg-accent"
+                        : "bg-ink"
+                  }`}
+                />
+                <span className="num text-xs text-muted w-16 shrink-0 pt-0.5 uppercase">
                   {fmtData(p.mes)}
                 </span>
                 <div>
-                  <p className="font-medium text-sm">{p.titulo}</p>
+                  <p className="font-medium text-sm">
+                    {p.titulo}
+                    {proximo && (
+                      <span className="kicker-xs ml-2 text-accent">próximo</span>
+                    )}
+                  </p>
                   <p className="text-sm text-ink2 mt-0.5">{p.descricao}</p>
                 </div>
               </li>
@@ -320,7 +558,7 @@ export default function DadosPage() {
         </div>
       </Figure>
 
-      <section className="body-copy max-w-2xl py-8 space-y-4">
+      <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
         <h2 className="font-display text-2xl text-ink">API aberta</h2>
         <p>
           Todas as séries estão disponíveis como ficheiros JSON estáticos —

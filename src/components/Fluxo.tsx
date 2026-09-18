@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { fmtEUR0, fmtPct } from "@/lib/format";
 import { m, t } from "@/lib/messages";
@@ -26,6 +29,13 @@ export interface MedidasEuro {
  * corte do Estado é uma barra suspensa — até sobrar o líquido.
  * Salário de 1 500 €, solteiro, 2026, valores mensais.
  * Largura = presença; nenhum rótulo toca uma barra.
+ *
+ * Gramática de interrogação (a mesma nos quatro instrumentos): o
+ * readout fixo por cima mostra o degrau em leitura; rato e toque
+ * apontam às barras; a régua do readout percorre por teclado. As
+ * barras com capítulo próprio são navegáveis (link svg, só ponteiro —
+ * o caminho de teclado são as portas por baixo, que também acendem
+ * os degraus ao foco).
  */
 export function Fluxo({
   className,
@@ -38,6 +48,14 @@ export function Fluxo({
   medidas: MedidasEuro;
 }) {
   const { custo, tsu, irs, ss, liquido, estado, taxaTsu, taxaSs } = medidas;
+
+  // interrogação — ponteiro nas barras ou régua do readout;
+  // "estado" interroga o bracket (os três cortes de uma vez)
+  const [hover, setHover] = useState<number | "estado" | null>(null);
+  const ativo: number | "estado" | null = hover ?? destaque ?? null;
+  const GRUPO_ESTADO = [1, 3, 4];
+  const acesa = (i: number) =>
+    ativo === null || ativo === i || (ativo === "estado" && GRUPO_ESTADO.includes(i));
 
   // geometria — eixo vertical = euros, base em y=380
   const Y0 = 380;
@@ -55,34 +73,38 @@ export function Fluxo({
     cor: string;
     cresce: "cima" | "baixo"; // direcção do crescimento
     valor: string;
+    v: number; // valor numérico — para o % do custo no readout
     nome: string;
-    acima?: string; // rótulo flutuante por cima
+    href: string; // capítulo correspondente — a barra é navegável
   }
 
   const barras: Barra[] = [
     {
       x: xs[0], top: custo, bot: 0, cor: "var(--ink)", cresce: "baixo",
-      valor: fmtEUR0(custo), nome: m.fluxo.empresa,
+      valor: fmtEUR0(custo), v: custo, nome: m.fluxo.empresa, href: "/salario",
     },
     {
       x: xs[1], top: custo, bot: custo - tsu, cor: "var(--accent)", cresce: "cima",
-      valor: `−${fmtEUR0(tsu)}`, nome: t(m.fluxo.tsu, { taxa: fmtPct(taxaTsu, 2) }),
+      valor: `−${fmtEUR0(tsu)}`, v: tsu, nome: t(m.fluxo.tsu, { taxa: fmtPct(taxaTsu, 2) }),
+      href: "/salario",
     },
     {
       x: xs[2], top: custo - tsu, bot: 0, cor: "var(--ink2)", cresce: "baixo",
-      valor: fmtEUR0(custo - tsu), nome: m.fluxo.brutoLabel,
+      valor: fmtEUR0(custo - tsu), v: custo - tsu, nome: m.fluxo.brutoLabel,
+      href: "/salario",
     },
     {
       x: xs[3], top: custo - tsu, bot: custo - tsu - irs, cor: "var(--accent)", cresce: "cima",
-      valor: `−${fmtEUR0(irs)}`, nome: m.fluxo.irs,
+      valor: `−${fmtEUR0(irs)}`, v: irs, nome: m.fluxo.irs, href: "/irs",
     },
     {
       x: xs[4], top: custo - tsu - irs, bot: custo - tsu - irs - ss, cor: "var(--accent)", cresce: "cima",
-      valor: `−${fmtEUR0(ss)}`, nome: t(m.fluxo.ss, { taxa: fmtPct(taxaSs, 0) }),
+      valor: `−${fmtEUR0(ss)}`, v: ss, nome: t(m.fluxo.ss, { taxa: fmtPct(taxaSs, 0) }),
+      href: "/salario",
     },
     {
       x: xs[5], top: custo - tsu - irs - ss, bot: 0, cor: "var(--keep)", cresce: "baixo",
-      valor: fmtEUR0(liquido), nome: m.fluxo.tu,
+      valor: fmtEUR0(liquido), v: liquido, nome: m.fluxo.tu, href: "/salario",
     },
   ];
 
@@ -99,6 +121,20 @@ export function Fluxo({
   const bx1 = xs[1] - 8;
   const bx2 = xs[4] + BW + 8;
   const by = y(custo) - 34;
+
+  // texto do readout — repouso: a viagem inteira; interrogado: o degrau
+  const leitura =
+    ativo === null
+      ? { t: `${m.fluxo.empresa} ${fmtEUR0(custo)}`, v: `${m.fluxo.tu} ${fmtEUR0(liquido)}` }
+      : ativo === "estado"
+        ? {
+            t: t(m.fluxo.estado, { valor: fmtEUR0(estado) }),
+            v: `${fmtPct(estado / custo)} ${m.chart.doCusto}`,
+          }
+        : {
+            t: barras[ativo].nome,
+            v: `${barras[ativo].valor} · ${fmtPct(barras[ativo].v / custo)} ${m.chart.doCusto}`,
+          };
 
   return (
     <div className={className}>
@@ -124,31 +160,64 @@ export function Fluxo({
         </tbody>
         </table>
       </div>
-      <div className="overflow-x-auto">
+
+      {/* readout fixo — o degrau em leitura; a régua percorre as 6 barras
+          + o total do Estado (posição final) por teclado */}
+      <div className="chart-readout" aria-live="polite">
+        <span className="chart-readout-t">{leitura.t}</span>
+        <span className="chart-readout-v">{leitura.v}</span>
+        <input
+          type="range"
+          className="chart-scrub"
+          min={0}
+          max={6}
+          value={ativo === null ? 6 : ativo === "estado" ? 6 : ativo}
+          aria-label={m.chart.scrubAria}
+          aria-valuetext={leitura.t}
+          onChange={(e) => {
+            const i = Number(e.target.value);
+            setHover(i >= 6 ? "estado" : i);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") setHover(null);
+          }}
+          onBlur={() => setHover(null)}
+        />
+      </div>
+
+      {/* em ecrã estreito a escada desliza — a máscara esbate o fim da
+          pista, a afordância de que há mais à direita (técnica do ticker) */}
+      <div className="fluxo-scroll overflow-x-auto">
         <svg
           viewBox="0 0 1000 440"
           aria-hidden="true"
           className="w-full min-w-[680px]"
         >
-          {/* bracket: o Estado leva tudo o que está suspenso */}
-          <g>
-            <path
-              d={`M ${bx1} ${by + 18} V ${by + 8} H ${bx2} V ${by + 18}`}
-              fill="none"
-              stroke="var(--accent)"
-              strokeWidth="1.5"
-              strokeDasharray="5 4"
-            />
-            <text
-              x={(bx1 + bx2) / 2}
-              y={by}
-              textAnchor="middle"
-              className="fluxo-label"
-              fill="var(--accent)"
+          {/* bracket: o Estado leva tudo o que está suspenso — navegável */}
+          <a href="/impostos" tabIndex={-1}>
+            <g
+              className="chart-hit cursor-pointer"
+              onPointerEnter={() => setHover("estado")}
+              onPointerLeave={() => setHover(null)}
             >
-              {t(m.fluxo.estado, { valor: fmtEUR0(estado) })}
-            </text>
-          </g>
+              <path
+                d={`M ${bx1} ${by + 18} V ${by + 8} H ${bx2} V ${by + 18}`}
+                fill="none"
+                stroke="var(--accent)"
+                strokeWidth="1.5"
+                strokeDasharray="5 4"
+              />
+              <text
+                x={(bx1 + bx2) / 2}
+                y={by}
+                textAnchor="middle"
+                className="fluxo-label"
+                fill="var(--accent)"
+              >
+                {t(m.fluxo.estado, { valor: fmtEUR0(estado) })}
+              </text>
+            </g>
+          </a>
 
           {/* conectores */}
           {ligacoes.map((l, i) => (
@@ -164,56 +233,72 @@ export function Fluxo({
           {/* linha de base */}
           <line x1="10" y1={Y0} x2="990" y2={Y0} stroke="var(--ink)" strokeWidth="1.5" />
 
-          {/* barras */}
+          {/* barras — cada uma é uma porta para o capítulo que a explica */}
           {barras.map((b, i) => {
             const top = y(b.top);
             const h = (b.top - b.bot) * k;
             return (
-              <g
-                key={b.nome}
-                className={
-                  destaque == null || destaque === i ? "fluxo-passo" : "fluxo-passo fluxo-off"
-                }
-              >
-                <rect
-                  className={`fluxo-barra fluxo-barra-${b.cresce}`}
-                  x={b.x}
-                  y={top}
-                  width={BW}
-                  height={h}
-                  fill={b.cor}
-                  style={{ animationDelay: `${i * 130}ms` }}
-                />
-                <text
-                  x={b.x + BW / 2}
-                  y={top - 10}
-                  textAnchor="middle"
-                  className="fluxo-valor-mini"
-                  fill="var(--ink)"
+              <a key={b.nome} href={b.href} tabIndex={-1}>
+                <g
+                  className={`fluxo-passo cursor-pointer ${acesa(i) ? "" : "fluxo-off"}`}
+                  onPointerEnter={() => setHover(i)}
+                  onPointerLeave={() => setHover(null)}
                 >
-                  {b.valor}
-                </text>
-                <text
-                  x={b.x + BW / 2}
-                  y={Y0 + 24}
-                  textAnchor="middle"
-                  className="fluxo-label"
-                  fill="var(--muted)"
-                >
-                  {b.nome}
-                </text>
-              </g>
+                  <rect
+                    className={`fluxo-barra fluxo-barra-${b.cresce}`}
+                    x={b.x}
+                    y={top}
+                    width={BW}
+                    height={h}
+                    fill={b.cor}
+                    style={{ animationDelay: `${i * 130}ms` }}
+                  />
+                  <text
+                    x={b.x + BW / 2}
+                    y={top - 10}
+                    textAnchor="middle"
+                    className="fluxo-valor-mini"
+                    fill="var(--ink)"
+                  >
+                    {b.valor}
+                  </text>
+                  <text
+                    x={b.x + BW / 2}
+                    y={Y0 + 24}
+                    textAnchor="middle"
+                    className="fluxo-label"
+                    fill="var(--muted)"
+                  >
+                    {b.nome}
+                  </text>
+                </g>
+              </a>
             );
           })}
         </svg>
       </div>
 
-      {/* portas para os capítulos */}
+      {/* portas para os capítulos — o caminho de teclado; ao foco,
+          acendem os degraus correspondentes */}
       <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t border-line pt-4">
-        <Link href="/impostos" className="kicker text-ink2 transition-colors hover:text-accent">
+        <Link
+          href="/impostos"
+          className="kicker text-ink2 transition-colors hover:text-accent"
+          onMouseEnter={() => setHover("estado")}
+          onMouseLeave={() => setHover(null)}
+          onFocus={() => setHover("estado")}
+          onBlur={() => setHover(null)}
+        >
           {m.fluxo.linkEstado} →
         </Link>
-        <Link href="/salario" className="kicker text-ink2 transition-colors hover:text-keep">
+        <Link
+          href="/salario"
+          className="kicker text-ink2 transition-colors hover:text-keep"
+          onMouseEnter={() => setHover(5)}
+          onMouseLeave={() => setHover(null)}
+          onFocus={() => setHover(5)}
+          onBlur={() => setHover(null)}
+        >
           {m.fluxo.linkTu} →
         </Link>
         <Link href="/casa" className="kicker text-ink2 transition-colors hover:text-accent">

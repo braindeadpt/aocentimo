@@ -1,10 +1,14 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+
 /**
  * Odometer — cada dígito é uma roda de 0–9 que roda até ao valor.
- * CSS puro: a posição final vive em --d (transform base), a animação
- * parte de 0 até essa posição; com reduced-motion a animação não corre
- * e o transform base deixa o valor final já correto — nunca zeros.
+ * A posição final vive em --d (transform base); a transição CSS anima
+ * qualquer mudança — montagem incluída: com JS, a classe .od-zero põe as
+ * rodas a 0, sai, e a transição desce-as até ao dígito. Sem JS e com
+ * reduced-motion o valor final está sempre correcto no DOM — nunca zeros.
+ * Quando `valor` muda, as rodas rodam do dígito anterior para o novo.
  * Separadores (espaços, vírgula, €) são estáticos; só dígitos rodam.
  */
 export function Odometer({
@@ -22,10 +26,24 @@ export function Odometer({
   dur?: number;
   className?: string;
 }) {
+  const ref = useRef<HTMLSpanElement>(null);
+
   const texto = `${prefixo}${new Intl.NumberFormat("pt-PT", {
     minimumFractionDigits: casas,
     maximumFractionDigits: casas,
   }).format(valor)}${sufixo}`;
+
+  // roll de entrada — só uma vez, só com motion; o .od-zero sai depois
+  // de o browser pintar o 0, e a transição faz o resto
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    el.classList.add("od-zero");
+    // força a composição do estado zero antes de soltar as rodas
+    void el.offsetWidth;
+    el.classList.remove("od-zero");
+  }, []);
 
   let rodas = 0;
   return (
@@ -33,7 +51,7 @@ export function Odometer({
       {/* (b) texto real em sr-only — dentro de aria-live um nome acessível
           via aria-label num <span> genérico não é exposto; o texto é */}
       <span className="sr-only">{texto}</span>
-      <span className={`odometer ${className ?? ""}`} aria-hidden="true">
+      <span ref={ref} className={`odometer ${className ?? ""}`} aria-hidden="true">
       {texto.split("").map((ch, i) => {
         if (/\d/.test(ch)) {
           const d = Number(ch);

@@ -60,7 +60,9 @@ export function Escada({ medidas }: { medidas: MedidasEuro }) {
 
   return (
     <div className="mt-8 border-t border-dashed border-line2 pt-6 lg:grid lg:grid-cols-12 lg:gap-8">
-      <div className="self-start lg:sticky lg:top-28 lg:col-span-8">
+      {/* blueprint = a textura da zona de medição — só atrás do diagrama,
+          nunca atrás do texto da aposta (a malha estragava o mono de 12px) */}
+      <div className="blueprint self-start px-3 py-6 lg:sticky lg:top-24 lg:col-span-8">
         <Fluxo destaque={ativo} medidas={medidas} />
       </div>
       <div className="lg:col-span-4">
@@ -74,7 +76,7 @@ export function Escada({ medidas }: { medidas: MedidasEuro }) {
             ref={(el) => {
               refs.current[i] = el;
             }}
-            className="flex items-center py-10 lg:min-h-[52vh] lg:py-0"
+            className="flex items-center py-10 lg:min-h-[34vh] lg:py-0"
           >
             <p
               className={`border-l-2 pl-5 font-display text-xl leading-snug tracking-wide transition-colors duration-300 md:text-2xl ${

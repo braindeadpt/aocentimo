@@ -87,7 +87,7 @@ export default function PrecosPage() {
                 return (
                   <div key={id} className="bg-panel px-4 py-4">
                     <p className="kicker">{nome}</p>
-                    <p className="num text-3xl mt-1">{fmtLitro(p.v)}</p>
+                    <p className="num-read mt-1">{fmtLitro(p.v)}</p>
                     <p className="text-xs text-muted mt-1 flex gap-3">
                       <span>sem <Delta value={varDias(serie!, 7)} casas={1} /></span>
                       <span>ano <Delta value={varDias(serie!, 365)} casas={1} /></span>
@@ -108,7 +108,7 @@ export default function PrecosPage() {
           </>
         ) : (
           <div className="border border-line bg-panel px-5 py-10 text-center">
-            <p className="num text-2xl text-muted">—</p>
+            <p className="num-read text-muted">—</p>
             <p className="footnote mt-3 max-w-md mx-auto">
               Dados DGEG indisponíveis — corre{" "}
               <code className="num">npm run ingest:daily</code>. Nenhum número
@@ -132,7 +132,7 @@ export default function PrecosPage() {
         <DecomposicaoFuel />
       </Figure>
 
-      <section className="body-copy max-w-2xl py-8 space-y-4">
+      <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
         <h2 className="font-display text-2xl text-ink">Porque não há preços de supermercado aqui</h2>
         <p>
           Não existe uma API oficial com o preço do leite ou do pão em cada

@@ -35,6 +35,29 @@
   --down: #1f6b4d;
   --warn: #a3720a;
 
+  /* rampa sequencial — um só matiz (azul-aço ~215°), longe do vermilhão
+     (~15°) e do verde (~160°): famílias ordinais (Euribor por prazo,
+     escalões, anos) sem semântica falsa. Passo 1 = mais tinta = mais
+     reactivo/curto; passo 4 recua. Os degraus separam-se por LUMINÂNCIA —
+     leem-se em deuteranopia e protanopia porque a ordenação não depende
+     do matiz. */
+  --seq-1: #1f5f96;
+  --seq-2: #3d7fb0;
+  --seq-3: #68a1c3;
+  --seq-4: #8fbdd4;
+
+  /* tintes das semânticas — preenchimentos sob linhas e fundos de célula;
+     nunca traço nem texto */
+  --accent-t: color-mix(in srgb, var(--accent) 14%, transparent);
+  --keep-t: color-mix(in srgb, var(--keep) 14%, transparent);
+  --mark-t: color-mix(in srgb, var(--mark) 16%, transparent);
+
+  /* rampa neutra de data-ink — séries de contexto recuam por ela */
+  --dink-1: var(--ink);
+  --dink-2: var(--ink2);
+  --dink-3: var(--muted);
+  --dink-4: var(--line2);
+
   /* no claro a elevação é sombra subtil — a superfície recua. O fio de
      luz na aresta superior é próprio do escuro; aqui não se acende. */
   --elev-raised: 0 1px 0 rgba(27, 24, 17, 0.05),
@@ -44,6 +67,16 @@
   --recess: inset 0 1px 2px rgba(27, 24, 17, 0.07);
 
   --grain-opacity: 0.05;
+
+  /* ————— gramática de motion — três durações, uma curva —————
+     res  resposta a hover/focus/interrogação — instantânea mas não abrupta
+     mov  mudança de estado: um valor que muda, uma barra que se reparte
+     in   entrada — corre UMA vez, à montagem, nunca em loop
+     a mesma curva em todo o lado: arranca rápido, pousa devagar */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-res: 0.18s;
+  --dur-mov: 0.55s;
+  --dur-in: 0.9s;
 }
 
 :root[data-theme="dark"] {
@@ -67,6 +100,22 @@
   --up: #ff6133;
   --down: #63d6a4;
   --warn: #f0c468;
+
+  /* a rampa no escuro inverte a direcção da luz: passo 1 = mais LUZ =
+     prazo mais curto; a mesma ordem, outra mecânica */
+  --seq-1: #b8d9f0;
+  --seq-2: #84b4d8;
+  --seq-3: #5b8ab0;
+  --seq-4: #466e8f;
+
+  --accent-t: color-mix(in srgb, var(--accent) 18%, transparent);
+  --keep-t: color-mix(in srgb, var(--keep) 16%, transparent);
+  --mark-t: color-mix(in srgb, var(--mark) 18%, transparent);
+
+  --dink-1: var(--ink);
+  --dink-2: var(--ink2);
+  --dink-3: var(--muted);
+  --dink-4: var(--line2);
 
   /* no escuro a sombra não se vê — a elevação faz-se com luz: luminância
      crescente na rampa + um fio de luz de 1px na aresta superior */
@@ -99,6 +148,18 @@
   --color-up: var(--up);
   --color-down: var(--down);
   --color-warn: var(--warn);
+
+  --color-seq-1: var(--seq-1);
+  --color-seq-2: var(--seq-2);
+  --color-seq-3: var(--seq-3);
+  --color-seq-4: var(--seq-4);
+  --color-accent-t: var(--accent-t);
+  --color-keep-t: var(--keep-t);
+  --color-mark-t: var(--mark-t);
+  --color-dink-1: var(--dink-1);
+  --color-dink-2: var(--dink-2);
+  --color-dink-3: var(--dink-3);
+  --color-dink-4: var(--dink-4);
 
   --shadow-raised: var(--elev-raised);
   --shadow-overlay: var(--elev-overlay);
@@ -183,6 +244,26 @@ body::before {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+/* ————— ritmo vertical — a escala de respiro —————
+   Três degraus nomeados, nunca valores avulsos:
+     fig = entre figuras dentro duma secção   (2rem)
+     sec = entre secções duma página          (4rem)
+     cap = entre capítulos — home, pé de pág. (6rem, alinha com o footer)
+   Aplicados como margin-block para colapsarem como margens de texto. */
+:root {
+  --gap-fig: 2rem;
+  --gap-sec: 4rem;
+  --gap-cap: 6rem;
+}
+.stack-fig { margin-block: var(--gap-fig); }
+.stack-sec { margin-block: var(--gap-sec); }
+.stack-cap { margin-block-start: var(--gap-cap); }
+
+/* ————— larguras de leitura — três molduras nomeadas —————
+   instrumento = páginas de simulador/dados (max-w-5xl)
+   leitura     = prosa corrida, ~68 caracteres (max-w-2xl)
+   referência  = /estilo e molduras de sistema (max-w-6xl) */
+
 ::selection {
   background: var(--accent);
   color: var(--floor);
@@ -229,6 +310,57 @@ body::before {
 .num {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
+}
+
+/* ————— escala de números — três registos, três papéis —————
+   .num-hero   a resposta do instrumento — um por painel de resultado.
+               Archivo expandido (wdth 125) com dígitos tabulares —
+               tnum medido na fonte real: «11111.11» e «88888.88» têm a
+               mesma largura, o número não dança ao actualizar.
+   .num-read   leitura de apoio dentro do painel — Space Mono ~1.4rem.
+   .num-dense  séries e tabelas — Space Mono compacto.
+   Unidade e sinal são membros da mesma linha de base — nunca notas
+   de rodapé nem spans flutuantes. */
+.num-hero {
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-variation-settings: "wdth" 125;
+  font-weight: 650;
+  font-size: clamp(3rem, 6vw + 1.5rem, 6rem);
+  line-height: 0.95;
+  letter-spacing: -0.015em;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  white-space: nowrap;
+}
+/* variante para valores sem teto conhecido (ex.: poder de compra com
+   input livre) — o mesmo registo, cabeça mais baixa */
+.num-hero-compact {
+  font-size: clamp(2.5rem, 4.5vw + 1rem, 4.5rem);
+}
+.num-unit {
+  font-size: 0.28em;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--ink2);
+  margin-left: 0.14em;
+}
+/* o sinal é semântico — herda a cor do número (keep/up), sobe ao óptico */
+.num-sign {
+  font-size: 0.55em;
+  font-weight: 500;
+  vertical-align: 0.13em;
+  margin-right: 0.06em;
+}
+.num-read {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.375rem;
+  line-height: 1.15;
+}
+.num-dense {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8125rem;
 }
 
 .rule {
@@ -357,10 +489,12 @@ body::before {
   to { transform: translateX(-50%); }
 }
 
-/* a barra do euro — segmento que cresce ao carregar */
+/* a barra do euro — segmento que cresce ao carregar; quando os dados
+   mudam, a largura transita — a barra reparte-se, não salta */
 .eurobar-seg {
   transform-origin: left;
-  animation: eurobar-grow 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: eurobar-grow var(--dur-in) var(--ease) both;
+  transition: width var(--dur-mov) var(--ease), background-color var(--dur-mov) var(--ease);
 }
 
 @keyframes eurobar-grow {
@@ -390,9 +524,11 @@ body::before {
   to { transform: scaleY(1); }
 }
 
-/* ————— odometer — rodas de dígitos —————
-   O transform base é já a posição final (--d); a animação parte de 0 e
-   chega lá. Sem animação (reduced-motion) o valor final fica correto. */
+/* ————— odometer — rodas de dígitos, reactivas —————
+   O transform base é a posição final (--d) e a TRANSIÇÃO faz o resto:
+   a montagem começa em 0 via .od-zero (só com JS — SSR e no-JS mostram
+   o valor final) e cada mudança de valor roda do dígito anterior para o
+   novo, nunca de zero. */
 .od-wheel {
   display: inline-block;
   height: 1em;
@@ -403,17 +539,25 @@ body::before {
   display: flex;
   flex-direction: column;
   transform: translateY(calc(var(--d) * -1em));
-  animation: od-roll var(--dur, 1.4s) cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: var(--delay, 0ms);
+  transition: transform var(--dur, 1.4s) var(--ease) var(--delay, 0ms);
+}
+.od-zero .od-strip {
+  transform: translateY(0);
+  transition: none;
 }
 .od-digit {
   height: 1em;
   line-height: 1;
   text-align: center;
 }
-@keyframes od-roll {
-  from { transform: translateY(0); }
-  to { transform: translateY(calc(var(--d) * -1em)); }
+
+/* escada em ecrã estreito: a pista desliza — a borda direita esbate-se
+   para sinalizar que há mais (a mesma máscara do ticker) */
+@media (max-width: 680px) {
+  .fluxo-scroll {
+    -webkit-mask-image: linear-gradient(to right, #000 82%, transparent);
+    mask-image: linear-gradient(to right, #000 82%, transparent);
+  }
 }
 
 /* scrolly da escada — barras fora de foco esbatem-se */
@@ -498,6 +642,27 @@ body::before {
 .talao-meta {
   font-size: 0.6rem;
 }
+/* campo de preço dentro do talão — tinta editável: sem moldura,
+   sublinhado picotado como um valor escrito à máquina */
+.talao-field {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dashed rgba(44, 36, 19, 0.55);
+  border-radius: 0;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.talao-field::-webkit-outer-spin-button,
+.talao-field::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+.talao-field:focus-visible {
+  outline: 2px solid rgba(157, 42, 13, 0.8);
+  outline-offset: 1px;
+  border-bottom-color: transparent;
+}
 /* carimbo — SIMULAÇÃO, rodado como tinta de borracha */
 .carimbo {
   position: absolute;
@@ -554,6 +719,108 @@ body::before {
 ::view-transition-old(nav-ind),
 ::view-transition-new(nav-ind) {
   animation: none;
+}
+
+/* ————— interrogação — a gramática dos instrumentos —————
+   readout fixo: o valor interrogado vive numa faixa própria, nunca num
+   tooltip flutuante que tapa dados; é o mesmo para rato, toque e teclado
+   (o readout é o controlo: foca-se, ← → percorrem, Home/End extremos). */
+.chart-readout {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
+  color: var(--ink2);
+  border-bottom: 1px solid var(--line);
+  padding: 0.45rem 0;
+  min-height: 2.1rem;
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.chart-readout .chart-readout-t {
+  color: var(--muted);
+}
+.chart-readout .chart-readout-v {
+  color: var(--ink);
+  font-weight: 700;
+}
+/* a régua de interrogação — um input range despido: fio de hairline +
+   cursor quadrado de tinta. É o controlo de teclado e toque-preciso;
+   o rato também pode apontar directamente às marcas. */
+.chart-scrub {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-left: auto;
+  width: 7rem;
+  min-width: 4rem;
+  height: 1.15rem;
+  background: transparent;
+  cursor: ew-resize;
+  flex-shrink: 0;
+}
+.chart-scrub::-webkit-slider-runnable-track {
+  height: 1px;
+  background: var(--line2);
+}
+.chart-scrub::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 9px;
+  height: 9px;
+  margin-top: -4px;
+  background: var(--ink);
+  border: none;
+  border-radius: 0;
+}
+.chart-scrub::-moz-range-track {
+  height: 1px;
+  background: var(--line2);
+}
+.chart-scrub::-moz-range-thumb {
+  width: 9px;
+  height: 9px;
+  background: var(--ink);
+  border: none;
+  border-radius: 0;
+}
+/* marca interrogada: acende; as irmãs recuam */
+.chart-hit {
+  transition: opacity var(--dur-res) var(--ease);
+}
+.chart-hit-off {
+  opacity: 0.3;
+}
+/* marcador de estado de série — quadrado, como as legendas do EuroBar */
+.serie-estado {
+  display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  margin-right: 0.45em;
+  vertical-align: baseline;
+}
+.serie-estado.em-dia {
+  background: var(--mark);
+}
+.serie-estado.atrasada {
+  background: var(--warn);
+}
+
+/* spark — micro-série de célula: sem JS/reduced-motion vem já desenhada;
+   com JS, o --spark-len é medido no DOM e a linha desenha-se uma vez ao
+   entrar no viewport, escalonada por --spark-delay */
+.spark-armed .spark-line {
+  stroke-dasharray: var(--spark-len);
+  stroke-dashoffset: var(--spark-len);
+}
+.spark-on .spark-line {
+  stroke-dasharray: var(--spark-len);
+  animation: spark-draw var(--dur-in) var(--ease) var(--spark-delay, 0s) forwards;
+}
+@keyframes spark-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 /* kinetic type — palavras sobem de trás de uma máscara de linha */
@@ -676,9 +943,6 @@ body::before {
   .fluxo-barra {
     animation: none;
   }
-  .od-strip {
-    animation: none;
-  }
   .kin-word {
     animation: none;
   }
@@ -710,6 +974,14 @@ body::before {
     --up: #8f2a10;
     --down: #1f6b4d;
     --warn: #6b5410;
+    --seq-1: #222222;
+    --seq-2: #555555;
+    --seq-3: #888888;
+    --seq-4: #aaaaaa;
+    --dink-1: #000000;
+    --dink-2: #333333;
+    --dink-3: #555555;
+    --dink-4: #888888;
   }
   header,
   footer,
@@ -725,7 +997,10 @@ body::before {
     display: none;
   }
   body {
-    background: #fff;
+    /* a grelha milimetrada (especificidade 0,2,1) ganharia ao reset simples —
+       !important garante papel branco mesmo com «gráficos de fundo» ligados */
+    background: #fff !important;
+    background-image: none !important;
     color: #000;
     font-size: 11pt;
   }

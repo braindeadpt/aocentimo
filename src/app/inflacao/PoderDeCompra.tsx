@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { NumHero } from "@/components/NumHero";
 import { fmtEUR } from "@/lib/format";
 
 interface Props {
@@ -53,20 +54,20 @@ export function PoderDeCompra({ serie }: Props) {
           </select>
         </div>
       </div>
-      <p className="mt-5 text-ink2 text-sm">
-        {resultado !== null ? (
-          <>
-            {fmtEUR(valor)} em janeiro de {ano} compram hoje o equivalente a{" "}
-            <span className="num text-xl text-ink font-medium">{fmtEUR(resultado)}</span>
-            <span className="block footnote mt-1">
-              Ou seja: para manteres o mesmo poder de compra, precisavas desse
-              valor agora. Diferença: {fmtEUR(resultado - valor)}.
-            </span>
-          </>
-        ) : (
-          "Sem dados suficientes."
-        )}
-      </p>
+      {resultado !== null ? (
+        <div className="mt-5">
+          <p className="text-ink2 text-sm">
+            {fmtEUR(valor)} em janeiro de {ano} compram hoje o equivalente a
+          </p>
+          <NumHero compacto valor={fmtEUR(resultado)} animar={resultado} className="mt-1" />
+          <p className="footnote mt-2">
+            Para manteres o mesmo poder de compra, precisavas desse valor
+            agora. Diferença: {fmtEUR(resultado - valor)}.
+          </p>
+        </div>
+      ) : (
+        <p className="mt-5 text-ink2 text-sm">Sem dados suficientes.</p>
+      )}
     </div>
   );
 }

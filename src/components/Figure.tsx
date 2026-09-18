@@ -15,7 +15,7 @@ export function Figure({
   children: ReactNode;
 }) {
   return (
-    <figure className="my-8">
+    <figure className="stack-fig">
       <figcaption className="flex items-baseline gap-3 border-t-2 border-ink pt-2 mb-4">
         <span className="num text-xs text-muted">Fig. {n}</span>
         <span className="font-display text-lg text-ink">{title}</span>
