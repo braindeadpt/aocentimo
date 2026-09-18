@@ -5,8 +5,14 @@ import { Delta } from "@/components/Delta";
 import { Escada } from "@/components/Escada";
 import { Kinetic } from "@/components/Kinetic";
 import { Source } from "@/components/Source";
-import { Spark } from "@/components/Spark";
-import { loadSerie, variacao, loadFontes, loadDerivado } from "@/lib/data";
+import { Instrumento } from "@/components/Instrumento";
+import {
+  loadSerie,
+  variacao,
+  loadFontes,
+  loadDerivado,
+  loadFreshness,
+} from "@/lib/data";
 import { simularSalario } from "@/lib/engines/irs";
 import { TSU_ENTIDADE, TSU_TRABALHADOR } from "@/lib/engines/seg-social";
 import { fmtPct, fmtData } from "@/lib/format";
@@ -26,6 +32,9 @@ export default function Home() {
   const alim = loadSerie("CP01");
   const caBase = loadDerivado<CaBase>("ca-base");
   const fonteIpc = loadFontes().find((f) => f.id === "hicp-pt-cp00");
+  const fresh = loadFreshness();
+  const estadoDe = (id: string) =>
+    fresh?.series.find((s) => s.id === id)?.estado;
 
   // Fronteira servidor/cliente: o motor fiscal corre UMA vez aqui —
   // simularSalario puxa os JSON de data/fiscal (IRS, retenção, SS) que
@@ -92,55 +101,51 @@ export default function Home() {
           )}
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4">
-          <div className="border-b border-r border-line px-5 py-4 md:border-b-0">
-            <p className="kicker-xs">{h.inflacaoHomologa}</p>
-            <p className="num mt-1.5 text-3xl text-ink">
-              {ipc ? <Delta value={variacao(ipc, 12)} /> : "—"}
-            </p>
-            {ipc && (
-              <div className="mt-2 text-muted">
-                <Spark pts={ipc.series} atraso={0} />
-              </div>
-            )}
-            <p className="footnote mt-1.5">{ipc ? fmtData(ipc.meta.serieAte) : "—"}</p>
-          </div>
-          <div className="border-b border-line px-5 py-4 md:border-b-0 md:border-r">
-            <p className="kicker-xs">{h.alimentacao}</p>
-            <p className="num mt-1.5 text-3xl text-ink">
-              {alim ? <Delta value={variacao(alim, 12)} /> : "—"}
-            </p>
-            {alim && (
-              <div className="mt-2 text-muted">
-                <Spark pts={alim.series} atraso={1} />
-              </div>
-            )}
-            <p className="footnote mt-1.5">{h.ihpcCP01}</p>
-          </div>
-          <div className="border-r border-line px-5 py-4">
-            <p className="kicker-xs">{h.salarioMinimo}</p>
-            <p className="num mt-1.5 text-3xl text-ink">
-              <Odometer valor={smn.serie[smn.serie.length - 1].valor} sufixo=" €" />
-            </p>
-            <div className="mt-2 text-muted">
-              <Spark
-                pts={smn.serie.map((s) => ({ t: String(s.ano), v: s.valor }))}
-                atraso={2}
+          <Instrumento
+            className="border-b border-r border-line px-5 py-4 md:border-b-0"
+            rotulo={h.inflacaoHomologa}
+            estado={estadoDe("hicp-pt-cp00")}
+            atraso={0}
+            grande
+            valor={ipc ? <Delta value={variacao(ipc, 12)} /> : "—"}
+            spark={ipc?.series}
+            meta={ipc ? fmtData(ipc.meta.serieAte) : "—"}
+          />
+          <Instrumento
+            className="border-b border-line px-5 py-4 md:border-b-0 md:border-r"
+            rotulo={h.alimentacao}
+            estado={estadoDe("hicp-pt-cp01")}
+            atraso={1}
+            grande
+            valor={alim ? <Delta value={variacao(alim, 12)} /> : "—"}
+            spark={alim?.series}
+            meta={h.ihpcCP01}
+          />
+          <Instrumento
+            className="border-r border-line px-5 py-4"
+            rotulo={h.salarioMinimo}
+            estado={estadoDe("fiscal-smn")}
+            atraso={2}
+            grande
+            valor={
+              <Odometer
+                valor={smn.serie[smn.serie.length - 1].valor}
+                sufixo=" €"
               />
-            </div>
-            <p className="footnote mt-1.5">{h.smnNota}</p>
-          </div>
-          <div className="px-5 py-4">
-            <p className="kicker-xs">{h.ca}</p>
-            <p className="num mt-1.5 text-3xl text-ink">
-              {fmtPct(ca.serieF.taxaBrutaNovasSubscricoes, 2)}
-            </p>
-            {caBase && (
-              <div className="mt-2 text-muted">
-                <Spark pts={caBase.series} atraso={3} />
-              </div>
-            )}
-            <p className="footnote mt-1.5">{h.caNota}</p>
-          </div>
+            }
+            spark={smn.serie.map((s) => ({ t: String(s.ano), v: s.valor }))}
+            meta={h.smnNota}
+          />
+          <Instrumento
+            className="px-5 py-4"
+            rotulo={h.ca}
+            estado={estadoDe("fiscal-ca")}
+            atraso={3}
+            grande
+            valor={fmtPct(ca.serieF.taxaBrutaNovasSubscricoes, 2)}
+            spark={caBase?.series}
+            meta={h.caNota}
+          />
         </div>
       </section>
       {fonteIpc && (

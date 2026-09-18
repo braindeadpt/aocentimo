@@ -6,7 +6,7 @@ import { Source } from "@/components/Source";
 import { JsonLd, dataset } from "@/lib/jsonld";
 import { LineChart } from "@/components/LineChart";
 import { Delta } from "@/components/Delta";
-import { Spark } from "@/components/Spark";
+import { Instrumento } from "@/components/Instrumento";
 import {
   loadFonte,
   loadDerivado,
@@ -16,7 +16,6 @@ import {
   type Serie,
 } from "@/lib/data";
 import { fmtData, fmtNum, fmtPct } from "@/lib/format";
-import { m } from "@/lib/messages";
 import usura from "@data/fiscal/usura-2026.json";
 import calendario from "@data/fiscal/calendario-2026.json";
 import eventos from "@data/fiscal/eventos.json";
@@ -45,47 +44,17 @@ const LINHAS_TAEG: { rotulo: string; capKey: string; serie: string }[] = [
   { rotulo: "Cartões, linhas e descobertos", capKey: "renovavel", serie: "taeg-renovavel-mensal" },
 ];
 
-/** Célula do quadro de instrumentos — valor, meta e selo de frescura.
- *  O quadrado torrado marca série verificada em dia; o de aviso + a
- *  palavra «atrasada» marca a falha — nunca se esconde. */
-function Celula({
-  rotulo,
-  valor,
-  meta,
-  estado,
-  spark,
-}: {
+/** Célula do quadro — delega no <Instrumento> do sistema: valor, meta e
+ *  selo de frescura (quadrado torrado em dia, warn + «atrasada» na falha,
+ *  oco sem SLA — a falha nunca se esconde). */
+function Celula(props: {
   rotulo: string;
   valor: ReactNode;
   meta: ReactNode;
   estado?: "em-dia" | "atrasada" | "sem-sla";
   spark?: { t: string; v: number }[];
 }) {
-  return (
-    <div className="bg-panel px-4 py-4">
-      <p className="kicker-xs flex items-center">
-        {estado && (
-          <span
-            aria-hidden
-            className={`serie-estado ${estado === "atrasada" ? "atrasada" : "em-dia"}`}
-          />
-        )}
-        {rotulo}
-      </p>
-      <p className="num-read mt-2">{valor}</p>
-      {spark && spark.length > 1 && (
-        <div className="mt-2 text-muted">
-          <Spark pts={spark} />
-        </div>
-      )}
-      <p className="footnote mt-1.5">
-        {estado === "atrasada" && (
-          <span className="text-warn">{m.chart.atrasada} · </span>
-        )}
-        {meta}
-      </p>
-    </div>
-  );
+  return <Instrumento {...props} className="bg-panel px-4 py-4" />;
 }
 
 export default function DadosPage() {
@@ -294,22 +263,22 @@ export default function DadosPage() {
                 const p = ultimo(euribor[k]);
                 const est = estadoDe(`euribor-${k.toLowerCase()}-mensal`);
                 return (
-                  <div key={k} className="bg-panel px-4 py-3">
-                    <p className="kicker flex items-center">
-                      {est && (
-                        <span
-                          aria-hidden
-                          className={`serie-estado ${est === "atrasada" ? "atrasada" : "em-dia"}`}
+                  <Instrumento
+                    key={k}
+                    className="bg-panel px-4 py-3"
+                    rotulo={k}
+                    estado={est}
+                    valor={p ? `${fmtNum(p.v, 2)} %` : "—"}
+                    meta={
+                      <>
+                        <Delta
+                          value={euribor[k] ? variacao(euribor[k]!, 1) : null}
+                          casas={2}
                         />
-                      )}
-                      {k}
-                    </p>
-                    <p className="num-read mt-1">{p ? `${fmtNum(p.v, 2)} %` : "—"}</p>
-                    <p className="text-xs text-muted mt-0.5">
-                      <Delta value={euribor[k] ? variacao(euribor[k]!, 1) : null} casas={2} />
-                      <span className="ml-1">no mês</span>
-                    </p>
-                  </div>
+                        <span className="ml-1">no mês</span>
+                      </>
+                    }
+                  />
                 );
               })}
             </div>

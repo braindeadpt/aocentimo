@@ -320,3 +320,40 @@ forçar a metáfora era decoração. Registado em comentário no CSS
 (`globals.css`, bloco `.eurobar-seg`).
 
 **Gates** — lint ✓ typecheck ✓ unit 178 ✓ data ✓ build 58 ✓ e2e 15/15 ✓.
+
+---
+
+## M-08 — `<Spark>` + `<Instrumento>` como componentes únicos
+
+**Entregue**
+
+- `Spark` (já desenhava-se, marcador torrado e área) ganhou os dois
+  requisitos de sistema:
+  - `estado` — o marcador final é o selo de frescura: torrado em dia,
+    `warn` quando atrasada, **oco** (só contorno) sem SLA;
+  - `descricao` — equivalente textual sr-only com a variação da cauda
+    ("rótulo: últimos N pontos entre mín e máx; último X").
+- `src/components/Instrumento.tsx` — UM painel: rótulo + selo +
+  valor herói (`grande` = 3xl na primeira dobra) + spark + rodapé com
+  timestamp; a palavra «atrasada»/«sem SLA definido» sai no rodapé
+  quando o estado não é limpo. `descricaoSpark` exportada e pura.
+- Três variantes consolidadas:
+  - `Celula` de `/dados` → wrapper fino sobre `Instrumento`;
+  - mini-células Euribor (1M/3M/6M/12M) de `/dados` → `Instrumento`
+    (a variação no mês passou ao rodapé `meta`);
+  - quadro do mês da home → 4× `Instrumento` com `estado` ligado ao
+    `freshness.json` (cp00, cp01, fiscal-smn, fiscal-ca) — a home não
+    tinha selo nenhum antes.
+- Mensagens `chart.semSla` + `chart.sparkDesc` em `pt.json`; CSS
+  `.serie-estado.sem-sla` (quadrado oco).
+
+**Decisões**
+
+- «A recolher» da spec **não existe nos dados** — `freshness.json`
+  só distingue em-dia/atrasada/sem-sla. Mapeei sem-sla → quadrado oco
+  + «sem SLA definido» (honesto: não verificável ≠ a recolher). Se o
+  dono quiser «a recolher», o derive tem de emitir esse estado.
+- A descrição sr-only da spark fala da cauda (24 pontos), não da
+  série inteira — é o que o desenho mostra.
+
+**Gates** — lint ✓ typecheck ✓ unit 178 ✓ data ✓ build 58 ✓ e2e 15/15 ✓.

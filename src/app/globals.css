@@ -935,6 +935,12 @@ body::before {
 .serie-estado.atrasada {
   background: var(--warn);
 }
+/* sem SLA definido: não é possível dizer se está atrasada — quadrado
+   oco, nem verificado nem falhado */
+.serie-estado.sem-sla {
+  background: transparent;
+  border: 1px solid var(--muted);
+}
 
 /* spark — micro-série de célula: sem JS/reduced-motion vem já desenhada;
    com JS, o --spark-len é medido no DOM e a linha desenha-se uma vez ao

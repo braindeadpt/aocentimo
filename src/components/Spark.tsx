@@ -2,24 +2,32 @@
 
 import { useEffect, useRef, useState } from "react";
 
+export type EstadoSerie = "em-dia" | "atrasada" | "sem-sla";
+
 /**
  * Spark — a micro-série dentro de uma célula de instrumento.
- * Linha fina, sem eixos; o último ponto é um quadrado torrado — o
- * marcador de evidência do sistema (a fonte/data vive na célula ao lado).
- * Desenha-se UMA vez, à entrada no viewport (stroke-dashoffset via
- * IntersectionObserver). Sem JS ou com reduced-motion: já vem desenhada —
- * o estado final é o defeito, a animação é um extra que o JS arma.
+ * Linha fina, sem eixos; o último ponto é um quadrado — o marcador de
+ * evidência do sistema. A cor do marcador é o selo de frescura:
+ * torrado em dia, warn quando atrasada, oco quando não há SLA para
+ * verificar. Desenha-se UMA vez, à entrada no viewport
+ * (stroke-dashoffset via IntersectionObserver). Sem JS ou com
+ * reduced-motion: já vem desenhada — o estado final é o defeito.
  */
 export function Spark({
   pts,
   className = "",
   atraso = 0,
+  estado,
+  descricao,
 }: {
   /** pontos {t, v} — usa-se a cauda (últimos 24) */
   pts: { t: string; v: number }[];
   className?: string;
   /** índice de escalonamento entre células — multiplica --stagger */
   atraso?: number;
+  estado?: EstadoSerie;
+  /** equivalente textual (sr-only) — a forma e a variação da cauda */
+  descricao?: string;
 }) {
   const svg = useRef<SVGSVGElement>(null);
   const [on, setOn] = useState(false);
@@ -64,39 +72,53 @@ export function Spark({
   const ultimo = cauda[cauda.length - 1];
 
   return (
-    <svg
-      ref={svg}
-      viewBox={`0 0 ${W} ${H}`}
-      preserveAspectRatio="none"
-      aria-hidden="true"
-      className={`spark block h-9 w-full ${on ? "spark-on" : ""} ${className}`}
-      style={{ "--spark-delay": `${atraso}` } as React.CSSProperties}
-    >
-      {/* área sob a linha — massa que torna a forma legível a esta escala */}
-      <polygon
-        className="spark-area"
-        fill="var(--ink2)"
-        points={`${x(0).toFixed(1)},${(H - P).toFixed(1)} ${cauda
-          .map((p, i) => `${x(i).toFixed(1)},${y(p.v).toFixed(1)}`)
-          .join(" ")} ${x(cauda.length - 1).toFixed(1)},${(H - P).toFixed(1)}`}
-      />
-      <polyline
-        className="spark-line"
-        fill="none"
-        stroke="var(--ink2)"
-        strokeWidth={1.5}
-        strokeLinejoin="round"
-        vectorEffect="non-scaling-stroke"
-        points={cauda.map((p, i) => `${x(i).toFixed(1)},${y(p.v).toFixed(1)}`).join(" ")}
-      />
-      {/* último ponto — marcador de evidência em torrado */}
-      <rect
-        x={x(cauda.length - 1) - 2}
-        y={y(ultimo.v) - 2}
-        width={4}
-        height={4}
-        fill="var(--color-mark)"
-      />
-    </svg>
+    <>
+      <svg
+        ref={svg}
+        viewBox={`0 0 ${W} ${H}`}
+        preserveAspectRatio="none"
+        aria-hidden="true"
+        className={`spark block h-9 w-full ${on ? "spark-on" : ""} ${className}`}
+        style={{ "--spark-delay": `${atraso}` } as React.CSSProperties}
+      >
+        {/* área sob a linha — massa que torna a forma legível a esta escala */}
+        <polygon
+          className="spark-area"
+          fill="var(--ink2)"
+          points={`${x(0).toFixed(1)},${(H - P).toFixed(1)} ${cauda
+            .map((p, i) => `${x(i).toFixed(1)},${y(p.v).toFixed(1)}`)
+            .join(" ")} ${x(cauda.length - 1).toFixed(1)},${(H - P).toFixed(1)}`}
+        />
+        <polyline
+          className="spark-line"
+          fill="none"
+          stroke="var(--ink2)"
+          strokeWidth={1.5}
+          strokeLinejoin="round"
+          vectorEffect="non-scaling-stroke"
+          points={cauda
+            .map((p, i) => `${x(i).toFixed(1)},${y(p.v).toFixed(1)}`)
+            .join(" ")}
+        />
+        {/* último ponto — marcador de evidência; a cor é o selo de
+            frescura (torrado em dia, warn atrasada, oco sem SLA) */}
+        <rect
+          x={x(cauda.length - 1) - 2}
+          y={y(ultimo.v) - 2}
+          width={4}
+          height={4}
+          fill={
+            estado === "sem-sla"
+              ? "none"
+              : estado === "atrasada"
+                ? "var(--warn)"
+                : "var(--color-mark)"
+          }
+          stroke={estado === "sem-sla" ? "var(--muted)" : "none"}
+          strokeWidth={1}
+        />
+      </svg>
+      {descricao && <span className="sr-only">{descricao}</span>}
+    </>
   );
 }
