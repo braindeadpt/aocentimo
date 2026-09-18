@@ -68,6 +68,12 @@
 
   --grain-opacity: 0.05;
 
+  /* papel físico — fixo nos dois temas: o talão é o mesmo objecto em
+     qualquer superfície. Definido na raiz (não em .talao) porque o
+     sistema de matéria (PecaPapel, rasgos, furos) vive fora do talão. */
+  --talao-paper: #f7f1e1;
+  --talao-ink: #2c2413;
+
   /* ————— gramática de motion — três durações, uma curva —————
      res  resposta a hover/focus/interrogação — instantânea mas não abrupta
      mov  mudança de estado: um valor que muda, uma barra que se reparte
@@ -577,8 +583,6 @@ body::before {
     drop-shadow(0 2px 4px rgba(24, 17, 6, 0.18));
 }
 .talao {
-  --talao-paper: #f7f1e1;
-  --talao-ink: #2c2413;
   position: relative;
   background: var(--talao-paper);
   color: var(--talao-ink);

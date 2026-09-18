@@ -9,6 +9,9 @@ import { EuroBar } from "@/components/EuroBar";
 import { Source } from "@/components/Source";
 import { Logo, LogoMark } from "@/components/Logo";
 import { MotionDemo } from "./MotionDemo";
+import { PapelDefs } from "@/components/Papel";
+import { PecaPapel } from "@/components/PecaPapel";
+import { arestaRasgada } from "@/lib/materia";
 
 export const metadata: Metadata = {
   title: "Sistema de design",
@@ -565,6 +568,115 @@ export default function EstiloPage() {
           <Source nome="Lei n.º 73-A/2025" vigencia="2026" />
           <Source nome="IGCP — ficha técnica CA Série F" nota="divergência entre fontes, ambas mostradas" />
         </div>
+      </section>
+
+      <section className="stack-sec">
+        <h2 className="kicker mb-4">Matéria — papel, rasgo, perfuração</h2>
+        <p className="footnote mb-4 max-w-xl">
+          A linguagem material do site é o talão: papel, linhas impressas,
+          fibra, perfurações, rasgos, carimbos. O dinheiro viaja como fita
+          de papel e o que sai é arrancado. Três regras: o rasgo nunca é
+          regular (passo e amplitude variam, e há fibras); a perfuração é um
+          buraco — vê-se o fundo, não um ponto pintado; cada pedaço cai com
+          a sua sombra.
+        </p>
+        <PapelDefs />
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="border border-line bg-panel px-5 py-4">
+            <p className="kicker-xs">O rasgo — determinista por semente</p>
+            <svg viewBox="0 0 300 60" className="mt-3 block w-full" aria-hidden>
+              <path
+                d={`${arestaRasgada(300, { semente: 2026, grosseria: 0.6 })} L300,60 L0,60 Z`}
+                fill="var(--talao-paper)"
+              />
+              <path
+                d={`${arestaRasgada(300, { semente: 2026, grosseria: 0.6 })} L300,60 L0,60 Z`}
+                fill="url(#papel-tom-x)"
+              />
+              <path
+                d={`${arestaRasgada(300, { semente: 2026, grosseria: 0.6 })} L300,60 L0,60 Z`}
+                fill="url(#papel-fibra)"
+              />
+            </svg>
+            <p className="footnote mt-3">
+              A mesma semente dá o mesmo rasgo — o mesmo salário rasga igual
+              entre renders. A 400 %:
+            </p>
+            <svg viewBox="60 -2 60 18" className="mt-2 block w-full border border-line" aria-hidden>
+              <path
+                d={`${arestaRasgada(300, { semente: 2026, grosseria: 0.6 })} L300,18 L0,18 Z`}
+                fill="var(--talao-paper)"
+              />
+              <path
+                d={`${arestaRasgada(300, { semente: 2026, grosseria: 0.6 })} L300,18 L0,18 Z`}
+                fill="url(#papel-fibra)"
+              />
+            </svg>
+          </div>
+          <div className="border border-line bg-panel px-5 py-4">
+            <p className="kicker-xs">A perfuração — um buraco, não um ponto</p>
+            <div className="relative mt-3">
+              {/* prova de que o furo é transparente: o quadrado mark por
+                  trás aparece dentro dos buracos */}
+              <div
+                aria-hidden
+                className="absolute inset-x-8 top-1/2 h-4 -translate-y-1/2 bg-mark"
+              />
+              <PecaPapel
+                comp={280}
+                alt={34}
+                semente={73}
+                grosseria={0.35}
+                furoY={17}
+                rasgoTopo={false}
+                rasgoFundo={false}
+                sombra={false}
+                className="relative block w-full"
+              />
+            </div>
+            <p className="footnote mt-3">
+              Os furos são máscara: o torrado atravessa-os. Espaçamento
+              regular de máquina — ao contrário do rasgo, feito à mão.
+            </p>
+          </div>
+          <div className="border border-line bg-panel px-5 py-4 md:col-span-2">
+            <p className="kicker-xs">A queda — cada pedaço com a sua sombra</p>
+            <div className="mt-3 flex items-end gap-6 overflow-visible px-2 pb-6">
+              {[3, 7, 11].map((a, i) => (
+                <div key={a} style={{ transform: `rotate(${a - 7}deg)` }}>
+                  <PecaPapel
+                    comp={120}
+                    alt={26 + i * 6}
+                    semente={a * 31}
+                    grosseria={0.5}
+                    angulo={a - 7}
+                    altura={0.2 + i * 0.35}
+                    className="block w-full"
+                  />
+                </div>
+              ))}
+            </div>
+            <p className="footnote">
+              Direção e desfoque derivam do ângulo e da altura de queda —
+              não há sombra uniforme. Filtros só em estático; o que anima
+              usa transform e opacity.
+            </p>
+          </div>
+        </div>
+        <ul className="mt-4 space-y-1">
+          {[
+            "O rasgo sai de arestaRasgada(comprimento, {semente, grosseria}) — PRNG próprio, nunca Math.random.",
+            "A superfície é camadas: base, tom, fibra, espessura — pattern+gradiente, nunca filtros na tinta.",
+            "O furo é máscara (o fundo vê-se) + sombra interna mínima no bordo.",
+            "A sombra é por peça: sombraPeca({ângulo, altura}).",
+            "Filtros só em elementos estáticos; animações em transform/opacity apenas.",
+          ].map((r) => (
+            <li key={r} className="footnote">
+              <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-mark align-middle" />
+              {r}
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section className="stack-sec">
