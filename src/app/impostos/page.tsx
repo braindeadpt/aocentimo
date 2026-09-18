@@ -42,7 +42,7 @@ export default function ImpostosPage() {
       >
         <div className="grid md:grid-cols-3 gap-4">
           {iva.taxas.map((t) => (
-            <div key={t.nome} className="bg-surface border border-line px-5 py-4">
+            <div key={t.nome} className="bg-panel border border-line px-5 py-4">
               <p className="kicker">{t.nome}</p>
               <p className="num text-3xl mt-1">{fmtPct(t.taxa, 0)}</p>
               <p className="footnote mt-2">{t.exemplos.join(", ")}</p>

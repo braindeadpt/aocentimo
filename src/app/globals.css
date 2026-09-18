@@ -6,10 +6,19 @@
    verde reservado ao que é teu; torrado = marcador de fonte, nunca
    decoração. */
 
+/* ————— escala de elevação — 4 níveis, um instrumento, não uma app —————
+   floor    fundo da página: o papel de worksheet (claro) / o ecrã em
+            repouso (escuro). A única textura de fundo vive aqui.
+   panel    bloco de conteúdo — a chapa onde as coisas se montam.
+   raised   resultado — o que o instrumento devolve.
+   overlay  sobreposição (menu, tooltip) — acima de tudo. No escuro é o
+            nível mais claro: leva só ink/ink2, nunca texto muted. */
 :root {
   color-scheme: light;
-  --paper: #f4f3ec;
-  --surface: #fbfaf6;
+  --floor: #f4f3ec;
+  --panel: #fbfaf6;
+  --raised: #fdfcf9;
+  --overlay: #ffffff;
   --ink: #1b1811;
   --ink2: #57534a;
   --muted: #6f6a58;
@@ -26,13 +35,23 @@
   --down: #1f6b4d;
   --warn: #a3720a;
 
+  /* no claro a elevação é sombra subtil — a superfície recua. O fio de
+     luz na aresta superior é próprio do escuro; aqui não se acende. */
+  --elev-raised: 0 1px 0 rgba(27, 24, 17, 0.05),
+    0 10px 22px -16px rgba(27, 24, 17, 0.28);
+  --elev-overlay: 0 1px 0 rgba(27, 24, 17, 0.07),
+    0 18px 40px -18px rgba(27, 24, 17, 0.34);
+  --recess: inset 0 1px 2px rgba(27, 24, 17, 0.07);
+
   --grain-opacity: 0.05;
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --paper: #0e0c09;
-  --surface: #16130f;
+  --floor: #0d0b08;
+  --panel: #1a1611;
+  --raised: #251f18;
+  --overlay: #342e20;
   --ink: #f2ecdd;
   --ink2: #aba28c;
   --muted: #8f8878;
@@ -49,12 +68,22 @@
   --down: #63d6a4;
   --warn: #f0c468;
 
+  /* no escuro a sombra não se vê — a elevação faz-se com luz: luminância
+     crescente na rampa + um fio de luz de 1px na aresta superior */
+  --elev-raised: inset 0 1px 0 rgba(242, 236, 221, 0.09),
+    0 1px 0 rgba(0, 0, 0, 0.5);
+  --elev-overlay: inset 0 1px 0 rgba(242, 236, 221, 0.12),
+    0 20px 44px -18px rgba(0, 0, 0, 0.72);
+  --recess: inset 0 1px 3px rgba(0, 0, 0, 0.55);
+
   --grain-opacity: 0.08;
 }
 
 @theme inline {
-  --color-paper: var(--paper);
-  --color-surface: var(--surface);
+  --color-floor: var(--floor);
+  --color-panel: var(--panel);
+  --color-raised: var(--raised);
+  --color-overlay: var(--overlay);
   --color-ink: var(--ink);
   --color-ink2: var(--ink2);
   --color-muted: var(--muted);
@@ -70,6 +99,9 @@
   --color-up: var(--up);
   --color-down: var(--down);
   --color-warn: var(--warn);
+
+  --shadow-raised: var(--elev-raised);
+  --shadow-overlay: var(--elev-overlay);
 
   --font-display: var(--font-archivo), "Arial Black", sans-serif;
   --font-sans: var(--font-grotesk), "Segoe UI", system-ui, sans-serif;
@@ -111,22 +143,32 @@ html {
 }
 
 body {
-  background: var(--paper);
+  background: var(--floor);
   color: var(--ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* ————— tema claro = «o documento»: papel milimetrado de worksheet —————
-   a grelha de engenharia esbatida cobre a página inteira e mata o look
-   editorial-creme genérico; no escuro (o instrumento) não existe */
+/* ————— textura de fundo — só no nível 0 (floor) —————
+   claro = «o documento»: papel milimetrado de worksheet, grelha de
+   engenharia esbatida que mata o look editorial-creme genérico.
+   escuro = «o instrumento»: a mesma malha, agora a varrer em fósforo
+   subtil — ecrã de registo, não papel. Painéis nunca têm textura. */
 :root:not([data-theme="dark"]) body {
   background-image:
     linear-gradient(to right, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px),
     linear-gradient(to bottom, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px),
     linear-gradient(to right, color-mix(in srgb, var(--ink) 9%, transparent) 1px, transparent 1px),
     linear-gradient(to bottom, color-mix(in srgb, var(--ink) 9%, transparent) 1px, transparent 1px);
+  background-size: 28px 28px, 28px 28px, 140px 140px, 140px 140px;
+}
+:root[data-theme="dark"] body {
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--ink) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--ink) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(to right, color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1px);
   background-size: 28px 28px, 28px 28px, 140px 140px, 140px 140px;
 }
 
@@ -143,7 +185,7 @@ body::before {
 
 ::selection {
   background: var(--accent);
-  color: var(--paper);
+  color: var(--floor);
 }
 
 /* foco visível em torrado — o amarelo tem função, não é decoração */
@@ -161,7 +203,7 @@ body::before {
   z-index: 70;
   transform: translateY(-300%);
   padding: 0.55rem 0.9rem;
-  background: var(--paper);
+  background: var(--overlay);
   color: var(--ink);
   border: 2px solid var(--ink);
   font-family: var(--font-mono);
@@ -248,33 +290,29 @@ body::before {
 
 .btn:hover {
   background: var(--ink);
-  color: var(--paper);
+  color: var(--floor);
 }
 
 .btn-primary {
   background: var(--accent);
   border-color: var(--accent);
-  color: var(--paper);
+  color: var(--floor);
 }
 
 .btn-primary:hover {
   background: var(--accent-ink);
   border-color: var(--accent-ink);
-  color: var(--paper);
-}
-
-/* superfície — card limpo para blocos flutuantes */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--line);
+  color: var(--floor);
 }
 
 /* campo de formulário — uma só classe, usada por todos os simuladores.
-   Fundo surface (visível sobre paper), foco pelo ring torrado global. */
+   Chapa de nível 1 encastrada: o recess marca a cavidade onde se escreve,
+   o foco fica pelo ring torrado global. */
 .field {
   width: 100%;
-  background: var(--surface);
+  background: var(--panel);
   border: 1px solid var(--line2);
+  box-shadow: var(--recess);
   color: var(--ink);
   font-family: var(--font-mono);
   font-size: 0.95rem;
@@ -587,10 +625,10 @@ body::before {
     transform: scaleX(1);
   }
   .chapter-row:hover {
-    color: var(--paper);
+    color: var(--floor);
   }
   .chapter-row:hover .chapter-dim {
-    color: var(--paper);
+    color: var(--floor);
     opacity: 0.7;
   }
   .chapter-row:hover .chapter-arrow {
@@ -656,8 +694,10 @@ body::before {
   /* tokens revertidos para a palete clara — imprimir em dark saía ilegível
      (a lista de seletores garante especificidade ≥ [data-theme="dark"]) */
   :root, :root[data-theme="dark"] {
-    --paper: #ffffff;
-    --surface: #ffffff;
+    --floor: #ffffff;
+    --panel: #ffffff;
+    --raised: #ffffff;
+    --overlay: #ffffff;
     --ink: #000000;
     --ink2: #333333;
     --muted: #555555;

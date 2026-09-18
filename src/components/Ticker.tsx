@@ -74,7 +74,7 @@ export function Ticker() {
   // a pista duplica-se para o loop ser contínuo
   const pista = [...itens, ...itens];
   return (
-    <div className="ticker bg-surface" role="region" aria-label={m.ticker.label}>
+    <div className="ticker bg-panel" role="region" aria-label={m.ticker.label}>
       <div className="ticker-track">
         {pista.map((it, i) => (
           <span

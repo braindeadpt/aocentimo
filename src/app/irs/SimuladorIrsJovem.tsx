@@ -52,7 +52,7 @@ export function SimuladorIrsJovem({ ano }: { ano: number }) {
       </div>
 
       <div className="space-y-8" aria-live="polite">
-        <div className="bg-surface border border-line">
+        <div className="bg-raised border border-line shadow-raised">
           <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
             <span className="kicker">No {anoGozo}.º ano de gozo</span>
             <span className="num text-xs text-muted">{fmtPct(r.pctIsencao, 0)} isento</span>
@@ -87,7 +87,7 @@ export function SimuladorIrsJovem({ ano }: { ano: number }) {
           <p className="kicker-sm mb-3">
             Os 10 anos, um a um
           </p>
-          <table className="w-full text-sm bg-surface border border-line">
+          <table className="w-full text-sm bg-panel border border-line">
             <thead>
               <tr className="text-left border-b-2 border-ink">
                 <th scope="col" className="px-4 py-2 font-medium">Ano de gozo</th>
@@ -98,7 +98,7 @@ export function SimuladorIrsJovem({ ano }: { ano: number }) {
             <tbody>
               {linhas.map((l) => (
                 <tr key={l.ano}
-                  className={`border-b border-line last:border-0 ${l.ano === anoGozo ? "bg-paper" : ""}`}>
+                  className={`border-b border-line last:border-0 ${l.ano === anoGozo ? "bg-floor" : ""}`}>
                   <td className="px-4 py-2 text-ink2">{l.ano}.º ano</td>
                   <td className="px-4 py-2 text-right num">{fmtPct(l.pct, 0)}</td>
                   <td className="px-4 py-2 text-right num">{fmtEUR0(l.poupanca)}</td>

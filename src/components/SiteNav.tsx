@@ -87,13 +87,13 @@ export function SiteNav() {
           <summary className="kicker cursor-pointer list-none text-ink2">
             {m.nav.index}
           </summary>
-          <nav aria-label="Principal" className="absolute right-0 top-7 z-50 flex w-44 flex-col border border-ink bg-surface">
+          <nav aria-label="Principal" className="absolute right-0 top-7 z-50 flex w-44 flex-col border border-ink bg-overlay shadow-overlay">
             {NAV.map(([key, href]) => (
               <Link
                 key={href}
                 href={href}
                 aria-current={ativo(href) ? "page" : undefined}
-                className={`border-b border-line px-4 py-2.5 text-sm last:border-0 hover:bg-paper ${
+                className={`border-b border-line px-4 py-2.5 text-sm last:border-0 hover:bg-floor ${
                   ativo(href) ? "text-accent" : "text-ink2"
                 }`}
               >

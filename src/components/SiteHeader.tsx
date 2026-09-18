@@ -11,7 +11,7 @@ export function SiteHeader() {
   const serieAte = fontes[0]?.serieAte;
 
   return (
-    <header className="border-b-2 border-ink bg-paper">
+    <header className="border-b-2 border-ink bg-floor">
       {/* fio de cabeçalho: meta de edição + tema */}
       <div className="border-b border-line">
         <div className="mx-auto flex max-w-6xl items-baseline justify-between px-5 py-1.5">

@@ -54,7 +54,7 @@ export function SalarioReal({ serie }: { serie: PontoSerie[] }) {
         </p>
       </div>
 
-      <div className="bg-surface border border-line self-start" aria-live="polite">
+      <div className="bg-raised border border-line shadow-raised self-start" aria-live="polite">
         <div className="border-b border-line px-5 py-3">
           <span className="kicker">Poder de compra {r ? `· ${r.mes} → ${ultimo}` : ""}</span>
         </div>

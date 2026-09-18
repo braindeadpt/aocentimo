@@ -25,7 +25,7 @@ export function PoderDeCompra({ serie }: Props) {
   }, [serie, ano, valor]);
 
   return (
-    <div className="bg-surface border border-line px-5 py-5" aria-live="polite">
+    <div className="bg-raised border border-line shadow-raised px-5 py-5" aria-live="polite">
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="kicker block mb-1.5" htmlFor="pd-valor">Valor</label>

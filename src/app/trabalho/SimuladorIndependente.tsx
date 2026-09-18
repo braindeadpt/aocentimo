@@ -38,7 +38,7 @@ export function SimuladorIndependente() {
       </div>
 
       <div className="space-y-8" aria-live="polite">
-        <div className="bg-surface border border-line">
+        <div className="bg-raised border border-line shadow-raised">
           <div className="border-b border-line px-5 py-3">
             <span className="kicker">Por ano, em {fmtEUR0(anual)} faturados</span>
           </div>

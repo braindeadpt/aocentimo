@@ -67,7 +67,7 @@ export function SimuladorAcerto({ ano }: { ano: number }) {
       </div>
 
       <div className="space-y-8" aria-live="polite">
-        <div className="bg-surface border border-line">
+        <div className="bg-raised border border-line shadow-raised">
           <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
             <span className="kicker">O acerto de contas</span>
             <span className="num text-xs text-muted">IRS {ano}</span>

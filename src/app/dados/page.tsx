@@ -126,7 +126,7 @@ export default function DadosPage() {
               {(Object.keys(euribor) as (keyof typeof euribor)[]).map((k) => {
                 const p = ultimo(euribor[k]);
                 return (
-                  <div key={k} className="bg-surface px-4 py-3">
+                  <div key={k} className="bg-panel px-4 py-3">
                     <p className="kicker">{k}</p>
                     <p className="num text-2xl mt-1">{p ? `${fmtNum(p.v, 2)} %` : "—"}</p>
                     <p className="text-xs text-muted mt-0.5">
@@ -139,7 +139,7 @@ export default function DadosPage() {
             </div>
           </>
         ) : (
-          <p className="footnote border border-line bg-surface px-5 py-10 text-center">
+          <p className="footnote border border-line bg-panel px-5 py-10 text-center">
             — indisponível: corre <code className="num">npm run ingest:daily</code>
           </p>
         )}
@@ -240,14 +240,14 @@ export default function DadosPage() {
       >
         {caBase ? (
           <div className="grid md:grid-cols-2 gap-px bg-line border border-line">
-            <div className="bg-surface px-5 py-5">
+            <div className="bg-panel px-5 py-5">
               <p className="kicker">Oficial IGCP — {caBase.meta.vigenciaOficial}</p>
               <p className="num text-3xl mt-1">{fmtPct(caBase.meta.oficialPct / 100, 3)}</p>
               <p className="footnote mt-2">
                 Média da Euribor 3M nos 10 dias úteis anteriores, limitada a 2,50 %.
               </p>
             </div>
-            <div className="bg-surface px-5 py-5">
+            <div className="bg-panel px-5 py-5">
               <p className="kicker">Indicativa — média mensal {caBase.meta.serieAte}</p>
               <p className="num text-3xl mt-1">
                 {fmtPct(caBase.series[caBase.series.length - 1].v / 100, 3)}
@@ -258,7 +258,7 @@ export default function DadosPage() {
             </div>
           </div>
         ) : (
-          <p className="footnote border border-line bg-surface px-5 py-10 text-center">
+          <p className="footnote border border-line bg-panel px-5 py-10 text-center">
             — indisponível: corre <code className="num">npm run derive</code>
           </p>
         )}
@@ -273,7 +273,7 @@ export default function DadosPage() {
           {prazos.map((p) => {
             const passou = p.mes < hoje.slice(0, 7);
             return (
-              <li key={p.id} className={`flex gap-4 px-5 py-4 ${passou ? "opacity-50" : "bg-surface"}`}>
+              <li key={p.id} className={`flex gap-4 px-5 py-4 ${passou ? "opacity-50" : "bg-panel"}`}>
                 <span className="num text-xs text-muted w-16 shrink-0 pt-1 uppercase">
                   {fmtData(p.mes)}
                 </span>
@@ -298,7 +298,7 @@ export default function DadosPage() {
           />
         }
       >
-        <div className="border border-line bg-surface px-5 py-6 text-sm text-ink2 space-y-3">
+        <div className="border border-line bg-panel px-5 py-6 text-sm text-ink2 space-y-3">
           <p>
             O Banco de Portugal publica diariamente o comparador de comissões de
             ~200 instituições, mas só dentro da aplicação web — não há um

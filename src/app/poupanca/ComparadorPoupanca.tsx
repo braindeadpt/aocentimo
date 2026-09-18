@@ -101,7 +101,7 @@ export function ComparadorPoupanca() {
       </div>
 
       <div>
-        <table className="w-full text-sm bg-surface border border-line" aria-live="polite">
+        <table className="w-full text-sm bg-raised border border-line shadow-raised" aria-live="polite">
           <thead>
             <tr className="text-left border-b-2 border-ink">
               <th scope="col" className="px-4 py-2 font-medium">Onde está o dinheiro</th>

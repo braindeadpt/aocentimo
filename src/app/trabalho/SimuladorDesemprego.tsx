@@ -52,7 +52,7 @@ export function SimuladorDesemprego() {
         </p>
       </div>
 
-      <div className="bg-surface border border-line self-start" aria-live="polite">
+      <div className="bg-raised border border-line shadow-raised self-start" aria-live="polite">
         <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
           <span className="kicker">O teu subsídio</span>
           <span className="num text-xs text-muted">65 % da remuneração de referência</span>

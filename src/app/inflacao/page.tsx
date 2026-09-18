@@ -115,7 +115,7 @@ export default function InflacaoPage() {
             ]}
           />
         ) : (
-          <div className="border border-line bg-surface px-5 py-10 text-center text-ink2">
+          <div className="border border-line bg-panel px-5 py-10 text-center text-ink2">
             <p className="num text-2xl">—</p>
             <p className="footnote mt-2">
               Dados ainda não carregados. Corre <code className="num">npm run ingest</code>{" "}

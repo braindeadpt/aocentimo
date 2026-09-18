@@ -32,7 +32,7 @@ export function EuroBar({
           return (
             <div
               key={s.label}
-              className="eurobar-seg relative h-full border-r border-paper last:border-0"
+              className="eurobar-seg relative h-full border-r border-floor last:border-0"
               style={{
                 width: `${w}%`,
                 backgroundColor: s.cor,
@@ -42,7 +42,7 @@ export function EuroBar({
               {w >= 12 && (
                 <span
                   className="num absolute inset-0 flex items-center justify-center text-xs md:text-sm"
-                  style={{ color: "var(--color-paper)" }}
+                  style={{ color: "var(--color-floor)" }}
                 >
                   {fmtPct(s.valor / total, 0)}
                 </span>

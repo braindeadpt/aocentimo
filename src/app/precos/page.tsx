@@ -85,7 +85,7 @@ export default function PrecosPage() {
               {series.map(({ id, nome, serie }) => {
                 const p = serie!.series[serie!.series.length - 1];
                 return (
-                  <div key={id} className="bg-surface px-4 py-4">
+                  <div key={id} className="bg-panel px-4 py-4">
                     <p className="kicker">{nome}</p>
                     <p className="num text-3xl mt-1">{fmtLitro(p.v)}</p>
                     <p className="text-xs text-muted mt-1 flex gap-3">
@@ -107,7 +107,7 @@ export default function PrecosPage() {
             />
           </>
         ) : (
-          <div className="border border-line bg-surface px-5 py-10 text-center">
+          <div className="border border-line bg-panel px-5 py-10 text-center">
             <p className="num text-2xl text-muted">—</p>
             <p className="footnote mt-3 max-w-md mx-auto">
               Dados DGEG indisponíveis — corre{" "}

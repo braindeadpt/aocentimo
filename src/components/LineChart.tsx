@@ -328,13 +328,13 @@ export function LineChart({ series, height = 360, unidade = "" }: Props) {
       {proximos && hoverX !== null && (
         <div
           aria-hidden
-          className="pointer-events-none absolute top-2 z-10 border border-line bg-surface px-3 py-2 text-xs shadow-sm"
+          className="pointer-events-none absolute top-2 z-10 border border-line bg-overlay px-3 py-2 text-xs shadow-overlay"
           style={{
             left: Math.min(Math.max(hoverX - 70, 0), w - 170),
             fontFamily: "var(--font-mono)",
           }}
         >
-          <p className="text-muted">{fmtData(new Date(proximos[0].t).toISOString().slice(0, 10))}</p>
+          <p className="text-ink2">{fmtData(new Date(proximos[0].t).toISOString().slice(0, 10))}</p>
           {proximos.map((p, i) => (
             <p key={i} className="mt-0.5 flex items-center gap-2">
               <span className="inline-block h-2 w-2" style={{ background: dados[i].cor }} />

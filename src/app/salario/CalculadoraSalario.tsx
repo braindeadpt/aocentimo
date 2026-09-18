@@ -276,7 +276,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
       </div>
 
       {/* o ano inteiro */}
-      <div className="md:col-span-2 bg-surface border border-line" aria-live="polite">
+      <div className="md:col-span-2 bg-raised border border-line shadow-raised" aria-live="polite">
         <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
           <span className="kicker">O ano inteiro, a 14 meses</span>
           <span className="num text-xs text-muted">estimativa IRS {ano}</span>

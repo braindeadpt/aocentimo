@@ -42,11 +42,16 @@ export const metadata: Metadata = {
   },
 };
 
-/** Resolve o tema antes da primeira pintura: localStorage → preferência do SO.
+/** Resolve o tema antes da primeira pintura: escolha guardada → escuro.
+ *  ESCURO POR OMISSÃO: o instrumento é a cara do produto.
+ *  prefers-color-scheme não distingue «sem preferência» de «claro» —
+ *  light é o fallback universal dos browsers, não uma escolha. Tratar o
+ *  sinal do SO como escolha escondia o escuro à maioria. Quem prefere
+ *  claro usa o toggle (persistido, visível no topo).
  *  E liga o toggle por delegação de eventos em vanilla JS — funciona mesmo
  *  numa página que nunca hidratou (React morto, cache velha). O React só
  *  sincroniza o rótulo do botão via MutationObserver no data-theme. */
-const themeInit = `(function(){try{var r=document.documentElement;var t=localStorage.getItem("aocentimo-theme");if(!t){t=localStorage.getItem("bruto-theme");if(t)localStorage.setItem("aocentimo-theme",t);}if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";r.dataset.theme=t;}catch(e){}
+const themeInit = `(function(){try{var r=document.documentElement;var t=localStorage.getItem("aocentimo-theme");if(!t){t=localStorage.getItem("bruto-theme");if(t)localStorage.setItem("aocentimo-theme",t);}if(!t)t="dark";r.dataset.theme=t;}catch(e){r.dataset.theme="dark";}
 document.addEventListener("click",function(e){var b=e.target&&e.target.closest?e.target.closest("[data-theme-toggle]"):null;if(!b)return;var root=document.documentElement;var next=root.dataset.theme==="dark"?"light":"dark";if(!matchMedia("(prefers-reduced-motion: reduce)").matches){root.setAttribute("data-theme-anim","");setTimeout(function(){root.removeAttribute("data-theme-anim")},400);}root.dataset.theme=next;try{localStorage.setItem("aocentimo-theme",next);}catch(x){}});})()`;
 
 export default function RootLayout({

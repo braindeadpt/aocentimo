@@ -72,7 +72,7 @@ export default function Home() {
       </section>
 
       {/* o instrumento — adivinha primeiro, depois a escada revela */}
-      <section className="blueprint mt-10 border border-line bg-surface px-5 py-6 md:px-8 md:py-8">
+      <section className="blueprint mt-10 border border-line bg-panel px-5 py-6 md:px-8 md:py-8">
         <div className="flex justify-end">
           <p className="num text-xs text-muted">{h.euroNota}</p>
         </div>
@@ -82,7 +82,7 @@ export default function Home() {
       </section>
 
       {/* quadro do dia — fila de instrumentos */}
-      <section className="mt-16 grid grid-cols-2 border border-line bg-surface md:grid-cols-4">
+      <section className="mt-16 grid grid-cols-2 border border-line bg-panel md:grid-cols-4">
         <div className="border-b border-r border-line px-5 py-5 md:border-b-0">
           <p className="kicker-xs">
             {h.inflacaoHomologa}

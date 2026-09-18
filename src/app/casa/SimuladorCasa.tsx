@@ -89,7 +89,7 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
       </div>
 
       <div className="space-y-8" aria-live="polite">
-        <div className="bg-surface border border-line">
+        <div className="bg-raised border border-line shadow-raised">
           <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
             <span className="kicker">No dia da escritura</span>
             <span className="num text-xs text-muted">impostos + registos</span>
@@ -123,7 +123,7 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
           </dl>
         </div>
 
-        <div className="bg-surface border border-line">
+        <div className="bg-raised border border-line shadow-raised">
           <div className="border-b border-line px-5 py-3">
             <span className="kicker">Todos os meses</span>
           </div>

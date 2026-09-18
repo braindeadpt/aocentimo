@@ -58,7 +58,7 @@ export default function PoupancaPage() {
         title="Certificados de Aforro, Série F"
         source={<Source nome={ca.fonte} vigencia={ca.vigencia} />}
       >
-        <div className="bg-surface border border-line px-5 py-5 grid md:grid-cols-2 gap-6 text-sm">
+        <div className="bg-panel border border-line px-5 py-5 grid md:grid-cols-2 gap-6 text-sm">
           <div>
             <p className="kicker">Taxa bruta (novas subscrições)</p>
             <p className="num text-3xl mt-1">{fmtPct(ca.serieF.taxaBrutaNovasSubscricoes, 2)}</p>

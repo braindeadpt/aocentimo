@@ -16,8 +16,10 @@ export const metadata: Metadata = {
 };
 
 const TOKENS: [string, string, string][] = [
-  ["paper", "bg-paper", "#f2f1ea / #0e0c09 — fundo"],
-  ["surface", "bg-surface", "#faf9f4 / #16130f — painéis"],
+  ["floor", "bg-floor", "#f4f3ec / #0d0b08 — nível 0, fundo"],
+  ["panel", "bg-panel", "#fbfaf6 / #1a1611 — nível 1, conteúdo"],
+  ["raised", "bg-raised", "#fdfcf9 / #251f18 — nível 2, resultado"],
+  ["overlay", "bg-overlay", "#ffffff / #342e20 — nível 3, sobreposição"],
   ["ink", "bg-ink", "#1b1811 / #f2ecdd — tinta"],
   ["ink2", "bg-ink2", "#57534a / #aba28c — secundário"],
   ["muted", "bg-muted", "#6f6a58 / #8f8878 — meta (AA nos dois temas)"],
@@ -36,7 +38,16 @@ const REGRAS = [
   "Verde só para «o teu dinheiro» — nunca decoração nem fundo genérico.",
   "Torrado só como marcador funcional: fonte, citação, anel de foco.",
   "Vermilhão-sinal para tudo o que sai do bolso — legível nos dois temas.",
-  "Dois temas de raiz: claro frio de papel técnico, escuro de instrumento.",
+  "Escuro por omissão — o instrumento é a cara; o claro é o documento.",
+];
+
+const REGRAS_SUPERFICIE = [
+  "Textura só no nível 0: papel milimetrado no claro; no escuro a mesma malha em fósforo esbatido — ecrã de registo, não papel.",
+  "panel, raised e overlay nunca têm textura — a leitura manda.",
+  "O fio de luz de 1px na aresta superior só existe no escuro; no claro é a sombra subtil que eleva.",
+  "overlay não leva texto muted — só ink/ink2. Meta e fontes vivem nos níveis baixos.",
+  "O grão é global — o vidro do instrumento; cobre todos os níveis por igual.",
+  ".blueprint (pontos) não é um nível: é a textura de uma zona de medição, atrás de diagramas.",
 ];
 
 export default function EstiloPage() {
@@ -51,12 +62,13 @@ export default function EstiloPage() {
         Archivo expandido para manchetes, Space Grotesk para a interface,
         Source Serif para a voz editorial, Space Mono para os números.
         Vermilhão-sinal é o que sai, verde é o que fica — e o torrado marca
-        sempre a fonte. Tudo vive em dois temas: claro e escuro.
+        sempre a fonte. Escuro por omissão: o instrumento é a cara do
+        produto; o tema claro é o documento.
       </p>
 
       <section className="mt-10">
         <h2 className="kicker mb-4">Marca — «o cêntimo»</h2>
-        <div className="card flex flex-wrap items-center gap-10 p-8">
+        <div className="border border-line bg-panel flex flex-wrap items-center gap-10 p-8">
           <Logo className="text-2xl sm:text-5xl lg:text-6xl" />
           <LogoMark className="h-16 w-16" />
           <p className="footnote max-w-sm">
@@ -75,7 +87,7 @@ export default function EstiloPage() {
         </p>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {TOKENS.map(([nome, cls, desc]) => (
-            <div key={nome} className="border border-line bg-surface">
+            <div key={nome} className="border border-line bg-panel">
               <div className={`h-14 ${cls}`} />
               <p className="num px-2 py-1.5 text-xs text-ink2">{nome}</p>
               <p className="footnote px-2 pb-2">{desc}</p>
@@ -84,6 +96,50 @@ export default function EstiloPage() {
         </div>
         <ul className="mt-4 space-y-1">
           {REGRAS.map((r) => (
+            <li key={r} className="footnote">
+              <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-mark align-middle" />
+              {r}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="mt-12">
+        <h2 className="kicker mb-4">Superfícies — escala de elevação</h2>
+        <p className="footnote mb-4 max-w-xl">
+          Quatro níveis, um instrumento. No claro a elevação é sombra subtil
+          e a superfície recua; no escuro é luz — luminância crescente na
+          rampa e um fio de 1px na aresta superior. Troca o tema para ver as
+          duas mecânicas.
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="border border-line bg-floor px-4 py-6">
+            <p className="kicker-xs">0 — floor</p>
+            <p className="footnote mt-2">
+              fundo da página · a grelha vive só aqui
+            </p>
+          </div>
+          <div className="border border-line bg-panel px-4 py-6">
+            <p className="kicker-xs">1 — panel</p>
+            <p className="footnote mt-2">
+              bloco de conteúdo · sem textura
+            </p>
+          </div>
+          <div className="border border-line bg-raised px-4 py-6 shadow-raised">
+            <p className="kicker-xs">2 — raised</p>
+            <p className="footnote mt-2">
+              resultado de simulador · o que o instrumento devolve
+            </p>
+          </div>
+          <div className="border border-line bg-overlay px-4 py-6 shadow-overlay">
+            <p className="kicker-xs">3 — overlay</p>
+            <p className="footnote mt-2">
+              menu e tooltip · só ink/ink2, nunca muted
+            </p>
+          </div>
+        </div>
+        <ul className="mt-4 space-y-1">
+          {REGRAS_SUPERFICIE.map((r) => (
             <li key={r} className="footnote">
               <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-mark align-middle" />
               {r}
@@ -136,7 +192,7 @@ export default function EstiloPage() {
       </section>
 
       <section className="mt-12">
-        <h2 className="kicker mb-4">Botões e superfícies</h2>
+        <h2 className="kicker mb-4">Botões e campos</h2>
         <div className="flex flex-wrap items-center gap-4">
           <Link href="/estilo" className="btn btn-primary">
             Acção principal
@@ -144,15 +200,12 @@ export default function EstiloPage() {
           <Link href="/estilo" className="btn">
             Acção secundária
           </Link>
-          <div className="card px-5 py-3 text-sm text-ink2">
-            .card — superfície limpa com hairline
-          </div>
           <input className="field max-w-56" defaultValue="1 500" aria-label="exemplo de campo" />
         </div>
         <p className="footnote mt-3">
           <code className="num">.field</code> é o único campo de formulário —
-          fundo surface, borda line2, foco pelo anel torrado global. Todos os
-          simuladores usam esta classe.
+          chapa de nível 1 com recess (cavidade), borda line2, foco pelo anel
+          torrado global. Todos os simuladores usam esta classe.
         </p>
       </section>
 
@@ -207,7 +260,7 @@ export default function EstiloPage() {
             />
           }
         >
-          <div className="border border-line bg-surface px-5 py-8 text-center text-muted">
+          <div className="border border-line bg-panel px-5 py-8 text-center text-muted">
             conteúdo da figura (gráfico, tabela, calculadora)
           </div>
         </Figure>

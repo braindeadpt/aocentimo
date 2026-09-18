@@ -37,7 +37,7 @@ export function Logo({ className }: LogoProps) {
 /** Marca reduzida — o ¢ desenhado (arco de C + haste verde), para favicon/app icon. */
 export function LogoMark({ className }: LogoProps) {
   const bg = "var(--ink)";
-  const fg = "var(--paper)";
+  const fg = "var(--floor)";
   const keep = "#63D6A4";
   return (
     <svg viewBox="0 0 64 64" role="img" aria-label="AO CÊNTIMO" className={className}>
