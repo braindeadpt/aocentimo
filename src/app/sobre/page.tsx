@@ -8,6 +8,10 @@ export const metadata: Metadata = {
 };
 
 export default function SobrePage() {
+  /* M-19: a sobriedade aqui é a decisão, não a falta dela — uma página
+     sobre quem faz isto e porquê não precisa de instrumentos nem
+     movimento; as promessas a cumprir são os links (repositório e
+     contacto reais) e a voz. */
   return (
     <div className="mx-auto max-w-2xl px-5 pt-14 pb-10">
       <p className="kicker">Sobre</p>

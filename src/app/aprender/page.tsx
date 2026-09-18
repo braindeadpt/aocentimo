@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import Link from "next/link";
 import { GLOSSARIO } from "@/content/glossario";
+import { MicroDemo } from "@/components/MicroDemo";
 import { JsonLd, faqPage } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
@@ -47,6 +48,7 @@ export default function AprenderPage() {
             </h2>
             <div className="body-copy">
               <p>{t.definicao}</p>
+              <MicroDemo slug={t.slug} />
               {t.exemplo && (
                 <p className="footnote mt-2">
                   <span className="text-muted">Exemplo — </span>

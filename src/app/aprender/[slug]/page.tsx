@@ -11,6 +11,7 @@ import {
 } from "@/content/glossario";
 import { JsonLd, definedTerm } from "@/lib/jsonld";
 import { TermoRef } from "@/components/TermoRef";
+import { MicroDemo } from "@/components/MicroDemo";
 
 export const dynamicParams = false;
 
@@ -83,6 +84,7 @@ export default async function TermoPage({
         <p>
           <TextoComTermos texto={t.definicao} excluir={t.slug} />
         </p>
+        <MicroDemo slug={t.slug} />
         {t.exemplo && (
           <p className="footnote mt-3">
             <span className="text-muted">Exemplo — </span>

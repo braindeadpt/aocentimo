@@ -713,3 +713,41 @@ desemprego — quanto e por quanto tempo").
 - e2e: rótulo da nav actualizado ("Desemprego" → "Trabalho").
 
 **Gates** — lint ✓ typecheck ✓ unit ✓ data ✓ build ✓ e2e ✓.
+
+---
+
+## M-19 — /aprender, /metodologia, /sobre: vida que serve a leitura
+
+**O que mudou**
+- `/aprender`: cada um dos 22 termos do glossário ganhou a sua
+  **micro-demonstração** (`MicroDemo` + `content/demos.ts`). Quatro
+  idiomas: `pilha` (segmentos somam ao total — Euribor+spread=TAN, TSU
+  com a fatia patronal *oca*: existe mas não se vê no recibo), `barras`
+  (comparações — marginal vs efetiva, nominal vs real), `vasos` (mini-
+  escalões que enchem por ordem) e `passos` (escada — CA a compor).
+  Valores = os exemplos editoriais do próprio glossário; `role="img"`
+  com `aria-label` completo.
+- A revelação usa o gate `useArmado` (não `animation-timeline: view()`:
+  o view() deixa elementos acima da dobra a meio do progresso — o e2e
+  apanhou e confirmou a regra M-09: nascer visível = nascer impresso).
+  Escalonamento por `--i` (70 ms).
+- `/metodologia`: a tabela cinzenta virou **quadro vivo** — mural de 60
+  azulejos ordenado por urgência (atrasada → no limite → em dia → sem
+  SLA). Novo estado derivado "no limite" (`serieAte == esperadoAte` —
+  33 séries estão lá: o fio onde a próxima publicação decide) com selo
+  hachurado torrado + tinta de fundo. Resumo conta folgas; legenda com
+  os quatro selos. Isto tornou visível que 33/60 séries estão a uma
+  publicação de falhar — o watchdog deixou de ser invisível.
+- `/sobre`: contida por decisão — comentário no código justifica a
+  sobriedade; links do repositório e contacto confirmados contra o
+  remote git real.
+
+**Infra** — `npx serve` morre a meio do e2e nesta máquina (3× esta
+noite); `scripts/_serve-static.mjs` (servidor estático mínimo, 46 linhas)
+aguentou a suite inteira. Candidato a substituir o webServer do
+playwright.config no M-21.
+
+**Screenshots** — `.screenshots/m19-*` (demos + quadro, 1440/375).
+
+**Gates** — lint ✓ typecheck ✓ unit 185 ✓ data 60 ✓ build 58 ✓ e2e
+16/16 ✓.

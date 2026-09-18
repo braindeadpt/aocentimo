@@ -803,6 +803,153 @@ html[data-theme="dark"] .tema-ponto {
   }
 }
 
+/* micro-demonstrações do glossário (M-19) — o conceito desenhado.
+   Pequenas, ao lado da definição; o desenho passa pelo gate de dobra
+   (useArmado): nasce visível, nasce no estado final; abaixo da dobra,
+   revela-se ao entrar no viewport. Reduced-motion/SSR = estado final. */
+.mdemo {
+  max-width: 19rem;
+  margin: 0.9rem 0 0.25rem;
+}
+.md-seg {
+  display: block;
+  background: var(--ink);
+}
+.md-seg-acento {
+  background: var(--accent);
+}
+.md-seg-aviso {
+  background: var(--warn);
+}
+/* oco = o que existe mas não se vê (TSU patronal, isenção, teto) */
+.md-seg-oco {
+  background: transparent;
+  border: 1px dashed var(--line2);
+  box-sizing: border-box;
+}
+.md-pilha-barra {
+  display: flex;
+  gap: 2px;
+  height: 20px;
+}
+.md-pilha-barra .md-seg {
+  height: 100%;
+}
+.md-cap {
+  margin-top: 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  color: var(--ink3);
+}
+.md-barras {
+  display: grid;
+  gap: 7px;
+}
+.md-linha-rotulo {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  color: var(--ink3);
+  margin-bottom: 2px;
+}
+.md-linha-trilho {
+  display: block;
+  height: 12px;
+  background: var(--panel);
+  border: 1px solid var(--line2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.md-linha-trilho .md-seg {
+  height: 100%;
+}
+.md-vasos {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+.md-vaso {
+  flex: 1;
+  max-width: 3.4rem;
+}
+.md-vaso-corpo {
+  display: flex;
+  align-items: flex-end;
+  height: 38px;
+  background: var(--panel);
+  border: 1px solid var(--line2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.md-vaso-taxa {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink3);
+  text-align: center;
+}
+.md-fill {
+  display: block;
+  width: 100%;
+  background: var(--ink);
+}
+.md-passos {
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
+  height: 56px;
+}
+.md-passo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.md-passo .md-seg {
+  width: 100%;
+}
+.md-passo-rotulo {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink3);
+  text-align: center;
+}
+/* as classes animadas só existem quando o useArmado arma — abaixo da
+   dobra, à entrada no viewport; o escalonamento é por --i */
+.md-draw {
+  transform-origin: left;
+  animation: md-desenha-x var(--dur-media) var(--ease-entra) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+.md-grow,
+.md-fill-v {
+  transform-origin: bottom;
+  animation: md-desenha-y var(--dur-media) var(--ease-entra) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+@keyframes md-desenha-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes md-desenha-y {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
 /* escalões-recipiente (/irs) — cada escalão é um tanque que enche com a
    fatia de rendimento que lá cabe; o enchimento é a transição de
    largura (muda de estado → --dur-media, a orquestra do input) */
@@ -1389,6 +1536,64 @@ html[data-theme="dark"] .tema-ponto {
 .serie-estado.sem-sla {
   background: transparent;
   border: 1px solid var(--muted);
+}
+/* no limite — em dia mas sem folga: a próxima publicação decide;
+   hachura torrada, o selo "de fio" do quadro vivo (/metodologia) */
+.serie-estado.no-limite {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--mark) 0 1.5px,
+    transparent 1.5px 3px
+  );
+  border: 1px solid var(--mark);
+}
+
+/* quadro vivo (/metodologia) — mural de azulejos: cada série uma célula,
+   ordenadas por urgência; o cinzento uniforme sai, a margem entra */
+.quadro-vivo {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+@media (min-width: 640px) {
+  .quadro-vivo {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  .quadro-vivo {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.qcell {
+  background: var(--panel);
+  padding: 0.6rem 0.75rem;
+}
+.qcell-id {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  color: var(--ink3);
+  overflow-wrap: anywhere;
+}
+.qcell-meta {
+  margin-top: 3px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink2);
+  font-variant-numeric: tabular-nums;
+}
+/* as células que pedem atenção sobem de tom — o resto fica quieto */
+.qcell-limite {
+  background: color-mix(in srgb, var(--mark) 7%, var(--panel));
+}
+.qcell-atrasada {
+  background: color-mix(in srgb, var(--warn) 9%, var(--panel));
+}
+.qcell-folga {
+  color: var(--muted);
 }
 
 /* spark — micro-série de célula: sem JS/reduced-motion vem já desenhada;

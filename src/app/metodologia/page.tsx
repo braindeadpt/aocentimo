@@ -49,10 +49,68 @@ const FONTES_FIXAS = [
   },
 ];
 
+/** Folga da série em períodos próprios — quanto o `serieAte` já passou
+ *  o `esperadoAte` do SLA. 0 = no limite: a próxima publicação decide. */
+function folgaPeriodos(s: {
+  serieAte: string;
+  esperadoAte: string;
+  frequencia: string;
+}): number | null {
+  if (!s.esperadoAte) return null;
+  if (s.frequencia === "anual") return Number(s.serieAte) - Number(s.esperadoAte);
+  if (s.frequencia === "diaria")
+    return Math.round((Date.parse(s.serieAte) - Date.parse(s.esperadoAte)) / 86_400_000);
+  const [a1, m1] = s.serieAte.split("-").map(Number);
+  const [a2, m2] = s.esperadoAte.split("-").map(Number);
+  const meses = (a1 - a2) * 12 + (m1 - m2);
+  return s.frequencia === "trimestral" ? Math.round(meses / 3) : meses;
+}
+
+const UN_FOLGA: Record<string, [string, string]> = {
+  mensal: ["mês", "meses"],
+  diaria: ["dia", "dias"],
+  anual: ["ano", "anos"],
+  trimestral: ["trimestre", "trimestres"],
+};
+
 export default function MetodologiaPage() {
   const fontes = loadFontes();
   const frescura = loadFreshness();
   const porId = new Map(frescura?.series.map((s) => [s.id, s]) ?? []);
+
+  // mural por urgência: atrasada → no limite → em dia → sem SLA → sem dados
+  const celulas = fontes
+    .map((f) => {
+      const s = porId.get(f.id);
+      const folga = s ? folgaPeriodos(s) : null;
+      const [unS, unP] = UN_FOLGA[s?.frequencia ?? "mensal"];
+      const classe = !s
+        ? "sem-sla"
+        : s.estado === "atrasada"
+          ? "atrasada"
+          : s.estado === "sem-sla"
+            ? "sem-sla"
+            : folga === 0
+              ? "no-limite"
+              : "em-dia";
+      const folgaTxt = !s
+        ? "sem verificação"
+        : s.estado === "atrasada"
+          ? `−${s.atrasoPeriodos} ${s.atrasoPeriodos === 1 ? unS : unP}`
+          : s.estado === "sem-sla"
+            ? "sem SLA"
+            : folga === 0
+              ? "no limite"
+              : `+${folga} ${folga === 1 ? unS : unP}`;
+      const rank = { atrasada: 0, "no-limite": 1, "em-dia": 2, "sem-sla": 3 }[classe];
+      return { id: f.id, fonte: f.fonte, serieAte: f.serieAte, classe, folgaTxt, rank };
+    })
+    .sort((a, b) => a.rank - b.rank || a.id.localeCompare(b.id));
+
+  const nLimite = celulas.filter((c) => c.classe === "no-limite").length;
+  const nAtrasadas = celulas.filter((c) => c.classe === "atrasada").length;
+  const nSemSla = celulas.filter((c) => c.classe === "sem-sla").length;
+  const resumo = `${celulas.length} séries · ${celulas.length - nLimite - nAtrasadas - nSemSla} com folga · ${nLimite} no limite · ${nAtrasadas} atrasadas${nSemSla ? ` · ${nSemSla} sem SLA` : ""}`;
 
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
@@ -90,44 +148,44 @@ export default function MetodologiaPage() {
         {fontes.length === 0 ? (
           <p className="footnote">Pipeline ainda não executada.</p>
         ) : (
-          <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left border-b-2 border-ink">
-                <th scope="col" className="py-2 pr-4 font-medium">Série</th>
-                <th scope="col" className="py-2 pr-4 font-medium">Fonte</th>
-                <th scope="col" className="py-2 pr-4 font-medium">Dados até</th>
-                <th scope="col" className="py-2 pr-4 font-medium">Recolhido</th>
-                <th scope="col" className="py-2 font-medium">Estado</th>
-              </tr>
-            </thead>
-            <tbody className="num text-ink2">
-              {fontes.map((f) => {
-                const s = porId.get(f.id);
-                return (
-                  <tr key={f.id} className="border-b border-line">
-                    <td className="py-2 pr-4">{f.id}</td>
-                    <td className="py-2 pr-4">{f.fonte}</td>
-                    <td className="py-2 pr-4">{fmtData(f.serieAte)}</td>
-                    <td className="py-2 pr-4">{fmtData(f.recolhidoEm.slice(0, 10))}</td>
-                    <td className="py-2">
-                      {!s ? (
-                        <span className="text-muted">—</span>
-                      ) : s.estado === "atrasada" ? (
-                        <span className="text-up">
-                          atrasada {s.atrasoPeriodos} {s.frequencia === "mensal" ? "mês" : "período"}
-                          {s.atrasoPeriodos !== 1 ? "es" : ""} — esperado {fmtData(s.esperadoAte)}
-                        </span>
-                      ) : (
-                        <span className="text-muted">em dia</span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          </div>
+          <>
+            {/* quadro vivo (M-19): a tabela cinzenta de 60 «em dia»
+                torna-se mural — a margem de cada série vê-se, e o que
+                está no fio (serieAte == esperadoAte) sobe para o topo */}
+            <p className="footnote mb-3">
+              <span className="serie-estado em-dia" aria-hidden /> em dia com
+              folga ·{" "}
+              <span className="serie-estado no-limite" aria-hidden /> em dia,
+              no limite ·{" "}
+              <span className="serie-estado atrasada" aria-hidden /> atrasada
+              · <span className="serie-estado sem-sla" aria-hidden /> sem SLA
+            </p>
+            <p className="num text-sm text-ink2 mb-2">
+              {resumo}
+            </p>
+            <ul className="quadro-vivo">
+              {celulas.map((c) => (
+                <li
+                  key={c.id}
+                  className={`qcell ${
+                    c.classe === "atrasada"
+                      ? "qcell-atrasada"
+                      : c.classe === "no-limite"
+                        ? "qcell-limite"
+                        : ""
+                  }`}
+                  title={`${c.id} — ${c.fonte}`}
+                >
+                  <p className="qcell-id">{c.id}</p>
+                  <p className="qcell-meta">
+                    <span className={`serie-estado ${c.classe}`} aria-hidden />
+                    {fmtData(c.serieAte)}
+                    <span className="qcell-folga"> · {c.folgaTxt}</span>
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
         {frescura && (
           <p className="footnote mt-3">
