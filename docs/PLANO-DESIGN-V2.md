@@ -1,5 +1,34 @@
 # PLANO-DESIGN-V2 — AO CÊNTIMO «O Terminal do Salário»
 
+> **Estado: HISTÓRICO — este documento não é contrato de trabalho.**
+>
+> Escrito em 2026-09-17.
+>
+> Decisão central: direção «O Terminal do Salário» — uma cor por credor,
+> radius 0, odometer do euro, talão físico em `/salario`, guess-first na
+> home — precedida de saneamento P0/P1.
+>
+> Executado: as fases D0–D4 correram em 2026-09-17 — saneamento e sistema
+> (`718d62d`), home assinatura (`5970611`), talão e `/dados` (`1e2314f`),
+> view transitions e kinetic type (`5f6e543`). Itens que o corpo lista como
+> por fazer estão hoje feitos — P0.1–P0.3, P0.12, `aria-live` nos
+> simuladores, skip-link, escala kicker, `Delta` neutro,
+> `prefers-reduced-motion` como estado final, SEO/JSON-LD/sitemap — mais o
+> pack de correção posterior e o domínio canónico `aocentimo.pt`
+> (`9725e85`, 2026-09-18). O valor deste documento é esse registo: o que
+> foi planeado e o que sobreviveu ao contacto com o código.
+>
+> Superado por: decisão do dono de 2026-09-17 — «instrumento vivo», escuro
+> por omissão. O talão de `/salario` sobrevive como único artefacto de
+> papel, por decisão expressa.
+>
+> Porquê: a direção consolidou-se de «terminal do salário» — centrado no
+> salário, dois temas — para um instrumento de leitura do dinheiro cujo
+> tema por omissão é o escuro.
+>
+> Direção em vigor: decisão do dono de 2026-09-17; o documento canónico que
+> a regista está a ser escrito.
+
 > Nota de rename: o projeto chamava-se BRUTO na altura deste plano; hoje é AO CÊNTIMO (`aocentimo.js.org`).
 
 Auditoria total de 2026-09-16: 3 agentes (código/UX, tokens/contraste, pesquisa

@@ -1,7 +1,36 @@
 # PLANO MASTER — Literacia Financeira PT
 
-> Documento canónico de planeamento. Estado: **aprovado para desenho, pré-implementação**.
-> Última revisão: 2026-09-16.
+> **Estado: HISTÓRICO — este documento não é contrato de trabalho.**
+>
+> Escrito em 2026-09-16; última alteração em git 2026-09-17.
+> Declaração original, hoje caduca: «Documento canónico de planeamento.
+> Estado: aprovado para desenho, pré-implementação. Última revisão:
+> 2026-09-16.»
+>
+> Decisão central: o plano master do produto — visão, fontes oficiais,
+> arquitetura «dados como código», motores puros e roadmap por fases.
+>
+> Superado por: decisão do dono de 2026-09-17 — direção escuro-por-omissão
+> «instrumento vivo», que substitui o §9 («light-first papel»); e pelo
+> código real, que revogou partes dos §§4–7 — o hosting é export estático
+> (`output: "export"`, não Vercel/ISR), os gráficos são SVG à medida (não
+> ECharts), o glossário é TS tipado (não MDX), as strings vivem em
+> `messages/pt.json` via `src/lib/messages.ts` (não next-intl) e as rotas
+> reais incluem `/casa`, `/irs`, `/trabalho` e `/dados`, que aqui não
+> existem.
+>
+> Porquê: o entendimento do produto passou de «observatório documental em
+> papel» para «instrumento vivo de leitura do próprio dinheiro» — e a stack
+> executada divergiu da planeada em pontos que este texto continua a
+> afirmar.
+>
+> O que permanece verdade: a regra nº1, os princípios de produto (§2), as
+> fontes oficiais (§5), o modelo de dados (§6) e os motores puros (§8)
+> descrevem o sistema construído — lêem-se como registo, não como contrato.
+>
+> Direção em vigor: decisão do dono de 2026-09-17 — escuro por omissão,
+> «instrumento vivo»; o talão de `/salario` é o único artefacto de papel.
+> O documento canónico que a regista está a ser escrito.
 
 ---
 

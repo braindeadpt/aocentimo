@@ -1,5 +1,30 @@
 # PLANO — REDESIGN TOTAL (era: BRUTO)
 
+> **Estado: HISTÓRICO — este documento não é contrato de trabalho.**
+>
+> Escrito em 2026-09-16; última alteração em git 2026-09-17.
+> A nota de rename e o estado «em execução» no corpo refletem a data de
+> escrita — o nome BRUTO, a direção «A Conta» e o domínio `aocentimo.js.org`
+> já não são vigentes (canónico: `aocentimo.pt`).
+>
+> Decisão central: redesign total sob o nome BRUTO com a direção visual
+> «C — A Conta» (papel areia, oxblood, verde-pinheiro) e as decisões
+> estruturais que ainda regem o repo — gráficos SVG à medida, export
+> estático, zero analytics/cookies, pipeline de dados com watchdog de
+> frescura.
+>
+> Superado por: `PLANO-DESIGN-V2.md` (2026-09-17), que substituiu a direção
+> «A Conta» após auditoria visual; pelo rebrand BRUTO → AO CÊNTIMO (commit
+> `3dbe581`, 2026-09-17); e, em definitivo, pela decisão do dono de
+> 2026-09-17 — escuro por omissão, «instrumento vivo».
+>
+> Porquê: «A Conta» executada foi auditada e lida como template «feito por
+> IA» (diagnóstico no §0 do PLANO-DESIGN-V2); e o nome BRUTO, preso ao
+> salário, deixou de cobrir o âmbito do produto quando este alargou.
+>
+> Direção em vigor: decisão do dono de 2026-09-17; o documento canónico que
+> a regista está a ser escrito.
+
 > Nota de rename: o projeto chamava-se BRUTO na altura deste plano; hoje é AO CÊNTIMO (`aocentimo.js.org`).
 
 v0.2 · 2026-09-16 · Estado: **em execução** — Fase 0 ✓ · Fase 1 ✓ ·
