@@ -9,7 +9,7 @@ export default defineConfig({
   webServer: {
     // o site é export estático (output: "export") — testa-se o out/
     // tal como o GitHub Pages o serve, não `next start`
-    command: "npm run build && npx serve out -l 3100",
+    command: "npm run build && node scripts/_serve-static.mjs",
     url: "http://localhost:3100",
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
