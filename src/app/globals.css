@@ -838,6 +838,60 @@ html[data-theme="dark"] .tema-ponto {
     right: 0.7rem;
   }
 }
+/* reimpressão do recibo (M-11) — quando os valores mudam, o <dl>
+   remonta-se e cada linha imprime de cima para baixo, escalonada por
+   --stagger, como uma impressora térmica. O estado final é o defeito:
+   sem JS/reduced-motion o recibo nasce impresso */
+.talao-linha {
+  animation: talao-imprime var(--dur-curta) var(--ease-entra) both;
+  animation-delay: calc(var(--linha, 0) * var(--stagger));
+}
+@keyframes talao-imprime {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+}
+/* carimbo RETIDO — marca cada linha cortada; cai depois da linha
+   imprimir (o snap do acto físico), rodado como tinta de borracha */
+.talao-retido {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0 0.3rem;
+  border: 1.5px solid rgba(157, 42, 13, 0.8);
+  border-radius: 2px;
+  color: rgba(157, 42, 13, 0.85);
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transform: rotate(-3deg);
+  animation: talao-carimbo var(--dur-micro) var(--ease-rasgo) both;
+  animation-delay: calc(var(--linha, 0) * var(--stagger) + 220ms);
+}
+@keyframes talao-carimbo {
+  from {
+    opacity: 0;
+    transform: rotate(-8deg) scale(1.5);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-3deg) scale(1);
+  }
+}
+/* fita em variante compacta — o mesmo artefacto, mais estreito: nas
+   páginas de simulador é peça de apoio, não a hero da home */
+.fita-compacta {
+  max-width: 36rem;
+  margin-inline: auto;
+}
+.fita-compacta .chart-readout {
+  font-size: 0.95rem;
+}
+
 /* código de barras — duas camadas de riscas sobrepostas */
 .talao-barras {
   height: 34px;

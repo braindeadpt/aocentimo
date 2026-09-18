@@ -2,10 +2,10 @@
 
 import { useMemo, useState } from "react";
 import { simularSalario } from "@/lib/engines/irs";
-import { TSU_ENTIDADE } from "@/lib/engines/seg-social";
+import { TSU_ENTIDADE, TSU_TRABALHADOR } from "@/lib/engines/seg-social";
 import { reciboMensal, FormaPagamentoSA } from "@/lib/engines/recibo";
 import { SituacaoRetencao } from "@/lib/engines/retencao";
-import { EuroBar } from "@/components/EuroBar";
+import { FitaTalao } from "@/components/FitaTalao";
 import { TweenNum } from "@/components/TweenNum";
 import { SITE_URL } from "@/lib/site";
 import { Cascata } from "@/components/Cascata";
@@ -63,6 +63,34 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
   }, [bruto, conjuge, situacao, dependentes, ano]);
 
   const limiteSA = sa.isentoPorDia[formaSA];
+
+  // reimpressão: dados novos = recibo novo — o <dl> remonta-se e cada
+  // linha imprime escalonada (talao-linha + --linha); o contador repõe-se
+  // a cada render para as linhas ficarem sequenciais mesmo quando a
+  // linha do subsídio não existe
+  const reciboKey = [
+    recibo.bruto,
+    recibo.saTotal,
+    recibo.ss,
+    recibo.retencao,
+    recibo.liquido,
+    recibo.custoEmpresa,
+  ].join("-");
+  let linha = -1;
+  const prox = () => ++linha;
+
+  // a outra metade da história — a fita liga o recibo ao custo total:
+  // o talão mostra o que tu vês; a fita mostra o que a empresa paga
+  const medidasFita = {
+    custo: recibo.custoEmpresa,
+    tsu: recibo.custoEmpresa - recibo.bruto - recibo.saTotal,
+    irs: recibo.retencao,
+    ss: recibo.ss,
+    liquido: recibo.liquido,
+    estado: recibo.custoEmpresa - recibo.liquido,
+    taxaTsu: TSU_ENTIDADE,
+    taxaSs: TSU_TRABALHADOR,
+  };
 
   return (
     <div className="grid md:grid-cols-[1fr_1.2fr] gap-10">
@@ -191,79 +219,117 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
         </p>
       </div>
 
-      {/* output — o talão físico: papel que não muda com o tema */}
-      {/* o talão é o resultado — pegajoso como os outros painéis */}
-      <div className="talao-wrap self-start md:sticky md:top-6" aria-live="polite">
-        <div className="talao">
-          <span className="carimbo">simulação</span>
-          <div className="talao-face px-6 pb-5 pt-7">
-            <p className="talao-head text-center">
-              Recibo de vencimento
-            </p>
-            <p className="talao-sub mt-1 text-center talao-dim">
-              * * * simulado * * *
-            </p>
-            <dl className="talao-body mt-4">
-              <div className="talao-sep flex justify-between gap-4 py-1.5">
-                <dt className="talao-dim">SALÁRIO BRUTO</dt>
-                <dd>{fmtEUR(recibo.bruto)}</dd>
-              </div>
-              {recibo.saTotal > 0 && (
-                <div className="talao-sep flex justify-between gap-4 py-1.5">
-                  <dt className="talao-dim">
-                    SUBS. ALIMENTAÇÃO
-                    {recibo.saTributavel > 0 && (
-                      <span className="talao-note block">
-                        {fmtEUR(recibo.saTributavel)} TRIBUTÁVEIS
-                      </span>
-                    )}
-                  </dt>
-                  <dd>{fmtEUR(recibo.saTotal)}</dd>
-                </div>
-              )}
-              <div className="talao-sep flex justify-between gap-4 py-1.5">
-                <dt className="talao-dim">SEG. SOCIAL 11%</dt>
-                <dd>{fmtEUR(recibo.ss)} −</dd>
-              </div>
-              <div className="talao-sep flex justify-between gap-4 py-1.5">
-                <dt className="talao-dim">
-                  IRS RETIDO
-                  <span className="talao-note block">
-                    TAXA EFETIVA {fmtPct(recibo.taxaEfetiva)}
-                    {anoJovem > 0 && ` · JOVEM ${anoJovem}.º ANO`}
-                  </span>
-                </dt>
-                <dd>{fmtEUR(recibo.retencao)} −</dd>
-              </div>
-              <div className="talao-cut mt-1 flex items-baseline justify-between gap-4 py-3">
-                <dt className="talao-total">
-                  Líquido no fim do mês
-                </dt>
-                <dd className="text-4xl font-bold">
-                  <TweenNum
-                    valor={recibo.liquido}
-                    casas={2}
-                    texto={fmtEUR(recibo.liquido)}
-                    sufixo=" €"
-                  />
-                </dd>
-              </div>
-              <div className="talao-sep flex justify-between gap-4 py-1.5">
-                <dt className="talao-dim">CUSTO TOTAL P/ A EMPRESA</dt>
-                <dd className="talao-dim">{fmtEUR(recibo.custoEmpresa)}/mês</dd>
-              </div>
-            </dl>
-            <div className="talao-barras mt-5" aria-hidden />
-            <p className="talao-meta mt-2 flex justify-between talao-dim">
-              <span>TABELA {recibo.tabela} · {ano}</span>
-              <span>{new URL(SITE_URL).host.toUpperCase()}</span>
-            </p>
-          </div>
+      {/* output — a resposta primeiro: o líquido domina e transita;
+          o talão é o artefacto que prova a conta — remonta-se e
+          reimprime linha a linha a cada mudança, com o carimbo RETIDO
+          a cair sobre cada linha cortada (M-11) */}
+      <div>
+        <div className="border-b-2 border-ink pb-4">
+          <p className="kicker-xs">Líquido no fim do mês</p>
+          <p className="num-hero mt-1">
+            <TweenNum
+              valor={recibo.liquido}
+              casas={2}
+              texto={fmtEUR(recibo.liquido)}
+              sufixo=" €"
+            />
+          </p>
+          <p className="footnote mt-1">
+            de {fmtEUR(recibo.bruto + recibo.saTotal)} brutos por mês — o
+            recibo em baixo, o custo total na fita
+          </p>
         </div>
-        <p className="footnote mt-6">
-          A retenção é um adiantamento — o IRS certo acerta-se na liquidação
-          anual. Subsídios de férias e de Natal retêm em separado.
-        </p>
+        <div className="talao-wrap mt-6 self-start md:sticky md:top-6">
+          <div className="talao">
+            <span className="carimbo">simulação</span>
+            <div className="talao-face px-6 pb-5 pt-7">
+              <p className="talao-head text-center">
+                Recibo de vencimento
+              </p>
+              <p className="talao-sub mt-1 text-center talao-dim">
+                * * * simulado * * *
+              </p>
+              <dl key={reciboKey} className="talao-body mt-4">
+                <div
+                  className="talao-linha talao-sep flex justify-between gap-4 py-1.5"
+                  style={{ "--linha": prox() } as React.CSSProperties}
+                >
+                  <dt className="talao-dim">SALÁRIO BRUTO</dt>
+                  <dd>{fmtEUR(recibo.bruto)}</dd>
+                </div>
+                {recibo.saTotal > 0 && (
+                  <div
+                    className="talao-linha talao-sep flex justify-between gap-4 py-1.5"
+                    style={{ "--linha": prox() } as React.CSSProperties}
+                  >
+                    <dt className="talao-dim">
+                      SUBS. ALIMENTAÇÃO
+                      {recibo.saTributavel > 0 && (
+                        <span className="talao-note block">
+                          {fmtEUR(recibo.saTributavel)} TRIBUTÁVEIS
+                        </span>
+                      )}
+                    </dt>
+                    <dd>{fmtEUR(recibo.saTotal)}</dd>
+                  </div>
+                )}
+                <div
+                  className="talao-linha talao-sep flex justify-between gap-4 py-1.5"
+                  style={{ "--linha": prox() } as React.CSSProperties}
+                >
+                  <dt className="talao-dim">SEG. SOCIAL 11%</dt>
+                  <dd>
+                    {fmtEUR(recibo.ss)} −
+                    <span className="talao-retido" aria-hidden>Retido</span>
+                  </dd>
+                </div>
+                <div
+                  className="talao-linha talao-sep flex justify-between gap-4 py-1.5"
+                  style={{ "--linha": prox() } as React.CSSProperties}
+                >
+                  <dt className="talao-dim">
+                    IRS RETIDO
+                    <span className="talao-note block">
+                      TAXA EFETIVA {fmtPct(recibo.taxaEfetiva)}
+                      {anoJovem > 0 && ` · JOVEM ${anoJovem}.º ANO`}
+                    </span>
+                  </dt>
+                  <dd>
+                    {fmtEUR(recibo.retencao)} −
+                    <span className="talao-retido" aria-hidden>Retido</span>
+                  </dd>
+                </div>
+                <div
+                  className="talao-linha talao-cut mt-1 flex items-baseline justify-between gap-4 py-3"
+                  style={{ "--linha": prox() } as React.CSSProperties}
+                >
+                  <dt className="talao-total">
+                    Líquido no fim do mês
+                  </dt>
+                  <dd className="text-4xl font-bold">
+                    {fmtEUR(recibo.liquido)}
+                  </dd>
+                </div>
+                <div
+                  className="talao-linha talao-sep flex justify-between gap-4 py-1.5"
+                  style={{ "--linha": prox() } as React.CSSProperties}
+                >
+                  <dt className="talao-dim">CUSTO TOTAL P/ A EMPRESA</dt>
+                  <dd className="talao-dim">{fmtEUR(recibo.custoEmpresa)}/mês</dd>
+                </div>
+              </dl>
+              <div className="talao-barras mt-5" aria-hidden />
+              <p className="talao-meta mt-2 flex justify-between talao-dim">
+                <span>TABELA {recibo.tabela} · {ano}</span>
+                <span>{new URL(SITE_URL).host.toUpperCase()}</span>
+              </p>
+            </div>
+          </div>
+          <p className="footnote mt-6">
+            A retenção é um adiantamento — o IRS certo acerta-se na liquidação
+            anual. Subsídios de férias e de Natal retêm em separado.
+          </p>
+        </div>
       </div>
 
       {/* a cascata — explica-me o recibo */}
@@ -344,24 +410,15 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
         </p>
       </div>
 
-      {/* a barra do euro — sobre o custo total para a empresa */}
+      {/* a outra metade da história — o recibo conta o que tu vês; a
+          fita liga-o ao custo total que a empresa paga (M-11). A mesma
+          história do EuroBar, no artefacto-assinatura, em variante
+          compacta — aqui a fita é peça de apoio, não a hero da home */}
       <div className="md:col-span-2">
         <p className="kicker-sm mb-3">
-          O custo total da empresa, partido em fatias
+          O que o recibo não mostra — o custo total para a empresa
         </p>
-        <EuroBar
-          total={resultado.custoEmpresaAnual}
-          segmentos={[
-            { label: "Fica contigo", valor: resultado.liquidoAnual, cor: "var(--color-keep)" },
-            { label: "IRS", valor: resultado.irsAnual, cor: "var(--color-accent)" },
-            { label: "A tua SS (11 %)", valor: resultado.ssAnual, cor: "var(--color-accent-ink)" },
-            {
-              label: `TSU da empresa (${fmtPct(TSU_ENTIDADE, 2)})`,
-              valor: resultado.brutoAnualTotal * TSU_ENTIDADE,
-              cor: "var(--color-ink2)",
-            },
-          ]}
-        />
+        <FitaTalao compacta medidas={medidasFita} />
       </div>
     </div>
   );

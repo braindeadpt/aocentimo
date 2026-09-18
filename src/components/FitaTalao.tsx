@@ -53,11 +53,15 @@ export function FitaTalao({
   className,
   destaque,
   medidas,
+  compacta = false,
 }: {
   className?: string;
   /** índice da parada em foco no scrolly; as outras recuam */
   destaque?: number | null;
   medidas: MedidasEuro;
+  /** variante de apoio — mais estreita; nas páginas de simulador a fita
+      é peça de contexto, não a hero da home (M-11) */
+  compacta?: boolean;
 }) {
   const { custo, tsu, irs, ss, liquido, estado, taxaTsu, taxaSs } = medidas;
   const [hover, setHover] = useState<number | "estado" | null>(null);
@@ -142,7 +146,7 @@ export function FitaTalao({
   );
 
   return (
-    <div className={className}>
+    <div className={`${compacta ? "fita-compacta " : ""}${className ?? ""}`}>
       <PapelDefs />
 
       {/* equivalente tabular — a viagem do euro em texto */}

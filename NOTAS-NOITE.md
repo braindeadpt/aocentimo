@@ -447,3 +447,27 @@ e2e 16/16 ✓ (teste novo incluído).
 **Screenshots** — `.screenshots/m10/` {home,instrumento}×{1440,375}.
 
 **Gates** — lint ✓ typecheck ✓ unit 178 ✓ data ✓ build 58 ✓ e2e 16/16 ✓.
+
+## M-11 — /salario: resposta primeiro, talão que se reimprime
+
+- Entrada por pergunta: H1 "Quanto vais receber mesmo?" — "Módulo 01"
+  e o kicker genérico fora. O lead explica os três cortes antes dos
+  inputs.
+- Herói `num-hero` (TweenNum, --dur-curta) acima do artefacto: o
+  líquido lê-se antes e independentemente do talão — o valor muda já,
+  a forma é que transita.
+- Talão reimprime linha a linha a cada mudança de input: remount por
+  `reciboKey`, cada linha `talao-linha` entra com `talao-imprime`
+  (--dur-curta, stagger --linha) — papel, não fade.
+- Carimbo `RETIDO` (talao-retido, --dur-micro + ease-rasgo, rotação
+  física) apenas nas linhas cortadas: Seg. Social e IRS.
+- EuroBar → `FitaTalao compacta` (.fita-compacta): a outra metade da
+  história (custo total para a empresa) com o mesmo artefacto da home,
+  em escala menor — um sistema, não dois artefactos parecidos.
+- Reduced-motion: estados base = impressos; o kill universal cobre as
+  classes novas sem CSS extra (verificado no teste 11).
+- Fonte oficial (Retenção/escalões/TSU) permanece no rodapé do quadro.
+
+**Screenshots** — `.screenshots/m11/` {topo,reimprime,fita}×{1440,375}.
+
+**Gates** — lint ✓ typecheck ✓ unit 178 ✓ data ✓ build 58 ✓ e2e 16/16 ✓.

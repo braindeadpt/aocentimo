@@ -27,9 +27,8 @@ export default function SalarioPage() {
           "Do salário bruto ao líquido em Portugal: Segurança Social, retenção de IRS, deduções e o custo total para a empresa."
         )}
       />
-      <p className="kicker">Módulo 01</p>
-      <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
-        Do bruto ao líquido
+      <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide uppercase">
+        Quanto vais receber mesmo?
       </h1>
       <p className="lede mt-5">
         Entre o que a empresa paga e o que tu recebes há três cortes: a tua
