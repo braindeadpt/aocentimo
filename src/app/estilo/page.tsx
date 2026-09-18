@@ -12,6 +12,10 @@ import { MotionDemo } from "./MotionDemo";
 import { PapelDefs } from "@/components/Papel";
 import { PecaPapel } from "@/components/PecaPapel";
 import { arestaRasgada } from "@/lib/materia";
+import eur1m from "@data/sources/bpstat/euribor-1m-mensal.json";
+import eur3m from "@data/sources/bpstat/euribor-3m-mensal.json";
+import eur6m from "@data/sources/bpstat/euribor-6m-mensal.json";
+import eur12m from "@data/sources/bpstat/euribor-12m-mensal.json";
 
 export const metadata: Metadata = {
   title: "Sistema de design",
@@ -19,6 +23,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/estilo", types: ALT_FEED },
   // indexável de propósito: é peça de portefólio, ligada do rodapé
 };
+
+// Euribor por prazo — cauda real de 24 meses para a comparação de rampas
+const EURIBOR = [eur1m, eur3m, eur6m, eur12m].map((s) =>
+  s.series.slice(-24)
+);
 
 const TOKENS: [string, string, string][] = [
   ["floor", "bg-floor", "#f4f3ec / #0d0b08 — nível 0, fundo"],
@@ -37,6 +46,10 @@ const TOKENS: [string, string, string][] = [
   ["warn", "bg-warn", "#a3720a / #f0c468 — aviso"],
   ["up", "bg-up", "#b03016 / #ff6133 — sobe (mau em preços)"],
   ["down", "bg-down", "#1f6b4d / #63d6a4 — desce (bom em preços)"],
+  ["papel-sai", "bg-papel-sai", "#f0d5c6 — papel avermelhado, o troço arrancado (fixo nos dois temas)"],
+  ["papel-sai-tinta", "bg-papel-sai-tinta", "#7a2a10 — a tinta desse papel (6,9:1)"],
+  ["papel-fica", "bg-papel-fica", "#dcead4 — papel esverdeado, o que é teu (fixo)"],
+  ["papel-fica-tinta", "bg-papel-fica-tinta", "#1d4f31 — a tinta desse papel (7,6:1)"],
 ];
 
 const REGRAS = [
@@ -112,36 +125,64 @@ export default function EstiloPage() {
         </ul>
 
         <div className="mt-8 grid gap-4 md:grid-cols-2">
-          <div className="border border-line bg-panel px-5 py-4">
-            <p className="kicker mb-3">Rampa sequencial — um só matiz</p>
-            <svg viewBox="0 0 300 90" className="block w-full" aria-hidden>
-              {[0, 1, 2, 3].map((i) => (
-                <polyline
-                  key={i}
-                  fill="none"
-                  stroke={`var(--color-seq-${i + 1})`}
-                  strokeWidth={2.5}
-                  points={Array.from({ length: 13 }, (_, j) => {
-                    const x = 8 + j * 24;
-                    const y = 14 + i * 14 + Math.sin(j * 0.9 + i * 0.7) * 5;
-                    return `${x},${y}`;
-                  }).join(" ")}
-                />
-              ))}
-            </svg>
-            <div className="mt-1 flex justify-between">
-              {[1, 2, 3, 4].map((i) => (
-                <span key={i} className="num flex items-center gap-1.5 text-xs text-muted">
-                  <span aria-hidden className="inline-block size-2.5" style={{ background: `var(--color-seq-${i})` }} />
-                  seq-{i}
-                </span>
+          <div className="border border-line bg-panel px-5 py-4 md:col-span-2">
+            <p className="kicker mb-1">Rampa sequencial — duas opções, escolha do dono</p>
+            <p className="footnote mb-4 max-w-xl">
+              As Euribor reais (1M→12M, últimos 24 meses, mesma escala)
+              desenhadas pelas duas rampas candidatas. A decisão fica
+              registada em NOTAS-NOITE — os rácios AA e a leitura em
+              daltonismo estão lá medidos.
+            </p>
+            <div className="grid gap-4 md:grid-cols-2">
+              {(["seq", "seqb"] as const).map((rampa, ri) => (
+                <div key={rampa} className="border border-line px-4 py-3">
+                  <p className="kicker-xs">
+                    {ri === 0 ? "A — azul-aço (actual)" : "B — âmbar escurecido (proposta)"}
+                  </p>
+                  <svg viewBox="0 0 300 110" className="mt-2 block w-full" aria-hidden>
+                    {EURIBOR.map((serie, i) => {
+                      const vs = EURIBOR.flat().map((p) => p.v);
+                      const mn = Math.min(...vs);
+                      const mx = Math.max(...vs);
+                      const span = mx - mn || 1;
+                      return (
+                        <polyline
+                          key={i}
+                          fill="none"
+                          stroke={`var(--color-${rampa}-${i + 1})`}
+                          strokeWidth={2.5}
+                          strokeLinejoin="round"
+                          points={serie
+                            .map((p, j) => {
+                              const x = 6 + (j / (serie.length - 1)) * 288;
+                              const y = 100 - ((p.v - mn) / span) * 88;
+                              return `${x.toFixed(1)},${y.toFixed(1)}`;
+                            })
+                            .join(" ")}
+                        />
+                      );
+                    })}
+                  </svg>
+                  <div className="mt-1 flex justify-between">
+                    {["1M", "3M", "6M", "12M"].map((k, i) => (
+                      <span key={k} className="num flex items-center gap-1.5 text-xs text-muted">
+                        <span aria-hidden className="inline-block size-2.5" style={{ background: `var(--color-${rampa}-${i + 1})` }} />
+                        {k}
+                      </span>
+                    ))}
+                  </div>
+                  <p className="footnote mt-2">
+                    {ri === 0
+                      ? "Único matiz fora da identidade quente. No claro, os degraus 3–4 caem abaixo de 3:1 no painel."
+                      : "Da família do torrado — a mesma tinta da evidência. Os 4 degraus passam 3:1 nos dois temas; colide em matiz com o mark (fonte/foco)."}
+                  </p>
+                </div>
               ))}
             </div>
             <p className="footnote mt-3">
               Euribor por prazo, escalões de IRS, anos do IRS Jovem — famílias
-              ordenadas. Azul-aço (~215°), longe do vermelhão e do verde. Os
-              degraus separam-se por luminância: a ordem lê-se em
-              deuteranopia e protanopia porque não depende do matiz.
+              ordenadas. Os degraus separam-se por luminância: a ordem lê-se
+              em deuteranopia e protanopia porque não depende do matiz.
             </p>
           </div>
           <div className="border border-line bg-panel px-5 py-4">

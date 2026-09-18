@@ -52,6 +52,24 @@
   --keep-t: color-mix(in srgb, var(--keep) 14%, transparent);
   --mark-t: color-mix(in srgb, var(--mark) 16%, transparent);
 
+  /* papel da família do talão — FIXO nos dois temas: o objecto físico
+     não muda quando apagas a luz. sai = papel avermelhado do troço
+     arrancado; fica = papel esverdeado do que é teu. Cada papel tem o
+     seu par de tinta, AA verificado (NOTAS-NOITE M-04). */
+  --papel-sai: #f0d5c6;
+  --papel-sai-tinta: #7a2a10;
+  --papel-fica: #dcead4;
+  --papel-fica-tinta: #1d4f31;
+
+  /* rampa sequencial — OPÇÃO B em avaliação (M-04): âmbar escurecido,
+     da família do torrado da identidade. As duas opções estão lado a
+     lado em /estilo com dados reais, à espera da escolha do dono —
+     --seq-* (azul-aço) continua a ser a rampa activa até lá. */
+  --seqb-1: #6d4e0b;
+  --seqb-2: #8a6210;
+  --seqb-3: #a67c1e;
+  --seqb-4: #b08a24;
+
   /* rampa neutra de data-ink — séries de contexto recuam por ela */
   --dink-1: var(--ink);
   --dink-2: var(--ink2);
@@ -132,6 +150,12 @@
   --seq-3: #5b8ab0;
   --seq-4: #466e8f;
 
+  /* opção B no escuro — mesma inversão */
+  --seqb-1: #f0c468;
+  --seqb-2: #c99934;
+  --seqb-3: #a8842a;
+  --seqb-4: #7d6420;
+
   --accent-t: color-mix(in srgb, var(--accent) 18%, transparent);
   --keep-t: color-mix(in srgb, var(--keep) 16%, transparent);
   --mark-t: color-mix(in srgb, var(--mark) 18%, transparent);
@@ -177,6 +201,14 @@
   --color-seq-2: var(--seq-2);
   --color-seq-3: var(--seq-3);
   --color-seq-4: var(--seq-4);
+  --color-papel-sai: var(--papel-sai);
+  --color-papel-sai-tinta: var(--papel-sai-tinta);
+  --color-papel-fica: var(--papel-fica);
+  --color-papel-fica-tinta: var(--papel-fica-tinta);
+  --color-seqb-1: var(--seqb-1);
+  --color-seqb-2: var(--seqb-2);
+  --color-seqb-3: var(--seqb-3);
+  --color-seqb-4: var(--seqb-4);
   --color-accent-t: var(--accent-t);
   --color-keep-t: var(--keep-t);
   --color-mark-t: var(--mark-t);

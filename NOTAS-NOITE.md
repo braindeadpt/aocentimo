@@ -135,3 +135,55 @@ processo sozinho e é estável — não arrancar `serve` à mão antes do
 **Copy a rever** — nenhuma.
 
 **Screenshots** — `.screenshots/M-03/depois-salario-*`.
+
+---
+
+## M-04 · tokens de papel + rampa sequencial (duas opções)
+
+**Entregue**
+
+- Quatro papéis físicos fixos nos dois temas (o objecto não muda com o
+  dark mode): `--talao-paper`/`--talao-ink` (já existiam, subidos a
+  `:root` no M-01), `--papel-sai`/`--papel-sai-tinta` (rosa torrado —
+  o que sai), `--papel-fica`/`--papel-fica-tinta` (verde seco — o que
+  fica). Aliases `--color-*` no `@theme inline` para utilitários.
+- Alternativa sequencial `--seqb-1..4` (âmbar torrado ~42°) nos dois
+  temas, lado a lado com a rampa activa `--seq-1..4` (azul-aço ~215°)
+  em `/estilo`, aplicada a dados REAIS: Euribor 1M/3M/6M/12M, últimos
+  24 meses BPstat, escala partilhada.
+- `scripts/_cores.mjs` (temporário, não commitado) mede os tokens
+  directamente do `globals.css` — rácios WCAG + simulação Machado 2009
+  de deuteranopia/protanopia.
+
+**Rácios medidos (tokens finais)**
+
+- Tinta sobre papel (texto, AA ≥ 4.5):
+  talao-ink **13.61**, papel-sai-tinta **6.94**, papel-fica-tinta **7.57**.
+- Limite papel vs chão (fronteira de objecto, ≥3 ideal):
+  papel-sai claro **1.26** / escuro **14.07**;
+  papel-fica claro **1.13** / escuro **15.69**.
+  No tema claro o papel quente quase se funde com o chão — a separação
+  fica a cargo da borda/sombra (decisão assumida: o talão real também
+  não grita contra a mesa).
+- Linha gráfica vs painel (≥3 ideal para componente de gráfico):
+  - seq-A claro: 6.41 | 4.14 | **2.69** | **1.93** (degraus 3-4 falham)
+  - seq-A escuro: 12.19 | 8.14 | 4.89 | 3.33
+  - seq-B claro: 7.33 | 5.24 | 3.64 | 3.09 — **todos ≥3**
+  - seq-B escuro: 10.97 | 6.93 | 5.14 | 3.18 — **todos ≥3**
+- Daltonismo (Machado 2009, severidade 1.0): ambas as rampas mantêm
+  ordenação monótona de luminância em deuteranopia E protanopia, nos
+  dois temas.
+
+**DECISÃO PENDENTE (dono)** — a rampa âmbar é estritamente melhor em
+contraste gráfico (passa 3:1 nos 8 casos; a azul falha 2). O azul-aço
+está mais longe do vermelhão semântico e do verde keep; o âmbar aproxima
+-se da família `--mark`/torrado mas não colide (`--mark` é #a07c17,
+entre seqb-3 e seqb-4 — convém verificar uso conjunto se for adoptada).
+`--seq-*` continua activa até o dono escolher; `/estilo` mostra as duas
+com os números.
+
+**Copy a rever** — texto da comparação de rampas em `/estilo`
+("a decisão não é minha…").
+
+**Screenshots** — `.screenshots/m04/depois-estilo-*` ×{dark,light}×
+{1440,375}.
