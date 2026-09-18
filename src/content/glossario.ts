@@ -150,3 +150,95 @@ export const GLOSSARIO: Termo[] = [
     exemplo: "1 200 € em 2020 valem ~1 440 € hoje; se agora ganhas 1 400 €, perdeste poder de compra.",
   },
 ];
+
+/* ————— modelo de conteúdo —————
+ * Decisão (B-2, 2026-09-18): o glossário fica em TS tipado, não MDX nem
+ * JSON+renderer. Com output:"export" o TS compila para o build na mesma,
+ * passa no typecheck de graça e faz diff limpo em git; não há hoje um
+ * artigo longo que justifique o custo de um pipeline MDX. Quando houver,
+ * o modelo aceita campos novos (ex.: seccoes) sem mudar a estrutura —
+ * MDX reavalia-se nessa altura.
+ *
+ * As relações entre termos NÃO são escritas à mão: derivam de menções
+ * literais nos textos (MENCOES = as formas como cada conceito aparece
+ * escrito). Relação inventada seria dado inventado — regra nº1. */
+
+/** Formas superficiais de cada termo em texto corrido. Só reconhece
+ *  menções literais ao conceito — inclui o nome do índice/conceito
+ *  quando o glossário tem um único termo para ele (IRS → escalão,
+ *  inflação → IPC/IHPC, Segurança Social → TSU). */
+const MENCOES: Record<string, RegExp> = {
+  euribor: /\beuribor\b/i,
+  spread: /\bspread\b/i,
+  tan: /\bTAN\b/,
+  taeg: /\bTAEG\b/,
+  mtic: /\bMTIC\b/,
+  "ipc-ihpc": /\bIH?PC\b|\binfla[cç][ãa]o\b/i,
+  "escalao-irs": /\bescal[ãa]o\b|\bescal[õo]es\b|\bIRS\b/i,
+  "taxa-efetiva-marginal": /\btaxa (efetiva|marginal)\b/i,
+  "deducao-especifica": /\bdedu[cç][ãa]o espec[ií]fica\b/i,
+  "minimo-existencia": /m[ií]nimo de exist[êe]ncia/i,
+  "retencao-fonte": /\breten[cç][ãa]o\b/i,
+  tsu: /\bTSU\b|\bSeguran[cç]a Social\b/i,
+  isp: /\bISP\b/,
+  iva: /\bIVA\b/,
+  "certificados-aforro": /\bcertificados de aforro\b/i,
+  "taxa-real": /\btaxa real\b|\btaxa nominal\b/i,
+  "retencao-capitais": /\b28 ?%\b|\breten[cç][ãa]o liberat[oó]ria\b/i,
+  "deducao-coleta": /\bdedu[cç][õo]es?\b/i,
+  "limite-deducoes": /\blimite global\b|\bart\.? ?78\b/i,
+  ppr: /\bPPR\b/,
+  "rendimento-relevante": /\brendimento relevante\b/i,
+  englobamento: /\benglobamento\b|\benglobar\b|\btaxa aut[oó]noma\b/i,
+  "salario-real": /\bsal[aá]rio real\b|\bpoder de compra\b/i,
+};
+
+export function termoPorSlug(slug: string): Termo | undefined {
+  return GLOSSARIO.find((t) => t.slug === slug);
+}
+
+export interface Mencao {
+  slug: string;
+  inicio: number;
+  fim: number;
+}
+
+/** Menções de outros termos dentro de `texto` — spans ordenados, sem
+ *  sobreposições (em empate de posição ganha a forma mais longa) e sem
+ *  o próprio `excluir`. */
+export function mencoesEm(texto: string, excluir?: string): Mencao[] {
+  const brutas: Mencao[] = [];
+  for (const [slug, re] of Object.entries(MENCOES)) {
+    if (slug === excluir) continue;
+    for (const m of texto.matchAll(new RegExp(re.source, re.flags.includes("g") ? re.flags : re.flags + "g"))) {
+      brutas.push({ slug, inicio: m.index, fim: m.index + m[0].length });
+    }
+  }
+  brutas.sort((a, b) => a.inicio - b.inicio || b.fim - b.inicio - (a.fim - a.inicio));
+  const aceites: Mencao[] = [];
+  let livre = 0;
+  for (const m of brutas) {
+    if (m.inicio < livre) continue;
+    aceites.push(m);
+    livre = m.fim;
+  }
+  return aceites;
+}
+
+/** Termos ligados a `slug`: os que o texto dele menciona + os que o
+ *  mencionam a ele. Ordenados pela ordem do glossário. */
+export function relacionados(slug: string): Termo[] {
+  const t = termoPorSlug(slug);
+  if (!t) return [];
+  const ligados = new Set<string>();
+  for (const m of mencoesEm(`${t.definicao} ${t.exemplo ?? ""}`, slug)) {
+    ligados.add(m.slug);
+  }
+  for (const outro of GLOSSARIO) {
+    if (outro.slug === slug || ligados.has(outro.slug)) continue;
+    if (mencoesEm(`${outro.definicao} ${outro.exemplo ?? ""}`, outro.slug).some((m) => m.slug === slug)) {
+      ligados.add(outro.slug);
+    }
+  }
+  return GLOSSARIO.filter((g) => ligados.has(g.slug));
+}

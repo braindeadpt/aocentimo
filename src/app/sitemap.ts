@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { loadFontes, loadDerivado } from "@/lib/data";
 import { SITE_URL } from "@/lib/site";
+import { GLOSSARIO } from "@/content/glossario";
 
 export const dynamic = "force-static";
 
@@ -59,6 +60,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     // editoriais — sem data honesta, omitem lastModified
     { path: "/aprender" },
+    // termos do glossário — derivados do conteúdo, nunca escritos à mão
+    ...GLOSSARIO.map((t) => ({ path: `/aprender/${t.slug}` })),
     { path: "/metodologia" },
     { path: "/sobre" },
   ];

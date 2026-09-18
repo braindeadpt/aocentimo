@@ -51,6 +51,25 @@ export function faqPage(
   };
 }
 
+/** /aprender/[slug] → DefinedTerm dentro do DefinedTermSet do glossário.
+ *  A FAQPage fica no índice — aqui vai o termo individual, sem duplicar. */
+export function definedTerm(t: { slug: string; termo: string; definicao: string }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "DefinedTerm",
+    name: t.termo,
+    description: t.definicao,
+    url: `${BASE}/aprender/${t.slug}`,
+    inDefinedTermSet: {
+      "@type": "DefinedTermSet",
+      name: "Glossário AO CÊNTIMO",
+      url: `${BASE}/aprender`,
+    },
+    inLanguage: "pt-PT",
+    publisher: ORG,
+  };
+}
+
 /** Painéis de dados oficiais → Dataset com proveniência real. */
 export function dataset(opts: {
   nome: string;

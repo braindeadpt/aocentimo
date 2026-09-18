@@ -37,7 +37,14 @@ export default function AprenderPage() {
       <div className="mt-10 divide-y divide-line border-y border-line">
         {GLOSSARIO.map((t) => (
           <article key={t.slug} id={t.slug} className="py-6 grid md:grid-cols-[220px_1fr] gap-2 md:gap-8">
-            <h2 className="font-display text-xl text-ink">{t.termo}</h2>
+            <h2 className="font-display text-xl text-ink">
+              <Link
+                href={`/aprender/${t.slug}`}
+                className="underline decoration-dashed decoration-line2 underline-offset-4 hover:decoration-mark"
+              >
+                {t.termo}
+              </Link>
+            </h2>
             <div className="body-copy">
               <p>{t.definicao}</p>
               {t.exemplo && (
