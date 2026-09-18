@@ -6,7 +6,8 @@ import { LineChart } from "@/components/LineChart";
 import { DecomposicaoFuel } from "../impostos/DecomposicaoFuel";
 import { Source } from "@/components/Source";
 import { loadFonte, type Serie } from "@/lib/data";
-import { fmtData, fmtLitro } from "@/lib/format";
+import { fmtData } from "@/lib/format";
+import { Odometer } from "@/components/Odometer";
 import isp from "@data/fiscal/isp.json";
 import iva from "@data/fiscal/iva.json";
 import eventos from "@data/fiscal/eventos.json";
@@ -57,9 +58,9 @@ export default function PrecosPage() {
           "Decomposição do preço dos combustíveis em Portugal: ISP, taxa de carbono, IVA e margens — dados DGEG."
         )}
       />
-      <p className="kicker">Módulo 06</p>
+      <p className="kicker">Preços oficiais, quase diários</p>
       <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
-        Combustíveis, dia a dia
+        Quanto custa o litro hoje?
       </h1>
       <p className="lede mt-5">
         A gasolina e o gasóleo são os únicos bens essenciais em Portugal com
@@ -87,7 +88,11 @@ export default function PrecosPage() {
                 return (
                   <div key={id} className="bg-panel px-4 py-4">
                     <p className="kicker">{nome}</p>
-                    <p className="num-read mt-1">{fmtLitro(p.v)}</p>
+                    {/* contador da bomba — rodas mecânicas por dígito;
+                        rolamento só na revelação abaixo da dobra (M-09) */}
+                    <p className="num-read mt-1">
+                      <Odometer valor={p.v} casas={3} sufixo=" €/L" />
+                    </p>
                     <p className="text-xs text-muted mt-1 flex gap-3">
                       <span>sem <Delta value={varDias(serie!, 7)} casas={1} /></span>
                       <span>ano <Delta value={varDias(serie!, 365)} casas={1} /></span>

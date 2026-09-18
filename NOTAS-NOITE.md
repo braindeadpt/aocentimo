@@ -654,3 +654,29 @@ topo; 1440/375; tema escuro real).
 
 **Gates** — lint ✓ typecheck ✓ unit 185 ✓ data 60 ✓ build 58 ✓ e2e
 16/16 ✓.
+
+---
+
+## M-17 — /inflacao e /precos: o euro a encolher, o contador da bomba
+
+**O que mudou**
+- `PoderDeCompra` ganhou a moeda que encolhe: `.euro-ghost` (contorno
+  tracejado = o euro cheio do ano escolhido) + `.euro-disc` que escala
+  para `poder = índice(ano)/índice(hoje)` — "o euro de 1996 encolheu
+  para 51 %". A parte comida é o anel que sobra. Vê-se, não se lê.
+  Transição `--dur-longa` na mudança de ano; reduced-motion corta-a.
+- `/precos`: os três preços/litro viraram contadores da bomba —
+  `Odometer` (rodas mecânicas por dígito, rolam na revelação abaixo da
+  dobra). Série diária DGEG já se desenha sozinha (M-06) e a
+  decomposição ISP→IVA já se separa (M-12) — confirmado, sem mexer.
+- Kickers editoriais em vez de "Módulo 03/06"; H1 de /precos virou
+  pergunta ("Quanto custa o litro hoje?").
+- CONFIRMAÇÃO pedida: a base do índice continua derivada de
+  `meta.unidade` via `anoBase()` ("Índice 2025=100" → "2025") — nenhuma
+  afirmação literal de ano-base no código.
+
+**Screenshots** — `.screenshots/m17/` (euro encolhido 1996, contadores,
+série DGEG; 1440/375).
+
+**Gates** — lint ✓ typecheck ✓ unit 185 ✓ data 60 ✓ build 58 ✓ e2e
+16/16 ✓.

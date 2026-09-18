@@ -84,7 +84,7 @@ export default function InflacaoPage() {
           })}
         />
       )}
-      <p className="kicker">Módulo 03</p>
+      <p className="kicker">Preços no consumidor</p>
       <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
         Quanto subiu o que compras
       </h1>
