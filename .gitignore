@@ -16,3 +16,6 @@ test-results/
 .github/skills/
 out/
 serve.log
+
+# artefactos de verificacao visual (temporarios)
+.screenshots/
