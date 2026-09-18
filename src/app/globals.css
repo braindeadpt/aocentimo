@@ -822,6 +822,18 @@ body::before {
     stroke-dashoffset: 0;
   }
 }
+/* a área esbate-se a entrar, depois do traço — sem JS/reduced-motion
+   fica já visível no estado final */
+.spark-area {
+  opacity: 0.09;
+}
+.spark-armed .spark-area {
+  opacity: 0;
+}
+.spark-on .spark-area {
+  opacity: 0.09;
+  transition: opacity var(--dur-mov) var(--ease) calc(var(--spark-delay, 0ms) + var(--dur-in));
+}
 
 /* kinetic type — palavras sobem de trás de uma máscara de linha */
 .kin-line {

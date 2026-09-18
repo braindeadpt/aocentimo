@@ -128,7 +128,8 @@ export default function EstiloPage() {
             </svg>
             <div className="mt-1 flex justify-between">
               {[1, 2, 3, 4].map((i) => (
-                <span key={i} className="num text-xs" style={{ color: `var(--color-seq-${i})` }}>
+                <span key={i} className="num flex items-center gap-1.5 text-xs text-muted">
+                  <span aria-hidden className="inline-block size-2.5" style={{ background: `var(--color-seq-${i})` }} />
                   seq-{i}
                 </span>
               ))}
@@ -159,7 +160,8 @@ export default function EstiloPage() {
             </svg>
             <div className="mt-1 flex justify-between">
               {[1, 2, 3, 4].map((i) => (
-                <span key={i} className="num text-xs" style={{ color: `var(--color-dink-${i})` }}>
+                <span key={i} className="num flex items-center gap-1.5 text-xs text-muted">
+                  <span aria-hidden className="inline-block size-2.5" style={{ background: `var(--color-dink-${i})` }} />
                   dink-{i}
                 </span>
               ))}
@@ -255,8 +257,8 @@ export default function EstiloPage() {
             </p>
           </div>
           <div className="border border-line bg-overlay px-4 py-6 shadow-overlay">
-            <p className="kicker-xs">3 — overlay</p>
-            <p className="footnote mt-2">
+            <p className="kicker-xs text-ink">3 — overlay</p>
+            <p className="mt-2 text-[0.8125rem] leading-normal text-ink2">
               menu e tooltip · só ink/ink2, nunca muted
             </p>
           </div>

@@ -1,5 +1,28 @@
 import { test, expect } from "@playwright/test";
-import { readFileSync } from "fs";
+import { readdirSync, readFileSync } from "fs";
+
+// o domínio declarado em public/CNAME é a fonte de verdade do deploy —
+// se divergir do canonical gerado, o SEO aponta para um domínio que
+// não serve o site (defeito real que já aconteceu)
+const HOST = readFileSync("public/CNAME", "utf8").trim().toLowerCase();
+
+/**
+ * Lista de rotas derivada, nunca escrita à mão: o sitemap é gerado do
+ * conteúdo (expande rotas dinâmicas como /aprender/[slug]) e os .html
+ * exportados cobrem as páginas fora do sitemap (ex.: /estilo). Qualquer
+ * rota nova nasce coberta por todos os testes abaixo.
+ */
+function rotasDoSite(): string[] {
+  const deSitemap = [
+    ...readFileSync("out/sitemap.xml", "utf8").matchAll(/<loc>([^<]+)<\/loc>/g),
+  ].map((m) => new URL(m[1]).pathname);
+  const deHtml = readdirSync("out", { recursive: true })
+    .filter((f): f is string => typeof f === "string" && f.endsWith(".html"))
+    .map((f) => f.replace(/\\/g, "/").replace(/\.html$/, ""))
+    .filter((f) => !f.startsWith("_") && f !== "404")
+    .map((p) => (p === "index" ? "/" : `/${p}`));
+  return [...new Set([...deSitemap, ...deHtml])].sort();
+}
 
 test("home renderiza com os números-chave", async ({ page }) => {
   await page.goto("/");
@@ -16,8 +39,25 @@ test("calculadora de salário produz resultado", async ({ page }) => {
   await expect(page.getByText("Taxa marginal")).toBeVisible();
 });
 
-test("páginas principais respondem", async ({ page }) => {
-  for (const path of ["/inflacao", "/impostos", "/credito", "/casa", "/irs", "/trabalho", "/poupanca", "/precos", "/dados", "/aprender", "/metodologia", "/sobre", "/estilo"]) {
+test("o talão do salário carimba o domínio canónico", async ({ page }) => {
+  await page.goto("/salario");
+  await page.getByLabel("Salário bruto mensal").fill("1500");
+  const texto = (await page.locator("body").innerText()).toLowerCase();
+  expect(texto).toContain(HOST);
+});
+
+test("a lista de rotas deriva do conteúdo", () => {
+  const rotas = rotasDoSite();
+  expect(rotas).toContain("/estilo");
+  expect(rotas).toContain("/");
+  expect(
+    rotas.some((r) => r.startsWith("/aprender/") && r !== "/aprender"),
+    "o sitemap expande /aprender/[slug]"
+  ).toBe(true);
+});
+
+test("todas as rotas respondem", async ({ page }) => {
+  for (const path of rotasDoSite()) {
     const res = await page.goto(path);
     expect(res?.status(), `${path} deve responder 200`).toBe(200);
   }
@@ -37,25 +77,7 @@ test("simuladores novos produzem resultado", async ({ page }) => {
 
 test("nenhuma rota transborda na horizontal a 375 px", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 800 });
-  const rotas = [
-    "/",
-    "/salario",
-    "/inflacao",
-    "/impostos",
-    "/credito",
-    "/casa",
-    "/irs",
-    "/trabalho",
-    "/poupanca",
-    "/precos",
-    "/dados",
-    "/aprender",
-    "/metodologia",
-    "/sobre",
-    "/estilo",
-    "/rota-que-nao-existe", // 404
-  ];
-  for (const path of rotas) {
+  for (const path of [...rotasDoSite(), "/rota-que-nao-existe"]) {
     await page.goto(path);
     const excesso = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth
@@ -65,24 +87,8 @@ test("nenhuma rota transborda na horizontal a 375 px", async ({ page }) => {
 });
 
 test("nenhuma página mostra undefined, NaN ou Invalid Date", async ({ page }) => {
-  const rotas = [
-    "/",
-    "/salario",
-    "/inflacao",
-    "/impostos",
-    "/credito",
-    "/casa",
-    "/irs",
-    "/trabalho",
-    "/poupanca",
-    "/precos",
-    "/dados",
-    "/aprender",
-    "/metodologia",
-    "/sobre",
-  ];
   const proibidas = ["undefined", "NaN", "Invalid Date"];
-  for (const path of rotas) {
+  for (const path of rotasDoSite()) {
     await page.goto(path);
     const texto = await page.locator("body").innerText();
     for (const s of proibidas) {
@@ -92,33 +98,76 @@ test("nenhuma página mostra undefined, NaN ou Invalid Date", async ({ page }) =
 });
 
 test("canonical de cada página bate certo com o CNAME", async ({ page }) => {
-  // o domínio declarado em public/CNAME é a fonte de verdade do deploy —
-  // se divergir do canonical gerado, o SEO aponta para um domínio que
-  // não serve o site (defeito real que já aconteceu)
-  const host = readFileSync("public/CNAME", "utf8").trim();
-  const rotas = [
-    "/",
-    "/salario",
-    "/inflacao",
-    "/impostos",
-    "/credito",
-    "/casa",
-    "/irs",
-    "/trabalho",
-    "/poupanca",
-    "/precos",
-    "/dados",
-    "/aprender",
-    "/metodologia",
-    "/sobre",
-    "/estilo",
-  ];
-  for (const path of rotas) {
-    await page.goto(path);
+  test.setTimeout(120_000);
+  for (const path of rotasDoSite()) {
+    // o canonical está no HTML inicial — domcontentloaded chega e torna
+    // o ciclo de ~38 rotas rápido o suficiente para o timeout
+    await page.goto(path, { waitUntil: "domcontentloaded" });
     const canon = await page
       .locator('link[rel="canonical"]')
       .getAttribute("href");
-    expect(canon, `${path}`).toBe(`https://${host}${path === "/" ? "" : path}`);
+    expect(canon?.toLowerCase(), `${path}`).toBe(
+      `https://${HOST}${path === "/" ? "" : path}`
+    );
+  }
+});
+
+test("o /estilo cumpre contraste AA nos dois temas", async ({ page }) => {
+  // reduced-motion desliga a transição de cor do body — sem ela a medição
+  // apanhava valores intermédios da animação de troca de tema
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/estilo");
+  for (const tema of ["light", "dark"]) {
+    await page.evaluate(
+      (t) => (document.documentElement.dataset.theme = t),
+      tema
+    );
+    const falhas = await page.evaluate(() => {
+      const srgb = (v: number) => {
+        const c = v / 255;
+        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+      };
+      const lum = (rgb: number[]) =>
+        0.2126 * srgb(rgb[0]) + 0.7152 * srgb(rgb[1]) + 0.0722 * srgb(rgb[2]);
+      const parse = (s: string) =>
+        (s.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+      const fundoDe = (el: Element): number[] => {
+        for (let n: Element | null = el; n; n = n.parentElement) {
+          const m = getComputedStyle(n).backgroundColor.match(/[\d.]+/g);
+          if (m && (m.length < 4 || Number(m[3]) === 1))
+            return m.slice(0, 3).map(Number);
+        }
+        return [255, 255, 255];
+      };
+      const falhas: string[] = [];
+      for (const el of document.body.querySelectorAll("*")) {
+        const temTexto = [...el.childNodes].some(
+          (n) => n.nodeType === Node.TEXT_NODE && (n.textContent ?? "").trim()
+        );
+        if (!temTexto) continue;
+        const cs = getComputedStyle(el);
+        if (cs.display === "none" || cs.visibility === "hidden") continue;
+        const rect = el.getBoundingClientRect();
+        if (!rect.width || !rect.height) continue;
+        const frente = parse(
+          el.namespaceURI?.includes("svg") ? cs.fill : cs.color
+        );
+        const fundo = fundoDe(el);
+        const L1 = lum(frente);
+        const L2 = lum(fundo);
+        const ratio = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05);
+        const px = parseFloat(cs.fontSize);
+        const grande = px >= 24 || (px >= 18.66 && Number(cs.fontWeight) >= 700);
+        const min = grande ? 3 : 4.5;
+        if (ratio < min) {
+          falhas.push(
+            `${el.tagName.toLowerCase()} "${(el.textContent ?? "").trim().slice(0, 50)}" → ${ratio.toFixed(2)}:1 < ${min}:1`
+          );
+        }
+      }
+      return falhas;
+    });
+    expect(falhas, `tema ${tema}`).toEqual([]);
   }
 });
 

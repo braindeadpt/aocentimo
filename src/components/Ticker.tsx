@@ -111,7 +111,7 @@ export function Ticker() {
               {est === "atrasada" && (
                 <span className="text-warn">{m.chart.atrasada}</span>
               )}
-              <span aria-hidden className="text-line2">·</span>
+              <span aria-hidden className="text-muted">·</span>
             </span>
           );
         })}

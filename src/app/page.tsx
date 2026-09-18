@@ -189,7 +189,7 @@ export default function Home() {
                 <span className="chapter-dim col-span-2 mt-2 max-w-xl text-sm leading-relaxed text-ink2 transition-colors md:col-span-1 md:mt-0">
                   {c.descricao}
                 </span>
-                <span className="chapter-arrow hidden text-right font-display text-2xl text-line2 md:block">
+                <span className="chapter-arrow hidden text-right font-display text-2xl text-muted md:block">
                   →
                 </span>
               </Link>

@@ -6,6 +6,7 @@ import { TSU_ENTIDADE } from "@/lib/engines/seg-social";
 import { reciboMensal, FormaPagamentoSA } from "@/lib/engines/recibo";
 import { SituacaoRetencao } from "@/lib/engines/retencao";
 import { EuroBar } from "@/components/EuroBar";
+import { SITE_URL } from "@/lib/site";
 import { Cascata } from "@/components/Cascata";
 import { fmtEUR, fmtPct, fmtData } from "@/lib/format";
 import sa from "@data/fiscal/subsidio-alimentacao.json";
@@ -247,7 +248,7 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
             <div className="talao-barras mt-5" aria-hidden />
             <p className="talao-meta mt-2 flex justify-between talao-dim">
               <span>TABELA {recibo.tabela} · {ano}</span>
-              <span>AOCENTIMO.JS.ORG</span>
+              <span>{new URL(SITE_URL).host.toUpperCase()}</span>
             </p>
           </div>
         </div>

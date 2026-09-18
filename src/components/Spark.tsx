@@ -69,13 +69,21 @@ export function Spark({
       viewBox={`0 0 ${W} ${H}`}
       preserveAspectRatio="none"
       aria-hidden="true"
-      className={`spark block h-7 w-full ${on ? "spark-on" : ""} ${className}`}
+      className={`spark block h-9 w-full ${on ? "spark-on" : ""} ${className}`}
       style={{ "--spark-delay": `${atraso}ms` } as React.CSSProperties}
     >
+      {/* área sob a linha — massa que torna a forma legível a esta escala */}
+      <polygon
+        className="spark-area"
+        fill="var(--ink2)"
+        points={`${x(0).toFixed(1)},${(H - P).toFixed(1)} ${cauda
+          .map((p, i) => `${x(i).toFixed(1)},${y(p.v).toFixed(1)}`)
+          .join(" ")} ${x(cauda.length - 1).toFixed(1)},${(H - P).toFixed(1)}`}
+      />
       <polyline
         className="spark-line"
         fill="none"
-        stroke="currentColor"
+        stroke="var(--ink2)"
         strokeWidth={1.5}
         strokeLinejoin="round"
         vectorEffect="non-scaling-stroke"
