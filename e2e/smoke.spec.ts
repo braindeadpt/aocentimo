@@ -112,62 +112,82 @@ test("canonical de cada página bate certo com o CNAME", async ({ page }) => {
   }
 });
 
-test("o /estilo cumpre contraste AA nos dois temas", async ({ page }) => {
+/** Avaliador AA partilhado: mede contraste real de todo o texto.
+ *  O fundo de texto SVG resolve-se por geometria (isPointInFill no
+ *  espaço do SVG via getScreenCTM) — o papel é um <path> com
+ *  pointer-events:none, invisível a elementsFromPoint. Fills
+ *  transparentes (zona de hover) e formas em defs/mask/clipPath não
+ *  contam. */
+const AA_EVAL = `(() => {
+  const srgb = (v) => { const c = v/255; return c <= 0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4); };
+  const lum = (rgb) => 0.2126*srgb(rgb[0]) + 0.7152*srgb(rgb[1]) + 0.0722*srgb(rgb[2]);
+  const parse = (s) => {
+    s = s.trim();
+    if (s.startsWith("#")) { const h = s.slice(1); return [0,2,4].map(i => parseInt(h.substr(i,2), 16)); }
+    const m = (s.match(/[\\d.]+/g) ?? []).slice(0,3).map(Number);
+    return s.startsWith("color(") ? m.map(v=>v*255) : m;
+  };
+  const fundoDe = (el) => {
+    if (el.namespaceURI?.includes("svg")) {
+      const r = el.getBoundingClientRect();
+      const svg = el.ownerSVGElement;
+      const ctm = svg?.getScreenCTM();
+      if (svg && ctm) {
+        const pt = new DOMPoint(r.x + r.width/2, r.y + r.height/2).matrixTransform(ctm.inverse());
+        for (const s of svg.querySelectorAll("path,rect,circle,polygon")) {
+          if (s.closest("defs,mask,clipPath")) continue;
+          const f = getComputedStyle(s).fill;
+          if (!f || f === "none" || f.startsWith("url(")) continue;
+          const am = f.match(/[\\d.]+/g);
+          if (am && am.length >= 4 && Number(am[3]) < 0.5) continue;
+          try { if (s.isPointInFill(pt)) return parse(f); } catch {}
+        }
+      }
+    }
+    for (let n = el; n; n = n.parentElement) {
+      const cs = getComputedStyle(n).backgroundColor;
+      const m = cs.match(/[\\d.]+/g);
+      if (m && (m.length < 4 || Number(m[3]) === 1)) return parse(cs);
+    }
+    return parse(getComputedStyle(document.body).backgroundColor);
+  };
+  const falhas = [];
+  for (const el of document.body.querySelectorAll("*")) {
+    const temTexto = [...el.childNodes].some(n => n.nodeType === 3 && (n.textContent ?? "").trim());
+    if (!temTexto) continue;
+    const cs = getComputedStyle(el);
+    if (cs.display === "none" || cs.visibility === "hidden") continue;
+    const r = el.getBoundingClientRect();
+    if (!r.width || !r.height) continue;
+    const frente = parse(el.namespaceURI?.includes("svg") ? cs.fill : cs.color);
+    const fundo = fundoDe(el);
+    const L1 = lum(frente), L2 = lum(fundo);
+    const ratio = (Math.max(L1,L2)+0.05)/(Math.min(L1,L2)+0.05);
+    const px = parseFloat(cs.fontSize);
+    const grande = px >= 24 || (px >= 18.66 && Number(cs.fontWeight) >= 700);
+    const min = grande ? 3 : 4.5;
+    if (ratio < min) falhas.push(el.tagName.toLowerCase()+"."+String(el.className?.baseVal ?? el.className ?? "").slice(0,30)+" \\""+(el.textContent??"").trim().slice(0,36)+"\\" → "+ratio.toFixed(2)+":1");
+  }
+  return falhas.slice(0, 8);
+})()`;
+
+test("todas as rotas cumprem contraste AA nos dois temas", async ({
+  page,
+}) => {
+  test.setTimeout(240_000);
   // reduced-motion desliga a transição de cor do body — sem ela a medição
   // apanhava valores intermédios da animação de troca de tema
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/estilo");
-  for (const tema of ["light", "dark"]) {
-    await page.evaluate(
-      (t) => (document.documentElement.dataset.theme = t),
-      tema
-    );
-    const falhas = await page.evaluate(() => {
-      const srgb = (v: number) => {
-        const c = v / 255;
-        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-      };
-      const lum = (rgb: number[]) =>
-        0.2126 * srgb(rgb[0]) + 0.7152 * srgb(rgb[1]) + 0.0722 * srgb(rgb[2]);
-      const parse = (s: string) =>
-        (s.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
-      const fundoDe = (el: Element): number[] => {
-        for (let n: Element | null = el; n; n = n.parentElement) {
-          const m = getComputedStyle(n).backgroundColor.match(/[\d.]+/g);
-          if (m && (m.length < 4 || Number(m[3]) === 1))
-            return m.slice(0, 3).map(Number);
-        }
-        return [255, 255, 255];
-      };
-      const falhas: string[] = [];
-      for (const el of document.body.querySelectorAll("*")) {
-        const temTexto = [...el.childNodes].some(
-          (n) => n.nodeType === Node.TEXT_NODE && (n.textContent ?? "").trim()
-        );
-        if (!temTexto) continue;
-        const cs = getComputedStyle(el);
-        if (cs.display === "none" || cs.visibility === "hidden") continue;
-        const rect = el.getBoundingClientRect();
-        if (!rect.width || !rect.height) continue;
-        const frente = parse(
-          el.namespaceURI?.includes("svg") ? cs.fill : cs.color
-        );
-        const fundo = fundoDe(el);
-        const L1 = lum(frente);
-        const L2 = lum(fundo);
-        const ratio = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05);
-        const px = parseFloat(cs.fontSize);
-        const grande = px >= 24 || (px >= 18.66 && Number(cs.fontWeight) >= 700);
-        const min = grande ? 3 : 4.5;
-        if (ratio < min) {
-          falhas.push(
-            `${el.tagName.toLowerCase()} "${(el.textContent ?? "").trim().slice(0, 50)}" → ${ratio.toFixed(2)}:1 < ${min}:1`
-          );
-        }
-      }
-      return falhas;
-    });
-    expect(falhas, `tema ${tema}`).toEqual([]);
+  for (const path of rotasDoSite()) {
+    await page.goto(path, { waitUntil: "domcontentloaded" });
+    for (const tema of ["light", "dark"]) {
+      await page.evaluate(
+        (t) => (document.documentElement.dataset.theme = t),
+        tema
+      );
+      const falhas = await page.evaluate(AA_EVAL);
+      expect(falhas, `${path} [${tema}]`).toEqual([]);
+    }
   }
 });
 
@@ -320,6 +340,81 @@ test("a fita do salário interroga-se por teclado e tem equivalente textual", as
     "href",
     "/salario"
   );
+});
+
+test("cada gráfico tem exactamente um equivalente textual alcançável", async ({
+  page,
+}) => {
+  test.setTimeout(180_000);
+  // contrato M-05/M-20(h): svg de dados é aria-hidden com irmão textual
+  // (.sr-only/tabela/dl/readout) OU role="img" com aria-label — nunca os
+  // dois (anúncio duplo), nunca nenhum (gráfico mudo)
+  for (const path of rotasDoSite()) {
+    await page.goto(path, { waitUntil: "domcontentloaded" });
+    const problemas = await page.evaluate(() => {
+      const bad: string[] = [];
+      document.querySelectorAll("svg").forEach((s) => {
+        const nome = s.getAttribute("class")?.toString().slice(0, 30) ?? "svg";
+        const hidden =
+          s.getAttribute("aria-hidden") === "true" ||
+          !!s.closest("[aria-hidden='true']");
+        const rotulo = s.getAttribute("aria-label");
+        const eImg = s.getAttribute("role") === "img";
+        if (eImg) {
+          if (!rotulo?.trim()) bad.push(`${nome}: role=img sem aria-label`);
+          if (hidden) bad.push(`${nome}: nomeado mas escondido — dupla`);
+          return;
+        }
+        if (!hidden) {
+          // logo e ícones pequenos podem ser decorativos inline — mas têm
+          // de estar dentro de um contexto aria-hidden ou ter nome
+          const dentroDeNomeado = s.closest("a[aria-label], button[aria-label], [role='img']");
+          if (!dentroDeNomeado && !rotulo)
+            bad.push(`${nome}: svg exposto sem nome nem contexto`);
+          return;
+        }
+        // svg escondido E grande = provável gráfico → um ancestral tem
+        // de trazer o equivalente textual (.sr-only/tabela/dl/readout
+        // ou prosa — os demos do /estilo descrevem-se em texto)
+        const largo = s.getBoundingClientRect().width > 100;
+        if (!largo) return;
+        let tem = false;
+        for (let n = s.parentElement; n && n !== document.body; n = n.parentElement) {
+          if (n.querySelector(".sr-only, table, dl, .chart-readout")) { tem = true; break; }
+          if (n instanceof HTMLElement && n.innerText.trim().length > 20) { tem = true; break; }
+        }
+        if (!tem) bad.push(`${nome}: gráfico escondido sem equivalente`);
+      });
+      return bad.slice(0, 6);
+    });
+    expect(problemas, `${path}`).toEqual([]);
+  }
+});
+
+test("o número herói de cada simulador chega no HTML sem JS", async ({
+  request,
+}) => {
+  // contrato M-03/M-20(i): o herói nasce no SSR com o valor final —
+  // nunca "0,00" nem vazio à espera de hidratação
+  for (const path of [
+    "/salario",
+    "/impostos",
+    "/casa",
+    "/credito",
+    "/poupanca",
+    "/irs",
+    "/trabalho",
+  ]) {
+    const res = await request.get(path);
+    expect(res.status(), path).toBe(200);
+    const html = await res.text();
+    const hero = html.match(/num-hero[^"]*"[^>]*>(.{0,400})/s)?.[1] ?? "";
+    const texto = hero.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    expect(texto, `${path}: herói vazio no HTML`).toMatch(/\d/);
+    expect(texto, `${path}: herói em zero à espera de JS`).not.toMatch(
+      /^[\s0,.\-—€%]+$/
+    );
+  }
 });
 
 test("painéis de dados, API e feed servem", async ({ page }) => {
