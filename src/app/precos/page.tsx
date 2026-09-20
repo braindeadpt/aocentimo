@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Delta } from "@/components/Delta";
-import { LineChart } from "@/components/LineChart";
+import { Linha } from "@/components/instrumentos/Linha";
 import { DecomposicaoFuel } from "../impostos/DecomposicaoFuel";
 import { Source } from "@/components/Source";
 import { loadFonte, type Serie } from "@/lib/data";
@@ -100,15 +100,16 @@ export default function PrecosPage() {
                 );
               })}
             </div>
-            <LineChart
+            <Linha
               series={series.map(({ nome, serie }) => ({
-                name: nome,
-                data: serie!.series
-                  .filter((p) => !corte || p.t >= corte!)
-                  .map((p) => [p.t, p.v] as [string, number]),
+                id: nome,
+                rotulo: nome,
+                pontos: serie!.series.filter((p) => !corte || p.t >= corte!),
               }))}
               unidade="€"
               eventos={eventos.eventos.filter((e) => e.alvo === "combustiveis")}
+              equivalente="tabela"
+              titulo="Preço médio nacional, por litro"
             />
           </>
         ) : (

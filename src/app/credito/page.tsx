@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
-import { LineChart } from "@/components/LineChart";
+import { Linha } from "@/components/instrumentos/Linha";
 import { SimuladorPrestacao } from "./SimuladorPrestacao";
 import { loadFonte, loadFreshness } from "@/lib/data";
 import { JsonLd, webApplication } from "@/lib/jsonld";
@@ -64,17 +64,20 @@ export default function CreditoPage() {
         }
       >
         {eur ? (
-          <LineChart
+          <Linha
             series={[
               {
-                name: "Euribor 3M",
-                data: eur.series.map((p) => [p.t, p.v]),
-                cor: "var(--color-ink)",
+                id: "euribor-3m",
+                rotulo: "Euribor 3M",
+                pontos: eur.series,
+                cor: "var(--ink)",
               },
             ]}
             unidade="%"
             eventos={eventos.eventos.filter((e) => e.alvo === "euribor")}
             estado={estado}
+            equivalente="tabela"
+            titulo="A Euribor desde 1994"
           />
         ) : (
           <p className="footnote">

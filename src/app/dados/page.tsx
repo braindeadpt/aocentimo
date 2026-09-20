@@ -4,7 +4,7 @@ import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { JsonLd, dataset } from "@/lib/jsonld";
-import { LineChart } from "@/components/LineChart";
+import { Linha } from "@/components/instrumentos/Linha";
 import { Delta } from "@/components/Delta";
 import { Instrumento } from "@/components/Instrumento";
 import {
@@ -240,12 +240,13 @@ export default function DadosPage() {
       >
         {temEuribor ? (
           <>
-            <LineChart
+            <Linha
               series={(Object.keys(euribor) as (keyof typeof euribor)[]).map((k, i) => ({
-                name: `Euribor ${k}`,
+                id: `euribor-${k.toLowerCase()}`,
+                rotulo: `Euribor ${k}`,
                 // família ordinal: rampa seq — prazo mais curto, mais tinta
                 cor: `var(--seq-${i + 1})`,
-                data: euribor[k]!.series.map((p) => [p.t + "-01", p.v] as [string, number]),
+                pontos: euribor[k]!.series,
               }))}
               unidade="%"
               eventos={eventos.eventos.filter((e) => e.alvo === "euribor")}
@@ -256,6 +257,8 @@ export default function DadosPage() {
                   ? "atrasada"
                   : "em-dia"
               }
+              equivalente="tabela"
+              titulo="Euribor — médias mensais"
             />
             <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-px bg-line border border-line">
               {(Object.keys(euribor) as (keyof typeof euribor)[]).map((k) => {

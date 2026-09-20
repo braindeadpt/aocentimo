@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Delta } from "@/components/Delta";
-import { LineChart } from "@/components/LineChart";
+import { Linha } from "@/components/instrumentos/Linha";
 import { Source } from "@/components/Source";
 import { JsonLd, dataset } from "@/lib/jsonld";
 import { PoderDeCompra } from "./PoderDeCompra";
@@ -111,14 +111,17 @@ export default function InflacaoPage() {
         }
       >
         {temDados ? (
-          <LineChart
+          <Linha
             series={[
-              { name: "Índice geral", data: cp00!.series.map((p) => [p.t + "-01", p.v] as [string, number]) },
-              { name: "Alimentação", data: (cp01 ?? cp00!).series.map((p) => [p.t + "-01", p.v] as [string, number]) },
-              { name: "Energia", data: (nrg ?? cp00!).series.map((p) => [p.t + "-01", p.v] as [string, number]) },
+              { id: "cp00", rotulo: "Índice geral", pontos: cp00!.series },
+              { id: "cp01", rotulo: "Alimentação", pontos: (cp01 ?? cp00!).series },
+              { id: "nrg", rotulo: "Energia", pontos: (nrg ?? cp00!).series },
             ]}
+            unidade=""
             eventos={eventos.eventos.filter((e) => e.alvo === "ihpc")}
             estado={ihpcAtrasada ? "atrasada" : "em-dia"}
+            equivalente="tabela"
+            titulo="Índice de preços, Portugal"
           />
         ) : (
           <div className="border border-line bg-panel px-5 py-10 text-center text-ink2">
