@@ -42,6 +42,39 @@ test("home renderiza com os números-chave", async ({ page }) => {
     await expect(celulas.nth(0)).toContainText(/\d/); // valor
     await expect(celulas.nth(2)).toContainText(/\d{4}/); // período
   }
+
+  // C-03: a lista «o teu euro» é o equivalente sempre visível —
+  // 5 passos com valor em cêntimos já no HTML SSR
+  const passos = page.locator("[data-euro-lista] > li");
+  await expect(passos).toHaveCount(5);
+  for (let i = 0; i < 5; i++) {
+    await expect(passos.nth(i)).toContainText(/\d+,\d\s*c/);
+  }
+});
+
+test("a leitura da inflação chega no HTML sem JS", async ({ request }) => {
+  // C-03: o «herói» da home é o Mostrador de inflação do painel —
+  // o valor tem de nascer no SSR, nunca à espera de hidratação
+  const res = await request.get("/");
+  expect(res.status()).toBe(200);
+  const html = await res.text();
+  expect(html).toMatch(/INFLA[CÇ][AÃ]O[\s\S]{0,500}?\d+,\d+\s*%/i);
+});
+
+test("o storytelling em reduced-motion é uma lista com 5 passos e valores", async ({
+  page,
+}) => {
+  // C-03: reduced-motion salta a cena pinned — fica a lista estática
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  const lista = page.locator("[data-euro-lista]");
+  await expect(lista).toBeVisible();
+  const passos = lista.locator("> li");
+  await expect(passos).toHaveCount(5);
+  await expect(passos.first()).toContainText(/Segurança Social/);
+  await expect(passos.last()).toContainText(/\d+,\d\s*c/);
+  // a cena svg está aria-hidden e não fica pinned/visível em reduced-motion
+  await expect(page.locator(".euro-moeda")).toBeHidden();
 });
 
 test("expandir um instrumento mostra a Linha com equivalente e fecha com Escape", async ({
@@ -324,9 +357,10 @@ test("a fita do salário interroga-se por teclado e tem equivalente textual", as
 }) => {
   // M-05/M-10: reduced-motion → a fita nasce já no estado final, sem
   // destaques — leitura determinística
+  // C-03: a fita saiu da home — vive agora em /salario (variante compacta)
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
-  const zona = page.locator(".blueprint").first();
+  await page.goto("/salario");
+  const zona = page.locator(".fita-compacta").first();
 
   // o desenho é decorativo; a viagem do euro existe em texto
   await expect(zona.locator("svg").first()).toHaveAttribute(

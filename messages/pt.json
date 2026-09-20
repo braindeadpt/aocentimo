@@ -108,9 +108,32 @@
     "segSs": "A tua Seg. Social (11 %)",
     "segTsu": "TSU da empresa (23,75 %)",
     "barraFoot": "A empresa paga {custo} por ano para te pagar {bruto} brutos por mês — {peso} desse custo vai para o Estado antes de chegar ao teu bolso.",
-    "euroTitulo": "DE CADA 1,00 € QUE A EMPRESA GASTA CONTIGO",
-    "euroNota": "salário de 1 500 € · solteiro · regras 2026",
-    "euroFoot": "{keep} chegam ao teu bolso. O resto é IRS, Segurança Social e a TSU que a empresa paga e nunca aparece no recibo.",
+    "euro": {
+      "titulo": "O TEU EURO",
+      "nota": "salário de 1 500 € brutos — solteiro, sem dependentes, regras 2026 · muda o teu em",
+      "passos": [
+        {
+          "rotulo": "Segurança Social",
+          "detalhe": "TSU do trabalhador — 11 % do bruto, desconta antes de chegar à conta"
+        },
+        {
+          "rotulo": "Retenção de IRS",
+          "detalhe": "tabelas de 2026 — a tua taxa depende da situação e dos dependentes"
+        },
+        {
+          "rotulo": "Chega à conta",
+          "detalhe": "o líquido mensal depois de Segurança Social e IRS"
+        },
+        {
+          "rotulo": "Impostos no gasóleo",
+          "detalhe": "50 L a {preco} €/L — ISP, taxa de carbono e IVA dentro do litro"
+        },
+        {
+          "rotulo": "Fica-te",
+          "detalhe": "de cada euro bruto, antes do IVA das compras do dia a dia"
+        }
+      ]
+    },
     "capitulosTitulo": "O PERCURSO DE UM EURO",
     "capitulosNota": "seis capítulos",
     "capitulos": [

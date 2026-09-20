@@ -1,51 +1,90 @@
 import Link from "next/link";
-import { Adivinha } from "@/components/Adivinha";
-import { FitaTalao } from "@/components/FitaTalao";
-import { Kinetic } from "@/components/Kinetic";
+import { Euro, type PassoEuro } from "@/components/Euro";
+import { Manchete } from "@/components/Manchete";
 import { Painel } from "@/components/painel/Painel";
-import { simularSalario } from "@/lib/engines/irs";
-import { TSU_ENTIDADE, TSU_TRABALHADOR } from "@/lib/engines/seg-social";
-import { fmtPct, fmtEUR0 } from "@/lib/format";
+import { loadFonte } from "@/lib/data";
+import { decomporCombustivel } from "@/lib/engines/impostos";
+import { retencaoNaFonte } from "@/lib/engines/retencao";
+import { TSU_TRABALHADOR } from "@/lib/engines/seg-social";
+import { fmtNum } from "@/lib/format";
 import { m, t } from "@/lib/messages";
 import { SITE_URL } from "@/lib/site";
+import isp from "@data/fiscal/isp.json";
+import retencaoJson from "@data/fiscal/retencao-2026.json";
+import ssJson from "@data/fiscal/ss.json";
+
+/** passos do storytelling «o teu euro» — tudo calculado dos motores e
+ *  das fontes, para um salário bruto de 1 500 €/mês (solteiro, sem
+ *  dependentes, regras 2026). Nenhum número é escrito à mão. */
+function passosEuro(): PassoEuro[] {
+  const bruto = 1500;
+  const ss = bruto * TSU_TRABALHADOR;
+  const ret = retencaoNaFonte(bruto, "naoCasado", 0, 2026).retencao;
+  const liquido = bruto - ss - ret;
+  /* 50 L de gasóleo ao PMD mais recente — os impostos dentro do litro
+     (ISP + taxa de carbono + IVA) em cêntimos por euro do bruto */
+  const pmd = loadFonte("dgeg", "pmd-gasoleo-diario");
+  const preco = pmd?.series[pmd.series.length - 1]?.v ?? 0;
+  const dec = decomporCombustivel(
+    preco,
+    isp.gasoleo.ispELitro,
+    isp.gasoleo.carbonoELitro
+  );
+  const impostos50 = dec.impostos * 50;
+  const porEuro = (v: number) => (v / bruto) * 100;
+
+  const fontes = {
+    ss: { nome: ssJson.fonte, url: ssJson.fonteUrl },
+    ret: { nome: retencaoJson.fonte, url: retencaoJson.fonteUrl },
+    calc: { nome: "Cálculo AO CÊNTIMO — motor do recibo", url: "/salario" },
+    pmd: {
+      nome: `${pmd?.meta.fonte ?? "DGEG"} + ${isp.fonte.split(";")[0]}`,
+      url: pmd?.meta.url,
+    },
+  };
+  const p = m.home.euro.passos;
+  return [
+    {
+      rotulo: p[0].rotulo,
+      detalhe: p[0].detalhe,
+      centimos: porEuro(ss),
+      fonteNome: fontes.ss.nome,
+      fonteUrl: fontes.ss.url,
+    },
+    {
+      rotulo: p[1].rotulo,
+      detalhe: p[1].detalhe,
+      centimos: porEuro(ret),
+      fonteNome: fontes.ret.nome,
+      fonteUrl: fontes.ret.url,
+    },
+    {
+      rotulo: p[2].rotulo,
+      detalhe: p[2].detalhe,
+      centimos: porEuro(liquido),
+      fonteNome: fontes.calc.nome,
+      fonteUrl: fontes.calc.url,
+    },
+    {
+      rotulo: p[3].rotulo,
+      detalhe: t(p[3].detalhe, { preco: fmtNum(preco, 3) }),
+      centimos: porEuro(impostos50),
+      fonteNome: fontes.pmd.nome,
+      fonteUrl: fontes.pmd.url,
+    },
+    {
+      rotulo: p[4].rotulo,
+      detalhe: p[4].detalhe,
+      centimos: porEuro(liquido - impostos50),
+      fonteNome: fontes.calc.nome,
+      fonteUrl: fontes.calc.url,
+      final: true,
+    },
+  ];
+}
 
 export default function Home() {
   const h = m.home;
-
-  // Fronteira servidor/cliente: o motor fiscal corre UMA vez aqui —
-  // simularSalario puxa os JSON de data/fiscal (IRS, retenção, SS) que
-  // assim nunca entram no bundle do browser. Adivinha/FitaTalao
-  // recebem números prontos por props (serializáveis); interactivos
-  // ficam só o form da aposta e o observer do scrolly.
-  const med = simularSalario([1500], 0, 2026);
-  const mensal = (v: number) => v / 14;
-  const medidas = {
-    custo: mensal(med.custoEmpresaAnual),
-    tsu: mensal(med.brutoAnualTotal * TSU_ENTIDADE),
-    irs: mensal(med.irsAnual),
-    ss: mensal(med.ssAnual),
-    liquido: mensal(med.liquidoAnual),
-    estado: mensal(med.brutoAnualTotal * TSU_ENTIDADE + med.irsAnual + med.ssAnual),
-    taxaTsu: TSU_ENTIDADE,
-    taxaSs: TSU_TRABALHADOR,
-  };
-  const real = (med.liquidoAnual / med.custoEmpresaAnual) * 100;
-
-  // a escada narrada, comprimida a legenda plana — a fita já conta a
-  // história; estas frases ficam como notas de leitura (M-10)
-  const { custo, tsu, irs, ss, liquido, estado, taxaTsu, taxaSs } = medidas;
-  const passos = [
-    t(m.escada.p0, { valor: fmtEUR0(custo) }),
-    t(m.escada.p1, { valor: fmtEUR0(tsu), taxa: fmtPct(taxaTsu, 2) }),
-    t(m.escada.p2, { valor: fmtEUR0(custo - tsu) }),
-    t(m.escada.p3, { valor: `−${fmtEUR0(irs)}` }),
-    t(m.escada.p4, { valor: `−${fmtEUR0(ss)}`, taxa: fmtPct(taxaSs, 0) }),
-    t(m.escada.p5, {
-      valor: fmtEUR0(liquido),
-      custo: fmtEUR0(custo),
-      estado: fmtEUR0(estado),
-    }),
-  ];
 
   const ld = {
     "@context": "https://schema.org",
@@ -63,17 +102,20 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
       />
-      {/* C-01 — o painel de leituras oficiais é a primeira dobra e
-          substitui o antigo quadro do mês; manchete e capítulos
-          descem intactos */}
+      {/* C-01 — o painel de leituras oficiais é a primeira dobra;
+          tem h2 — o h1 da página é a manchete, abaixo da dobra */}
       <Painel />
-      {/* manchete compacta — o herói é o instrumento, não o titular */}
-      <section className="grid items-end gap-4 pt-6 md:grid-cols-12 md:pt-12">
+
+      {/* C-03 — a manchete do antigo herói é agora o h1, abaixo do
+          painel; a FitaTalao saiu da home (continua em /salario) */}
+      <section className="grid items-end gap-4 pt-10 md:grid-cols-12 md:pt-16">
         <div className="md:col-span-8">
-          <h1 className="font-display text-4xl leading-[0.95] tracking-wide text-ink sm:text-6xl lg:text-7xl">
-            <Kinetic texto={`${h.h1a} ${h.h1b}`} />{" "}
-            <Kinetic texto={h.h1c} desde={4} className="text-accent" />
-          </h1>
+          <Manchete
+            as="h1"
+            className="font-display text-4xl uppercase leading-[0.95] tracking-wide text-ink sm:text-6xl lg:text-7xl"
+          >
+            {`${h.h1a} ${h.h1b} ${h.h1c}`}
+          </Manchete>
         </div>
         <div className="md:col-span-4">
           <p className="lede !mt-0 text-sm md:text-base">{h.lede}</p>
@@ -83,36 +125,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* o instrumento — a pergunta primeiro, a fita depois: ao revelar,
-          a FitaTalao reimprime-se e rasga-se (remount por ronda). Em
-          largura total — é a peça-assinatura. A escada do scrolly foi
-          comprimida a legenda plana: a fita já narra sozinha. */}
-      <section
-        aria-labelledby="instrumento"
-        className="stack-sec border border-line bg-panel px-5 py-6 md:px-8 md:py-8"
-      >
-        <div className="flex items-baseline justify-between gap-4">
-          <h2 id="instrumento" className="kicker">{h.euroTitulo}</h2>
-          <p className="num text-right text-xs text-muted">{h.euroNota}</p>
-        </div>
-        <Adivinha real={real}>
-          <div className="blueprint mt-6 border-t border-dashed border-line2 px-3 py-6">
-            <FitaTalao medidas={medidas} />
-          </div>
-          <ol className="mt-5 grid gap-x-8 gap-y-2 md:grid-cols-2">
-            {passos.map((p, i) => (
-              <li
-                key={i}
-                className="border-l-2 border-line pl-4 text-sm leading-relaxed text-ink2"
-              >
-                {p}
-              </li>
-            ))}
-          </ol>
-        </Adivinha>
-      </section>
+      {/* C-03 — «o teu euro»: moeda pinned ≥768, lista estática em
+          <768 e reduced-motion; números todos dos motores/dados */}
+      <Euro passos={passosEuro()} />
 
-      {/* capítulos — o percurso do euro */}
+      {/* capítulos — comprimidos a grelha de 2 colunas ≥768; as
+          leituras repetidas do painel já não se mostram aqui */}
       <section className="stack-cap">
         <div className="flex items-baseline justify-between border-b-2 border-ink pb-3">
           <h2 className="font-display text-2xl tracking-wide md:text-3xl">
@@ -120,20 +138,22 @@ export default function Home() {
           </h2>
           <span className="num text-xs text-muted">{h.capitulosNota}</span>
         </div>
-        <ol>
+        <ol className="md:grid md:grid-cols-2">
           {h.capitulos.map((c) => (
             <li key={c.href} className="border-b border-line">
               <Link
                 href={c.href}
-                className="chapter-row group grid grid-cols-[1fr] items-baseline gap-4 px-2 py-6 md:grid-cols-[16rem_1fr_2rem] md:gap-8 md:px-4"
+                className="chapter-row group grid grid-cols-[1fr_1.5rem] items-baseline gap-4 px-2 py-5 md:px-4"
               >
-                <span className="font-display text-3xl tracking-wide transition-colors md:text-4xl">
-                  {c.titulo}
+                <span>
+                  <span className="font-display text-2xl tracking-wide transition-colors md:text-3xl">
+                    {c.titulo}
+                  </span>
+                  <span className="chapter-dim mt-1 block max-w-md text-sm leading-relaxed text-ink2 transition-colors">
+                    {c.descricao}
+                  </span>
                 </span>
-                <span className="chapter-dim col-span-2 mt-2 max-w-xl text-sm leading-relaxed text-ink2 transition-colors md:col-span-1 md:mt-0">
-                  {c.descricao}
-                </span>
-                <span className="chapter-arrow hidden text-right font-display text-2xl text-muted md:block">
+                <span className="chapter-arrow text-right font-display text-2xl text-muted">
                   →
                 </span>
               </Link>
