@@ -2,6 +2,7 @@ import { z } from "zod";
 import { writeFileSync, mkdirSync, readFileSync, existsSync } from "fs";
 import path from "path";
 import type { SerieGuardada } from "./eurostat";
+import { fetchJson, type ResultadoFonte } from "./_http";
 
 /**
  * Ingest DGEG — preço médio nacional diário de combustíveis (PMD).
@@ -55,10 +56,7 @@ async function fetchPmd(
   dataFim: string
 ): Promise<{ t: string; v: number }[]> {
   const url = `${BASE}?idsTiposComb=${idTipo}&dataIni=${dataIni}&dataFim=${dataFim}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`DGEG PMD ${idTipo}: HTTP ${res.status}`);
-
-  const body = respostaSchema.parse(await res.json());
+  const body = respostaSchema.parse(await fetchJson(url));
   if (!body.status || !body.resultado) return [];
 
   return body.resultado
@@ -113,25 +111,31 @@ export async function fetchCombustivel(
   return serieSchema.parse(doc);
 }
 
-export async function runDgeg(outDir: string): Promise<SerieGuardada[]> {
+export async function runDgeg(
+  outDir: string
+): Promise<ResultadoFonte<SerieGuardada>> {
   mkdirSync(outDir, { recursive: true });
   const docs: SerieGuardada[] = [];
-  for (const combustivel of Object.keys(COMBUSTIVEIS) as Combustivel[]) {
-    const file = path.join(outDir, `pmd-${combustivel}-diario.json`);
-    let existente: { t: string; v: number }[] = [];
-    if (existsSync(file)) {
-      try {
-        existente = serieSchema.parse(JSON.parse(readFileSync(file, "utf8"))).series;
-      } catch {
-        existente = []; // ficheiro inválido → backfill completo
+  try {
+    for (const combustivel of Object.keys(COMBUSTIVEIS) as Combustivel[]) {
+      const file = path.join(outDir, `pmd-${combustivel}-diario.json`);
+      let existente: { t: string; v: number }[] = [];
+      if (existsSync(file)) {
+        try {
+          existente = serieSchema.parse(JSON.parse(readFileSync(file, "utf8"))).series;
+        } catch {
+          existente = []; // ficheiro inválido → backfill completo
+        }
       }
+      const doc = await fetchCombustivel(combustivel, existente);
+      writeFileSync(file, JSON.stringify(doc, null, 2));
+      docs.push(doc);
+      console.log(
+        `✓ ${COMBUSTIVEIS[combustivel].nome}: ${doc.series.length} dias até ${doc.meta.serieAte}`
+      );
     }
-    const doc = await fetchCombustivel(combustivel, existente);
-    writeFileSync(file, JSON.stringify(doc, null, 2));
-    docs.push(doc);
-    console.log(
-      `✓ ${COMBUSTIVEIS[combustivel].nome}: ${doc.series.length} dias até ${doc.meta.serieAte}`
-    );
+  } catch (e) {
+    return { ok: false, erro: e instanceof Error ? e.message : String(e) };
   }
-  return docs;
+  return { ok: true, docs };
 }

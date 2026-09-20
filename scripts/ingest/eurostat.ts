@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { writeFileSync, mkdirSync } from "fs";
 import path from "path";
+import { fetchJson, type ResultadoFonte } from "./_http";
 
 /**
  * Ingest Eurostat — IHPC (prc_hicp_minr, ECOICOP 2018), JSON-stat 2.0.
@@ -47,12 +48,22 @@ const seriesSchema = z.object({
 
 export type SerieGuardada = z.infer<typeof seriesSchema>;
 
-interface JsonStat {
-  id?: string[];
-  size?: number[];
-  dimension: { time?: { category: { index: Record<string, number> } } };
-  value: number[] | Record<string, number>;
-}
+/** JSON-stat 2.0 — estrutura mínima que o parser precisa. */
+const jsonStatSchema = z.object({
+  id: z.array(z.string()).optional(),
+  size: z.array(z.number()).optional(),
+  dimension: z.object({
+    time: z
+      .object({ category: z.object({ index: z.record(z.string(), z.number()) }) })
+      .optional(),
+  }),
+  value: z.union([
+    z.array(z.number().nullable()),
+    z.record(z.string(), z.number().nullable()),
+  ]),
+});
+
+type JsonStat = z.infer<typeof jsonStatSchema>;
 
 /** JSON-stat 2.0 (só a dimensão temporal varia) → [{t, v}] ordenado. */
 export function parseJsonStat(json: JsonStat): { t: string; v: number }[] {
@@ -80,10 +91,7 @@ export function parseJsonStat(json: JsonStat): { t: string; v: number }[] {
 
 export async function fetchCoicop(coicop: Coicop): Promise<SerieGuardada> {
   const url = `${BASE}/${DATASET}?format=JSON&geo=PT&coicop18=${apiCoicop(coicop)}&unit=I25`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Eurostat ${coicop}: HTTP ${res.status}`);
-
-  const json = (await res.json()) as JsonStat;
+  const json = jsonStatSchema.parse(await fetchJson(url));
   const series = parseJsonStat(json);
   if (series.length === 0) throw new Error(`Eurostat ${coicop}: série vazia`);
 
@@ -102,17 +110,23 @@ export async function fetchCoicop(coicop: Coicop): Promise<SerieGuardada> {
   return seriesSchema.parse(doc);
 }
 
-export async function runEurostat(outDir: string): Promise<SerieGuardada[]> {
+export async function runEurostat(
+  outDir: string
+): Promise<ResultadoFonte<SerieGuardada>> {
   mkdirSync(outDir, { recursive: true });
   const docs: SerieGuardada[] = [];
-  for (const coicop of COICOPS) {
-    const doc = await fetchCoicop(coicop);
-    writeFileSync(
-      path.join(outDir, `hicp-pt-${coicop.toLowerCase()}.json`),
-      JSON.stringify(doc, null, 2)
-    );
-    docs.push(doc);
-    console.log(`✓ ${coicop}: ${doc.series.length} pontos até ${doc.meta.serieAte}`);
+  try {
+    for (const coicop of COICOPS) {
+      const doc = await fetchCoicop(coicop);
+      writeFileSync(
+        path.join(outDir, `hicp-pt-${coicop.toLowerCase()}.json`),
+        JSON.stringify(doc, null, 2)
+      );
+      docs.push(doc);
+      console.log(`✓ ${coicop}: ${doc.series.length} pontos até ${doc.meta.serieAte}`);
+    }
+  } catch (e) {
+    return { ok: false, erro: e instanceof Error ? e.message : String(e) };
   }
-  return docs;
+  return { ok: true, docs };
 }

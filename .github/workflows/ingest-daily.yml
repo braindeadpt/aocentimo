@@ -7,6 +7,11 @@ on:
 
 permissions:
   contents: write
+  issues: write
+
+concurrency:
+  group: dados
+  cancel-in-progress: false
 
 jobs:
   ingest:
@@ -26,4 +31,39 @@ jobs:
           git config user.email "bot@bruto.local"
           git add data/
           git diff --staged --quiet || git commit -m "data: ingest diária $(date +%Y-%m-%d)"
+          git pull --rebase origin main
           git push
+      - name: Registar falha em issue
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const titulo = `Ingest diária falhou — ${new Date().toISOString().slice(0, 10)}`;
+            await github.rest.issues.createLabel({ owner, repo, name: "dados" }).catch(() => {});
+            const { data: abertas } = await github.rest.issues.listForRepo({
+              owner, repo, state: "open", labels: "dados",
+            });
+            const corpo = `A ingest diária falhou em ${context.runId ? `[run ${context.runId}](${context.payload.repository?.html_url}/actions/runs/${context.runId})` : "execução agendada"}. Ver data/meta/ingest-log.json no commit seguinte.`;
+            const existente = abertas.find((i) => i.title.startsWith("Ingest diária falhou"));
+            if (existente) {
+              await github.rest.issues.createComment({ owner, repo, issue_number: existente.number, body: corpo });
+            } else {
+              await github.rest.issues.create({ owner, repo, title: titulo, labels: ["dados"], body: corpo });
+            }
+      - name: Fechar issues de falha
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const { data: abertas } = await github.rest.issues.listForRepo({
+              owner, repo, state: "open", labels: "dados",
+            });
+            for (const i of abertas.filter((i) => i.title.startsWith("Ingest diária falhou"))) {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: i.number,
+                body: "Ingest diária voltou a correr sem falhas — fecho automático.",
+              });
+              await github.rest.issues.update({ owner, repo, issue_number: i.number, state: "closed" });
+            }

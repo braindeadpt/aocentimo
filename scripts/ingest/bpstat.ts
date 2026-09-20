@@ -2,6 +2,7 @@ import { z } from "zod";
 import { writeFileSync, mkdirSync } from "fs";
 import path from "path";
 import type { SerieGuardada } from "./eurostat";
+import { fetchJson, type ResultadoFonte } from "./_http";
 
 /**
  * Ingest BPstat (Banco de Portugal) — Euribor média mensal.
@@ -78,10 +79,7 @@ function dedupeMes(series: { t: string; v: number }[]) {
 export async function fetchEuribor(prazo: PrazoEuribor): Promise<SerieGuardada> {
   const id = SERIES_EURIBOR[prazo];
   const url = `${BASE}?series_ids=${id}&lang=PT`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`BPstat Euribor ${prazo}: HTTP ${res.status}`);
-
-  const { data } = respostaSchema.parse(await res.json());
+  const { data } = respostaSchema.parse(await fetchJson(url));
   const series = dedupeMes(
     data
       .map((o) => ({ t: o.reference_date.slice(0, 7), v: Number(o.value) }))
@@ -107,10 +105,7 @@ export async function fetchEuribor(prazo: PrazoEuribor): Promise<SerieGuardada> 
 export async function fetchTaeg(categoria: CategoriaTaeg): Promise<SerieGuardada> {
   const id = SERIES_TAEG[categoria];
   const url = `${BASE}?series_ids=${id}&lang=PT`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`BPstat TAEG ${categoria}: HTTP ${res.status}`);
-
-  const { data } = respostaSchema.parse(await res.json());
+  const { data } = respostaSchema.parse(await fetchJson(url));
   const series = dedupeMes(
     data
       .map((o) => ({ t: o.reference_date.slice(0, 7), v: Number(o.value) }))
@@ -133,26 +128,32 @@ export async function fetchTaeg(categoria: CategoriaTaeg): Promise<SerieGuardada
   return serieSchema.parse(doc);
 }
 
-export async function runBpstat(outDir: string): Promise<SerieGuardada[]> {
+export async function runBpstat(
+  outDir: string
+): Promise<ResultadoFonte<SerieGuardada>> {
   mkdirSync(outDir, { recursive: true });
   const docs: SerieGuardada[] = [];
-  for (const prazo of Object.keys(SERIES_EURIBOR) as PrazoEuribor[]) {
-    const doc = await fetchEuribor(prazo);
-    writeFileSync(
-      path.join(outDir, `euribor-${prazo}-mensal.json`),
-      JSON.stringify(doc, null, 2)
-    );
-    docs.push(doc);
-    console.log(`✓ Euribor ${prazo}: ${doc.series.length} pontos até ${doc.meta.serieAte}`);
+  try {
+    for (const prazo of Object.keys(SERIES_EURIBOR) as PrazoEuribor[]) {
+      const doc = await fetchEuribor(prazo);
+      writeFileSync(
+        path.join(outDir, `euribor-${prazo}-mensal.json`),
+        JSON.stringify(doc, null, 2)
+      );
+      docs.push(doc);
+      console.log(`✓ Euribor ${prazo}: ${doc.series.length} pontos até ${doc.meta.serieAte}`);
+    }
+    for (const categoria of Object.keys(SERIES_TAEG) as CategoriaTaeg[]) {
+      const doc = await fetchTaeg(categoria);
+      writeFileSync(
+        path.join(outDir, `taeg-${categoria}-mensal.json`),
+        JSON.stringify(doc, null, 2)
+      );
+      docs.push(doc);
+      console.log(`✓ TAEG ${categoria}: ${doc.series.length} pontos até ${doc.meta.serieAte}`);
+    }
+  } catch (e) {
+    return { ok: false, erro: e instanceof Error ? e.message : String(e) };
   }
-  for (const categoria of Object.keys(SERIES_TAEG) as CategoriaTaeg[]) {
-    const doc = await fetchTaeg(categoria);
-    writeFileSync(
-      path.join(outDir, `taeg-${categoria}-mensal.json`),
-      JSON.stringify(doc, null, 2)
-    );
-    docs.push(doc);
-    console.log(`✓ TAEG ${categoria}: ${doc.series.length} pontos até ${doc.meta.serieAte}`);
-  }
-  return docs;
+  return { ok: true, docs };
 }
