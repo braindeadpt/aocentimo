@@ -10,6 +10,16 @@ import { Source } from "@/components/Source";
 import { Logo, LogoMark } from "@/components/Logo";
 import { MotionDemo } from "./MotionDemo";
 import { MotorDemo } from "./MotorDemo";
+import { BarrasDemo } from "./BarrasDemo";
+import { Linha } from "@/components/instrumentos/Linha";
+import { Mostrador } from "@/components/instrumentos/Mostrador";
+import { Calendario } from "@/components/instrumentos/Calendario";
+import { Multiplos } from "@/components/instrumentos/Multiplos";
+import { Declive } from "@/components/instrumentos/Declive";
+import { Manchete } from "@/components/Manchete";
+import { Glifo } from "@/components/Glifo";
+import painel from "@data/derived/painel.json";
+import pmdGasoleo from "@data/sources/dgeg/pmd-gasoleo-diario.json";
 import { PapelDefs } from "@/components/Papel";
 import { PecaPapel } from "@/components/PecaPapel";
 import { arestaRasgada } from "@/lib/materia";
@@ -29,6 +39,25 @@ export const metadata: Metadata = {
 const EURIBOR = [eur1m, eur3m, eur6m, eur12m].map((s) =>
   s.series.slice(-24)
 );
+
+// dados reais do painel para a secção Instrumentos (B-03)
+const PAINEL = painel.series;
+const painelSerie = (id: string) => PAINEL.find((s) => s.id === id);
+const PMD_2026 = pmdGasoleo.series.filter(
+  (p) => p.t >= "2026-01-01" && p.t <= "2026-12-31"
+);
+const DECLIVE_ITENS = ["euribor-3m-mensal", "euribor-12m-mensal", "ca-base", "une-pt-total", "pib-pt-homologo", "lci-pt-homologo"]
+  .map((id) => painelSerie(id))
+  .filter((s) => s !== undefined)
+  .map((s) => ({
+    rotulo: s.rotulo.split(",")[0],
+    antes: Math.round((s.valor - s.variacao.abs) * 100) / 100,
+    depois: s.valor,
+  }));
+const MULTIPLOS = ["euribor-3m-mensal", "euribor-12m-mensal", "ca-base", "une-pt-total"]
+  .map((id) => painelSerie(id))
+  .filter((s) => s !== undefined)
+  .map((s) => ({ id: s.id, rotulo: s.rotulo, pontos: s.spark }));
 
 const TOKENS: [string, string, string][] = [
   ["floor", "bg-floor", "#f4f3ec / #0d0b08 — nível 0, fundo"],
@@ -819,6 +848,131 @@ export default function EstiloPage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="stack-sec">
+        <h2 className="kicker mb-4">Instrumentos — o motor aplicado</h2>
+        <p className="footnote mb-4 max-w-xl">
+          Os seis instrumentos do observatório, com dados reais de{" "}
+          <code className="num">data/derived/painel.json</code> e das fontes.
+          Todos partilham o contrato: um só equivalente textual, estado
+          final no SSR, revelação só abaixo da dobra via{" "}
+          <code className="num">useArmado</code>.
+        </p>
+        <div className="space-y-6">
+          <Figure
+            title="Linha — Euribor por prazo"
+            source={<Source nome="Banco de Portugal — BPstat" />}
+          >
+            <Linha
+              series={EURIBOR.map((pts, i) => ({
+                id: `euribor-${i}`,
+                rotulo: `Euribor ${["1M", "3M", "6M", "12M"][i]}`,
+                cor: `var(--seq-${i + 1})`,
+                pontos: pts,
+              }))}
+              unidade="%"
+              equivalente="tabela"
+              titulo="Euribor por prazo — últimos 24 meses"
+            />
+          </Figure>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="border border-line bg-panel px-5 py-4">
+              <p className="kicker-xs mb-2">Mostrador — desemprego vs. UE27</p>
+              <Mostrador
+                valor={painelSerie("une-pt-total")?.valor ?? 0}
+                unidade="%"
+                min={0}
+                max={15}
+                mediana={{
+                  valor: painelSerie("une-ue27-total")?.valor ?? 0,
+                  rotulo: "UE27",
+                }}
+                rotulo="Desemprego"
+                t={painelSerie("une-pt-total")?.t ?? ""}
+              />
+            </div>
+            <div className="border border-line bg-panel px-5 py-4">
+              <p className="kicker-xs mb-2">Declive — variação homóloga</p>
+              <Declive
+                itens={DECLIVE_ITENS}
+                rotulos={["há um ano", "agora"]}
+                unidade="%"
+                titulo="Variação homóloga dos instrumentos"
+              />
+            </div>
+          </div>
+          <div className="border border-line bg-panel px-5 py-4">
+            <p className="kicker-xs mb-2">Multiplos — quatro séries, eixo comum</p>
+            <Multiplos
+              series={MULTIPLOS}
+              colunas={4}
+              unidade="%"
+              eixoComum
+              titulo="Quatro séries do painel, últimos 24 pontos"
+            />
+          </div>
+          <div className="border border-line bg-panel px-5 py-4">
+            <p className="kicker-xs mb-2">Barras — variação homóloga, reordenável</p>
+            <BarrasDemo />
+          </div>
+          <div className="border border-line bg-panel px-5 py-4">
+            <p className="kicker-xs mb-2">Calendario — gasóleo, dias de 2026</p>
+            <Calendario
+              pontos={PMD_2026}
+              anos={[2026]}
+              unidade="€/L"
+              titulo="Preço médio do gasóleo, por dia, em 2026"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="stack-sec">
+        <h2 className="kicker mb-4">Lettering — a manchete que abre</h2>
+        <p className="footnote mb-4 max-w-xl">
+          <code className="num">Manchete</code> abre cada carácter de
+          font-stretch 62 % → 100 %, escalonado por{" "}
+          <code className="num">--stagger</code> — a Archivo tem o eixo wdth
+          carregado, a compressão é real. Só corre abaixo da dobra ou com
+          runKey nova; SSR e reduced-motion trazem o texto final.
+        </p>
+        <div className="space-y-6">
+          <Manchete className="font-display text-3xl uppercase tracking-wide sm:text-4xl">
+            O cêntimo mede o teu dinheiro
+          </Manchete>
+          <Manchete as="h2" className="font-display text-xl uppercase tracking-wide text-ink2">
+            Cada número com fonte e data
+          </Manchete>
+          <Manchete as="p" className="footnote max-w-md">
+            E em corpo de texto a mesma abertura lê-se como um sussurro —
+            discreta, nunca um truque.
+          </Manchete>
+        </div>
+      </section>
+
+      <section className="stack-sec">
+        <h2 className="kicker mb-4">Glifos — sinais desenhados à mão</h2>
+        <p className="footnote mb-4 max-w-xl">
+          Cinco glifos 12×12 em <code className="num">currentColor</code>,
+          decorativos (aria-hidden): o significado mora no texto ao lado.
+          Na mudança de tipo o traço redesenha-se em{" "}
+          <code className="num">--dur-curta</code>.
+        </p>
+        <div className="flex flex-wrap items-end gap-8">
+          {(["sobe", "desce", "euro", "pct", "fluxo"] as const).map((g) => (
+            <span key={g} className="flex flex-col items-center gap-2">
+              <Glifo tipo={g} className="h-6 w-6 text-ink" />
+              <span className="kicker-xs">{g}</span>
+            </span>
+          ))}
+        </div>
+        <p className="footnote mt-4">
+          No Delta o glifo substitui o carácter visível e o sinal fica em
+          sr-only: <Delta value={0.023} /> sobe em preços,{" "}
+          <Delta value={-0.015} /> desce,{" "}
+          <Delta value={0.018} goodWhenUp /> sobe em poupança (bom).
+        </p>
       </section>
 
       {/* M-22: os casos proibidos mostrados — cada um foi um defeito real

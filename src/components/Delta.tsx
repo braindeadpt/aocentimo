@@ -1,8 +1,11 @@
 import { fmtPct } from "@/lib/format";
+import { Glifo } from "@/components/Glifo";
 
 /**
  * Variação com semântica de cor + símbolo (nunca só cor).
- * `bom` indica se a variação positiva é boa (poupança) ou má (preços).
+ * `goodWhenUp` indica se a variação positiva é boa (poupança) ou má
+ * (preços). O glifo é decorativo — «▲»/«▼» fica em sr-only como
+ * equivalente textual.
  */
 export function Delta({
   value,
@@ -25,8 +28,13 @@ export function Delta({
   const up = value > 0;
   const good = up === goodWhenUp;
   return (
-    <span className={`num ${good ? "text-down" : "text-up"}`}>
-      {up ? "▲" : "▼"} {fmtPct(Math.abs(value), casas)}
+    <span className={`num inline-flex items-center gap-0.5 ${good ? "text-down" : "text-up"}`}>
+      <Glifo
+        tipo={up ? "sobe" : "desce"}
+        className="inline-block h-[0.85em] w-[0.85em]"
+      />
+      <span className="sr-only">{up ? "▲" : "▼"}</span>
+      {fmtPct(Math.abs(value), casas)}
     </span>
   );
 }
