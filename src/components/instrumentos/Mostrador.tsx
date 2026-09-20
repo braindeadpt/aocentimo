@@ -17,7 +17,7 @@
  * Equivalente único: role="img" + aria-label com valor, unidade e data.
  */
 import { useEffect, useRef } from "react";
-import { fmtData, fmtNum } from "@/lib/format";
+import { fmtNum, fmtPeriodo } from "@/lib/format";
 import { useArmado } from "@/lib/useArmado";
 import { carregarGsap, dur, ease, motionActiva } from "@/lib/motion/gsap";
 import { pathArco } from "@/lib/viz/formas";
@@ -120,13 +120,24 @@ export function Mostrador({
       : acima
         ? "var(--accent)"
         : "var(--keep)";
-  const pMed = mediana
-    ? noArco(cx, cy, r - 8, anguloDe(mediana.valor, min, max))
+  /* referência fora da escala → sem tick no arco; fica só no texto
+     por baixo do valor (a escala fixa não mente) */
+  const medVisivel =
+    mediana !== undefined && mediana.valor >= min && mediana.valor <= max;
+  const pMed = medVisivel
+    ? noArco(cx, cy, r - 8, anguloDe(mediana!.valor, min, max))
     : null;
-  const pMed2 = mediana
-    ? noArco(cx, cy, r + 8, anguloDe(mediana.valor, min, max))
+  const pMed2 = medVisivel
+    ? noArco(cx, cy, r + 8, anguloDe(mediana!.valor, min, max))
     : null;
   const ponta = noArco(cx, cy, r - 12, angulo);
+
+  /* traços menores a cada unidade inteira da escala + extremos com
+     rótulo — a escala fixa lê-se, não se deduz */
+  const tracos: { a: number; extremo: boolean }[] = [];
+  for (let v = Math.ceil(min); v <= Math.floor(max); v++) {
+    tracos.push({ a: anguloDe(v, min, max), extremo: v === min || v === max });
+  }
 
   return (
     <div ref={refArmado} className="w-full">
@@ -139,7 +150,7 @@ export function Mostrador({
           ? { "aria-hidden": "true" }
           : {
               role: "img",
-              "aria-label": `${rotulo}: ${fmtNum(valor)} ${unidade} em ${fmtData(t)}`,
+              "aria-label": `${rotulo}: ${fmtNum(valor)} ${unidade} em ${fmtPeriodo(t)}`,
             })}
         data-viz
       >
@@ -159,8 +170,39 @@ export function Mostrador({
           stroke={corArco}
           strokeWidth={compacto ? 5 : 6}
         />
-        {/* marca da mediana */}
-        {mediana && pMed && pMed2 && (
+        {/* traços da escala — um por unidade inteira; extremos levam
+            rótulo de 10 px em --muted */}
+        {tracos.map(({ a, extremo }) => {
+          const p1 = noArco(cx, cy, r + (extremo ? 10 : 6), a);
+          const p2 = noArco(cx, cy, r + 3, a);
+          const pRot = noArco(cx, cy, r + 17, a);
+          return (
+            <g key={a}>
+              <line
+                x1={p2.x}
+                y1={p2.y}
+                x2={p1.x}
+                y2={p1.y}
+                stroke="var(--line2)"
+                strokeWidth={extremo ? 1.5 : 1}
+              />
+              {extremo && (
+                <text
+                  x={pRot.x}
+                  y={pRot.y + 3}
+                  textAnchor="middle"
+                  fontSize={10}
+                  fill="var(--muted)"
+                  fontFamily="var(--font-mono)"
+                >
+                  {a === A0 ? fmtNum(min) : `${fmtNum(max)}${unidade === "%" ? " %" : unidade ? ` ${unidade}` : ""}`}
+                </text>
+              )}
+            </g>
+          );
+        })}
+        {/* marca da mediana — só dentro da escala */}
+        {medVisivel && pMed && pMed2 && (
           <line
             x1={pMed.x}
             y1={pMed.y}

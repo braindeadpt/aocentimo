@@ -1,41 +1,16 @@
 import Link from "next/link";
 import { Adivinha } from "@/components/Adivinha";
-import { Odometer } from "@/components/Odometer";
-import { Delta } from "@/components/Delta";
 import { FitaTalao } from "@/components/FitaTalao";
 import { Kinetic } from "@/components/Kinetic";
-import { Source } from "@/components/Source";
-import { Instrumento } from "@/components/Instrumento";
 import { Painel } from "@/components/painel/Painel";
-import {
-  loadSerie,
-  variacao,
-  loadFontes,
-  loadDerivado,
-  loadFreshness,
-} from "@/lib/data";
 import { simularSalario } from "@/lib/engines/irs";
 import { TSU_ENTIDADE, TSU_TRABALHADOR } from "@/lib/engines/seg-social";
-import { fmtPct, fmtData, fmtEUR0 } from "@/lib/format";
+import { fmtPct, fmtEUR0 } from "@/lib/format";
 import { m, t } from "@/lib/messages";
 import { SITE_URL } from "@/lib/site";
-import smn from "@data/fiscal/smn.json";
-import ca from "@data/fiscal/ca.json";
-
-interface CaBase {
-  meta: { oficialPct: number; vigenciaOficial: string; serieAte: string; url?: string };
-  series: { t: string; v: number }[];
-}
 
 export default function Home() {
   const h = m.home;
-  const ipc = loadSerie("CP00");
-  const alim = loadSerie("CP01");
-  const caBase = loadDerivado<CaBase>("ca-base");
-  const fonteIpc = loadFontes().find((f) => f.id === "hicp-pt-cp00");
-  const fresh = loadFreshness();
-  const estadoDe = (id: string) =>
-    fresh?.series.find((s) => s.id === id)?.estado;
 
   // Fronteira servidor/cliente: o motor fiscal corre UMA vez aqui —
   // simularSalario puxa os JSON de data/fiscal (IRS, retenção, SS) que
@@ -88,11 +63,11 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
       />
-      {/* C-01 — o painel de leituras oficiais é a primeira dobra;
-          manchete, quadro do mês e capítulos descem intactos */}
+      {/* C-01 — o painel de leituras oficiais é a primeira dobra e
+          substitui o antigo quadro do mês; manchete e capítulos
+          descem intactos */}
       <Painel />
-      {/* manchete compacta — o herói é o instrumento, não o titular;
-          comprimida para o quadro do mês entrar na primeira dobra a 375 */}
+      {/* manchete compacta — o herói é o instrumento, não o titular */}
       <section className="grid items-end gap-4 pt-6 md:grid-cols-12 md:pt-12">
         <div className="md:col-span-8">
           <h1 className="font-display text-4xl leading-[0.95] tracking-wide text-ink sm:text-6xl lg:text-7xl">
@@ -105,73 +80,6 @@ export default function Home() {
           <Link href="/salario" className="btn btn-primary mt-4">
             {h.cta}
           </Link>
-        </div>
-      </section>
-
-      {/* os números do mês — primeira dobra: cada célula com a micro-série
-          de 24 meses, último ponto a torrado, fonte e data */}
-      <section className="mt-5 border border-line bg-panel md:mt-8" aria-labelledby="quadro-mes">
-        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-line px-5 py-3">
-          <h2 id="quadro-mes" className="kicker">
-            {h.hoje}
-          </h2>
-          {/* fonte e data no topo do quadro — a evidência entra na
-              primeira dobra com os números, não escondida no fim */}
-          {fonteIpc && (
-            <Source
-              nome={fonteIpc.fonte}
-              url={fonteIpc.url}
-              serieAte={fonteIpc.serieAte}
-              nota="IGCP · DL 139/2025"
-            />
-          )}
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4">
-          <Instrumento
-            className="border-b border-r border-line px-5 py-3 md:border-b-0 md:py-4"
-            rotulo={h.inflacaoHomologa}
-            estado={estadoDe("hicp-pt-cp00")}
-            atraso={0}
-            grande
-            valor={ipc ? <Delta value={variacao(ipc, 12)} /> : "—"}
-            spark={ipc?.series}
-            meta={ipc ? fmtData(ipc.meta.serieAte) : "—"}
-          />
-          <Instrumento
-            className="border-b border-line px-5 py-3 md:border-b-0 md:border-r md:py-4"
-            rotulo={h.alimentacao}
-            estado={estadoDe("hicp-pt-cp01")}
-            atraso={1}
-            grande
-            valor={alim ? <Delta value={variacao(alim, 12)} /> : "—"}
-            spark={alim?.series}
-            meta={h.ihpcCP01}
-          />
-          <Instrumento
-            className="border-r border-line px-5 py-3 md:py-4"
-            rotulo={h.salarioMinimo}
-            estado={estadoDe("fiscal-smn")}
-            atraso={2}
-            grande
-            valor={
-              <Odometer
-                valor={smn.serie[smn.serie.length - 1].valor}
-                sufixo=" €"
-              />
-            }
-            spark={smn.serie.map((s) => ({ t: String(s.ano), v: s.valor }))}
-            meta={h.smnNota}
-          />
-          <Instrumento
-            className="px-5 py-3 md:py-4"
-            rotulo={h.ca}
-            estado={estadoDe("fiscal-ca")}
-            atraso={3}
-            grande
-            valor={fmtPct(ca.serieF.taxaBrutaNovasSubscricoes, 2)}
-            spark={caBase?.series}
-            meta={h.caNota}
-          />
         </div>
       </section>
 

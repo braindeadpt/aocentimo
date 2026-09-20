@@ -285,6 +285,14 @@
     "estadoAtrasada": "atrasada",
     "estadoSemSla": "sem SLA",
     "equivalenteTitulo": "Leituras do painel — valor, variação, período e fonte de cada série",
-    "indiceEm": "índice"
+    "indiceEm": "índice",
+    "rotulos": {
+      "une-pt-total": "Desemprego",
+      "hpi-pt": "Habitação",
+      "pib-pt-homologo": "PIB homólogo",
+      "lci-pt-homologo": "Custo do trabalho",
+      "confianca-pt": "Confiança",
+      "elec-pt-domestico": "Electricidade"
+    }
   }
 }

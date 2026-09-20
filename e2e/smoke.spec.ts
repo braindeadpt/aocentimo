@@ -27,9 +27,9 @@ function rotasDoSite(): string[] {
 test("home renderiza com os números-chave", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(/para onde vai o teu dinheiro/i);
-  await expect(
-    page.getByText("Salário mínimo", { exact: true })
-  ).toBeVisible();
+  await expect(page.locator("#painel-titulo")).toContainText(
+    /leituras oficiais/i
+  );
 
   // C-01: o painel é a primeira dobra — o equivalente sr-only traz
   // todas as leituras com valor e período já no HTML SSR

@@ -69,6 +69,18 @@ export function fmtDataHora(iso: string): string {
   return `${data} · ${hora}`;
 }
 
+/** Período de série oficial → PT curto:
+ *  "2026-Q1" → "1.º trim. 2026"; "2025-S2" → "2.º sem. 2025";
+ *  datas e meses delegam em fmtData ("2026-08" → "ago 2026",
+ *  "2026-09-17" → "17 set 2026", "2026" → "2026"). */
+export function fmtPeriodo(t: string): string {
+  const q = /^(\d{4})-Q([1-4])$/.exec(t.trim());
+  if (q) return `${q[2]}.º trim. ${q[1]}`;
+  const s = /^(\d{4})-S([12])$/.exec(t.trim());
+  if (s) return `${s[2]}.º sem. ${s[1]}`;
+  return fmtData(t);
+}
+
 /** "2026-08" → "ago 2026"; "2026-08-15" → "15 ago 2026"; malformado → "—". */
 export function fmtData(iso: string): string {
   const partes = /^(\d{4})(?:-(\d{1,2})(?:-(\d{1,2}))?)?$/.exec(iso.trim());
