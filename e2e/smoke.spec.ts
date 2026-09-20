@@ -44,6 +44,24 @@ test("home renderiza com os números-chave", async ({ page }) => {
   }
 });
 
+test("expandir um instrumento mostra a Linha com equivalente e fecha com Escape", async ({
+  page,
+}) => {
+  await page.goto("/");
+  // C-02: o rótulo é um botão aria-expanded; o expandido traz a Linha
+  // completa (svg aria-hidden + a sua tabela equivalente), o selector
+  // de período e o link «página →»
+  await page.getByRole("button", { name: /Euribor 12M/ }).click();
+  const exp = page.locator("#exp-euribor-12m-mensal");
+  await expect(exp).toBeVisible();
+  await expect(exp.locator("svg[data-viz]")).toBeVisible();
+  await expect(exp.locator("table")).toBeAttached();
+  await expect(exp.locator('button[aria-pressed="true"]')).toHaveCount(1);
+  await expect(exp.getByText("página →")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.locator("#exp-euribor-12m-mensal")).toHaveCount(0);
+});
+
 test("calculadora de salário produz resultado", async ({ page }) => {
   await page.goto("/salario");
   await page.getByLabel("Salário bruto mensal").fill("1500");

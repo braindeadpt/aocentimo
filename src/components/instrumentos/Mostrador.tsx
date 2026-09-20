@@ -141,8 +141,11 @@ export function Mostrador({
 
   return (
     <div ref={refArmado} className="w-full">
-      {/* rótulo por cima do arco — kicker, fora do svg */}
-      <p className="kicker-xs mb-1 text-center">{rotulo}</p>
+      {/* rótulo por cima do arco — kicker, fora do svg; vazio quando o
+          contexto já o fornece (o painel tem botão próprio) */}
+      {rotulo !== "" && (
+        <p className="kicker-xs mb-1 text-center">{rotulo}</p>
+      )}
       <svg
         viewBox={`0 0 220 ${alturaSvg}`}
         className={compacto ? "block w-full" : "mx-auto block w-full max-w-64"}

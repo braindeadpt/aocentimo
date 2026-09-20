@@ -1,14 +1,15 @@
 /**
- * Painel — a primeira dobra da home (C-01): leituras oficiais do
- * data/derived/painel.json em grelha de instrumentos. Hierarquia, não
- * cards iguais: dois mostradores grandes, combustíveis empilhados,
- * seis leituras médias.
+ * Painel — a primeira dobra da home (C-01/C-02): leituras oficiais do
+ * data/derived/painel.json em grelha de instrumentos expansíveis.
+ * Hierarquia, não cards iguais: dois mostradores grandes, combustíveis
+ * empilhados, seis leituras médias.
  *
- * Contrato: SSR com os valores finais (nada anima ao carregar — M-09),
- * um só equivalente textual (<table> sr-only com todas as leituras) —
- * os instrumentos ficam aria-hidden e os links/focáveis fora do nó
- * escondido. Períodos sempre em PT (fmtPeriodo), valores com símbolo
- * de unidade. Falha de fonte mostra-se — nunca um número inventado.
+ * Este ficheiro corre no servidor: monta os ItemPainel (incluindo o
+ * histórico completo de cada série, lido de data/sources) e entrega
+ * a grelha ao GrelhaPainel (cliente — Flip, expansão, hash). O SSR é
+ * o painel colapsado com os valores finais; um só equivalente textual
+ * (<table> sr-only) cobre as leituras colapsadas; os instrumentos
+ * ficam aria-hidden e os links/focáveis fora do nó escondido.
  */
 import Link from "next/link";
 import { Glifo } from "@/components/Glifo";
@@ -19,6 +20,13 @@ import { Spark, type EstadoSerie } from "@/components/Spark";
 import { fmtDataHora, fmtNum, fmtPeriodo } from "@/lib/format";
 import { m, t } from "@/lib/messages";
 import { loadFonte } from "@/lib/data";
+import {
+  CelulaGrelha,
+  GrelhaPainel,
+  InstrumentoPainel,
+  type ItemPainel,
+} from "@/components/painel/GrelhaPainel";
+import eventos from "@data/fiscal/eventos.json";
 import painel from "@data/derived/painel.json";
 
 type Entrada = (typeof painel.series)[number];
@@ -61,9 +69,9 @@ const rotuloCurto = (id: string, fallback: string) =>
   (m.painel.rotulos as Record<string, string>)[id] ?? fallback;
 
 /** linha «leitura {período} · estado» — fora do aria-hidden */
-function Meta({ s, className = "" }: { s: Entrada; className?: string }) {
+function Meta({ s }: { s: Entrada }) {
   return (
-    <p className={`footnote mt-2 flex items-center gap-1.5 ${className}`}>
+    <p className="footnote mt-2 flex items-center gap-1.5">
       <span className={`serie-estado ${s.estado}`} aria-hidden />
       {m.painel.leitura} {fmtPeriodo(s.rotuloAte)} ·{" "}
       {ESTADO_TXT[s.estado] ?? s.estado}
@@ -97,80 +105,92 @@ function VariacaoPP({ pp, periodo }: { pp: number; periodo: string }) {
   const up = pp > 0;
   return (
     <p className="num flex items-center gap-1 text-xs text-ink2">
-      {pp !== 0 && (
-        <Glifo tipo={up ? "sobe" : "desce"} className="h-3 w-3" />
-      )}
+      {pp !== 0 && <Glifo tipo={up ? "sobe" : "desce"} className="h-3 w-3" />}
       {pp === 0 ? "=" : up ? "+" : "−"}
       {fmtNum(Math.abs(pp))} p.p. {m.painel.vs} {fmtPeriodo(periodo)}
     </p>
   );
 }
 
-/** rótulo-link — fora do nó aria-hidden para ficar focável;
- *  `futuro` marca rotas temáticas planeadas (ainda sem ficheiro) */
-function RotuloLink({
-  s,
-  href,
-  futuro = false,
-  texto,
-}: {
-  s: Entrada;
-  href: string;
-  futuro?: boolean;
-  texto?: string;
-}) {
-  return (
-    <Link
-      href={href}
-      {...(futuro ? { "data-futuro": "" } : {})}
-      className="kicker-xs underline decoration-line2 underline-offset-2 hover:text-accent"
-      title={descricaoDe(s.id)}
-    >
-      {texto ?? s.rotulo}
-    </Link>
-  );
+/* ———— histórico completo para a expansão ———— */
+
+type DirFonte = "eurostat" | "bpstat" | "dgeg";
+
+/** id do painel → ficheiro de fonte; `homologa` = n.º de períodos da
+ *  variação homóloga quando o instrumento mostra a taxa, não o índice */
+const FONTE_SERIE: Record<
+  string,
+  { dir: DirFonte; nome: string; homologa?: number }
+> = {
+  "inflacao-homologa": { dir: "eurostat", nome: "hicp-pt-cp00", homologa: 12 },
+  "euribor-12m-mensal": { dir: "bpstat", nome: "euribor-12m-mensal" },
+  "pmd-gasoleo-diario": { dir: "dgeg", nome: "pmd-gasoleo-diario" },
+  "pmd-gasolina95-diario": { dir: "dgeg", nome: "pmd-gasolina95-diario" },
+  "une-pt-total": { dir: "eurostat", nome: "une-pt-total" },
+  "hpi-pt": { dir: "eurostat", nome: "hpi-pt", homologa: 4 },
+  "pib-pt-homologo": { dir: "eurostat", nome: "pib-pt-homologo" },
+  "lci-pt-homologo": { dir: "eurostat", nome: "lci-pt-homologo" },
+  "confianca-pt": { dir: "eurostat", nome: "confianca-pt" },
+  "elec-pt-domestico": { dir: "eurostat", nome: "elec-pt-domestico" },
+};
+
+const UNI_LINHA: Record<string, string> = {
+  "pmd-gasoleo-diario": "€/L",
+  "pmd-gasolina95-diario": "€/L",
+  "elec-pt-domestico": "€/kWh",
+  "confianca-pt": "",
+};
+
+function serieDe(id: string): { t: string; v: number }[] {
+  const f = FONTE_SERIE[id];
+  if (!f) return [];
+  const pts = loadFonte(f.dir, f.nome)?.series ?? [];
+  if (!f.homologa) return pts;
+  const k = f.homologa;
+  return pts.slice(k).map((p, i) => ({
+    t: p.t,
+    v: Math.round((p.v / pts[i].v - 1) * 10000) / 100,
+  }));
 }
 
-function Combustivel({
-  s,
-  spark30,
-}: {
-  s: Entrada;
-  spark30: { t: string; v: number }[];
-}) {
-  return (
-    <div className="p-3 md:px-4">
-      <div className="flex items-baseline justify-between gap-2">
-        <Link
-          href="/precos"
-          className="kicker-xs underline decoration-line2 underline-offset-2 hover:text-accent"
-          title={descricaoDe(s.id)}
-        >
-          {s.rotulo}
-        </Link>
-        <span className="num text-xl tabular-nums" aria-hidden="true">
-          <Odometer valor={s.valor} casas={3} sufixo=" €/L" dur={600} />
-        </span>
-      </div>
-      <div aria-hidden="true">
-        <Variacao s={s} />
-        <Spark pts={spark30} estado={s.estado as EstadoSerie} className="mt-1" />
-      </div>
-      <Meta s={s} />
-    </div>
-  );
+function itemDe(
+  s: Entrada,
+  o: { href: string; futuro?: boolean; eventos?: ItemPainel["eventos"] }
+): ItemPainel {
+  const unidadeLinha = UNI_LINHA[s.id] ?? "%";
+  return {
+    id: s.id,
+    rotulo: rotuloCurto(s.id, s.rotulo),
+    rotuloCompleto: s.rotulo,
+    descricao: descricaoDe(s.id),
+    href: o.href,
+    futuro: o.futuro ?? false,
+    estado: s.estado,
+    fonte: s.fonte,
+    url: s.url,
+    rotuloAte: s.rotuloAte,
+    unidadeLinha,
+    serie: serieDe(s.id),
+    eventos: o.eventos,
+    refLinha: s.referencia
+      ? {
+          valor: s.referencia.valor,
+          rotulo: `${s.referencia.rotulo} · ${fmtNum(s.referencia.valor)} ${unidadeLinha}`.trim(),
+        }
+      : undefined,
+  };
 }
 
-function Grande({
+/* ———— visuais colapsados (renderizados no servidor) ———— */
+
+function VisualGrande({
   s,
   min,
   max,
-  href,
 }: {
   s: Entrada;
   min: number;
   max: number;
-  href: string;
 }) {
   const mediana = s.referencia
     ? { valor: s.referencia.valor, rotulo: s.referencia.rotulo }
@@ -181,16 +201,16 @@ function Grande({
     min,
     max,
     mediana,
-    rotulo: s.rotulo,
+    rotulo: "",
     t: s.t,
     mudo: true,
   };
   return (
-    <div className="bg-panel p-3 md:px-4 md:py-4">
+    <>
       {/* mobile: mostrador compacto ~44 % à esquerda, valor+referência
           + leitura à direita; ≥md: mostrador grande por cima.
           Dois svgs mudos — o equivalente é a tabela única. */}
-      <div className="flex items-center gap-3 md:block">
+      <div className="mt-1 flex items-center gap-3 md:block">
         <div aria-hidden="true" className="w-[44%] shrink-0 md:w-auto">
           <div className="hidden md:block">
             <Mostrador {...props} />
@@ -199,23 +219,11 @@ function Grande({
             <Mostrador {...props} compacto />
           </div>
         </div>
-        <div className="min-w-0 md:mt-2">
-          <p className="footnote">
-            <Link
-              href={href}
-              className="underline decoration-line2 underline-offset-2 hover:text-accent"
-            >
-              {s.rotulo}
-            </Link>
-            {/* a descrição esconde-se abaixo de 640 px — o link fica */}
-            <span className="hidden sm:inline"> — {descricaoDe(s.id)}</span>
-          </p>
+        <div className="min-w-0 md:mt-1">
           {/* valor e referência em texto só no mobile — no desktop já
               estão dentro do mostrador */}
           <div aria-hidden="true" className="md:hidden">
-            <p className="num mt-1 text-2xl tabular-nums">
-              {fmtNum(s.valor)} %
-            </p>
+            <p className="num text-2xl tabular-nums">{fmtNum(s.valor)} %</p>
             {s.referencia && (
               <p className="num text-[11px] text-muted">
                 {s.referencia.rotulo} {fmtNum(s.referencia.valor)} %
@@ -226,19 +234,38 @@ function Grande({
           <Source nome={s.fonte} url={s.url} />
         </div>
       </div>
-    </div>
+      {/* a descrição esconde-se abaixo de 640 px */}
+      <p className="footnote mt-2 hidden sm:block">{descricaoDe(s.id)}</p>
+    </>
   );
 }
 
-function Medio({
+function VisualCombustivel({
   s,
-  href,
+  spark30,
+}: {
+  s: Entrada;
+  spark30: { t: string; v: number }[];
+}) {
+  return (
+    <>
+      <div aria-hidden="true" className="mt-1">
+        <p className="num text-xl tabular-nums">
+          <Odometer valor={s.valor} casas={3} sufixo=" €/L" dur={600} />
+        </p>
+        <Variacao s={s} />
+        <Spark pts={spark30} estado={s.estado as EstadoSerie} className="mt-1" />
+      </div>
+      <Meta s={s} />
+    </>
+  );
+}
+
+function VisualMedio({
+  s,
   varPP,
 }: {
   s: Entrada;
-  href: string;
-  /** variação em p.p. da taxa homóloga (habitação) — substitui a
-   *  diferença de índice, que não se lê */
   varPP?: { pp: number; periodo: string };
 }) {
   const eHpi = s.id === "hpi-pt";
@@ -249,13 +276,7 @@ function Medio({
     ? `${s.variacao.pct !== null && s.variacao.pct >= 0 ? "+" : "−"}${fmtNum(Math.abs((s.variacao.pct ?? 0) * 100))} %`
     : `${fmtNum(s.valor)}${uni ? ` ${uni}` : ""}`;
   return (
-    <div className="flex flex-col bg-panel p-3 md:px-4">
-      <RotuloLink
-        s={s}
-        href={href}
-        futuro
-        texto={rotuloCurto(s.id, s.rotulo)}
-      />
+    <>
       <div aria-hidden="true" className="mt-1">
         <p className="num text-2xl tabular-nums">{valorTxt}</p>
         {eHpi && (
@@ -272,7 +293,7 @@ function Medio({
       </div>
       <Meta s={s} />
       <Source nome={s.fonte} url={s.url} />
-    </div>
+    </>
   );
 }
 
@@ -296,7 +317,11 @@ export function Painel() {
   /* spark de 30 dias — o painel só guarda 24; lê-se a fonte diária */
   const pmdGasoleo = loadFonte("dgeg", "pmd-gasoleo-diario");
   const pmdGasolina = loadFonte("dgeg", "pmd-gasolina95-diario");
-  const hpiPP = variacaoHomologaPP(loadFonte("eurostat", "hpi-pt")?.series ?? []);
+  const hpiPP = variacaoHomologaPP(
+    loadFonte("eurostat", "hpi-pt")?.series ?? []
+  );
+
+  const evsEuribor = eventos.eventos.filter((e) => e.alvo === "euribor");
 
   const medios: { id: string; href: string }[] = [
     { id: "une-pt-total", href: "/emprego" },
@@ -359,54 +384,82 @@ export function Painel() {
         </p>
       </div>
 
-      {/* grelha 12 / 6 / 1 colunas */}
-      <div className="grid grid-cols-1 gap-px bg-line md:grid-cols-6 lg:grid-cols-12">
+      <GrelhaPainel>
         {/* linha 1 — os dois mostradores grandes */}
         {inflacao && (
-          <div className="md:col-span-3 lg:col-span-4">
-            <Grande s={inflacao} min={0} max={10} href="/inflacao" />
-          </div>
+          <CelulaGrelha
+            ids={["inflacao-homologa"]}
+            base="md:col-span-3 lg:col-span-4"
+          >
+            <InstrumentoPainel
+              item={itemDe(inflacao, { href: "/inflacao" })}
+            >
+              <VisualGrande s={inflacao} min={0} max={10} />
+            </InstrumentoPainel>
+          </CelulaGrelha>
         )}
         {euribor && (
-          <div className="md:col-span-3 lg:col-span-4">
-            <Grande s={euribor} min={0} max={6} href="/credito" />
-          </div>
+          <CelulaGrelha
+            ids={["euribor-12m-mensal"]}
+            base="md:col-span-3 lg:col-span-4"
+          >
+            <InstrumentoPainel
+              item={itemDe(euribor, {
+                href: "/credito",
+                eventos: evsEuribor,
+              })}
+            >
+              <VisualGrande s={euribor} min={0} max={6} />
+            </InstrumentoPainel>
+          </CelulaGrelha>
         )}
 
-        {/* coluna dos combustíveis — empilhados */}
-        <div className="grid grid-rows-2 gap-px bg-line md:col-span-6 lg:col-span-4">
+        {/* coluna dos combustíveis — empilhados, cada um expansível */}
+        <CelulaGrelha
+          ids={["pmd-gasoleo-diario", "pmd-gasolina95-diario"]}
+          base="grid gap-px bg-line md:col-span-6 lg:col-span-4"
+        >
           {gasoleo && (
-            <div className="bg-panel">
-              <Combustivel
+            <InstrumentoPainel
+              item={itemDe(gasoleo, { href: "/precos" })}
+            >
+              <VisualCombustivel
                 s={gasoleo}
                 spark30={pmdGasoleo?.series.slice(-30) ?? gasoleo.spark}
               />
-            </div>
+            </InstrumentoPainel>
           )}
           {gasolina && (
-            <div className="bg-panel">
-              <Combustivel
+            <InstrumentoPainel
+              item={itemDe(gasolina, { href: "/precos" })}
+            >
+              <VisualCombustivel
                 s={gasolina}
                 spark30={pmdGasolina?.series.slice(-30) ?? gasolina.spark}
               />
-            </div>
+            </InstrumentoPainel>
           )}
-        </div>
+        </CelulaGrelha>
 
         {/* linha 2 — seis instrumentos médios */}
         {medios.map(({ id, href }) => {
           const s = porId(id);
           return s ? (
-            <div key={id} className="bg-panel md:col-span-2 lg:col-span-2">
-              <Medio
-                s={s}
-                href={href}
-                varPP={id === "hpi-pt" ? (hpiPP ?? undefined) : undefined}
-              />
-            </div>
+            <CelulaGrelha
+              key={id}
+              ids={[id]}
+              base="bg-panel md:col-span-2 lg:col-span-2"
+            >
+              <InstrumentoPainel item={itemDe(s, { href, futuro: true })}>
+                <VisualMedio
+                  s={s}
+                  varPP={id === "hpi-pt" ? (hpiPP ?? undefined) : undefined}
+                />
+              </InstrumentoPainel>
+            </CelulaGrelha>
           ) : null;
         })}
-      </div>
+      </GrelhaPainel>
 
       {/* rodapé — contagem honesta + porta para a metodologia */}
       <p className="border-t border-line px-3 py-2.5 text-xs text-muted md:px-5">

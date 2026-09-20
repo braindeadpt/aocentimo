@@ -66,6 +66,8 @@ interface Props {
   eventos?: EventoLinha[];
   /** faixa de contexto — área tracejada entre dois valores (ex.: meta 2 %) */
   banda?: { min: number; max: number; rotulo: string };
+  /** linha de referência horizontal tracejada em --mark (ex.: mediana) */
+  refLinha?: { valor: number; rotulo: string };
   altura?: number;
   /** forma do equivalente textual sr-only */
   equivalente: "tabela" | "dl";
@@ -97,6 +99,7 @@ export function Linha({
   unidade,
   eventos,
   banda,
+  refLinha,
   altura = 360,
   equivalente,
   titulo,
@@ -196,17 +199,19 @@ export function Linha({
     [series]
   );
 
-  // domínio com folga proporcional — o zero não entra à força
+  // domínio com folga proporcional — o zero não entra à força;
+  // a linha de referência entra no domínio para nunca ser cortada
   const domBase = useMemo((): Dominio => {
     const ts = dados.flatMap((d) => d.pts.map((p) => p.t));
     const vs = dados.flatMap((d) => d.pts.map((p) => p.v));
+    if (refLinha && Number.isFinite(refLinha.valor)) vs.push(refLinha.valor);
     const t0 = Math.min(...ts);
     const t1 = Math.max(...ts);
     const vMin = Math.min(...vs);
     const vMax = Math.max(...vs);
     const span = vMax - vMin || 1;
     return { t0, t1, lo: vMin - span * 0.09, hi: vMax + span * 0.09 };
-  }, [dados]);
+  }, [dados, refLinha]);
 
   const dadosPts = useMemo(() => dados.map((d) => d.pts), [dados]);
 
@@ -328,6 +333,9 @@ export function Linha({
       cruzaZero,
     };
   }, [dados, dom, ptsList, w, altura, pad, unidade]);
+
+  /* a referência depende do domínio — mas o domínio já a inclui */
+  const yRef = refLinha ? y(refLinha.valor) : null;
 
   const plotW = w - pad.left - pad.right;
   const plotH = altura - pad.top - pad.bottom;
@@ -558,6 +566,30 @@ export function Linha({
               fontFamily="var(--font-mono)"
             >
               {banda.rotulo}
+            </text>
+          </g>
+        )}
+        {/* linha de referência — mediana/comparador tracejado em --mark */}
+        {refLinha && yRef !== null && (
+          <g>
+            <line
+              x1={pad.left}
+              x2={w - pad.right}
+              y1={yRef}
+              y2={yRef}
+              stroke="var(--mark)"
+              strokeWidth={1}
+              strokeDasharray="4 3"
+              vectorEffect="non-scaling-stroke"
+            />
+            <text
+              x={pad.left + 4}
+              y={yRef - 4}
+              fontSize={10}
+              fill="var(--muted)"
+              fontFamily="var(--font-mono)"
+            >
+              {refLinha.rotulo}
             </text>
           </g>
         )}
