@@ -258,7 +258,7 @@ export default function DadosPage() {
                   : "em-dia"
               }
               equivalente="tabela"
-              titulo="Euribor — médias mensais"
+              titulo="Euribor — quatro prazos"
             />
             <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-px bg-line border border-line">
               {(Object.keys(euribor) as (keyof typeof euribor)[]).map((k) => {

@@ -938,7 +938,7 @@ export default function EstiloPage() {
           runKey nova; SSR e reduced-motion trazem o texto final.
         </p>
         <div className="space-y-6">
-          <Manchete className="font-display text-3xl uppercase tracking-wide sm:text-4xl">
+          <Manchete as="h2" className="font-display text-3xl uppercase tracking-wide sm:text-4xl">
             O cêntimo mede o teu dinheiro
           </Manchete>
           <Manchete as="h2" className="font-display text-xl uppercase tracking-wide text-ink2">

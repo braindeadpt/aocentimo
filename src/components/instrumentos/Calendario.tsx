@@ -129,7 +129,7 @@ export function Calendario({ pontos, anos, unidade, titulo }: Props) {
     if (celulasPlano.some((c) => c.iso === nova)) {
       setFoco(nova);
       scope.current
-        ?.querySelector<SVGRectElement>(`[data-dia="${nova}"]`)
+        ?.querySelector<HTMLElement>(`[data-dia="${nova}"]`)
         ?.focus();
     }
   };
@@ -189,62 +189,82 @@ export function Calendario({ pontos, anos, unidade, titulo }: Props) {
       </div>
 
       <div className="overflow-x-auto">
-        {anosBlocos.map(({ ano, celulas }) => (
-          <div key={ano} className="cal-ano mt-3">
-            <p aria-hidden className="kicker-xs mb-1">{ano}</p>
-            <svg
-              viewBox={`0 0 ${53 * PASSO + 30} ${7 * PASSO + 6}`}
-              className="block h-auto w-full min-w-[540px]"
-              style={{ maxWidth: 700 }}
-              role="grid"
-              aria-label={`${titulo} — ${ano}`}
-              data-viz
-            >
-              {DIAS_SEM.map((d, i) =>
-                i % 2 === 0 ? (
-                  <text
-                    key={d}
-                    x={0}
-                    y={i * PASSO + CELL - 1}
-                    fontSize={8}
-                    fill="var(--muted)"
-                    fontFamily="var(--font-mono)"
-                  >
-                    {d}
-                  </text>
-                ) : null
-              )}
-              {celulas.map((c) => (
-                // eslint-disable-next-line jsx-a11y/role-supports-aria-props -- o brief exige aria-valuetext na célula; o aria-label é o anúncio
-                <rect
-                  key={c.iso}
-                  data-dia={c.iso}
-                  x={26 + c.col * PASSO}
-                  y={c.linha * PASSO}
-                  width={CELL}
-                  height={CELL}
-                  tabIndex={foco === c.iso || (foco === null && c === celulas[celulas.length - 1]) ? 0 : -1}
-                  role="gridcell"
-                  aria-label={`${c.iso}: ${c.v !== null ? fmtV(c.v) : "sem dados"}`}
-                  aria-valuetext={c.v !== null ? fmtV(c.v) : "sem dados"}
-                  fill={c.v !== null ? corQuantil(quantilDe(c.v)) : "none"}
-                  stroke={c.v !== null ? "none" : "var(--line)"}
-                  strokeWidth={c.v !== null ? 0 : 1}
-                  onPointerEnter={() => setFoco(c.iso)}
-                  onFocus={() => setFoco(c.iso)}
-                  onKeyDown={(e) => {
-                    if (e.key === "ArrowRight") { e.preventDefault(); moveFoco(c.iso, 1); }
-                    else if (e.key === "ArrowLeft") { e.preventDefault(); moveFoco(c.iso, -1); }
-                    else if (e.key === "ArrowDown") { e.preventDefault(); moveFoco(c.iso, 7); }
-                    else if (e.key === "ArrowUp") { e.preventDefault(); moveFoco(c.iso, -7); }
-                    else if (e.key === "Escape") setFoco(null);
-                  }}
-                  style={foco === c.iso ? { outline: "1.5px solid var(--mark)", outlineOffset: 1 } : undefined}
-                />
-              ))}
-            </svg>
-          </div>
-        ))}
+        {anosBlocos.map(({ ano, celulas }) => {
+          const W = 53 * PASSO + 30;
+          const H = 7 * PASSO + 6;
+          return (
+            <div key={ano} className="cal-ano mt-3">
+              <p aria-hidden className="kicker-xs mb-1">{ano}</p>
+              <div className="relative w-full min-w-[540px]" style={{ maxWidth: 700 }}>
+                <svg
+                  viewBox={`0 0 ${W} ${H}`}
+                  className="block h-auto w-full"
+                  aria-hidden="true"
+                  data-viz
+                >
+                  {DIAS_SEM.map((d, i) =>
+                    i % 2 === 0 ? (
+                      <text
+                        key={d}
+                        x={0}
+                        y={i * PASSO + CELL - 1}
+                        fontSize={8}
+                        fill="var(--muted)"
+                        fontFamily="var(--font-mono)"
+                      >
+                        {d}
+                      </text>
+                    ) : null
+                  )}
+                  {celulas.map((c) => (
+                    <rect
+                      key={c.iso}
+                      x={26 + c.col * PASSO}
+                      y={c.linha * PASSO}
+                      width={CELL}
+                      height={CELL}
+                      fill={c.v !== null ? corQuantil(quantilDe(c.v)) : "none"}
+                      stroke={c.v !== null ? "none" : "var(--line)"}
+                      strokeWidth={c.v !== null ? 0 : 1}
+                    />
+                  ))}
+                </svg>
+                {/* grelha interactiva — o svg fica mudo, as células são divs sobre ele */}
+                <div role="grid" aria-label={`${titulo} — ${ano}`} className="absolute inset-0">
+                  {celulas.map((c) => (
+                    // eslint-disable-next-line jsx-a11y/role-supports-aria-props -- o brief exige aria-valuetext na célula; o aria-label é o anúncio
+                    <div
+                      key={c.iso}
+                      data-dia={c.iso}
+                      role="gridcell"
+                      tabIndex={foco === c.iso || (foco === null && c === celulas[celulas.length - 1]) ? 0 : -1}
+                      aria-label={`${c.iso}: ${c.v !== null ? fmtV(c.v) : "sem dados"}`}
+                      aria-valuetext={c.v !== null ? fmtV(c.v) : "sem dados"}
+                      className="absolute"
+                      style={{
+                        left: `${((26 + c.col * PASSO) / W) * 100}%`,
+                        top: `${((c.linha * PASSO) / H) * 100}%`,
+                        width: `${(CELL / W) * 100}%`,
+                        height: `${(CELL / H) * 100}%`,
+                        outline: foco === c.iso ? "1.5px solid var(--mark)" : undefined,
+                        outlineOffset: 1,
+                      }}
+                      onPointerEnter={() => setFoco(c.iso)}
+                      onFocus={() => setFoco(c.iso)}
+                      onKeyDown={(e) => {
+                        if (e.key === "ArrowRight") { e.preventDefault(); moveFoco(c.iso, 1); }
+                        else if (e.key === "ArrowLeft") { e.preventDefault(); moveFoco(c.iso, -1); }
+                        else if (e.key === "ArrowDown") { e.preventDefault(); moveFoco(c.iso, 7); }
+                        else if (e.key === "ArrowUp") { e.preventDefault(); moveFoco(c.iso, -7); }
+                        else if (e.key === "Escape") setFoco(null);
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* legenda de quantis — valores reais */}

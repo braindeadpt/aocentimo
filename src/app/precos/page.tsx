@@ -109,7 +109,7 @@ export default function PrecosPage() {
               unidade="€"
               eventos={eventos.eventos.filter((e) => e.alvo === "combustiveis")}
               equivalente="tabela"
-              titulo="Preço médio nacional, por litro"
+              titulo="Gasóleo e gasolina — série diária"
             />
           </>
         ) : (
