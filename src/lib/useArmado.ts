@@ -48,5 +48,7 @@ export function useArmado<T extends Element>(run: string) {
   }, []);
 
   const arm = (cls: string) => (revelou || run !== mountRun ? cls : "");
-  return { ref, arm };
+  // armado: a mesma decisão em booleano — os motores GSAP (B-01) precisam
+  // do predicado, não da classe
+  return { ref, arm, armado: revelou || run !== mountRun };
 }

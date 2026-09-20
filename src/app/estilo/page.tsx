@@ -9,6 +9,7 @@ import { EuroBar } from "@/components/EuroBar";
 import { Source } from "@/components/Source";
 import { Logo, LogoMark } from "@/components/Logo";
 import { MotionDemo } from "./MotionDemo";
+import { MotorDemo } from "./MotorDemo";
 import { PapelDefs } from "@/components/Papel";
 import { PecaPapel } from "@/components/PecaPapel";
 import { arestaRasgada } from "@/lib/materia";
@@ -569,6 +570,19 @@ export default function EstiloPage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="stack-sec">
+        <h2 className="kicker mb-4">Motor — GSAP + d3, a gramática intacta</h2>
+        <p className="footnote mb-4 max-w-xl">
+          O motor novo: o d3 só calcula escalas, marcas e formas — o SVG é
+          desenhado à mão e o movimento é GSAP com os tokens{" "}
+          <code className="num">--dur-*</code>/<code className="num">--ease-*</code>.
+          Com prefers-reduced-motion nenhum tween arranca — o estado final é
+          o estado base — e acima da dobra nada revela: o gate continua a
+          ser o <code className="num">useArmado</code>.
+        </p>
+        <MotorDemo />
       </section>
 
       <section className="stack-sec">
