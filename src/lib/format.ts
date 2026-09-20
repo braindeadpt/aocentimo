@@ -49,6 +49,26 @@ export const fmtLitro = (v: number) =>
 export const fmtPct = (v: number, casas = 1) =>
   finito(v) ? `${(v * 100).toFixed(casas).replace(".", ",")} %` : FALHOU;
 
+/** "2026-09-20T19:43:30Z" → "20 set 2026 · 21:43" (hora de Lisboa);
+ *  aceita também datas simples → devolve só a data. */
+export function fmtDataHora(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return FALHOU;
+  if (!iso.includes("T")) return fmtData(iso);
+  const data = new Intl.DateTimeFormat("pt-PT", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "Europe/Lisbon",
+  }).format(d);
+  const hora = new Intl.DateTimeFormat("pt-PT", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Europe/Lisbon",
+  }).format(d);
+  return `${data} · ${hora}`;
+}
+
 /** "2026-08" → "ago 2026"; "2026-08-15" → "15 ago 2026"; malformado → "—". */
 export function fmtData(iso: string): string {
   const partes = /^(\d{4})(?:-(\d{1,2})(?:-(\d{1,2}))?)?$/.exec(iso.trim());

@@ -268,6 +268,23 @@
     "elec-pt-domestico": {
       "rotulo": "Electricidade doméstica",
       "descricao": "Preço médio semestral para consumos de 2 500–5 000 kWh por ano, com impostos — não é a tua tarifa exacta."
+    },
+    "inflacao-homologa": {
+      "rotulo": "Inflação, homóloga",
+      "descricao": "Variação do IHPC face ao mesmo mês do ano anterior — a taxa que o BCE acompanha; não é o preço do teu cabaz."
     }
+  },
+  "painel": {
+    "kicker": "PAINEL — leituras oficiais",
+    "recolhido": "recolhido",
+    "leitura": "leitura",
+    "vs": "vs.",
+    "rodape": "{n} séries oficiais · {emDia} em dia",
+    "metodologia": "metodologia →",
+    "estadoEmDia": "em dia",
+    "estadoAtrasada": "atrasada",
+    "estadoSemSla": "sem SLA",
+    "equivalenteTitulo": "Leituras do painel — valor, variação, período e fonte de cada série",
+    "indiceEm": "índice"
   }
 }

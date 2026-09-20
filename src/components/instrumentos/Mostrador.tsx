@@ -34,6 +34,9 @@ interface Props {
   /** período do valor — entra no aria-label */
   t: string;
   compacto?: boolean;
+  /** dentro do painel (C-01) o equivalente é a tabela única — o svg
+      fica mudo, sem role="img"/aria-label (evita anúncio duplo) */
+  mudo?: boolean;
 }
 
 /* arco simétrico: 8h → 4h, o vazio fica em baixo para o valor */
@@ -59,6 +62,7 @@ export function Mostrador({
   rotulo,
   t,
   compacto = false,
+  mudo = false,
 }: Props) {
   const { ref: refArmado, armado } = useArmado<HTMLDivElement>(
     `${rotulo}-${t}`
@@ -131,8 +135,12 @@ export function Mostrador({
       <svg
         viewBox={`0 0 220 ${alturaSvg}`}
         className={compacto ? "block w-full" : "mx-auto block w-full max-w-64"}
-        role="img"
-        aria-label={`${rotulo}: ${fmtNum(valor)} ${unidade} em ${fmtData(t)}`}
+        {...(mudo
+          ? { "aria-hidden": "true" }
+          : {
+              role: "img",
+              "aria-label": `${rotulo}: ${fmtNum(valor)} ${unidade} em ${fmtData(t)}`,
+            })}
         data-viz
       >
         {/* pista */}

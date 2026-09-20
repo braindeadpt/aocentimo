@@ -6,6 +6,7 @@ import { FitaTalao } from "@/components/FitaTalao";
 import { Kinetic } from "@/components/Kinetic";
 import { Source } from "@/components/Source";
 import { Instrumento } from "@/components/Instrumento";
+import { Painel } from "@/components/painel/Painel";
 import {
   loadSerie,
   variacao,
@@ -87,6 +88,9 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
       />
+      {/* C-01 — o painel de leituras oficiais é a primeira dobra;
+          manchete, quadro do mês e capítulos descem intactos */}
+      <Painel />
       {/* manchete compacta — o herói é o instrumento, não o titular;
           comprimida para o quadro do mês entrar na primeira dobra a 375 */}
       <section className="grid items-end gap-4 pt-6 md:grid-cols-12 md:pt-12">

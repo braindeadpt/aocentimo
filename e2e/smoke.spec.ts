@@ -30,6 +30,18 @@ test("home renderiza com os números-chave", async ({ page }) => {
   await expect(
     page.getByText("Salário mínimo", { exact: true })
   ).toBeVisible();
+
+  // C-01: o painel é a primeira dobra — o equivalente sr-only traz
+  // todas as leituras com valor e período já no HTML SSR
+  const linhas = page.locator(
+    'section[aria-labelledby="painel-titulo"] table tbody tr'
+  );
+  expect(await linhas.count()).toBeGreaterThanOrEqual(8);
+  for (let i = 0; i < (await linhas.count()); i++) {
+    const celulas = linhas.nth(i).locator("td");
+    await expect(celulas.nth(0)).toContainText(/\d/); // valor
+    await expect(celulas.nth(2)).toContainText(/\d{4}/); // período
+  }
 });
 
 test("calculadora de salário produz resultado", async ({ page }) => {

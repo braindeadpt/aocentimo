@@ -128,6 +128,9 @@ for (const { file, rota: r, html } of paginas) {
       continue;
     }
     if (/^(mailto|tel):/.test(href)) continue;
+    // [data-futuro]: rotas temáticas planeadas (C/D) — o href já é o
+    // final mas o ficheiro ainda não existe; não é um link partido
+    if ("data-futuro" in a) continue;
     // interno
     const { file: alvo, hash } = resolveHref(file, href);
     if (hash !== null && hash !== "" && alvo === null && href.startsWith("#")) {
