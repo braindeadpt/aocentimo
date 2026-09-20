@@ -17,7 +17,7 @@ export function BarrasDemo() {
     .slice(0, 8)
     .map((s) => ({
       id: s.id,
-      rotulo: s.rotulo.split(",")[0].split(" ")[0],
+      rotulo: s.rotulo,
       valor: Math.round((s.variacao.pct ?? 0) * 1000) / 10,
       t: s.t,
     }));

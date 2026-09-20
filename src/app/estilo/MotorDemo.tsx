@@ -2,13 +2,15 @@
 
 /**
  * Secção «Motor» do /estilo — prova mínima de B-01: escalas d3 + SVG
- * manual + revelação GSAP (DrawSVG no traço, rotação na agulha).
+ * manual + revelação GSAP por dynamic import (DrawSVG no traço,
+ * agulha por coordenadas — o mesmo padrão do instrumento Mostrador).
  * Dados reais de data/derived/painel.json — a régie do site aplica-se
- * também às demos. Com prefers-reduced-motion nenhum tween arranca.
+ * também às demos. Com prefers-reduced-motion nenhum tween arranca e
+ * o chunk do GSAP nunca é descarregado.
  */
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useArmado } from "@/lib/useArmado";
-import { dur, ease, gsap, reduzido, useGSAP } from "@/lib/motion/gsap";
+import { carregarGsap, dur, ease, motionActiva } from "@/lib/motion/gsap";
 import { dataDePeriodo, escalaTempo, escalaValor } from "@/lib/viz/escalas";
 import { pathArco, pathLinha } from "@/lib/viz/formas";
 import { ticksTempo, ticksValor } from "@/lib/viz/eixos";
@@ -23,17 +25,22 @@ const MR = 8;
 const MT = 8;
 const MB = 24;
 
-/* Mostrador mínimo — arco de 240°, de −210° a 30° (0° = 12h) */
+/* Mostrador mínimo — arco simétrico −120°→120° (8h→4h), vazio em baixo */
 const MCX = 110;
-const MCY = 105;
-const MR_ = 78;
-const A0 = -210;
-const A1 = 30;
+const MCY = 74;
+const MR_ = 64;
+const A0 = -120;
+const A1 = 120;
 const anguloDe = (v: number, min: number, max: number) =>
   A0 + ((v - min) / (max - min)) * (A1 - A0);
+const noArco = (r: number, a: number) => ({
+  x: MCX + r * Math.sin((a * Math.PI) / 180),
+  y: MCY - r * Math.cos((a * Math.PI) / 180),
+});
 
 export function MotorDemo() {
   const scope = useRef<HTMLDivElement>(null);
+  const agulha = useRef<SVGLineElement>(null);
   const { ref: refArmado, armado } = useArmado<HTMLDivElement>("motor-demo");
 
   const hicp = painel.series.find((i) => i.id === "hicp-pt-cp00");
@@ -56,28 +63,38 @@ export function MotorDemo() {
   const valor = desemprego?.valor ?? 0;
   const mediana = ue27?.valor;
   const angulo = anguloDe(valor, min, max);
+  const ponta = noArco(MR_ - 12, angulo);
+  const pMed1 = mediana !== undefined ? noArco(MR_ - 8, anguloDe(mediana, min, max)) : null;
+  const pMed2 = mediana !== undefined ? noArco(MR_ + 8, anguloDe(mediana, min, max)) : null;
 
-  useGSAP(
-    () => {
-      if (!armado || reduzido()) return;
+  useEffect(() => {
+    if (!armado || !motionActiva()) return;
+    let morto = false;
+    void carregarGsap().then(({ gsap }) => {
+      const raiz = scope.current;
+      const el = agulha.current;
+      if (morto || !raiz || !el) return;
+      const proxy = { a: A0 };
       gsap.fromTo(
-        ".motor-linha",
+        raiz.querySelectorAll(".motor-linha"),
         { drawSVG: "0%" },
         { drawSVG: "100%", duration: dur("longa"), ease: ease("entra") }
       );
-      gsap.fromTo(
-        ".motor-agulha",
-        { rotation: A0, svgOrigin: `${MCX} ${MCY}` },
-        {
-          rotation: angulo,
-          svgOrigin: `${MCX} ${MCY}`,
-          duration: dur("longa"),
-          ease: ease("entra"),
-        }
-      );
-    },
-    { scope, dependencies: [armado, caminho, angulo] }
-  );
+      gsap.to(proxy, {
+        a: angulo,
+        duration: dur("longa"),
+        ease: ease("entra"),
+        onUpdate: () => {
+          const p = noArco(MR_ - 12, proxy.a);
+          el.setAttribute("x2", String(Math.round(p.x * 100) / 100));
+          el.setAttribute("y2", String(Math.round(p.y * 100) / 100));
+        },
+      });
+    });
+    return () => {
+      morto = true;
+    };
+  }, [armado, caminho, angulo]);
 
   return (
     <div
@@ -148,7 +165,7 @@ export function MotorDemo() {
 
       <figure className="border border-line bg-panel px-5 py-4">
         <figcaption className="kicker-xs">
-          Mostrador — agulha GSAP, escala fixa 0–15
+          Mostrador — agulha por coordenadas, escala fixa 0–15
         </figcaption>
         <svg
           viewBox="0 0 220 170"
@@ -175,32 +192,31 @@ export function MotorDemo() {
             }
             strokeWidth={6}
           />
-          {mediana !== undefined && (
+          {pMed1 && pMed2 && (
             <line
-              x1={MCX + (MR_ - 8) * Math.sin((anguloDe(mediana, min, max) * Math.PI) / 180)}
-              y1={MCY - (MR_ - 8) * Math.cos((anguloDe(mediana, min, max) * Math.PI) / 180)}
-              x2={MCX + (MR_ + 8) * Math.sin((anguloDe(mediana, min, max) * Math.PI) / 180)}
-              y2={MCY - (MR_ + 8) * Math.cos((anguloDe(mediana, min, max) * Math.PI) / 180)}
+              x1={pMed1.x}
+              y1={pMed1.y}
+              x2={pMed2.x}
+              y2={pMed2.y}
               stroke="var(--mark)"
               strokeWidth={2}
             />
           )}
           <line
-            className="motor-agulha"
+            ref={agulha}
             x1={MCX}
             y1={MCY}
-            x2={MCX}
-            y2={MCY - (MR_ - 14)}
+            x2={ponta.x}
+            y2={ponta.y}
             stroke="var(--ink)"
             strokeWidth={2}
-            transform={`rotate(${angulo} ${MCX} ${MCY})`}
           />
           <circle cx={MCX} cy={MCY} r={3} fill="var(--ink)" />
           <text
             x={MCX}
-            y={MCY + 34}
+            y={MCY + MR_ * 0.5 + 26}
             textAnchor="middle"
-            fontSize={22}
+            fontSize={21}
             fill="var(--ink)"
             className="num tabular-nums"
           >
@@ -208,12 +224,12 @@ export function MotorDemo() {
           </text>
           <text
             x={MCX}
-            y={MCY + 50}
+            y={MCY + MR_ * 0.5 + 42}
             textAnchor="middle"
-            fontSize={10}
+            fontSize={11}
             fill="var(--muted)"
           >
-            desemprego · UE27 {fmtNum(mediana ?? NaN)} %
+            UE27 {fmtNum(mediana ?? NaN)} %
           </text>
         </svg>
         <p className="footnote mt-2">

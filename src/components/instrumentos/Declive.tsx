@@ -6,7 +6,7 @@
  * Rótulos com anti-colisão: empurra verticalmente em passos de ≥12 px.
  * Equivalente único: tabela sr-only com antes/depois/variação.
  */
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { fmtNum } from "@/lib/format";
 import { escalaValor } from "@/lib/viz/escalas";
 import { EmptyState } from "@/components/EmptyState";
@@ -27,10 +27,13 @@ interface Props {
 
 const W = 640;
 const H = 240;
-const X0 = 150;
-const X1 = W - 150;
 const PAD_Y = 26;
 const PASSO_ROTULO = 12;
+/** largura aproximada de um carácter mono a 11 px — as margens são
+ *  calculadas pelo rótulo mais comprido, nunca cortam */
+const PX_CHAR = 6.2;
+/** abaixo desta largura renderizada os rótulos passam para cima/baixo */
+const COMPACTO = 480;
 
 const fmtV = (v: number, unidade: string) =>
   unidade ? `${fmtNum(v)} ${unidade}` : fmtNum(v);
@@ -60,10 +63,38 @@ function semColisao(ys: number[]): number[] {
 }
 
 export function Declive({ itens, rotulos, unidade, titulo }: Props) {
+  const scope = useRef<HTMLDivElement>(null);
+  const [w, setW] = useState(720);
+
+  useEffect(() => {
+    const el = scope.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setW(e.contentRect.width));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   const dados = useMemo(
     () => itens.filter((i) => Number.isFinite(i.antes) && Number.isFinite(i.depois)),
     [itens]
   );
+
+  const compacto = w < COMPACTO;
+
+  /* margens laterais calculadas pelo rótulo mais comprido — nunca corta;
+     em compacto as margens encolhem e os rótulos vão para cima/baixo */
+  const { X0, X1 } = useMemo(() => {
+    if (compacto) return { X0: 14, X1: W - 14 };
+    const esq = Math.max(
+      ...dados.map((i) => `${i.rotulo} ${fmtV(i.antes, unidade)}`.length)
+    );
+    const dir = Math.max(
+      ...dados.map((i) => `▲ ${fmtV(i.depois, unidade)}`.length)
+    );
+    const margem = (chars: number) =>
+      Math.min(W * 0.42, Math.ceil(chars * PX_CHAR) + 10);
+    return { X0: margem(esq), X1: W - margem(dir) };
+  }, [dados, unidade, compacto]);
 
   const y = useMemo(() => {
     const vs = dados.flatMap((i) => [i.antes, i.depois]);
@@ -82,7 +113,7 @@ export function Declive({ itens, rotulos, unidade, titulo }: Props) {
   if (dados.length === 0) return <EmptyState titulo="Dados indisponíveis" />;
 
   return (
-    <div className="relative w-full">
+    <div ref={scope} className="relative w-full">
       <div className="sr-only">
         <table>
           <caption>{titulo}</caption>
@@ -151,26 +182,55 @@ export function Declive({ itens, rotulos, unidade, titulo }: Props) {
               />
               <circle cx={X0} cy={y(i.antes)} r={2.5} fill={cor} />
               <circle cx={X1} cy={y(i.depois)} r={2.5} fill={cor} />
-              <text
-                x={X0 - 8}
-                y={rotEsq[k] + 3}
-                textAnchor="end"
-                fontSize={11}
-                fill="var(--ink2)"
-                fontFamily="var(--font-mono)"
-              >
-                {i.rotulo} {fmtV(i.antes, unidade)}
-              </text>
-              <text
-                x={X1 + 8}
-                y={rotDir[k] + 3}
-                textAnchor="start"
-                fontSize={11}
-                fill="var(--ink2)"
-                fontFamily="var(--font-mono)"
-              >
-                <tspan fill={cor}>{sinal}</tspan> {fmtV(i.depois, unidade)}
-              </text>
+              {compacto ? (
+                <>
+                  {/* mobile: rótulo por cima do ponto esquerdo, valor por
+                      baixo do direito — as margens laterais não existem */}
+                  <text
+                    x={X0}
+                    y={rotEsq[k] - 8}
+                    textAnchor="start"
+                    fontSize={11}
+                    fill="var(--ink2)"
+                    fontFamily="var(--font-mono)"
+                  >
+                    {i.rotulo} {fmtV(i.antes, unidade)}
+                  </text>
+                  <text
+                    x={X1}
+                    y={rotDir[k] + 14}
+                    textAnchor="end"
+                    fontSize={11}
+                    fill="var(--ink2)"
+                    fontFamily="var(--font-mono)"
+                  >
+                    <tspan fill={cor}>{sinal}</tspan> {fmtV(i.depois, unidade)}
+                  </text>
+                </>
+              ) : (
+                <>
+                  <text
+                    x={X0 - 8}
+                    y={rotEsq[k] + 3}
+                    textAnchor="end"
+                    fontSize={11}
+                    fill="var(--ink2)"
+                    fontFamily="var(--font-mono)"
+                  >
+                    {i.rotulo} {fmtV(i.antes, unidade)}
+                  </text>
+                  <text
+                    x={X1 + 8}
+                    y={rotDir[k] + 3}
+                    textAnchor="start"
+                    fontSize={11}
+                    fill="var(--ink2)"
+                    fontFamily="var(--font-mono)"
+                  >
+                    <tspan fill={cor}>{sinal}</tspan> {fmtV(i.depois, unidade)}
+                  </text>
+                </>
+              )}
             </g>
           );
         })}

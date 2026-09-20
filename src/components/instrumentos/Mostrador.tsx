@@ -1,21 +1,25 @@
 "use client";
 
 /**
- * Mostrador — o relógio do observatório (B-02): um valor numa escala
- * fixa passada por props (nunca auto-escalada — min/max são o contexto,
- * ex.: 0–15 % para taxas). Arco de 240° de −210° a 30° (0° = 12h,
- * positivo horário). A marca torrada é a mediana de referência; o arco
- * percorrido é --accent acima dela e --keep abaixo.
+ * Mostrador — o relógio do observatório (B-02, rev. pós-B-2): um valor
+ * numa escala fixa passada por props (nunca auto-escalada — min/max são
+ * o contexto, ex.: 0–10 % para inflação). Arco simétrico de −120° a
+ * 120° (8h → 4h, 0° = 12h) — o vazio fica em baixo e recebe o valor.
+ * A marca torrada é a mediana de referência; o arco percorrido é
+ * --accent acima dela e --keep abaixo.
  *
- * Movimento: mudança de valor roda a agulha com gsap.to (dur media,
- * ease entra); revelação abaixo da dobra varre de A0 ao valor.
- * Nascer visível = posição final já. prefers-reduced-motion: sem tween.
+ * A agulha é uma <line> cujos x2/y2 saem de noArco() no render — SSR
+ * correcto sem JS, sem transform/rotation (nada se compõe). A animação
+ * tween um proxy {a} e escreve x2/y2 em onUpdate.
+ * Movimento: mudança de valor ou revelação abaixo da dobra varre de
+ * A0/posição actual ao alvo; nascer visível = posição final já.
+ * prefers-reduced-motion: sem tween, e o GSAP nunca é descarregado.
  * Equivalente único: role="img" + aria-label com valor, unidade e data.
  */
 import { useEffect, useRef } from "react";
 import { fmtData, fmtNum } from "@/lib/format";
 import { useArmado } from "@/lib/useArmado";
-import { dur, ease, gsap, reduzido } from "@/lib/motion/gsap";
+import { carregarGsap, dur, ease, motionActiva } from "@/lib/motion/gsap";
 import { pathArco } from "@/lib/viz/formas";
 
 interface Props {
@@ -24,7 +28,7 @@ interface Props {
   /** escala FIXA — nunca auto-escalada */
   min: number;
   max: number;
-  /** marca de referência (ex.: mediana UE27) */
+  /** marca de referência (ex.: mediana 10 anos, UE27) */
   mediana?: { valor: number; rotulo: string };
   rotulo: string;
   /** período do valor — entra no aria-label */
@@ -32,10 +36,11 @@ interface Props {
   compacto?: boolean;
 }
 
-const A0 = -210;
-const A1 = 30;
+/* arco simétrico: 8h → 4h, o vazio fica em baixo para o valor */
+const A0 = -120;
+const A1 = 120;
 const anguloDe = (v: number, min: number, max: number) =>
-  A0 + (Math.min(max, Math.max(min, v)) - min) / (max - min) * (A1 - A0);
+  A0 + ((Math.min(max, Math.max(min, v)) - min) / (max - min)) * (A1 - A0);
 
 const r2 = (n: number) => Math.round(n * 100) / 100;
 
@@ -63,52 +68,69 @@ export function Mostrador({
   const angRef = useRef<number | null>(null);
 
   const cx = 110;
-  const cy = compacto ? 96 : 105;
-  const r = compacto ? 66 : 78;
+  const cy = compacto ? 64 : 74;
+  const r = compacto ? 52 : 64;
   const angulo = anguloDe(valor, min, max);
+  /* o vazio do arco começa em cy + r·cos(60°) — o valor mora lá dentro */
+  const yVazio = cy + r * 0.5;
+  const alturaSvg = yVazio + (compacto ? 40 : 52);
 
-  // movimento da agulha: revelação (armado) ou mudança de valor —
-  // sempre da posição actual para a nova, nunca de zero
+  /* movimento da agulha + arco percorrido: revelação (armado) ou
+     mudança de valor — sempre da posição actual para a nova. O proxy
+     tween o ângulo e escreve coordenadas; sem rotation. */
   useEffect(() => {
     const el = agulha.current;
+    const arco = arcoVivo.current;
     if (!el) return;
     const de = angRef.current;
     angRef.current = angulo;
-    if (reduzido()) {
-      gsap.set(el, { rotation: angulo, svgOrigin: `${cx} ${cy}` });
-      return;
-    }
-    if (de === null) {
-      // primeiro render — só anima se a dobra legitimou (armado)
-      if (!armado) return;
-      gsap.fromTo(
-        el,
-        { rotation: A0, svgOrigin: `${cx} ${cy}` },
-        { rotation: angulo, svgOrigin: `${cx} ${cy}`, duration: dur("media"), ease: ease("entra") }
-      );
-      return;
-    }
-    if (de === angulo) return;
-    gsap.fromTo(
-      el,
-      { rotation: de, svgOrigin: `${cx} ${cy}` },
-      { rotation: angulo, svgOrigin: `${cx} ${cy}`, duration: dur("media"), ease: ease("entra") }
-    );
-  }, [angulo, armado, cx, cy]);
+    if (!motionActiva()) return;
+    if (de === null && !armado) return; // nasceu visível: SSR já é final
+    const partida = de === null ? A0 : de;
+    if (partida === angulo) return;
+    let morto = false;
+    const proxy = { a: partida };
+    void carregarGsap().then(({ gsap }) => {
+      if (morto) return;
+      gsap.to(proxy, {
+        a: angulo,
+        duration: dur("media"),
+        ease: ease("entra"),
+        onUpdate: () => {
+          const p = noArco(cx, cy, r - 12, proxy.a);
+          el.setAttribute("x2", String(p.x));
+          el.setAttribute("y2", String(p.y));
+          arco?.setAttribute("d", pathArco(cx, cy, r, A0, proxy.a));
+        },
+      });
+    });
+    return () => {
+      morto = true;
+    };
+  }, [angulo, armado, cx, cy, r]);
 
   const acima = mediana !== undefined && valor > mediana.valor;
-  const corArco = mediana === undefined ? "var(--ink)" : acima ? "var(--accent)" : "var(--keep)";
-  const pMed = mediana ? noArco(cx, cy, r - 9, anguloDe(mediana.valor, min, max)) : null;
-  const pMed2 = mediana ? noArco(cx, cy, r + 9, anguloDe(mediana.valor, min, max)) : null;
+  const corArco =
+    mediana === undefined
+      ? "var(--ink)"
+      : acima
+        ? "var(--accent)"
+        : "var(--keep)";
+  const pMed = mediana
+    ? noArco(cx, cy, r - 8, anguloDe(mediana.valor, min, max))
+    : null;
+  const pMed2 = mediana
+    ? noArco(cx, cy, r + 8, anguloDe(mediana.valor, min, max))
+    : null;
+  const ponta = noArco(cx, cy, r - 12, angulo);
 
   return (
-    <div
-      ref={refArmado}
-      className={compacto ? "w-full" : "mx-auto w-full max-w-64"}
-    >
+    <div ref={refArmado} className="w-full">
+      {/* rótulo por cima do arco — kicker, fora do svg */}
+      <p className="kicker-xs mb-1 text-center">{rotulo}</p>
       <svg
-        viewBox={`0 0 220 ${compacto ? 150 : 170}`}
-        className="block w-full"
+        viewBox={`0 0 220 ${alturaSvg}`}
+        className={compacto ? "block w-full" : "mx-auto block w-full max-w-64"}
         role="img"
         aria-label={`${rotulo}: ${fmtNum(valor)} ${unidade} em ${fmtData(t)}`}
         data-viz
@@ -140,24 +162,23 @@ export function Mostrador({
             strokeWidth={2}
           />
         )}
-        {/* agulha — nasce na posição final; o tween só a roda */}
+        {/* agulha — coordenadas do render; o tween só reescreve x2/y2 */}
         <line
           ref={agulha}
           x1={cx}
           y1={cy}
-          x2={cx}
-          y2={cy - (r - 14)}
+          x2={ponta.x}
+          y2={ponta.y}
           stroke="var(--ink)"
           strokeWidth={2}
-          transform={`rotate(${angulo} ${cx} ${cy})`}
         />
         <circle cx={cx} cy={cy} r={3} fill="var(--ink)" />
-        {/* valor central — mono tabular */}
+        {/* valor no vazio do arco — mono tabular */}
         <text
           x={cx}
-          y={cy + (compacto ? 28 : 34)}
+          y={yVazio + (compacto ? 20 : 26)}
           textAnchor="middle"
-          fontSize={compacto ? 18 : 22}
+          fontSize={compacto ? 17 : 21}
           fill="var(--ink)"
           fontFamily="var(--font-mono)"
           className="tabular-nums"
@@ -165,16 +186,16 @@ export function Mostrador({
           {fmtNum(valor)}
           {unidade === "%" ? " %" : unidade ? ` ${unidade}` : ""}
         </text>
-        {!compacto && (
+        {/* referência por baixo do valor */}
+        {mediana && (
           <text
             x={cx}
-            y={cy + 50}
+            y={yVazio + (compacto ? 34 : 42)}
             textAnchor="middle"
-            fontSize={10}
+            fontSize={11}
             fill="var(--muted)"
           >
-            {rotulo}
-            {mediana ? ` · ${mediana.rotulo} ${fmtNum(mediana.valor)} ${unidade}` : ""}
+            {mediana.rotulo} {fmtNum(mediana.valor)} {unidade}
           </text>
         )}
       </svg>

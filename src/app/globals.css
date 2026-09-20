@@ -955,6 +955,23 @@ html[data-theme="dark"] .tema-ponto {
   }
 }
 
+/* Glifo (B-03) — o traço redesenha-se quando o tipo muda: dashoffset
+   sobre pathLength=1, duração/easing dos tokens. A classe .glifo-desenha
+   só entra depois da montagem e numa mudança real de tipo; com
+   reduced-motion a regra global corta a animação e o glifo nasce cheio. */
+.glifo-desenha path {
+  stroke-dasharray: 1;
+  animation: glifo-desenha var(--dur-curta) var(--ease-entra) both;
+}
+@keyframes glifo-desenha {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 /* escalões-recipiente (/irs) — cada escalão é um tanque que enche com a
    fatia de rendimento que lá cabe; o enchimento é a transição de
    largura (muda de estado → --dur-media, a orquestra do input) */

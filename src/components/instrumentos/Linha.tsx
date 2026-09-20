@@ -29,7 +29,13 @@ import {
   type PontoTV,
 } from "@/lib/grafico";
 import { useArmado } from "@/lib/useArmado";
-import { dur, ease, gsap, reduzido, stagger, useGSAP } from "@/lib/motion/gsap";
+import {
+  carregarGsap,
+  dur,
+  ease,
+  motionActiva,
+  stagger,
+} from "@/lib/motion/gsap";
 import { dataDePeriodo, escalaValor } from "@/lib/viz/escalas";
 import { rotuloValor, ticksTempo } from "@/lib/viz/eixos";
 import { pathLinha } from "@/lib/viz/formas";
@@ -115,46 +121,57 @@ export function Linha({
   }, []);
 
   /* revelação DrawSVG — só quando o useArmado legitima (abaixo da dobra
-     ou run nova); reduced-motion e SSR nascem no traço final */
-  useGSAP(
-    () => {
-      if (!armado || reduzido()) return;
-      const linhas = scope.current?.querySelectorAll(".ln-linha");
-      if (linhas?.length) {
-        gsap.fromTo(
-          linhas,
-          { drawSVG: "0%" },
-          {
-            drawSVG: "100%",
-            duration: dur("longa"),
-            ease: ease("entra"),
-            stagger: stagger(),
-            // a morph seguinte muda o d — o dash inline ficava a medir
-            // o comprimento velho e escondia a cauda
-            onComplete: () =>
-              gsap.set(linhas, {
-                clearProps: "strokeDasharray,strokeDashoffset",
-              }),
-          }
-        );
-      }
-      const bandas = scope.current?.querySelectorAll(".lc-banda, .ln-banda-ctx");
-      if (bandas?.length) {
-        gsap.fromTo(
-          bandas,
-          { opacity: 0 },
-          {
-            opacity: 1,
-            duration: dur("media"),
-            delay: dur("longa") * 0.55,
-            ease: ease("entra"),
-            onComplete: () => gsap.set(bandas, { clearProps: "opacity" }),
-          }
-        );
-      }
-    },
-    { scope, dependencies: [armado] }
-  );
+     ou run nova) e o movimento pode correr; o GSAP chega por dynamic
+     import — fora do bundle inicial. reduced-motion e SSR nascem no
+     traço final e o chunk nunca é pedido. */
+  useEffect(() => {
+    if (!armado || !motionActiva()) return;
+    let morto = false;
+    let ctx: { revert(): void } | null = null;
+    void carregarGsap().then(({ gsap }) => {
+      const alvo = scope.current;
+      if (morto || !alvo) return;
+      ctx = gsap.context(() => {
+        const linhas = alvo.querySelectorAll(".ln-linha");
+        if (linhas.length) {
+          gsap.fromTo(
+            linhas,
+            { drawSVG: "0%" },
+            {
+              drawSVG: "100%",
+              duration: dur("longa"),
+              ease: ease("entra"),
+              stagger: stagger(),
+              // a morph seguinte muda o d — o dash inline ficava a medir
+              // o comprimento velho e escondia a cauda
+              onComplete: () =>
+                gsap.set(linhas, {
+                  clearProps: "strokeDasharray,strokeDashoffset",
+                }),
+            }
+          );
+        }
+        const bandas = alvo.querySelectorAll(".lc-banda, .ln-banda-ctx");
+        if (bandas.length) {
+          gsap.fromTo(
+            bandas,
+            { opacity: 0 },
+            {
+              opacity: 1,
+              duration: dur("media"),
+              delay: dur("longa") * 0.55,
+              ease: ease("entra"),
+              onComplete: () => gsap.set(bandas, { clearProps: "opacity" }),
+            }
+          );
+        }
+      }, alvo);
+    });
+    return () => {
+      morto = true;
+      ctx?.revert();
+    };
+  }, [armado]);
 
   const compacto = w < COMPACTO;
   const pad = compacto ? PAD_SM : PAD;
@@ -210,21 +227,27 @@ export function Linha({
     const para = { dom: domBase, pts: dadosPts };
     prevChave.current = chave;
     renderedRef.current = para;
-    if (!de || de.pts.length === 0 || reduzido()) return;
+    if (!de || de.pts.length === 0 || !motionActiva()) return;
+    let morto = false;
     const prog = { k: 0 };
-    const tw = gsap.to(prog, {
-      k: 1,
-      duration: dur("media"),
-      ease: ease("entra"),
-      onUpdate: () =>
-        setFrame({
-          dom: interpDom(de.dom, para.dom, prog.k),
-          pts: para.pts.map((pts, i) => interpPts(de.pts[i] ?? [], pts, prog.k)),
-        }),
-      onComplete: () => setFrame(null),
+    void carregarGsap().then(({ gsap }) => {
+      if (morto) return;
+      gsap.to(prog, {
+        k: 1,
+        duration: dur("media"),
+        ease: ease("entra"),
+        onUpdate: () =>
+          setFrame({
+            dom: interpDom(de.dom, para.dom, prog.k),
+            pts: para.pts.map((pts, i) =>
+              interpPts(de.pts[i] ?? [], pts, prog.k)
+            ),
+          }),
+        onComplete: () => setFrame(null),
+      });
     });
     return () => {
-      tw.kill();
+      morto = true;
     };
   }, [dados, domBase, dadosPts, chave]);
 

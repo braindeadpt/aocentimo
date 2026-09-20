@@ -5,8 +5,8 @@ import { fmtNum } from "@/lib/format";
 
 /**
  * Contagem simples — o apresentador dos números que mudam (M-03).
- * Consome o motor único `Contador` (tween GSAP): desliza do valor
- * anterior para o novo, nunca de zero.
+ * Consome o motor único `Contador` (interpolação rAF): desliza do
+ * valor anterior para o novo, nunca de zero.
  *
  * Contrato:
  *  - o SSR e o primeiro paint mostram o valor FINAL

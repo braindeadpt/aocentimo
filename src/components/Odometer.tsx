@@ -5,8 +5,8 @@ import { useContador } from "@/components/Contador";
 
 /**
  * Odometer — cada dígito é uma roda de 0–9 que roda até ao valor.
- * O número vem do motor único (Contador — tween GSAP do valor anterior
- * ao novo); a roda de cada dígito roda pela transição CSS em --d.
+ * O número vem do motor único (Contador — interpolação rAF do valor
+ * anterior ao novo); a roda de cada dígito roda pela transição CSS em --d.
  * Com JS, a classe .od-zero põe as rodas a 0 na entrada abaixo da dobra;
  * sem JS e com reduced-motion o valor final está sempre correcto no DOM.
  * Separadores (espaços, vírgula, €) são estáticos; só dígitos rodam.

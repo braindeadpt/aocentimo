@@ -1,31 +1,71 @@
 /**
- * Motor de movimento — B-01.
+ * Motor de movimento — B-01 (revisão pós-B-2: GSAP fora do bundle inicial).
  *
- * Ponto único de importação do GSAP: regista os plugins uma vez (só no
- * cliente) e exporta os helpers que traduzem os tokens de movimento do
- * globals.css (--dur-*, --ease-*, --stagger) para a API do GSAP.
+ * Ninguém importa `gsap` estaticamente — a biblioteca e os plugins
+ * chegam por `carregarGsap()`, um dynamic import memoizado que só é
+ * pedido quando há movimento legítimo por fazer (abaixo da dobra ou
+ * run nova, via useArmado) E `motionActiva()` — com
+ * prefers-reduced-motion o chunk nunca é descarregado.
+ *
+ * Os helpers de tokens (--dur-*, --ease-*, --stagger) são puros: leem
+ * o :root e não dependem do GSAP — podem ser importados sem custo.
  *
  * Contrato (M-02/M-09):
  *  - SSR/sem-JS nasce no estado final — nenhum tween corre no servidor;
- *  - prefers-reduced-motion: nenhum tween arranca (`reduzido()`);
- *  - quem anima ao entrar no viewport passa por useArmado — este módulo
- *    só fornece o motor, o gatilho continua a ser o hook.
+ *  - prefers-reduced-motion: estado final já, sem tween nem download.
  */
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Flip } from "gsap/Flip";
-import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
-import { SplitText } from "gsap/SplitText";
-
 const CLIENTE = typeof window !== "undefined";
 
-if (CLIENTE) {
-  gsap.registerPlugin(useGSAP, ScrollTrigger, Flip, DrawSVGPlugin, SplitText);
+export interface MotorGsap {
+  gsap: typeof import("gsap").gsap;
+  ScrollTrigger: typeof import("gsap/ScrollTrigger").ScrollTrigger;
+  Flip: typeof import("gsap/Flip").Flip;
+  DrawSVGPlugin: typeof import("gsap/DrawSVGPlugin").DrawSVGPlugin;
+  SplitText: typeof import("gsap/SplitText").SplitText;
 }
 
-/** matchMedia do GSAP — inerte até `.add()` ser chamado num efeito. */
-export const mm = gsap.matchMedia();
+let promessa: Promise<MotorGsap> | null = null;
+
+/** Carrega o GSAP + plugins uma vez; devolve sempre a mesma promessa. */
+export function carregarGsap(): Promise<MotorGsap> {
+  if (!promessa) {
+    promessa = Promise.all([
+      import("gsap"),
+      import("gsap/ScrollTrigger"),
+      import("gsap/Flip"),
+      import("gsap/DrawSVGPlugin"),
+      import("gsap/SplitText"),
+    ]).then(([g, st, fl, dr, sp]) => {
+      const gsap = g.gsap;
+      gsap.registerPlugin(
+        st.ScrollTrigger,
+        fl.Flip,
+        dr.DrawSVGPlugin,
+        sp.SplitText
+      );
+      return {
+        gsap,
+        ScrollTrigger: st.ScrollTrigger,
+        Flip: fl.Flip,
+        DrawSVGPlugin: dr.DrawSVGPlugin,
+        SplitText: sp.SplitText,
+      };
+    });
+  }
+  return promessa;
+}
+
+/** prefers-reduced-motion agora — com reduce nenhum tween arranca. */
+export function reduzido(): boolean {
+  return (
+    CLIENTE && window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
+
+/** O movimento pode correr — o contrário de reduzido(), falso no SSR. */
+export function motionActiva(): boolean {
+  return CLIENTE && !reduzido();
+}
 
 export type DurToken = "micro" | "curta" | "media" | "longa";
 
@@ -49,13 +89,6 @@ export function stagger(): number {
       .trim()
   );
   return Number.isFinite(n) ? n / 1000 : 0;
-}
-
-/** prefers-reduced-motion agora — com reduce nenhum tween arranca. */
-export function reduzido(): boolean {
-  return (
-    CLIENTE && window.matchMedia("(prefers-reduced-motion: reduce)").matches
-  );
 }
 
 /* ————— easings = os tokens CSS, resolvidos por cubic-bezier ————— */
@@ -127,5 +160,3 @@ export function ease(token: EaseToken): (p: number) => number {
   }
   return f;
 }
-
-export { gsap, useGSAP, ScrollTrigger, Flip, DrawSVGPlugin, SplitText };

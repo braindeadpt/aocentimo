@@ -11,11 +11,17 @@
  * de médias mensais — explicitamente marcadas como médias.
  * prefers-reduced-motion: estado final já, sem tween.
  */
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { quantile } from "d3-array";
 import { fmtData, fmtNum } from "@/lib/format";
 import { useArmado } from "@/lib/useArmado";
-import { dur, ease, gsap, reduzido, stagger, useGSAP } from "@/lib/motion/gsap";
+import {
+  carregarGsap,
+  dur,
+  ease,
+  motionActiva,
+  stagger,
+} from "@/lib/motion/gsap";
 import { corQuantil } from "@/lib/viz/cores";
 import { EmptyState } from "@/components/EmptyState";
 import { m } from "@/lib/messages";
@@ -93,12 +99,16 @@ export function Calendario({ pontos, anos, unidade, titulo }: Props) {
     [anos, dados]
   );
 
-  /* revelação — os anos esbatem-se escalonados ao entrar na dobra */
-  useGSAP(
-    () => {
-      if (!armado || reduzido()) return;
-      const blocos = scope.current?.querySelectorAll(".cal-ano");
-      if (!blocos?.length) return;
+  /* revelação — os anos esbatem-se escalonados ao entrar na dobra;
+     GSAP por dynamic import, fora do bundle inicial */
+  useEffect(() => {
+    if (!armado || !motionActiva()) return;
+    let morto = false;
+    void carregarGsap().then(({ gsap }) => {
+      const alvo = scope.current;
+      if (morto || !alvo) return;
+      const blocos = alvo.querySelectorAll(".cal-ano");
+      if (!blocos.length) return;
       gsap.fromTo(
         blocos,
         { opacity: 0 },
@@ -110,9 +120,11 @@ export function Calendario({ pontos, anos, unidade, titulo }: Props) {
           onComplete: () => gsap.set(blocos, { clearProps: "opacity" }),
         }
       );
-    },
-    { scope, dependencies: [armado] }
-  );
+    });
+    return () => {
+      morto = true;
+    };
+  }, [armado]);
 
   const fmtV = (v: number) =>
     unidade ? `${fmtNum(v)} ${unidade}` : fmtNum(v);
