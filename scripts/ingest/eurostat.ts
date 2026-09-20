@@ -23,6 +23,102 @@ function apiCoicop(coicop: Coicop): string {
   return coicop === "CP00" ? "TOTAL" : coicop;
 }
 
+/**
+ * Séries novas do observatório (§1 do PACK-OBSERVATORIO) — filtros
+ * verificados ao vivo em 2026-09-20. `sinceTimePeriod=2000` dá histórico
+ * completo. Frequência entra no meta para o watchdog de frescura aplicar
+ * o SLA certo (mensal 2 meses, trimestral 2 trimestres, semestral 2 semestres).
+ */
+export interface SerieExtra {
+  id: string;
+  dataset: string;
+  filtros: string;
+  unidade: string;
+  frequencia: "mensal" | "trimestral" | "semestral";
+  /** Dimensões extra que o dataset devolve sempre fixadas a 1 categoria
+   *  (além de "freq"). Se vierem com >1 categoria, o parser falha na mesma. */
+  dimsFixas?: string[];
+}
+
+export const SERIES_EXTRA: SerieExtra[] = [
+  {
+    id: "une-pt-total",
+    dataset: "une_rt_m",
+    filtros: "geo=PT&s_adj=SA&age=TOTAL&unit=PC_ACT&sex=T",
+    unidade: "percentagem_populacao_activa",
+    frequencia: "mensal",
+  },
+  {
+    id: "une-pt-jovem",
+    dataset: "une_rt_m",
+    filtros: "geo=PT&s_adj=SA&age=Y_LT25&unit=PC_ACT&sex=T",
+    unidade: "percentagem_populacao_activa",
+    frequencia: "mensal",
+  },
+  {
+    id: "une-ue27-total",
+    dataset: "une_rt_m",
+    filtros: "geo=EU27_2020&s_adj=SA&age=TOTAL&unit=PC_ACT&sex=T",
+    unidade: "percentagem_populacao_activa",
+    frequencia: "mensal",
+  },
+  {
+    id: "hpi-pt",
+    dataset: "prc_hpi_q",
+    filtros: "geo=PT&purchase=TOTAL&unit=I15_Q",
+    unidade: "indice_2015_100",
+    frequencia: "trimestral",
+  },
+  {
+    id: "pib-pt-homologo",
+    dataset: "namq_10_gdp",
+    filtros: "geo=PT&na_item=B1GQ&unit=CLV_PCH_SM&s_adj=SCA",
+    unidade: "percentagem_variacao_homologa",
+    frequencia: "trimestral",
+  },
+  {
+    id: "confianca-pt",
+    dataset: "ei_bsco_m",
+    filtros: "geo=PT&indic=BS-CSMCI&s_adj=SA&unit=BAL",
+    unidade: "saldo_respostas",
+    frequencia: "mensal",
+  },
+  {
+    id: "lci-pt-homologo",
+    dataset: "ei_lmlc_q",
+    filtros: "geo=PT&indic=LM-LCI-TOT&nace_r2=B-S&s_adj=SCA&unit=PCH_SM&p_adj=NV",
+    unidade: "percentagem_variacao_homologa",
+    frequencia: "trimestral",
+  },
+  {
+    id: "elec-pt-domestico",
+    dataset: "nrg_pc_204",
+    filtros: "geo=PT&nrg_cons=KWH2500-4999&tax=I_TAX&currency=EUR&unit=KWH",
+    unidade: "eur_kwh",
+    frequencia: "semestral",
+    // verificado 2026-09-20: o dataset devolve siec={"E7000"} (electricidade),
+    // sempre uma única categoria — é o único produto de nrg_pc_204.
+    dimsFixas: ["siec"],
+  },
+];
+
+/** "2026-Q1" → "2026-03-31"; "2025-S2" → "2025-12-31"; resto fica igual. */
+export function rotuloParaSerieAte(t: string): string {
+  const q = /^(\d{4})-Q([1-4])$/.exec(t);
+  if (q) {
+    const y = Number(q[1]);
+    const mesFim = Number(q[2]) * 3;
+    return new Date(Date.UTC(y, mesFim, 0)).toISOString().slice(0, 10);
+  }
+  const s = /^(\d{4})-S([12])$/.exec(t);
+  if (s) {
+    const y = Number(s[1]);
+    const mesFim = Number(s[2]) * 6;
+    return new Date(Date.UTC(y, mesFim, 0)).toISOString().slice(0, 10);
+  }
+  return t;
+}
+
 export const COICOPS = [
   "CP00", // total
   "CP01", "CP0111", "CP0112", "CP0113", "CP0114", "CP0115", "CP0116", "CP0117", "CP0118",
@@ -42,6 +138,8 @@ const seriesSchema = z.object({
     unidade: z.string(),
     recolhidoEm: z.string(),
     serieAte: z.string(),
+    frequencia: z.string().optional(),
+    rotuloAte: z.string().optional(),
   }),
   series: z.array(z.object({ t: z.string(), v: z.number() })),
 });
@@ -104,6 +202,49 @@ export async function fetchCoicop(coicop: Coicop): Promise<SerieGuardada> {
       unidade: UNIDADE,
       recolhidoEm: new Date().toISOString(),
       serieAte: series[series.length - 1].t,
+      frequencia: "mensal",
+    },
+    series,
+  };
+  return seriesSchema.parse(doc);
+}
+
+/**
+ * Série avulsa (§1): falha ruidosamente se a resposta tiver dimensões
+ * inesperadas — nunca se escolhe a primeira categoria nem se adapta o filtro.
+ */
+export async function fetchSerie(spec: SerieExtra): Promise<SerieGuardada> {
+  const url = `${BASE}/${spec.dataset}?format=JSON&${spec.filtros}&sinceTimePeriod=2000`;
+  const json = jsonStatSchema.parse(await fetchJson(url));
+
+  const esperadas = new Set([
+    "time",
+    "freq",
+    ...(spec.dimsFixas ?? []),
+    ...spec.filtros.split("&").map((f) => f.split("=")[0]),
+  ]);
+  const inesperadas = (json.id ?? []).filter((d) => !esperadas.has(d));
+  if (inesperadas.length > 0) {
+    throw new Error(
+      `Eurostat ${spec.id}: dimensões inesperadas ${inesperadas.join(", ")} — rever filtros`
+    );
+  }
+
+  const series = parseJsonStat(json);
+  if (series.length === 0) throw new Error(`Eurostat ${spec.id}: série vazia`);
+
+  const rotuloAte = series[series.length - 1].t;
+  const doc: SerieGuardada = {
+    meta: {
+      id: spec.id,
+      fonte: "Eurostat",
+      dataset: spec.dataset,
+      url,
+      unidade: spec.unidade,
+      recolhidoEm: new Date().toISOString(),
+      serieAte: rotuloParaSerieAte(rotuloAte),
+      rotuloAte,
+      frequencia: spec.frequencia,
     },
     series,
   };
@@ -124,6 +265,17 @@ export async function runEurostat(
       );
       docs.push(doc);
       console.log(`✓ ${coicop}: ${doc.series.length} pontos até ${doc.meta.serieAte}`);
+    }
+    for (const spec of SERIES_EXTRA) {
+      const doc = await fetchSerie(spec);
+      writeFileSync(
+        path.join(outDir, `${spec.id}.json`),
+        JSON.stringify(doc, null, 2)
+      );
+      docs.push(doc);
+      console.log(
+        `✓ ${spec.id}: ${doc.series.length} pontos até ${doc.meta.rotuloAte ?? doc.meta.serieAte}`
+      );
     }
   } catch (e) {
     return { ok: false, erro: e instanceof Error ? e.message : String(e) };

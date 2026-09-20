@@ -1,12 +1,12 @@
 {
-  "verificadoEm": "2026-09-20T19:40:14.281Z",
+  "verificadoEm": "2026-09-20T19:51:40.170Z",
   "estado": "ok",
   "series": [
     {
       "id": "hicp-pt-cp00",
       "fonte": "Eurostat",
       "serieAte": "2026-08",
-      "esperadoAte": "2026-07",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -14,8 +14,8 @@
     {
       "id": "hicp-pt-cp01",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -23,8 +23,8 @@
     {
       "id": "hicp-pt-cp0111",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -32,8 +32,8 @@
     {
       "id": "hicp-pt-cp0112",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -41,8 +41,8 @@
     {
       "id": "hicp-pt-cp0113",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -50,8 +50,8 @@
     {
       "id": "hicp-pt-cp0114",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -59,8 +59,8 @@
     {
       "id": "hicp-pt-cp0115",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -68,8 +68,8 @@
     {
       "id": "hicp-pt-cp0116",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -77,8 +77,8 @@
     {
       "id": "hicp-pt-cp0117",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -86,8 +86,8 @@
     {
       "id": "hicp-pt-cp0118",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -95,8 +95,8 @@
     {
       "id": "hicp-pt-cp02",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -104,8 +104,8 @@
     {
       "id": "hicp-pt-cp03",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -113,8 +113,8 @@
     {
       "id": "hicp-pt-cp04",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -122,8 +122,8 @@
     {
       "id": "hicp-pt-cp045",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -131,8 +131,8 @@
     {
       "id": "hicp-pt-cp05",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -140,8 +140,8 @@
     {
       "id": "hicp-pt-cp06",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -149,8 +149,8 @@
     {
       "id": "hicp-pt-cp07",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -158,8 +158,8 @@
     {
       "id": "hicp-pt-cp0722",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -167,8 +167,8 @@
     {
       "id": "hicp-pt-cp08",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -176,8 +176,8 @@
     {
       "id": "hicp-pt-cp09",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -185,8 +185,8 @@
     {
       "id": "hicp-pt-cp10",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -194,8 +194,8 @@
     {
       "id": "hicp-pt-cp11",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -203,8 +203,8 @@
     {
       "id": "hicp-pt-cp12",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -213,7 +213,7 @@
       "id": "hicp-pt-nrg",
       "fonte": "Eurostat",
       "serieAte": "2026-08",
-      "esperadoAte": "2026-07",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -222,7 +222,7 @@
       "id": "hicp-pt-food",
       "fonte": "Eurostat",
       "serieAte": "2026-08",
-      "esperadoAte": "2026-07",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -231,7 +231,7 @@
       "id": "hicp-pt-tot_x_nrg_food",
       "fonte": "Eurostat",
       "serieAte": "2026-08",
-      "esperadoAte": "2026-07",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -240,7 +240,7 @@
       "id": "euribor-1m-mensal",
       "fonte": "Banco de Portugal — BPstat",
       "serieAte": "2026-08",
-      "esperadoAte": "2026-07",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -249,7 +249,7 @@
       "id": "euribor-3m-mensal",
       "fonte": "Banco de Portugal — BPstat",
       "serieAte": "2026-08",
-      "esperadoAte": "2026-07",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -258,7 +258,7 @@
       "id": "euribor-6m-mensal",
       "fonte": "Banco de Portugal — BPstat",
       "serieAte": "2026-08",
-      "esperadoAte": "2026-07",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -267,7 +267,7 @@
       "id": "euribor-12m-mensal",
       "fonte": "Banco de Portugal — BPstat",
       "serieAte": "2026-08",
-      "esperadoAte": "2026-07",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -303,7 +303,7 @@
       "id": "fiscal-ca",
       "fonte": "IGCP — curado",
       "serieAte": "2026-09",
-      "esperadoAte": "2026-07",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -339,7 +339,7 @@
       "id": "fiscal-isp",
       "fonte": "AT/DR — curado",
       "serieAte": "2026-07",
-      "esperadoAte": "2026-01",
+      "esperadoAte": "2025-12-31",
       "frequencia": "trimestral",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -456,7 +456,7 @@
       "id": "taeg-pessoal-mensal",
       "fonte": "Banco de Portugal — BPstat",
       "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -465,7 +465,7 @@
       "id": "taeg-pessoal-educacao-saude-energia-mensal",
       "fonte": "Banco de Portugal — BPstat",
       "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -474,7 +474,7 @@
       "id": "taeg-pessoal-outros-mensal",
       "fonte": "Banco de Portugal — BPstat",
       "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -483,7 +483,7 @@
       "id": "taeg-automovel-mensal",
       "fonte": "Banco de Portugal — BPstat",
       "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -492,7 +492,7 @@
       "id": "taeg-automovel-novo-mensal",
       "fonte": "Banco de Portugal — BPstat",
       "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -501,7 +501,7 @@
       "id": "taeg-automovel-usado-mensal",
       "fonte": "Banco de Portugal — BPstat",
       "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -510,7 +510,7 @@
       "id": "taeg-automovel-ald-mensal",
       "fonte": "Banco de Portugal — BPstat",
       "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -519,7 +519,7 @@
       "id": "taeg-renovavel-mensal",
       "fonte": "Banco de Portugal — BPstat",
       "serieAte": "2026-07",
-      "esperadoAte": "2026-07",
+      "esperadoAte": "2026-06-30",
       "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -539,6 +539,78 @@
       "serieAte": "2026",
       "esperadoAte": "2024",
       "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "une-pt-total",
+      "fonte": "Eurostat",
+      "serieAte": "2026-07",
+      "esperadoAte": "2026-06-30",
+      "frequencia": "mensal",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "une-pt-jovem",
+      "fonte": "Eurostat",
+      "serieAte": "2026-07",
+      "esperadoAte": "2026-06-30",
+      "frequencia": "mensal",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "une-ue27-total",
+      "fonte": "Eurostat",
+      "serieAte": "2026-07",
+      "esperadoAte": "2026-06-30",
+      "frequencia": "mensal",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "hpi-pt",
+      "fonte": "Eurostat",
+      "serieAte": "2026-03-31",
+      "esperadoAte": "2025-12-31",
+      "frequencia": "trimestral",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "pib-pt-homologo",
+      "fonte": "Eurostat",
+      "serieAte": "2026-06-30",
+      "esperadoAte": "2025-12-31",
+      "frequencia": "trimestral",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "confianca-pt",
+      "fonte": "Eurostat",
+      "serieAte": "2026-08",
+      "esperadoAte": "2026-06-30",
+      "frequencia": "mensal",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "lci-pt-homologo",
+      "fonte": "Eurostat",
+      "serieAte": "2026-06-30",
+      "esperadoAte": "2025-12-31",
+      "frequencia": "trimestral",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "elec-pt-domestico",
+      "fonte": "Eurostat",
+      "serieAte": "2025-12-31",
+      "esperadoAte": "2025-06-30",
+      "frequencia": "semestral",
       "estado": "em-dia",
       "atrasoPeriodos": 0
     }

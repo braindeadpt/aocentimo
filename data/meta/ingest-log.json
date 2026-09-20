@@ -1,14 +1,9 @@
 {
-  "correuEm": "2026-09-20T19:39:50.574Z",
+  "correuEm": "2026-09-20T19:43:34.512Z",
   "fontes": {
-    "bpstat": {
+    "eurostat": {
       "ok": true,
-      "series": 12
-    },
-    "dgeg": {
-      "ok": false,
-      "erro": "falha forçada (AOC_FALHAR)",
-      "series": 0
+      "series": 34
     }
   }
 }

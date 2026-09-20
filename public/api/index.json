@@ -1,7 +1,7 @@
 {
   "nome": "AO CÊNTIMO — dados abertos",
   "descricao": "Séries estáticas geradas a partir de fontes oficiais (Eurostat, BPstat, DGEG, IGCP, AT). Atualizadas a cada build.",
-  "geradoEm": "2026-09-20T19:40:14.325Z",
+  "geradoEm": "2026-09-20T19:51:40.259Z",
   "endpoints": [
     {
       "path": "/api/euribor-12m-mensal.json",
@@ -62,6 +62,14 @@
     {
       "path": "/api/pmd-gpl-diario.json",
       "descricao": "Série pmd-gpl-diario (dgeg)"
+    },
+    {
+      "path": "/api/confianca-pt.json",
+      "descricao": "Série confianca-pt (eurostat)"
+    },
+    {
+      "path": "/api/elec-pt-domestico.json",
+      "descricao": "Série elec-pt-domestico (eurostat)"
     },
     {
       "path": "/api/hicp-pt-cp00.json",
@@ -168,12 +176,40 @@
       "descricao": "Série hicp-pt-tot_x_nrg_food (eurostat)"
     },
     {
+      "path": "/api/hpi-pt.json",
+      "descricao": "Série hpi-pt (eurostat)"
+    },
+    {
+      "path": "/api/lci-pt-homologo.json",
+      "descricao": "Série lci-pt-homologo (eurostat)"
+    },
+    {
+      "path": "/api/pib-pt-homologo.json",
+      "descricao": "Série pib-pt-homologo (eurostat)"
+    },
+    {
+      "path": "/api/une-pt-jovem.json",
+      "descricao": "Série une-pt-jovem (eurostat)"
+    },
+    {
+      "path": "/api/une-pt-total.json",
+      "descricao": "Série une-pt-total (eurostat)"
+    },
+    {
+      "path": "/api/une-ue27-total.json",
+      "descricao": "Série une-ue27-total (eurostat)"
+    },
+    {
       "path": "/api/ihpc-resumo.json",
       "descricao": "IHPC resumido por categoria"
     },
     {
       "path": "/api/ca-base.json",
       "descricao": "Taxa base CA Série F — indicativa e oficial"
+    },
+    {
+      "path": "/api/painel.json",
+      "descricao": "Painel da home — leituras com variação, spark e frescura"
     },
     {
       "path": "/api/freshness.json",

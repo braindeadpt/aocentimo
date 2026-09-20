@@ -3,7 +3,7 @@
     "id": "hicp-pt-cp00",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=TOTAL&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:34.257Z",
+    "recolhidoEm": "2026-09-20T19:43:30.886Z",
     "serieAte": "2026-08",
     "frequencia": "mensal"
   },
@@ -11,183 +11,183 @@
     "id": "hicp-pt-cp01",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP01&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:35.232Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:31.127Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp0111",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP0111&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:36.123Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:31.221Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp0112",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP0112&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:36.941Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:31.305Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp0113",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP0113&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:37.810Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:31.397Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp0114",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP0114&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:38.570Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:31.495Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp0115",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP0115&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:39.333Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:31.594Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp0116",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP0116&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:40.103Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:31.682Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp0117",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP0117&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:40.900Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:31.774Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp0118",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP0118&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:41.650Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:31.865Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp02",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP02&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:42.379Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:31.964Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp03",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP03&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:43.199Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:32.063Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp04",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP04&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:43.987Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:32.164Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp045",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP045&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:44.768Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:32.252Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp05",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP05&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:45.556Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:32.342Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp06",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP06&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:46.337Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:32.445Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp07",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP07&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:47.108Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:32.534Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp0722",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP0722&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:47.933Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:32.628Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp08",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP08&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:48.775Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:32.715Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp09",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP09&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:49.573Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:32.964Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp10",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP10&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:50.314Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:33.056Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp11",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP11&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:51.100Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:33.188Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-cp12",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=CP12&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:51.967Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-09-20T19:43:33.285Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal"
   },
   {
     "id": "hicp-pt-nrg",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=NRG&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:52.815Z",
+    "recolhidoEm": "2026-09-20T19:43:33.426Z",
     "serieAte": "2026-08",
     "frequencia": "mensal"
   },
@@ -195,7 +195,7 @@
     "id": "hicp-pt-food",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=FOOD&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:53.566Z",
+    "recolhidoEm": "2026-09-20T19:43:33.523Z",
     "serieAte": "2026-08",
     "frequencia": "mensal"
   },
@@ -203,7 +203,7 @@
     "id": "hicp-pt-tot_x_nrg_food",
     "fonte": "Eurostat",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=TOT_X_NRG_FOOD&unit=I25",
-    "recolhidoEm": "2026-09-16T18:22:54.316Z",
+    "recolhidoEm": "2026-09-20T19:43:33.661Z",
     "serieAte": "2026-08",
     "frequencia": "mensal"
   },
@@ -478,5 +478,69 @@
     "recolhidoEm": "2026-10-01T00:00:00Z",
     "serieAte": "2026",
     "frequencia": "anual"
+  },
+  {
+    "id": "une-pt-total",
+    "fonte": "Eurostat",
+    "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?format=JSON&geo=PT&s_adj=SA&age=TOTAL&unit=PC_ACT&sex=T&sinceTimePeriod=2000",
+    "recolhidoEm": "2026-09-20T19:43:33.757Z",
+    "serieAte": "2026-07",
+    "frequencia": "mensal"
+  },
+  {
+    "id": "une-pt-jovem",
+    "fonte": "Eurostat",
+    "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?format=JSON&geo=PT&s_adj=SA&age=Y_LT25&unit=PC_ACT&sex=T&sinceTimePeriod=2000",
+    "recolhidoEm": "2026-09-20T19:43:33.906Z",
+    "serieAte": "2026-07",
+    "frequencia": "mensal"
+  },
+  {
+    "id": "une-ue27-total",
+    "fonte": "Eurostat",
+    "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?format=JSON&geo=EU27_2020&s_adj=SA&age=TOTAL&unit=PC_ACT&sex=T&sinceTimePeriod=2000",
+    "recolhidoEm": "2026-09-20T19:43:34.003Z",
+    "serieAte": "2026-07",
+    "frequencia": "mensal"
+  },
+  {
+    "id": "hpi-pt",
+    "fonte": "Eurostat",
+    "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hpi_q?format=JSON&geo=PT&purchase=TOTAL&unit=I15_Q&sinceTimePeriod=2000",
+    "recolhidoEm": "2026-09-20T19:43:34.089Z",
+    "serieAte": "2026-03-31",
+    "frequencia": "trimestral"
+  },
+  {
+    "id": "pib-pt-homologo",
+    "fonte": "Eurostat",
+    "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?format=JSON&geo=PT&na_item=B1GQ&unit=CLV_PCH_SM&s_adj=SCA&sinceTimePeriod=2000",
+    "recolhidoEm": "2026-09-20T19:43:34.181Z",
+    "serieAte": "2026-06-30",
+    "frequencia": "trimestral"
+  },
+  {
+    "id": "confianca-pt",
+    "fonte": "Eurostat",
+    "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/ei_bsco_m?format=JSON&geo=PT&indic=BS-CSMCI&s_adj=SA&unit=BAL&sinceTimePeriod=2000",
+    "recolhidoEm": "2026-09-20T19:43:34.322Z",
+    "serieAte": "2026-08",
+    "frequencia": "mensal"
+  },
+  {
+    "id": "lci-pt-homologo",
+    "fonte": "Eurostat",
+    "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/ei_lmlc_q?format=JSON&geo=PT&indic=LM-LCI-TOT&nace_r2=B-S&s_adj=SCA&unit=PCH_SM&p_adj=NV&sinceTimePeriod=2000",
+    "recolhidoEm": "2026-09-20T19:43:34.415Z",
+    "serieAte": "2026-06-30",
+    "frequencia": "trimestral"
+  },
+  {
+    "id": "elec-pt-domestico",
+    "fonte": "Eurostat",
+    "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nrg_pc_204?format=JSON&geo=PT&nrg_cons=KWH2500-4999&tax=I_TAX&currency=EUR&unit=KWH&sinceTimePeriod=2000",
+    "recolhidoEm": "2026-09-20T19:43:34.509Z",
+    "serieAte": "2025-12-31",
+    "frequencia": "semestral"
   }
 ]

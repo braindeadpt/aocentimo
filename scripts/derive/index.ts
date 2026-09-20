@@ -3,6 +3,8 @@ import { runHicp } from "./hicp";
 import { runFreshness } from "./freshness";
 import { runFiscalFontes } from "./fiscal-fontes";
 import { runCaBase } from "./paineis";
+import { runDerivados } from "./derivados";
+import { runPainel } from "./painel";
 import { runApi } from "./api";
 
 const ROOT = path.resolve(__dirname, "..", "..");
@@ -22,6 +24,8 @@ function main() {
   const ca = runCaBase(DATA);
   if (ca) console.log(`✓ ca-base.json: indicativa até ${ca.meta.serieAte}`);
 
+  runDerivados(DATA);
+
   const fiscais = runFiscalFontes(DATA);
   console.log(`✓ sources.json: ${fiscais.length} fontes fiscais registadas`);
 
@@ -32,6 +36,8 @@ function main() {
       s.estado === "atrasada" ? ` — atrasada ${s.atrasoPeriodos} período(s), esperado ${s.esperadoAte}` : "";
     console.log(`${marca} ${s.id}: até ${s.serieAte}${extra}`);
   }
+
+  runPainel(DATA, frescura, ROOT);
 
   runApi(ROOT);
 

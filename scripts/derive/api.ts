@@ -30,6 +30,7 @@ export function runApi(rootDir: string) {
   // Derivados e metadados
   copiar(path.join(dataDir, "derived", "hicp-resumo.json"), "ihpc-resumo.json", "IHPC resumido por categoria");
   copiar(path.join(dataDir, "derived", "ca-base.json"), "ca-base.json", "Taxa base CA Série F — indicativa e oficial");
+  copiar(path.join(dataDir, "derived", "painel.json"), "painel.json", "Painel da home — leituras com variação, spark e frescura");
   copiar(path.join(dataDir, "meta", "freshness.json"), "freshness.json", "Estado de frescura de todas as fontes");
   copiar(path.join(dataDir, "meta", "sources.json"), "sources.json", "Registo de fontes e datas das séries");
 

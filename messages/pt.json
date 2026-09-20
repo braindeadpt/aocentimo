@@ -203,5 +203,71 @@
     "p3": "IRS retido na fonte: {valor} por mês.",
     "p4": "A tua Segurança Social: {valor} ({taxa}).",
     "p5": "Chegam-te {valor}. Dos {custo} que a empresa gastou, o Estado ficou com {estado}."
+  },
+  "series": {
+    "hicp-pt-cp00": {
+      "rotulo": "Inflação (IHPC)",
+      "descricao": "Índice harmonizado de preços no consumidor, cabaz médio nacional (2025=100) — não é o preço do teu cabaz nem o IPC do INE."
+    },
+    "euribor-3m-mensal": {
+      "rotulo": "Euribor 3 meses",
+      "descricao": "Média mensal da taxa interbancária a 3 meses — não inclui o spread nem os outros custos do teu crédito."
+    },
+    "euribor-12m-mensal": {
+      "rotulo": "Euribor 12 meses",
+      "descricao": "Média mensal da taxa interbancária a 12 meses — não inclui o spread nem os outros custos do teu crédito."
+    },
+    "pmd-gasoleo-diario": {
+      "rotulo": "Gasóleo",
+      "descricao": "Preço médio nacional ao litro, já com impostos — não é o preço da tua bomba."
+    },
+    "pmd-gasolina95-diario": {
+      "rotulo": "Gasolina 95",
+      "descricao": "Preço médio nacional ao litro, já com impostos — não é o preço da tua bomba."
+    },
+    "ca-base": {
+      "rotulo": "Certificados de Aforro",
+      "descricao": "Taxa base indicativa da Série F (Euribor 3M limitada a 2,5 %) — a oficial é a do IGCP e pode diferir dentro do mês."
+    },
+    "une-pt-total": {
+      "rotulo": "Desemprego",
+      "descricao": "Taxa de desemprego dessazonalizada, população activa dos 15 aos 74 anos — não conta inactivos nem subemprego."
+    },
+    "une-pt-jovem": {
+      "rotulo": "Desemprego jovem",
+      "descricao": "Taxa de desemprego dos menos de 25 anos, dessazonalizada — não mede quem está fora do mercado nem o subemprego."
+    },
+    "une-ue27-total": {
+      "rotulo": "Desemprego UE27",
+      "descricao": "Taxa de desemprego média da União Europeia — é o comparador, não uma meta."
+    },
+    "desemprego-gap": {
+      "rotulo": "Desemprego PT − UE27",
+      "descricao": "Diferença entre a taxa portuguesa e a média da União, em pontos percentuais — mede a distância, não as causas."
+    },
+    "hpi-pt": {
+      "rotulo": "Preços da habitação",
+      "descricao": "Índice de preços da habitação, todas as transacções (2015=100) — não mede rendas nem acessibilidade."
+    },
+    "casa-em-salarios": {
+      "rotulo": "Casa vs. custo do trabalho",
+      "descricao": "Preço da habitação a dividir pelo custo do trabalho, ambos com 2015=100 — razão de índices oficiais, não são salários reais."
+    },
+    "pib-pt-homologo": {
+      "rotulo": "PIB, variação homóloga",
+      "descricao": "Variação real do PIB face ao mesmo trimestre do ano anterior — não mede bem-estar nem distribuição."
+    },
+    "lci-pt-homologo": {
+      "rotulo": "Custo do trabalho",
+      "descricao": "Variação homóloga do custo da mão-de-obra (indústria e serviços) — não é o salário líquido do trabalhador."
+    },
+    "confianca-pt": {
+      "rotulo": "Confiança dos consumidores",
+      "descricao": "Saldo de respostas do inquérito mensal aos consumidores — mede expectativas, não o estado real da economia."
+    },
+    "elec-pt-domestico": {
+      "rotulo": "Electricidade doméstica",
+      "descricao": "Preço médio semestral para consumos de 2 500–5 000 kWh por ano, com impostos — não é a tua tarifa exacta."
+    }
   }
 }

@@ -72,7 +72,7 @@ async function main() {
         url: d.meta.url,
         recolhidoEm: d.meta.recolhidoEm,
         serieAte: d.meta.serieAte,
-        frequencia: "mensal",
+        frequencia: d.meta.frequencia ?? "mensal",
       });
     }
   }
