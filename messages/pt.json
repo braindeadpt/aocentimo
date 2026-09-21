@@ -244,6 +244,11 @@
     "bandaHistorica": "mín–máx",
     "mediana10a": "mediana 10 anos"
   },
+  "precosPag": {
+    "calGasoleo": "Gasóleo, dia a dia",
+    "calGasolina": "Gasolina 95, dia a dia",
+    "notaIsp": "{data} — {rotulo}: {detalhe}."
+  },
   "credito": {
     "euriborAgora": "Euribor 12M agora",
     "euriborNota": "a referência mais usada nos créditos em revisão anual — mediana de 10 anos como comparação"

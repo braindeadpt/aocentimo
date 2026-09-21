@@ -3,10 +3,12 @@ import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Delta } from "@/components/Delta";
 import { Linha } from "@/components/instrumentos/Linha";
+import { Calendario } from "@/components/instrumentos/Calendario";
 import { DecomposicaoFuel } from "../impostos/DecomposicaoFuel";
 import { Source } from "@/components/Source";
 import { loadFonte, type Serie } from "@/lib/data";
 import { fmtData } from "@/lib/format";
+import { m, t } from "@/lib/messages";
 import { Odometer } from "@/components/Odometer";
 import isp from "@data/fiscal/isp.json";
 import iva from "@data/fiscal/iva.json";
@@ -123,6 +125,64 @@ export default function PrecosPage() {
           </div>
         )}
       </Figure>
+
+      {/* D-03 — cada dia em calendário: o ano corrente e o anterior,
+          cor por quantis reais da série. A nota ISP fica datada por
+          baixo — o desconto de 2022 explica o que se lê no mapa */}
+      {(
+        [
+          ["pmd-gasoleo-diario", m.precosPag.calGasoleo],
+          ["pmd-gasolina95-diario", m.precosPag.calGasolina],
+        ] as const
+      ).map(([id, titulo]) => {
+        const serie = series.find((s) => s.id === id)?.serie;
+        const ultimoDia = serie?.series.at(-1);
+        const ano = ultimoDia ? Number(ultimoDia.t.slice(0, 4)) : null;
+        const ispEvento = eventos.eventos.find((e) => e.id === "isp-desconto");
+        return (
+          <Figure
+            key={id}
+            title={titulo}
+            source={
+              <Source
+                nome="DGEG — preços médios diários"
+                url={serie?.meta.url}
+                serieAte={serie?.meta.serieAte}
+              />
+            }
+          >
+            {serie && ano ? (
+              <>
+                <Calendario
+                  pontos={serie.series}
+                  anos={[ano - 1, ano]}
+                  unidade="€/L"
+                  titulo={titulo}
+                />
+                {ispEvento && (
+                  <p className="footnote mt-3">
+                    {t(m.precosPag.notaIsp, {
+                      data: fmtData(ispEvento.t),
+                      rotulo: ispEvento.rotulo,
+                      detalhe: ispEvento.detalhe,
+                    })}{" "}
+                    <a
+                      href={ispEvento.url}
+                      className="underline decoration-line2 underline-offset-2"
+                    >
+                      {ispEvento.fonte}
+                    </a>
+                  </p>
+                )}
+              </>
+            ) : (
+              <p className="footnote">
+                Série DGEG indisponível — sem dados oficiais não há mapa.
+              </p>
+            )}
+          </Figure>
+        );
+      })}
 
       <Figure
         title="Enquanto isso: quanto do litro é imposto?"

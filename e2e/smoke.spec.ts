@@ -495,3 +495,68 @@ test("painéis de dados, API e feed servem", async ({ page }) => {
   const feed = await page.goto("/feed.xml");
   expect(feed?.status()).toBe(200);
 });
+
+/** D — cada página nova tem a sua figura presente e UM equivalente
+ *  textual (tabela/dl em .sr-only, ou role=img+aria-label nos
+ *  instrumentos de número único). */
+const equivUnico = ".sr-only:has(table), .sr-only:has(dl), table.sr-only, dl.sr-only";
+
+test("D-01 · /inflacao mostra as 12 divisões ECOICOP com equivalente único", async ({
+  page,
+}) => {
+  await page.goto("/inflacao");
+  const fig = page.locator("figure", {
+    hasText: "As 12 divisões do cabaz",
+  });
+  await expect(fig.locator("svg[data-viz]").first()).toBeAttached();
+  await expect(fig.locator(equivUnico)).toHaveCount(1);
+  // 12 múltiplos com rótulo próprio (o nome repete-se no dl sr-only)
+  await expect(fig.getByText("Transportes").first()).toBeVisible();
+});
+
+test("D-02 · /credito mostra o mostrador Euribor 12M e a Linha das quatro", async ({
+  page,
+}) => {
+  await page.goto("/credito");
+  // Mostrador: número único — o próprio svg é o nomeado (sem equivalente extra)
+  await expect(
+    page.locator('svg[role="img"][aria-label*="Euribor 12M"]')
+  ).toBeAttached();
+  const fig = page.locator("figure", {
+    hasText: "As quatro Euribor desde 1994",
+  });
+  await expect(fig.locator("svg[data-viz]")).toBeAttached();
+  await expect(fig.locator(equivUnico)).toHaveCount(1);
+  await expect(fig.getByText("Euribor 12M").first()).toBeVisible();
+});
+
+test("D-02 · /casa mostra o declive casa-vs-salário com equivalente único", async ({
+  page,
+}) => {
+  await page.goto("/casa");
+  const fig = page.locator("figure", {
+    hasText: "A casa contra o salário",
+  });
+  await expect(fig.locator("svg[data-viz]")).toBeAttached();
+  await expect(fig.locator(equivUnico)).toHaveCount(1);
+  await expect(
+    fig.getByText(/a casa subiu \d+,\d× mais/)
+  ).toBeVisible();
+});
+
+test("D-03 · /precos mostra os calendários com equivalente mensal único", async ({
+  page,
+}) => {
+  await page.goto("/precos");
+  for (const titulo of ["Gasóleo, dia a dia", "Gasolina 95, dia a dia"]) {
+    const fig = page.locator("figure", { hasText: titulo });
+    await expect(fig.locator("svg[data-viz]").first()).toBeAttached();
+    await expect(fig.locator(equivUnico)).toHaveCount(1);
+    // nota ISP datada por baixo do mapa
+    await expect(
+      fig.getByText(/Desconto extraordinário do ISP/)
+    ).toBeVisible();
+    // o equivalente é mensal e diz que é média
+    await expect(fig.locator(".sr-only table")).toContainText(/média/);
+  }
+});
