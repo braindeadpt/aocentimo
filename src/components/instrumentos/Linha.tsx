@@ -557,12 +557,14 @@ export function Linha({
               strokeDasharray="3 3"
               vectorEffect="non-scaling-stroke"
             />
+            {/* ink, não muted — o rótulo fica DENTRO da banda --seq-4
+                e tem de passar AA contra ela */}
             <text
               x={w - pad.right - 4}
               y={y(banda.max) + 11}
               textAnchor="end"
               fontSize={10}
-              fill="var(--muted)"
+              fill="var(--ink)"
               fontFamily="var(--font-mono)"
             >
               {banda.rotulo}
@@ -582,11 +584,12 @@ export function Linha({
               strokeDasharray="4 3"
               vectorEffect="non-scaling-stroke"
             />
+            {/* idem — pode cair sobre a banda de contexto */}
             <text
               x={pad.left + 4}
               y={yRef - 4}
               fontSize={10}
-              fill="var(--muted)"
+              fill="var(--ink)"
               fontFamily="var(--font-mono)"
             >
               {refLinha.rotulo}
