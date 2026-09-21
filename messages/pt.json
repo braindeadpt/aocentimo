@@ -244,6 +244,17 @@
     "bandaHistorica": "mín–máx",
     "mediana10a": "mediana 10 anos"
   },
+  "credito": {
+    "euriborAgora": "Euribor 12M agora",
+    "euriborNota": "a referência mais usada nos créditos em revisão anual — mediana de 10 anos como comparação"
+  },
+  "casa": {
+    "contraSalarioTitulo": "A casa contra o salário",
+    "contraSalario": "a casa subiu {x}× mais do que o custo do trabalho desde 2015",
+    "contraSalarioNota": "Fórmula: índice de preços da habitação (HPI, 2015=100) ÷ custo do trabalho reindexado a 2015=100 por encadeamento das variações homólogas do LCI. Razão de índices oficiais — não mede salários reais nem o esforço mensal.",
+    "hpi": "Preço da habitação (HPI)",
+    "lci": "Custo do trabalho (LCI)"
+  },
   "series": {
     "hicp-pt-cp00": {
       "rotulo": "Inflação (IHPC)",

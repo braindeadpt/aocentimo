@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { fmtEUR0 } from "@/lib/format";
 import { useArmado } from "@/lib/useArmado";
+import { carregarGsap, dur, ease, motionActiva } from "@/lib/motion/gsap";
 import type { LinhaAmortizacao } from "@/lib/engines/prestacao";
 
 /**
@@ -17,7 +18,9 @@ import type { LinhaAmortizacao } from "@/lib/engines/prestacao";
  * Interrogável por ano: régua + readout (chart-readout), Escape
  * limpa. Gate de dobra (M-09): nascer à vista = nascer no estado
  * final; a primeira revelação só anima se entrar no viewport.
- * `runKey` re-desenha a revelação quando os dados mudam.
+ * Quando os dados mudam a divisória MORFA para a nova geometria
+ * (gsap.to sobre um proxy, --dur-media) — nunca remount, nunca salto;
+ * em reduced-motion ou mudança de comprimento salta para o final.
  */
 
 const W = 300;
@@ -52,16 +55,65 @@ export function JuroCapital({
   }, [linhas]);
 
   // geometria da faixa anual — a soma juro+capital é ~constante,
-  // a divisória desce: no início é quase tudo juro
-  const pts = planoAnual.map((a, i) => {
-    const tot = a.juro + a.capital;
-    const x = planoAnual.length > 1 ? (i / (planoAnual.length - 1)) * W : W;
-    const yCap = tot > 0 ? H - (a.capital / tot) * H : H;
-    return { x: Math.round(x * 10) / 10, yCap: Math.round(yCap * 10) / 10, ano: i + 1, ...a };
-  });
-  const divPts = pts.map((p) => `${p.x},${p.yCap}`).join(" ");
-  const capArea = pts.length ? `M0,${H} L${divPts.replaceAll(" ", " L")} L${W},${H} Z` : "";
-  const lido = anoLido !== null ? pts[Math.min(anoLido, pts.length - 1)] : null;
+  // a divisória desce: no início é quase tudo juro. Memoizada:
+  // identidade estável entre renders, senão o efeito de morph
+  // disparava a cada setInterp e sufocava a transição
+  const pts = useMemo(
+    () =>
+      planoAnual.map((a, i) => {
+        const tot = a.juro + a.capital;
+        const x = planoAnual.length > 1 ? (i / (planoAnual.length - 1)) * W : W;
+        const yCap = tot > 0 ? H - (a.capital / tot) * H : H;
+        return { x: Math.round(x * 10) / 10, yCap: Math.round(yCap * 10) / 10, ano: i + 1, ...a };
+      }),
+    [planoAnual]
+  );
+
+  /* morph da divisória quando os dados mudam — interpola cada yCap
+     do plano anterior para o novo (mesmo n.º de anos); GSAP só desce
+     com motionActiva() e depois da primeira mudança real */
+  const prevPts = useRef<typeof pts | null>(null);
+  const [interp, setInterp] = useState<{
+    a: typeof pts;
+    b: typeof pts;
+    t: number;
+  } | null>(null);
+  useEffect(() => {
+    const prev = prevPts.current;
+    prevPts.current = pts;
+    if (!prev || prev === pts) return;
+    if (prev.length !== pts.length || !motionActiva()) {
+      setInterp(null);
+      return;
+    }
+    let vivo = true;
+    let tween: { kill(): void } | null = null;
+    const o = { t: 0 };
+    void carregarGsap().then(({ gsap }) => {
+      if (!vivo) return;
+      tween = gsap.to(o, {
+        t: 1,
+        duration: dur("media"),
+        ease: ease("entra"),
+        onUpdate: () => setInterp({ a: prev, b: pts, t: o.t }),
+        onComplete: () => setInterp(null),
+      });
+    });
+    return () => {
+      vivo = false;
+      tween?.kill();
+    };
+  }, [pts]);
+
+  const renderPts = interp
+    ? interp.a.map((p, i) => ({
+        ...p,
+        yCap: p.yCap + (interp.b[i].yCap - p.yCap) * interp.t,
+      }))
+    : pts;
+  const divPts = renderPts.map((p) => `${p.x},${p.yCap}`).join(" ");
+  const capArea = renderPts.length ? `M0,${H} L${divPts.replaceAll(" ", " L")} L${W},${H} Z` : "";
+  const lido = anoLido !== null ? renderPts[Math.min(anoLido, renderPts.length - 1)] : null;
 
   return (
     <div className="mt-5 border-t border-line pt-4">
@@ -103,7 +155,9 @@ export function JuroCapital({
         role="img"
         aria-label={ariaLabel}
       >
-        <g className={tempoArm("tempo-revela")} key={runKey}>
+        {/* sem key={runKey}: a morph do proxy trata das mudanças —
+            remount cortaria a transição a meio */}
+        <g className={tempoArm("tempo-revela")}>
           {/* juro — a faixa inteira; a área keep tapa a parte
               que é capital */}
           <rect x={0} y={0} width={W} height={H} fill="var(--color-up)" opacity={0.16} />
