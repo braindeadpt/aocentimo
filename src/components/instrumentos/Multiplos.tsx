@@ -91,10 +91,9 @@ export function Multiplos({
       </dl>
 
       <div
-        className="grid gap-px border border-line bg-line"
-        style={{
-          gridTemplateColumns: `repeat(${colunas}, minmax(0, 1fr))`,
-        }}
+        className={`grid gap-px border border-line bg-line grid-cols-2 ${
+          colunas === 4 ? "md:grid-cols-3 lg:grid-cols-4" : "md:grid-cols-3"
+        }`}
       >
         {dados.map((d) => {
           const ys = d.pts.map((p) => p.v);

@@ -3,12 +3,14 @@ import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Delta } from "@/components/Delta";
 import { Linha } from "@/components/instrumentos/Linha";
+import { Multiplos } from "@/components/instrumentos/Multiplos";
 import { Source } from "@/components/Source";
 import { JsonLd, dataset } from "@/lib/jsonld";
 import { PoderDeCompra } from "./PoderDeCompra";
 import { SalarioReal } from "./SalarioReal";
 import { loadSerie, variacao, loadFontes, loadFreshness, type Serie } from "@/lib/data";
 import { fmtNum } from "@/lib/format";
+import { m } from "@/lib/messages";
 import eventos from "@data/fiscal/eventos.json";
 
 export const metadata: Metadata = {
@@ -63,6 +65,37 @@ export default function InflacaoPage() {
     serie: loadSerie(cod),
   }));
 
+  /* D-01 — os 12 múltiplos das divisões ECOICOP em variação homóloga
+     (taxa, não índice — compara o ritmo, não o nível) */
+  const homologa = (s: Serie | null) =>
+    s
+      ? s.series.slice(12).map((p, i) => ({
+          t: p.t,
+          v: (p.v / s.series[i].v - 1) * 100,
+        }))
+      : [];
+  const divisoes = (Object.keys(m.divisoes) as (keyof typeof m.divisoes)[])
+    .map((cod) => ({
+      id: cod,
+      rotulo: m.divisoes[cod],
+      pontos: homologa(loadSerie(cod)),
+    }))
+    .filter((d) => d.pontos.length > 0);
+
+  /* banda mín–máx e mediana do índice geral nos últimos 10 anos */
+  const ult10 = cp00 ? cp00.series.slice(-120).map((p) => p.v) : [];
+  const ord10 = [...ult10].sort((a, b) => a - b);
+  const mediana10 =
+    ord10.length > 0 ? ord10[Math.floor(ord10.length / 2)] : null;
+  const banda10 =
+    ult10.length > 0
+      ? {
+          min: Math.min(...ult10),
+          max: Math.max(...ult10),
+          rotulo: `${m.inflacao.bandaHistorica} 10 anos`,
+        }
+      : undefined;
+
   const temDados = cp00 !== null;
   const base = anoBase(cp00);
   const baseLabel = base ?? cp00?.meta.unidade ?? null;
@@ -86,7 +119,7 @@ export default function InflacaoPage() {
       )}
       <p className="kicker">Preços no consumidor</p>
       <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
-        Quanto subiu o que compras
+        Quanto subiu o que compras?
       </h1>
       <p className="lede mt-5">
         O índice de preços no consumidor é a medida oficial da inflação. Não é
@@ -94,6 +127,33 @@ export default function InflacaoPage() {
         representativo. Mostramos o IHPC (Eurostat, comparável com a Zona
         Euro), por categoria, desde {desde}.
       </p>
+
+      {/* D-01 — figura principal: as 12 divisões ECOICOP em homóloga,
+          eixo comum */}
+      <Figure
+        title={m.inflacao.multiplosTitulo}
+        source={
+          <Source
+            nome="Eurostat, IHPC mensal"
+            url={fonte?.url}
+            serieAte={cp00?.meta.serieAte}
+            recolhidoEm={fonte?.recolhidoEm}
+          />
+        }
+      >
+        {divisoes.length > 0 ? (
+          <Multiplos
+            series={divisoes}
+            colunas={4}
+            unidade="%"
+            eixoComum
+            titulo={m.inflacao.multiplosTitulo}
+          />
+        ) : (
+          <p className="footnote">Indisponível sem dados.</p>
+        )}
+        <p className="footnote mt-2">{m.inflacao.multiplosNota}</p>
+      </Figure>
 
       <Figure
         title={`Índice de preços, Portugal${baseLabel ? ` (${baseLabel}${base ? " = 100" : ""})` : ""}`}
@@ -111,18 +171,27 @@ export default function InflacaoPage() {
         }
       >
         {temDados ? (
-          <Linha
-            series={[
-              { id: "cp00", rotulo: "Índice geral", pontos: cp00!.series },
-              { id: "cp01", rotulo: "Alimentação", pontos: (cp01 ?? cp00!).series },
-              { id: "nrg", rotulo: "Energia", pontos: (nrg ?? cp00!).series },
-            ]}
-            unidade=""
-            eventos={eventos.eventos.filter((e) => e.alvo === "ihpc")}
-            estado={ihpcAtrasada ? "atrasada" : "em-dia"}
-            equivalente="tabela"
-            titulo="Índice de preços, Portugal"
-          />
+          <>
+            <Linha
+              series={[
+                { id: "cp00", rotulo: "Índice geral", pontos: cp00!.series },
+                { id: "cp01", rotulo: "Alimentação", pontos: (cp01 ?? cp00!).series },
+                { id: "nrg", rotulo: "Energia", pontos: (nrg ?? cp00!).series },
+              ]}
+              unidade=""
+              eventos={eventos.eventos.filter((e) => e.alvo === "ihpc")}
+              banda={banda10}
+              refLinha={
+                mediana10 !== null
+                  ? { valor: mediana10, rotulo: m.inflacao.mediana10a }
+                  : undefined
+              }
+              estado={ihpcAtrasada ? "atrasada" : "em-dia"}
+              equivalente="tabela"
+              titulo="Índice de preços, Portugal"
+            />
+            <p className="footnote mt-2">{m.inflacao.linhaNota}</p>
+          </>
         ) : (
           <div className="border border-line bg-panel px-5 py-10 text-center text-ink2">
             <p className="num-read">—</p>

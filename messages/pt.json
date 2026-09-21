@@ -223,6 +223,27 @@
     "centimos": "cêntimos"
   },
 
+  "divisoes": {
+    "CP01": "Alimentação e bebidas",
+    "CP02": "Álcool e tabaco",
+    "CP03": "Vestuário e calçado",
+    "CP04": "Habitação, água e energia",
+    "CP05": "Mobiliário e casa",
+    "CP06": "Saúde",
+    "CP07": "Transportes",
+    "CP08": "Comunicações",
+    "CP09": "Recreação e cultura",
+    "CP10": "Educação",
+    "CP11": "Restaurantes e hotéis",
+    "CP12": "Outros bens e serviços"
+  },
+  "inflacao": {
+    "multiplosTitulo": "As 12 divisões do cabaz — variação homóloga",
+    "multiplosNota": "Cada painel mostra a variação homóloga mensal da divisão ECOICOP; o eixo vertical é comum — lê-se o nível, não só a forma.",
+    "linhaNota": "Energia é o agregado oficial NRG do IHPC (electricidade, gás, combustíveis e afins) — não somamos divisões à mão.",
+    "bandaHistorica": "mín–máx",
+    "mediana10a": "mediana 10 anos"
+  },
   "series": {
     "hicp-pt-cp00": {
       "rotulo": "Inflação (IHPC)",
