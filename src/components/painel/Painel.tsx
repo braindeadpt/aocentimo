@@ -416,7 +416,7 @@ export function Painel() {
         {/* coluna dos combustíveis — empilhados, cada um expansível */}
         <CelulaGrelha
           ids={["pmd-gasoleo-diario", "pmd-gasolina95-diario"]}
-          base="grid gap-px bg-line md:col-span-6 lg:col-span-4"
+          base="grid auto-rows-fr gap-px bg-line md:col-span-6 lg:col-span-4"
         >
           {gasoleo && (
             <InstrumentoPainel

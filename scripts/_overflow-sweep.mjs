@@ -21,6 +21,12 @@ for (const w of [768, 1440]) {
   for (const r of rotas) {
     try {
       await p.goto("http://localhost:3100" + r, { waitUntil: "domcontentloaded", timeout: 15000 });
+      /* o ticker e outras animações contínuas podem ser apanhadas a
+         meio do ciclo e dar falsos positivos de overflow — mede-se a
+         página parada */
+      await p.addStyleTag({
+        content: "*, *::before, *::after { animation-play-state: paused !important; }",
+      });
       await p.waitForTimeout(400);
       const res = await p.evaluate(() => ({
         sw: document.documentElement.scrollWidth,

@@ -181,7 +181,7 @@ export function InstrumentoPainel({
   const { aberto, alternar } = usePainel();
   const ab = aberto === item.id;
   return (
-    <div className="bg-panel p-3 md:px-4">
+    <div className="h-full bg-panel p-3 md:px-4">
       <button
         type="button"
         aria-expanded={ab}

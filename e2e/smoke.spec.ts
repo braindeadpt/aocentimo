@@ -120,8 +120,9 @@ test("a lista de rotas deriva do conteúdo", () => {
 });
 
 test("todas as rotas respondem", async ({ page }) => {
+  test.setTimeout(120_000); // ~42 rotas num ciclo — só interessa o status
   for (const path of rotasDoSite()) {
-    const res = await page.goto(path);
+    const res = await page.goto(path, { waitUntil: "domcontentloaded" });
     expect(res?.status(), `${path} deve responder 200`).toBe(200);
   }
 });
@@ -139,6 +140,7 @@ test("simuladores novos produzem resultado", async ({ page }) => {
 });
 
 test("nenhuma rota transborda na horizontal a 375 px", async ({ page }) => {
+  test.setTimeout(120_000); // load completo × 43 rotas — CSS é preciso
   await page.setViewportSize({ width: 375, height: 800 });
   for (const path of [...rotasDoSite(), "/rota-que-nao-existe"]) {
     await page.goto(path);
@@ -150,9 +152,10 @@ test("nenhuma rota transborda na horizontal a 375 px", async ({ page }) => {
 });
 
 test("nenhuma página mostra undefined, NaN ou Invalid Date", async ({ page }) => {
+  test.setTimeout(120_000); // o texto é SSR — domcontentloaded chega
   const proibidas = ["undefined", "NaN", "Invalid Date"];
   for (const path of rotasDoSite()) {
-    await page.goto(path);
+    await page.goto(path, { waitUntil: "domcontentloaded" });
     const texto = await page.locator("body").innerText();
     for (const s of proibidas) {
       expect(texto, `${path} mostra "${s}" no texto visível`).not.toContain(s);

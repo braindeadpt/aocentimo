@@ -29,7 +29,14 @@ createServer(async (req, res) => {
     for (const t of tentativas) {
       try {
         const data = await readFile(t);
-        res.writeHead(200, { "content-type": MIME[extname(t)] ?? "application/octet-stream" });
+        /* content-length explícito → resposta sem chunked e conexão
+           keep-alive reutilizável; sem ele o browser abre sockets novos
+           e o carregamento de 42 rotas em paralelo afoga o servidor */
+        res.writeHead(200, {
+          "content-type": MIME[extname(t)] ?? "application/octet-stream",
+          "content-length": data.length,
+          "cache-control": "no-store",
+        });
         res.end(data);
         ok = true;
         break;

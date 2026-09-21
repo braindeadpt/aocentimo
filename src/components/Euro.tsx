@@ -16,8 +16,10 @@
  *    SEGMENTO rectangular --accent de largura ∝ cêntimos — os
  *    segmentos acumulam da esquerda e os rótulos vivem SÓ na régua;
  *  · «Chega à conta» não é corte: o resto pisca a --keep e a régua
- *    ganha um marcador vertical com o líquido; «Fica-te» deixa o
- *    resto em --keep com o valor no centro;
+ *    ganha um marcador vertical na fronteira corte/resto (os cortes
+ *    acumulam da esquerda) com o troço restante a --keep 30 %;
+ *    «Fica-te» encurta o troço para depois do último corte e deixa o
+ *    resto da moeda em --keep com o valor no centro;
  *  · o índice do passo vem do progresso do scroll (onUpdate); a troca
  *    de texto é a keyframe `euro-passo` (y 8 px, opacidade 0.4→1);
  *  · a <ol> de passos fica sempre visível por baixo — é o equivalente;
@@ -108,7 +110,14 @@ export function Euro({ passos }: { passos: PassoEuro[] }) {
   const segX = cortes.map((_, k) => X0 + acc[k] * PX_C);
   const segW = cortes.map((_, k) => c[cortes[k]] * PX_C);
   const segCx = cortes.map((_, k) => segX[k] + segW[k] / 2);
-  const marcadorX = X0 + c[2] * PX_C;
+  /* o marcador fica na fronteira corte/resto: a régua acumula cortes
+     desde 0, logo o líquido marca-se em x = cortes acumulados (22,2)
+     e o troço restante até 100 fica a --keep; no último passo a
+     fronteira avança para depois do gasóleo (25,1) */
+  const fronteira = acc[2];
+  const fronteiraFim = acc[2] + c[3];
+  const marcadorX = X0 + fronteira * PX_C;
+  const marcadorXFim = X0 + fronteiraFim * PX_C;
 
   /** contador «restam» — o que fica depois da acção do passo */
   const restam = [remDepois[0], remDepois[1], c[2], remDepois[2], c[4]];
@@ -219,8 +228,30 @@ export function Euro({ passos }: { passos: PassoEuro[] }) {
           /* passo 3 — impostos no gasóleo */
           cai(2);
           padAte(3);
-          /* passo 4 — o resto fica-te, em keep definitivo */
+          /* passo 4 — o resto fica-te, em keep definitivo; na régua
+             a fronteira avança para depois do gasóleo e o rótulo do
+             marcador troca para «ficam-te» */
           tl.set(".euro-resto", { attr: { fill: "var(--keep)" } });
+          tl.to(
+            ".euro-troco",
+            {
+              attr: {
+                x: marcadorXFim,
+                width: (100 - fronteiraFim) * PX_C,
+              },
+              duration: 0.3,
+            }
+          );
+          tl.to(
+            ".euro-marcador-pos",
+            {
+              attr: { transform: `translate(${marcadorXFim} 0)` },
+              duration: 0.3,
+            },
+            "<"
+          );
+          tl.set(".euro-lab-chega", { opacity: 0 });
+          tl.set(".euro-lab-fica", { opacity: 1 });
           tl.fromTo(
             ".euro-fim",
             { opacity: 0, y: 8 },
@@ -437,28 +468,56 @@ export function Euro({ passos }: { passos: PassoEuro[] }) {
                 );
               })}
 
-              {/* marcador «chega à conta» — linha vertical no líquido */}
+              {/* marcador «chega à conta» — na fronteira corte/resto;
+                  o troço restante da régua fica a --keep 30 % e no
+                  último passo encurta para depois do último corte */}
               <g className="euro-marcador" opacity={0}>
-                <line
-                  x1={marcadorX}
-                  x2={marcadorX}
-                  y1={Y_REGUA - SEG_H - 22}
-                  y2={Y_REGUA + 8}
-                  stroke="var(--mark)"
-                  strokeWidth={1.5}
-                  strokeDasharray="3 2"
-                />
-                <text
+                <rect
+                  className="euro-troco"
                   x={marcadorX}
-                  y={Y_REGUA - SEG_H - 28}
-                  textAnchor="middle"
-                  fontSize={10}
-                  fill="var(--ink)"
-                  fontFamily="var(--font-mono)"
-                  className="tabular-nums"
+                  y={Y_REGUA - SEG_H}
+                  width={(100 - fronteira) * PX_C}
+                  height={SEG_H}
+                  fill="var(--keep)"
+                  opacity={0.3}
+                />
+                <g
+                  className="euro-marcador-pos"
+                  transform={`translate(${marcadorX} 0)`}
                 >
-                  {fmtNum(c[2], 1)} c
-                </text>
+                  <line
+                    x1={0}
+                    x2={0}
+                    y1={Y_REGUA - SEG_H - 22}
+                    y2={Y_REGUA + 8}
+                    stroke="var(--mark)"
+                    strokeWidth={1.5}
+                    strokeDasharray="3 2"
+                  />
+                  <text
+                    className="euro-lab-chega tabular-nums"
+                    x={0}
+                    y={Y_REGUA - SEG_H - 28}
+                    textAnchor="middle"
+                    fontSize={10}
+                    fill="var(--ink)"
+                    fontFamily="var(--font-mono)"
+                  >
+                    {t(m.home.euro.chegaConta, { n: fmtNum(c[2], 1) })}
+                  </text>
+                  <text
+                    className="euro-lab-fica tabular-nums"
+                    x={0}
+                    y={Y_REGUA - SEG_H - 28}
+                    textAnchor="middle"
+                    fontSize={10}
+                    fill="var(--ink)"
+                    fontFamily="var(--font-mono)"
+                    opacity={0}
+                  >
+                    {t(m.home.euro.ficamTe, { n: fmtNum(c[4], 1) })}
+                  </text>
+                </g>
               </g>
 
               {/* segmentos cortados — rectângulos --accent de largura

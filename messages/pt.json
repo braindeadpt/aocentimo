@@ -122,6 +122,7 @@
       "nota": "salário de 1 500 € brutos — solteiro, sem dependentes, regras 2026 · muda o teu em",
       "passo": "PASSO {n}/{total}",
       "restam": "restam",
+      "chegaConta": "chega à conta · {n} c",
       "ficamTe": "ficam-te {n} c",
       "escala": "cêntimos por cada euro bruto",
       "passos": [
