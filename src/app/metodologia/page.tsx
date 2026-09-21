@@ -49,27 +49,6 @@ const FONTES_FIXAS = [
   },
 ];
 
-/** Índice do período que contém uma data/rótulo — série e esperado podem
- *  vir em convenções diferentes ("2026-08", "2026-09-30", "2026"). */
-function periodoIndex(iso: string, frequencia: string): number | null {
-  const [y, m, d] = iso.split("-").map(Number);
-  if (!Number.isFinite(y)) return null;
-  const mm = m || 1;
-  const dd = d || 1;
-  switch (frequencia) {
-    case "anual":
-      return y;
-    case "diaria":
-      return Math.round(Date.UTC(y, mm - 1, dd) / 86_400_000);
-    case "trimestral":
-      return y * 4 + Math.floor((mm - 1) / 3);
-    case "semestral":
-      return y * 2 + Math.floor((mm - 1) / 6);
-    default:
-      return y * 12 + (mm - 1); // mensal
-  }
-}
-
 /** Folga da série em períodos próprios — quanto o `serieAte` já passou
  *  o `esperadoAte` do SLA. 0 = no limite: a próxima publicação decide. */
 function folgaPeriodos(s: {
@@ -77,11 +56,16 @@ function folgaPeriodos(s: {
   esperadoAte: string;
   frequencia: string;
 }): number | null {
-  if (!s.esperadoAte || s.esperadoAte === "—") return null;
-  const a = periodoIndex(s.serieAte, s.frequencia);
-  const b = periodoIndex(s.esperadoAte, s.frequencia);
-  if (a === null || b === null) return null;
-  return a - b;
+  if (!s.esperadoAte) return null;
+  if (s.frequencia === "anual") return Number(s.serieAte) - Number(s.esperadoAte);
+  if (s.frequencia === "diaria")
+    return Math.round((Date.parse(s.serieAte) - Date.parse(s.esperadoAte)) / 86_400_000);
+  const [a1, m1] = s.serieAte.split("-").map(Number);
+  const [a2, m2] = s.esperadoAte.split("-").map(Number);
+  const meses = (a1 - a2) * 12 + (m1 - m2);
+  if (s.frequencia === "trimestral") return Math.round(meses / 3);
+  if (s.frequencia === "semestral") return Math.round(meses / 6);
+  return meses;
 }
 
 const UN_FOLGA: Record<string, [string, string]> = {
@@ -102,7 +86,7 @@ export default function MetodologiaPage() {
     .map((f) => {
       const s = porId.get(f.id);
       const folga = s ? folgaPeriodos(s) : null;
-      const [unS, unP] = UN_FOLGA[s?.frequencia ?? "mensal"] ?? ["período", "períodos"];
+      const [unS, unP] = UN_FOLGA[s?.frequencia ?? "mensal"];
       const classe = !s
         ? "sem-sla"
         : s.estado === "atrasada"

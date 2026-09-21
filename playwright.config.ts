@@ -2,11 +2,7 @@ import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./e2e",
-  /* o timeout de 30 s é por TESTE, não por navegação — os ciclos de
-     ~42 rotas precisam de margem própria (setTimeout no spec); 2
-     workers chegam e não afogam o servidor estático single-thread */
   timeout: 30_000,
-  workers: 2,
   use: {
     baseURL: "http://localhost:3100",
   },

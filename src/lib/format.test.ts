@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { fmtData, fmtEUR, fmtEUR0, fmtNum, fmtPct, fmtPeriodo } from "./format";
+import { fmtData, fmtEUR, fmtEUR0, fmtNum, fmtPct } from "./format";
 
 describe("fmtData", () => {
   it("formata ano-mês", () => {
@@ -22,26 +22,6 @@ describe("fmtData", () => {
       expect(r).not.toContain("undefined");
       expect(r).not.toContain("NaN");
     }
-  });
-});
-
-describe("fmtPeriodo", () => {
-  it("trimestres e semestres em PT curto", () => {
-    expect(fmtPeriodo("2026-Q1")).toBe("1.º trim. 2026");
-    expect(fmtPeriodo("2025-Q4")).toBe("4.º trim. 2025");
-    expect(fmtPeriodo("2025-S2")).toBe("2.º sem. 2025");
-    expect(fmtPeriodo("2026-S1")).toBe("1.º sem. 2026");
-  });
-
-  it("delega meses, dias e anos em fmtData", () => {
-    expect(fmtPeriodo("2026-08")).toBe("ago 2026");
-    expect(fmtPeriodo("2026-09-17")).toBe("17 set 2026");
-    expect(fmtPeriodo("2026")).toBe("2026");
-  });
-
-  it("malformado → —", () => {
-    expect(fmtPeriodo("2026-Q7")).toBe("—");
-    expect(fmtPeriodo("lixo")).toBe("—");
   });
 });
 

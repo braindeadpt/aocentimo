@@ -1,25 +1,17 @@
-import dynamic from "next/dynamic";
 import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Delta } from "@/components/Delta";
+import { LineChart } from "@/components/LineChart";
 import { DecomposicaoFuel } from "../impostos/DecomposicaoFuel";
 import { Source } from "@/components/Source";
 import { loadFonte, type Serie } from "@/lib/data";
 import { fmtData } from "@/lib/format";
-import { m, t } from "@/lib/messages";
 import { Odometer } from "@/components/Odometer";
 import isp from "@data/fiscal/isp.json";
 import iva from "@data/fiscal/iva.json";
 import eventos from "@data/fiscal/eventos.json";
 import { JsonLd, webApplication } from "@/lib/jsonld";
-
-const Calendario = dynamic(() =>
-  import("@/components/instrumentos/Calendario").then((mo) => mo.Calendario)
-);
-const Linha = dynamic(() =>
-  import("@/components/instrumentos/Linha").then((mo) => mo.Linha)
-);
 
 export const metadata: Metadata = {
   title: "Preços — combustíveis dia a dia",
@@ -108,17 +100,15 @@ export default function PrecosPage() {
                 );
               })}
             </div>
-            <Linha
-              chart={m.chart}
+            <LineChart
               series={series.map(({ nome, serie }) => ({
-                id: nome,
-                rotulo: nome,
-                pontos: serie!.series.filter((p) => !corte || p.t >= corte!),
+                name: nome,
+                data: serie!.series
+                  .filter((p) => !corte || p.t >= corte!)
+                  .map((p) => [p.t, p.v] as [string, number]),
               }))}
               unidade="€"
               eventos={eventos.eventos.filter((e) => e.alvo === "combustiveis")}
-              equivalente="tabela"
-              titulo="Gasóleo e gasolina — série diária"
             />
           </>
         ) : (
@@ -132,65 +122,6 @@ export default function PrecosPage() {
           </div>
         )}
       </Figure>
-
-      {/* D-03 — cada dia em calendário: o ano corrente e o anterior,
-          cor por quantis reais da série. A nota ISP fica datada por
-          baixo — o desconto de 2022 explica o que se lê no mapa */}
-      {(
-        [
-          ["pmd-gasoleo-diario", m.precosPag.calGasoleo],
-          ["pmd-gasolina95-diario", m.precosPag.calGasolina],
-        ] as const
-      ).map(([id, titulo]) => {
-        const serie = series.find((s) => s.id === id)?.serie;
-        const ultimoDia = serie?.series.at(-1);
-        const ano = ultimoDia ? Number(ultimoDia.t.slice(0, 4)) : null;
-        const ispEvento = eventos.eventos.find((e) => e.id === "isp-desconto");
-        return (
-          <Figure
-            key={id}
-            title={titulo}
-            source={
-              <Source
-                nome="DGEG — preços médios diários"
-                url={serie?.meta.url}
-                serieAte={serie?.meta.serieAte}
-              />
-            }
-          >
-            {serie && ano ? (
-              <>
-                <Calendario
-                  chart={m.chart}
-                  pontos={serie.series}
-                  anos={[ano - 1, ano]}
-                  unidade="€/L"
-                  titulo={titulo}
-                />
-                {ispEvento && (
-                  <p className="footnote mt-3">
-                    {t(m.precosPag.notaIsp, {
-                      data: fmtData(ispEvento.t),
-                      rotulo: ispEvento.rotulo,
-                      detalhe: ispEvento.detalhe,
-                    })}{" "}
-                    <a
-                      href={ispEvento.url}
-                      className="underline decoration-line2 underline-offset-2"
-                    >
-                      {ispEvento.fonte}
-                    </a>
-                  </p>
-                )}
-              </>
-            ) : (
-              <p className="footnote">
-                Série DGEG indisponível — sem dados oficiais não há mapa.
-              </p>
-            )}
-          </Figure>
-        );
-      })}
 
       <Figure
         title="Enquanto isso: quanto do litro é imposto?"

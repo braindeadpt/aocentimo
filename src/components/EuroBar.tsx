@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { fmtEUR, fmtPct } from "@/lib/format";
-import type { Messages } from "@/lib/messages";
+import { m } from "@/lib/messages";
 
 export interface Segmento {
   label: string;
@@ -24,13 +24,10 @@ export function EuroBar({
   segmentos,
   total,
   unidade = "€",
-  chart,
 }: {
   segmentos: Segmento[];
   total: number;
   unidade?: string;
-  /** strings messages.chart — prop para o JSON não entrar no cliente */
-  chart: Messages["chart"];
 }) {
   const [ativo, setAtivo] = useState<number | null>(null);
   const lida = ativo !== null ? segmentos[ativo] : null;
@@ -67,7 +64,7 @@ export function EuroBar({
           min={0}
           max={Math.max(0, segmentos.length - 1)}
           value={ativo ?? segmentos.length - 1}
-          aria-label={chart.scrubAria}
+          aria-label={m.chart.scrubAria}
           aria-valuetext={lida ? `${lida.label}: ${fmtEUR(lida.valor)}` : undefined}
           onChange={(e) => setAtivo(Number(e.target.value))}
           onKeyDown={(e) => {

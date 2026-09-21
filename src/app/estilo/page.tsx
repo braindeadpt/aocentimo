@@ -1,30 +1,14 @@
 import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
-import { m } from "@/lib/messages";
 import Link from "next/link";
 import { Delta } from "@/components/Delta";
 import { NumHero } from "@/components/NumHero";
 import { Stat } from "@/components/Stat";
 import { Figure } from "@/components/Figure";
+import { EuroBar } from "@/components/EuroBar";
 import { Source } from "@/components/Source";
 import { Logo, LogoMark } from "@/components/Logo";
-import dynamic from "next/dynamic";
-
-const MotionDemo = dynamic(() =>
-  import("./MotionDemo").then((mo) => mo.MotionDemo)
-);
-const MotorDemo = dynamic(() =>
-  import("./MotorDemo").then((mo) => mo.MotorDemo)
-);
-const BarrasDemo = dynamic(() =>
-  import("./BarrasDemo").then((mo) => mo.BarrasDemo)
-);
-const Manchete = dynamic(() =>
-  import("@/components/Manchete").then((mo) => mo.Manchete)
-);
-import { Glifo } from "@/components/Glifo";
-import painel from "@data/derived/painel.json";
-import pmdGasoleo from "@data/sources/dgeg/pmd-gasoleo-diario.json";
+import { MotionDemo } from "./MotionDemo";
 import { PapelDefs } from "@/components/Papel";
 import { PecaPapel } from "@/components/PecaPapel";
 import { arestaRasgada } from "@/lib/materia";
@@ -32,25 +16,6 @@ import eur1m from "@data/sources/bpstat/euribor-1m-mensal.json";
 import eur3m from "@data/sources/bpstat/euribor-3m-mensal.json";
 import eur6m from "@data/sources/bpstat/euribor-6m-mensal.json";
 import eur12m from "@data/sources/bpstat/euribor-12m-mensal.json";
-
-const Calendario = dynamic(() =>
-  import("@/components/instrumentos/Calendario").then((mo) => mo.Calendario)
-);
-const Declive = dynamic(() =>
-  import("@/components/instrumentos/Declive").then((mo) => mo.Declive)
-);
-const EuroBar = dynamic(() =>
-  import("@/components/EuroBar").then((mo) => mo.EuroBar)
-);
-const Linha = dynamic(() =>
-  import("@/components/instrumentos/Linha").then((mo) => mo.Linha)
-);
-const Mostrador = dynamic(() =>
-  import("@/components/instrumentos/Mostrador").then((mo) => mo.Mostrador)
-);
-const Multiplos = dynamic(() =>
-  import("@/components/instrumentos/Multiplos").then((mo) => mo.Multiplos)
-);
 
 export const metadata: Metadata = {
   title: "Sistema de design",
@@ -63,25 +28,6 @@ export const metadata: Metadata = {
 const EURIBOR = [eur1m, eur3m, eur6m, eur12m].map((s) =>
   s.series.slice(-24)
 );
-
-// dados reais do painel para a secção Instrumentos (B-03)
-const PAINEL = painel.series;
-const painelSerie = (id: string) => PAINEL.find((s) => s.id === id);
-const PMD_2026 = pmdGasoleo.series.filter(
-  (p) => p.t >= "2026-01-01" && p.t <= "2026-12-31"
-);
-const DECLIVE_ITENS = ["euribor-3m-mensal", "euribor-12m-mensal", "ca-base", "une-pt-total", "pib-pt-homologo", "lci-pt-homologo"]
-  .map((id) => painelSerie(id))
-  .filter((s) => s !== undefined)
-  .map((s) => ({
-    rotulo: s.rotulo.split(",")[0],
-    antes: Math.round((s.valor - s.variacao.abs) * 100) / 100,
-    depois: s.valor,
-  }));
-const MULTIPLOS = ["euribor-3m-mensal", "euribor-12m-mensal", "ca-base", "une-pt-total"]
-  .map((id) => painelSerie(id))
-  .filter((s) => s !== undefined)
-  .map((s) => ({ id: s.id, rotulo: s.rotulo, pontos: s.spark }));
 
 const TOKENS: [string, string, string][] = [
   ["floor", "bg-floor", "#f4f3ec / #0d0b08 — nível 0, fundo"],
@@ -626,23 +572,6 @@ export default function EstiloPage() {
       </section>
 
       <section className="stack-sec">
-        <h2 className="kicker mb-4">Motor — GSAP + d3, a gramática intacta</h2>
-        <p className="footnote mb-4 max-w-xl">
-          O motor novo: o d3 só calcula escalas, marcas e formas — o SVG é
-          desenhado à mão e o movimento é GSAP com os tokens{" "}
-          <code className="num">--dur-*</code>/<code className="num">--ease-*</code>.
-          Com prefers-reduced-motion nenhum tween arranca — o estado final é
-          o estado base — e acima da dobra nada revela: o gate continua a
-          ser o <code className="num">useArmado</code>.
-        </p>
-        <MotorDemo
-          hicp={PAINEL.find((i) => i.id === "hicp-pt-cp00")}
-          desemprego={PAINEL.find((i) => i.id === "une-pt-total")}
-          ue27={PAINEL.find((i) => i.id === "une-ue27-total")}
-        />
-      </section>
-
-      <section className="stack-sec">
         <h2 className="kicker mb-4">Os dois papéis — porquê o talão não muda de cor</h2>
         <div className="grid items-start gap-8 md:grid-cols-[1fr_auto]">
           <div>
@@ -688,7 +617,6 @@ export default function EstiloPage() {
       <section className="stack-sec">
         <h2 className="kicker mb-4">A barra do euro — assinatura</h2>
         <EuroBar
-          chart={m.chart}
           total={25987}
           segmentos={[
             { label: "Fica contigo", valor: 16419.69, cor: "var(--color-keep)" },
@@ -867,7 +795,7 @@ export default function EstiloPage() {
         <ul className="space-y-1 max-w-2xl">
           {[
             "O elemento visual leva aria-hidden — seja <svg>, cascata ou barra proporcional.",
-            "O equivalente textual é um irmão <table>: .sr-only quando é só para leitores de ecrã (FitaTalao, Cascata, Linha), visível quando já faz parte do desenho (EuroBar).",
+            "O equivalente textual é um irmão <table>: .sr-only quando é só para leitores de ecrã (FitaTalao, Cascata, LineChart), visível quando já faz parte do desenho (EuroBar).",
             "Nunca role=\"img\" com aria-label E equivalente ao mesmo tempo — o leitor de ecrã anuncia a mesma informação duas vezes.",
             "O próximo gráfico nasce assim.",
           ].map((r) => (
@@ -877,143 +805,6 @@ export default function EstiloPage() {
             </li>
           ))}
         </ul>
-      </section>
-
-      <section className="stack-sec">
-        <h2 className="kicker mb-4">Instrumentos — o motor aplicado</h2>
-        <p className="footnote mb-4 max-w-xl">
-          Os seis instrumentos do observatório, com dados reais de{" "}
-          <code className="num">data/derived/painel.json</code> e das fontes.
-          Todos partilham o contrato: um só equivalente textual, estado
-          final no SSR, revelação só abaixo da dobra via{" "}
-          <code className="num">useArmado</code>.
-        </p>
-        <div className="space-y-6">
-          <Figure
-            title="Linha — Euribor por prazo"
-            source={<Source nome="Banco de Portugal — BPstat" />}
-          >
-            <Linha
-              chart={m.chart}
-              series={EURIBOR.map((pts, i) => ({
-                id: `euribor-${i}`,
-                rotulo: `Euribor ${["1M", "3M", "6M", "12M"][i]}`,
-                cor: `var(--seq-${i + 1})`,
-                pontos: pts,
-              }))}
-              unidade="%"
-              equivalente="tabela"
-              titulo="Euribor por prazo — últimos 24 meses"
-            />
-          </Figure>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="border border-line bg-panel px-5 py-4">
-              <p className="kicker-xs mb-2">Mostrador — desemprego vs. UE27</p>
-              <Mostrador
-                valor={painelSerie("une-pt-total")?.valor ?? 0}
-                unidade="%"
-                min={0}
-                max={15}
-                mediana={{
-                  valor: painelSerie("une-ue27-total")?.valor ?? 0,
-                  rotulo: "UE27",
-                }}
-                rotulo="Desemprego"
-                t={painelSerie("une-pt-total")?.t ?? ""}
-              />
-            </div>
-            <div className="border border-line bg-panel px-5 py-4">
-              <p className="kicker-xs mb-2">Declive — variação homóloga</p>
-              <Declive
-                itens={DECLIVE_ITENS}
-                rotulos={["há um ano", "agora"]}
-                unidade="%"
-                titulo="Variação homóloga dos instrumentos"
-              />
-            </div>
-          </div>
-          <div className="border border-line bg-panel px-5 py-4">
-            <p className="kicker-xs mb-2">Multiplos — quatro séries, eixo comum</p>
-            <Multiplos
-              chart={m.chart}
-              series={MULTIPLOS}
-              colunas={4}
-              unidade="%"
-              eixoComum
-              titulo="Quatro séries do painel, últimos 24 pontos"
-            />
-          </div>
-          <div className="border border-line bg-panel px-5 py-4">
-            <p className="kicker-xs mb-2">Barras — variação homóloga, reordenável</p>
-            <BarrasDemo
-              itens={PAINEL.filter((s) => s.variacao.pct !== null)
-                .slice(0, 8)
-                .map((s) => ({
-                  id: s.id,
-                  rotulo: s.rotulo,
-                  valor: Math.round((s.variacao.pct ?? 0) * 1000) / 10,
-                  t: s.t,
-                }))}
-            />
-          </div>
-          <div className="border border-line bg-panel px-5 py-4">
-            <p className="kicker-xs mb-2">Calendario — gasóleo, dias de 2026</p>
-            <Calendario
-              chart={m.chart}
-              pontos={PMD_2026}
-              anos={[2026]}
-              unidade="€/L"
-              titulo="Preço médio do gasóleo, por dia, em 2026"
-            />
-          </div>
-        </div>
-      </section>
-
-      <section className="stack-sec">
-        <h2 className="kicker mb-4">Lettering — a manchete que abre</h2>
-        <p className="footnote mb-4 max-w-xl">
-          <code className="num">Manchete</code> abre cada carácter de
-          font-stretch 62 % → 100 %, escalonado por{" "}
-          <code className="num">--stagger</code> — a Archivo tem o eixo wdth
-          carregado, a compressão é real. Só corre abaixo da dobra ou com
-          runKey nova; SSR e reduced-motion trazem o texto final.
-        </p>
-        <div className="space-y-6">
-          <Manchete as="h2" className="font-display text-3xl uppercase tracking-wide sm:text-4xl">
-            O cêntimo mede o teu dinheiro
-          </Manchete>
-          <Manchete as="h2" className="font-display text-xl uppercase tracking-wide text-ink2">
-            Cada número com fonte e data
-          </Manchete>
-          <Manchete as="p" className="footnote max-w-md">
-            E em corpo de texto a mesma abertura lê-se como um sussurro —
-            discreta, nunca um truque.
-          </Manchete>
-        </div>
-      </section>
-
-      <section className="stack-sec">
-        <h2 className="kicker mb-4">Glifos — sinais desenhados à mão</h2>
-        <p className="footnote mb-4 max-w-xl">
-          Cinco glifos 12×12 em <code className="num">currentColor</code>,
-          decorativos (aria-hidden): o significado mora no texto ao lado.
-          Na mudança de tipo o traço redesenha-se em{" "}
-          <code className="num">--dur-curta</code>.
-        </p>
-        <div className="flex flex-wrap items-end gap-8">
-          {(["sobe", "desce", "euro", "pct", "fluxo"] as const).map((g) => (
-            <span key={g} className="flex flex-col items-center gap-2">
-              <Glifo tipo={g} className="h-6 w-6 text-ink" />
-              <span className="kicker-xs">{g}</span>
-            </span>
-          ))}
-        </div>
-        <p className="footnote mt-4">
-          No Delta o glifo substitui o carácter visível e o sinal fica em
-          sr-only: <Delta value={0.023} /> sobe em preços,{" "}
-          <Delta value={-0.015} /> desce,{" "}
-          <Delta value={0.018} goodWhenUp /> sobe em poupança (bom).
-        </p>
       </section>
 
       {/* M-22: os casos proibidos mostrados — cada um foi um defeito real
@@ -1089,9 +880,6 @@ export default function EstiloPage() {
             "Sem aliases --color-seq-* em SVG inline: @theme inline só emite a var quando há utilidade — em fill/stroke usa-se --seq-* directo.",
             "Sem tinta de tema sobre papel fixo — o papel tem a sua tinta (--talao-ink, papel-sai-tinta, papel-fica-tinta).",
             "Sem número herói vazio à espera de JS — o SSR traz o valor final.",
-            "Sem rótulos flutuantes a meio do ecrã — no «o teu euro» cada valor fica na moeda ou na régua, nunca no ar (fix pós-D-03).",
-            "Sem escala auto no mostrador — a escala é fixa, declarada e lê-se (traços por unidade + extremos); a mediana fora da escala fica só em texto.",
-            "Sem animação acima da dobra ao carregar — o e2e percorre todas as rotas e falha se algo entrar animado.",
           ].map((r) => (
             <li key={r} className="footnote">
               <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-mark align-middle" />

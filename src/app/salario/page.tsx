@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
-import { m } from "@/lib/messages";
 import { CalculadoraSalario } from "./CalculadoraSalario";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
@@ -48,10 +47,7 @@ export default function SalarioPage() {
           />
         }
       >
-        <CalculadoraSalario
-          ano={ANO}
-          txt={{ fita: m.fita, fluxo: m.fluxo, chart: m.chart }}
-        />
+        <CalculadoraSalario ano={ANO} />
       </Figure>
 
       <Figure

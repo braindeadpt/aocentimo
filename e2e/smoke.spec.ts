@@ -27,72 +27,9 @@ function rotasDoSite(): string[] {
 test("home renderiza com os números-chave", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(/para onde vai o teu dinheiro/i);
-  await expect(page.locator("#painel-titulo")).toContainText(
-    /leituras oficiais/i
-  );
-
-  // C-01: o painel é a primeira dobra — o equivalente sr-only traz
-  // todas as leituras com valor e período já no HTML SSR
-  const linhas = page.locator(
-    'section[aria-labelledby="painel-titulo"] table tbody tr'
-  );
-  expect(await linhas.count()).toBeGreaterThanOrEqual(8);
-  for (let i = 0; i < (await linhas.count()); i++) {
-    const celulas = linhas.nth(i).locator("td");
-    await expect(celulas.nth(0)).toContainText(/\d/); // valor
-    await expect(celulas.nth(2)).toContainText(/\d{4}/); // período
-  }
-
-  // C-03: a lista «o teu euro» é o equivalente sempre visível —
-  // 5 passos com valor em cêntimos já no HTML SSR
-  const passos = page.locator("[data-euro-lista] > li");
-  await expect(passos).toHaveCount(5);
-  for (let i = 0; i < 5; i++) {
-    await expect(passos.nth(i)).toContainText(/\d+,\d\s*c/);
-  }
-});
-
-test("a leitura da inflação chega no HTML sem JS", async ({ request }) => {
-  // C-03: o «herói» da home é o Mostrador de inflação do painel —
-  // o valor tem de nascer no SSR, nunca à espera de hidratação
-  const res = await request.get("/");
-  expect(res.status()).toBe(200);
-  const html = await res.text();
-  expect(html).toMatch(/INFLA[CÇ][AÃ]O[\s\S]{0,500}?\d+,\d+\s*%/i);
-});
-
-test("o storytelling em reduced-motion é uma lista com 5 passos e valores", async ({
-  page,
-}) => {
-  // C-03: reduced-motion salta a cena pinned — fica a lista estática
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
-  const lista = page.locator("[data-euro-lista]");
-  await expect(lista).toBeVisible();
-  const passos = lista.locator("> li");
-  await expect(passos).toHaveCount(5);
-  await expect(passos.first()).toContainText(/Segurança Social/);
-  await expect(passos.last()).toContainText(/\d+,\d\s*c/);
-  // a cena svg está aria-hidden e não fica pinned/visível em reduced-motion
-  await expect(page.locator(".euro-moeda")).toBeHidden();
-});
-
-test("expandir um instrumento mostra a Linha com equivalente e fecha com Escape", async ({
-  page,
-}) => {
-  await page.goto("/");
-  // C-02: o rótulo é um botão aria-expanded; o expandido traz a Linha
-  // completa (svg aria-hidden + a sua tabela equivalente), o selector
-  // de período e o link «página →»
-  await page.getByRole("button", { name: /Euribor 12M/ }).click();
-  const exp = page.locator("#exp-euribor-12m-mensal");
-  await expect(exp).toBeVisible();
-  await expect(exp.locator("svg[data-viz]")).toBeVisible();
-  await expect(exp.locator("table")).toBeAttached();
-  await expect(exp.locator('button[aria-pressed="true"]')).toHaveCount(1);
-  await expect(exp.getByText("página →")).toBeVisible();
-  await page.keyboard.press("Escape");
-  await expect(page.locator("#exp-euribor-12m-mensal")).toHaveCount(0);
+  await expect(
+    page.getByText("Salário mínimo", { exact: true })
+  ).toBeVisible();
 });
 
 test("calculadora de salário produz resultado", async ({ page }) => {
@@ -120,9 +57,8 @@ test("a lista de rotas deriva do conteúdo", () => {
 });
 
 test("todas as rotas respondem", async ({ page }) => {
-  test.setTimeout(120_000); // ~42 rotas num ciclo — só interessa o status
   for (const path of rotasDoSite()) {
-    const res = await page.goto(path, { waitUntil: "domcontentloaded" });
+    const res = await page.goto(path);
     expect(res?.status(), `${path} deve responder 200`).toBe(200);
   }
 });
@@ -140,7 +76,6 @@ test("simuladores novos produzem resultado", async ({ page }) => {
 });
 
 test("nenhuma rota transborda na horizontal a 375 px", async ({ page }) => {
-  test.setTimeout(120_000); // load completo × 43 rotas — CSS é preciso
   await page.setViewportSize({ width: 375, height: 800 });
   for (const path of [...rotasDoSite(), "/rota-que-nao-existe"]) {
     await page.goto(path);
@@ -152,10 +87,9 @@ test("nenhuma rota transborda na horizontal a 375 px", async ({ page }) => {
 });
 
 test("nenhuma página mostra undefined, NaN ou Invalid Date", async ({ page }) => {
-  test.setTimeout(120_000); // o texto é SSR — domcontentloaded chega
   const proibidas = ["undefined", "NaN", "Invalid Date"];
   for (const path of rotasDoSite()) {
-    await page.goto(path, { waitUntil: "domcontentloaded" });
+    await page.goto(path);
     const texto = await page.locator("body").innerText();
     for (const s of proibidas) {
       expect(texto, `${path} mostra "${s}" no texto visível`).not.toContain(s);
@@ -360,10 +294,9 @@ test("a fita do salário interroga-se por teclado e tem equivalente textual", as
 }) => {
   // M-05/M-10: reduced-motion → a fita nasce já no estado final, sem
   // destaques — leitura determinística
-  // C-03: a fita saiu da home — vive agora em /salario (variante compacta)
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/salario");
-  const zona = page.locator(".fita-compacta").first();
+  await page.goto("/");
+  const zona = page.locator(".blueprint").first();
 
   // o desenho é decorativo; a viagem do euro existe em texto
   await expect(zona.locator("svg").first()).toHaveAttribute(
@@ -497,141 +430,4 @@ test("painéis de dados, API e feed servem", async ({ page }) => {
   expect(api?.status()).toBe(200);
   const feed = await page.goto("/feed.xml");
   expect(feed?.status()).toBe(200);
-});
-
-/** D — cada página nova tem a sua figura presente e UM equivalente
- *  textual (tabela/dl em .sr-only, ou role=img+aria-label nos
- *  instrumentos de número único). */
-const equivUnico = ".sr-only:has(table), .sr-only:has(dl), table.sr-only, dl.sr-only";
-
-test("D-01 · /inflacao mostra as 12 divisões ECOICOP com equivalente único", async ({
-  page,
-}) => {
-  await page.goto("/inflacao");
-  const fig = page.locator("figure", {
-    hasText: "As 12 divisões do cabaz",
-  });
-  await expect(fig.locator("svg[data-viz]").first()).toBeAttached();
-  await expect(fig.locator(equivUnico)).toHaveCount(1);
-  // 12 múltiplos com rótulo próprio (o nome repete-se no dl sr-only)
-  await expect(fig.getByText("Transportes").first()).toBeVisible();
-});
-
-test("D-02 · /credito mostra o mostrador Euribor 12M e a Linha das quatro", async ({
-  page,
-}) => {
-  await page.goto("/credito");
-  // Mostrador: número único — o próprio svg é o nomeado (sem equivalente extra)
-  await expect(
-    page.locator('svg[role="img"][aria-label*="Euribor 12M"]')
-  ).toBeAttached();
-  const fig = page.locator("figure", {
-    hasText: "As quatro Euribor desde 1994",
-  });
-  await expect(fig.locator("svg[data-viz]")).toBeAttached();
-  await expect(fig.locator(equivUnico)).toHaveCount(1);
-  await expect(fig.getByText("Euribor 12M").first()).toBeVisible();
-});
-
-test("D-02 · /casa mostra a frase-conclusão e aponta para /habitacao", async ({
-  page,
-}) => {
-  await page.goto("/casa");
-  // D-04: o declive vive em /habitacao; /casa fica com a conclusão
-  await expect(
-    page.getByText(/a casa subiu \d+,\d× mais/)
-  ).toBeVisible();
-  await expect(
-    page.getByRole("link", { name: /ver a evolução completa em Habitação/ })
-  ).toHaveAttribute("href", "/habitacao");
-});
-
-test("D-04 · /emprego mostra a linha PT vs UE27 com equivalente único", async ({
-  page,
-}) => {
-  await page.goto("/emprego");
-  const fig = page.locator("figure", {
-    hasText: "Desemprego — Portugal e a UE27",
-  });
-  await expect(fig.locator("svg[data-viz]")).toBeAttached();
-  await expect(fig.locator(equivUnico)).toHaveCount(1);
-  await expect(
-    page.locator('svg[role="img"][aria-label*="Desemprego jovem"]')
-  ).toBeAttached();
-});
-
-test("D-04 · /habitacao mostra o declive casa-vs-salário com equivalente único", async ({
-  page,
-}) => {
-  await page.goto("/habitacao");
-  const fig = page.locator("figure", {
-    hasText: "A casa contra o salário",
-  });
-  await expect(fig.locator("svg[data-viz]")).toBeAttached();
-  await expect(fig.locator(equivUnico)).toHaveCount(1);
-  await expect(
-    fig.getByText(/a casa subiu \d+,\d× mais/)
-  ).toBeVisible();
-});
-
-test("D-04 · /economia mostra as barras do PIB e os quatro múltiplos", async ({
-  page,
-}) => {
-  await page.goto("/economia");
-  const pib = page.locator("figure", {
-    hasText: "PIB — variação homóloga trimestral",
-  });
-  await expect(pib.locator("svg[data-viz]")).toBeAttached();
-  await expect(pib.locator(equivUnico)).toHaveCount(1);
-  const multi = page.locator("figure", {
-    hasText: "O país em quatro linhas",
-  });
-  await expect(multi.locator("svg[data-viz]")).toHaveCount(4);
-  await expect(multi.locator(equivUnico)).toHaveCount(1);
-});
-
-test("D-03 · /precos mostra os calendários com equivalente mensal único", async ({
-  page,
-}) => {
-  await page.goto("/precos");
-  for (const titulo of ["Gasóleo, dia a dia", "Gasolina 95, dia a dia"]) {
-    const fig = page.locator("figure", { hasText: titulo });
-    await expect(fig.locator("svg[data-viz]").first()).toBeAttached();
-    await expect(fig.locator(equivUnico)).toHaveCount(1);
-    // nota ISP datada por baixo do mapa
-    await expect(
-      fig.getByText(/Desconto extraordinário do ISP/)
-    ).toBeVisible();
-    // o equivalente é mensal e diz que é média
-    await expect(fig.locator(".sr-only table")).toContainText(/média/);
-  }
-});
-
-test("D-05 · /dados mostra o catálogo com filtros, contadores e export JSON", async ({
-  page,
-}) => {
-  await page.goto("/dados");
-  // contadores no cabeçalho
-  await expect(
-    page.getByText(/\d+ séries · \d+ fontes · \d+ em dia/)
-  ).toBeVisible();
-  const fig = page.locator("figure", {
-    hasText: "Todas as séries, todas as fontes",
-  });
-  // múltiplos + equivalente único
-  await expect(fig.locator("[data-celula]").first()).toBeAttached();
-  await expect(fig.locator(equivUnico)).toHaveCount(1);
-  // filtro multi: «BdP» reduz o conjunto visível
-  const antes = await fig.locator("[data-celula]:visible").count();
-  await fig.getByRole("button", { name: "BdP", exact: true }).click();
-  // o filtro reflete-se nas células visíveis (BPstat = Euribor + TAEG)
-  await expect
-    .poll(() => fig.locator("[data-celula]:visible").count())
-    .toBeLessThan(antes);
-  const depois = await fig.locator("[data-celula]:visible").count();
-  expect(depois).toBeGreaterThan(0);
-  // cada célula expõe o export JSON
-  await expect(
-    fig.locator("[data-celula]:visible").first().getByRole("link", { name: "JSON" })
-  ).toHaveAttribute("href", /^\/api\/[\w-]+\.json$/);
 });

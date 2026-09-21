@@ -24,6 +24,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const fontes = loadFontes();
   const hicp = fontes.filter((f) => f.id.startsWith("hicp-pt-")).map((f) => f.id);
   const pmd = fontes.filter((f) => f.id.startsWith("pmd-")).map((f) => f.id);
+  const euribor = fontes
+    .filter((f) => f.id.startsWith("euribor-"))
+    .map((f) => f.id);
+  const taeg = fontes.filter((f) => f.id.startsWith("taeg-")).map((f) => f.id);
 
   const caBase = loadDerivado<{ meta?: { recolhidoEm?: string } }>("ca-base");
   const caBaseEm = caBase?.meta?.recolhidoEm;
@@ -50,33 +54,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     { path: "/precos", ids: [...pmd, "fiscal-isp", "fiscal-iva"] },
     {
-      path: "/emprego",
-      ids: [
-        "une-pt-total",
-        "une-ue27-total",
-        "une-pt-jovem",
-        "lci-pt-homologo",
-      ],
-    },
-    { path: "/habitacao", ids: ["hpi-pt", "lci-pt-homologo"] },
-    {
-      path: "/economia",
-      ids: [
-        "pib-pt-homologo",
-        "confianca-pt",
-        "elec-pt-domestico",
-        "une-pt-total",
-        "hicp-pt-cp00",
-      ],
-    },
-    {
       path: "/dados",
-      // catálogo completo (D-05): todas as séries das fontes + derivados
-      ids: [
-        ...fontes.filter((f) => !f.id.startsWith("fiscal-")).map((f) => f.id),
-        "fiscal-usura-2026",
-        "fiscal-calendario-2026",
-      ],
+      ids: [...euribor, ...taeg, "fiscal-usura-2026", "fiscal-calendario-2026"],
       extra: caBaseEm ? [caBaseEm] : [],
     },
     // editoriais — sem data honesta, omitem lastModified

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { fmtEUR, fmtPct } from "@/lib/format";
-import type { Messages } from "@/lib/messages";
+import { m } from "@/lib/messages";
 
 export interface Passo {
   label: string;
@@ -23,14 +23,7 @@ export interface Passo {
  * Interrogação: readout fixo em cima; ponteiro nas linhas, régua com
  * setas para teclado.
  */
-export function Cascata({
-  passos,
-  chart,
-}: {
-  passos: Passo[];
-  /** strings messages.chart — prop para o JSON não entrar no cliente */
-  chart: Messages["chart"];
-}) {
+export function Cascata({ passos }: { passos: Passo[] }) {
   const [ativo, setAtivo] = useState<number | null>(null);
   const total = passos.find((p) => p.tipo === "base")?.valor ?? 0;
 
@@ -75,7 +68,7 @@ export function Cascata({
           min={0}
           max={Math.max(0, linhas.length - 1)}
           value={ativo ?? linhas.length - 1}
-          aria-label={chart.scrubAria}
+          aria-label={m.chart.scrubAria}
           aria-valuetext={lida ? `${lida.label}: ${fmtEUR(lida.valor)}` : undefined}
           onChange={(e) => setAtivo(Number(e.target.value))}
           onKeyDown={(e) => {

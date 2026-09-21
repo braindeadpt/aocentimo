@@ -9,7 +9,7 @@
     "formula": "Índice de preços da habitação (2015=100) ÷ custo do trabalho reindexado a 2015=100 (encadeamento das variações homólogas). Razão de índices oficiais — não mede salários reais.",
     "unidade": "indice_2015_100",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hpi_q?format=JSON&geo=PT&purchase=TOTAL&unit=I15_Q&sinceTimePeriod=2000",
-    "recolhidoEm": "2026-09-21T13:46:27.729Z",
+    "recolhidoEm": "2026-09-21T17:07:03.623Z",
     "serieAte": "2026-03-31",
     "rotuloAte": "2026-Q1",
     "frequencia": "trimestral"

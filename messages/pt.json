@@ -14,16 +14,10 @@
     "casa": "Casa",
     "irs": "IRS",
     "trabalho": "Trabalho",
-    "emprego": "Emprego",
-    "habitacao": "Habitação",
-    "economia": "Economia",
     "poupanca": "Poupança",
     "precos": "Preços",
     "dados": "Dados",
-    "aprender": "Aprender",
-    "grupoDinheiro": "Dinheiro",
-    "grupoPrecos": "Preços",
-    "grupoPais": "País"
+    "aprender": "Aprender"
   },
   "footer": {
     "blurb": "Literacia financeira para Portugal. Projeto pessoal, gratuito, sem publicidade e sem rastreamento. Cada número mostra a fonte e a data — quando uma fonte falha, mostramos a falha.",
@@ -51,10 +45,7 @@
     "atrasada": "atrasada",
     "semSla": "sem SLA definido",
     "sparkDesc": "{rotulo}: últimos {n} pontos entre {min} e {max}; último {ult}",
-    "eventosAria": "Eventos marcados no gráfico — cada um abre a fonte oficial",
-    "eixoComum": "eixo comum {min} … {max}",
-    "janelaAnos": "{n} a",
-    "janelaMax": "máx"
+    "eventosAria": "Eventos marcados no gráfico — cada um abre a fonte oficial"
   },
   "fluxo": {
     "aria": "A empresa paga {custo} por mês; chegam-te {liquido} líquidos.",
@@ -117,40 +108,9 @@
     "segSs": "A tua Seg. Social (11 %)",
     "segTsu": "TSU da empresa (23,75 %)",
     "barraFoot": "A empresa paga {custo} por ano para te pagar {bruto} brutos por mês — {peso} desse custo vai para o Estado antes de chegar ao teu bolso.",
-    "euro": {
-      "titulo": "O TEU EURO",
-      "nota": "salário de 1 500 € brutos — solteiro, sem dependentes, regras 2026 · muda o teu em",
-      "passo": "PASSO {n}/{total}",
-      "restam": "restam",
-      "chegaConta": "chega à conta · {n} c",
-      "ficamTe": "ficam-te {n} c",
-      "escala": "cêntimos por cada euro bruto",
-      "passos": [
-        {
-          "rotulo": "Segurança Social",
-          "curto": "Seg. Social",
-          "detalhe": "TSU do trabalhador — 11 % do bruto, desconta antes de chegar à conta"
-        },
-        {
-          "rotulo": "Retenção de IRS",
-          "curto": "IRS",
-          "detalhe": "tabelas de 2026 — a tua taxa depende da situação e dos dependentes"
-        },
-        {
-          "rotulo": "Chega à conta",
-          "detalhe": "o líquido mensal depois de Segurança Social e IRS"
-        },
-        {
-          "rotulo": "Impostos no gasóleo",
-          "curto": "Gasóleo",
-          "detalhe": "50 L a {preco} €/L — ISP, taxa de carbono e IVA dentro do litro"
-        },
-        {
-          "rotulo": "Ficam-te",
-          "detalhe": "de cada euro bruto, antes do IVA das compras do dia a dia"
-        }
-      ]
-    },
+    "euroTitulo": "DE CADA 1,00 € QUE A EMPRESA GASTA CONTIGO",
+    "euroNota": "salário de 1 500 € · solteiro · regras 2026",
+    "euroFoot": "{keep} chegam ao teu bolso. O resto é IRS, Segurança Social e a TSU que a empresa paga e nunca aparece no recibo.",
     "capitulosTitulo": "O PERCURSO DE UM EURO",
     "capitulosNota": "seis capítulos",
     "capitulos": [
@@ -235,278 +195,13 @@
     "longe": "longe — a maioria erra para cima",
     "centimos": "cêntimos"
   },
-
-  "divisoes": {
-    "CP00": "Índice geral (IHPC)",
-    "CP01": "Alimentação e bebidas",
-    "CP0111": "Pão e cereais",
-    "CP0112": "Carne",
-    "CP0113": "Peixe e marisco",
-    "CP0114": "Leite, queijo e ovos",
-    "CP0115": "Óleos e gorduras",
-    "CP0116": "Fruta",
-    "CP0117": "Legumes",
-    "CP0118": "Açúcar e doces",
-    "CP02": "Álcool e tabaco",
-    "CP03": "Vestuário e calçado",
-    "CP04": "Habitação, água e energia",
-    "CP045": "Electricidade, gás e combustíveis da casa",
-    "CP05": "Mobiliário e casa",
-    "CP06": "Saúde",
-    "CP07": "Transportes",
-    "CP0722": "Combustíveis do carro",
-    "CP08": "Comunicações",
-    "CP09": "Recreação e cultura",
-    "CP10": "Educação",
-    "CP11": "Restaurantes e hotéis",
-    "CP12": "Outros bens e serviços",
-    "NRG": "Energia",
-    "FOOD": "Alimentação",
-    "TOT_X_NRG_FOOD": "Sem energia nem alimentação"
-  },
-  "inflacao": {
-    "multiplosTitulo": "As 12 divisões do cabaz — variação homóloga",
-    "multiplosNota": "Cada painel mostra a variação homóloga mensal da divisão ECOICOP; o eixo vertical é comum — lê-se o nível, não só a forma.",
-    "linhaNota": "Energia é o agregado oficial NRG do IHPC (electricidade, gás, combustíveis e afins) — não somamos divisões à mão.",
-    "bandaHistorica": "mín–máx",
-    "mediana10a": "mediana 10 anos"
-  },
-  "emprego": {
-    "kicker": "Mercado de trabalho",
-    "h1": "Quem está sem trabalho em Portugal?",
-    "lede": "A taxa de desemprego conta quem procura trabalho e não encontra — não conta quem desistiu de procurar, quem tem um part-time que não chega para viver, nem quem emigrou. É a medida oficial (Eurostat), mas é o chão do problema, não o tecto.",
-    "linhaTitulo": "Desemprego — Portugal e a UE27",
-    "linhaNota": "Banda mín–máx dos últimos 10 anos da série portuguesa.",
-    "evPico": "pico do desemprego — programa de ajustamento",
-    "evPandemia": "pandemia",
-    "jovemTitulo": "Desemprego jovem (15–24 anos)",
-    "jovemRotulo": "Desemprego jovem",
-    "jovemNota": "Mede só quem procura emprego — quem estuda ou está em formação não entra na taxa.",
-    "decliveTitulo": "2015 contra o último mês",
-    "declivePt": "Desemprego Portugal",
-    "decliveUe": "Desemprego UE27",
-    "lciTitulo": "Custo do trabalho — variação homóloga",
-    "lciNota": "O que as empresas pagam por hora trabalhada (salários + contribuições), homólogo ao mesmo trimestre do ano anterior — não é o teu salário, é o custo total."
-  },
-  "habitacao": {
-    "kicker": "Casa e preços",
-    "h1": "Quanto subiu a casa que não consegues comprar?",
-    "lede": "O índice de preços da habitação mede o valor das casas transaccionadas — não a tua casa, não a renda que pagas, nem o esforço de quem ainda não entrou no mercado. É a régua oficial do Eurostat para comparar países — e em Portugal ela diz que a casa se afastou do trabalho.",
-    "hpiTitulo": "Preços da habitação — índice 2015=100",
-    "hpiNota": "Banda mín–máx histórica da série desde 2008.",
-    "evPandemia": "pandemia",
-    "evEuribor": "início da subida da Euribor",
-    "decliveTitulo": "A casa contra o salário",
-    "decliveConclusao": "a casa subiu {x}× mais do que o custo do trabalho desde 2015",
-    "decliveNota": "Fórmula: índice de preços da habitação (HPI, 2015=100) ÷ custo do trabalho reindexado a 2015=100 por encadeamento das variações homólogas do LCI. Razão de índices oficiais — não mede salários reais nem o esforço mensal.",
-    "hpiRotulo": "Preço da habitação (HPI)",
-    "lciRotulo": "Custo do trabalho (LCI)",
-    "barrasTitulo": "Variação homóloga dos preços, por trimestre",
-    "metodologiaNota": "Nota de metodologia: um índice não é o preço da tua casa — mede a variação média das transacções. E não mede rendas: o arrendamento não está no HPI."
-  },
-  "economia": {
-    "kicker": "O país em números",
-    "h1": "A economia cresce — e tu sentes?",
-    "lede": "O PIB soma tudo o que a economia produz — incluindo o que não chega à tua conta. Crescer 2 % não quer dizer que a tua vida melhorou 2 %. A confiança dos consumidores mede humor declarado, não carteiras.",
-    "pibTitulo": "PIB — variação homóloga trimestral",
-    "confTitulo": "Confiança dos consumidores",
-    "confNota": "Saldo de respostas (positivo = optimismo). A banda mostra o intervalo dos últimos 10 anos; a linha de zero separa pessimismo de optimismo.",
-    "elecTitulo": "Electricidade doméstica — €/kWh por semestre",
-    "elecNota": "Preço médio da electricidade para consumo doméstico, banda de consumo DC — inclui impostos.",
-    "multiplosTitulo": "O país em quatro linhas",
-    "multiplosNota": "Cada painel escala a si próprio — compara formas, não níveis.",
-    "pibRotulo": "PIB (homóloga, %)",
-    "confRotulo": "Confiança (saldo)",
-    "uneRotulo": "Desemprego (%)",
-    "hicpRotulo": "Inflação (homóloga, %)"
-  },
-  "dados": {
-    "catalogoTitulo": "Todas as séries, todas as fontes",
-    "catalogoNota": "Cada painel escala a si próprio — compara formas, não níveis. O rótulo abre a página temática da série; «JSON» abre o ficheiro estático em /api/.",
-    "contadores": "{series} séries · {fontes} fontes · {emDia} em dia · {falha} em falha ou sem SLA",
-    "verificado": "verificado {data}",
-    "visiveis": "{n} de {total} séries",
-    "fFonte": "Fonte",
-    "fFreq": "Frequência",
-    "fEstado": "Estado",
-    "fDiaria": "diária",
-    "fMensal": "mensal",
-    "fTrimestral": "trimestral",
-    "fSemestral": "semestral",
-    "fEmDia": "em dia",
-    "fAtrasada": "atrasada",
-    "fSemSla": "sem SLA",
-    "json": "JSON",
-    "unidades": {
-      "percentagem_media_mensal": "%",
-      "percentagem_variacao_homologa": "%",
-      "percentagem_populacao_activa": "%",
-      "eur_litro_media_nacional": "€/L",
-      "eur_kwh": "€/kWh",
-      "saldo_respostas": "saldo",
-      "indice_2015_100": "índice",
-      "índice 2025=100": "índice",
-      "pontos_percentuais": "p.p."
-    }
-  },
-  "precosPag": {
-    "calGasoleo": "Gasóleo, dia a dia",
-    "calGasolina": "Gasolina 95, dia a dia",
-    "notaIsp": "{data} — {rotulo}: {detalhe}."
-  },
-  "credito": {
-    "euriborAgora": "Euribor 12M agora",
-    "euriborNota": "a referência mais usada nos créditos em revisão anual — mediana de 10 anos como comparação"
-  },
-  "casa": {
-    "contraSalarioTitulo": "A casa contra o salário",
-    "contraSalario": "a casa subiu {x}× mais do que o custo do trabalho desde 2015",
-    "contraSalarioNota": "Fórmula: índice de preços da habitação (HPI, 2015=100) ÷ custo do trabalho reindexado a 2015=100 por encadeamento das variações homólogas do LCI. Razão de índices oficiais — não mede salários reais nem o esforço mensal."
-  },
-  "series": {
-    "hicp-pt-cp00": {
-      "rotulo": "Inflação (IHPC)",
-      "descricao": "Índice harmonizado de preços no consumidor, cabaz médio nacional (2025=100) — não é o preço do teu cabaz nem o IPC do INE."
-    },
-    "euribor-3m-mensal": {
-      "rotulo": "Euribor 3 meses",
-      "descricao": "Média mensal da taxa interbancária a 3 meses — não inclui o spread nem os outros custos do teu crédito."
-    },
-    "euribor-12m-mensal": {
-      "rotulo": "Euribor 12 meses",
-      "descricao": "Média mensal da taxa interbancária a 12 meses — não inclui o spread nem os outros custos do teu crédito."
-    },
-    "pmd-gasoleo-diario": {
-      "rotulo": "Gasóleo",
-      "descricao": "Preço médio nacional ao litro, já com impostos — não é o preço da tua bomba."
-    },
-    "pmd-gasolina95-diario": {
-      "rotulo": "Gasolina 95",
-      "descricao": "Preço médio nacional ao litro, já com impostos — não é o preço da tua bomba."
-    },
-    "ca-base": {
-      "rotulo": "Certificados de Aforro",
-      "descricao": "Taxa base indicativa da Série F (Euribor 3M limitada a 2,5 %) — a oficial é a do IGCP e pode diferir dentro do mês."
-    },
-    "une-pt-total": {
-      "rotulo": "Desemprego",
-      "descricao": "Taxa de desemprego dessazonalizada, população activa dos 15 aos 74 anos — não conta inactivos nem subemprego."
-    },
-    "une-pt-jovem": {
-      "rotulo": "Desemprego jovem",
-      "descricao": "Taxa de desemprego dos menos de 25 anos, dessazonalizada — não mede quem está fora do mercado nem o subemprego."
-    },
-    "une-ue27-total": {
-      "rotulo": "Desemprego UE27",
-      "descricao": "Taxa de desemprego média da União Europeia — é o comparador, não uma meta."
-    },
-    "desemprego-gap": {
-      "rotulo": "Desemprego PT − UE27",
-      "descricao": "Diferença entre a taxa portuguesa e a média da União, em pontos percentuais — mede a distância, não as causas."
-    },
-    "hpi-pt": {
-      "rotulo": "Preços da habitação",
-      "descricao": "Índice de preços da habitação, todas as transacções (2015=100) — não mede rendas nem acessibilidade."
-    },
-    "casa-em-salarios": {
-      "rotulo": "Casa vs. custo do trabalho",
-      "descricao": "Preço da habitação a dividir pelo custo do trabalho, ambos com 2015=100 — razão de índices oficiais, não são salários reais."
-    },
-    "pib-pt-homologo": {
-      "rotulo": "PIB, variação homóloga",
-      "descricao": "Variação real do PIB face ao mesmo trimestre do ano anterior — não mede bem-estar nem distribuição."
-    },
-    "lci-pt-homologo": {
-      "rotulo": "Custo do trabalho",
-      "descricao": "Variação homóloga do custo da mão-de-obra (indústria e serviços) — não é o salário líquido do trabalhador."
-    },
-    "confianca-pt": {
-      "rotulo": "Confiança dos consumidores",
-      "descricao": "Saldo de respostas do inquérito mensal aos consumidores — mede expectativas, não o estado real da economia."
-    },
-    "elec-pt-domestico": {
-      "rotulo": "Electricidade doméstica",
-      "descricao": "Preço médio semestral para consumos de 2 500–5 000 kWh por ano, com impostos — não é a tua tarifa exacta."
-    },
-    "inflacao-homologa": {
-      "rotulo": "Inflação, homóloga",
-      "descricao": "Variação do IHPC face ao mesmo mês do ano anterior — a taxa que o BCE acompanha; não é o preço do teu cabaz."
-    },
-    "euribor-1m-mensal": {
-      "rotulo": "Euribor 1 mês",
-      "descricao": "Média mensal da taxa interbancária a 1 mês."
-    },
-    "euribor-6m-mensal": {
-      "rotulo": "Euribor 6 meses",
-      "descricao": "Média mensal da taxa interbancária a 6 meses."
-    },
-    "pmd-gpl-diario": {
-      "rotulo": "GPL auto",
-      "descricao": "Preço médio nacional ao litro, já com impostos — não é o preço da tua bomba."
-    },
-    "taeg-pessoal-mensal": {
-      "rotulo": "TAEG pessoal — total",
-      "descricao": "TAEG média dos novos créditos pessoais — é a média praticada, não a melhor oferta."
-    },
-    "taeg-pessoal-educacao-saude-energia-mensal": {
-      "rotulo": "TAEG pessoal — educação, saúde",
-      "descricao": "TAEG média dos novos créditos pessoais para educação, saúde e energias renováveis."
-    },
-    "taeg-pessoal-outros-mensal": {
-      "rotulo": "TAEG pessoal — outros fins",
-      "descricao": "TAEG média dos novos créditos pessoais para outros fins."
-    },
-    "taeg-automovel-mensal": {
-      "rotulo": "TAEG automóvel — total",
-      "descricao": "TAEG média dos novos créditos automóveis."
-    },
-    "taeg-automovel-novo-mensal": {
-      "rotulo": "TAEG automóvel — novo",
-      "descricao": "TAEG média dos novos créditos para carro novo."
-    },
-    "taeg-automovel-usado-mensal": {
-      "rotulo": "TAEG automóvel — usado",
-      "descricao": "TAEG média dos novos créditos para carro usado."
-    },
-    "taeg-automovel-ald-mensal": {
-      "rotulo": "TAEG automóvel — ALD",
-      "descricao": "TAEG média das locações financeiras e ALD de automóveis."
-    },
-    "taeg-renovavel-mensal": {
-      "rotulo": "TAEG cartões e descobertos",
-      "descricao": "TAEG média do crédito renovável — cartões, linhas e descobertos."
-    }
-  },
-  "painel": {
-    "kicker": "PAINEL — leituras oficiais",
-    "recolhido": "recolhido",
-    "leitura": "leitura",
-    "vs": "vs.",
-    "rodape": "{n} séries oficiais · {emDia} em dia",
-    "metodologia": "metodologia →",
-    "estadoEmDia": "em dia",
-    "estadoAtrasada": "atrasada",
-    "estadoSemSla": "sem SLA",
-    "equivalenteTitulo": "Leituras do painel — valor, variação, período e fonte de cada série",
-    "indiceEm": "índice",
-    "rotulos": {
-      "inflacao-homologa": "Inflação",
-      "euribor-12m-mensal": "Euribor 12M",
-      "pmd-gasoleo-diario": "Gasóleo",
-      "pmd-gasolina95-diario": "Gasolina 95",
-      "une-pt-total": "Desemprego",
-      "hpi-pt": "Habitação",
-      "pib-pt-homologo": "PIB homólogo",
-      "lci-pt-homologo": "Custo do trabalho",
-      "confianca-pt": "Confiança",
-      "elec-pt-domestico": "Electricidade"
-    },
-    "pagina": "página →",
-    "periodo1a": "1 a",
-    "periodo5a": "5 a",
-    "periodoMax": "máx",
-    "bandaHistorica": "mín–máx histórico",
-    "expandir": "expandir",
-    "recolher": "recolher"
+  "escada": {
+    "titulo": "a escada, degrau a degrau",
+    "p0": "A empresa paga {valor} por mês por ti — mais do que o teu bruto.",
+    "p1": "Antes do recibo existir, o Estado já cortou {valor} — a TSU que a entidade paga ({taxa}).",
+    "p2": "O teu bruto: {valor}. É daqui que partem os teus descontos.",
+    "p3": "IRS retido na fonte: {valor} por mês.",
+    "p4": "A tua Segurança Social: {valor} ({taxa}).",
+    "p5": "Chegam-te {valor}. Dos {custo} que a empresa gastou, o Estado ficou com {estado}."
   }
 }

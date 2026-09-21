@@ -3,9 +3,7 @@ import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { SimuladorCasa } from "./SimuladorCasa";
-import { fmtEUR0, fmtNum } from "@/lib/format";
-import { loadDerivado } from "@/lib/data";
-import { m, t } from "@/lib/messages";
+import { fmtEUR0 } from "@/lib/format";
 import { readFileSync } from "fs";
 import path from "path";
 import imt from "@data/fiscal/imt-2026.json";
@@ -30,20 +28,8 @@ function euriborAtual(): { valor: number; ate: string } | null {
   }
 }
 
-type DerivadoRazao = {
-  meta: { serieAte: string; fontes: string[]; formula: string };
-  series: { t: string; v: number }[];
-};
-
 export default function CasaPage() {
   const eur = euriborAtual();
-
-  /* «a casa contra o salário»: a razão derivada (casa-em-salarios =
-     HPI ÷ LCI reindexado) dá a frase-conclusão; a figura completa
-     vive em /habitacao */
-  const razao = loadDerivado<DerivadoRazao>("casa-em-salarios");
-  const razaoUlt = razao?.series.at(-1) ?? null;
-  const declive = razaoUlt ? { vezes: razaoUlt.v / 100 } : null;
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
       <JsonLd
@@ -74,34 +60,8 @@ export default function CasaPage() {
           />
         }
       >
-        <SimuladorCasa euriborAtual={eur?.valor ?? null} chart={m.chart} />
+        <SimuladorCasa euriborAtual={eur?.valor ?? null} />
       </Figure>
-
-      {/* a casa contra o salário — a frase-conclusão fica aqui;
-          a figura completa vive em /habitacao (D-04) */}
-      <section className="stack-sec max-w-2xl" aria-label={m.casa.contraSalarioTitulo}>
-        <h2 className="font-display text-2xl text-ink">
-          {m.casa.contraSalarioTitulo}
-        </h2>
-        {declive ? (
-          <>
-            <p className="num text-lg tabular-nums">
-              {t(m.casa.contraSalario, { x: fmtNum(declive.vezes, 1) })}
-            </p>
-            <p className="footnote">{m.casa.contraSalarioNota}</p>
-            <p className="body-copy">
-              <a
-                href="/habitacao"
-                className="underline decoration-line2 underline-offset-2"
-              >
-                ver a evolução completa em Habitação →
-              </a>
-            </p>
-          </>
-        ) : (
-          <p className="footnote">Indisponível sem dados.</p>
-        )}
-      </section>
 
       <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
         <h2 className="font-display text-2xl text-ink">Os impostos da escritura</h2>

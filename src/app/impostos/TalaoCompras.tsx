@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { ivaContido } from "@/lib/engines/impostos";
 import { fmtEUR, fmtPct } from "@/lib/format";
 import { mascaraFaixaRasgo, r1, sementeDe } from "@/lib/materia";
-import type { Messages } from "@/lib/messages";
+import { m } from "@/lib/messages";
 import { useArmado } from "@/lib/useArmado";
 
 /**
@@ -50,7 +50,7 @@ const CABAZ: Item[] = [
 const COMP = 320;
 const SEMENTE = sementeDe(20260918);
 
-export function TalaoCompras({ chart }: { chart: Messages["chart"] }) {
+export function TalaoCompras() {
   const [precos, setPrecos] = useState<number[]>(CABAZ.map((i) => i.preco));
   const [ativo, setAtivo] = useState<number | null>(null);
 
@@ -126,7 +126,7 @@ export function TalaoCompras({ chart }: { chart: Messages["chart"] }) {
             min={0}
             max={linhas.length - 1}
             value={ativo ?? linhas.length - 1}
-            aria-label={chart.scrubAria}
+            aria-label={m.chart.scrubAria}
             aria-valuetext={
               lida ? `${lida.nome}: ${fmtEUR(lida.preco)}` : undefined
             }

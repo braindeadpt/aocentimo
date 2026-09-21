@@ -32,7 +32,7 @@ export function SiteHeader() {
         <Link href="/" aria-label={m.brand.name} className="block shrink-0 transition-opacity hover:opacity-80">
           <Logo className="text-3xl md:text-4xl" />
         </Link>
-        <SiteNav nav={m.nav} />
+        <SiteNav />
       </div>
     </header>
   );

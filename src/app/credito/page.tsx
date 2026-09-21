@@ -1,21 +1,12 @@
-import dynamic from "next/dynamic";
 import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
+import { LineChart } from "@/components/LineChart";
 import { SimuladorPrestacao } from "./SimuladorPrestacao";
 import { loadFonte, loadFreshness } from "@/lib/data";
-import { m } from "@/lib/messages";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 import eventos from "@data/fiscal/eventos.json";
-import painel from "@data/derived/painel.json";
-
-const Linha = dynamic(() =>
-  import("@/components/instrumentos/Linha").then((mo) => mo.Linha)
-);
-const Mostrador = dynamic(() =>
-  import("@/components/instrumentos/Mostrador").then((mo) => mo.Mostrador)
-);
 
 export const metadata: Metadata = {
   title: "Crédito — Euribor, spread e prestação",
@@ -27,17 +18,6 @@ export const metadata: Metadata = {
 export default function CreditoPage() {
   const eur = loadFonte("bpstat", "euribor-3m-mensal");
   const ultimo = eur?.series.at(-1) ?? null;
-  /* as quatro Euribor — a família inteira, não só o prazo do exemplo */
-  const prazos = (["1m", "3m", "6m", "12m"] as const)
-    .map((p) => ({ prazo: p, serie: loadFonte("bpstat", `euribor-${p}-mensal`) }))
-    .filter((p) => p.serie !== null);
-  const eur12 = loadFonte("bpstat", "euribor-12m-mensal");
-  const ultimo12 = eur12?.series.at(-1) ?? null;
-  const ref12 = (
-    painel.series.find((s) => s.id === "euribor-12m-mensal") as
-      | { referencia?: { valor: number; rotulo: string } }
-      | undefined
-  )?.referencia;
   const fresh = loadFreshness();
   const estado =
     fresh?.series.find((s) => s.id === "euribor-3m-mensal")?.estado ?? "sem-sla";
@@ -71,42 +51,11 @@ export default function CreditoPage() {
           />
         }
       >
-        {/* D-02 — o mostrador da Euribor 12M ao lado do simulador:
-            escala fixa 0–6 %, mediana 10 anos como referência */}
-        <div className="grid gap-6 lg:grid-cols-[1fr_15rem]">
-          <SimuladorPrestacao euriborAtual={ultimo?.v ?? null} euriborAte={ultimo?.t ?? null} />
-          <aside className="border-t border-line pt-4 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
-            <p className="kicker-xs">{m.credito.euriborAgora}</p>
-            {ultimo12 ? (
-              <Mostrador
-                valor={ultimo12.v}
-                unidade="%"
-                min={0}
-                max={6}
-                mediana={
-                  ref12
-                    ? { valor: ref12.valor, rotulo: ref12.rotulo }
-                    : undefined
-                }
-                rotulo={m.credito.euriborAgora}
-                t={ultimo12.t}
-                compacto
-              />
-            ) : (
-              <p className="footnote mt-2">Série indisponível.</p>
-            )}
-            <p className="footnote mt-1">{m.credito.euriborNota}</p>
-            <Source
-              nome="Banco de Portugal — BPstat"
-              url={eur12?.meta.url}
-              serieAte={ultimo12?.t}
-            />
-          </aside>
-        </div>
+        <SimuladorPrestacao euriborAtual={ultimo?.v ?? null} euriborAte={ultimo?.t ?? null} />
       </Figure>
 
       <Figure
-        title="As quatro Euribor desde 1994"
+        title="A Euribor desde 1994"
         source={
           <Source
             nome="Banco de Portugal — BPstat · Euribor 3M, média mensal"
@@ -114,20 +63,18 @@ export default function CreditoPage() {
           />
         }
       >
-        {prazos.length > 0 ? (
-          <Linha
-            chart={m.chart}
-            series={prazos.map(({ prazo, serie }) => ({
-              id: `euribor-${prazo}`,
-              rotulo: `Euribor ${prazo.toUpperCase()}`,
-              pontos: serie!.series,
-              cor: prazo === "3m" ? "var(--ink)" : "var(--ink2)",
-            }))}
+        {eur ? (
+          <LineChart
+            series={[
+              {
+                name: "Euribor 3M",
+                data: eur.series.map((p) => [p.t, p.v]),
+                cor: "var(--color-ink)",
+              },
+            ]}
             unidade="%"
             eventos={eventos.eventos.filter((e) => e.alvo === "euribor")}
             estado={estado}
-            equivalente="tabela"
-            titulo="As quatro Euribor desde 1994"
           />
         ) : (
           <p className="footnote">

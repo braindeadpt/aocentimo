@@ -9,6 +9,7 @@ export const m = pt;
 
 export type Messages = typeof pt;
 
-/** re-export por compat — clientes devem importar `t` de "./t" para
- *  não arrastar o JSON para o chunk do browser */
-export { t } from "./t";
+/** Substituição simples de placeholders {chave}. */
+export function t(template: string, vars: Record<string, string | number>): string {
+  return template.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? `{${k}}`));
+}

@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useContador } from "@/components/Contador";
 
 /**
  * Odometer — cada dígito é uma roda de 0–9 que roda até ao valor.
- * O número vem do motor único (Contador — interpolação rAF do valor
- * anterior ao novo); a roda de cada dígito roda pela transição CSS em --d.
- * Com JS, a classe .od-zero põe as rodas a 0 na entrada abaixo da dobra;
- * sem JS e com reduced-motion o valor final está sempre correcto no DOM.
+ * A posição final vive em --d (transform base); a transição CSS anima
+ * qualquer mudança — montagem incluída: com JS, a classe .od-zero põe as
+ * rodas a 0, sai, e a transição desce-as até ao dígito. Sem JS e com
+ * reduced-motion o valor final está sempre correcto no DOM — nunca zeros.
+ * Quando `valor` muda, as rodas rodam do dígito anterior para o novo.
  * Separadores (espaços, vírgula, €) são estáticos; só dígitos rodam.
  */
 export function Odometer({
@@ -27,14 +27,11 @@ export function Odometer({
   className?: string;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const animado = useContador(valor, { durMs: dur, casas });
 
-  const fmt = new Intl.NumberFormat("pt-PT", {
+  const texto = `${prefixo}${new Intl.NumberFormat("pt-PT", {
     minimumFractionDigits: casas,
     maximumFractionDigits: casas,
-  });
-  const texto = `${prefixo}${fmt.format(valor)}${sufixo}`;
-  const textoRodas = `${prefixo}${fmt.format(animado)}${sufixo}`;
+  }).format(valor)}${sufixo}`;
 
   // roll de entrada — só uma vez, só com motion, e só quando nasce
   // abaixo da primeira dobra (M-09: acima da dobra nada entra a animar
@@ -70,7 +67,7 @@ export function Odometer({
         {texto}
       </span>
       <span ref={ref} className={`odometer ${className ?? ""}`} aria-hidden="true">
-      {textoRodas.split("").map((ch, i) => {
+      {texto.split("").map((ch, i) => {
         if (/\d/.test(ch)) {
           const d = Number(ch);
           const atraso = `calc(${rodas++} * var(--stagger))`; // as rodas da direita chegam por último

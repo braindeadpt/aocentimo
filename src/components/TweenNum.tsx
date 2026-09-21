@@ -1,15 +1,16 @@
 "use client";
 
-import { useContador } from "@/components/Contador";
+import { useValorAnimado } from "@/lib/useValorAnimado";
 import { fmtNum } from "@/lib/format";
 
 /**
  * Contagem simples — o apresentador dos números que mudam (M-03).
- * Consome o motor único `Contador` (interpolação rAF): desliza do
- * valor anterior para o novo, nunca de zero.
+ * Consome o motor `useValorAnimado`: desliza do valor anterior para o
+ * novo, nunca de zero.
  *
  * Contrato:
- *  - o SSR e o primeiro paint mostram o valor FINAL
+ *  - o SSR e o primeiro paint mostram o valor FINAL (o motor devolve o
+ *    alvo no primeiro render)
  *  - o visual é `aria-hidden`; um nó sr-only com `aria-live="polite"`
  *    traz `texto` — anuncia o valor final UMA vez, nunca os intermédios
  *  - `tabular-nums` no visual: a largura não muda ao animar
@@ -32,10 +33,11 @@ export function TweenNum({
   /** unidade estática dentro do span visual — nunca interpola */
   sufixo?: string;
   /** ms — da gramática (--dur-curta 320 por defeito: a resposta a um
-      input é "muda de estado" — M-09) */
+      input é "muda de estado", orquestrada com as barras/segmentos que
+      transitam sobre o mesmo token — M-09) */
   dur?: number;
 }) {
-  const animado = useContador(valor, { durMs: dur, casas });
+  const animado = useValorAnimado(valor, { dur });
   return (
     <>
       <span className="sr-only" aria-live="polite">

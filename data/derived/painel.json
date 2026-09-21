@@ -1,10 +1,10 @@
 {
-  "geradoEm": "2026-09-21T13:46:27.765Z",
-  "recolhidoEm": "2026-09-21T13:46:27.731Z",
+  "geradoEm": "2026-09-21T17:07:03.705Z",
+  "recolhidoEm": "2026-09-21T17:07:03.625Z",
   "series": [
     {
       "id": "hicp-pt-cp00",
-      "rotulo": "Inflação (IHPC)",
+      "rotulo": "hicp-pt-cp00",
       "valor": 104.07,
       "unidade": "Índice 2025=100",
       "t": "2026-08",
@@ -120,7 +120,7 @@
     },
     {
       "id": "inflacao-homologa",
-      "rotulo": "Inflação, homóloga",
+      "rotulo": "inflacao-homologa",
       "valor": 3.55,
       "unidade": "%",
       "t": "2026-08",
@@ -239,7 +239,7 @@
     },
     {
       "id": "euribor-3m-mensal",
-      "rotulo": "Euribor 3 meses",
+      "rotulo": "euribor-3m-mensal",
       "valor": 2.5131,
       "unidade": "%",
       "t": "2026-08",
@@ -358,7 +358,7 @@
     },
     {
       "id": "euribor-12m-mensal",
-      "rotulo": "Euribor 12 meses",
+      "rotulo": "euribor-12m-mensal",
       "valor": 2.9537,
       "unidade": "%",
       "t": "2026-08",
@@ -477,7 +477,7 @@
     },
     {
       "id": "pmd-gasoleo-diario",
-      "rotulo": "Gasóleo",
+      "rotulo": "pmd-gasoleo-diario",
       "valor": 2.1541,
       "unidade": "€/L",
       "t": "2026-09-20",
@@ -593,7 +593,7 @@
     },
     {
       "id": "pmd-gasolina95-diario",
-      "rotulo": "Gasolina 95",
+      "rotulo": "pmd-gasolina95-diario",
       "valor": 2.066,
       "unidade": "€/L",
       "t": "2026-09-20",
@@ -709,7 +709,7 @@
     },
     {
       "id": "ca-base",
-      "rotulo": "Certificados de Aforro",
+      "rotulo": "ca-base",
       "valor": 2.5,
       "unidade": "%",
       "t": "2026-08",
@@ -821,11 +821,11 @@
       "referencia": null,
       "fonte": "IGCP (oficial) + BPstat Euribor 3M (indicativa)",
       "url": "https://www.igcp.pt/pt/aforristas/produtos-de-aforro/certificados-de-aforro",
-      "recolhidoEm": "2026-09-21T13:46:27.725Z"
+      "recolhidoEm": "2026-09-21T17:07:03.620Z"
     },
     {
       "id": "une-ue27-total",
-      "rotulo": "Desemprego UE27",
+      "rotulo": "une-ue27-total",
       "valor": 6.1,
       "unidade": "%",
       "t": "2026-07",
@@ -941,7 +941,7 @@
     },
     {
       "id": "une-pt-total",
-      "rotulo": "Desemprego",
+      "rotulo": "une-pt-total",
       "valor": 5.7,
       "unidade": "%",
       "t": "2026-07",
@@ -1060,7 +1060,7 @@
     },
     {
       "id": "une-pt-jovem",
-      "rotulo": "Desemprego jovem",
+      "rotulo": "une-pt-jovem",
       "valor": 20.1,
       "unidade": "%",
       "t": "2026-07",
@@ -1176,7 +1176,7 @@
     },
     {
       "id": "desemprego-gap",
-      "rotulo": "Desemprego PT − UE27",
+      "rotulo": "desemprego-gap",
       "valor": -0.4,
       "unidade": "p.p.",
       "t": "2026-07",
@@ -1288,11 +1288,11 @@
       "referencia": null,
       "fonte": "Eurostat — une_rt_m (PT − EU27_2020)",
       "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?format=JSON&geo=PT&s_adj=SA&age=TOTAL&unit=PC_ACT&sex=T&sinceTimePeriod=2000",
-      "recolhidoEm": "2026-09-21T13:46:27.731Z"
+      "recolhidoEm": "2026-09-21T17:07:03.625Z"
     },
     {
       "id": "hpi-pt",
-      "rotulo": "Preços da habitação",
+      "rotulo": "hpi-pt",
       "valor": 290.98,
       "unidade": "Índice 2015=100",
       "t": "2026-Q1",
@@ -1408,7 +1408,7 @@
     },
     {
       "id": "casa-em-salarios",
-      "rotulo": "Casa vs. custo do trabalho",
+      "rotulo": "casa-em-salarios",
       "valor": 191.65,
       "unidade": "Índice 2015=100",
       "t": "2026-Q1",
@@ -1520,11 +1520,11 @@
       "referencia": null,
       "fonte": "Eurostat — prc_hpi_q ÷ ei_lmlc_q",
       "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hpi_q?format=JSON&geo=PT&purchase=TOTAL&unit=I15_Q&sinceTimePeriod=2000",
-      "recolhidoEm": "2026-09-21T13:46:27.729Z"
+      "recolhidoEm": "2026-09-21T17:07:03.623Z"
     },
     {
       "id": "pib-pt-homologo",
-      "rotulo": "PIB, variação homóloga",
+      "rotulo": "pib-pt-homologo",
       "valor": 2.5,
       "unidade": "% homóloga",
       "t": "2026-Q2",
@@ -1643,7 +1643,7 @@
     },
     {
       "id": "lci-pt-homologo",
-      "rotulo": "Custo do trabalho",
+      "rotulo": "lci-pt-homologo",
       "valor": 5.4,
       "unidade": "% homóloga",
       "t": "2026-Q2",
@@ -1759,7 +1759,7 @@
     },
     {
       "id": "confianca-pt",
-      "rotulo": "Confiança dos consumidores",
+      "rotulo": "confianca-pt",
       "valor": -20.4,
       "unidade": "saldo",
       "t": "2026-08",
@@ -1875,7 +1875,7 @@
     },
     {
       "id": "elec-pt-domestico",
-      "rotulo": "Electricidade doméstica",
+      "rotulo": "elec-pt-domestico",
       "valor": 0.2435,
       "unidade": "€/kWh",
       "t": "2025-S2",

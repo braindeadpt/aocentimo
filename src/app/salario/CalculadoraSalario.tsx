@@ -5,7 +5,7 @@ import { simularSalario } from "@/lib/engines/irs";
 import { TSU_ENTIDADE, TSU_TRABALHADOR } from "@/lib/engines/seg-social";
 import { reciboMensal, FormaPagamentoSA } from "@/lib/engines/recibo";
 import { SituacaoRetencao } from "@/lib/engines/retencao";
-import { FitaTalao, type TxtFita } from "@/components/FitaTalao";
+import { FitaTalao } from "@/components/FitaTalao";
 import { TweenNum } from "@/components/TweenNum";
 import { SITE_URL } from "@/lib/site";
 import { useArmado } from "@/lib/useArmado";
@@ -28,15 +28,7 @@ function diaDoAno(fracao: number, ano: number): string {
   return fmtData(d.toISOString().slice(0, 10));
 }
 
-export function CalculadoraSalario({
-  ano,
-  txt,
-}: {
-  ano: number;
-  /** strings da fita + chart — prop do servidor para o JSON não
-      entrar no chunk do cliente */
-  txt: TxtFita;
-}) {
+export function CalculadoraSalario({ ano }: { ano: number }) {
   const [bruto, setBruto] = useState(1500);
   const [situacao, setSituacao] = useState<Situacao>("solteiro");
   const [conjuge, setConjuge] = useState(1500);
@@ -350,7 +342,6 @@ export function CalculadoraSalario({
           Explica-me o recibo — para onde vai o bruto
         </p>
         <Cascata
-          chart={txt.chart}
           passos={[
             {
               label: "Bruto + subsídios",
@@ -431,7 +422,7 @@ export function CalculadoraSalario({
         <p className="kicker-sm mb-3">
           O que o recibo não mostra — o custo total para a empresa
         </p>
-        <FitaTalao compacta medidas={medidasFita} txt={txt} />
+        <FitaTalao compacta medidas={medidasFita} />
       </div>
     </div>
   );
