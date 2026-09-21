@@ -182,6 +182,57 @@
     "manifestoFoot": "Quem percebe as regras, decide melhor. Simuladores indicativos ·",
     "metodologia": "metodologia e fontes"
   },
+  "painel": {
+    "titulo": "PAINEL — LEITURAS OFICIAIS",
+    "recolhido": "recolhido {quando}",
+    "acima": "acima",
+    "abaixo": "abaixo",
+    "subiu": "subiu",
+    "desceu": "desceu",
+    "insightMediana": "{abs} p.p. {direcao} da mediana de 10 anos",
+    "insightUe": "{abs} p.p. {direcao} da média europeia",
+    "insightHabitacao": "o preço das casas {direcao} {v} % num ano",
+    "insightCombustivel": "{sinal}{v} cêntimos num mês",
+    "insightCombustivelZero": "o litro não mexeu num mês",
+    "cartoes": {
+      "inflacao": {
+        "breadcrumb": "PREÇOS / CABAZ · EUROSTAT",
+        "titulo": "Inflação"
+      },
+      "euribor": {
+        "breadcrumb": "CRÉDITO / EURIBOR 12M · BPSTAT",
+        "titulo": "Euribor 12M"
+      },
+      "desemprego": {
+        "breadcrumb": "PAÍS / TRABALHO · EUROSTAT",
+        "titulo": "Desemprego"
+      },
+      "habitacao": {
+        "breadcrumb": "PAÍS / HABITAÇÃO · EUROSTAT",
+        "titulo": "Habitação"
+      },
+      "gasoleo": {
+        "breadcrumb": "PREÇOS / COMBUSTÍVEIS · DGEG",
+        "titulo": "Gasóleo"
+      },
+      "pib": {
+        "breadcrumb": "PAÍS / PIB · EUROSTAT",
+        "titulo": "PIB"
+      }
+    }
+  },
+  "leitura": {
+    "leitura": "leitura",
+    "fonte": "Fonte",
+    "pagina": "página",
+    "json": "JSON",
+    "emDia": "em dia",
+    "atrasada": "atrasada",
+    "semSla": "sem SLA",
+    "pico": "pico {periodo} · {valor}",
+    "minimo": "mínimo {periodo} · {valor}",
+    "aria": "{insight} — série de {de} a {ate}, último {valor}"
+  },
   "guess": {
     "kicker": "adivinha primeiro",
     "pergunta": "De cada 1,00 € que a empresa paga por ti, quantos cêntimos achas que te chegam?",

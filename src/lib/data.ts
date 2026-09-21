@@ -94,6 +94,36 @@ export function loadFreshness(): Freshness | null {
   return freshnessSchema.parse(JSON.parse(readFileSync(file, "utf8")));
 }
 
+/* ————— painel derivado — leitura leve, sem zod: o contrato é interno
+   (scripts/derive/painel.ts) e a frescura já foi validada a montante ———— */
+
+export interface PainelSerie {
+  id: string;
+  rotulo: string;
+  valor: number;
+  unidade: string;
+  t: string;
+  rotuloAte?: string;
+  variacao: { abs: number; pct: number | null; periodo: string };
+  spark: { t: string; v: number }[];
+  estado: "em-dia" | "atrasada" | "sem-sla";
+  referencia: { valor: number; rotulo: string } | null;
+  fonte: string;
+  url: string;
+  recolhidoEm: string | null;
+}
+
+export interface Painel {
+  geradoEm: string;
+  recolhidoEm: string | null;
+  series: PainelSerie[];
+}
+
+/** data/derived/painel.json — o resumo das leituras oficiais da home. */
+export function loadPainel(): Painel | null {
+  return loadDerivado<Painel>("painel");
+}
+
 export function listSeries(): string[] {
   const dir = path.join(DATA, "sources", "eurostat");
   if (!existsSync(dir)) return [];

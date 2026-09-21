@@ -28,8 +28,9 @@ test("home renderiza com os números-chave", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(/para onde vai o teu dinheiro/i);
   await expect(
-    page.getByText("Salário mínimo", { exact: true })
+    page.getByRole("heading", { name: /leituras oficiais/i })
   ).toBeVisible();
+  await expect(page.locator(".leitura").first()).toBeVisible();
 });
 
 test("calculadora de salário produz resultado", async ({ page }) => {

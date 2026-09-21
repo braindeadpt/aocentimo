@@ -1682,6 +1682,253 @@ html[data-theme="dark"] .tema-ponto {
   opacity: 0.08;
 }
 
+/* ————— leitura — o cartão-instrumento da Direcção V3 —————
+   Objecto completo: cabeçalho com breadcrumb + selo, corpo com uma
+   ideia (insight serifado, valor mono, gráfico-frase), rodapé com
+   fonte e acções. Em hover/focus-within inverte para papel — o
+   observatório imprime a leitura quando lhe pegas: as cores são
+   custom props locais --l-* trocadas de uma vez, e a transição é
+   a mesma --dur-curta em background/color/fill/stroke. */
+.leitura {
+  --l-bg: var(--panel);
+  --l-ink: var(--ink);
+  --l-ink2: var(--ink2);
+  --l-muted: var(--muted);
+  --l-line: var(--line);
+  --l-line2: var(--line2);
+  --l-accent: var(--accent);
+  --l-keep: var(--keep);
+  --l-mark: var(--mark);
+  background: var(--l-bg);
+  color: var(--l-ink);
+  border: 1px solid var(--l-line);
+  border-radius: 14px;
+  box-shadow: var(--elev-raised);
+  transition: background-color var(--dur-curta) var(--ease-entra),
+    color var(--dur-curta) var(--ease-entra),
+    border-color var(--dur-curta) var(--ease-entra);
+}
+.leitura-head,
+.leitura-breadcrumb,
+.leitura-meta,
+.leitura-insight,
+.leitura-valor,
+.leitura-foot,
+.leitura-fonte,
+.leitura-acoes {
+  transition: background-color var(--dur-curta) var(--ease-entra),
+    color var(--dur-curta) var(--ease-entra),
+    border-color var(--dur-curta) var(--ease-entra);
+}
+.leitura svg text,
+.leitura svg rect,
+.leitura svg line,
+.leitura svg path {
+  transition: fill var(--dur-curta) var(--ease-entra),
+    stroke var(--dur-curta) var(--ease-entra);
+}
+/* foco = impressão — o papel é palete fixa, nos dois temas */
+.leitura:focus-within {
+  --l-bg: var(--talao-paper);
+  --l-ink: var(--talao-ink);
+  --l-ink2: rgba(44, 36, 19, 0.78);
+  --l-muted: rgba(44, 36, 19, 0.68);
+  --l-line: rgba(44, 36, 19, 0.22);
+  --l-line2: rgba(44, 36, 19, 0.42);
+  --l-accent: #9d2a0d;
+  --l-keep: var(--papel-fica-tinta);
+  --l-mark: #7a5c10;
+}
+@media (hover: hover) {
+  .leitura:hover {
+    --l-bg: var(--talao-paper);
+    --l-ink: var(--talao-ink);
+    --l-ink2: rgba(44, 36, 19, 0.78);
+    --l-muted: rgba(44, 36, 19, 0.68);
+    --l-line: rgba(44, 36, 19, 0.22);
+    --l-line2: rgba(44, 36, 19, 0.42);
+    --l-accent: #9d2a0d;
+    --l-keep: var(--papel-fica-tinta);
+    --l-mark: #7a5c10;
+  }
+}
+
+.leitura-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.35rem 1rem;
+  flex-wrap: wrap;
+  padding: 0.8rem 1.15rem 0.65rem;
+  border-bottom: 1px solid var(--l-line);
+}
+.leitura-breadcrumb {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--l-muted);
+}
+.leitura-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--l-muted);
+}
+.leitura-estado {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.leitura-corpo {
+  padding: 0.9rem 1.15rem 1rem;
+}
+.leitura-insight {
+  font-family: var(--font-editorial);
+  font-size: 1.1875rem;
+  line-height: 1.45;
+  color: var(--l-ink2);
+  max-width: 44rem;
+}
+.leitura-valor {
+  margin-top: 0.3rem;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(2.25rem, 4vw + 1rem, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.leitura-amplo .leitura-valor {
+  font-size: clamp(2.5rem, 4.5vw + 1rem, 3.5rem);
+}
+.lq-graf {
+  margin-top: 0.8rem;
+  height: 7rem;
+}
+@media (min-width: 768px) {
+  .lq-graf {
+    height: 11rem;
+  }
+  .leitura-amplo .lq-graf {
+    height: 15rem;
+  }
+}
+
+.leitura-foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem 1rem;
+  flex-wrap: wrap;
+  padding: 0.55rem 1.15rem 0.75rem;
+  border-top: 1px solid var(--l-line);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.68rem;
+  color: var(--l-muted);
+}
+.leitura-acoes {
+  display: flex;
+  gap: 1rem;
+}
+.lq-link {
+  color: var(--l-ink2);
+  text-decoration: underline;
+  text-decoration-color: var(--l-line2);
+  text-underline-offset: 2px;
+}
+.lq-link:hover {
+  color: var(--l-accent);
+  text-decoration-color: var(--l-accent);
+}
+
+/* texto dentro do svg — mono, a mesma voz dos rótulos do sistema */
+.lq-txt {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  fill: var(--l-muted);
+}
+.lq-ext-main {
+  fill: var(--l-ink);
+  font-weight: 700;
+}
+.lq-anot-rot {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  fill: var(--l-ink);
+}
+
+/* ————— desenho de entrada — só com .leitura-on (useArmado ao entrar
+   no viewport). O estado base é sempre o final: sem JS, acima da
+   dobra ou com reduced-motion nasce tudo impresso. ————— */
+.leitura-on .lq-line,
+.leitura-on .lq-ref {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: lq-draw var(--dur-longa) var(--ease-entra) both;
+}
+.leitura-on .lq-ref {
+  animation-delay: var(--stagger);
+}
+/* a mediana constante revela-se por varrimento — o dash "5 4" dela é
+   semântico, não pode servir de truque de desenho */
+.leitura-on .lq-refmark {
+  animation: lq-clip var(--dur-longa) var(--ease-entra) var(--stagger) both;
+}
+/* a hachura assenta a meio do traço; os extremos quando a linha chega */
+.leitura-on .lq-hatch {
+  animation: lq-fade var(--dur-media) var(--ease-entra)
+    calc(var(--dur-longa) * 0.5) both;
+}
+.leitura-on .lq-ext,
+.leitura-on .lq-ref-rotulo {
+  animation: lq-fade var(--dur-curta) var(--ease-entra)
+    calc(var(--dur-longa) * 0.8) both;
+}
+/* a anotação desenha-se por último — floresce do ponto anotado */
+.leitura-on .lq-anot {
+  animation: lq-anot var(--dur-media) var(--ease-entra) var(--dur-longa) both;
+}
+@keyframes lq-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes lq-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes lq-clip {
+  from {
+    clip-path: inset(-10px 100% -10px -10px);
+  }
+  to {
+    clip-path: inset(-10px -10px -10px -10px);
+  }
+}
+@keyframes lq-anot {
+  from {
+    clip-path: circle(0px at var(--ax, 50%) var(--ay, 50%));
+  }
+  to {
+    clip-path: circle(480px at var(--ax, 50%) var(--ay, 50%));
+  }
+}
+
 /* kinetic type — palavras sobem de trás de uma máscara de linha */
 .kin-line {
   display: inline-block;

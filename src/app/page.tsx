@@ -1,40 +1,257 @@
 import Link from "next/link";
 import { Adivinha } from "@/components/Adivinha";
-import { Odometer } from "@/components/Odometer";
-import { Delta } from "@/components/Delta";
 import { FitaTalao } from "@/components/FitaTalao";
 import { Kinetic } from "@/components/Kinetic";
-import { Source } from "@/components/Source";
-import { Instrumento } from "@/components/Instrumento";
 import {
-  loadSerie,
-  variacao,
-  loadFontes,
-  loadDerivado,
-  loadFreshness,
-} from "@/lib/data";
+  Leitura,
+  type LeituraProps,
+  type RotulosLeitura,
+} from "@/components/Leitura";
+import { loadFonte, loadPainel, type PainelSerie } from "@/lib/data";
 import { simularSalario } from "@/lib/engines/irs";
 import { TSU_ENTIDADE, TSU_TRABALHADOR } from "@/lib/engines/seg-social";
-import { fmtPct, fmtData, fmtEUR0 } from "@/lib/format";
+import {
+  fmtLitro,
+  fmtNum,
+  fmtPct,
+  fmtEUR0,
+  fmtPeriodo,
+  fmtDataHora,
+} from "@/lib/format";
 import { m, t } from "@/lib/messages";
 import { SITE_URL } from "@/lib/site";
-import smn from "@data/fiscal/smn.json";
-import ca from "@data/fiscal/ca.json";
 
-interface CaBase {
-  meta: { oficialPct: number; vigenciaOficial: string; serieAte: string; url?: string };
-  series: { t: string; v: number }[];
-}
+type Ponto = { t: string; v: number };
+type Cartao = Omit<LeituraProps, "rotulos">;
+
+/** janela dos últimos ~10 anos — o ano vem do prefixo do período
+    (regra do derivador: mensal, trimestral e semestral servem) */
+const janela10 = (s: Ponto[]): Ponto[] => {
+  const ult = s[s.length - 1];
+  if (!ult) return s;
+  const fim = Number(ult.t.slice(0, 4));
+  return s.filter((p) => Number(p.t.slice(0, 4)) >= fim - 10);
+};
+
+/** taxa homóloga de um índice — v / v[i-passo] − 1, em % */
+const homologa = (s: Ponto[], passo: number): Ponto[] =>
+  s.slice(passo).map((p, i) => ({ t: p.t, v: (p.v / s[i].v - 1) * 100 }));
+
+/** UM extremo real da janela — a anotação é sempre um dado, nunca
+    um ponto inventado; o rótulo já sai formatado do servidor */
+const anotacaoDe = (
+  s: Ponto[],
+  tipo: "max" | "min",
+  fmt: (v: number) => string
+): Cartao["anotacao"] => {
+  if (s.length === 0) return undefined;
+  const p = s.reduce((b, q) =>
+    tipo === "max" ? (q.v > b.v ? q : b) : q.v < b.v ? q : b
+  );
+  return {
+    t: p.t,
+    rotulo: t(tipo === "max" ? m.leitura.pico : m.leitura.minimo, {
+      periodo: fmtPeriodo(p.t),
+      valor: fmt(p.v),
+    }),
+  };
+};
+
+/** insight «{abs} p.p. {acima|abaixo} da mediana de 10 anos» */
+const insightMediana = (item: PainelSerie): string =>
+  item.referencia
+    ? t(m.painel.insightMediana, {
+        abs: fmtNum(Math.abs(item.valor - item.referencia.valor)),
+        direcao:
+          item.valor >= item.referencia.valor
+            ? m.painel.acima
+            : m.painel.abaixo,
+      })
+    : `${fmtNum(item.valor)} ${item.unidade}`;
 
 export default function Home() {
   const h = m.home;
-  const ipc = loadSerie("CP00");
-  const alim = loadSerie("CP01");
-  const caBase = loadDerivado<CaBase>("ca-base");
-  const fonteIpc = loadFontes().find((f) => f.id === "hicp-pt-cp00");
-  const fresh = loadFreshness();
-  const estadoDe = (id: string) =>
-    fresh?.series.find((s) => s.id === id)?.estado;
+  const painel = loadPainel();
+  const pSerie = (id: string) =>
+    painel?.series.find((s) => s.id === id) ?? null;
+  const c = m.painel.cartoes;
+
+  const rotulosLeitura: RotulosLeitura = {
+    leitura: m.leitura.leitura,
+    fonte: m.leitura.fonte,
+    pagina: m.leitura.pagina,
+    json: m.leitura.json,
+    estados: {
+      "em-dia": m.leitura.emDia,
+      atrasada: m.leitura.atrasada,
+      "sem-sla": m.leitura.semSla,
+    },
+    aria: m.leitura.aria,
+  };
+
+  // ————— o Leitura-herói: inflação homóloga, histórico de 10 anos —————
+  const infl = pSerie("inflacao-homologa");
+  const hicp = loadFonte("eurostat", "hicp-pt-cp00");
+  const serieInfl = hicp ? janela10(homologa(hicp.series, 12)) : [];
+  const hero: Cartao | null =
+    infl && serieInfl.length > 1
+      ? {
+          breadcrumb: c.inflacao.breadcrumb,
+          titulo: c.inflacao.titulo,
+          insight: insightMediana(infl),
+          valor: infl.valor,
+          unidade: infl.unidade,
+          formato: "pct",
+          serie: serieInfl,
+          referencia: infl.referencia ?? undefined,
+          anotacao: anotacaoDe(serieInfl, "max", (v) => `${fmtNum(v, 1)} %`),
+          leitura: fmtPeriodo(infl.rotuloAte ?? infl.t),
+          estado: infl.estado,
+          fonteNome: infl.fonte,
+          fonteUrl: infl.url,
+          href: "/inflacao",
+          hrefJson: "/api/hicp-pt-cp00.json",
+          amplo: true,
+        }
+      : null;
+
+  // ————— a grelha de leituras —————
+  const eur = pSerie("euribor-12m-mensal");
+  const eurFonte = loadFonte("bpstat", "euribor-12m-mensal");
+  const serieEur = eurFonte ? janela10(eurFonte.series) : [];
+
+  const une = pSerie("une-pt-total");
+  const unePt = loadFonte("eurostat", "une-pt-total");
+  const uneUe = loadFonte("eurostat", "une-ue27-total");
+  const serieUne = unePt ? janela10(unePt.series) : [];
+  const serieUe = uneUe ? janela10(uneUe.series) : [];
+
+  const hpi = pSerie("hpi-pt");
+  const hpiFonte = loadFonte("eurostat", "hpi-pt");
+  const serieHpi = hpiFonte ? janela10(homologa(hpiFonte.series, 4)) : [];
+  const valorHpi = serieHpi[serieHpi.length - 1]?.v;
+
+  const gas = pSerie("pmd-gasoleo-diario");
+  const gasFonte = loadFonte("dgeg", "pmd-gasoleo-diario");
+  const serieGas = gasFonte ? gasFonte.series.slice(-180) : [];
+  const centimos = gas ? gas.variacao.abs * 100 : 0;
+
+  const pib = pSerie("pib-pt-homologo");
+  const pibFonte = loadFonte("eurostat", "pib-pt-homologo");
+  const seriePib = pibFonte ? janela10(pibFonte.series) : [];
+
+  const cartoes: (Cartao | null)[] = [
+    eur && serieEur.length > 1
+      ? {
+          breadcrumb: c.euribor.breadcrumb,
+          titulo: c.euribor.titulo,
+          insight: insightMediana(eur),
+          valor: eur.valor,
+          unidade: eur.unidade,
+          formato: "pct",
+          serie: serieEur,
+          referencia: eur.referencia ?? undefined,
+          anotacao: anotacaoDe(serieEur, "max", (v) => `${fmtNum(v, 2)} %`),
+          leitura: fmtPeriodo(eur.rotuloAte ?? eur.t),
+          estado: eur.estado,
+          fonteNome: eur.fonte,
+          fonteUrl: eur.url,
+          href: "/credito",
+          hrefJson: "/api/euribor-12m-mensal.json",
+        }
+      : null,
+    une && serieUne.length > 1 && serieUe.length > 1
+      ? {
+          breadcrumb: c.desemprego.breadcrumb,
+          titulo: c.desemprego.titulo,
+          insight: une.referencia
+            ? t(m.painel.insightUe, {
+                abs: fmtNum(Math.abs(une.valor - une.referencia.valor), 1),
+                direcao:
+                  une.valor >= une.referencia.valor
+                    ? m.painel.acima
+                    : m.painel.abaixo,
+              })
+            : `${fmtNum(une.valor, 1)} %`,
+          valor: une.valor,
+          unidade: une.unidade,
+          formato: "pct1",
+          serie: serieUne,
+          referencia: { pontos: serieUe, rotulo: "UE 27" },
+          anotacao: anotacaoDe(serieUne, "max", (v) => `${fmtNum(v, 1)} %`),
+          leitura: fmtPeriodo(une.rotuloAte ?? une.t),
+          estado: une.estado,
+          fonteNome: une.fonte,
+          fonteUrl: une.url,
+          href: "/trabalho",
+          hrefJson: "/api/une-pt-total.json",
+        }
+      : null,
+    hpi && serieHpi.length > 1 && valorHpi !== undefined
+      ? {
+          breadcrumb: c.habitacao.breadcrumb,
+          titulo: c.habitacao.titulo,
+          insight: t(m.painel.insightHabitacao, {
+            direcao: valorHpi >= 0 ? m.painel.subiu : m.painel.desceu,
+            v: fmtNum(Math.abs(valorHpi), 1),
+          }),
+          valor: valorHpi,
+          unidade: "%",
+          formato: "pct1",
+          serie: serieHpi,
+          anotacao: anotacaoDe(serieHpi, "max", (v) => `${fmtNum(v, 1)} %`),
+          leitura: fmtPeriodo(hpi.rotuloAte ?? hpi.t),
+          estado: hpi.estado,
+          fonteNome: hpi.fonte,
+          fonteUrl: hpi.url,
+          href: "/dados",
+          hrefJson: "/api/hpi-pt.json",
+        }
+      : null,
+    gas && serieGas.length > 1
+      ? {
+          breadcrumb: c.gasoleo.breadcrumb,
+          titulo: c.gasoleo.titulo,
+          insight:
+            Math.abs(centimos) < 0.5
+              ? m.painel.insightCombustivelZero
+              : t(m.painel.insightCombustivel, {
+                  sinal: centimos >= 0 ? "+" : "−",
+                  v: fmtNum(Math.abs(centimos), 1),
+                }),
+          valor: gas.valor,
+          unidade: gas.unidade,
+          formato: "litro",
+          serie: serieGas,
+          anotacao: anotacaoDe(serieGas, "max", fmtLitro),
+          leitura: fmtPeriodo(gas.rotuloAte ?? gas.t),
+          estado: gas.estado,
+          fonteNome: gas.fonte,
+          fonteUrl: gas.url,
+          href: "/precos",
+          hrefJson: "/api/pmd-gasoleo-diario.json",
+        }
+      : null,
+    pib && seriePib.length > 1
+      ? {
+          breadcrumb: c.pib.breadcrumb,
+          titulo: c.pib.titulo,
+          insight: insightMediana(pib),
+          valor: pib.valor,
+          unidade: pib.unidade,
+          formato: "pct1",
+          serie: seriePib,
+          referencia: pib.referencia ?? undefined,
+          anotacao: anotacaoDe(seriePib, "min", (v) => `${fmtNum(v, 1)} %`),
+          leitura: fmtPeriodo(pib.rotuloAte ?? pib.t),
+          estado: pib.estado,
+          fonteNome: pib.fonte,
+          fonteUrl: pib.url,
+          href: "/dados",
+          hrefJson: "/api/pib-pt-homologo.json",
+        }
+      : null,
+  ];
 
   // Fronteira servidor/cliente: o motor fiscal corre UMA vez aqui —
   // simularSalario puxa os JSON de data/fiscal (IRS, retenção, SS) que
@@ -104,70 +321,31 @@ export default function Home() {
         </div>
       </section>
 
-      {/* os números do mês — primeira dobra: cada célula com a micro-série
-          de 24 meses, último ponto a torrado, fonte e data */}
-      <section className="mt-5 border border-line bg-panel md:mt-8" aria-labelledby="quadro-mes">
-        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-line px-5 py-3">
-          <h2 id="quadro-mes" className="kicker">
-            {h.hoje}
+      {/* painel — leituras oficiais na linguagem «Leitura»: um cartão
+          por ideia, hachura entre a série e a referência, uma anotação
+          real por gráfico; o carimbo de recolha vem do derivado */}
+      <section className="mt-6 md:mt-10" aria-labelledby="painel-leituras">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b-2 border-ink pb-3">
+          <h2 id="painel-leituras" className="kicker">
+            {m.painel.titulo}
           </h2>
-          {/* fonte e data no topo do quadro — a evidência entra na
-              primeira dobra com os números, não escondida no fim */}
-          {fonteIpc && (
-            <Source
-              nome={fonteIpc.fonte}
-              url={fonteIpc.url}
-              serieAte={fonteIpc.serieAte}
-              nota="IGCP · DL 139/2025"
-            />
+          {painel?.recolhidoEm && (
+            <p className="num text-xs text-muted">
+              {t(m.painel.recolhido, { quando: fmtDataHora(painel.recolhidoEm) })}
+            </p>
           )}
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4">
-          <Instrumento
-            className="border-b border-r border-line px-5 py-3 md:border-b-0 md:py-4"
-            rotulo={h.inflacaoHomologa}
-            estado={estadoDe("hicp-pt-cp00")}
-            atraso={0}
-            grande
-            valor={ipc ? <Delta value={variacao(ipc, 12)} /> : "—"}
-            spark={ipc?.series}
-            meta={ipc ? fmtData(ipc.meta.serieAte) : "—"}
-          />
-          <Instrumento
-            className="border-b border-line px-5 py-3 md:border-b-0 md:border-r md:py-4"
-            rotulo={h.alimentacao}
-            estado={estadoDe("hicp-pt-cp01")}
-            atraso={1}
-            grande
-            valor={alim ? <Delta value={variacao(alim, 12)} /> : "—"}
-            spark={alim?.series}
-            meta={h.ihpcCP01}
-          />
-          <Instrumento
-            className="border-r border-line px-5 py-3 md:py-4"
-            rotulo={h.salarioMinimo}
-            estado={estadoDe("fiscal-smn")}
-            atraso={2}
-            grande
-            valor={
-              <Odometer
-                valor={smn.serie[smn.serie.length - 1].valor}
-                sufixo=" €"
-              />
-            }
-            spark={smn.serie.map((s) => ({ t: String(s.ano), v: s.valor }))}
-            meta={h.smnNota}
-          />
-          <Instrumento
-            className="px-5 py-3 md:py-4"
-            rotulo={h.ca}
-            estado={estadoDe("fiscal-ca")}
-            atraso={3}
-            grande
-            valor={fmtPct(ca.serieF.taxaBrutaNovasSubscricoes, 2)}
-            spark={caBase?.series}
-            meta={h.caNota}
-          />
+        {hero && (
+          <div className="mt-5">
+            <Leitura {...hero} rotulos={rotulosLeitura} />
+          </div>
+        )}
+        <div className="mt-5 grid gap-5 lg:grid-cols-2">
+          {cartoes
+            .filter((cartao): cartao is Cartao => cartao !== null)
+            .map((cartao) => (
+              <Leitura key={cartao.titulo} {...cartao} rotulos={rotulosLeitura} />
+            ))}
         </div>
       </section>
 

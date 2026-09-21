@@ -3,6 +3,7 @@ import { dataDePeriodo, escalaTempo, escalaValor } from "./escalas";
 import { rotuloValor, ticksTempo, ticksValor } from "./eixos";
 import { pathArco, pathArea, pathLinha, pathStep } from "./formas";
 import { corQuantil, corSeq, corSerie } from "./cores";
+import { regioesEntre } from "./entre";
 
 describe("dataDePeriodo — rótulos resolvem no fim do período (UTC)", () => {
   it("ano → 31 de dezembro", () => {
@@ -173,6 +174,58 @@ describe("formas", () => {
   it("pathArco: arco curto usa large-arc 0", () => {
     const d = pathArco(50, 50, 40, -30, 30);
     expect(d).toMatch(/A 40 40 0 0 1 /);
+  });
+});
+
+describe("regioesEntre — a área entre duas séries, partida nos cruzamentos", () => {
+  // lembrete do referencial: y cresce para baixo — "acima" = a.y < b.y
+  it("série sempre por cima → uma região acima", () => {
+    const a: [number, number][] = [[0, 10], [50, 10], [100, 10]];
+    const b: [number, number][] = [[0, 60], [100, 60]];
+    const r = regioesEntre(a, b);
+    expect(r).toHaveLength(1);
+    expect(r[0].acima).toBe(true);
+    expect(r[0].d.startsWith("M")).toBe(true);
+    expect(r[0].d.endsWith("Z")).toBe(true);
+  });
+
+  it("cruzamento único → duas regiões com sinais opostos", () => {
+    // A desce de 10 para 90 enquanto B fica em 50 — cruzam a meio (x=50)
+    const a: [number, number][] = [[0, 10], [100, 90]];
+    const b: [number, number][] = [[0, 50], [100, 50]];
+    const r = regioesEntre(a, b);
+    expect(r).toHaveLength(2);
+    expect(r[0].acima).toBe(true);
+    expect(r[1].acima).toBe(false);
+    // o cruzamento partilha o mesmo x nas duas regiões (~50)
+    for (const reg of r) expect(reg.d).toContain("50");
+  });
+
+  it("referência constante → recta de dois pontos funciona", () => {
+    const a: [number, number][] = [[0, 80], [50, 20], [100, 80]];
+    const mediana: [number, number][] = [[0, 50], [100, 50]];
+    const r = regioesEntre(a, mediana);
+    expect(r).toHaveLength(3);
+    expect(r.map((x) => x.acima)).toEqual([false, true, false]);
+  });
+
+  it("séries coladas → sem regiões (não inventa área)", () => {
+    const a: [number, number][] = [[0, 30], [100, 30]];
+    expect(regioesEntre(a, a)).toEqual([]);
+  });
+
+  it("intervalo comum: B mais curta limita a hachura", () => {
+    const a: [number, number][] = [[0, 10], [100, 10]];
+    const b: [number, number][] = [[40, 60], [60, 60]];
+    const r = regioesEntre(a, b);
+    expect(r).toHaveLength(1);
+    // a região não estende para lá de B — o path fica entre 40 e 60
+    expect(r[0].d).not.toContain("100");
+  });
+
+  it("menos de dois pontos → vazio", () => {
+    expect(regioesEntre([[0, 1]], [[0, 2], [9, 3]])).toEqual([]);
+    expect(regioesEntre([], [])).toEqual([]);
   });
 });
 
