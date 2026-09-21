@@ -603,3 +603,32 @@ test("D-03 · /precos mostra os calendários com equivalente mensal único", asy
     await expect(fig.locator(".sr-only table")).toContainText(/média/);
   }
 });
+
+test("D-05 · /dados mostra o catálogo com filtros, contadores e export JSON", async ({
+  page,
+}) => {
+  await page.goto("/dados");
+  // contadores no cabeçalho
+  await expect(
+    page.getByText(/\d+ séries · \d+ fontes · \d+ em dia/)
+  ).toBeVisible();
+  const fig = page.locator("figure", {
+    hasText: "Todas as séries, todas as fontes",
+  });
+  // múltiplos + equivalente único
+  await expect(fig.locator("[data-celula]").first()).toBeAttached();
+  await expect(fig.locator(equivUnico)).toHaveCount(1);
+  // filtro multi: «BdP» reduz o conjunto visível
+  const antes = await fig.locator("[data-celula]:visible").count();
+  await fig.getByRole("button", { name: "BdP", exact: true }).click();
+  // o filtro reflete-se nas células visíveis (BPstat = Euribor + TAEG)
+  await expect
+    .poll(() => fig.locator("[data-celula]:visible").count())
+    .toBeLessThan(antes);
+  const depois = await fig.locator("[data-celula]:visible").count();
+  expect(depois).toBeGreaterThan(0);
+  // cada célula expõe o export JSON
+  await expect(
+    fig.locator("[data-celula]:visible").first().getByRole("link", { name: "JSON" })
+  ).toHaveAttribute("href", /^\/api\/[\w-]+\.json$/);
+});

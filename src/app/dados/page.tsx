@@ -5,17 +5,23 @@ import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { JsonLd, dataset } from "@/lib/jsonld";
 import { Linha } from "@/components/instrumentos/Linha";
+import { Catalogo, type SerieCatalogo } from "@/components/instrumentos/Catalogo";
 import { Delta } from "@/components/Delta";
 import { Instrumento } from "@/components/Instrumento";
+import { rotaDaSerie } from "@/lib/meta";
 import {
   loadFonte,
   loadDerivado,
+  loadFontes,
   loadFreshness,
   loadSerie,
   variacao,
   type Serie,
 } from "@/lib/data";
+import { existsSync, readdirSync } from "fs";
+import path from "path";
 import { fmtData, fmtNum, fmtPct } from "@/lib/format";
+import { m, t } from "@/lib/messages";
 import usura from "@data/fiscal/usura-2026.json";
 import calendario from "@data/fiscal/calendario-2026.json";
 import eventos from "@data/fiscal/eventos.json";
@@ -80,6 +86,74 @@ export default function DadosPage() {
 
   const prazos = [...calendario.prazos].sort((a, b) => a.mes.localeCompare(b.mes));
 
+  /* D-05 — catálogo completo: todas as séries numéricas das fontes
+     (eurostat/bpstat/dgeg) + derivados com série própria. O rótulo de
+     cada múltiplo abre a página temática (rotaDaSerie) ou o JSON. */
+  const serieTxt = m.series as Record<
+    string,
+    { rotulo: string; descricao?: string } | undefined
+  >;
+  const divisoesTxt = m.divisoes as Record<string, string>;
+  const unidadesTxt = m.dados.unidades as Record<string, string>;
+  const rotuloDe = (id: string) =>
+    serieTxt[id]?.rotulo ??
+    divisoesTxt[id.replace(/^hicp-pt-/i, "").toUpperCase()] ??
+    id;
+
+  const fontesMeta = loadFontes();
+  const catalogo: SerieCatalogo[] = [];
+  for (const dir of ["eurostat", "bpstat", "dgeg"] as const) {
+    const pasta = path.join(process.cwd(), "data", "sources", dir);
+    if (!existsSync(pasta)) continue;
+    for (const f of readdirSync(pasta).filter((x) => x.endsWith(".json"))) {
+      const id = f.replace(".json", "");
+      const s = loadFonte(dir, id);
+      if (!s || s.series.length < 2) continue;
+      catalogo.push({
+        id,
+        rotulo: rotuloDe(id),
+        descricao: serieTxt[id]?.descricao,
+        pontos: s.series,
+        unidade: unidadesTxt[s.meta.unidade] ?? "",
+        fonte: dir,
+        frequencia:
+          (fontesMeta.find((x) => x.id === id)?.frequencia as
+            | SerieCatalogo["frequencia"]
+            | undefined) ?? "mensal",
+        estado: estadoDe(id) ?? "sem-sla",
+        href: rotaDaSerie(id) ?? `/api/${id}.json`,
+      });
+    }
+  }
+  /* derivados com série temporal própria — frequência declarada aqui
+     porque o meta do derivado não a regista */
+  const DERIVADOS: {
+    id: string;
+    frequencia: SerieCatalogo["frequencia"];
+    unidade: string;
+  }[] = [
+    { id: "ca-base", frequencia: "mensal", unidade: "%" },
+    { id: "casa-em-salarios", frequencia: "trimestral", unidade: "índice" },
+    { id: "desemprego-gap", frequencia: "mensal", unidade: "p.p." },
+  ];
+  for (const d of DERIVADOS) {
+    const der = loadDerivado<{ series?: { t: string; v: number }[] }>(d.id);
+    if (!der?.series || der.series.length < 2) continue;
+    catalogo.push({
+      id: d.id,
+      rotulo: rotuloDe(d.id),
+      descricao: serieTxt[d.id]?.descricao,
+      pontos: der.series,
+      unidade: d.unidade,
+      fonte: "derivado",
+      frequencia: d.frequencia,
+      estado: estadoDe(d.id) ?? "sem-sla",
+      href: rotaDaSerie(d.id) ?? `/api/${d.id}.json`,
+    });
+  }
+  const nFontes = new Set(catalogo.map((c) => c.fonte)).size;
+  const nEmDia = catalogo.filter((c) => c.estado === "em-dia").length;
+
   // Dataset com proveniência real — data = fim de série mais recente
   const serieFim = [
     ...Object.values(euribor).map((s) => s?.meta.serieAte),
@@ -127,6 +201,22 @@ export default function DadosPage() {
           /api/
         </a>
         .
+      </p>
+      <p className="num mt-3 text-xs text-ink2 tabular-nums">
+        {t(m.dados.contadores, {
+          series: catalogo.length,
+          fontes: nFontes,
+          emDia: nEmDia,
+          falha: catalogo.length - nEmDia,
+        })}
+        {fresh && (
+          <>
+            {" — "}
+            {t(m.dados.verificado, {
+              data: fmtData(fresh.verificadoEm.slice(0, 10)),
+            })}
+          </>
+        )}
       </p>
 
       {/* quadro de instrumentos — o estado das fontes num relance:
@@ -226,6 +316,31 @@ export default function DadosPage() {
           />
         </div>
       </section>
+
+      {/* catálogo completo — todas as séries numéricas com filtros
+          por fonte, frequência e estado; o rótulo abre a página
+          temática, «JSON» o ficheiro estático */}
+      <Figure
+        title={m.dados.catalogoTitulo}
+        source={
+          <Source
+            nome="Eurostat · Banco de Portugal · DGEG · derivados AO CÊNTIMO"
+            url="/api/index.json"
+            recolhidoEm={fresh?.verificadoEm}
+          />
+        }
+      >
+        {catalogo.length > 0 ? (
+          <>
+            <Catalogo series={catalogo} titulo={m.dados.catalogoTitulo} />
+            <p className="footnote mt-2">{m.dados.catalogoNota}</p>
+          </>
+        ) : (
+          <p className="footnote border border-line bg-panel px-5 py-10 text-center">
+            — indisponível: corre <code className="num">npm run ingest</code>
+          </p>
+        )}
+      </Figure>
 
       <Figure
         title="Euribor — médias mensais (as das prestações)"

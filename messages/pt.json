@@ -236,18 +236,32 @@
   },
 
   "divisoes": {
+    "CP00": "Índice geral (IHPC)",
     "CP01": "Alimentação e bebidas",
+    "CP0111": "Pão e cereais",
+    "CP0112": "Carne",
+    "CP0113": "Peixe e marisco",
+    "CP0114": "Leite, queijo e ovos",
+    "CP0115": "Óleos e gorduras",
+    "CP0116": "Fruta",
+    "CP0117": "Legumes",
+    "CP0118": "Açúcar e doces",
     "CP02": "Álcool e tabaco",
     "CP03": "Vestuário e calçado",
     "CP04": "Habitação, água e energia",
+    "CP045": "Electricidade, gás e combustíveis da casa",
     "CP05": "Mobiliário e casa",
     "CP06": "Saúde",
     "CP07": "Transportes",
+    "CP0722": "Combustíveis do carro",
     "CP08": "Comunicações",
     "CP09": "Recreação e cultura",
     "CP10": "Educação",
     "CP11": "Restaurantes e hotéis",
-    "CP12": "Outros bens e serviços"
+    "CP12": "Outros bens e serviços",
+    "NRG": "Energia",
+    "FOOD": "Alimentação",
+    "TOT_X_NRG_FOOD": "Sem energia nem alimentação"
   },
   "inflacao": {
     "multiplosTitulo": "As 12 divisões do cabaz — variação homóloga",
@@ -304,6 +318,35 @@
     "confRotulo": "Confiança (saldo)",
     "uneRotulo": "Desemprego (%)",
     "hicpRotulo": "Inflação (homóloga, %)"
+  },
+  "dados": {
+    "catalogoTitulo": "Todas as séries, todas as fontes",
+    "catalogoNota": "Cada painel escala a si próprio — compara formas, não níveis. O rótulo abre a página temática da série; «JSON» abre o ficheiro estático em /api/.",
+    "contadores": "{series} séries · {fontes} fontes · {emDia} em dia · {falha} em falha ou sem SLA",
+    "verificado": "verificado {data}",
+    "visiveis": "{n} de {total} séries",
+    "fFonte": "Fonte",
+    "fFreq": "Frequência",
+    "fEstado": "Estado",
+    "fDiaria": "diária",
+    "fMensal": "mensal",
+    "fTrimestral": "trimestral",
+    "fSemestral": "semestral",
+    "fEmDia": "em dia",
+    "fAtrasada": "atrasada",
+    "fSemSla": "sem SLA",
+    "json": "JSON",
+    "unidades": {
+      "percentagem_media_mensal": "%",
+      "percentagem_variacao_homologa": "%",
+      "percentagem_populacao_activa": "%",
+      "eur_litro_media_nacional": "€/L",
+      "eur_kwh": "€/kWh",
+      "saldo_respostas": "saldo",
+      "indice_2015_100": "índice",
+      "índice 2025=100": "índice",
+      "pontos_percentuais": "p.p."
+    }
   },
   "precosPag": {
     "calGasoleo": "Gasóleo, dia a dia",
@@ -387,6 +430,50 @@
     "inflacao-homologa": {
       "rotulo": "Inflação, homóloga",
       "descricao": "Variação do IHPC face ao mesmo mês do ano anterior — a taxa que o BCE acompanha; não é o preço do teu cabaz."
+    },
+    "euribor-1m-mensal": {
+      "rotulo": "Euribor 1 mês",
+      "descricao": "Média mensal da taxa interbancária a 1 mês."
+    },
+    "euribor-6m-mensal": {
+      "rotulo": "Euribor 6 meses",
+      "descricao": "Média mensal da taxa interbancária a 6 meses."
+    },
+    "pmd-gpl-diario": {
+      "rotulo": "GPL auto",
+      "descricao": "Preço médio nacional ao litro, já com impostos — não é o preço da tua bomba."
+    },
+    "taeg-pessoal-mensal": {
+      "rotulo": "TAEG pessoal — total",
+      "descricao": "TAEG média dos novos créditos pessoais — é a média praticada, não a melhor oferta."
+    },
+    "taeg-pessoal-educacao-saude-energia-mensal": {
+      "rotulo": "TAEG pessoal — educação, saúde",
+      "descricao": "TAEG média dos novos créditos pessoais para educação, saúde e energias renováveis."
+    },
+    "taeg-pessoal-outros-mensal": {
+      "rotulo": "TAEG pessoal — outros fins",
+      "descricao": "TAEG média dos novos créditos pessoais para outros fins."
+    },
+    "taeg-automovel-mensal": {
+      "rotulo": "TAEG automóvel — total",
+      "descricao": "TAEG média dos novos créditos automóveis."
+    },
+    "taeg-automovel-novo-mensal": {
+      "rotulo": "TAEG automóvel — novo",
+      "descricao": "TAEG média dos novos créditos para carro novo."
+    },
+    "taeg-automovel-usado-mensal": {
+      "rotulo": "TAEG automóvel — usado",
+      "descricao": "TAEG média dos novos créditos para carro usado."
+    },
+    "taeg-automovel-ald-mensal": {
+      "rotulo": "TAEG automóvel — ALD",
+      "descricao": "TAEG média das locações financeiras e ALD de automóveis."
+    },
+    "taeg-renovavel-mensal": {
+      "rotulo": "TAEG cartões e descobertos",
+      "descricao": "TAEG média do crédito renovável — cartões, linhas e descobertos."
     }
   },
   "painel": {

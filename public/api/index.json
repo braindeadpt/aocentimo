@@ -1,7 +1,7 @@
 {
   "nome": "AO CÊNTIMO — dados abertos",
   "descricao": "Séries estáticas geradas a partir de fontes oficiais (Eurostat, BPstat, DGEG, IGCP, AT). Atualizadas a cada build.",
-  "geradoEm": "2026-09-21T10:12:06.995Z",
+  "geradoEm": "2026-09-21T11:16:53.062Z",
   "endpoints": [
     {
       "path": "/api/euribor-12m-mensal.json",
@@ -206,6 +206,14 @@
     {
       "path": "/api/ca-base.json",
       "descricao": "Taxa base CA Série F — indicativa e oficial"
+    },
+    {
+      "path": "/api/casa-em-salarios.json",
+      "descricao": "Razão HPI ÷ custo do trabalho, 2015=100"
+    },
+    {
+      "path": "/api/desemprego-gap.json",
+      "descricao": "Desemprego PT menos UE27, em pontos percentuais"
     },
     {
       "path": "/api/painel.json",

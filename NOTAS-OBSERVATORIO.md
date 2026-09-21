@@ -52,3 +52,23 @@ Registo de execução do PACK-OBSERVATORIO. Uma entrada por milestone.
   a frase-conclusão e link.
 - SiteNav reorganizado em 3 grupos com rótulo kicker; menu mobile
   (`<details>`) lista os grupos.
+
+## D-05 — /dados catálogo completo (2026-09-21)
+
+- `Catalogo` (src/components/instrumentos/Catalogo.tsx): 52 múltiplos
+  — todas as séries numéricas das fontes + 3 derivados — com filtros
+  multi (fonte/frequência/estado, aria-pressed), janela 10 a/máx,
+  Flip na reordenação, rótulo-link para a página temática
+  (`rotaDaSerie` em src/lib/meta.ts) ou o JSON, export «JSON» por
+  célula (/api/<id>.json — api.ts exporta agora casa-em-salarios e
+  desemprego-gap).
+- Contadores no cabeçalho de /dados: séries · fontes · em dia · em
+  falha/sem SLA (derivados contam como sem SLA — não têm SLA próprio).
+- TAEG sem página temática → o rótulo abre o JSON directamente.
+- **COPY NOVO PARA REVISÃO DO DONO**: `dados.*`, nomes das
+  sub-divisões ECOICOP e agregados em `divisoes` (CP0111–CP0118,
+  CP045, CP0722, NRG, FOOD, TOT_X_NRG_FOOD — nomes oficiais Eurostat),
+  e `series.*` para euribor-1m/6m, pmd-gpl e as 8 TAEG.
+- Nota lint: handlers de filtro passam por prop `onMudar` ao
+  `BotaoFiltro` (o react-hooks/refs não consegue seguir props de
+  componente — padrão do GrelhaPainel via contexto).
