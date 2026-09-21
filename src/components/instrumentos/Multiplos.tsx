@@ -11,7 +11,8 @@ import { fmtData, fmtNum, fmtPct } from "@/lib/format";
 import { dataDePeriodo, escalaTempo, escalaValor } from "@/lib/viz/escalas";
 import { pathLinha } from "@/lib/viz/formas";
 import { EmptyState } from "@/components/EmptyState";
-import { m, t } from "@/lib/messages";
+import { t } from "@/lib/t";
+import type { Messages } from "@/lib/messages";
 
 interface Serie {
   id: string;
@@ -28,6 +29,8 @@ interface Props {
   /** janela em anos — activa os botões «{n} a · máx» por cima da
       grelha; por omissão mostra a janela */
   janela?: number;
+  /** strings messages.chart — prop para o JSON não entrar no cliente */
+  chart: Messages["chart"];
 }
 
 const W = 200;
@@ -44,6 +47,7 @@ export function Multiplos({
   eixoComum,
   titulo,
   janela,
+  chart,
 }: Props) {
   const [ativo, setAtivo] = useState<string | null>(null);
   const [janelaOn, setJanelaOn] = useState(janela !== undefined);
@@ -110,7 +114,7 @@ export function Multiplos({
         <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
           {domComum ? (
             <p className="footnote">
-              {t(m.chart.eixoComum, {
+              {t(chart.eixoComum, {
                 min: fmtV(domComum[0], unidade),
                 max: fmtV(domComum[1], unidade),
               })}
@@ -132,7 +136,7 @@ export function Multiplos({
                       : "border-line bg-transparent text-ink2 hover:border-ink2"
                   }`}
                 >
-                  {v ? t(m.chart.janelaAnos, { n: janela }) : m.chart.janelaMax}
+                  {v ? t(chart.janelaAnos, { n: janela }) : chart.janelaMax}
                 </button>
               ))}
             </div>

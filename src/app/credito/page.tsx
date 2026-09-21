@@ -1,15 +1,21 @@
+import dynamic from "next/dynamic";
 import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
-import { Linha } from "@/components/instrumentos/Linha";
-import { Mostrador } from "@/components/instrumentos/Mostrador";
 import { SimuladorPrestacao } from "./SimuladorPrestacao";
 import { loadFonte, loadFreshness } from "@/lib/data";
 import { m } from "@/lib/messages";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 import eventos from "@data/fiscal/eventos.json";
 import painel from "@data/derived/painel.json";
+
+const Linha = dynamic(() =>
+  import("@/components/instrumentos/Linha").then((mo) => mo.Linha)
+);
+const Mostrador = dynamic(() =>
+  import("@/components/instrumentos/Mostrador").then((mo) => mo.Mostrador)
+);
 
 export const metadata: Metadata = {
   title: "Crédito — Euribor, spread e prestação",
@@ -110,6 +116,7 @@ export default function CreditoPage() {
       >
         {prazos.length > 0 ? (
           <Linha
+            chart={m.chart}
             series={prazos.map(({ prazo, serie }) => ({
               id: `euribor-${prazo}`,
               rotulo: `Euribor ${prazo.toUpperCase()}`,

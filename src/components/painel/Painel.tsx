@@ -383,7 +383,7 @@ export function Painel() {
         </p>
       </div>
 
-      <GrelhaPainel>
+      <GrelhaPainel txt={m.painel} chart={m.chart} fonte={m.common.fonte}>
         {/* linha 1 — os dois mostradores grandes */}
         {inflacao && (
           <CelulaGrelha

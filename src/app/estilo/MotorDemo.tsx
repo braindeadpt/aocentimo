@@ -15,7 +15,6 @@ import { dataDePeriodo, escalaTempo, escalaValor } from "@/lib/viz/escalas";
 import { pathArco, pathLinha } from "@/lib/viz/formas";
 import { ticksTempo, ticksValor } from "@/lib/viz/eixos";
 import { fmtData, fmtNum } from "@/lib/format";
-import painel from "@data/derived/painel.json";
 
 /* Linha mínima */
 const LW = 560;
@@ -31,6 +30,15 @@ const MCY = 74;
 const MR_ = 64;
 const A0 = -120;
 const A1 = 120;
+/** subconjunto de uma entrada de data/derived/painel.json */
+type EntradaPainel = {
+  id: string;
+  valor: number;
+  t: string;
+  fonte: string;
+  spark: { t: string; v: number }[];
+};
+
 const anguloDe = (v: number, min: number, max: number) =>
   A0 + ((v - min) / (max - min)) * (A1 - A0);
 const noArco = (r: number, a: number) => ({
@@ -38,14 +46,20 @@ const noArco = (r: number, a: number) => ({
   y: MCY - r * Math.cos((a * Math.PI) / 180),
 });
 
-export function MotorDemo() {
+/* as entradas do painel chegam por props do servidor — importar
+   painel.json aqui metia os 38 KB do ficheiro no chunk do cliente */
+export function MotorDemo({
+  hicp,
+  desemprego,
+  ue27,
+}: {
+  hicp?: EntradaPainel;
+  desemprego?: EntradaPainel;
+  ue27?: EntradaPainel;
+}) {
   const scope = useRef<HTMLDivElement>(null);
   const agulha = useRef<SVGLineElement>(null);
   const { ref: refArmado, armado } = useArmado<HTMLDivElement>("motor-demo");
-
-  const hicp = painel.series.find((i) => i.id === "hicp-pt-cp00");
-  const desemprego = painel.series.find((i) => i.id === "une-pt-total");
-  const ue27 = painel.series.find((i) => i.id === "une-ue27-total");
 
   const pontos = hicp?.spark ?? [];
   const x = escalaTempo(pontos, [ML, LW - MR]);

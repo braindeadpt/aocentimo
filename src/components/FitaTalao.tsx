@@ -9,7 +9,16 @@ import { FITA, geometriaFita } from "@/lib/fita";
 import { furos, r1 } from "@/lib/materia";
 import { useValorAnimado } from "@/lib/useValorAnimado";
 import { fmtEUR0, fmtPct } from "@/lib/format";
-import { m, t } from "@/lib/messages";
+import { t } from "@/lib/t";
+import type { Messages } from "@/lib/messages";
+
+/** strings que a fita precisa — chegam do servidor por props para o
+ *  messages/pt.json não entrar no chunk do cliente */
+export interface TxtFita {
+  fita: Messages["fita"];
+  fluxo: Messages["fluxo"];
+  chart: Messages["chart"];
+}
 
 /**
  * Medidas da fita, mensais — calculadas UMA vez no servidor
@@ -54,6 +63,7 @@ export function FitaTalao({
   destaque,
   medidas,
   compacta = false,
+  txt,
 }: {
   className?: string;
   /** índice da parada em foco no scrolly; as outras recuam */
@@ -62,7 +72,9 @@ export function FitaTalao({
   /** variante de apoio — mais estreita; nas páginas de simulador a fita
       é peça de contexto, não a hero da home (M-11) */
   compacta?: boolean;
+  txt: TxtFita;
 }) {
+  const { fita, fluxo, chart } = txt;
   const { custo, tsu, irs, ss, liquido, estado, taxaTsu, taxaSs } = medidas;
   const [hover, setHover] = useState<number | "estado" | null>(null);
   const ativo: number | "estado" | null = hover ?? destaque ?? null;
@@ -79,27 +91,27 @@ export function FitaTalao({
   // total do Estado na posição final da régua
   const paradas = useMemo(
     () => [
-      { nome: m.fluxo.empresa, valor: fmtEUR0(custo), v: custo },
+      { nome: fluxo.empresa, valor: fmtEUR0(custo), v: custo },
       {
-        nome: t(m.fluxo.tsu, { taxa: fmtPct(taxaTsu, 2) }),
+        nome: t(fluxo.tsu, { taxa: fmtPct(taxaTsu, 2) }),
         valor: `−${fmtEUR0(tsu)}`,
         v: tsu,
       },
-      { nome: m.fluxo.brutoLabel, valor: fmtEUR0(custo - tsu), v: custo - tsu },
-      { nome: m.fluxo.irs, valor: `−${fmtEUR0(irs)}`, v: irs },
+      { nome: fluxo.brutoLabel, valor: fmtEUR0(custo - tsu), v: custo - tsu },
+      { nome: fluxo.irs, valor: `−${fmtEUR0(irs)}`, v: irs },
       {
-        nome: t(m.fluxo.ss, { taxa: fmtPct(taxaSs, 0) }),
+        nome: t(fluxo.ss, { taxa: fmtPct(taxaSs, 0) }),
         valor: `−${fmtEUR0(ss)}`,
         v: ss,
       },
-      { nome: m.fluxo.tu, valor: fmtEUR0(liquido), v: liquido },
+      { nome: fluxo.tu, valor: fmtEUR0(liquido), v: liquido },
       {
-        nome: t(m.fluxo.estado, { valor: fmtEUR0(estado) }),
+        nome: t(fluxo.estado, { valor: fmtEUR0(estado) }),
         valor: fmtEUR0(estado),
         v: estado,
       },
     ],
-    [custo, tsu, irs, ss, liquido, estado, taxaTsu, taxaSs]
+    [custo, tsu, irs, ss, liquido, estado, taxaTsu, taxaSs, fluxo]
   );
 
   // qual elemento responde a cada parada: t0 empresa · p0 tsu · t1 bruto
@@ -114,21 +126,21 @@ export function FitaTalao({
 
   const leitura =
     ativo === null
-      ? { t: `${m.fluxo.empresa} ${fmtEUR0(custo)}`, v: `${m.fluxo.tu} ${fmtEUR0(liquido)}` }
+      ? { t: `${fluxo.empresa} ${fmtEUR0(custo)}`, v: `${fluxo.tu} ${fmtEUR0(liquido)}` }
       : ativo === "estado"
         ? {
-            t: t(m.fluxo.estado, { valor: fmtEUR0(estado) }),
-            v: `${fmtPct(estado / custo)} ${m.chart.doCusto}`,
+            t: t(fluxo.estado, { valor: fmtEUR0(estado) }),
+            v: `${fmtPct(estado / custo)} ${chart.doCusto}`,
           }
         : {
             t: paradas[ativo].nome,
-            v: `${paradas[ativo].valor} · ${fmtPct(paradas[ativo].v / custo)} ${m.chart.doCusto}`,
+            v: `${paradas[ativo].valor} · ${fmtPct(paradas[ativo].v / custo)} ${chart.doCusto}`,
           };
 
   // a etiqueta de um pedaço arrancado, ao lado de onde caiu
   const etiqueta = (i: number) => {
     const p = geo.pecas[i];
-    const nome = [t(m.fluxo.tsu, { taxa: fmtPct(taxaTsu, 2) }), m.fluxo.irs, t(m.fluxo.ss, { taxa: fmtPct(taxaSs, 0) })][i];
+    const nome = [t(fluxo.tsu, { taxa: fmtPct(taxaTsu, 2) }), fluxo.irs, t(fluxo.ss, { taxa: fmtPct(taxaSs, 0) })][i];
     return { p, nome };
   };
 
@@ -153,7 +165,7 @@ export function FitaTalao({
       <div className="sr-only">
         <table>
           <caption>
-            {t(m.fita.aria, {
+            {t(fita.aria, {
               custo: fmtEUR0(custo),
               tsu: fmtEUR0(tsu),
               irs: fmtEUR0(irs),
@@ -169,7 +181,7 @@ export function FitaTalao({
               </tr>
             ))}
             <tr>
-              <th scope="row">{m.fluxo.estadoLabel}</th>
+              <th scope="row">{fluxo.estadoLabel}</th>
               <td>{fmtEUR0(estado)}</td>
             </tr>
           </tbody>
@@ -187,7 +199,7 @@ export function FitaTalao({
           min={0}
           max={6}
           value={ativo === null ? 6 : ativo === "estado" ? 6 : ativo}
-          aria-label={m.chart.scrubAria}
+          aria-label={chart.scrubAria}
           aria-valuetext={leitura.t}
           onChange={(e) => {
             const i = Number(e.target.value);
@@ -254,7 +266,7 @@ export function FitaTalao({
               className="fluxo-label"
               fill="var(--muted)"
             >
-              {m.fita.emissao}
+              {fita.emissao}
             </text>
           </g>
 
@@ -291,7 +303,7 @@ export function FitaTalao({
                 fill="var(--talao-ink)"
                 opacity={0.62}
               >
-                {m.fluxo.empresa.toUpperCase()}
+                {fluxo.empresa.toUpperCase()}
               </text>
               <Impresso
                 x={X0 + 14}
@@ -311,7 +323,7 @@ export function FitaTalao({
                 fill="var(--talao-ink)"
                 opacity={0.62}
               >
-                {m.fluxo.brutoLabel.toUpperCase()}
+                {fluxo.brutoLabel.toUpperCase()}
               </text>
               <Impresso
                 x={X0 + 14}
@@ -331,7 +343,7 @@ export function FitaTalao({
                 fill="var(--papel-fica-tinta)"
                 opacity={0.72}
               >
-                {m.fita.ficaContigo}
+                {fita.ficaContigo}
               </text>
               <Impresso
                 x={X0 + 14}
@@ -348,7 +360,7 @@ export function FitaTalao({
                 fill="var(--papel-fica-tinta)"
                 opacity={0.8}
               >
-                {`${fmtPct(liquido / custo, 1).replace(" %", "")} ${m.fita.centimos}`}
+                {`${fmtPct(liquido / custo, 1).replace(" %", "")} ${fita.centimos}`}
               </text>
             </g>
           </g>
@@ -377,7 +389,7 @@ export function FitaTalao({
                   className="fluxo-label"
                   fill="var(--muted)"
                 >
-                  {`${etiqueta(i).nome} — ${m.fita.naoToca}`}
+                  {`${etiqueta(i).nome} — ${fita.naoToca}`}
                 </text>
               </g>
             ) : (
@@ -481,7 +493,7 @@ export function FitaTalao({
               className="fluxo-valor-mini"
               fill="var(--accent)"
             >
-              {t(m.fita.arrancados, { valor: fmtEUR0(estado) })}
+              {t(fita.arrancados, { valor: fmtEUR0(estado) })}
             </text>
             <text
               x={DIR}
@@ -489,14 +501,14 @@ export function FitaTalao({
               className="fluxo-label"
               fill="var(--muted)"
             >
-              {m.fita.antesDaConta}
+              {fita.antesDaConta}
             </text>
           </g>
         </g>
       </svg>
 
       {geo.pecas.some((p) => p.naoProp) && (
-        <p className="footnote mt-1">† {m.fita.naoProp}</p>
+        <p className="footnote mt-1">† {fita.naoProp}</p>
       )}
 
       {/* portas para os capítulos — o caminho de teclado; ao foco,
@@ -510,7 +522,7 @@ export function FitaTalao({
           onFocus={() => setHover("estado")}
           onBlur={() => setHover(null)}
         >
-          {m.fluxo.linkEstado} →
+          {fluxo.linkEstado} →
         </Link>
         <Link
           href="/salario"
@@ -520,13 +532,13 @@ export function FitaTalao({
           onFocus={() => setHover(5)}
           onBlur={() => setHover(null)}
         >
-          {m.fluxo.linkTu} →
+          {fluxo.linkTu} →
         </Link>
         <Link href="/casa" className="kicker text-ink2 transition-colors hover:text-accent">
-          {m.fluxo.linkBanco} →
+          {fluxo.linkBanco} →
         </Link>
         <Link href="/precos" className="kicker text-ink2 transition-colors hover:text-accent">
-          {m.fluxo.linkBomba} →
+          {fluxo.linkBomba} →
         </Link>
       </div>
     </div>

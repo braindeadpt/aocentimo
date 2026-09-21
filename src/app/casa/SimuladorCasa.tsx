@@ -33,7 +33,13 @@ const SEMENTE = sementeDe(20260101);
 const TINTA = "rgba(44,36,19,";
 const TORRADO = "rgba(157,42,13,";
 
-export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null }) {
+export function SimuladorCasa({
+  euriborAtual,
+  chart,
+}: {
+  euriborAtual: number | null;
+  chart: import("@/lib/messages").Messages["chart"];
+}) {
   const [preco, setPreco] = useState(200000);
   const [tipo, setTipo] = useState<"hpp" | "secundaria">("hpp");
   const [jovem, setJovem] = useState(false);
@@ -248,6 +254,7 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
             O dinheiro do dia da escritura, partido
           </p>
           <EuroBar
+            chart={chart}
             total={realEscritura}
             segmentos={[
               { label: "A casa (preço)", valor: preco, cor: "var(--color-ink)" },

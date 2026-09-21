@@ -39,7 +39,7 @@ import {
 import { dataDePeriodo, escalaValor } from "@/lib/viz/escalas";
 import { rotuloValor, ticksTempo } from "@/lib/viz/eixos";
 import { pathLinha } from "@/lib/viz/formas";
-import { m } from "@/lib/messages";
+import type { Messages } from "@/lib/messages";
 
 export interface SerieLinha {
   id: string;
@@ -74,6 +74,8 @@ interface Props {
   titulo: string;
   /** selo de frescura — "atrasada" marca a falha no mostrador */
   estado?: "em-dia" | "atrasada" | "sem-sla";
+  /** strings messages.chart — prop para o JSON não entrar no cliente */
+  chart: Messages["chart"];
 }
 
 /* paleta por defeito: tinta + família dink — cores semânticas
@@ -104,6 +106,7 @@ export function Linha({
   equivalente,
   titulo,
   estado,
+  chart,
 }: Props) {
   const scope = useRef<HTMLDivElement>(null);
   const { ref: refArmado, armado } = useArmado<HTMLDivElement>(titulo);
@@ -450,11 +453,11 @@ export function Linha({
         {estado === "atrasada" && (
           <span className="inline-flex items-center gap-1.5">
             <span aria-hidden className="serie-estado atrasada" />
-            <span className="chart-readout-t text-warn">{m.chart.atrasada}</span>
+            <span className="chart-readout-t text-warn">{chart.atrasada}</span>
           </span>
         )}
         <span className="chart-readout-t">
-          {ativo === null ? `${m.chart.ultimo} · ` : ""}
+          {ativo === null ? `${chart.ultimo} · ` : ""}
           {alvo !== null ? fmtData(isoDe(alvo)) : ""}
         </span>
         {lidos?.map((p, i) => (
@@ -474,7 +477,7 @@ export function Linha({
           min={0}
           max={Math.max(0, nPts - 1)}
           value={idx}
-          aria-label={m.chart.scrubAria}
+          aria-label={chart.scrubAria}
           aria-valuetext={alvo !== null ? fmtData(isoDe(alvo)) : undefined}
           onChange={(e) => setAtivo(Number(e.target.value))}
           onKeyDown={(e) => {
@@ -720,7 +723,7 @@ export function Linha({
       {/* a citação dos eventos — cada anotação abre a fonte oficial */}
       {evs.length > 0 && (
         <ul
-          aria-label={m.chart.eventosAria}
+          aria-label={chart.eventosAria}
           className="mt-1 flex flex-wrap gap-x-5 gap-y-1"
         >
           {evs.map((ev) => (

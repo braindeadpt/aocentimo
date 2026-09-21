@@ -1,22 +1,27 @@
 import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
+import { m } from "@/lib/messages";
 import Link from "next/link";
 import { Delta } from "@/components/Delta";
 import { NumHero } from "@/components/NumHero";
 import { Stat } from "@/components/Stat";
 import { Figure } from "@/components/Figure";
-import { EuroBar } from "@/components/EuroBar";
 import { Source } from "@/components/Source";
 import { Logo, LogoMark } from "@/components/Logo";
-import { MotionDemo } from "./MotionDemo";
-import { MotorDemo } from "./MotorDemo";
-import { BarrasDemo } from "./BarrasDemo";
-import { Linha } from "@/components/instrumentos/Linha";
-import { Mostrador } from "@/components/instrumentos/Mostrador";
-import { Calendario } from "@/components/instrumentos/Calendario";
-import { Multiplos } from "@/components/instrumentos/Multiplos";
-import { Declive } from "@/components/instrumentos/Declive";
-import { Manchete } from "@/components/Manchete";
+import dynamic from "next/dynamic";
+
+const MotionDemo = dynamic(() =>
+  import("./MotionDemo").then((mo) => mo.MotionDemo)
+);
+const MotorDemo = dynamic(() =>
+  import("./MotorDemo").then((mo) => mo.MotorDemo)
+);
+const BarrasDemo = dynamic(() =>
+  import("./BarrasDemo").then((mo) => mo.BarrasDemo)
+);
+const Manchete = dynamic(() =>
+  import("@/components/Manchete").then((mo) => mo.Manchete)
+);
 import { Glifo } from "@/components/Glifo";
 import painel from "@data/derived/painel.json";
 import pmdGasoleo from "@data/sources/dgeg/pmd-gasoleo-diario.json";
@@ -27,6 +32,25 @@ import eur1m from "@data/sources/bpstat/euribor-1m-mensal.json";
 import eur3m from "@data/sources/bpstat/euribor-3m-mensal.json";
 import eur6m from "@data/sources/bpstat/euribor-6m-mensal.json";
 import eur12m from "@data/sources/bpstat/euribor-12m-mensal.json";
+
+const Calendario = dynamic(() =>
+  import("@/components/instrumentos/Calendario").then((mo) => mo.Calendario)
+);
+const Declive = dynamic(() =>
+  import("@/components/instrumentos/Declive").then((mo) => mo.Declive)
+);
+const EuroBar = dynamic(() =>
+  import("@/components/EuroBar").then((mo) => mo.EuroBar)
+);
+const Linha = dynamic(() =>
+  import("@/components/instrumentos/Linha").then((mo) => mo.Linha)
+);
+const Mostrador = dynamic(() =>
+  import("@/components/instrumentos/Mostrador").then((mo) => mo.Mostrador)
+);
+const Multiplos = dynamic(() =>
+  import("@/components/instrumentos/Multiplos").then((mo) => mo.Multiplos)
+);
 
 export const metadata: Metadata = {
   title: "Sistema de design",
@@ -611,7 +635,11 @@ export default function EstiloPage() {
           o estado base — e acima da dobra nada revela: o gate continua a
           ser o <code className="num">useArmado</code>.
         </p>
-        <MotorDemo />
+        <MotorDemo
+          hicp={PAINEL.find((i) => i.id === "hicp-pt-cp00")}
+          desemprego={PAINEL.find((i) => i.id === "une-pt-total")}
+          ue27={PAINEL.find((i) => i.id === "une-ue27-total")}
+        />
       </section>
 
       <section className="stack-sec">
@@ -660,6 +688,7 @@ export default function EstiloPage() {
       <section className="stack-sec">
         <h2 className="kicker mb-4">A barra do euro — assinatura</h2>
         <EuroBar
+          chart={m.chart}
           total={25987}
           segmentos={[
             { label: "Fica contigo", valor: 16419.69, cor: "var(--color-keep)" },
@@ -865,6 +894,7 @@ export default function EstiloPage() {
             source={<Source nome="Banco de Portugal — BPstat" />}
           >
             <Linha
+              chart={m.chart}
               series={EURIBOR.map((pts, i) => ({
                 id: `euribor-${i}`,
                 rotulo: `Euribor ${["1M", "3M", "6M", "12M"][i]}`,
@@ -905,6 +935,7 @@ export default function EstiloPage() {
           <div className="border border-line bg-panel px-5 py-4">
             <p className="kicker-xs mb-2">Multiplos — quatro séries, eixo comum</p>
             <Multiplos
+              chart={m.chart}
               series={MULTIPLOS}
               colunas={4}
               unidade="%"
@@ -914,11 +945,21 @@ export default function EstiloPage() {
           </div>
           <div className="border border-line bg-panel px-5 py-4">
             <p className="kicker-xs mb-2">Barras — variação homóloga, reordenável</p>
-            <BarrasDemo />
+            <BarrasDemo
+              itens={PAINEL.filter((s) => s.variacao.pct !== null)
+                .slice(0, 8)
+                .map((s) => ({
+                  id: s.id,
+                  rotulo: s.rotulo,
+                  valor: Math.round((s.variacao.pct ?? 0) * 1000) / 10,
+                  t: s.t,
+                }))}
+            />
           </div>
           <div className="border border-line bg-panel px-5 py-4">
             <p className="kicker-xs mb-2">Calendario — gasóleo, dias de 2026</p>
             <Calendario
+              chart={m.chart}
               pontos={PMD_2026}
               anos={[2026]}
               unidade="€/L"

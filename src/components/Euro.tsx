@@ -31,8 +31,9 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Odometer } from "@/components/Odometer";
-import { Source } from "@/components/Source";
-import { m, t } from "@/lib/messages";
+import { SourceBase } from "@/components/SourceBase";
+import { t } from "@/lib/t";
+import type { Messages } from "@/lib/messages";
 import { fmtNum } from "@/lib/format";
 import { carregarGsap, motionActiva } from "@/lib/motion/gsap";
 
@@ -88,7 +89,18 @@ function arcoExt(ang: number, rr = R + 18) {
   return { x: CX + rr * Math.sin(a), y: CY - rr * Math.cos(a) };
 }
 
-export function Euro({ passos }: { passos: PassoEuro[] }) {
+export function Euro({
+  passos,
+  txt,
+  fonte,
+}: {
+  passos: PassoEuro[];
+  /** strings messages.home.euro — prop para o JSON não entrar no
+      cliente (o bloco todo são ~10 strings serializadas) */
+  txt: Messages["home"]["euro"];
+  /** rótulo «Fonte» para o SourceBase da lista de passos */
+  fonte: string;
+}) {
   const wrap = useRef<HTMLDivElement>(null);
   const cena = useRef<HTMLDivElement>(null);
   const [passo, setPasso] = useState(0);
@@ -294,10 +306,10 @@ export function Euro({ passos }: { passos: PassoEuro[] }) {
           id="euro-titulo"
           className="font-display text-2xl tracking-wide md:text-3xl"
         >
-          {m.home.euro.titulo}
+          {txt.titulo}
         </h2>
         <p className="num text-xs text-muted">
-          {m.home.euro.nota}{" "}
+          {txt.nota}{" "}
           <Link
             href="/salario"
             className="underline decoration-line2 underline-offset-2"
@@ -318,7 +330,7 @@ export function Euro({ passos }: { passos: PassoEuro[] }) {
           {/* esquerda — o texto do passo, em leitura */}
           <div className="w-[40%] shrink-0">
             <p className="kicker-xs text-muted">
-              {t(m.home.euro.passo, { n: passo + 1, total: n })}
+              {t(txt.passo, { n: passo + 1, total: n })}
             </p>
             <div key={passo} className="euro-passo">
               <h3 className="mt-2 font-display text-4xl leading-none tracking-wide">
@@ -344,7 +356,7 @@ export function Euro({ passos }: { passos: PassoEuro[] }) {
               <Odometer
                 valor={restam[passo]}
                 casas={1}
-                prefixo={`${m.home.euro.restam} `}
+                prefixo={`${txt.restam} `}
                 sufixo=" c"
                 dur={400}
               />
@@ -391,7 +403,7 @@ export function Euro({ passos }: { passos: PassoEuro[] }) {
                   fill="var(--muted)"
                   fontFamily="var(--font-mono)"
                 >
-                  {m.home.euro.escala}
+                  {txt.escala}
                 </text>
               </g>
 
@@ -503,7 +515,7 @@ export function Euro({ passos }: { passos: PassoEuro[] }) {
                     fill="var(--ink)"
                     fontFamily="var(--font-mono)"
                   >
-                    {t(m.home.euro.chegaConta, { n: fmtNum(c[2], 1) })}
+                    {t(txt.chegaConta, { n: fmtNum(c[2], 1) })}
                   </text>
                   <text
                     className="euro-lab-fica tabular-nums"
@@ -515,7 +527,7 @@ export function Euro({ passos }: { passos: PassoEuro[] }) {
                     fontFamily="var(--font-mono)"
                     opacity={0}
                   >
-                    {t(m.home.euro.ficamTe, { n: fmtNum(c[4], 1) })}
+                    {t(txt.ficamTe, { n: fmtNum(c[4], 1) })}
                   </text>
                 </g>
               </g>
@@ -580,7 +592,7 @@ export function Euro({ passos }: { passos: PassoEuro[] }) {
               <Odometer valor={pp.centimos} casas={1} sufixo=" c" dur={700} />
             </p>
             <p className="footnote mt-1">{pp.detalhe}</p>
-            <Source nome={pp.fonteNome} url={pp.fonteUrl} />
+            <SourceBase rotuloFonte={fonte} nome={pp.fonteNome} url={pp.fonteUrl} />
           </li>
         ))}
       </ol>

@@ -74,7 +74,7 @@ export default function CasaPage() {
           />
         }
       >
-        <SimuladorCasa euriborAtual={eur?.valor ?? null} />
+        <SimuladorCasa euriborAtual={eur?.valor ?? null} chart={m.chart} />
       </Figure>
 
       {/* a casa contra o salário — a frase-conclusão fica aqui;

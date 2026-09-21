@@ -1,9 +1,8 @@
+import dynamic from "next/dynamic";
 import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Delta } from "@/components/Delta";
-import { Linha } from "@/components/instrumentos/Linha";
-import { Calendario } from "@/components/instrumentos/Calendario";
 import { DecomposicaoFuel } from "../impostos/DecomposicaoFuel";
 import { Source } from "@/components/Source";
 import { loadFonte, type Serie } from "@/lib/data";
@@ -14,6 +13,13 @@ import isp from "@data/fiscal/isp.json";
 import iva from "@data/fiscal/iva.json";
 import eventos from "@data/fiscal/eventos.json";
 import { JsonLd, webApplication } from "@/lib/jsonld";
+
+const Calendario = dynamic(() =>
+  import("@/components/instrumentos/Calendario").then((mo) => mo.Calendario)
+);
+const Linha = dynamic(() =>
+  import("@/components/instrumentos/Linha").then((mo) => mo.Linha)
+);
 
 export const metadata: Metadata = {
   title: "Preços — combustíveis dia a dia",
@@ -103,6 +109,7 @@ export default function PrecosPage() {
               })}
             </div>
             <Linha
+              chart={m.chart}
               series={series.map(({ nome, serie }) => ({
                 id: nome,
                 rotulo: nome,
@@ -154,6 +161,7 @@ export default function PrecosPage() {
             {serie && ano ? (
               <>
                 <Calendario
+                  chart={m.chart}
                   pontos={serie.series}
                   anos={[ano - 1, ano]}
                   unidade="€/L"

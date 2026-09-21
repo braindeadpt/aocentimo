@@ -28,11 +28,11 @@ import {
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import type { Flip } from "gsap/Flip";
-import { Source } from "@/components/Source";
+import { SourceBase } from "@/components/SourceBase";
 import type { EstadoSerie } from "@/components/Spark";
 import type { EventoLinha } from "@/components/instrumentos/Linha";
 import { fmtNum, fmtPeriodo } from "@/lib/format";
-import { m } from "@/lib/messages";
+import type { Messages } from "@/lib/messages";
 import { carregarGsap, dur, ease, motionActiva } from "@/lib/motion/gsap";
 import { dataDePeriodo } from "@/lib/viz/escalas";
 
@@ -68,37 +68,46 @@ type EstadoFlip = ReturnType<typeof Flip.getState>;
 const CtxPainel = createContext<{
   aberto: string | null;
   alternar: (id: string) => void;
-}>({ aberto: null, alternar: () => {} });
+  /** strings messages.painel / messages.chart — props do servidor
+      para o JSON não entrar no chunk do cliente */
+  txt: Messages["painel"];
+  chart: Messages["chart"];
+  /** rótulo «Fonte» para o SourceBase dentro do expandido */
+  fonte: string;
+}>({ aberto: null, alternar: () => {}, txt: {} as Messages["painel"], chart: {} as Messages["chart"], fonte: "" });
 
 const usePainel = () => useContext(CtxPainel);
 
-const ESTADO_TXT: Record<string, string> = {
-  "em-dia": m.painel.estadoEmDia,
-  atrasada: m.painel.estadoAtrasada,
-  "sem-sla": m.painel.estadoSemSla,
-};
-
-const RECORTES = [
-  { k: "1a", rotulo: m.painel.periodo1a, anos: 1 },
-  { k: "5a", rotulo: m.painel.periodo5a, anos: 5 },
-  { k: "max", rotulo: m.painel.periodoMax, anos: null },
-] as const;
-
-type Recorte = (typeof RECORTES)[number]["k"];
+type Recorte = "1a" | "5a" | "max";
 
 /** o conteúdo expandido: selector de período + Linha completa com
  *  banda mín–máx histórica, referência tracejada e eventos */
 function Expandido({ item }: { item: ItemPainel }) {
+  const { txt, chart, fonte } = usePainel();
   const [recorte, setRecorte] = useState<Recorte>("5a");
 
+  const recortes = [
+    { k: "1a", rotulo: txt.periodo1a, anos: 1 },
+    { k: "5a", rotulo: txt.periodo5a, anos: 5 },
+    { k: "max", rotulo: txt.periodoMax, anos: null },
+  ] as const;
+
+  const estadoTxt: Record<string, string> = {
+    "em-dia": txt.estadoEmDia,
+    atrasada: txt.estadoAtrasada,
+    "sem-sla": txt.estadoSemSla,
+  };
+
   const pts = useMemo(() => {
-    const anos = RECORTES.find((r) => r.k === recorte)?.anos;
+    const anos = recortes.find((r) => r.k === recorte)?.anos;
     if (anos == null || item.serie.length === 0) return item.serie;
     const fim = dataDePeriodo(item.serie[item.serie.length - 1].t);
     const lim = new Date(fim);
     lim.setFullYear(lim.getFullYear() - anos);
     const c = lim.getTime();
     return item.serie.filter((p) => dataDePeriodo(p.t).getTime() >= c);
+    // recortes deriva de txt (estável entre renders)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item.serie, recorte]);
 
   const banda = useMemo(() => {
@@ -109,9 +118,9 @@ function Expandido({ item }: { item: ItemPainel }) {
     return {
       min: lo,
       max: hi,
-      rotulo: `${m.painel.bandaHistorica} · ${fmtNum(lo)}–${fmtNum(hi)}`,
+      rotulo: `${txt.bandaHistorica} · ${fmtNum(lo)}–${fmtNum(hi)}`,
     };
-  }, [item.serie]);
+  }, [item.serie, txt.bandaHistorica]);
 
   return (
     <div id={`exp-${item.id}`} className="mt-3 border-t border-line pt-3">
@@ -121,7 +130,7 @@ function Expandido({ item }: { item: ItemPainel }) {
         role="group"
         aria-label="Período do gráfico"
       >
-        {RECORTES.map(({ k, rotulo }) => (
+        {recortes.map(({ k, rotulo }) => (
           <button
             key={k}
             type="button"
@@ -147,20 +156,21 @@ function Expandido({ item }: { item: ItemPainel }) {
         titulo={item.rotuloCompleto}
         altura={320}
         estado={item.estado as EstadoSerie}
+        chart={chart}
       />
       {item.descricao && <p className="footnote mt-2">{item.descricao}</p>}
       <p className="footnote mt-1 flex items-center gap-1.5">
         <span className={`serie-estado ${item.estado}`} aria-hidden />
-        {m.painel.leitura} {fmtPeriodo(item.rotuloAte)} ·{" "}
-        {ESTADO_TXT[item.estado] ?? item.estado}
+        {txt.leitura} {fmtPeriodo(item.rotuloAte)} ·{" "}
+        {estadoTxt[item.estado] ?? item.estado}
       </p>
       <p className="mt-1 flex flex-wrap items-baseline gap-x-4">
-        <Source nome={item.fonte} url={item.url} />
+        <SourceBase rotuloFonte={fonte} nome={item.fonte} url={item.url} />
         <Link
           href={item.href}
           className="num text-xs text-ink2 underline decoration-line2 underline-offset-2 hover:text-accent"
         >
-          {m.painel.pagina}
+          {txt.pagina}
         </Link>
       </p>
     </div>
@@ -240,7 +250,19 @@ export function CelulaGrelha({
   );
 }
 
-export function GrelhaPainel({ children }: { children: ReactNode }) {
+export function GrelhaPainel({
+  txt,
+  chart,
+  fonte,
+  children,
+}: {
+  /** strings messages.painel / messages.chart — props do servidor */
+  txt: Messages["painel"];
+  chart: Messages["chart"];
+  /** rótulo «Fonte» para o SourceBase do expandido */
+  fonte: string;
+  children: ReactNode;
+}) {
   const grelha = useRef<HTMLDivElement>(null);
   const [aberto, setAberto] = useState<string | null>(null);
   const flipPendente = useRef<EstadoFlip | null>(null);
@@ -301,7 +323,7 @@ export function GrelhaPainel({ children }: { children: ReactNode }) {
   }, [aberto]);
 
   return (
-    <CtxPainel.Provider value={{ aberto, alternar }}>
+    <CtxPainel.Provider value={{ aberto, alternar, txt, chart, fonte }}>
       <div
         ref={grelha}
         className="grid grid-cols-1 gap-px bg-line md:grid-cols-6 lg:grid-cols-12"

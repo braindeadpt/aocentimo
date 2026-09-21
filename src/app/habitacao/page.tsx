@@ -1,14 +1,22 @@
+import dynamic from "next/dynamic";
 import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
-import { Linha } from "@/components/instrumentos/Linha";
-import { Declive } from "@/components/instrumentos/Declive";
-import { Barras } from "@/components/instrumentos/Barras";
 import { loadDerivado, loadFonte } from "@/lib/data";
 import { fmtNum, fmtPeriodo } from "@/lib/format";
 import { m, t } from "@/lib/messages";
 import { JsonLd, dataset } from "@/lib/jsonld";
+
+const Linha = dynamic(() =>
+  import("@/components/instrumentos/Linha").then((mo) => mo.Linha)
+);
+const Declive = dynamic(() =>
+  import("@/components/instrumentos/Declive").then((mo) => mo.Declive)
+);
+const Barras = dynamic(() =>
+  import("@/components/instrumentos/Barras").then((mo) => mo.Barras)
+);
 
 export const metadata: Metadata = {
   title: "Habitação — o índice de preços contra o salário",
@@ -102,6 +110,7 @@ export default function HabitacaoPage() {
         {hpi ? (
           <>
             <Linha
+              chart={m.chart}
               series={[
                 {
                   id: "hpi",

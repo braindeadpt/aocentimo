@@ -1,14 +1,22 @@
+import dynamic from "next/dynamic";
 import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
-import { Linha } from "@/components/instrumentos/Linha";
-import { Barras } from "@/components/instrumentos/Barras";
-import { Multiplos } from "@/components/instrumentos/Multiplos";
 import { loadFonte, loadSerie } from "@/lib/data";
 import { fmtPeriodo } from "@/lib/format";
 import { m } from "@/lib/messages";
 import { JsonLd, dataset } from "@/lib/jsonld";
+
+const Linha = dynamic(() =>
+  import("@/components/instrumentos/Linha").then((mo) => mo.Linha)
+);
+const Barras = dynamic(() =>
+  import("@/components/instrumentos/Barras").then((mo) => mo.Barras)
+);
+const Multiplos = dynamic(() =>
+  import("@/components/instrumentos/Multiplos").then((mo) => mo.Multiplos)
+);
 
 export const metadata: Metadata = {
   title: "Economia — PIB, confiança e electricidade",
@@ -135,6 +143,7 @@ export default function EconomiaPage() {
         {conf ? (
           <>
             <Linha
+              chart={m.chart}
               series={[
                 {
                   id: "conf",
@@ -193,6 +202,7 @@ export default function EconomiaPage() {
         {multiplos.length > 0 ? (
           <>
             <Multiplos
+              chart={m.chart}
               series={multiplos}
               colunas={4}
               unidade=""

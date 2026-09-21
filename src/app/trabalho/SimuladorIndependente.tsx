@@ -4,8 +4,9 @@ import { useMemo, useState } from "react";
 import { simularIndependente } from "@/lib/engines/independente";
 import { Cascata } from "@/components/Cascata";
 import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
+import type { Messages } from "@/lib/messages";
 
-export function SimuladorIndependente() {
+export function SimuladorIndependente({ chart }: { chart: Messages["chart"] }) {
   const [faturacao, setFaturacao] = useState(2000);
   const [primeiroAno, setPrimeiroAno] = useState(false);
 
@@ -72,6 +73,7 @@ export function SimuladorIndependente() {
             Da faturação ao bolso
           </p>
           <Cascata
+            chart={chart}
             passos={[
               { label: "Faturação", valor: r.faturacaoAnual, tipo: "base" },
               { label: "Segurança Social", valor: -r.ss, tipo: "corte" },

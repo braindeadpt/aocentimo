@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
+import { m } from "@/lib/messages";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { SimuladorDesemprego } from "./SimuladorDesemprego";
@@ -47,7 +48,7 @@ export default function TrabalhoPage() {
         title="Recibos verdes — da faturação ao bolso"
         source={<Source nome={catb.fonte} vigencia={catb.vigencia} />}
       >
-        <SimuladorIndependente />
+        <SimuladorIndependente chart={m.chart} />
       </Figure>
 
       <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">

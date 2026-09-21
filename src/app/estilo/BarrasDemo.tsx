@@ -6,21 +6,17 @@
  */
 import { useState } from "react";
 import { Barras } from "@/components/instrumentos/Barras";
-import painel from "@data/derived/painel.json";
 
 const ORDENS = ["valor", "rotulo"] as const;
 
-export function BarrasDemo() {
+/* os itens chegam por props do servidor — importar painel.json aqui
+   metia os 38 KB do ficheiro no chunk do cliente */
+export function BarrasDemo({
+  itens,
+}: {
+  itens: { id: string; rotulo: string; valor: number; t: string }[];
+}) {
   const [ordem, setOrdem] = useState<(typeof ORDENS)[number]>("valor");
-  const itens = painel.series
-    .filter((s) => s.variacao.pct !== null)
-    .slice(0, 8)
-    .map((s) => ({
-      id: s.id,
-      rotulo: s.rotulo,
-      valor: Math.round((s.variacao.pct ?? 0) * 1000) / 10,
-      t: s.t,
-    }));
   return (
     <div>
       <div className="mb-3 flex gap-2" role="group" aria-label="ordenar barras">

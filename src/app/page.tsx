@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Euro, type PassoEuro } from "@/components/Euro";
-import { Manchete } from "@/components/Manchete";
+import dynamic from "next/dynamic";
+import type { PassoEuro } from "@/components/Euro";
 import { Painel } from "@/components/painel/Painel";
 import { loadFonte } from "@/lib/data";
 import { decomporCombustivel } from "@/lib/engines/impostos";
@@ -12,6 +12,12 @@ import { SITE_URL } from "@/lib/site";
 import isp from "@data/fiscal/isp.json";
 import retencaoJson from "@data/fiscal/retencao-2026.json";
 import ssJson from "@data/fiscal/ss.json";
+
+/* abaixo da dobra: SSR mantém o HTML, o chunk hidrata depois */
+const Euro = dynamic(() => import("@/components/Euro").then((mo) => mo.Euro));
+const Manchete = dynamic(() =>
+  import("@/components/Manchete").then((mo) => mo.Manchete)
+);
 
 /** passos do storytelling «o teu euro» — tudo calculado dos motores e
  *  das fontes, para um salário bruto de 1 500 €/mês (solteiro, sem
@@ -129,7 +135,7 @@ export default function Home() {
 
       {/* C-03 — «o teu euro»: moeda pinned ≥768, lista estática em
           <768 e reduced-motion; números todos dos motores/dados */}
-      <Euro passos={passosEuro()} />
+      <Euro passos={passosEuro()} txt={m.home.euro} fonte={m.common.fonte} />
 
       {/* capítulos — comprimidos a grelha de 2 colunas ≥768; as
           leituras repetidas do painel já não se mostram aqui */}

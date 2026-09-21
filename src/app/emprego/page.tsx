@@ -1,15 +1,25 @@
+import dynamic from "next/dynamic";
 import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
-import { Linha } from "@/components/instrumentos/Linha";
-import { Mostrador } from "@/components/instrumentos/Mostrador";
-import { Declive } from "@/components/instrumentos/Declive";
-import { Barras } from "@/components/instrumentos/Barras";
 import { loadFonte } from "@/lib/data";
 import { fmtPeriodo } from "@/lib/format";
 import { m } from "@/lib/messages";
 import { JsonLd, dataset } from "@/lib/jsonld";
+
+const Linha = dynamic(() =>
+  import("@/components/instrumentos/Linha").then((mo) => mo.Linha)
+);
+const Mostrador = dynamic(() =>
+  import("@/components/instrumentos/Mostrador").then((mo) => mo.Mostrador)
+);
+const Declive = dynamic(() =>
+  import("@/components/instrumentos/Declive").then((mo) => mo.Declive)
+);
+const Barras = dynamic(() =>
+  import("@/components/instrumentos/Barras").then((mo) => mo.Barras)
+);
 
 export const metadata: Metadata = {
   title: "Emprego — quem está sem trabalho",
@@ -109,6 +119,7 @@ export default function EmpregoPage() {
         {une && ue27 ? (
           <>
             <Linha
+              chart={m.chart}
               series={[
                 { id: "pt", rotulo: "Portugal", pontos: une.series },
                 { id: "ue27", rotulo: "UE27", pontos: ue27.series },

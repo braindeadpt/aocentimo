@@ -1,9 +1,8 @@
+import dynamic from "next/dynamic";
 import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Delta } from "@/components/Delta";
-import { Linha } from "@/components/instrumentos/Linha";
-import { Multiplos } from "@/components/instrumentos/Multiplos";
 import { Source } from "@/components/Source";
 import { JsonLd, dataset } from "@/lib/jsonld";
 import { PoderDeCompra } from "./PoderDeCompra";
@@ -12,6 +11,13 @@ import { loadSerie, variacao, loadFontes, loadFreshness, type Serie } from "@/li
 import { fmtNum } from "@/lib/format";
 import { m } from "@/lib/messages";
 import eventos from "@data/fiscal/eventos.json";
+
+const Linha = dynamic(() =>
+  import("@/components/instrumentos/Linha").then((mo) => mo.Linha)
+);
+const Multiplos = dynamic(() =>
+  import("@/components/instrumentos/Multiplos").then((mo) => mo.Multiplos)
+);
 
 export const metadata: Metadata = {
   title: "Inflação — quanto subiu o que compras",
@@ -143,6 +149,7 @@ export default function InflacaoPage() {
       >
         {divisoes.length > 0 ? (
           <Multiplos
+            chart={m.chart}
             series={divisoes}
             colunas={4}
             unidade="%"
@@ -174,6 +181,7 @@ export default function InflacaoPage() {
         {temDados ? (
           <>
             <Linha
+              chart={m.chart}
               series={[
                 { id: "cp00", rotulo: "Índice geral", pontos: cp00!.series },
                 { id: "cp01", rotulo: "Alimentação", pontos: (cp01 ?? cp00!).series },

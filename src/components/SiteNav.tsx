@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, ViewTransition } from "react";
-import { m } from "@/lib/messages";
 
 /* três grupos temáticos (D-04): Dinheiro = o teu bolso, Preços = o
    que pagas, País = o observatório; Aprender fica fora, à direita.
@@ -46,8 +45,12 @@ const APRENDER = ["aprender", "/aprender"] as const;
  * Navegação principal — cliente porque precisa de usePathname para o
  * estado ativo (aria-current) e para gerir os menus <details>: fecham
  * ao navegar, com Escape e com clique fora (desktop e mobile).
+ *
+ * Os rótulos chegam por props do SiteHeader (servidor) — importar `m`
+ * aqui metia o messages/pt.json inteiro no chunk partilhado de todas
+ * as rotas.
  */
-export function SiteNav() {
+export function SiteNav({ nav }: { nav: Record<string, string> }) {
   const pathname = usePathname();
   const raiz = useRef<HTMLDivElement>(null);
 
@@ -112,7 +115,7 @@ export function SiteNav() {
                   temAtivo ? "text-accent" : "text-ink2 hover:text-accent"
                 }`}
               >
-                {m.nav[g.kicker]}
+                {nav[g.kicker]}
                 <span
                   aria-hidden
                   className="ml-1 inline-block transition-transform duration-150 group-open:rotate-180"
@@ -130,7 +133,7 @@ export function SiteNav() {
                       ativo(href) ? "text-accent" : "text-ink2"
                     }`}
                   >
-                    {m.nav[key]}
+                    {nav[key]}
                   </Link>
                 ))}
               </div>
@@ -142,7 +145,7 @@ export function SiteNav() {
           aria-current={ativo(APRENDER[1]) ? "page" : undefined}
           className={linkCls(APRENDER[1])}
         >
-          {m.nav[APRENDER[0]]}
+          {nav[APRENDER[0]]}
           {ativo(APRENDER[1]) && (
             <ViewTransition name="nav-ind" share="auto" default="none">
               <span
@@ -158,7 +161,7 @@ export function SiteNav() {
       <div className="flex items-center gap-3 xl:hidden">
         <details className="relative">
           <summary className="kicker cursor-pointer list-none text-ink2 [&::-webkit-details-marker]:hidden">
-            {m.nav.index}
+            {nav.index}
           </summary>
           <nav
             aria-label="Principal"
@@ -170,7 +173,7 @@ export function SiteNav() {
                 className="border-b border-line last:border-0"
               >
                 <p className="kicker-xs px-4 pt-3 pb-1 text-ink2">
-                  {m.nav[g.kicker]}
+                  {nav[g.kicker]}
                 </p>
                 {g.links.map(([key, href]) => (
                   <Link
@@ -181,7 +184,7 @@ export function SiteNav() {
                       ativo(href) ? "text-accent" : "text-ink2"
                     }`}
                   >
-                    {m.nav[key]}
+                    {nav[key]}
                   </Link>
                 ))}
               </div>
@@ -193,7 +196,7 @@ export function SiteNav() {
                 ativo(APRENDER[1]) ? "text-accent" : "text-ink2"
               }`}
             >
-              {m.nav[APRENDER[0]]}
+              {nav[APRENDER[0]]}
             </Link>
           </nav>
         </details>

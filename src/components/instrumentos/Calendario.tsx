@@ -24,7 +24,7 @@ import {
 } from "@/lib/motion/gsap";
 import { corQuantil } from "@/lib/viz/cores";
 import { EmptyState } from "@/components/EmptyState";
-import { m } from "@/lib/messages";
+import type { Messages } from "@/lib/messages";
 
 interface Props {
   /** pontos diários — t em "YYYY-MM-DD" */
@@ -32,6 +32,8 @@ interface Props {
   anos: number[];
   unidade: string;
   titulo: string;
+  /** strings messages.chart — prop para o JSON não entrar no cliente */
+  chart: Messages["chart"];
 }
 
 const CELL = 10;
@@ -68,7 +70,7 @@ function celulasDoAno(ano: number, dados: Map<string, number>): Celula[] {
   return celulas;
 }
 
-export function Calendario({ pontos, anos, unidade, titulo }: Props) {
+export function Calendario({ pontos, anos, unidade, titulo, chart }: Props) {
   const scope = useRef<HTMLDivElement>(null);
   const { ref: refArmado, armado } = useArmado<HTMLDivElement>(titulo);
   const [foco, setFoco] = useState<string | null>(null);
@@ -193,7 +195,7 @@ export function Calendario({ pontos, anos, unidade, titulo }: Props) {
       {/* readout fixo — o dia interrogado */}
       <div className="chart-readout" aria-live="polite">
         <span className="chart-readout-t">
-          {focada ? fmtData(focada.iso) : `${m.chart.ultimo} · ${fmtData(pontos[pontos.length - 1].t)}`}
+          {focada ? fmtData(focada.iso) : `${chart.ultimo} · ${fmtData(pontos[pontos.length - 1].t)}`}
         </span>
         <span className="chart-readout-v">
           {focada ? (focada.v !== null ? fmtV(focada.v) : "sem dados") : fmtV(pontos[pontos.length - 1].v)}

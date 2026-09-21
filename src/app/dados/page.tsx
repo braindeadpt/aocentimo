@@ -4,8 +4,8 @@ import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { JsonLd, dataset } from "@/lib/jsonld";
-import { Linha } from "@/components/instrumentos/Linha";
-import { Catalogo, type SerieCatalogo } from "@/components/instrumentos/Catalogo";
+import dynamic from "next/dynamic";
+import type { SerieCatalogo } from "@/components/instrumentos/Catalogo";
 import { Delta } from "@/components/Delta";
 import { Instrumento } from "@/components/Instrumento";
 import { rotaDaSerie } from "@/lib/meta";
@@ -25,6 +25,17 @@ import { m, t } from "@/lib/messages";
 import usura from "@data/fiscal/usura-2026.json";
 import calendario from "@data/fiscal/calendario-2026.json";
 import eventos from "@data/fiscal/eventos.json";
+
+const Linha = dynamic(() =>
+  import("@/components/instrumentos/Linha").then((mo) => mo.Linha)
+);
+
+/* o catálogo é a peça mais pesada da página e fica abaixo da dobra —
+   entra por next/dynamic: SSR mantém as células no HTML, o chunk só
+   desce para hidratar */
+const Catalogo = dynamic(() =>
+  import("@/components/instrumentos/Catalogo").then((mo) => mo.Catalogo)
+);
 
 export const metadata: Metadata = {
   title: "Dados — painéis vivos de fontes oficiais",
@@ -332,7 +343,12 @@ export default function DadosPage() {
       >
         {catalogo.length > 0 ? (
           <>
-            <Catalogo series={catalogo} titulo={m.dados.catalogoTitulo} />
+            <Catalogo
+              series={catalogo}
+              titulo={m.dados.catalogoTitulo}
+              txt={m.dados}
+              chart={m.chart}
+            />
             <p className="footnote mt-2">{m.dados.catalogoNota}</p>
           </>
         ) : (
@@ -356,6 +372,7 @@ export default function DadosPage() {
         {temEuribor ? (
           <>
             <Linha
+              chart={m.chart}
               series={(Object.keys(euribor) as (keyof typeof euribor)[]).map((k, i) => ({
                 id: `euribor-${k.toLowerCase()}`,
                 rotulo: `Euribor ${k}`,

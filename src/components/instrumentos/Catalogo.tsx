@@ -24,7 +24,8 @@ import { dataDePeriodo, escalaTempo, escalaValor } from "@/lib/viz/escalas";
 import { pathLinha } from "@/lib/viz/formas";
 import { EmptyState } from "@/components/EmptyState";
 import { carregarGsap, dur, ease, motionActiva } from "@/lib/motion/gsap";
-import { m, t } from "@/lib/messages";
+import { t } from "@/lib/t";
+import type { Messages } from "@/lib/messages";
 
 export type FonteCatalogo = "eurostat" | "bpstat" | "dgeg" | "derivado";
 export type EstadoCatalogo = "em-dia" | "atrasada" | "sem-sla";
@@ -52,18 +53,11 @@ const PAD = { top: 8, right: 6, bottom: 6, left: 6 };
 const fmtV = (v: number, unidade: string) =>
   unidade ? `${fmtNum(v)} ${unidade}` : fmtNum(v);
 
-const FREQ_TXT: Record<SerieCatalogo["frequencia"], string> = {
-  diaria: m.dados.fDiaria,
-  mensal: m.dados.fMensal,
-  trimestral: m.dados.fTrimestral,
-  semestral: m.dados.fSemestral,
-  anual: "anual",
-};
-
-const ESTADO_TXT: Record<EstadoCatalogo, string> = {
-  "em-dia": m.dados.fEmDia,
-  atrasada: m.dados.fAtrasada,
-  "sem-sla": m.dados.fSemSla,
+const FONTE_TXT: Record<FonteCatalogo, string> = {
+  eurostat: "Eurostat",
+  bpstat: "BdP",
+  dgeg: "DGEG",
+  derivado: "Derivado",
 };
 
 /** Captura a geometria das células visíveis ANTES da mutação — o
@@ -83,13 +77,6 @@ function toggleSet<T>(set: Set<T>, v: T): Set<T> {
   else s.add(v);
   return s;
 }
-
-const FONTE_TXT: Record<FonteCatalogo, string> = {
-  eurostat: "Eurostat",
-  bpstat: "BdP",
-  dgeg: "DGEG",
-  derivado: "Derivado",
-};
 
 function BotaoFiltro<T>({
   ativo,
@@ -122,11 +109,29 @@ export function Catalogo({
   series,
   titulo,
   janela = 10,
+  txt,
+  chart,
 }: {
   series: SerieCatalogo[];
   titulo: string;
   janela?: number;
+  /** strings messages.dados / messages.chart — props para o JSON
+      não entrar no chunk do cliente */
+  txt: Messages["dados"];
+  chart: Messages["chart"];
 }) {
+  const FREQ_TXT: Record<SerieCatalogo["frequencia"], string> = {
+    diaria: txt.fDiaria,
+    mensal: txt.fMensal,
+    trimestral: txt.fTrimestral,
+    semestral: txt.fSemestral,
+    anual: "anual",
+  };
+  const ESTADO_TXT: Record<EstadoCatalogo, string> = {
+    "em-dia": txt.fEmDia,
+    atrasada: txt.fAtrasada,
+    "sem-sla": txt.fSemSla,
+  };
   const grelha = useRef<HTMLDivElement>(null);
   const flipPendente = useRef<EstadoFlip | null>(null);
   const [janelaOn, setJanelaOn] = useState(true);
@@ -235,7 +240,7 @@ export function Catalogo({
       <div className="mb-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           {grupo(
-            m.dados.fFonte,
+            txt.fFonte,
             (Object.keys(FONTE_TXT) as FonteCatalogo[]).map((f) => (
               <BotaoFiltro
                 key={f}
@@ -248,7 +253,7 @@ export function Catalogo({
             ))
           )}
           {grupo(
-            m.dados.fFreq,
+            txt.fFreq,
             (["diaria", "mensal", "trimestral", "semestral"] as const).map(
               (f) => (
                 <BotaoFiltro
@@ -263,7 +268,7 @@ export function Catalogo({
             )
           )}
           {grupo(
-            m.dados.fEstado,
+            txt.fEstado,
             (Object.keys(ESTADO_TXT) as EstadoCatalogo[]).map((e) => (
               <BotaoFiltro
                 key={e}
@@ -278,7 +283,7 @@ export function Catalogo({
         </div>
         <div className="flex items-center gap-2">
           <p className="num text-[11px] text-ink2 tabular-nums" aria-hidden>
-            {t(m.dados.visiveis, { n: visiveis.length, total: dados.length })}
+            {t(txt.visiveis, { n: visiveis.length, total: dados.length })}
           </p>
           <div className="flex gap-1" role="group">
             {[true, false].map((v) => (
@@ -288,7 +293,7 @@ export function Catalogo({
                 valor={v}
                 onMudar={setJanelaOn}
               >
-                {v ? t(m.chart.janelaAnos, { n: janela }) : m.chart.janelaMax}
+                {v ? t(chart.janelaAnos, { n: janela }) : chart.janelaMax}
               </BotaoFiltro>
             ))}
           </div>
@@ -379,7 +384,7 @@ export function Catalogo({
                   href={`/api/${d.id}.json`}
                   className="num text-[10px] text-ink2 underline-offset-2 hover:text-accent hover:underline"
                 >
-                  {m.dados.json}
+                  {txt.json}
                 </a>
               </div>
             </div>

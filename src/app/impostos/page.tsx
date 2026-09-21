@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
+import { m } from "@/lib/messages";
 import { Figure } from "@/components/Figure";
 import { CalculadoraIva } from "./CalculadoraIva";
 import { TalaoCompras } from "./TalaoCompras";
@@ -74,7 +75,7 @@ export default function ImpostosPage() {
           />
         }
       >
-        <TalaoCompras />
+        <TalaoCompras chart={m.chart} />
       </Figure>
 
       <Figure
