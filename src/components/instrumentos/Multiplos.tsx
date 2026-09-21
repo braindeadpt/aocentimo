@@ -11,6 +11,7 @@ import { fmtData, fmtNum, fmtPct } from "@/lib/format";
 import { dataDePeriodo, escalaTempo, escalaValor } from "@/lib/viz/escalas";
 import { pathLinha } from "@/lib/viz/formas";
 import { EmptyState } from "@/components/EmptyState";
+import { m, t } from "@/lib/messages";
 
 interface Serie {
   id: string;
@@ -24,6 +25,9 @@ interface Props {
   unidade: string;
   eixoComum: boolean;
   titulo: string;
+  /** janela em anos — activa os botões «{n} a · máx» por cima da
+      grelha; por omissão mostra a janela */
+  janela?: number;
 }
 
 const W = 200;
@@ -39,22 +43,31 @@ export function Multiplos({
   unidade,
   eixoComum,
   titulo,
+  janela,
 }: Props) {
   const [ativo, setAtivo] = useState<string | null>(null);
+  const [janelaOn, setJanelaOn] = useState(janela !== undefined);
 
-  const dados = useMemo(
-    () =>
-      series
-        .map((s) => ({
-          ...s,
-          pts: s.pontos
-            .map((p) => ({ t: dataDePeriodo(p.t).getTime(), v: p.v }))
-            .filter((p) => !Number.isNaN(p.t))
-            .sort((a, b) => a.t - b.t),
-        }))
-        .filter((s) => s.pts.length > 0),
-    [series]
-  );
+  const dados = useMemo(() => {
+    const todas = series
+      .map((s) => ({
+        ...s,
+        pts: s.pontos
+          .map((p) => ({ t: dataDePeriodo(p.t).getTime(), v: p.v }))
+          .filter((p) => !Number.isNaN(p.t))
+          .sort((a, b) => a.t - b.t),
+      }))
+      .filter((s) => s.pts.length > 0);
+    if (!janela || !janelaOn) return todas;
+    /* janela global — o mesmo intervalo temporal em todos os painéis,
+       medido a partir do ponto mais recente do conjunto */
+    const maxT = Math.max(...todas.map((d) => d.pts[d.pts.length - 1].t));
+    const corte = maxT - janela * 365.25 * 86_400_000;
+    return todas.map((d) => {
+      const pts = d.pts.filter((p) => p.t >= corte);
+      return { ...d, pts: pts.length >= 2 ? pts : d.pts.slice(-2) };
+    });
+  }, [series, janela, janelaOn]);
 
   const domComum = useMemo(() => {
     if (!eixoComum) return null;
@@ -89,6 +102,43 @@ export function Multiplos({
           );
         })}
       </dl>
+
+      {/* barra de contexto — âmbito do eixo comum no canto superior
+          esquerdo (uma só vez, não em cada múltiplo), selector de
+          janela à direita */}
+      {(janela !== undefined || domComum) && (
+        <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
+          {domComum ? (
+            <p className="footnote">
+              {t(m.chart.eixoComum, {
+                min: fmtV(domComum[0], unidade),
+                max: fmtV(domComum[1], unidade),
+              })}
+            </p>
+          ) : (
+            <span />
+          )}
+          {janela !== undefined && (
+            <div className="flex gap-1" role="group">
+              {[true, false].map((v) => (
+                <button
+                  key={String(v)}
+                  type="button"
+                  aria-pressed={janelaOn === v}
+                  onClick={() => setJanelaOn(v)}
+                  className={`border px-2 py-0.5 font-mono text-[11px] transition-colors ${
+                    janelaOn === v
+                      ? "border-ink bg-ink text-panel"
+                      : "border-line bg-transparent text-ink2 hover:border-ink2"
+                  }`}
+                >
+                  {v ? t(m.chart.janelaAnos, { n: janela }) : m.chart.janelaMax}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       <div
         className={`grid gap-px border border-line bg-line grid-cols-2 ${
@@ -132,8 +182,13 @@ export function Multiplos({
               onBlur={() => setAtivo(null)}
             >
               <div className="flex items-baseline justify-between gap-2">
-                <p className="kicker-xs">{d.rotulo}</p>
-                <p className="num text-xs text-ink tabular-nums">
+                <p
+                  className="kicker-xs min-w-0 flex-1 truncate"
+                  title={d.rotulo}
+                >
+                  {d.rotulo}
+                </p>
+                <p className="num shrink-0 text-xs text-ink tabular-nums whitespace-nowrap">
                   {fmtV(ult.v, unidade)}
                 </p>
               </div>
@@ -143,7 +198,9 @@ export function Multiplos({
                 aria-hidden
                 data-viz
               >
-                {eixoComum && (
+                {/* linha do zero a tracejado — só quando o domínio a
+                    cruza (comum ou próprio) */}
+                {dom[0] < 0 && dom[1] > 0 && (
                   <line
                     x1={PAD.left}
                     x2={W - PAD.right}
@@ -151,8 +208,8 @@ export function Multiplos({
                     y2={y(0)}
                     stroke="var(--line)"
                     strokeWidth={1}
+                    strokeDasharray="3 3"
                     vectorEffect="non-scaling-stroke"
-                    display={dom[0] < 0 && dom[1] > 0 ? undefined : "none"}
                   />
                 )}
                 <path

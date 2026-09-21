@@ -45,7 +45,10 @@
     "atrasada": "atrasada",
     "semSla": "sem SLA definido",
     "sparkDesc": "{rotulo}: últimos {n} pontos entre {min} e {max}; último {ult}",
-    "eventosAria": "Eventos marcados no gráfico — cada um abre a fonte oficial"
+    "eventosAria": "Eventos marcados no gráfico — cada um abre a fonte oficial",
+    "eixoComum": "eixo comum {min} … {max}",
+    "janelaAnos": "{n} a",
+    "janelaMax": "máx"
   },
   "fluxo": {
     "aria": "A empresa paga {custo} por mês; chegam-te {liquido} líquidos.",
@@ -118,10 +121,12 @@
       "passos": [
         {
           "rotulo": "Segurança Social",
+          "curto": "Seg. Social",
           "detalhe": "TSU do trabalhador — 11 % do bruto, desconta antes de chegar à conta"
         },
         {
           "rotulo": "Retenção de IRS",
+          "curto": "IRS",
           "detalhe": "tabelas de 2026 — a tua taxa depende da situação e dos dependentes"
         },
         {
@@ -130,10 +135,11 @@
         },
         {
           "rotulo": "Impostos no gasóleo",
+          "curto": "Gasóleo",
           "detalhe": "50 L a {preco} €/L — ISP, taxa de carbono e IVA dentro do litro"
         },
         {
-          "rotulo": "Fica-te",
+          "rotulo": "Ficam-te",
           "detalhe": "de cada euro bruto, antes do IVA das compras do dia a dia"
         }
       ]

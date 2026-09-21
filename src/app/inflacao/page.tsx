@@ -147,6 +147,7 @@ export default function InflacaoPage() {
             colunas={4}
             unidade="%"
             eixoComum
+            janela={10}
             titulo={m.inflacao.multiplosTitulo}
           />
         ) : (

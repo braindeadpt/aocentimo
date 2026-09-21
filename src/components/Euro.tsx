@@ -1,21 +1,28 @@
 "use client";
 
 /**
- * Euro — o storytelling «o teu euro» (C-03, composição revista):
+ * Euro — o storytelling «o teu euro» (C-03, geometria revista):
  *
  *  · cena pinned ≥768 + movimento (ScrollTrigger, pin, scrub 0.6,
  *    400 vh): coluna esquerda (40 %) lê o passo actual — kicker
  *    «PASSO n/5», rótulo grande, cêntimos em mono ~72 px, detalhe e
- *    fonte; coluna direita (60 %) tem a moeda grande, as fatias que se
- *    cortam e caem para a linha de base com o seu ângulo real, o
- *    contador «restam N c» no topo e uma régua de ticks a cada 10 c;
+ *    fonte; coluna direita (60 %) tem a moeda-pie (o que RESTA é um
+ *    sector desde as 12h, fill --panel / contorno --ink, que encolhe
+ *    a cada corte) e a régua de cêntimos em baixo;
+ *  · o wedge do passo fica em --accent na moeda (ângulo real ∝
+ *    cêntimos, contorno tracejado — o tracejado marca só o wedge a
+ *    cortar) com o valor junto ao arco exterior; ao avançar voa para
+ *    a régua e ao aterrar desaparece (scale→0) enquanto acende um
+ *    SEGMENTO rectangular --accent de largura ∝ cêntimos — os
+ *    segmentos acumulam da esquerda e os rótulos vivem SÓ na régua;
+ *  · «Chega à conta» não é corte: o resto pisca a --keep e a régua
+ *    ganha um marcador vertical com o líquido; «Fica-te» deixa o
+ *    resto em --keep com o valor no centro;
  *  · o índice do passo vem do progresso do scroll (onUpdate); a troca
- *    de texto é a keyframe `euro-passo` (y 8 px, opacidade 0.4→1) —
- *    o estado nunca parte de zero;
+ *    de texto é a keyframe `euro-passo` (y 8 px, opacidade 0.4→1);
  *  · a <ol> de passos fica sempre visível por baixo — é o equivalente;
  *    em <768 e reduced-motion é o conteúdo (a cena nem se monta);
- *  · a cena inteira é aria-hidden e não tem focáveis — os links de
- *    fonte dentro dela são texto, os links a sério estão na lista;
+ *  · a cena inteira é aria-hidden e não tem focáveis;
  *  · GSAP só desce por IntersectionObserver quando a secção se
  *    aproxima — nunca no bundle inicial nem acima da dobra.
  */
@@ -29,32 +36,42 @@ import { carregarGsap, motionActiva } from "@/lib/motion/gsap";
 
 export interface PassoEuro {
   rotulo: string;
+  /** rótulo curto para a régua (só nos passos de corte) */
+  curto?: string;
   detalhe: string;
   /** cêntimos por cada euro bruto */
   centimos: number;
   fonteNome: string;
   fonteUrl?: string;
-  /** o último passo é o resto — volta à moeda em --keep */
-  final?: boolean;
 }
 
-/* ———— geometria da cena (viewBox 720×700) ———— */
+/* ———— geometria da cena (viewBox 460×560) ———— */
 
-const W = 720;
-const H = 700;
-/** moeda — diâmetro ≈ 46 vh no ecrã pinned */
-const CX = 360;
-const CY = 196;
-const R = 158;
-/** fatias caídas — apex em cima, sector abre para baixo */
-const SY = 508;
-const RS = 86;
-/** régua de cêntimos por baixo */
-const Y_REGUA = 652;
-const X0_REGUA = 60;
-const X1_REGUA = 660;
+const W = 460;
+const H = 560;
+/** moeda-pie — diâmetro ≈ 45 vh no ecrã pinned */
+const CX = 230;
+const CY = 200;
+const R = 150;
+/** régua 0–100 cêntimos */
+const Y_REGUA = 468;
+const X0 = 30;
+const X1 = 430;
+const PX_C = (X1 - X0) / 100; // px por cêntimo
+const SEG_H = 16;
 
-/** sector de pizza centrado no "up" (0° = 12h): apex em (0,0) */
+/** sector que RESTA — das 12h no sentido horário até `ang` graus */
+function restoPath(cx: number, cy: number, r: number, ang: number) {
+  if (ang >= 359.9)
+    return `M ${cx} ${cy - r} A ${r} ${r} 0 1 1 ${cx} ${cy + r} A ${r} ${r} 0 1 1 ${cx} ${cy - r} Z`;
+  const a = (ang * Math.PI) / 180;
+  const x = cx + r * Math.sin(a);
+  const y = cy - r * Math.cos(a);
+  const grande = ang > 180 ? 1 : 0;
+  return `M ${cx} ${cy} L ${cx} ${cy - r} A ${r} ${r} 0 ${grande} 1 ${x} ${y} Z`;
+}
+
+/** wedge de corte — apex em (0,0), simétrico em torno de "up" (12h) */
 function sector(r: number, meioAngulo: number) {
   const a = (meioAngulo * Math.PI) / 180;
   const x = r * Math.sin(a);
@@ -63,13 +80,10 @@ function sector(r: number, meioAngulo: number) {
   return `M 0 0 L ${-x} ${y} A ${r} ${r} 0 ${grande} 1 ${x} ${y} Z`;
 }
 
-/** arco do que resta na moeda — de `a0` a 360 graus (0 = 12h) */
-function resto(cx: number, cy: number, r: number, a0: number) {
-  const r0 = (a0 * Math.PI) / 180;
-  const x0 = cx + r * Math.sin(r0);
-  const y0 = cy - r * Math.cos(r0);
-  const grande = 360 - a0 > 180 ? 1 : 0;
-  return `M ${cx} ${cy} L ${x0} ${y0} A ${r} ${r} 0 ${grande} 1 ${cx} ${cy - r} Z`;
+/** ponto no arco exterior do wedge — para o rótulo de valor */
+function arcoExt(ang: number, rr = R + 18) {
+  const a = (ang * Math.PI) / 180;
+  return { x: CX + rr * Math.sin(a), y: CY - rr * Math.cos(a) };
 }
 
 export function Euro({ passos }: { passos: PassoEuro[] }) {
@@ -80,35 +94,24 @@ export function Euro({ passos }: { passos: PassoEuro[] }) {
   const n = passos.length;
   const p = passos[passo];
 
-  /* ângulos verdadeiros — cada fatia guarda o seu arco na moeda
-     (0° = 12h, sentido do relógio). Os dois primeiros cortes saem do
-     euro bruto; o 3.º é o líquido inteiro que "chega à conta"; o 4.º
-     corta-se do líquido já na linha; o 5.º é o resto — volta à moeda */
-  const a1 = passos[0].centimos * 3.6;
-  const a2 = a1 + passos[1].centimos * 3.6;
-  const a4 = passos[3].centimos * 3.6;
-  const arcos = [
-    { ini: 0, fim: a1 }, // SS
-    { ini: a1, fim: a2 }, // IRS
-    { ini: a2, fim: 360 }, // líquido
-    { ini: a2, fim: a2 + a4 }, // gasóleo (dentro do líquido)
-    { ini: a2 + a4, fim: 360 }, // resto
-  ];
-  const meio = arcos.map((a) => (a.ini + a.fim) / 2);
-  const largura = arcos.map((a) => a.fim - a.ini);
-  /** apex de cada fatia na linha de base — espalhadas */
-  const slots = [104, 236, 370, 504, 616];
-  /* o que ainda está na moeda ao mostrar o passo i: o arco a partir
-     do que já caiu — passos 3 e 4 já têm a moeda vazia (o líquido
-     caiu); no passo 5 o resto voltou (é o g5, não o sector) */
-  const restoAngulo = [0, a1, a2, null, null] as const;
-  const restam = [
-    100 - passos[0].centimos,
-    100 - passos[0].centimos - passos[1].centimos,
-    passos[2].centimos,
-    passos[4].centimos,
-    passos[4].centimos,
-  ];
+  const c = passos.map((pp) => pp.centimos);
+  /* cortes reais: passos 0 (SS), 1 (IRS) e 3 (gasóleo). Passo 2 é o
+     líquido que chega (flash + marcador); passo 4 é o resto (keep) */
+  const cortes = [0, 1, 3];
+  /** o que resta ANTES de cada corte — em cêntimos */
+  const remAntes = [100, 100 - c[0], c[2]];
+  const remDepois = [100 - c[0], c[2], c[2] - c[3]];
+  /** meio angular do wedge — no fim do sector que resta */
+  const meio = cortes.map((_, k) => (remAntes[k] - c[cortes[k]] / 2) * 3.6);
+  /** posição acumulada dos segmentos na régua — da esquerda */
+  const acc = [0, c[0], c[0] + c[1]];
+  const segX = cortes.map((_, k) => X0 + acc[k] * PX_C);
+  const segW = cortes.map((_, k) => c[cortes[k]] * PX_C);
+  const segCx = cortes.map((_, k) => segX[k] + segW[k] / 2);
+  const marcadorX = X0 + c[2] * PX_C;
+
+  /** contador «restam» — o que fica depois da acção do passo */
+  const restam = [remDepois[0], remDepois[1], c[2], remDepois[2], c[4]];
 
   useEffect(() => {
     const alvo = wrap.current;
@@ -125,23 +128,26 @@ export function Euro({ passos }: { passos: PassoEuro[] }) {
       void carregarGsap().then(({ gsap }) => {
         if (morto) return;
         ctx = gsap.context(() => {
-          /* estado inicial: fatias na moeda (apex no centro, orientação
-             verdadeira), invisíveis; rótulos da base escondidos; o
-             texto dentro da fatia contra-roda sobre o próprio centro
-             para ficar sempre direito */
-          for (let i = 0; i < n; i++) {
+          /* estado inicial — moeda cheia, wedges no lugar mas
+             invisíveis, régua limpa */
+          cortes.forEach((i, k) => {
             gsap.set(`.euro-fatia-${i}`, {
               x: CX,
               y: CY,
-              rotation: meio[i],
+              rotation: meio[k],
               opacity: 0,
               transformOrigin: "0px 0px",
             });
-            gsap.set(`.euro-ftxt-${i}`, {
-              rotation: -meio[i],
-              transformOrigin: `0px ${-R * (passos[i].centimos < 6 ? 0.82 : 0.6)}px`,
+            gsap.set(`.euro-vlab-${i}`, { opacity: 0 });
+            gsap.set(`.euro-seg-${i}`, {
+              scaleX: 0,
+              transformOrigin: "left center",
             });
-          }
+            gsap.set(`.euro-leg-${i}`, { opacity: 0 });
+          });
+          gsap.set(".euro-marcador", { opacity: 0 });
+          gsap.set(".euro-fim", { opacity: 0 });
+
           const tl = gsap.timeline({
             defaults: { ease: "none" },
             scrollTrigger: {
@@ -165,110 +171,61 @@ export function Euro({ passos }: { passos: PassoEuro[] }) {
             if (falta > 0) tl.to({}, { duration: falta });
           };
 
-          const cai = (i: number, slot: number) => {
-            /* aparece cortada na moeda, roda para "baixo" e cai; o
-               texto dentro contra-roda/escala para ficar direito */
-            tl.fromTo(
-              `.euro-fatia-${i}`,
-              { opacity: 0 },
-              { opacity: 1, duration: 0.15 },
-              ">"
-            );
+          /* um corte: o wedge acende no lugar, voa para a régua,
+             desaparece ao aterrar e o segmento acende com a largura
+             real; a moeda encolhe no momento da aterragem */
+          const cai = (k: number) => {
+            const i = cortes[k];
+            tl.to(`.euro-fatia-${i}`, { opacity: 1, duration: 0.15 });
+            tl.to(`.euro-vlab-${i}`, { opacity: 1, duration: 0.15 }, "<");
+            tl.to({}, { duration: 0.35 });
+            tl.to(`.euro-vlab-${i}`, { opacity: 0, duration: 0.12 });
             tl.to(
               `.euro-fatia-${i}`,
               {
-                x: slots[slot],
-                y: SY,
-                rotation: 180,
-                scale: RS / R,
-                duration: 0.85,
+                x: segCx[k],
+                y: Y_REGUA - SEG_H - 8,
+                rotation: 360,
+                duration: 0.6,
                 ease: "power1.in",
               },
-              "<0.15"
-            );
-            tl.to(
-              `.euro-ftxt-${i}`,
-              { rotation: -180, scale: R / RS, duration: 0.85 },
               "<"
             );
-            tl.fromTo(
-              `.euro-leg-${i}`,
-              { opacity: 0 },
-              { opacity: 1, duration: 0.25 },
-              ">-0.2"
-            );
+            tl.to(`.euro-fatia-${i}`, { scale: 0, duration: 0.18 });
+            tl.set(".euro-resto", {
+              attr: { d: restoPath(CX, CY, R, remDepois[k] * 3.6) },
+            });
+            tl.to(`.euro-seg-${i}`, {
+              scaleX: 1,
+              duration: 0.22,
+              ease: "power1.out",
+            });
+            tl.to(`.euro-leg-${i}`, { opacity: 1, duration: 0.2 }, "<");
           };
 
           /* passo 0 — Segurança Social */
-          cai(0, 0);
+          cai(0);
+          tl.set(".euro-umo", { opacity: 0 }); // já não é o euro inteiro
           padAte(0);
           /* passo 1 — retenção de IRS */
-          cai(1, 1);
+          cai(1);
           padAte(1);
-          /* passo 2 — o líquido inteiro chega à conta */
-          cai(2, 2);
+          /* passo 2 — chega à conta: não corta, marca-se */
+          tl.set(".euro-resto", { attr: { fill: "var(--keep)" } });
+          tl.to({}, { duration: 0.5 }); // --dur-media de pausa
+          tl.set(".euro-resto", { attr: { fill: "var(--panel)" } });
+          tl.to(".euro-marcador", { opacity: 1, duration: 0.25 });
           padAte(2);
-          /* passo 3 — o gasóleo corta-se do líquido na linha: o bloco
-             único troca pelas duas sub-fatias e a do gasóleo desliza */
-          tl.to(`.euro-fatia-2`, { opacity: 0, duration: 0.15 });
-          /* g4 e g5 nascem a cobrir exactamente o arco do líquido na
-             orientação da linha (180 = a abrir para baixo) */
-          const rot4 = 180 - largura[2] / 2 + largura[3] / 2;
-          const rot5 = 180 + largura[2] / 2 - largura[4] / 2;
-          tl.set(`.euro-fatia-3`, {
-            x: slots[2],
-            y: SY,
-            rotation: rot4,
-            scale: RS / R,
-            opacity: 1,
-          });
-          tl.set(`.euro-ftxt-3`, {
-            rotation: -rot4,
-            scale: R / RS,
-          });
-          tl.set(`.euro-fatia-4`, {
-            x: slots[2],
-            y: SY,
-            rotation: rot5,
-            scale: RS / R,
-            opacity: 1,
-          });
-          tl.set(`.euro-ftxt-4`, {
-            rotation: -rot5,
-            scale: R / RS,
-          });
-          tl.to(
-            `.euro-fatia-3`,
-            { x: slots[3], rotation: 180, duration: 0.85, ease: "power1.in" },
-            ">0.1"
-          );
-          tl.to(`.euro-ftxt-3`, { rotation: -180, duration: 0.85 }, "<");
-          tl.fromTo(
-            `.euro-leg-3`,
-            { opacity: 0 },
-            { opacity: 1, duration: 0.25 },
-            ">-0.2"
-          );
+          /* passo 3 — impostos no gasóleo */
+          cai(2);
           padAte(3);
-          /* passo 4 — o resto volta à moeda em --keep */
-          tl.to(
-            `.euro-fatia-4`,
-            {
-              x: CX,
-              y: CY,
-              rotation: meio[4],
-              scale: 1,
-              duration: 0.9,
-              ease: "power1.inOut",
-            },
-            ">0.1"
-          );
-          tl.to(`.euro-ftxt-4`, { opacity: 0, duration: 0.3 }, "<");
+          /* passo 4 — o resto fica-te, em keep definitivo */
+          tl.set(".euro-resto", { attr: { fill: "var(--keep)" } });
           tl.fromTo(
             ".euro-fim",
-            { opacity: 0, y: 6 },
+            { opacity: 0, y: 8 },
             { opacity: 1, y: 0, duration: 0.4 },
-            ">-0.15"
+            ">0.15"
           );
           padAte(4);
         }, alvo);
@@ -350,7 +307,7 @@ export function Euro({ passos }: { passos: PassoEuro[] }) {
             </div>
           </div>
 
-          {/* direita — a moeda e a linha das fatias */}
+          {/* direita — a moeda-pie e a régua de cêntimos */}
           <div className="relative min-w-0 flex-1">
             <p className="num absolute right-0 top-0 text-sm tabular-nums text-muted">
               <Odometer
@@ -361,68 +318,43 @@ export function Euro({ passos }: { passos: PassoEuro[] }) {
                 dur={400}
               />
             </p>
-            <svg
-              viewBox={`0 0 ${W} ${H}`}
-              className="block h-auto w-full"
-            >
-              {/* a moeda — círculo + «1 €» em mono; o que resta é o
-                  sector ainda por cortar; fantasma tracejado fica */}
-              <circle
-                cx={CX}
-                cy={CY}
-                r={R}
-                fill="none"
-                stroke="var(--line2)"
-                strokeWidth={1}
-                strokeDasharray="3 5"
+            <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full">
+              {/* a moeda — o que RESTA é o sector desde as 12h; sem
+                  contorno fantasma: o tracejado é só do wedge a cortar */}
+              <path
+                className="euro-resto"
+                d={restoPath(CX, CY, R, 360)}
+                fill="var(--panel)"
+                stroke="var(--ink)"
+                strokeWidth={2}
               />
-              {restoAngulo[passo] !== null &&
-                (restoAngulo[passo] === 0 ? (
-                  <circle
-                    cx={CX}
-                    cy={CY}
-                    r={R}
-                    fill="var(--panel)"
-                    stroke="var(--ink)"
-                    strokeWidth={2}
-                  />
-                ) : (
-                  <path
-                    d={resto(CX, CY, R, restoAngulo[passo] as number)}
-                    fill="var(--panel)"
-                    stroke="var(--ink)"
-                    strokeWidth={2}
-                  />
-                ))}
-              {restoAngulo[passo] !== null && (
-                <text
-                  x={CX}
-                  y={CY + 9}
-                  textAnchor="middle"
-                  fontSize={30}
-                  fill="var(--ink)"
-                  fontFamily="var(--font-mono)"
-                >
-                  1 €
-                </text>
-              )}
-              {/* «ficam-te X c» no centro — aparece com o resto */}
+              <text
+                className="euro-umo"
+                x={CX}
+                y={CY + 9}
+                textAnchor="middle"
+                fontSize={28}
+                fill="var(--ink)"
+                fontFamily="var(--font-mono)"
+              >
+                1 €
+              </text>
+              {/* «ficam-te» — o resto em keep com o valor ao centro */}
               <g className="euro-fim" opacity={0}>
                 <text
                   x={CX}
-                  y={CY - 4}
+                  y={CY - 2}
                   textAnchor="middle"
-                  fontSize={15}
+                  fontSize={24}
                   fill="var(--ink)"
                   fontFamily="var(--font-mono)"
+                  className="tabular-nums"
                 >
-                  {t(m.home.euro.ficamTe, {
-                    n: fmtNum(passos[4].centimos, 1),
-                  })}
+                  {fmtNum(c[4], 1)} c
                 </text>
                 <text
                   x={CX}
-                  y={CY + 16}
+                  y={CY + 20}
                   textAnchor="middle"
                   fontSize={10}
                   fill="var(--muted)"
@@ -432,31 +364,67 @@ export function Euro({ passos }: { passos: PassoEuro[] }) {
                 </text>
               </g>
 
+              {/* wedges de corte — apex em (0,0) local; tracejado =
+                  "a ser cortado"; o valor fica junto ao arco exterior */}
+              {cortes.map((i, k) => {
+                const lab = arcoExt(meio[k]);
+                return (
+                  <g key={i}>
+                    <g className={`euro-fatia-${i}`} opacity={0}>
+                      <path
+                        d={sector(R, (c[i] * 3.6) / 2)}
+                        fill="var(--accent)"
+                        fillOpacity={0.9}
+                        stroke="var(--ink)"
+                        strokeWidth={1}
+                        strokeDasharray="4 3"
+                      />
+                    </g>
+                    <text
+                      className={`euro-vlab-${i} tabular-nums`}
+                      x={lab.x}
+                      y={lab.y}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fontSize={13}
+                      fill="var(--ink)"
+                      stroke="var(--paper)"
+                      strokeWidth={4}
+                      paintOrder="stroke"
+                      fontFamily="var(--font-mono)"
+                      opacity={0}
+                    >
+                      {fmtNum(c[i], 1)} c
+                    </text>
+                  </g>
+                );
+              })}
+
               {/* régua — ticks a cada 10 cêntimos, escala honesta */}
               <line
-                x1={X0_REGUA}
-                x2={X1_REGUA}
+                x1={X0}
+                x2={X1}
                 y1={Y_REGUA}
                 y2={Y_REGUA}
                 stroke="var(--line2)"
                 strokeWidth={1}
               />
               {Array.from({ length: 11 }, (_, i) => {
-                const x = X0_REGUA + (i * (X1_REGUA - X0_REGUA)) / 10;
+                const x = X0 + i * 10 * PX_C;
                 return (
                   <g key={i}>
                     <line
                       x1={x}
                       x2={x}
                       y1={Y_REGUA}
-                      y2={Y_REGUA - (i % 5 === 0 ? 8 : 4)}
+                      y2={Y_REGUA + (i % 5 === 0 ? 7 : 4)}
                       stroke="var(--muted)"
                       strokeWidth={1}
                     />
                     {i % 5 === 0 && (
                       <text
                         x={x}
-                        y={Y_REGUA + 14}
+                        y={Y_REGUA + 17}
                         textAnchor="middle"
                         fontSize={9}
                         fill="var(--muted)"
@@ -469,76 +437,67 @@ export function Euro({ passos }: { passos: PassoEuro[] }) {
                 );
               })}
 
-              {/* legendas de cada fatia caída */}
-              {passos.map((pp, i) => (
-                <g key={pp.rotulo} className={`euro-leg-${i}`} opacity={0}>
-                  <text
-                    x={slots[i]}
-                    y={SY + 108}
-                    textAnchor="middle"
-                    fontSize={11}
-                    fill="var(--ink)"
-                    fontFamily="var(--font-mono)"
-                  >
-                    {pp.rotulo}
-                  </text>
-                  <text
-                    x={slots[i]}
-                    y={SY + 124}
-                    textAnchor="middle"
-                    fontSize={13}
-                    fill="var(--muted)"
-                    fontFamily="var(--font-mono)"
-                    className="tabular-nums"
-                  >
-                    {fmtNum(pp.centimos, 1)} c
-                  </text>
+              {/* marcador «chega à conta» — linha vertical no líquido */}
+              <g className="euro-marcador" opacity={0}>
+                <line
+                  x1={marcadorX}
+                  x2={marcadorX}
+                  y1={Y_REGUA - SEG_H - 22}
+                  y2={Y_REGUA + 8}
+                  stroke="var(--mark)"
+                  strokeWidth={1.5}
+                  strokeDasharray="3 2"
+                />
+                <text
+                  x={marcadorX}
+                  y={Y_REGUA - SEG_H - 28}
+                  textAnchor="middle"
+                  fontSize={10}
+                  fill="var(--ink)"
+                  fontFamily="var(--font-mono)"
+                  className="tabular-nums"
+                >
+                  {fmtNum(c[2], 1)} c
+                </text>
+              </g>
+
+              {/* segmentos cortados — rectângulos --accent de largura
+                  real, acumulam da esquerda; rótulos SÓ aqui */}
+              {cortes.map((i, k) => (
+                <g key={i}>
+                  <rect
+                    className={`euro-seg-${i}`}
+                    x={segX[k]}
+                    y={Y_REGUA - SEG_H}
+                    width={segW[k]}
+                    height={SEG_H}
+                    fill="var(--accent)"
+                  />
+                  <g className={`euro-leg-${i}`} opacity={0}>
+                    <text
+                      x={segCx[k]}
+                      y={Y_REGUA + 34 + (k % 2) * 15}
+                      textAnchor="middle"
+                      fontSize={10}
+                      fill="var(--ink)"
+                      fontFamily="var(--font-mono)"
+                    >
+                      {passos[i].curto}
+                    </text>
+                    <text
+                      x={segCx[k]}
+                      y={Y_REGUA + 34 + (k % 2) * 15 + 11}
+                      textAnchor="middle"
+                      fontSize={10}
+                      fill="var(--muted)"
+                      fontFamily="var(--font-mono)"
+                      className="tabular-nums"
+                    >
+                      {fmtNum(c[i], 1)} c
+                    </text>
+                  </g>
                 </g>
               ))}
-
-              {/* as fatias — apex em (0,0) local, arco verdadeiro da
-                  moeda; o valor viaja dentro (ou junto, se <6 c) */}
-              {passos.map((pp, i) => {
-                const a = largura[i];
-                const fora = pp.centimos < 6;
-                /* o valor dentro da fatia (ou junto à ponta, se <6 c) —
-                   posição local do sector, que aponta para cima */
-                const ty = -R * (fora ? 0.82 : 0.6);
-                return (
-                  <g key={pp.rotulo} className={`euro-fatia-${i}`} opacity={0}>
-                    <path
-                      d={sector(R, a / 2)}
-                      fill={
-                        pp.final
-                          ? "var(--keep)"
-                          : i === 2
-                            ? "var(--ink2)"
-                            : "var(--accent)"
-                      }
-                      fillOpacity={i === 2 ? 0.18 : 0.9}
-                      stroke="var(--ink)"
-                      strokeWidth={1}
-                    />
-                    <g className={`euro-ftxt-${i}`}>
-                      <text
-                        x={0}
-                        y={ty}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                        fontSize={15}
-                        fill="var(--ink)"
-                        stroke="var(--paper)"
-                        strokeWidth={4}
-                        paintOrder="stroke"
-                        fontFamily="var(--font-mono)"
-                        className="tabular-nums"
-                      >
-                        {fmtNum(pp.centimos, 0)} c
-                      </text>
-                    </g>
-                  </g>
-                );
-              })}
             </svg>
           </div>
         </div>

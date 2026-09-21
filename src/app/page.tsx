@@ -46,6 +46,7 @@ function passosEuro(): PassoEuro[] {
   return [
     {
       rotulo: p[0].rotulo,
+      curto: p[0].curto,
       detalhe: p[0].detalhe,
       centimos: porEuro(ss),
       fonteNome: fontes.ss.nome,
@@ -53,6 +54,7 @@ function passosEuro(): PassoEuro[] {
     },
     {
       rotulo: p[1].rotulo,
+      curto: p[1].curto,
       detalhe: p[1].detalhe,
       centimos: porEuro(ret),
       fonteNome: fontes.ret.nome,
@@ -67,6 +69,7 @@ function passosEuro(): PassoEuro[] {
     },
     {
       rotulo: p[3].rotulo,
+      curto: p[3].curto,
       detalhe: t(p[3].detalhe, { preco: fmtNum(preco, 3) }),
       centimos: porEuro(impostos50),
       fonteNome: fontes.pmd.nome,
@@ -78,7 +81,6 @@ function passosEuro(): PassoEuro[] {
       centimos: porEuro(liquido - impostos50),
       fonteNome: fontes.calc.nome,
       fonteUrl: fontes.calc.url,
-      final: true,
     },
   ];
 }
