@@ -116,8 +116,9 @@ function Expandido({ item }: { item: ItemPainel }) {
 
   return (
     <div id={`exp-${item.id}`} className="mt-3 border-t border-line pt-3">
+      {/* selector de período por cima, à direita */}
       <div
-        className="mb-2 flex flex-wrap items-center gap-1"
+        className="mb-2 flex flex-wrap items-center justify-end gap-1"
         role="group"
         aria-label="Período do gráfico"
       >
@@ -145,7 +146,7 @@ function Expandido({ item }: { item: ItemPainel }) {
         refLinha={item.refLinha}
         equivalente="tabela"
         titulo={item.rotuloCompleto}
-        altura={300}
+        altura={320}
         estado={item.estado as EstadoSerie}
       />
       {item.descricao && <p className="footnote mt-2">{item.descricao}</p>}
@@ -168,8 +169,10 @@ function Expandido({ item }: { item: ItemPainel }) {
   );
 }
 
-/** um instrumento do painel: botão de rótulo + conteúdo colapsado
- *  (children, renderizados no servidor) + expansão */
+/** um instrumento do painel: o cabeçalho inteiro é o botão de
+ *  expansão (rótulo + glifo ⌄ que roda), hit-area ≥ 44 px; aberto, a
+ *  célula ocupa a linha toda e divide-se — visual à esquerda (3/12),
+ *  Linha completa à direita (9/12); <1024 empilha. */
 export function InstrumentoPainel({
   item,
   children,
@@ -187,15 +190,29 @@ export function InstrumentoPainel({
         aria-controls={`exp-${item.id}`}
         onClick={() => alternar(item.id)}
         title={item.descricao}
-        className="kicker-xs flex w-full items-baseline justify-between gap-2 text-left underline decoration-line2 underline-offset-2 transition-colors hover:text-accent"
+        className="kicker-xs -mx-1 flex min-h-11 w-[calc(100%+0.5rem)] items-center justify-between gap-2 rounded-sm px-1 text-left transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
-        <span>{item.rotulo}</span>
-        <span aria-hidden className="num text-muted">
-          {ab ? "−" : "+"}
+        <span className="underline decoration-line2 underline-offset-2">
+          {item.rotulo}
+        </span>
+        <span
+          aria-hidden
+          data-aberto={ab}
+          className="euro-chev num text-sm leading-none text-muted"
+        >
+          ⌄
         </span>
       </button>
-      {children}
-      {ab && <Expandido item={item} />}
+      {ab ? (
+        <div className="lg:grid lg:grid-cols-12 lg:gap-x-8">
+          <div className="lg:col-span-3">{children}</div>
+          <div className="min-w-0 lg:col-span-9">
+            <Expandido item={item} />
+          </div>
+        </div>
+      ) : (
+        children
+      )}
     </div>
   );
 }

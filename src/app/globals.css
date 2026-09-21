@@ -599,6 +599,33 @@ html[data-theme="dark"] .tema-ponto {
   }
 }
 
+/* «o teu euro» — troca do texto do passo na cena pinned: sobe 8 px e
+   ganha opacidade, nunca parte de zero (M-03). Só existe dentro da
+   cena — que já está toda ela vedada a reduced-motion — e o bloco
+   global acima corta-a se o utilizador mudar a preferência a meio. */
+@keyframes euro-passo {
+  from {
+    transform: translateY(8px);
+    opacity: 0.4;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.euro-passo {
+  animation: euro-passo var(--dur-curta) var(--ease-entra) both;
+}
+
+/* seta do cabeçalho-botão do instrumento do painel — roda ao abrir */
+.euro-chev {
+  transition: transform var(--dur-curta) var(--ease-entra);
+}
+.euro-chev[data-aberto="true"] {
+  transform: rotate(180deg);
+}
+
 @keyframes eurobar-grow {
   from { transform: scaleX(0); }
   to { transform: scaleX(1); }
