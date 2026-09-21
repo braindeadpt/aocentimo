@@ -14,7 +14,29 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  qualidade:
+    # gate: e2e + auditorias correm ANTES do build/deploy —
+    # uma falha aqui impede a publicação
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - run: npm ci
+      - run: npx playwright install chromium --with-deps
+      - run: npm run test:e2e
+        # webServer do playwright faz `npm run build` e serve o out/ na 3100
+      - run: node scripts/_serve-static.mjs &
+      - run: sleep 1 && npm run audit
+
   build:
+    needs: qualidade
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

@@ -118,3 +118,7 @@ console.log("\n=== FALHAS AA ===");
 for (const [k, v] of Object.entries(aaFalhas)) console.log(k, "\n  " + v.join("\n  "));
 if (!Object.keys(aaFalhas).length) console.log("(nenhuma)");
 await b.close();
+// CI gate: chumba em falhas AA (e SVG exposto sem equivalente)
+const svgExposto = res.flatMap((r) => r.graf.map((g) => `${r.rota}: ${g}`));
+if (svgExposto.length) console.log("SVG sem equivalente:\n" + svgExposto.join("\n"));
+if (Object.keys(aaFalhas).length || svgExposto.length) process.exitCode = 1;

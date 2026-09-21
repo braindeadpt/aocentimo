@@ -328,7 +328,20 @@ export function GrelhaPainel({
         ref={grelha}
         className="grid grid-cols-1 gap-px bg-line md:grid-cols-6 lg:grid-cols-12"
         onKeyDown={(e) => {
-          if (e.key === "Escape" && aberto) alternar(aberto);
+          if (e.key === "Escape" && aberto) {
+            alternar(aberto);
+            /* o conteúdo expandido desmonta — se o foco lá estava
+               dentro, devolve-o ao botão do instrumento */
+            const activo = document.activeElement;
+            const celula = grelha.current?.querySelector(
+              `[data-ids~="${aberto}"]`
+            );
+            if (activo instanceof HTMLElement && celula?.contains(activo)) {
+              celula
+                .querySelector<HTMLElement>("button[aria-expanded]")
+                ?.focus();
+            }
+          }
         }}
       >
         {children}

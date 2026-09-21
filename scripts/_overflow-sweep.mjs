@@ -45,3 +45,4 @@ console.log(
     ? "OVERFLOW:\n" + falhas.join("\n")
     : `sem overflow horizontal a 768/1440 em ${rotas.length} rotas`
 );
+if (falhas.length) process.exitCode = 1;

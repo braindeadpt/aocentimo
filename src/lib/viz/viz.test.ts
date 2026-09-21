@@ -51,6 +51,38 @@ describe("escalaTempo / escalaValor", () => {
     expect(s.domain()).toEqual([0, 20]);
     expect(s(10)).toBe(50);
   });
+
+  it("escalaTempo com pontos Q/S: espaçamento proporcional ao tempo real", () => {
+    // trimestres — Q1→Q2 ≈ 91 dias, Q3→Q4 ≈ 92: distâncias quase iguais
+    const sq = escalaTempo(
+      [{ t: "2025-Q1" }, { t: "2025-Q4" }],
+      [0, 300]
+    );
+    const d12 = sq(dataDePeriodo("2025-Q2")) - sq(dataDePeriodo("2025-Q1"));
+    const d34 = sq(dataDePeriodo("2025-Q4")) - sq(dataDePeriodo("2025-Q3"));
+    expect(Math.abs(d12 - d34)).toBeLessThan(4); // px
+    expect(sq(dataDePeriodo("2025-Q1"))).toBe(0);
+    expect(sq(dataDePeriodo("2025-Q4"))).toBe(300);
+
+    // semestres — S1→S2 = 184 dias: o meio da escala cai em S2? não —
+    // S2 acaba no fim do ano: x de S2 > meio do intervalo S1→S2 seguinte
+    const ss = escalaTempo(
+      [{ t: "2025-S1" }, { t: "2026-S1" }],
+      [0, 400]
+    );
+    const xS2 = ss(dataDePeriodo("2025-S2"));
+    expect(xS2).toBeGreaterThan(190);
+    expect(xS2).toBeLessThan(210);
+
+    // misto Q com mês no mesmo eixo — ordenação cronológica mantém-se
+    const sm = escalaTempo(
+      [{ t: "2025-Q1" }, { t: "2025-09" }],
+      [0, 100]
+    );
+    expect(sm(dataDePeriodo("2025-Q2"))).toBeLessThan(
+      sm(dataDePeriodo("2025-09"))
+    );
+  });
 });
 
 describe("ticksTempo — rótulos pela amplitude", () => {

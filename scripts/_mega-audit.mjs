@@ -241,3 +241,5 @@ console.log(`\n=== FALHAS (${falhas.length}) ===`);
 for (const f of falhas) console.log(" ✗ " + f);
 console.log(`\n=== AVISOS (${avisos.length}) ===`);
 for (const a of avisos) console.log(" ~ " + a);
+// CI gate: falhas reprovam; avisos ficam no log sem chumbar
+if (falhas.length) process.exitCode = 1;
