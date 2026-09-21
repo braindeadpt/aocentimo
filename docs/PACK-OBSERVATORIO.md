@@ -122,7 +122,7 @@ Todos: `aria-label` único + equivalente `<table class="sr-only">` **ou** `<dl>`
 
 - **E-01 Performance** ✅ `78f1e08`: GSAP e d3 só em client components por rota (import dinâmico onde não há interacção acima da dobra); orçamento: JS ≤ 350 KB/rota (hoje ~500), LCP ≤ 1 s, CLS ≤ 0,05 — medir com `scripts/_sweep.mjs`.
 - **E-02 Testes** ✅ `d1bd936`: e2e por instrumento (equivalente único, reduced-motion sem animação, SSR com valor, teclado), `_mega-audit` e `_overflow-sweep` como testes; unit em `viz/` e `motion/`.
-- **E-03 Docs** ✅ (commit E-03): `PRODUTO.md` (novas rotas/séries), `DECISOES.md` (GSAP/d3, home=painel, séries), `design-system.md` + `/estilo` (instrumentos, glifos, manchete), `AGENTS.md` (comandos e regras de viz), `PLANO-LITERACIA-FINANCEIRA.md` §9 actualizado (escuro por omissão, GSAP adoptado).
+- **E-03 Docs** ✅ `716c6f9`: `PRODUTO.md` (novas rotas/séries), `DECISOES.md` (GSAP/d3, home=painel, séries), `design-system.md` + `/estilo` (instrumentos, glifos, manchete), `AGENTS.md` (comandos e regras de viz), `PLANO-LITERACIA-FINANCEIRA.md` §9 actualizado (escuro por omissão, GSAP adoptado).
 
 ## 3. Riscos
 
