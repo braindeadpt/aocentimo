@@ -5,7 +5,7 @@
     "dataset": "PMD GPL Auto (1120)",
     "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=1120&dataIni=2017-01-01&dataFim=2026-09-21",
     "unidade": "eur_litro_media_nacional",
-    "recolhidoEm": "2026-09-21T10:11:54.546Z",
+    "recolhidoEm": "2026-09-21T12:23:21.767Z",
     "serieAte": "2026-09-20"
   },
   "series": [

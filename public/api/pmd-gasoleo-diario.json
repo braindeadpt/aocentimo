@@ -5,7 +5,7 @@
     "dataset": "PMD Gasóleo simples (2101)",
     "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=2101&dataIni=2017-01-01&dataFim=2026-09-21",
     "unidade": "eur_litro_media_nacional",
-    "recolhidoEm": "2026-09-21T10:11:28.990Z",
+    "recolhidoEm": "2026-09-21T12:23:21.088Z",
     "serieAte": "2026-09-20"
   },
   "series": [
