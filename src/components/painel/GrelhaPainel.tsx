@@ -49,9 +49,8 @@ export interface ItemPainel {
   /** título completo para a Linha expandida */
   rotuloCompleto: string;
   descricao?: string;
-  /** rota temática — futura leva data-futuro */
+  /** rota temática da série */
   href: string;
-  futuro: boolean;
   estado: string;
   fonte: string;
   url?: string;
@@ -159,7 +158,6 @@ function Expandido({ item }: { item: ItemPainel }) {
         <Source nome={item.fonte} url={item.url} />
         <Link
           href={item.href}
-          {...(item.futuro ? { "data-futuro": "", prefetch: false } : {})}
           className="num text-xs text-ink2 underline decoration-line2 underline-offset-2 hover:text-accent"
         >
           {m.painel.pagina}

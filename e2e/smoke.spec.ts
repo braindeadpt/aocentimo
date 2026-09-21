@@ -530,10 +530,37 @@ test("D-02 · /credito mostra o mostrador Euribor 12M e a Linha das quatro", asy
   await expect(fig.getByText("Euribor 12M").first()).toBeVisible();
 });
 
-test("D-02 · /casa mostra o declive casa-vs-salário com equivalente único", async ({
+test("D-02 · /casa mostra a frase-conclusão e aponta para /habitacao", async ({
   page,
 }) => {
   await page.goto("/casa");
+  // D-04: o declive vive em /habitacao; /casa fica com a conclusão
+  await expect(
+    page.getByText(/a casa subiu \d+,\d× mais/)
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: /ver a evolução completa em Habitação/ })
+  ).toHaveAttribute("href", "/habitacao");
+});
+
+test("D-04 · /emprego mostra a linha PT vs UE27 com equivalente único", async ({
+  page,
+}) => {
+  await page.goto("/emprego");
+  const fig = page.locator("figure", {
+    hasText: "Desemprego — Portugal e a UE27",
+  });
+  await expect(fig.locator("svg[data-viz]")).toBeAttached();
+  await expect(fig.locator(equivUnico)).toHaveCount(1);
+  await expect(
+    page.locator('svg[role="img"][aria-label*="Desemprego jovem"]')
+  ).toBeAttached();
+});
+
+test("D-04 · /habitacao mostra o declive casa-vs-salário com equivalente único", async ({
+  page,
+}) => {
+  await page.goto("/habitacao");
   const fig = page.locator("figure", {
     hasText: "A casa contra o salário",
   });
@@ -542,6 +569,22 @@ test("D-02 · /casa mostra o declive casa-vs-salário com equivalente único", a
   await expect(
     fig.getByText(/a casa subiu \d+,\d× mais/)
   ).toBeVisible();
+});
+
+test("D-04 · /economia mostra as barras do PIB e os quatro múltiplos", async ({
+  page,
+}) => {
+  await page.goto("/economia");
+  const pib = page.locator("figure", {
+    hasText: "PIB — variação homóloga trimestral",
+  });
+  await expect(pib.locator("svg[data-viz]")).toBeAttached();
+  await expect(pib.locator(equivUnico)).toHaveCount(1);
+  const multi = page.locator("figure", {
+    hasText: "O país em quatro linhas",
+  });
+  await expect(multi.locator("svg[data-viz]")).toHaveCount(4);
+  await expect(multi.locator(equivUnico)).toHaveCount(1);
 });
 
 test("D-03 · /precos mostra os calendários com equivalente mensal único", async ({

@@ -155,7 +155,7 @@ function serieDe(id: string): { t: string; v: number }[] {
 
 function itemDe(
   s: Entrada,
-  o: { href: string; futuro?: boolean; eventos?: ItemPainel["eventos"] }
+  o: { href: string; eventos?: ItemPainel["eventos"] }
 ): ItemPainel {
   const unidadeLinha = UNI_LINHA[s.id] ?? "%";
   return {
@@ -164,7 +164,6 @@ function itemDe(
     rotuloCompleto: s.rotulo,
     descricao: descricaoDe(s.id),
     href: o.href,
-    futuro: o.futuro ?? false,
     estado: s.estado,
     fonte: s.fonte,
     url: s.url,
@@ -450,7 +449,7 @@ export function Painel() {
               ids={[id]}
               base="bg-panel md:col-span-2 lg:col-span-2"
             >
-              <InstrumentoPainel item={itemDe(s, { href, futuro: true })}>
+              <InstrumentoPainel item={itemDe(s, { href })}>
                 <VisualMedio
                   s={s}
                   varPP={id === "hpi-pt" ? (hpiPP ?? undefined) : undefined}

@@ -54,6 +54,26 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     { path: "/precos", ids: [...pmd, "fiscal-isp", "fiscal-iva"] },
     {
+      path: "/emprego",
+      ids: [
+        "une-pt-total",
+        "une-ue27-total",
+        "une-pt-jovem",
+        "lci-pt-homologo",
+      ],
+    },
+    { path: "/habitacao", ids: ["hpi-pt", "lci-pt-homologo"] },
+    {
+      path: "/economia",
+      ids: [
+        "pib-pt-homologo",
+        "confianca-pt",
+        "elec-pt-domestico",
+        "une-pt-total",
+        "hicp-pt-cp00",
+      ],
+    },
+    {
       path: "/dados",
       ids: [...euribor, ...taeg, "fiscal-usura-2026", "fiscal-calendario-2026"],
       extra: caBaseEm ? [caBaseEm] : [],

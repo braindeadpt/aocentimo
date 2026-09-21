@@ -39,3 +39,16 @@ Registo de execução do PACK-OBSERVATORIO. Uma entrada por milestone.
   (abs e pct; pct=null com base ≤ 0), spark 24 pontos, estado do
   watchdog, fonte+url. Copiado para `public/api/painel.json`.
 - `messages/pt.json`: bloco `series` com rótulo + descrição por série.
+
+## D-04 — rotas temáticas (2026-09-21)
+
+- /emprego, /habitacao, /economia criadas (figuras com fonte, sitemap,
+  OG, JSON-LD). Painel já não usa `data-futuro`; excepção removida do
+  `_mega-audit`.
+- **COPY NOVO PARA REVISÃO DO DONO**: `messages/pt.json` blocos
+  `emprego.*`, `habitacao.*`, `economia.*` (kickers, h1, ledes, notas)
+  e `nav.grupoDinheiro/grupoPrecos/grupoPais`.
+- O `Declive` HPI÷LCI moveu-se de /casa para /habitacao; /casa fica com
+  a frase-conclusão e link.
+- SiteNav reorganizado em 3 grupos com rótulo kicker; menu mobile
+  (`<details>`) lista os grupos.
