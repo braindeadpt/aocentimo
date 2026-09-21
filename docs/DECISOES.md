@@ -225,3 +225,45 @@ equivalente único por gráfico, herói no HTML sem JS).
   `globals.css`, `/estilo`); o V2 diz que substituiu uma direção
   «Observatório» parcial. Fica por confirmar se era direção formal antes
   do V2 ou o enquadramento do plano master que o código adotou depois.
+
+## 2026-09-21 — Fase C–E: o observatório (painel vivo, storytelling, rotas temáticas)
+
+**Decisões do dono** (comunicadas em sessão):
+- Evoluir a identidade para «instrumento/documento» escuro; adoptar
+  GSAP + d3 (d3 calcula, nós desenhamos).
+- Alargar dados (Eurostat 8 séries novas, BPstat, DGEG) e páginas;
+  **home = painel vivo** — a primeira dobra é a grelha de leituras,
+  não um herói editorial.
+- Referência fora do domínio do mostrador/gráfico: não desenhar o
+  tick — fica só no texto (mediana Euribor −0,08 em escala 0–6 %).
+- Nav em dropdowns aceite (14 links não cabiam — 3 grupos kicker +
+  Aprender).
+
+**Decisões de agente** (registadas para revisão):
+- **GSAP fora do bundle inicial**: `import("gsap")` memoizado em
+  `carregarGsap()`, só com `motionActiva()` + abaixo da dobra ou
+  interacção. Em reduced-motion o chunk (~150 KB) nem desce — e2e
+  prova-o por interceptação de pedidos.
+- **Pie do euro**: sector restante desenhado das 12h; cada corte cai
+  para a régua como segmento ∝ cêntimos; «chega à conta» é marcador
+  na fronteira corte/resto (não é um corte); o restante fica `--keep`.
+- **Taxa de carbono incluída** nos impostos do passo 4 do euro
+  (ISP+carbono+IVA — esconder ~0,17 €/L mentia o número).
+- **Instrumentos por `next/dynamic` (ssr:true)** inline por rota —
+  barril partilhado testado e rejeitado (funde os instrumentos num
+  chunk-union que todas as rotas carregam).
+- **`pt.json` fora do cliente**: client components recebem strings por
+  props do servidor; `Source`/`SourceBase` partidos pelo rótulo.
+- **Estados de frescura**: `em-dia/atrasada/sem-sla` — «no limite»
+  não existe; derivados contam como sem SLA (verdade honesta).
+
+**Alternativas rejeitadas**: escala auto do mostrador (drama vem do
+dado); tick de referência fora da escala (distorce o eixo); rótulos
+flutuantes no euro (tudo fica na moeda ou na régua); animação acima
+da dobra (regra M-09 mantida); barril de dynamics (ver acima).
+
+**Em aberto**: copy novo para revisão do dono (blocos `emprego.*`,
+`habitacao.*`, `economia.*`, `dados.*`, `nav.grupo*`, sub-divisões
+ECOICOP, `series.*` novas — listado em NOTAS-OBSERVATORIO.md);
+«no limite» como estado de frescura futuro (aviso antes de atrasar);
+o residual de ~460 KB é o piso do Next 16 — só desce mudando de stack.

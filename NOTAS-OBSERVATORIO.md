@@ -150,3 +150,71 @@ peso novo: os módulos são os mesmos.)
 - LCP: 280–884 ms (máx. /irs 884, /precos 856).
 - CLS: 0–0,068 excepto /aprender/limite-deducoes 0,188 (pré-existente,
   fora do âmbito — anotado para revisão).
+
+## E-02 — testes e CI (2026-09-21)
+
+- `e2e/interacoes.spec.ts` (6 testes): painel por teclado (Tab→Enter→
+  Linha visível→Escape→foco devolvido — adicionada reposição de foco
+  no GrelhaPainel), `#painel=euribor-12m-mensal` nasce expandido sem
+  tween, nav dropdowns por teclado/Escape/um-aberto, catálogo «diária»
+  → 3 + «máx» muda a janela, calendário com setas + aria-valuetext,
+  e reduced-motion: chunks do gsap identificados pelo conteúdo
+  (`window.gsap`/`_gsap`) — sanity: carregam ao fazer scroll em
+  movimento normal; em reduced-motion 0 pedidos nas 42 rotas.
+- Unit: `scripts/derive/painel.test.ts` (6 testes — variação, pct=null
+  com base ≤0, mediana-10-a/UE27, inflacao-homologa, série em falta
+  omitida, derivado herda pior estado); `viz.test.ts` +1 (escalaTempo
+  com pontos Q/S/mistos); `fmtPeriodo` já coberto (9 casos).
+- Auditorias com exit code (falhas chumbam): `_mega-audit`,
+  `_overflow-sweep`, `_sweep` (AA + svg exposto). `npm run audit` =
+  os três; precisam de `serve:out` na :3100.
+- CI: job `qualidade` em deploy-pages.yml — instala chromium com
+  cache (~/.cache/ms-playwright por lockfile), corre `test:e2e` e
+  `audit`; `build`/`deploy` dependem dele — falha = não publica.
+- Resultado: **35 testes e2e verdes em 3 corridas seguidas**
+  (6,2 min / 3,1 min / 3,1 min), 0 flakes.
+
+## E-03 — fecho (2026-09-21)
+
+- Docs: PRODUTO §8 (rotas, painel, instrumentos, séries/SLAs, motion,
+  orçamento), DECISOES datada (dono vs agente, rejeitadas, abertas),
+  `src/app/design-system.md` novo, /estilo «Proibido» com os defeitos
+  desta fase (rótulo flutuante, escala auto, animação acima da dobra),
+  AGENTS (comandos audit/serve:out/_js-por-rota/_bundle-top, regras
+  gsap/fmtPeriodo/props, rotas), README actualizado, PACK com hashes.
+- Limpeza: apagados `_shots`, `_b/c/c2/d/d2-shots`, `_m1*-shot(s)`,
+  `_aa-probe`, `_cores`, `_lcp`, `audit-visual` — ficam
+  `_mega-audit`, `_overflow-sweep`, `_sweep`, `_js-por-rota`,
+  `_serve-static`, `_bundle-top`.
+- Copy novo para revisão do dono (PT-PT, por aprovar):
+  `emprego.*`, `habitacao.*`, `economia.*`, `dados.*`,
+  `nav.grupoDinheiro/grupoPrecos/grupoPais`, nomes de sub-divisões
+  ECOICOP e agregados em `divisoes`, `series.*` (euribor-1m/6m,
+  pmd-gpl, 8× TAEG), `home.euro.*`, e as entradas novas do «Proibido»
+  em /estilo.
+
+### Medições finais (build de fecho, 2026-09-21)
+
+JS inicial por rota (`_js-por-rota`, medido em pedidos reais):
+`/` 531 · salario 502 · impostos 479 · inflacao 532 · credito 569 ·
+casa 482 · irs 493 · trabalho 490 · poupanca 541 · precos 538 ·
+emprego 530 · habitacao 527 · economia 564 · dados 528 · aprender*
+466–540 · metodologia 531 · estilo 551 · sobre 459 KB.
+
+Chunk partilhado (`_bundle-top --shared`, build BUNDLE_MAPS=1):
+454 KB atribuídos e **100 % framework** — react-dom-client 196,0;
+react-server-dom 22,6; segment-cache cache.ts 21,7 + scheduler 13,1;
+ppr-navigations 10,2; react 7,6; restante = router/layout-runtime da
+Next 16. Único ficheiro nosso: SiteNav 3,6 KB.
+
+Top global (todos os chunks, 1158 KB atribuídos): react-dom-client
+196,0 · **Linha.tsx 94,2** · gsap-core 50,1 · ScrollTrigger 33,5 ·
+react-server-dom 22,6 · segment-cache 21,7 · Flip 19,1 · CSSPlugin
+18,3 · format.ts 18,0 · d3-path 17,7 KB. GSAP (~120 KB somado) vive
+em chunks próprios — não entra no inicial de nenhuma rota e em
+reduced-motion não é pedido (e2e).
+
+Sweep final: AA 0 falhas nos dois temas · CLS ≤ 0,09 · LCP ~0,5–1,6 s
+(máx /dados) · overflow 0 · mega-audit 0 falhas / 0 avisos em 42 págs.
+e2e: 35/35 verdes em 4 corridas consecutivas (3× E-02 + fecho).
+OG ≤ 53 KB · fontes latin + swap.

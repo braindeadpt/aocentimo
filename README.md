@@ -11,16 +11,24 @@ uma fonte falha, mostramos a falha — nunca um número inventado.
 
 ## O que tem
 
+- **Painel vivo na home** — grelha de leituras oficiais (inflação, Euribor,
+  combustíveis, desemprego, habitação, PIB…), cada uma expansível para a
+  série completa; mais o storytelling «o teu euro» (1 € bruto cortado à
+  fatia, com números do motor fiscal)
+- **Páginas temáticas de dados** — `/inflacao` (12 divisões ECOICOP),
+  `/precos` (calendário diário de combustíveis), `/emprego`, `/habitacao`,
+  `/economia`, e `/dados` (catálogo de 52 séries com filtros e export JSON)
 - **Simuladores** — salário líquido (recibo físico), IRS anual e IRS Jovem,
-  retenção na fonte, crédito habitação (TAN/TAEG/MTIC), compra de casa (IMT+IS),
-  subsídio de desemprego, poupança e juros compostos, inflação por categoria
-- **Dados oficiais ao dia** — Euribor (BPstat), IHPC por categoria (Eurostat),
-  preços de combustíveis (DGEG), tabelas fiscais versionadas (AT, IGCP),
-  tetos de usura, calendário fiscal
-- **API pública** — `/api/*.json` estático com as séries e regras usadas no site
+  retenção na fonte, crédito habitação (TAN/TAEG/MTIC), compra de casa
+  (IMT+IS), subsídio de desemprego, poupança e juros compostos
+- **Dados oficiais ao dia** — Eurostat (IHPC, desemprego, HPI, LCI, PIB,
+  confiança, electricidade), BPstat (Euribor, TAEG), DGEG (combustíveis),
+  tabelas fiscais versionadas (AT, IGCP), tetos de usura, calendário fiscal
+- **API pública** — `/api/*.json` estático com as séries e regras usadas
 - **Feed RSS** de mudanças fiscais — `/feed.xml`
 - Tema claro («o documento», papel milimetrado) e escuro («o instrumento»),
-  view transitions, reduced-motion respeitado, a11y com equivalentes tabulares
+  view transitions, reduced-motion respeitado (o motor de animação nem é
+  descarregado), a11y com equivalentes tabulares e AA nos dois temas
 
 ## Stack
 
@@ -40,6 +48,8 @@ npm run lint && npm run typecheck
 npm run test:unit      # vitest
 npm run build          # export estático → out/
 npm run test:e2e       # playwright serve o out/ (como o Pages)
+npm run serve:out      # serve o out/ em http://localhost:3100
+npm run audit          # mega-audit + overflow + AA (precisa de :3100)
 npm run ingest:daily   # recolha diária (BPstat, DGEG)
 npm run ingest:monthly # Eurostat IHPC mensal
 npm run derive         # data/derived + public/api + feed.xml

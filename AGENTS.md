@@ -38,20 +38,45 @@ Canónicas em `.agents/skills/` (junctions: `.devin/skills`, `.claude/skills`,
 - `animate`, `improve-animations`, `gsap-*` — motion; mínimo e significativo.
 - `owasp-security` — se alguma vez houver input de utilizador.
 
-## Comandos (alvo, Fase 0)
+## Comandos
 
 ```bash
 npm install && npx playwright install chromium
 npm run dev            # http://localhost:3000
 npm run lint && npm run typecheck
 npm run test:unit      # vitest
-npm run build
-npm run test:e2e       # playwright smoke
+npm run build          # export estático → out/
+npm run serve:out      # serve o out/ em http://localhost:3100
+npm run test:e2e       # playwright (faz build e serve sozinho)
+npm run audit          # _mega-audit + _overflow-sweep + _sweep (precisa de :3100)
 npm run ingest:daily   # scripts/ingest --daily (local mirror do Actions)
 npm run ingest:monthly # Eurostat mensal (prc_hicp_minr, ECOICOP 2018)
 npm run derive         # data/derived + watchdog de frescura
 npm run validate:data  # gate de frescura — falha se série oficial atrasar
+node scripts/_js-por-rota.mjs        # JS inicial/total por rota (precisa de :3100)
+node scripts/_bundle-top.mjs [chunks] # top de módulos por chunk (build com productionBrowserSourceMaps)
 ```
+
+## Regras de viz/motion (vigente)
+
+- **GSAP só via `carregarGsap()`** — nunca `import gsap` estático; só
+  corre com `motionActiva()` e abaixo da dobra ou em interacção. Em
+  reduced-motion o chunk nem é pedido (há teste e2e).
+- **Períodos sempre por `fmtPeriodo()`** — `2026-Q1`→«1.º trim. 2026»;
+  nunca `YYYY-Qn`/`YYYY-Sn`/`YYYY-MM` cru ao utilizador.
+- **Client components não importam `messages/pt.json` nem `data/*.json`** —
+  strings e dados chegam por props do servidor (`m`/`t` ficam em server
+  components; `t` isolado em `src/lib/t.ts`; `Source` é server —
+  em client usa-se `SourceBase` com `rotuloFonte` por prop).
+- Um equivalente textual por figura; AA nos dois temas; nada anima
+  acima da dobra ao carregar.
+
+## Rotas
+
+`/` (painel + «o teu euro») · `/salario` `/irs` `/impostos` `/poupanca`
+`/credito` `/casa` (dinheiro) · `/inflacao` `/precos` `/habitacao`
+(preços) · `/trabalho` `/emprego` `/economia` `/dados` (país) ·
+`/aprender` + `/aprender/[slug]` · `/metodologia` `/estilo` `/sobre`.
 
 ## Limites
 

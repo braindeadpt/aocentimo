@@ -214,3 +214,79 @@ build && test:e2e`.
 `/estilo` — tokens, tipografia, botões, selo de evidência e padrões de
 acessibilidade de gráficos, ao vivo nos dois temas. Quando o sistema mudar,
 `/estilo` e este documento mudam juntos.
+
+## 8. Observatório — estado final (Fases C–E, set 2026)
+
+### Rotas
+
+| Rota | Pergunta | Peça-assinatura |
+|---|---|---|
+| `/` | — | **Painel** (grelha 12 col de leituras vivas, expansível por Flip) + storytelling «o teu euro» (secção pinned, moeda→régua) |
+| `/salario` · `/irs` · `/impostos` · `/poupanca` · `/credito` · `/casa` | simuladores existentes | recibo/talão/cascata/JuroCapital |
+| `/inflacao` | «o que está a ficar caro?» | `Multiplos` 12 divisões ECOICOP + `Linha` CP00 vs CP01 |
+| `/precos` | «quanto está o litro?» | `Calendario` gasóleo + gasolina (ano corrente + anterior) |
+| `/trabalho` | «quanto fica de lado?» | simuladores desemprego/independente |
+| `/emprego` | «Quem está sem trabalho?» | `Linha` PT vs UE27 + `Mostrador` jovem + `Declive` + `Barras` LCI |
+| `/habitacao` | «Quanto subiu a casa?» | `Linha` HPI + `Declive` HPI÷LCI + `Barras` homóloga |
+| `/economia` | «A economia cresce — e tu sentes?» | `Barras` PIB + `Linha` confiança + `Barras` electricidade + `Multiplos` 4×1 |
+| `/dados` | catálogo | `Catalogo`: 52 múltiplos filtráveis + export `/api/*.json` |
+| `/aprender/*` (24 glossário) · `/metodologia` · `/estilo` · `/sobre` | | |
+
+Nav: 3 grupos dropdown no desktop (**Dinheiro · Preços · País**) +
+Aprender; mobile = `<details>` «Índice» com os grupos.
+
+### Painel — contrato
+
+SSR completo de `data/derived/painel.json` (16 instrumentos); cada
+instrumento: `<button aria-expanded>` no cabeçalho → expansão inline
+Flip para `Linha` completa (1 a/5 a/máx, banda mín–máx, mediana
+tracejada, eventos BCE na Euribor), Escape fecha e devolve o foco,
+`#painel=<id>` nasce expandido sem tween. Equivalente: tabela sr-only
+com todas as leituras no HTML.
+
+### Instrumentos → uso → contrato a11y
+
+| Componente | Uso | Contrato |
+|---|---|---|
+| `Linha` | séries temporais | svg `aria-hidden` + tabela sr-only; scrub teclado; banda/ref só se dentro do domínio |
+| `Mostrador` | taxa única | escala fixa declarada + traços por unidade + extremos; referência fora da escala fica só em texto |
+| `Multiplos` | N séries com eixo comum | `dl` sr-only; linha do zero se cruza; rótulo com ellipsis+title |
+| `Calendario` | diário | `role=grid`/`gridcell`, setas movem foco, `aria-valuetext`; equivalente = médias mensais |
+| `Barras`/`Declive`/`EuroBar`/`Cascata`/`JuroCapital` | comparações | equivalente textual único; SSR no estado final |
+| `Catalogo` | /dados | filtros `aria-pressed`; Flip só em interacção |
+| `Spark`/`Odometer`/`Glifo`/`Manchete` | micro | valor final no SSR; animam só ao entrar/em mudança |
+
+Regra transversal: um equivalente por figura, `fmtPeriodo` para todos
+os períodos (`2026-Q1`→«1.º trim. 2026»), fonte+data sempre visíveis.
+
+### Séries e SLAs
+
+Eurostat (mensal, watchdog em `scripts/derive/freshness.ts`):
+IHPC CP00 + 12 divisões ECOICOP + agregados, desemprego
+PT/UE27/jovem, HPI, LCI, PIB homólogo, confiança, electricidade.
+BPstat (mensal): Euribor 1/3/6/12M + 8 TAEG. DGEG (diário):
+PMD gasóleo/gasolina/GPL + electricidade doméstica. Derivados
+(sem SLA próprio — herdam o pior estado dos inputs): `ca-base`,
+`casa-em-salarios`, `desemprego-gap`, `hicp-resumo`, `painel`.
+Estados: `em-dia` / `atrasada` / `sem-sla` — a falha mostra-se.
+
+### Arquitectura de motion
+
+Nada importa `gsap` estaticamente. `carregarGsap()` é um dynamic
+import memoizado chamado só quando `motionActiva()` (não
+reduced-motion) E há movimento legítimo (abaixo da dobra via
+`useArmado`/IntersectionObserver, ou interacção). Durações/curvas
+lidas dos tokens CSS (`dur()`, `ease()`). Em reduced-motion o chunk
+do GSAP **não é descarregado** — tem teste e2e que percorre todas as
+rotas e intercepta os pedidos.
+
+### Orçamento de performance (medido, `_js-por-rota` + `_sweep`)
+
+- JS inicial: piso ~460 KB — o chunk partilhado (459 KB na rota mais
+  leve) é ~100 % framework (react-dom 196 KB + flight/router/
+  segment-cache); código nosso no shared ≈ 4 KB (SiteNav). Rotas:
+  **459–569 KB**. O alvo 450 KB é impossível neste stack — o que
+  controlámos (`pt.json`, `data/*.json`, instrumentos) já saiu.
+- LCP medido no sweep local: ~0,5–1,6 s (máx /dados, catálogo com 52
+  múltiplos); CLS ≤ 0,09; AA 0 falhas nos dois temas.
+- OG images ≤ 53 KB; fontes latin+swap, só as 4 famílias usadas.

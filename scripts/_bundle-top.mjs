@@ -30,9 +30,19 @@ function analisa(ficheiro, acc) {
 }
 
 const alvo = process.argv.slice(2);
-const ficheiros = alvo.length
-  ? alvo
-  : readdirSync(dir).filter((f) => f.endsWith(".js"));
+// --shared: os chunks pedidos pela rota mais leve (/sobre) — o piso comum
+const ficheiros =
+  alvo[0] === "--shared"
+    ? [
+        ...new Set(
+          [...readFileSync("out/sobre.html", "utf8").matchAll(
+            /\/_next\/static\/chunks\/([\w.-]+\.js)/g,
+          )].map((m) => m[1]),
+        ),
+      ]
+    : alvo.length
+      ? alvo
+      : readdirSync(dir).filter((f) => f.endsWith(".js"));
 
 const acc = new Map();
 for (const f of ficheiros) {

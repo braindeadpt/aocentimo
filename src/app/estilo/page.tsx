@@ -1089,6 +1089,9 @@ export default function EstiloPage() {
             "Sem aliases --color-seq-* em SVG inline: @theme inline só emite a var quando há utilidade — em fill/stroke usa-se --seq-* directo.",
             "Sem tinta de tema sobre papel fixo — o papel tem a sua tinta (--talao-ink, papel-sai-tinta, papel-fica-tinta).",
             "Sem número herói vazio à espera de JS — o SSR traz o valor final.",
+            "Sem rótulos flutuantes a meio do ecrã — no «o teu euro» cada valor fica na moeda ou na régua, nunca no ar (fix pós-D-03).",
+            "Sem escala auto no mostrador — a escala é fixa, declarada e lê-se (traços por unidade + extremos); a mediana fora da escala fica só em texto.",
+            "Sem animação acima da dobra ao carregar — o e2e percorre todas as rotas e falha se algo entrar animado.",
           ].map((r) => (
             <li key={r} className="footnote">
               <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-mark align-middle" />
