@@ -1,5 +1,11 @@
 # Direcção V3 — «Ledger»: o observatório como instrumento de secretária
 
+> **Estado: integrada no `docs/PRODUTO.md` a 2026-09-22.** Este ficheiro
+> fica como registo datado da direcção V3 — fontes, as dez regras
+> completas e as decisões extraídas das referências. O contrato vigente é
+> o PRODUTO.md (que resume estas regras em §3 e as completa com a V4);
+> onde divergirem, o PRODUTO manda.
+
 > Referências do dono (2026-09-21): vídeos e capturas de uma app financeira
 > escura (estilo «Ledger») — cartões com breadcrumb, uma cor de sinal,
 > anotações com linhas de chamada tracejadas, controlos físicos (régua,

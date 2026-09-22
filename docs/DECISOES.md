@@ -218,6 +218,18 @@ equivalente único por gráfico, herói no HTML sem JS).
 - **`npx serve` instável** — substituir o webServer do playwright.config
   por `_serve-static.mjs` permanentemente?
 - **«Observatório»** — pergunta anterior continua por responder.
+- **V4 · C7 — vídeos de terceiros no repositório público** (relatório §7.1):
+  tirar `docs/brand/referencias/*.mp4` do repo? Recomendação: sim — movê-los
+  para `referencias/` (gitignored). Apagá-los do histórico exige reescrita
+  + force-push, que o AGENTS proíbe — decisão do dono.
+- **V4 · moeda de pontos na home** (relatório §7.2): o campo de cêntimos
+  substitui a explosão isométrica como momento da home? Recomendação: sim
+  (a explosão não é proporcional); a explosão continua para estrutura.
+- **V4 · história canónica do «teu euro»** (relatório §7.3): inclui a TSU
+  (a partir do custo total)? Recomendação: sim — é o facto mais revelador
+  do site; a Sessão 1 alinha home e `/salario`.
+- **V4 · protótipo da moeda de pontos** (relatório §7.4): testar o
+  conceito animado antes das sessões longas?
 
 ## Perguntas em aberto (arquivo)
 
@@ -267,3 +279,48 @@ da dobra (regra M-09 mantida); barril de dynamics (ver acima).
 ECOICOP, `series.*` novas — listado em NOTAS-OBSERVATORIO.md);
 «no limite» como estado de frescura futuro (aviso antes de atrasar);
 o residual de ~460 KB é o piso do Next 16 — só desce mudando de stack.
+
+## 2026-09-22 — Direcção V4: «o cêntimo como unidade» e a verdade única
+
+**Contexto.** O relatório `referencias/V4/00-RELATORIO.md` (2026-09-22)
+diagnosticou: os componentes melhoraram muito mas o produto não — a home é
+uma colagem de três gerações (V1/V3), cada página repete a mesma história
+com números diferentes, e os documentos canónicos estavam em deriva
+(PRODUTO sem V3, DIRECAO-V3 órfã, AGENTS com rotas revertidas e regra de
+movimento a colidir com o herói animado). As referências novas convergem
+todas para **unidades contáveis** (pontos, traços) — e o produto chama-se
+AO CÊNTIMO.
+
+**Alternativas.** (a) Substituir a V3 por uma linguagem nova — rejeitado,
+as peças V3 são boas e o relatório manda não deitar nada fora;
+(b) manter a V3 e só corrigir defeitos — rejeitado, não resolve a
+arquitectura («confuso/massudo») nem aproveita a unidade; (c) biblioteca
+de visualização pesada para os campos de pontos — rejeitado, Canvas 2D
+nativo chega para centenas de pontos a 60 fps.
+
+**Escolha.** V4 = V3 «Ledger» + a unidade + a arquitectura:
+- **Unidade:** 1 ponto = 1 cêntimo — partes de um todo em dinheiro
+  desenham-se em pontos contáveis (maior resto; o texto diz o decimal).
+- **Arquitectura:** três níveis em todas as páginas de conteúdo
+  (1 · A resposta / 2 · Explora / 3 · Confirma) e navegação por quatro
+  perguntas (O que ganhas · O que pagas · O banco · O país) + Aprender.
+- **Catálogo fechado de codificações** (PRODUTO.md §5): cada tipo de
+  dado tem a sua forma. Regra de ouro: isométrico = estrutura (o que é),
+  pontos = quantidade (quanto é).
+- **Regras visuais V4:** vermelhão só no dinheiro que sai (bruto e custo
+  total neutros); raio com significado (papel 0 · instrumento 14 px ·
+  controlos pílula); números heróis em Archivo tabular (Space Mono só em
+  rótulos, kickers e tabelas).
+- **Verdade única:** PRODUTO.md integra V3 + V4; DIRECAO-V3.md fica como
+  registo com cabeçalho de estado; AGENTS.md corrige as rotas e a regra
+  da dobra (nada entra com animação acima da dobra; animação ambiente só
+  no herói da home, com pausa fora do ecrã/separador escondido e
+  reduced-motion).
+
+**Consequências.** Um agente que leia AGENTS → PRODUTO encontra a V3 e a
+V4 sem contradições com o código. A Sessão 1 (`v4/fundacao`) corrige os
+defeitos do relatório e constrói os componentes partilhados
+(`CampoCentimos`, catálogo, `Cartao`/`Pagina`, nav por perguntas,
+`OrbeEstado`), que **congelam** antes das sessões paralelas 2 e 3A–3D.
+As decisões em aberto do relatório §7 entraram em «Perguntas ao dono»
+acima.

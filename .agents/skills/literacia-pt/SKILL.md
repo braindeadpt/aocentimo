@@ -44,17 +44,32 @@ description: Regras de produto do site de literacia financeira para Portugal (AO
 
 ## Design — "sem cara de IA"
 
-- Direção: «Observatório» — instrumento vivo, escuro por omissão (o claro
-  é o documento). Escala de elevação floor/panel/raised/overlay; textura
-  só no floor; radius 0. `/salario` é o único artefacto de papel (talão
-  físico). Serif editorial + mono tabular para números (escala
-  num-hero/num-read/num-dense), 1 acento só.
-- Cor semântica: verde = dinheiro que fica; vermilhão = o que sai; torrado
-  = fonte/foco. Verde nunca é decoração.
-- Proibido: gradientes hero, glassmorphism, grelhas de cards idênticos,
-  emoji-bullets, iconografia stock, sombras grossas.
+- Direção V4 = V3 «Ledger» + a unidade + a arquitetura (PRODUTO.md §3–§5):
+  instrumento vivo, escuro por omissão (o claro é o documento). Escala de
+  elevação floor/panel/raised/overlay; textura só no floor.
+- **A unidade: 1 ponto = 1 cêntimo.** Partes de um todo em dinheiro
+  desenham-se em pontos contáveis. Regra de ouro: isométrico = estrutura
+  (o que é); pontos = quantidade (quanto é) — nunca o contrário.
+- **Três níveis em cada página:** 1 · A resposta (pergunta + um
+  instrumento + uma frase ≤ 25 palavras), 2 · Explora (controlos),
+  3 · Confirma (tabelas/legislação/fontes em `<details>` fechado).
+- Cor semântica: verde (`--keep`) = só o que fica contigo; vermelhão
+  (`--accent`) = só o dinheiro que sai; ocre (`--mark`) = só fonte/foco;
+  **bruto e custo total são neutros**. Cor nunca é decoração.
+- Raio com significado: papel = 0 (é cortado); instrumento = 14 px;
+  controlos = pílula. O papel é a matéria dos artefactos documentais
+  (recibo, talão, escritura, caderneta) — nunca do chrome.
+- Tipografia: números heróis em Archivo com algarismos tabulares
+  (`tabular-nums`); Space Mono só em rótulos, kickers e tabelas; serifada
+  para a frase-insight; 1 acento só.
+- Proibido: gradientes hero, roxo/violeta, glassmorphism, grelhas de
+  cards idênticos, emoji-bullets, iconografia stock, sombras grossas,
+  mostradores de agulha, scroll-jacking, fade-up genérico, paleta
+  categórica em séries ordinais, qualquer animação que atrase um número.
 - Variações sempre com ▲/▼ + cor semântica (nunca só cor).
-- Motion mínimo e significativo; `prefers-reduced-motion` sempre.
+- Motion mínimo e significativo; `prefers-reduced-motion` = estado final
+  imediato. Nada entra com animação acima da dobra ao carregar (valor
+  final no HTML do servidor); animação ambiente só no herói da home.
 - Tokens em `globals.css`; living reference em `/estilo`.
 - Antes de UI: carregar `frontend-design` + `frontend-ui-engineering`;
   revisão com `web-design-guidelines`. Estas skills genéricas nunca sobrepõem

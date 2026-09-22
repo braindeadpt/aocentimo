@@ -1,13 +1,15 @@
 # AGENTS — Literacia Financeira PT
 
 > **Estado: VIGENTE — este ficheiro é o contrato operacional da casa.**
-> Última revisão: 2026-09-18. Não substitui nenhum documento — rege como
+> Última revisão: 2026-09-22. Não substitui nenhum documento — rege como
 > se trabalha no repo.
 
 Site público de literacia financeira para Portugal. Documento canónico:
-`docs/PRODUTO.md` — direção, sistema visual e regras de produto; ler antes
-de qualquer trabalho. Decisões datadas: `docs/DECISOES.md`. Os três
-planos em `docs/` são históricos — registo, não contrato.
+`docs/PRODUTO.md` — direção (V3 «Ledger» + V4 «o cêntimo como unidade»),
+sistema visual e regras de produto; ler antes de qualquer trabalho.
+`docs/DIRECAO-V3.md` está integrada no PRODUTO.md (registo datado).
+Decisões datadas: `docs/DECISOES.md`. Os três planos em `docs/` são
+históricos — registo, não contrato.
 
 ## Contrato rápido
 
@@ -68,15 +70,19 @@ node scripts/_bundle-top.mjs [chunks] # top de módulos por chunk (build com pro
   strings e dados chegam por props do servidor (`m`/`t` ficam em server
   components; `t` isolado em `src/lib/t.ts`; `Source` é server —
   em client usa-se `SourceBase` com `rotuloFonte` por prop).
-- Um equivalente textual por figura; AA nos dois temas; nada anima
-  acima da dobra ao carregar.
+- Um equivalente textual por figura; AA nos dois temas.
+- **Movimento acima da dobra:** nada ENTRA com animação acima da dobra ao
+  carregar; o valor final está no HTML do servidor. Animação ambiente só
+  no herói da home: pausa fora do ecrã e com o separador escondido, e
+  desliga-se em prefers-reduced-motion.
 
 ## Rotas
 
-`/` (painel + «o teu euro») · `/salario` `/irs` `/impostos` `/poupanca`
-`/credito` `/casa` (dinheiro) · `/inflacao` `/precos` `/habitacao`
-(preços) · `/trabalho` `/emprego` `/economia` `/dados` (país) ·
-`/aprender` + `/aprender/[slug]` · `/metodologia` `/estilo` `/sobre`.
+`/` (home) · `/salario` `/irs` `/impostos` `/poupanca` `/credito`
+`/casa` (dinheiro) · `/inflacao` `/precos` (preços) · `/trabalho`
+`/dados` (país) · `/aprender` + `/aprender/[slug]` · `/metodologia`
+`/estilo` `/sobre`. Só estas existem em `src/app/` — não criar rotas
+novas sem entrada aqui e no PRODUTO.md.
 
 ## Limites
 
