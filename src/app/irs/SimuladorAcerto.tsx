@@ -164,7 +164,7 @@ export function SimuladorAcerto({ ano }: { ano: number }) {
                 <p className="talao-note talao-dim uppercase tracking-widest">
                   {r.reembolsoEstimado >= 0 ? "Resultado · a receber" : "Resultado · a pagar"}
                 </p>
-                <p className="mt-1 flex items-center justify-between gap-3">
+                <div className="mt-1 flex items-center justify-between gap-3">
                   <NumHero
                     valor={fmtEUR(Math.abs(r.reembolsoEstimado))}
                     animar={Math.abs(r.reembolsoEstimado)}
@@ -181,7 +181,7 @@ export function SimuladorAcerto({ ano }: { ano: number }) {
                   >
                     {r.reembolsoEstimado >= 0 ? "a receber" : "a pagar"}
                   </span>
-                </p>
+                </div>
                 <p className="talao-note talao-dim mt-2">
                   {r.reembolsoEstimado >= 0
                     ? "REEMBOLSO — FOI UM EMPRÉSTIMO GRÁTIS QUE FIZESTE AO ESTADO, MÊS A MÊS."

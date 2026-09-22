@@ -1,28 +1,11 @@
 import { test, expect } from "@playwright/test";
-import { readdirSync, readFileSync } from "fs";
+import { readFileSync } from "fs";
+import { rotasDoSite } from "./rotas";
 
 // o domínio declarado em public/CNAME é a fonte de verdade do deploy —
 // se divergir do canonical gerado, o SEO aponta para um domínio que
 // não serve o site (defeito real que já aconteceu)
 const HOST = readFileSync("public/CNAME", "utf8").trim().toLowerCase();
-
-/**
- * Lista de rotas derivada, nunca escrita à mão: o sitemap é gerado do
- * conteúdo (expande rotas dinâmicas como /aprender/[slug]) e os .html
- * exportados cobrem as páginas fora do sitemap (ex.: /estilo). Qualquer
- * rota nova nasce coberta por todos os testes abaixo.
- */
-function rotasDoSite(): string[] {
-  const deSitemap = [
-    ...readFileSync("out/sitemap.xml", "utf8").matchAll(/<loc>([^<]+)<\/loc>/g),
-  ].map((m) => new URL(m[1]).pathname);
-  const deHtml = readdirSync("out", { recursive: true })
-    .filter((f): f is string => typeof f === "string" && f.endsWith(".html"))
-    .map((f) => f.replace(/\\/g, "/").replace(/\.html$/, ""))
-    .filter((f) => !f.startsWith("_") && f !== "404")
-    .map((p) => (p === "index" ? "/" : `/${p}`));
-  return [...new Set([...deSitemap, ...deHtml])].sort();
-}
 
 test("home renderiza com os números-chave", async ({ page }) => {
   await page.goto("/");
