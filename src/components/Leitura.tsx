@@ -35,7 +35,7 @@ export interface PontoLeitura {
   v: number;
 }
 
-export type FormatoLeitura = "pct" | "pct1" | "litro" | "num";
+export type FormatoLeitura = "pct" | "pct1" | "litro" | "num" | "pp" | "kwh";
 
 export type ReferenciaLeitura =
   | { pontos: PontoLeitura[]; rotulo: string }
@@ -92,6 +92,8 @@ const FORMATOS: Record<
   pct1: { fmt: (v) => `${fmtNum(v, 1)} %`, casas: 1, sufixo: " %" },
   litro: { fmt: fmtLitro, casas: 3, sufixo: " €/L" },
   num: { fmt: (v) => fmtNum(v), casas: 2, sufixo: "" },
+  pp: { fmt: (v) => `${fmtNum(v, 1)} p.p.`, casas: 1, sufixo: " p.p." },
+  kwh: { fmt: (v) => `${fmtNum(v, 4)} €/kWh`, casas: 4, sufixo: " €/kWh" },
 };
 
 const r1 = (n: number) => Math.round(n * 10) / 10;
@@ -234,9 +236,16 @@ export function Leitura({
   );
   const ly = rotAcima ? ay - 30 : ay + 34;
 
-  // rótulo da referência constante — por cima da linha, âncora na
-  // direita do plot; se colidir com o rótulo de fim da principal,
-  // desce para debaixo da linha de mediana
+  // rótulo da referência constante — por cima da linha, encostado à
+  // direita do plot; se colidir com o rótulo de fim da principal, desce
+  // para debaixo da linha de mediana. Em cartões estreitos (grelhas a
+  // 3 col.) o rótulo pode não caber entre a borda e o fim do plot —
+  // encosta-se à esquerda em vez de cortar na margem do svg
+  const rotRefLinha = refLinha
+    ? `${refLinha.rotulo} · ${FMT(refLinha.valor)}`
+    : "";
+  const wRotRefLinha = rotRefLinha.length * MONO_CH;
+  const xRotRefLinha = Math.max(pad.l + 2, W - pad.r - 6 - wRotRefLinha);
   const yLinhaRef = refLinha ? y(refLinha.valor) : 0;
   const yFimMain = pts.length ? pts[pts.length - 1][1] : 0;
   const yFimRef = refPts.length ? refPts[refPts.length - 1][1] : 0;
@@ -351,11 +360,11 @@ export function Leitura({
               {refLinha && (
                 <text
                   className="lq-txt lq-ref-rotulo"
-                  x={W - pad.r - 6}
+                  x={xRotRefLinha}
                   y={yRotRefLinha}
-                  textAnchor="end"
+                  textAnchor="start"
                 >
-                  {refLinha.rotulo} · {FMT(refLinha.valor)}
+                  {rotRefLinha}
                 </text>
               )}
 

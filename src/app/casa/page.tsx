@@ -2,8 +2,20 @@ import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
+import { Leitura } from "@/components/Leitura";
 import { SimuladorCasa } from "./SimuladorCasa";
-import { fmtEUR0 } from "@/lib/format";
+import { loadFonte, loadDerivado, loadFreshness } from "@/lib/data";
+import { fmtEUR0, fmtNum, fmtPeriodo } from "@/lib/format";
+import {
+  anotacaoDe,
+  estadoDe,
+  homologa,
+  janela10,
+  rotulosLeitura,
+  type Cartao,
+  type Ponto,
+} from "@/lib/leitura";
+import { m, t } from "@/lib/messages";
 import { readFileSync } from "fs";
 import path from "path";
 import imt from "@data/fiscal/imt-2026.json";
@@ -28,8 +40,51 @@ function euriborAtual(): { valor: number; ate: string } | null {
   }
 }
 
+/** derivado casa-em-salarios: índice de preços da habitação ÷ custo do
+    trabalho reindexado (2015=100) — razão de índices, não salários reais */
+interface CasaSalarios {
+  meta: { fonte: string; url: string; serieAte: string };
+  series: Ponto[];
+}
+
 export default function CasaPage() {
   const eur = euriborAtual();
+  const rotulos = rotulosLeitura();
+  const fresh = loadFreshness();
+
+  // ————— o preço das casas como instrumento: índice Eurostat da
+  //   habitação em taxa homóloga (série trimestral, passo 4) —————
+  const hpi = loadFonte("eurostat", "hpi-pt");
+  const serieHpi = hpi ? janela10(homologa(hpi.series, 4)) : [];
+  const ultHpi = serieHpi[serieHpi.length - 1];
+  const cartao: Cartao | null =
+    hpi && ultHpi
+      ? {
+          breadcrumb: m.painel.cartoes.habitacao.breadcrumb,
+          titulo: m.painel.cartoes.habitacao.titulo,
+          insight: t(m.painel.insightHabitacao, {
+            direcao: ultHpi.v >= 0 ? m.painel.subiu : m.painel.desceu,
+            v: fmtNum(Math.abs(ultHpi.v), 1),
+          }),
+          valor: ultHpi.v,
+          unidade: "%",
+          formato: "pct1",
+          serie: serieHpi,
+          anotacao: anotacaoDe(serieHpi, "max", (v) => `${fmtNum(v, 1)} %`),
+          leitura: fmtPeriodo(ultHpi.t),
+          estado: estadoDe(fresh, "hpi-pt"),
+          fonteNome: hpi.meta.fonte,
+          fonteUrl: hpi.meta.url,
+          href: "/casa",
+          hrefJson: "/api/hpi-pt.json",
+          amplo: true,
+        }
+      : null;
+
+  // a razão casa/trabalho — a conclusão do derivado, em prosa curta
+  const razao = loadDerivado<CasaSalarios>("casa-em-salarios");
+  const ultRazao = razao?.series.at(-1) ?? null;
+
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
       <JsonLd
@@ -49,6 +104,23 @@ export default function CasaPage() {
         Este simulador soma tudo — com as tabelas oficiais de {imt.ano} e a
         Euribor real do Banco de Portugal.
       </p>
+
+      {/* o índice de preços da habitação em leitura — homóloga do
+          trimestre; a razão casa/trabalho fica em prosa por baixo */}
+      {cartao && (
+        <div className="mt-8">
+          <Leitura {...cartao} rotulos={rotulos} />
+          {razao && ultRazao && (
+            <p className="footnote mt-3">
+              Face ao custo do trabalho, a casa está{" "}
+              {fmtNum(Math.abs(ultRazao.v - 100), 0)} %{" "}
+              {ultRazao.v >= 100 ? "acima" : "abaixo"} do nível de 2015
+              ({fmtPeriodo(ultRazao.t)} — razão de índices Eurostat, não
+              salários reais).
+            </p>
+          )}
+        </div>
+      )}
 
       <Figure
         title="Simulador de compra"

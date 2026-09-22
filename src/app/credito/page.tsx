@@ -2,9 +2,20 @@ import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
+import { Leitura } from "@/components/Leitura";
 import { LineChart } from "@/components/LineChart";
 import { SimuladorPrestacao } from "./SimuladorPrestacao";
 import { loadFonte, loadFreshness, loadPainel } from "@/lib/data";
+import { fmtNum, fmtPeriodo } from "@/lib/format";
+import {
+  anotacaoDe,
+  estadoDe,
+  insightMediana,
+  janela10,
+  mediana,
+  rotulosLeitura,
+  type Cartao,
+} from "@/lib/leitura";
 import { m } from "@/lib/messages";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 import eventos from "@data/fiscal/eventos.json";
@@ -21,13 +32,48 @@ export default function CreditoPage() {
   const ultimo = eur?.series.at(-1) ?? null;
   // o marcador «agora» da régua da taxa é a Euribor 12M — a referência
   // de contrato mais comum; a mediana de 10 anos vem do painel derivado
-  const ultimo12 = loadFonte("bpstat", "euribor-12m-mensal")?.series.at(-1) ?? null;
+  const eur12 = loadFonte("bpstat", "euribor-12m-mensal");
+  const ultimo12 = eur12?.series.at(-1) ?? null;
   const mediana12 =
     loadPainel()?.series.find((s) => s.id === "euribor-12m-mensal")?.referencia
       ?.valor ?? null;
   const fresh = loadFreshness();
   const estado =
     fresh?.series.find((s) => s.id === "euribor-3m-mensal")?.estado ?? "sem-sla";
+
+  // ————— a leitura do contrato: Euribor 12M, 10 anos, mediana da
+  //   janela como referência constante, pico anotado —————
+  const rotulos = rotulosLeitura();
+  const serieEur12 = eur12 ? janela10(eur12.series) : [];
+  const medEur12 = mediana(serieEur12.map((p) => p.v));
+  const cartao: Cartao | null =
+    eur12 && ultimo12 && serieEur12.length > 1
+      ? {
+          breadcrumb: m.painel.cartoes.euribor.breadcrumb,
+          titulo: m.painel.cartoes.euribor.titulo,
+          insight: insightMediana(
+            ultimo12.v,
+            medEur12 !== null ? { valor: medEur12 } : null,
+            "%"
+          ),
+          valor: ultimo12.v,
+          unidade: "%",
+          formato: "pct",
+          serie: serieEur12,
+          referencia:
+            medEur12 !== null
+              ? { valor: medEur12, rotulo: m.leitura.mediana10 }
+              : undefined,
+          anotacao: anotacaoDe(serieEur12, "max", (v) => `${fmtNum(v, 2)} %`),
+          leitura: fmtPeriodo(ultimo12.t),
+          estado: estadoDe(fresh, "euribor-12m-mensal"),
+          fonteNome: eur12.meta.fonte,
+          fonteUrl: eur12.meta.url,
+          href: "/credito",
+          hrefJson: "/api/euribor-12m-mensal.json",
+          amplo: true,
+        }
+      : null;
 
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
@@ -48,6 +94,14 @@ export default function CreditoPage() {
         não se negoceia; o spread, sim. E dentro de cada prestação esconde-se
         uma divisão — no início pagas sobretudo juro, no fim sobretudo capital.
       </p>
+
+      {/* a Euribor 12M como instrumento — a taxa do contrato, 10 anos
+          contra a mediana da própria janela */}
+      {cartao && (
+        <div className="mt-8">
+          <Leitura {...cartao} rotulos={rotulos} />
+        </div>
+      )}
 
       <Figure
         title="Simulador de prestação"

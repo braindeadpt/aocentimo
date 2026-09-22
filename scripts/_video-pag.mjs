@@ -1,16 +1,17 @@
 // _video-pag — grava a entrada de um cartão «Leitura» numa página
-// temática (R-04a): chegada suave à secção (arma + desenha a linha,
-// hachura e anotação por ordem) e o hover que inverte para papel.
-// Depois os shots de verificação das 4 páginas convertidas em
-// 1440-dark e 375 (.shots/), em reduced-motion = estado final.
-//   node scripts/_video-pag.mjs [base] [rota]   (default :3100 /inflacao)
+// temática: chegada suave à secção (arma + desenha a linha, hachura e
+// anotação por ordem) e o hover que inverte para papel. Depois os
+// shots de verificação das páginas em 1440-dark e 375 (.shots/), em
+// reduced-motion = estado final.
+//   node scripts/_video-pag.mjs [base] [rota] [rotas-shots]
+//   default: :3100 /dados credito,casa,dados
 import { chromium } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import { mkdirSync, readdirSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 
 const BASE = process.argv[2] ?? "http://localhost:3100";
-const ROTA = process.argv[3] ?? "/inflacao";
+const ROTA = process.argv[3] ?? "/dados";
 const OUT_V = ".videos";
 const OUT_S = ".shots";
 mkdirSync(OUT_V, { recursive: true });
@@ -85,9 +86,9 @@ if (webm) {
   console.log("sem vídeo gravado");
 }
 
-// ————— shots de verificação: as 4 páginas R-04a em 1440-dark e 375,
+// ————— shots de verificação: páginas em 1440-dark e 375,
 //   reduced-motion = estado final impresso —————
-const ROTAS = ["inflacao", "precos", "trabalho", "poupanca"];
+const ROTAS = (process.argv[4] ?? "credito,casa,dados").split(",");
 const b2 = await chromium.launch();
 async function shot(nome, rota, largura, tema) {
   const c = await b2.newContext({

@@ -207,6 +207,8 @@
     "insightHabitacao": "o preço das casas {direcao} {v} % num ano",
     "insightCombustivel": "{sinal}{v} cêntimos num mês",
     "insightCombustivelZero": "o litro não mexeu num mês",
+    "insightElec": "{abs} cêntimos por kWh {direcao} da mediana de 10 anos",
+    "insightCasaTrabalho": "face ao custo do trabalho, a casa está {v} % {direcao} do nível de 2015",
     "cartoes": {
       "inflacao": {
         "breadcrumb": "PREÇOS / CABAZ · EUROSTAT",
@@ -279,6 +281,32 @@
       "breadcrumb": "DINHEIRO / POUPANÇA · IGCP",
       "titulo": "Certificados de Aforro",
       "cap": "a taxa base está no tecto de {valor}"
+    },
+    "pais": {
+      "confianca": {
+        "breadcrumb": "PAÍS / CONFIANÇA · EUROSTAT",
+        "titulo": "Confiança dos consumidores"
+      },
+      "eletricidade": {
+        "breadcrumb": "PAÍS / ELETRICIDADE · EUROSTAT",
+        "titulo": "Eletricidade doméstica"
+      },
+      "custoTrabalho": {
+        "breadcrumb": "PAÍS / CUSTO DO TRABALHO · EUROSTAT",
+        "titulo": "Custo do trabalho"
+      },
+      "jovem": {
+        "breadcrumb": "PAÍS / TRABALHO JOVEM · EUROSTAT",
+        "titulo": "Desemprego jovem"
+      },
+      "gap": {
+        "breadcrumb": "PAÍS / TRABALHO · PT − UE27 · EUROSTAT",
+        "titulo": "Desemprego — diferença para a UE"
+      },
+      "casaTrabalho": {
+        "breadcrumb": "PAÍS / HABITAÇÃO · EUROSTAT",
+        "titulo": "Casa vs custo do trabalho"
+      }
     }
   },
   "euroV3": {

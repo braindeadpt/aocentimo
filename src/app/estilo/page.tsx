@@ -756,6 +756,22 @@ export default function EstiloPage() {
 
       <section className="stack-sec">
         <h2 className="kicker mb-4">Componentes</h2>
+        <p className="footnote mb-4 max-w-xl">
+          Os instrumentos da linguagem V3 vivem nas páginas: o cartão{" "}
+          <Link href="/dados" className="underline decoration-line2 underline-offset-2">
+            «Leitura»
+          </Link>{" "}
+          — uma ideia por objecto, com breadcrumb, insight, série, referência
+          e fonte — e a régua física de input em{" "}
+          <Link href="/credito" className="underline decoration-line2 underline-offset-2">
+            /credito
+          </Link>{" "}
+          e{" "}
+          <Link href="/salario" className="underline decoration-line2 underline-offset-2">
+            /salario
+          </Link>
+          .
+        </p>
         <div className="grid gap-6 md:grid-cols-4">
           <Stat label="Exemplo" value="920 €" hint="salário mínimo 2026" />
           <Stat label="Variação" value={<Delta value={0.023} />} hint="preço a subir" />
