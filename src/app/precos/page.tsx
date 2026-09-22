@@ -1,16 +1,20 @@
 import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
-import { Delta } from "@/components/Delta";
-import { LineChart } from "@/components/LineChart";
+import { Leitura } from "@/components/Leitura";
 import { DecomposicaoFuel } from "../impostos/DecomposicaoFuel";
 import { Source } from "@/components/Source";
-import { loadFonte, type Serie } from "@/lib/data";
-import { fmtData } from "@/lib/format";
-import { Odometer } from "@/components/Odometer";
+import { loadFonte, loadFreshness, type Serie } from "@/lib/data";
+import { fmtData, fmtLitro, fmtNum, fmtPeriodo } from "@/lib/format";
+import {
+  anotacaoDe,
+  estadoDe,
+  rotulosLeitura,
+  type Cartao,
+} from "@/lib/leitura";
+import { m, t } from "@/lib/messages";
 import isp from "@data/fiscal/isp.json";
 import iva from "@data/fiscal/iva.json";
-import eventos from "@data/fiscal/eventos.json";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
@@ -20,34 +24,63 @@ export const metadata: Metadata = {
   alternates: { canonical: "/precos", types: ALT_FEED },
 };
 
-const COMBUSTIVEIS: [string, string][] = [
-  ["pmd-gasoleo-diario", "Gasóleo simples"],
-  ["pmd-gasolina95-diario", "Gasolina 95"],
-  ["pmd-gpl-diario", "GPL auto"],
+const COMBUSTIVEIS: [
+  string,
+  { breadcrumb: string; titulo: string },
+][] = [
+  ["pmd-gasoleo-diario", m.leitura.combustiveis.gasoleo],
+  ["pmd-gasolina95-diario", m.leitura.combustiveis.gasolina95],
+  ["pmd-gpl-diario", m.leitura.combustiveis.gpl],
 ];
 
-function varDias(s: Serie, dias: number): number | null {
+/** variação absoluta (€/L) entre o último ponto e o ponto com pelo
+    menos `dias` dias de distância — em cêntimos multiplica-se por 100 */
+function deltaDias(s: Serie, dias: number): number | null {
   const alvo = s.series[s.series.length - 1];
   const alvoMs = Date.parse(alvo.t);
-  // último ponto com pelo menos `dias` dias de distância
   const anterior = [...s.series].reverse().find(
     (p) => alvoMs - Date.parse(p.t) >= dias * 86_400_000
   );
-  if (!anterior || anterior.v === 0) return null;
-  return alvo.v / anterior.v - 1;
+  return anterior ? alvo.v - anterior.v : null;
 }
 
 export default function PrecosPage() {
-  const series = COMBUSTIVEIS.map(([id, nome]) => ({
-    id,
-    nome,
-    serie: loadFonte("dgeg", id),
-  }));
-  const temDados = series.every((s) => s.serie !== null);
-  const ultimo = series[0].serie?.meta.serieAte;
-  // janela do gráfico: desde 2022 — a guerra, o desconto do ISP e o
-  // pico são a história; 12 meses escondiam os eventos que a explicam
-  const corte = "2022-01-01";
+  const fresh = loadFreshness();
+  const rotulos = rotulosLeitura();
+
+  // cada combustível é uma leitura: ~6 meses de PMD diário, o insight
+  // é a variação do último mês em cêntimos — a unidade que se sente
+  const cartoes: Cartao[] = COMBUSTIVEIS.flatMap(([id, rot]) => {
+    const s = loadFonte("dgeg", id);
+    const serie = s ? s.series.slice(-180) : [];
+    const ult = serie[serie.length - 1];
+    if (!s || !ult) return [];
+    const centimos = (deltaDias(s, 30) ?? 0) * 100;
+    return [
+      {
+        breadcrumb: rot.breadcrumb,
+        titulo: rot.titulo,
+        insight:
+          Math.abs(centimos) < 0.5
+            ? m.painel.insightCombustivelZero
+            : t(m.painel.insightCombustivel, {
+                sinal: centimos >= 0 ? "+" : "−",
+                v: fmtNum(Math.abs(centimos), 1),
+              }),
+        valor: ult.v,
+        unidade: "€/L",
+        formato: "litro" as const,
+        serie,
+        anotacao: anotacaoDe(serie, "max", fmtLitro),
+        leitura: fmtPeriodo(s.meta.serieAte),
+        estado: estadoDe(fresh, id),
+        fonteNome: s.meta.fonte,
+        fonteUrl: s.meta.url,
+        href: "/precos",
+        hrefJson: `/api/${id}.json`,
+      },
+    ];
+  });
 
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
@@ -69,49 +102,19 @@ export default function PrecosPage() {
         oficial é mensal (vê <a href="/inflacao" className="underline decoration-line2 underline-offset-2">Inflação</a>).
       </p>
 
-      <Figure
-        title="Preço médio nacional, por litro"
-        source={
-          <Source
-            nome="DGEG — preços médios diários"
-            url={series[0].serie?.meta.url ?? "https://precoscombustiveis.dgeg.gov.pt"}
-            serieAte={ultimo}
-          />
-        }
-      >
-        {temDados ? (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-line border border-line mb-6">
-              {series.map(({ id, nome, serie }) => {
-                const p = serie!.series[serie!.series.length - 1];
-                return (
-                  <div key={id} className="bg-panel px-4 py-4">
-                    <p className="kicker">{nome}</p>
-                    {/* contador da bomba — rodas mecânicas por dígito;
-                        rolamento só na revelação abaixo da dobra (M-09) */}
-                    <p className="num-read mt-1">
-                      <Odometer valor={p.v} casas={3} sufixo=" €/L" />
-                    </p>
-                    <p className="text-xs text-muted mt-1 flex gap-3">
-                      <span>sem <Delta value={varDias(serie!, 7)} casas={1} /></span>
-                      <span>ano <Delta value={varDias(serie!, 365)} casas={1} /></span>
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-            <LineChart
-              series={series.map(({ nome, serie }) => ({
-                name: nome,
-                data: serie!.series
-                  .filter((p) => !corte || p.t >= corte!)
-                  .map((p) => [p.t, p.v] as [string, number]),
-              }))}
-              unidade="€"
-              eventos={eventos.eventos.filter((e) => e.alvo === "combustiveis")}
-            />
-          </>
-        ) : (
+      {/* um instrumento por combustível — o litro em €, meio ano de
+          PMD e a variação do mês em cêntimos como insight */}
+      {cartoes.length > 0 ? (
+        <div className="mt-8 grid gap-5 md:grid-cols-3">
+          {cartoes.map((cartao) => (
+            <Leitura key={cartao.titulo} {...cartao} rotulos={rotulos} />
+          ))}
+        </div>
+      ) : (
+        <Figure
+          title="Preço médio nacional, por litro"
+          source="DGEG — preços médios diários"
+        >
           <div className="border border-line bg-panel px-5 py-10 text-center">
             <p className="num-read text-muted">—</p>
             <p className="footnote mt-3 max-w-md mx-auto">
@@ -120,8 +123,8 @@ export default function PrecosPage() {
               inventado: a honestidade é a regra nº 1 deste site.
             </p>
           </div>
-        )}
-      </Figure>
+        </Figure>
+      )}
 
       <Figure
         title="Enquanto isso: quanto do litro é imposto?"

@@ -7,12 +7,16 @@ import {
 } from "@/components/EuroExplodido";
 import { FitaTalao } from "@/components/FitaTalao";
 import { Kinetic } from "@/components/Kinetic";
+import { Leitura } from "@/components/Leitura";
+import { loadFonte, loadPainel } from "@/lib/data";
 import {
-  Leitura,
-  type LeituraProps,
-  type RotulosLeitura,
-} from "@/components/Leitura";
-import { loadFonte, loadPainel, type PainelSerie } from "@/lib/data";
+  anotacaoDe,
+  insightMediana,
+  janela10,
+  homologa,
+  rotulosLeitura,
+  type Cartao,
+} from "@/lib/leitura";
 import { decomporCombustivel } from "@/lib/engines/impostos";
 import { simularSalario } from "@/lib/engines/irs";
 import { retencaoNaFonte } from "@/lib/engines/retencao";
@@ -31,54 +35,6 @@ import {
 import { m, t } from "@/lib/messages";
 import { SITE_URL } from "@/lib/site";
 
-type Ponto = { t: string; v: number };
-type Cartao = Omit<LeituraProps, "rotulos">;
-
-/** janela dos últimos ~10 anos — o ano vem do prefixo do período
-    (regra do derivador: mensal, trimestral e semestral servem) */
-const janela10 = (s: Ponto[]): Ponto[] => {
-  const ult = s[s.length - 1];
-  if (!ult) return s;
-  const fim = Number(ult.t.slice(0, 4));
-  return s.filter((p) => Number(p.t.slice(0, 4)) >= fim - 10);
-};
-
-/** taxa homóloga de um índice — v / v[i-passo] − 1, em % */
-const homologa = (s: Ponto[], passo: number): Ponto[] =>
-  s.slice(passo).map((p, i) => ({ t: p.t, v: (p.v / s[i].v - 1) * 100 }));
-
-/** UM extremo real da janela — a anotação é sempre um dado, nunca
-    um ponto inventado; o rótulo já sai formatado do servidor */
-const anotacaoDe = (
-  s: Ponto[],
-  tipo: "max" | "min",
-  fmt: (v: number) => string
-): Cartao["anotacao"] => {
-  if (s.length === 0) return undefined;
-  const p = s.reduce((b, q) =>
-    tipo === "max" ? (q.v > b.v ? q : b) : q.v < b.v ? q : b
-  );
-  return {
-    t: p.t,
-    rotulo: t(tipo === "max" ? m.leitura.pico : m.leitura.minimo, {
-      periodo: fmtPeriodo(p.t),
-      valor: fmt(p.v),
-    }),
-  };
-};
-
-/** insight «{abs} p.p. {acima|abaixo} da mediana de 10 anos» */
-const insightMediana = (item: PainelSerie): string =>
-  item.referencia
-    ? t(m.painel.insightMediana, {
-        abs: fmtNum(Math.abs(item.valor - item.referencia.valor)),
-        direcao:
-          item.valor >= item.referencia.valor
-            ? m.painel.acima
-            : m.painel.abaixo,
-      })
-    : `${fmtNum(item.valor)} ${item.unidade}`;
-
 export default function Home() {
   const h = m.home;
   const painel = loadPainel();
@@ -86,18 +42,7 @@ export default function Home() {
     painel?.series.find((s) => s.id === id) ?? null;
   const c = m.painel.cartoes;
 
-  const rotulosLeitura: RotulosLeitura = {
-    leitura: m.leitura.leitura,
-    fonte: m.leitura.fonte,
-    pagina: m.leitura.pagina,
-    json: m.leitura.json,
-    estados: {
-      "em-dia": m.leitura.emDia,
-      atrasada: m.leitura.atrasada,
-      "sem-sla": m.leitura.semSla,
-    },
-    aria: m.leitura.aria,
-  };
+  const rotulos = rotulosLeitura();
 
   // ————— o Leitura-herói: inflação homóloga, histórico de 10 anos —————
   const infl = pSerie("inflacao-homologa");
@@ -108,7 +53,7 @@ export default function Home() {
       ? {
           breadcrumb: c.inflacao.breadcrumb,
           titulo: c.inflacao.titulo,
-          insight: insightMediana(infl),
+          insight: insightMediana(infl.valor, infl.referencia, infl.unidade),
           valor: infl.valor,
           unidade: infl.unidade,
           formato: "pct",
@@ -155,7 +100,7 @@ export default function Home() {
       ? {
           breadcrumb: c.euribor.breadcrumb,
           titulo: c.euribor.titulo,
-          insight: insightMediana(eur),
+          insight: insightMediana(eur.valor, eur.referencia, eur.unidade),
           valor: eur.valor,
           unidade: eur.unidade,
           formato: "pct",
@@ -246,7 +191,7 @@ export default function Home() {
       ? {
           breadcrumb: c.pib.breadcrumb,
           titulo: c.pib.titulo,
-          insight: insightMediana(pib),
+          insight: insightMediana(pib.valor, pib.referencia, pib.unidade),
           valor: pib.valor,
           unidade: pib.unidade,
           formato: "pct1",
@@ -432,14 +377,14 @@ export default function Home() {
         </div>
         {hero && (
           <div className="mt-5">
-            <Leitura {...hero} rotulos={rotulosLeitura} />
+            <Leitura {...hero} rotulos={rotulos} />
           </div>
         )}
         <div className="mt-5 grid gap-5 lg:grid-cols-2">
           {cartoes
             .filter((cartao): cartao is Cartao => cartao !== null)
             .map((cartao) => (
-              <Leitura key={cartao.titulo} {...cartao} rotulos={rotulosLeitura} />
+              <Leitura key={cartao.titulo} {...cartao} rotulos={rotulos} />
             ))}
         </div>
       </section>

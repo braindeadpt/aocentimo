@@ -1,11 +1,22 @@
 import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
+import { Leitura } from "@/components/Leitura";
 import { Source } from "@/components/Source";
 import { SimuladorDesemprego } from "./SimuladorDesemprego";
 import { SimuladorIndependente } from "./SimuladorIndependente";
 import desemprego from "@data/fiscal/desemprego.json";
 import catb from "@data/fiscal/catb.json";
+import { loadFonte, loadFreshness } from "@/lib/data";
+import { fmtNum, fmtPeriodo } from "@/lib/format";
+import {
+  anotacaoDe,
+  estadoDe,
+  janela10,
+  rotulosLeitura,
+  type Cartao,
+} from "@/lib/leitura";
+import { m, t } from "@/lib/messages";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
@@ -16,6 +27,42 @@ export const metadata: Metadata = {
 };
 
 export default function TrabalhoPage() {
+  const rotulos = rotulosLeitura();
+  const fresh = loadFreshness();
+
+  // ————— o dado do país na página do trabalho: desemprego PT com a
+  // média europeia como série de referência por baixo —————
+  const unePt = loadFonte("eurostat", "une-pt-total");
+  const uneUe = loadFonte("eurostat", "une-ue27-total");
+  const seriePt = unePt ? janela10(unePt.series) : [];
+  const serieUe = uneUe ? janela10(uneUe.series) : [];
+  const ultPt = seriePt[seriePt.length - 1];
+  const ultUe = serieUe[serieUe.length - 1];
+  const cartao: Cartao | null =
+    unePt && ultPt && ultUe
+      ? {
+          breadcrumb: m.painel.cartoes.desemprego.breadcrumb,
+          titulo: m.painel.cartoes.desemprego.titulo,
+          insight: t(m.painel.insightUe, {
+            abs: fmtNum(Math.abs(ultPt.v - ultUe.v), 1),
+            direcao: ultPt.v >= ultUe.v ? m.painel.acima : m.painel.abaixo,
+          }),
+          valor: ultPt.v,
+          unidade: "%",
+          formato: "pct1",
+          serie: seriePt,
+          referencia: { pontos: serieUe, rotulo: m.leitura.ue27 },
+          anotacao: anotacaoDe(seriePt, "max", (v) => `${fmtNum(v, 1)} %`),
+          leitura: fmtPeriodo(unePt.meta.serieAte),
+          estado: estadoDe(fresh, "une-pt-total"),
+          fonteNome: unePt.meta.fonte,
+          fonteUrl: unePt.meta.url,
+          href: "/trabalho",
+          hrefJson: "/api/une-pt-total.json",
+          amplo: true,
+        }
+      : null;
+
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
       <JsonLd
@@ -35,6 +82,12 @@ export default function TrabalhoPage() {
         da tua remuneração de referência, dentro de limites e por tempo
         contado.
       </p>
+
+      {cartao && (
+        <div className="mt-8">
+          <Leitura {...cartao} rotulos={rotulos} />
+        </div>
+      )}
 
       <Figure
         title="Simulador de subsídio de desemprego"

@@ -424,7 +424,9 @@ test("painéis de dados, API e feed servem", async ({ page }) => {
   await expect(page.getByText("Calendário fiscal 2026")).toBeVisible();
 
   await page.goto("/precos");
-  await expect(page.getByText("Preço médio nacional, por litro")).toBeVisible();
+  // R-04a: cada combustível é um cartão Leitura (breadcrumb DGEG) —
+  // o bloco «Preço médio nacional, por litro» virou 3 instrumentos
+  await expect(page.locator(".leitura")).toHaveCount(3);
   await expect(page.getByText("Gasóleo simples").first()).toBeVisible();
 
   const api = await page.goto("/api/index.json");

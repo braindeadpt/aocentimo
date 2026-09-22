@@ -2,14 +2,24 @@ import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Delta } from "@/components/Delta";
-import { LineChart } from "@/components/LineChart";
+import { Leitura } from "@/components/Leitura";
 import { Source } from "@/components/Source";
 import { JsonLd, dataset } from "@/lib/jsonld";
 import { PoderDeCompra } from "./PoderDeCompra";
 import { SalarioReal } from "./SalarioReal";
 import { loadSerie, variacao, loadFontes, loadFreshness, type Serie } from "@/lib/data";
-import { fmtNum } from "@/lib/format";
-import eventos from "@data/fiscal/eventos.json";
+import { fmtNum, fmtPeriodo } from "@/lib/format";
+import {
+  anotacaoDe,
+  estadoDe,
+  homologa,
+  insightMediana,
+  janela10,
+  mediana,
+  rotulosLeitura,
+  type Cartao,
+} from "@/lib/leitura";
+import { m } from "@/lib/messages";
 
 export const metadata: Metadata = {
   title: "Inflação — quanto subiu o que compras",
@@ -49,13 +59,9 @@ function anoBase(s: Serie | null): string | null {
 
 export default function InflacaoPage() {
   const cp00 = loadSerie("CP00");
-  const cp01 = loadSerie("CP01");
-  const nrg = loadSerie("NRG");
   const fonte = loadFontes().find((f) => f.id === "hicp-pt-cp00");
   const fresh = loadFreshness();
-  const ihpcAtrasada = ["hicp-pt-cp00", "hicp-pt-cp01", "hicp-pt-nrg"].some(
-    (id) => fresh?.series.find((s) => s.id === id)?.estado === "atrasada"
-  );
+  const rotulos = rotulosLeitura();
 
   const linhas = CATEGORIAS.map(([cod, nome]) => ({
     cod,
@@ -65,8 +71,81 @@ export default function InflacaoPage() {
 
   const temDados = cp00 !== null;
   const base = anoBase(cp00);
-  const baseLabel = base ?? cp00?.meta.unidade ?? null;
   const desde = cp00?.series[0]?.t.slice(0, 4) ?? "1996";
+
+  // ————— a leitura-herói: taxa homóloga do índice geral, 10 anos,
+  // com a mediana da própria série como referência constante —————
+  const homCp00 = cp00 ? janela10(homologa(cp00.series, 12)) : [];
+  const medCp00 = mediana(homCp00.map((p) => p.v));
+  const ultCp00 = homCp00[homCp00.length - 1];
+  const hero: Cartao | null =
+    cp00 && ultCp00
+      ? {
+          breadcrumb: m.painel.cartoes.inflacao.breadcrumb,
+          titulo: m.painel.cartoes.inflacao.titulo,
+          insight: insightMediana(
+            ultCp00.v,
+            medCp00 !== null ? { valor: medCp00 } : null,
+            "%"
+          ),
+          valor: ultCp00.v,
+          unidade: "%",
+          formato: "pct",
+          serie: homCp00,
+          referencia:
+            medCp00 !== null
+              ? { valor: medCp00, rotulo: m.leitura.mediana10 }
+              : undefined,
+          anotacao: anotacaoDe(homCp00, "max", (v) => `${fmtNum(v, 1)} %`),
+          leitura: fmtPeriodo(cp00.meta.serieAte),
+          estado: estadoDe(fresh, "hicp-pt-cp00"),
+          fonteNome: cp00.meta.fonte,
+          fonteUrl: cp00.meta.url,
+          href: "/inflacao",
+          hrefJson: "/api/hicp-pt-cp00.json",
+          amplo: true,
+        }
+      : null;
+
+  // ————— as divisões mais faladas, homólogas, na mesma régua —————
+  const divisoes: [string, { breadcrumb: string; titulo: string }][] = [
+    ["CP01", m.leitura.cabaz.alimentacao],
+    ["CP045", m.leitura.cabaz.energiaCasa],
+    ["CP11", m.leitura.cabaz.restaurantes],
+  ];
+  const cartoesDiv: Cartao[] = divisoes.flatMap(([cod, rot]) => {
+    const s = loadSerie(cod);
+    const hom = s ? janela10(homologa(s.series, 12)) : [];
+    const ult = hom[hom.length - 1];
+    if (!s || !ult) return [];
+    const med = mediana(hom.map((p) => p.v));
+    return [
+      {
+        breadcrumb: rot.breadcrumb,
+        titulo: rot.titulo,
+        insight: insightMediana(
+          ult.v,
+          med !== null ? { valor: med } : null,
+          "%"
+        ),
+        valor: ult.v,
+        unidade: "%",
+        formato: "pct1" as const,
+        serie: hom,
+        referencia:
+          med !== null
+            ? { valor: med, rotulo: m.leitura.mediana10 }
+            : undefined,
+        anotacao: anotacaoDe(hom, "max", (v) => `${fmtNum(v, 1)} %`),
+        leitura: fmtPeriodo(s.meta.serieAte),
+        estado: estadoDe(fresh, `hicp-pt-${cod.toLowerCase()}`),
+        fonteNome: s.meta.fonte,
+        fonteUrl: s.meta.url,
+        href: "/inflacao",
+        hrefJson: `/api/hicp-pt-${cod.toLowerCase()}.json`,
+      },
+    ];
+  });
 
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
@@ -95,32 +174,25 @@ export default function InflacaoPage() {
         Euro), por categoria, desde {desde}.
       </p>
 
-      <Figure
-        title={`Índice de preços, Portugal${baseLabel ? ` (${baseLabel}${base ? " = 100" : ""})` : ""}`}
-        source={
-          fonte ? (
-            <Source
-              nome="Eurostat, IHPC mensal"
-              url={fonte.url}
-              serieAte={fonte.serieAte}
-              recolhidoEm={fonte.recolhidoEm}
-            />
-          ) : (
-            "Eurostat, IHPC mensal"
-          )
-        }
-      >
-        {temDados ? (
-          <LineChart
-            series={[
-              { name: "Índice geral", data: cp00!.series.map((p) => [p.t + "-01", p.v] as [string, number]) },
-              { name: "Alimentação", data: (cp01 ?? cp00!).series.map((p) => [p.t + "-01", p.v] as [string, number]) },
-              { name: "Energia", data: (nrg ?? cp00!).series.map((p) => [p.t + "-01", p.v] as [string, number]) },
-            ]}
-            eventos={eventos.eventos.filter((e) => e.alvo === "ihpc")}
-            estado={ihpcAtrasada ? "atrasada" : "em-dia"}
-          />
-        ) : (
+      {/* a taxa homóloga como instrumento — herói amplo + divisões;
+          a base do índice e a tabela por categoria ficam mais abaixo */}
+      {hero ? (
+        <div className="stack-fig">
+          <Leitura {...hero} rotulos={rotulos} />
+          {cartoesDiv.length > 0 && (
+            <div className="mt-5 grid gap-5 md:grid-cols-3">
+              {cartoesDiv.map((cartao) => (
+                <Leitura
+                  key={cartao.titulo}
+                  {...cartao}
+                  rotulos={rotulos}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <Figure title="Índice de preços, Portugal" source="Eurostat, IHPC mensal">
           <div className="border border-line bg-panel px-5 py-10 text-center text-ink2">
             <p className="num-read">—</p>
             <p className="footnote mt-2">
@@ -128,8 +200,8 @@ export default function InflacaoPage() {
               para puxar as séries do Eurostat.
             </p>
           </div>
-        )}
-      </Figure>
+        </Figure>
+      )}
 
       <Figure
         title="Variação por categoria"

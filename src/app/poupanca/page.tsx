@@ -1,12 +1,24 @@
 import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
+import { Leitura } from "@/components/Leitura";
 import { Source } from "@/components/Source";
 import { ComparadorPoupanca } from "./ComparadorPoupanca";
 import { CadernetaAforro } from "./CadernetaAforro";
 import { SimuladorPpr } from "./SimuladorPpr";
 import { SimuladorMaisValias } from "./SimuladorMaisValias";
-import { fmtData, fmtPct } from "@/lib/format";
+import { loadDerivado } from "@/lib/data";
+import { fmtData, fmtNum, fmtPct, fmtPeriodo } from "@/lib/format";
+import {
+  anotacaoDe,
+  insightMediana,
+  janela10,
+  mediana,
+  rotulosLeitura,
+  type Cartao,
+  type Ponto,
+} from "@/lib/leitura";
+import { m, t } from "@/lib/messages";
 import ca from "@data/fiscal/ca.json";
 import capitais from "@data/fiscal/capitais.json";
 import ppr from "@data/fiscal/ppr.json";
@@ -20,7 +32,61 @@ export const metadata: Metadata = {
   alternates: { canonical: "/poupanca", types: ALT_FEED },
 };
 
+/** derivado ca-base: taxa base mensal dos CA Série F (IGCP oficial +
+    Euribor 3M indicativa) — o meta é mais rico que uma fonte crua */
+interface CaBase {
+  meta: {
+    fonte: string;
+    url: string;
+    serieAte: string;
+    oficialPct?: number;
+  };
+  series: Ponto[];
+}
+
 export default function PoupancaPage() {
+  const rotulos = rotulosLeitura();
+
+  // ————— a taxa base dos Certificados como instrumento —————
+  const caBase = loadDerivado<CaBase>("ca-base");
+  const serieCa = caBase ? janela10(caBase.series) : [];
+  const ultCa = serieCa[serieCa.length - 1];
+  const medCa = mediana(serieCa.map((p) => p.v));
+  const cap = caBase?.meta.oficialPct;
+  const cartao: Cartao | null =
+    caBase && ultCa
+      ? {
+          breadcrumb: m.leitura.certificados.breadcrumb,
+          titulo: m.leitura.certificados.titulo,
+          insight:
+            cap !== undefined && ultCa.v >= cap
+              ? t(m.leitura.certificados.cap, {
+                  valor: `${fmtNum(cap, 2)} %`,
+                })
+              : insightMediana(
+                  ultCa.v,
+                  medCa !== null ? { valor: medCa } : null,
+                  "%"
+                ),
+          valor: ultCa.v,
+          unidade: "%",
+          formato: "pct",
+          serie: serieCa,
+          referencia:
+            medCa !== null
+              ? { valor: medCa, rotulo: m.leitura.mediana10 }
+              : undefined,
+          anotacao: anotacaoDe(serieCa, "max", (v) => `${fmtNum(v, 1)} %`),
+          leitura: fmtPeriodo(caBase.meta.serieAte),
+          estado: "sem-sla",
+          fonteNome: caBase.meta.fonte,
+          fonteUrl: caBase.meta.url,
+          href: "/poupanca",
+          hrefJson: "/api/ca-base.json",
+          amplo: true,
+        }
+      : null;
+
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
       <JsonLd
@@ -38,6 +104,12 @@ export default function PoupancaPage() {
         e sem aviso. A taxa que interessa é a <strong>real</strong>: nominal
         menos imposto menos inflação.
       </p>
+
+      {cartao && (
+        <div className="mt-8">
+          <Leitura {...cartao} rotulos={rotulos} />
+        </div>
+      )}
 
       <Figure
         title="Comparador de poupança"

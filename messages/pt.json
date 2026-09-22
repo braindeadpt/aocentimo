@@ -244,7 +244,42 @@
     "semSla": "sem SLA",
     "pico": "pico {periodo} · {valor}",
     "minimo": "mínimo {periodo} · {valor}",
-    "aria": "{insight} — série de {de} a {ate}, último {valor}"
+    "aria": "{insight} — série de {de} a {ate}, último {valor}",
+    "mediana10": "mediana 10 anos",
+    "ue27": "UE 27",
+    "cabaz": {
+      "alimentacao": {
+        "breadcrumb": "PREÇOS / CABAZ · ALIMENTAÇÃO · EUROSTAT",
+        "titulo": "Alimentação e bebidas"
+      },
+      "energiaCasa": {
+        "breadcrumb": "PREÇOS / CABAZ · ENERGIA DA CASA · EUROSTAT",
+        "titulo": "Eletricidade e gás"
+      },
+      "restaurantes": {
+        "breadcrumb": "PREÇOS / CABAZ · RESTAURANTES · EUROSTAT",
+        "titulo": "Restaurantes e hotéis"
+      }
+    },
+    "combustiveis": {
+      "gasoleo": {
+        "breadcrumb": "PREÇOS / COMBUSTÍVEIS · GASÓLEO SIMPLES · DGEG",
+        "titulo": "Gasóleo simples"
+      },
+      "gasolina95": {
+        "breadcrumb": "PREÇOS / COMBUSTÍVEIS · GASOLINA 95 · DGEG",
+        "titulo": "Gasolina 95"
+      },
+      "gpl": {
+        "breadcrumb": "PREÇOS / COMBUSTÍVEIS · GPL AUTO · DGEG",
+        "titulo": "GPL auto"
+      }
+    },
+    "certificados": {
+      "breadcrumb": "DINHEIRO / POUPANÇA · IGCP",
+      "titulo": "Certificados de Aforro",
+      "cap": "a taxa base está no tecto de {valor}"
+    }
   },
   "euroV3": {
     "titulo": "O TEU EURO",
