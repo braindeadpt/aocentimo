@@ -1,5 +1,10 @@
 import Link from "next/link";
 import { Adivinha } from "@/components/Adivinha";
+import {
+  EuroExplodido,
+  type PassoEuro,
+  type RotulosEuro,
+} from "@/components/EuroExplodido";
 import { FitaTalao } from "@/components/FitaTalao";
 import { Kinetic } from "@/components/Kinetic";
 import {
@@ -8,8 +13,13 @@ import {
   type RotulosLeitura,
 } from "@/components/Leitura";
 import { loadFonte, loadPainel, type PainelSerie } from "@/lib/data";
+import { decomporCombustivel } from "@/lib/engines/impostos";
 import { simularSalario } from "@/lib/engines/irs";
+import { retencaoNaFonte } from "@/lib/engines/retencao";
 import { TSU_ENTIDADE, TSU_TRABALHADOR } from "@/lib/engines/seg-social";
+import isp from "@data/fiscal/isp.json";
+import retencaoJson from "@data/fiscal/retencao-2026.json";
+import ssJson from "@data/fiscal/ss.json";
 import {
   fmtLitro,
   fmtNum,
@@ -288,6 +298,91 @@ export default function Home() {
     }),
   ];
 
+  // ————— «o teu euro» (R-02): a decomposição de 1 € bruto —————
+  // Tudo sai dos motores e das fontes, para um salário bruto de
+  // 1 500 €/mês (solteiro, sem dependentes, regras 2026): SS do
+  // trabalhador, retenção de IRS, líquido, os impostos dentro de 50 L
+  // de gasóleo ao PMD mais recente (ISP + carbono + IVA) e o que fica
+  // — cada valor em cêntimos por euro bruto. Nada escrito à mão.
+  const e3 = m.euroV3;
+  const brutoMes = 1500;
+  const ssEuro = brutoMes * TSU_TRABALHADOR;
+  const retEuro = retencaoNaFonte(brutoMes, "naoCasado", 0, 2026).retencao;
+  const liquidoEuro = brutoMes - ssEuro - retEuro;
+  const pmdEuro = loadFonte("dgeg", "pmd-gasoleo-diario");
+  const precoEuro = pmdEuro?.series[pmdEuro.series.length - 1]?.v ?? 0;
+  const decGasoleo = decomporCombustivel(
+    precoEuro,
+    isp.gasoleo.ispELitro,
+    isp.gasoleo.carbonoELitro
+  );
+  const impostos50 = decGasoleo.impostos * 50;
+  const porEuro = (v: number) => (v / brutoMes) * 100;
+  const motorEuro = { nome: e3.motor, url: "/salario" };
+  const passoGasoleo: PassoEuro | null =
+    pmdEuro && precoEuro > 0
+      ? {
+          id: "gasoleo",
+          rotulo: e3.passos.gasoleo.rotulo,
+          detalhe: t(e3.passos.gasoleo.detalhe, {
+            preco: fmtLitro(precoEuro),
+          }),
+          centimos: porEuro(impostos50),
+          fonteNome: `${pmdEuro.meta.fonte} + ${isp.fonte.split(";")[0]}`,
+          fonteUrl: pmdEuro.meta.url,
+        }
+      : null;
+  const passosEuro: PassoEuro[] = [
+    {
+      id: "ss",
+      rotulo: e3.passos.ss.rotulo,
+      detalhe: e3.passos.ss.detalhe,
+      centimos: porEuro(ssEuro),
+      fonteNome: ssJson.fonte,
+      fonteUrl: ssJson.fonteUrl,
+    },
+    {
+      id: "irs",
+      rotulo: e3.passos.irs.rotulo,
+      detalhe: e3.passos.irs.detalhe,
+      centimos: porEuro(retEuro),
+      fonteNome: retencaoJson.fonte,
+      fonteUrl: retencaoJson.fonteUrl,
+    },
+    {
+      id: "liquido",
+      rotulo: e3.passos.liquido.rotulo,
+      detalhe: e3.passos.liquido.detalhe,
+      centimos: porEuro(liquidoEuro),
+      fonteNome: motorEuro.nome,
+      fonteUrl: motorEuro.url,
+    },
+    {
+      id: "fica",
+      rotulo: e3.passos.fica.rotulo,
+      detalhe: e3.passos.fica.detalhe,
+      centimos: porEuro(liquidoEuro - impostos50),
+      fonteNome: motorEuro.nome,
+      fonteUrl: motorEuro.url,
+    },
+  ];
+  // o gasóleo entra antes do «fica» — só com PMD real (regra nº1)
+  if (passoGasoleo) passosEuro.splice(passosEuro.length - 1, 0, passoGasoleo);
+  const rotulosEuro: RotulosEuro = {
+    titulo: e3.titulo,
+    nota: e3.nota,
+    breadcrumb: e3.breadcrumb,
+    meta:
+      pmdEuro && precoEuro > 0
+        ? t(e3.meta, { quando: fmtPeriodo(pmdEuro.meta.serieAte) })
+        : "",
+    brutoRotulo: e3.brutoRotulo,
+    brutoDetalhe: e3.brutoDetalhe,
+    ficamTe: e3.ficamTe,
+    fontes: e3.fontes,
+    simulador: e3.simulador,
+  };
+
   const ld = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -377,6 +472,13 @@ export default function Home() {
           </ol>
         </Adivinha>
       </section>
+
+      {/* «O TEU EURO» (R-02) — o euro bruto em explosão isométrica:
+          camadas wireframe afastadas na vertical, chamadas tracejadas
+          até aos rótulos mono; a lista é o equivalente sempre visível.
+          Depois do painel de leituras, antes dos capítulos — e depois
+          do instrumento, para a adivinha não chegar respondida. */}
+      <EuroExplodido passos={passosEuro} rotulos={rotulosEuro} />
 
       {/* capítulos — o percurso do euro */}
       <section className="stack-cap">

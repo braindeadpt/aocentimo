@@ -233,6 +233,40 @@
     "minimo": "mínimo {periodo} · {valor}",
     "aria": "{insight} — série de {de} a {ate}, último {valor}"
   },
+  "euroV3": {
+    "titulo": "O TEU EURO",
+    "nota": "salário de 1 500 € brutos · solteiro, sem dependentes · regras 2026",
+    "breadcrumb": "O TEU DINHEIRO / DECOMPOSIÇÃO · MOTORES 2026",
+    "meta": "PMD gasóleo · {quando}",
+    "brutoRotulo": "1 € bruto",
+    "brutoDetalhe": "1 500 € por mês",
+    "ficamTe": "ficam-te",
+    "fontes": "Fontes",
+    "simulador": "simulador",
+    "motor": "AO CÊNTIMO · motores do recibo e do litro",
+    "passos": {
+      "ss": {
+        "rotulo": "Segurança Social",
+        "detalhe": "TSU do trabalhador — sai do recibo"
+      },
+      "irs": {
+        "rotulo": "IRS retido",
+        "detalhe": "retenção mensal, tabelas 2026"
+      },
+      "liquido": {
+        "rotulo": "Chega à conta",
+        "detalhe": "o líquido depois de SS e IRS"
+      },
+      "gasoleo": {
+        "rotulo": "Gasóleo · 50 L",
+        "detalhe": "ISP, carbono e IVA a {preco}"
+      },
+      "fica": {
+        "rotulo": "Fica-te",
+        "detalhe": "o resto de cada euro, antes do IVA"
+      }
+    }
+  },
   "guess": {
     "kicker": "adivinha primeiro",
     "pergunta": "De cada 1,00 € que a empresa paga por ti, quantos cêntimos achas que te chegam?",

@@ -35,6 +35,21 @@
 Processo: o dono aponta 3–5 itens concretos → extraímos a mecânica para
 aqui → aplicamos à peça seguinte. Não se desenha «de cabeça».
 
+## Decisões extraídas das referências (2026-09-22, revistas com vídeo)
+- **Euro = explosão isométrica.** «O teu euro» desmonta-se em camadas
+  verticais de traço fino (como o vault da referência 1): cada peça é um
+  elipse/placa wireframe separada, afastada na vertical; linha de chamada
+  tracejada liga cada peça ao rótulo mono (SS, IRS, IVA do gasóleo, «fica»);
+  a peça em foco recebe fill `--accent` a ~12 %; a última peça («fica»)
+  recebe `--keep`. Montagem por scroll: as peças convergem de cima para o
+  stack (translateY → 0, stagger 80 ms, `--ease-entra`), as chamadas
+  desenham-se depois; reduced-motion = stack montado e legendado.
+  **Nunca mais moeda a rolar.**
+- **Controlos = réguas físicas** (referência 2 e inspora «pick your plan»):
+  traços de unidade a cada passo, polegar = rectângulo cheio com valor,
+  marcador «agora» fixo, presets em pills. Aplica-se a /salario e /credito.
+- **Inversão de foco confirmada** — manter como assinatura (já no R-01).
+
 ## Verificação de movimento (regra nova, permanente)
 Nenhuma animação é «aprovada» por screenshot. Cada peça animada entrega
 `scripts/_video.mjs` (Playwright `recordVideo` + ffmpeg → folha de contacto
