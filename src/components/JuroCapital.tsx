@@ -126,7 +126,7 @@ export function JuroCapital({
           />
         )}
       </svg>
-      <div className="mt-1 flex items-center gap-4 text-xs text-muted">
+      <div className="mt-1 flex items-center gap-4 text-rotulo text-muted">
         <span className="flex items-center gap-1.5">
           <span className="sw" style={{ background: "var(--color-keep)", opacity: 0.7 }} aria-hidden />
           capital — fica teu

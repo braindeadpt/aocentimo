@@ -164,7 +164,7 @@ export default function InflacaoPage() {
         />
       )}
       <p className="kicker">Preços no consumidor</p>
-      <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
+      <h1 className="titulo-pagina">
         Quanto subiu o que compras
       </h1>
       <p className="lede mt-5">
@@ -215,7 +215,7 @@ export default function InflacaoPage() {
         }
       >
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-corpo-sm">
             <thead>
               <tr className="text-left border-b-2 border-ink">
                 <th scope="col" className="py-2 pr-4 font-medium">Categoria</th>
@@ -229,7 +229,7 @@ export default function InflacaoPage() {
                 <tr key={cod} className="border-b border-line">
                   <td className="py-2 pr-4 text-ink2">
                     {nome}
-                    <span className="num text-xs text-muted ml-2">{cod}</span>
+                    <span className="num text-rotulo text-muted ml-2">{cod}</span>
                   </td>
                   <td className="py-2 pr-4 text-right num">
                     {serie ? fmtNum(ultimoValor(serie)!, 2) : "—"}
@@ -288,7 +288,7 @@ export default function InflacaoPage() {
       </Figure>
 
       <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
-        <h2 className="font-display text-2xl text-ink">Ler com honestidade</h2>
+        <h2 className="font-display text-display-sm text-ink">Ler com honestidade</h2>
         <p>
           O IHPC mede um cabaz <em>médio</em>. O teu cabaz pessoal pode ter
           subido mais ou menos — depende do que compras. E índice não é preço:

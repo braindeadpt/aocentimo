@@ -12,7 +12,7 @@ export function Stat({
   return (
     <div className="border-l border-line pl-4 py-1">
       <p className="kicker">{label}</p>
-      <p className="num text-2xl md:text-3xl mt-1 text-ink">{value}</p>
+      <p className="num text-display-sm md:text-display-md mt-1 text-ink">{value}</p>
       {hint && <p className="footnote mt-1">{hint}</p>}
     </div>
   );

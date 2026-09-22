@@ -60,7 +60,7 @@ export function SalarioReal({ serie }: { serie: PontoSerie[] }) {
           <span className="kicker">Poder de compra {r ? `· ${r.mes} → ${ultimo}` : ""}</span>
         </div>
         {r ? (
-          <dl className="px-5 py-4 text-sm">
+          <dl className="px-5 py-4 text-corpo-sm">
             <div className="flex justify-between py-1.5 border-b border-line/60">
               <dt className="text-ink2">{fmtEUR(salarioAntigo)} de então valem hoje</dt>
               <dd className="num">{fmtEUR(r.equivalenteHoje)}</dd>

@@ -72,7 +72,7 @@ export function SimuladorPpr() {
         <div className="border-b border-line px-5 py-3">
           <span className="kicker">O benefício, dos dois lados</span>
         </div>
-        <dl className="px-5 py-4 text-sm">
+        <dl className="px-5 py-4 text-corpo-sm">
           <div className="flex justify-between py-1.5 border-b border-line/60">
             <dt className="text-ink2">Deduzes ao IRS, por ano</dt>
             <dd className="num text-keep">{fmtEUR(r.deducaoAnual)}</dd>
@@ -88,7 +88,7 @@ export function SimuladorPpr() {
           <div className="flex justify-between py-1.5 border-b border-line/60">
             <dt className="text-ink2">
               Imposto sobre {fmtEUR0(r.rendimentos)} de rendimentos
-              <span className="block text-xs text-muted">8 % efetivos vs {fmtPct(capitais.retencaoLiberatoria.taxa, 0)} normais</span>
+              <span className="block text-rotulo text-muted">8 % efetivos vs {fmtPct(capitais.retencaoLiberatoria.taxa, 0)} normais</span>
             </dt>
             <dd className="num">{fmtEUR(r.impostoSaida)} <span className="text-muted">({fmtEUR(r.impostoNormal)})</span></dd>
           </div>

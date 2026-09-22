@@ -96,7 +96,7 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
           </select>
         </div>
         <div>
-          <label className="flex items-center gap-2 text-sm text-ink2">
+          <label className="flex items-center gap-2 text-corpo-sm text-ink2">
             <input type="checkbox" checked={jovem} disabled={tipo !== "hpp"}
               onChange={(e) => setJovem(e.target.checked)}
               className="h-4 w-4 accent-[var(--color-accent)]" />
@@ -195,7 +195,7 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
                 key={`cut-${runEscritura}`}
               >
                 <span className="talao-total">Custa mesmo</span>
-                <span className="text-2xl font-bold">{fmtEUR0(realEscritura)}</span>
+                <span className="text-display-sm font-bold">{fmtEUR0(realEscritura)}</span>
               </div>
               <p
                 className={talaoArm("talao-linha") + " talao-note talao-dim"}
@@ -220,7 +220,7 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
           </div>
           <div className="px-5 py-5">
             <NumHero valor={fmtEUR(prest.prestacao)} sufixo="/mês" animar={prest.prestacao} />
-            <dl className="mt-4 text-sm space-y-2">
+            <dl className="mt-4 text-corpo-sm space-y-2">
               <div className="flex justify-between border-b border-line/60 pb-1.5">
                 <dt className="text-ink2">TAN (Euribor + spread)</dt>
                 <dd className="num">{fmtPct(prest.tan)}</dd>

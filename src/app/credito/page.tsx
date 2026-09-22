@@ -84,7 +84,7 @@ export default function CreditoPage() {
           "Simulador de prestação de crédito habitação em Portugal: Euribor, spread, TAN e custo total do empréstimo."
         )}
       />
-      <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
+      <h1 className="titulo-pagina">
         O que a tua prestação esconde
       </h1>
       <p className="lede mt-5">
@@ -160,7 +160,7 @@ export default function CreditoPage() {
       </Figure>
 
       <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
-        <h2 className="font-display text-2xl text-ink">Os cinco termos que interessam</h2>
+        <h2 className="font-display text-display-sm text-ink">Os cinco termos que interessam</h2>
         <dl className="space-y-3">
           <div>
             <dt className="font-medium text-ink">Euribor</dt>

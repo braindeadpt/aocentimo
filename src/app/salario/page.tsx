@@ -29,7 +29,7 @@ export default function SalarioPage() {
           "Do salário bruto ao líquido em Portugal: Segurança Social, retenção de IRS, deduções e o custo total para a empresa."
         )}
       />
-      <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide uppercase">
+      <h1 className="titulo-pagina">
         Quanto vais receber mesmo?
       </h1>
       <p className="lede mt-5">
@@ -86,7 +86,7 @@ export default function SalarioPage() {
       </Figure>
 
       <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
-        <h2 className="font-display text-2xl text-ink">O que a calculadora faz</h2>
+        <h2 className="font-display text-display-sm text-ink">O que a calculadora faz</h2>
         <p>
           1. Soma os 14 meses (salário + subsídios de férias e Natal).{" "}
           2. Abate a <strong>dedução específica</strong> (

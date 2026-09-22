@@ -16,7 +16,7 @@ export function Figure({
   return (
     <figure className="stack-fig">
       <figcaption className="flex items-baseline gap-3 border-t-2 border-ink pt-2 mb-4">
-        <span className="font-display text-lg text-ink">{title}</span>
+        <span className="font-display text-grande text-ink">{title}</span>
       </figcaption>
       {children}
       {source &&

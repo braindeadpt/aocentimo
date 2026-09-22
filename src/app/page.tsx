@@ -318,13 +318,13 @@ export default function Home() {
           comprimida para o quadro do mês entrar na primeira dobra a 375 */}
       <section className="grid items-end gap-4 pt-6 md:grid-cols-12 md:pt-12">
         <div className="md:col-span-8">
-          <h1 className="font-display text-4xl leading-[0.95] tracking-wide text-ink sm:text-6xl lg:text-7xl">
+          <h1 className="titulo-hero">
             <Kinetic texto={`${h.h1a} ${h.h1b}`} />{" "}
             <Kinetic texto={h.h1c} desde={4} className="text-accent" />
           </h1>
         </div>
         <div className="md:col-span-4">
-          <p className="lede !mt-0 text-sm md:text-base">{h.lede}</p>
+          <p className="lede !mt-0">{h.lede}</p>
           <Link href="/salario" className="btn btn-primary mt-4">
             {h.cta}
           </Link>
@@ -340,7 +340,7 @@ export default function Home() {
             {m.painel.titulo}
           </h2>
           {painel?.recolhidoEm && (
-            <p className="num text-xs text-muted">
+            <p className="num text-rotulo text-muted">
               {t(m.painel.recolhido, { quando: fmtDataHora(painel.recolhidoEm) })}
             </p>
           )}
@@ -368,7 +368,7 @@ export default function Home() {
       >
         <div className="flex items-baseline justify-between gap-4">
           <h2 id="instrumento" className="kicker">{h.euroTitulo}</h2>
-          <p className="num text-right text-xs text-muted">{h.euroNota}</p>
+          <p className="num text-right text-rotulo text-muted">{h.euroNota}</p>
         </div>
         <Adivinha real={real} />
       </section>
@@ -383,10 +383,10 @@ export default function Home() {
       {/* capítulos — o percurso do euro */}
       <section className="stack-cap">
         <div className="flex items-baseline justify-between border-b-2 border-ink pb-3">
-          <h2 className="font-display text-2xl tracking-wide md:text-3xl">
+          <h2 className="font-display text-display-sm tracking-wide md:text-display-md">
             {h.capitulosTitulo}
           </h2>
-          <span className="num text-xs text-muted">{h.capitulosNota}</span>
+          <span className="num text-rotulo text-muted">{h.capitulosNota}</span>
         </div>
         <ol>
           {h.capitulos.map((c) => (
@@ -395,13 +395,13 @@ export default function Home() {
                 href={c.href}
                 className="chapter-row group grid grid-cols-[1fr] items-baseline gap-4 px-2 py-6 md:grid-cols-[16rem_1fr_2rem] md:gap-8 md:px-4"
               >
-                <span className="font-display text-3xl tracking-wide transition-colors md:text-4xl">
+                <span className="font-display text-display-md tracking-wide transition-colors md:text-display-lg">
                   {c.titulo}
                 </span>
-                <span className="chapter-dim col-span-2 mt-2 max-w-xl text-sm leading-relaxed text-ink2 transition-colors md:col-span-1 md:mt-0">
+                <span className="chapter-dim col-span-2 mt-2 max-w-xl text-corpo-sm leading-relaxed text-ink2 transition-colors md:col-span-1 md:mt-0">
                   {c.descricao}
                 </span>
-                <span className="chapter-arrow hidden text-right font-display text-2xl text-muted md:block">
+                <span className="chapter-arrow hidden text-right font-display text-display-sm text-muted md:block">
                   →
                 </span>
               </Link>
@@ -413,7 +413,7 @@ export default function Home() {
       {/* ferramentas — os simuladores novos */}
       <section className="stack-cap">
         <div className="border-b-2 border-ink pb-3">
-          <h2 className="font-display text-2xl tracking-wide md:text-3xl">
+          <h2 className="font-display text-display-sm tracking-wide md:text-display-md">
             {h.ferramentasTitulo}
           </h2>
         </div>
@@ -421,10 +421,10 @@ export default function Home() {
           {h.ferramentas.map((f) => (
             <li key={f.href} className="border-t border-line md:border-t-0 md:border-l md:first:border-l-0">
               <Link href={f.href} className="group block px-0 py-6 md:px-6 md:first:pl-0">
-                <span className="font-display text-2xl tracking-wide text-ink transition-colors group-hover:text-accent">
+                <span className="font-display text-display-sm tracking-wide text-ink transition-colors group-hover:text-accent">
                   {f.titulo}
                 </span>
-                <span className="mt-2 block max-w-xs text-sm leading-relaxed text-ink2">
+                <span className="mt-2 block max-w-xs text-corpo-sm leading-relaxed text-ink2">
                   {f.descricao}
                 </span>
               </Link>
@@ -435,7 +435,7 @@ export default function Home() {
 
       {/* manifesto */}
       <section className="stack-cap grid gap-8 border-t-2 border-ink pt-8 pb-8 md:grid-cols-12">
-        <p className="font-display text-3xl leading-tight tracking-wide text-ink md:col-span-5 md:text-4xl">
+        <p className="font-display text-display-md leading-tight tracking-wide text-ink md:col-span-5 md:text-display-lg">
           {h.manifesto1}{" "}
           <br />
           {h.manifesto2}{" "}

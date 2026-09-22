@@ -30,7 +30,7 @@ export function SiteHeader() {
       {/* nome + navegação */}
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-5 pb-3 pt-4">
         <Link href="/" aria-label={m.brand.name} className="block shrink-0 transition-opacity hover:opacity-80">
-          <Logo className="text-3xl md:text-4xl" />
+          <Logo className="text-display-md md:text-display-lg" />
         </Link>
         <SiteNav />
       </div>

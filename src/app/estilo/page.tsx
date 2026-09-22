@@ -72,7 +72,7 @@ export default function EstiloPage() {
   return (
     <div className="mx-auto max-w-6xl px-5 pt-14 pb-10">
       <p className="kicker">Referência viva</p>
-      <h1 className="font-display mt-2 text-3xl uppercase tracking-wide hyphens-auto sm:text-4xl md:text-6xl">
+      <h1 className="titulo-pagina">
         Sistema de design
       </h1>
       <p className="lede mt-5">
@@ -87,7 +87,7 @@ export default function EstiloPage() {
       <section className="stack-sec">
         <h2 className="kicker mb-4">Marca — «o cêntimo»</h2>
         <div className="border border-line bg-panel flex flex-wrap items-center gap-10 p-8">
-          <Logo className="text-2xl sm:text-5xl lg:text-6xl" />
+          <Logo className="text-display-sm sm:text-display-xl lg:text-display-2xl" />
           <LogoMark className="h-16 w-16" />
           <p className="footnote max-w-sm">
             O C do wordmark é o sinal de cêntimo — ¢ — cortado por uma haste
@@ -110,7 +110,7 @@ export default function EstiloPage() {
           {TOKENS.map(([nome, cls, desc]) => (
             <div key={nome} className="border border-line bg-panel">
               <div className={`h-14 ${cls}`} />
-              <p className="num px-2 py-1.5 text-xs text-ink2">{nome}</p>
+              <p className="num px-2 py-1.5 text-rotulo text-ink2">{nome}</p>
               <p className="footnote px-2 pb-2">{desc}</p>
             </div>
           ))}
@@ -165,7 +165,7 @@ export default function EstiloPage() {
                   </svg>
                   <div className="mt-1 flex justify-between">
                     {["1M", "3M", "6M", "12M"].map((k, i) => (
-                      <span key={k} className="num flex items-center gap-1.5 text-xs text-muted">
+                      <span key={k} className="num flex items-center gap-1.5 text-rotulo text-muted">
                         <span aria-hidden className="inline-block size-2.5" style={{ background: `var(--color-${rampa}-${i + 1})` }} />
                         {k}
                       </span>
@@ -204,7 +204,7 @@ export default function EstiloPage() {
             </svg>
             <div className="mt-1 flex justify-between">
               {[1, 2, 3, 4].map((i) => (
-                <span key={i} className="num flex items-center gap-1.5 text-xs text-muted">
+                <span key={i} className="num flex items-center gap-1.5 text-rotulo text-muted">
                   <span aria-hidden className="inline-block size-2.5" style={{ background: `var(--color-dink-${i})` }} />
                   dink-{i}
                 </span>
@@ -302,7 +302,7 @@ export default function EstiloPage() {
           </div>
           <div className="border border-line bg-overlay px-4 py-6 shadow-overlay">
             <p className="kicker-xs text-ink">3 — overlay</p>
-            <p className="mt-2 text-[0.8125rem] leading-normal text-ink2">
+            <p className="mt-2 text-nota leading-normal text-ink2">
               menu e tooltip · só ink/ink2, nunca muted
             </p>
           </div>
@@ -334,7 +334,7 @@ export default function EstiloPage() {
             <div key={nome} className="border border-line bg-panel px-5 py-4">
               <div className="flex items-baseline justify-between">
                 <span className="kicker-xs">{nome}</span>
-                <span className="num text-xs text-muted">{val}</span>
+                <span className="num text-rotulo text-muted">{val}</span>
               </div>
               <div className={`${h} my-3 w-full border-y border-dashed border-line2`} aria-hidden />
               <p className="footnote">{uso}</p>
@@ -344,13 +344,13 @@ export default function EstiloPage() {
         <p className="kicker mb-3 mt-8">Larguras — três molduras, sem excepções</p>
         <div className="space-y-3" aria-hidden>
           <div className="border border-line bg-panel px-4 py-2.5">
-            <span className="num text-xs text-muted">referência — esta página · max-w-6xl</span>
+            <span className="num text-rotulo text-muted">referência — esta página · max-w-6xl</span>
           </div>
           <div className="mx-auto max-w-5xl border border-line bg-panel px-4 py-2.5">
-            <span className="num text-xs text-muted">instrumento — todas as páginas de dados e simuladores · max-w-5xl</span>
+            <span className="num text-rotulo text-muted">instrumento — todas as páginas de dados e simuladores · max-w-5xl</span>
           </div>
           <div className="mx-auto max-w-2xl border border-line bg-panel px-4 py-2.5">
-            <span className="num text-xs text-muted">leitura — prosa corrida, ~68 caracteres · max-w-2xl</span>
+            <span className="num text-rotulo text-muted">leitura — prosa corrida, ~68 caracteres · max-w-2xl</span>
           </div>
         </div>
         <p className="footnote mt-4">
@@ -363,44 +363,103 @@ export default function EstiloPage() {
       </section>
 
       <section className="stack-sec">
-        <h2 className="kicker mb-4">Tipografia</h2>
+        <h2 className="kicker mb-4">Tipografia — escala fechada</h2>
+        <p className="footnote mb-4 max-w-xl">
+          Sete papéis e nada mais: <strong>kicker</strong>,{" "}
+          <strong>rótulo</strong>, <strong>corpo</strong>,{" "}
+          <strong>insight</strong>, <strong>número de leitura</strong>,{" "}
+          <strong>número herói</strong> e <strong>título</strong>. Cada
+          degrau é um token <code className="num">--text-*</code> que gera
+          o utilitário <code className="num">text-*</code> — nenhum
+          elemento escreve um tamanho fora da escala. Os tamanhos dentro
+          de viewBox vivem em <code className="num">--text-svg-*</code>{" "}
+          (unidades do desenho, não da página) e o talão tem a sua
+          sub-escala <code className="num">--text-talao-*</code>: é um
+          documento de impressora térmica, não chrome do site.
+        </p>
         <div className="divide-y divide-line border-y border-line">
           <div className="py-5">
-            <p className="kicker mb-2">Display — Archivo expandido (wdth 125)</p>
-            <p className="font-display text-5xl uppercase tracking-wide">
-              Para onde vai o teu dinheiro.
+            <p className="kicker mb-2">
+              Título de herói — .titulo-hero · Archivo condensado (wdth 75)
             </p>
-          </div>
-          <div className="py-5">
-            <p className="kicker mb-2">Interface — Space Grotesk · .body-copy</p>
-            <p className="body-copy">
-              O corpo da interface e das páginas. Neutro, técnico, sem ser
-              genérico — o par natural do Space Mono dos números.
+            <p className="titulo-hero !mt-0">
+              Onde pára o teu euro.
             </p>
-          </div>
-          <div className="py-5">
-            <p className="kicker mb-2">Rótulos — .kicker, mono maiúsculo</p>
-            <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
-              <p className="kicker">.kicker · 0.6875rem / 0.14em</p>
-              <p className="kicker-sm">.kicker-sm · 0.65rem / 0.16em</p>
-              <p className="kicker-xs">.kicker-xs · 0.6rem / 0.14em</p>
-            </div>
             <p className="footnote mt-2">
-              A cor por defeito é muted; contextos com outra cor sobrepõem com
-              text-* (acento, tinta, aviso). O talão tem escala própria
-              (talao-*) — é um documento, não chrome do site.
+              Só na home — o monumento. O eixo wdth aperta a manchete para
+              ela pesar; nunca se usa em mais lado nenhum.
             </p>
           </div>
           <div className="py-5">
-            <p className="kicker mb-2">Editorial — Source Serif 4 (só ledes)</p>
+            <p className="kicker mb-2">
+              Título de página — .titulo-pagina · Archivo expandido (wdth 125)
+            </p>
+            <p className="titulo-pagina !mt-0">Para onde vai o teu dinheiro</p>
+            <p className="footnote mt-2">
+              Um por página, caixa-alta. Os dois estilos de título são a
+              mesma fonte — o wdth é o que os separa; não há terceiro.
+            </p>
+          </div>
+          <div className="py-5">
+            <p className="kicker mb-2">
+              Display de secção — .font-display + escada text-display-*
+            </p>
+            <p className="font-display text-display-sm tracking-wide text-ink md:text-display-md">
+              Os capítulos e as secções
+            </p>
+            <p className="footnote mt-2">
+              Os h2 e números grandes partilham a escada{" "}
+              <code className="num">text-display-xs → 3xl</code> — não são
+              um estilo de título, são degraus da mesma escala.
+            </p>
+          </div>
+          <div className="py-5">
+            <p className="kicker mb-2">Insight — Source Serif 4 · .lede / .leitura-insight</p>
             <p className="lede">
               Entre o que a empresa paga e o que tu recebes há três cortes:
               Segurança Social, IRS e a TSU que nunca vês no recibo.
             </p>
           </div>
           <div className="py-5">
-            <p className="kicker mb-2">Dados — Space Mono, tabular</p>
-            <p className="num text-3xl">1 234 567,89 € · ▲ 12,5 %</p>
+            <p className="kicker mb-2">Corpo — Space Grotesk · .body-copy / text-corpo(-sm)</p>
+            <p className="body-copy">
+              O corpo da interface e das páginas. Neutro, técnico, sem ser
+              genérico — o par natural do Space Mono dos números.
+            </p>
+          </div>
+          <div className="py-5">
+            <p className="kicker mb-2">Kicker — mono maiúsculo · .kicker, .kicker-sm, .kicker-xs</p>
+            <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
+              <p className="kicker">.kicker · text-kicker</p>
+              <p className="kicker-sm">.kicker-sm · text-kicker-sm</p>
+              <p className="kicker-xs">.kicker-xs · text-micro</p>
+            </div>
+          </div>
+          <div className="py-5">
+            <p className="kicker mb-2">Rótulo e nota — text-rotulo · .footnote (text-nota)</p>
+            <p className="num text-rotulo text-muted">
+              rótulos, readouts, meta de lista — 12px
+            </p>
+            <p className="footnote mt-1">
+              a nota de rodapé e o detalhe — 13px, sempre em muted ou ink2.
+            </p>
+          </div>
+          <div className="py-5">
+            <p className="kicker mb-2">Papel — a sub-escala do talão · text-talao-*</p>
+            <div className="talao-wrap mt-3 w-56">
+              <div className="talao">
+                <div className="talao-face px-4 pb-3 pt-4">
+                  <p className="talao-head text-center">Talao</p>
+                  <p className="talao-sub talao-dim mt-1 text-center">
+                    typesetting de impressora térmica
+                  </p>
+                  <p className="talao-total mt-3 flex justify-between">
+                    <span>Total</span>
+                    <span className="num text-talao-hero">38,40 €</span>
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -479,33 +538,74 @@ export default function EstiloPage() {
       </section>
 
       <section className="stack-sec">
-        <h2 className="kicker mb-4">Raio — zero, porque isto é uma régua</h2>
+        <h2 className="kicker mb-4">Raio — a aresta diz a matéria</h2>
         <p className="footnote mb-4 max-w-xl">
-          Um instrumento de medida tem arestas. <code className="num">border-radius</code>{" "}
-          é 0 em todo o chrome — campos, botões, painéis, tabelas. A única
-          excepção é o carimbo (2px): é tinta de borracha, um objecto
-          físico — a excepção prova a regra. Pílulas e cartões macios são
-          linguagem de app de consumo; aqui mede-se dinheiro.
+          Quatro raios com significado, nenhum avulso:{" "}
+          <code className="num">--raio-papel</code> (0 — o documento é
+          cortado, nunca arredondado),{" "}
+          <code className="num">--raio-pormenor</code> (2px, derivado do
+          instrumento — carimbos, trilhos, peças maquinadas),{" "}
+          <code className="num">--raio-instrumento</code> (14px — o
+          objecto completo: cartão, resultado, overlay) e{" "}
+          <code className="num">--raio-controlo</code> (999px — a pílula:
+          presets, toggles, botões, marcadores). Geometria de desenho
+          (círculos, <code className="num">rx</code> de svg) não é raio
+          de objecto — fica fora da escala por natureza, não por
+          excepção.
         </p>
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="border border-line bg-panel px-5 py-4">
-            <input className="field w-full" defaultValue="1 500" aria-label="campo real — raio zero" />
-            <p className="footnote mt-3">
-              ✓ o campo é uma cavidade — arestas rectas, recess interno,
-              foco pelo anel torrado
-            </p>
-          </div>
-          <div className="border border-line bg-panel px-5 py-4">
-            <div
-              aria-hidden
-              className="num border-2 border-line2 bg-panel px-3 py-2 text-muted"
-              style={{ borderRadius: "999px" }}
-            >
-              1 500
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="border border-line bg-panel px-4 py-5">
+            <p className="kicker-xs">papel · 0</p>
+            <div className="talao-wrap mt-3">
+              <div className="talao">
+                <div className="talao-face px-3 py-2">
+                  <p className="talao-meta talao-dim text-center">
+                    aresta recta — cortado
+                  </p>
+                </div>
+              </div>
             </div>
             <p className="footnote mt-3">
-              ✗ proibido — a pílula arredondada promete um toque que o
-              instrumento não dá
+              talões, recibos, campos (.field), picotados — o papel nunca
+              é arredondado.
+            </p>
+          </div>
+          <div className="border border-line bg-panel px-4 py-5">
+            <p className="kicker-xs">pormenor · 2px</p>
+            <div className="talao-wrap mt-3">
+              <div className="talao">
+                <div className="talao-face px-3 py-2 text-center">
+                  <span className="carimbo">simulação</span>
+                </div>
+              </div>
+            </div>
+            <p className="footnote mt-3">
+              carimbo de borracha, trilho de barra, gauge — a aresta
+              mínima da peça maquinada. É{" "}
+              <code className="num">--raio-instrumento / 7</code>, não um
+              valor solto.
+            </p>
+          </div>
+          <div className="border border-line bg-panel px-4 py-5">
+            <p className="kicker-xs">instrumento · 14px</p>
+            <div className="mt-3 rounded-instrumento border border-line bg-raised px-3 py-3 shadow-raised">
+              <p className="num text-rotulo text-ink">o cartão Leitura</p>
+              <p className="footnote">resultado · overlay · explosão</p>
+            </div>
+            <p className="footnote mt-3">
+              um objecto completo é maquinado — elevação ≥ 1 pede o raio;
+              a chapa de nível 1 fica recta.
+            </p>
+          </div>
+          <div className="border border-line bg-panel px-4 py-5">
+            <p className="kicker-xs">controlo · 999px</p>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <Link href="/estilo" className="btn">preset</Link>
+              <span className="tema-ponto" aria-hidden />
+            </div>
+            <p className="footnote mt-3">
+              pílulas, toggles, botões e marcadores — o que se carrega é
+              redondo; o que se lê é recto.
             </p>
           </div>
         </div>
@@ -528,7 +628,7 @@ export default function EstiloPage() {
             ["--dur-longa", "1200ms", "sequência orquestrada"],
           ].map(([tok, ms, uso]) => (
             <div key={tok} className="bg-panel px-4 py-3">
-              <p className="num text-sm text-ink">{ms}</p>
+              <p className="num text-corpo-sm text-ink">{ms}</p>
               <p className="kicker-xs mt-1">{tok}</p>
               <p className="footnote mt-1">{uso}</p>
             </div>
@@ -864,7 +964,7 @@ export default function EstiloPage() {
           </div>
           <div className="border border-line px-4 py-3">
             <p className="kicker-xs mb-2">✓ tick com a cor da série, nome em tinta</p>
-            <p aria-hidden className="num text-sm text-ink2 flex items-center gap-2">
+            <p aria-hidden className="num text-corpo-sm text-ink2 flex items-center gap-2">
               <span className="inline-block h-0.5 w-3" style={{ background: "var(--seq-2)" }} />
               Euribor 12M — 2,95 %
             </p>

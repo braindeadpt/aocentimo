@@ -225,24 +225,55 @@ pontos: sai = `accent`, fica = `keep`, neutro = cinzento.
 
 | Token | Valor | Significado |
 |---|---|---|
-| `--raio-papel` | 0 | papel — é cortado, não arredondado |
-| `--raio-instrumento` | 14 px | cartão/objecto de instrumento — é maquinado |
-| `--raio-controlo` | pílula | controlos — réguas, presets, toggles |
+| `--raio-papel` | 0 | papel — é cortado, não arredondado (talões, recibos, `.field`) |
+| `--raio-pormenor` | 2 px (= instrumento ÷ 7) | aresta mínima de peça maquinada — carimbo, trilho, gauge |
+| `--raio-instrumento` | 14 px | o objecto completo — cartão Leitura, resultado, overlay |
+| `--raio-controlo` | 999 px (pílula) | o que se carrega — presets, toggles, `.btn`, marcadores |
 
-(Valores em tokens a formalizar na tarefa S1-03; o significado já é
-contrato: o raio diz a matéria da peça.)
+O raio diz a matéria da peça. Geometria de desenho (`rx`/`ry` de svg,
+círculos) não é raio de objecto — fica fora da escala por natureza. Os
+utilitários Tailwind `rounded-papel/pormenor/instrumento/controlo`
+apontam para estes tokens; nenhum `border-radius` literal existe fora
+deles.
 
-### Tipografia
+### Tipografia — escala fechada (S1-03)
 
-Archivo (variável — o eixo de largura `wdth` é o instrumento expressivo)
-para display e **números heróis com algarismos tabulares**
-(`font-variant-numeric: tabular-nums`); Space Grotesk para a interface;
-**Space Mono só em rótulos, kickers e tabelas** (`.num` denso); Source
-Serif 4 só para ledes/prosa editorial e a frase-insight. Escala canónica
-de micro-tipografia: `.kicker` / `.kicker-sm` / `.kicker-xs` (mono
-maiúsculo, `muted` por defeito). A escala fechada completa — kicker,
-rótulo, corpo, insight, número de leitura, número herói, título de
-página — é tokenizada na tarefa S1-03 e nada vive fora dela.
+Sete papéis e nada mais: **kicker, rótulo, corpo, insight, número de
+leitura, número herói, título**. Cada degrau é um token `--text-*` em
+`@theme` (gera o utilitário `text-*`); a escala por omissão do Tailwind
+está fechada (`--text-*: initial`). Nada escreve um `font-size` fora
+destes tokens — os únicos `font-size` relativos que restam são razões
+`em` dentro do mesmo registo (`.num-unit`, `.num-sign`, `.regua-un`).
+
+| Papel | Token(s) | Registo |
+|---|---|---|
+| kicker | `--text-micro` (9.6) · `--text-mini` (10) · `--text-kicker-sm` (10.4) · `--text-kicker` (11) | mono, caixa-alta, muted por defeito |
+| rótulo | `--text-rotulo` (12) · `--text-nota` (13) | rótulos/readouts; `.footnote` |
+| corpo | `--text-corpo-sm` (14) · `--text-corpo` (15.2) | Space Grotesk — `.body-copy`, `.field`, tabelas |
+| insight | `--text-grande` (18) · `--text-insight` (19) | Source Serif — `.lede`, `.leitura-insight` |
+| número de leitura | `--text-numero` (22) | `.num-read`, Space Mono tabular |
+| número herói | `--text-valor` · `--text-valor-amplo` · `--text-hero-sm` · `--text-hero` (clamps fluidos) | `.leitura-valor`, `.num-hero` — Archivo `tnum` |
+| título | ver abaixo — só dois estilos | Archivo `wdth` |
+
+Escada partilhada de display — `text-display-xs → 3xl` (20 · 24 · 30 ·
+36 · 48 · 60 · 72 px): h2 de secção/capítulo, stats e números grandes
+usam-na com `.font-display` ou `.num`; não é um terceiro estilo de
+título, são degraus.
+
+**Títulos — só dois.** O eixo `wdth` do Archivo é o instrumento
+expressivo que os separa:
+
+| Estilo | Archivo | Uso |
+|---|---|---|
+| `.titulo-pagina` | expandido, `wdth` 125, caixa-alta | um por página — a manchete institucional |
+| `.titulo-hero` | condensado, `wdth` 75 | só o herói da home — o monumento |
+
+Sub-escalas fora do cromado mas dentro do sistema: `--text-svg-*`
+(texto dentro de viewBox — unidades do desenho, escalam com o svg) e
+`--text-talao-*` (o talão é um documento de impressora térmica —
+typesetting próprio). Impressão usa `--text-impressao` (pt de papel,
+não rem). As imagens OG são raster — a sua escala (`OG_TIPO` em
+`src/lib/og.tsx`) é tipografia de imagem 1200×630, não da página.
 
 ### Motion — gramática (M-02)
 

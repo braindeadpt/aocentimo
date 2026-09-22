@@ -91,7 +91,7 @@ export function Cascata({ passos }: { passos: Passo[] }) {
               onPointerEnter={() => setAtivo(i)}
               onPointerLeave={() => setAtivo(null)}
             >
-              <span className={`text-xs md:text-sm ${l.tipo === "total" ? "font-medium" : "text-ink2"}`}>
+              <span className={`text-rotulo md:text-corpo-sm ${l.tipo === "total" ? "font-medium" : "text-ink2"}`}>
                 {l.label}
               </span>
               <div className="flex h-6 md:h-7">
@@ -126,7 +126,7 @@ export function Cascata({ passos }: { passos: Passo[] }) {
                   />
                 )}
               </div>
-              <span className={`num text-right text-xs md:text-sm ${l.tipo === "corte" ? "text-up" : l.tipo === "total" ? "font-medium" : "text-ink2"}`}>
+              <span className={`num text-right text-rotulo md:text-corpo-sm ${l.tipo === "corte" ? "text-up" : l.tipo === "total" ? "font-medium" : "text-ink2"}`}>
                 {l.tipo === "corte" ? "−" : ""}
                 {fmtEUR(Math.abs(l.valor))}
               </span>

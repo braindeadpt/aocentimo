@@ -232,7 +232,7 @@ export default function DadosPage() {
         />
       )}
       <p className="kicker">Painéis</p>
-      <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
+      <h1 className="titulo-pagina">
         Os números, direto da fonte
       </h1>
       <p className="lede mt-5">
@@ -255,7 +255,7 @@ export default function DadosPage() {
         <div className="flex items-baseline justify-between">
           <p className="kicker">O observatório agora</p>
           {fresh && (
-            <p className="num text-xs text-muted">
+            <p className="num text-rotulo text-muted">
               verificado {fmtData(fresh.verificadoEm.slice(0, 10))}
             </p>
           )}
@@ -441,15 +441,15 @@ export default function DadosPage() {
             const cap = (vigente.taegMaxima as Record<string, number>)[l.capKey];
             return (
               <div key={l.capKey} className="bg-panel px-4 py-3">
-                <p className="text-sm font-medium">{l.rotulo}</p>
+                <p className="text-corpo-sm font-medium">{l.rotulo}</p>
                 <div className="mt-1.5 flex items-baseline justify-between gap-4">
-                  <span className="num text-sm">
+                  <span className="num text-corpo-sm">
                     {p ? `${fmtNum(p.v, 1)} %` : "—"}
                     {p && (
-                      <span className="block text-xs text-muted">{fmtData(p.t)}</span>
+                      <span className="block text-rotulo text-muted">{fmtData(p.t)}</span>
                     )}
                   </span>
-                  <span className="num text-xs text-muted">
+                  <span className="num text-rotulo text-muted">
                     teto {fmtNum(cap, 1)} %
                   </span>
                 </div>
@@ -466,19 +466,19 @@ export default function DadosPage() {
                       />
                       <span className="absolute inset-y-0 right-0 w-px bg-ink" />
                     </span>
-                    <span className="num text-xs text-muted">
+                    <span className="num text-rotulo text-muted">
                       {fmtNum(cap - p.v, 1)} pp p/ teto
                     </span>
                   </div>
                 ) : (
-                  <p className="num mt-2 text-xs text-muted">—</p>
+                  <p className="num mt-2 text-rotulo text-muted">—</p>
                 )}
               </div>
             );
           })}
         </div>
         <div className="hidden overflow-x-auto md:block">
-          <table className="w-full text-sm">
+          <table className="w-full text-corpo-sm">
             <thead>
               <tr className="text-left border-b-2 border-ink">
                 <th scope="col" className="py-2 pr-4 font-medium">Tipo de crédito</th>
@@ -501,7 +501,7 @@ export default function DadosPage() {
                     <td className="py-2 pr-4 text-ink2">{l.rotulo}</td>
                     <td className="py-2 pr-4 text-right num">
                       {p ? `${fmtNum(p.v, 1)} %` : "—"}
-                      {p && <span className="block text-xs text-muted">{fmtData(p.t)}</span>}
+                      {p && <span className="block text-rotulo text-muted">{fmtData(p.t)}</span>}
                     </td>
                     <td className="py-2 pr-4 text-right num font-medium">{fmtNum(cap, 1)} %</td>
                     {proximo && (
@@ -521,12 +521,12 @@ export default function DadosPage() {
                             />
                             <span className="absolute inset-y-0 right-0 w-px bg-ink" />
                           </span>
-                          <span className="num w-14 text-right text-xs text-muted">
+                          <span className="num w-14 text-right text-rotulo text-muted">
                             {fmtNum(cap - p.v, 1)} pp
                           </span>
                         </div>
                       ) : (
-                        <span className="num text-xs text-muted">—</span>
+                        <span className="num text-rotulo text-muted">—</span>
                       )}
                     </td>
                   </tr>
@@ -614,17 +614,17 @@ export default function DadosPage() {
                         : "bg-ink"
                   }`}
                 />
-                <span className="num text-xs text-muted w-16 shrink-0 pt-0.5 uppercase">
+                <span className="num text-rotulo text-muted w-16 shrink-0 pt-0.5 uppercase">
                   {fmtData(p.mes)}
                 </span>
                 <div>
-                  <p className="font-medium text-sm">
+                  <p className="font-medium text-corpo-sm">
                     {p.titulo}
                     {proximo && (
                       <span className="kicker-xs ml-2 text-accent">próximo</span>
                     )}
                   </p>
-                  <p className="text-sm text-ink2 mt-0.5">{p.descricao}</p>
+                  <p className="text-corpo-sm text-ink2 mt-0.5">{p.descricao}</p>
                 </div>
               </li>
             );
@@ -642,7 +642,7 @@ export default function DadosPage() {
           />
         }
       >
-        <div className="border border-line bg-panel px-5 py-6 text-sm text-ink2 space-y-3">
+        <div className="border border-line bg-panel px-5 py-6 text-corpo-sm text-ink2 space-y-3">
           <p>
             O Banco de Portugal publica diariamente o comparador de comissões de
             ~200 instituições, mas só dentro da aplicação web — não há um
@@ -665,7 +665,7 @@ export default function DadosPage() {
       </Figure>
 
       <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
-        <h2 className="font-display text-2xl text-ink">API aberta</h2>
+        <h2 className="font-display text-display-sm text-ink">API aberta</h2>
         <p>
           Todas as séries estão disponíveis como ficheiros JSON estáticos —
           sem chave, sem registo:{" "}

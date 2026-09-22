@@ -37,7 +37,7 @@ export default function IrsPage() {
         )}
       />
       <p className="kicker">Imposto sobre o rendimento</p>
-      <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
+      <h1 className="titulo-pagina">
         Subir de escalão faz-te perder dinheiro?
       </h1>
       <p className="lede mt-5">
@@ -52,7 +52,7 @@ export default function IrsPage() {
         title={`Os escalões enchem — IRS ${ANO}`}
         source={<Source nome={irs.fonte} vigencia={irs.vigencia} />}
       >
-        <p className="text-sm text-ink2 mb-5">
+        <p className="text-corpo-sm text-ink2 mb-5">
           Põe o teu rendimento coletável e vê os nove recipientes a encher
           por ordem: cada um cobra a sua taxa só sobre a fatia que recebe.
         </p>
@@ -63,14 +63,14 @@ export default function IrsPage() {
         title="Retenção na fonte — a fatia de cada mês"
         source={<Source nome={retencao.fonte} vigencia={retencao.vigencia} />}
       >
-        <p className="text-sm text-ink2 mb-4">
+        <p className="text-corpo-sm text-ink2 mb-4">
           A fórmula de {ANO} é progressiva ao cêntimo:{" "}
           <span className="num">retenção = bruto × taxa marginal − parcela a
           abater − parcela por dependente</span>. Tabela I (não casado e
           casado dois titulares), amostra:
         </p>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-corpo-sm">
             <thead>
               <tr className="text-left border-b-2 border-ink">
                 <th scope="col" className="py-2 pr-4 font-medium">Bruto mensal até</th>
@@ -115,7 +115,7 @@ export default function IrsPage() {
       </Figure>
 
       <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
-        <h2 className="font-display text-2xl text-ink">O que contar ao IRS Jovem</h2>
+        <h2 className="font-display text-display-sm text-ink">O que contar ao IRS Jovem</h2>
         <p>
           Até aos {irsJovem.idadeMax} anos, nos primeiros{" "}
           {irsJovem.anosMax} anos de rendimentos: {fmtPct(1, 0)} de isenção no

@@ -250,7 +250,7 @@ export function ComparadorPoupanca() {
               />
             )}
           </svg>
-          <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
+          <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-rotulo text-muted">
             {SERIES.map((s) => (
               <span key={s.id} className="flex items-center gap-1.5">
                 <span className="sw" style={{ background: s.cor }} aria-hidden />
@@ -264,7 +264,7 @@ export function ComparadorPoupanca() {
           </div>
         </div>
 
-        <table className="w-full text-sm bg-raised border border-line shadow-raised mt-4" aria-live="polite">
+        <table className="w-full text-corpo-sm bg-raised border border-line shadow-raised mt-4" aria-live="polite">
           <thead>
             <tr className="text-left border-b-2 border-ink">
               <th scope="col" className="px-4 py-2 font-medium">Onde está o dinheiro</th>
@@ -280,7 +280,7 @@ export function ComparadorPoupanca() {
                 <td className="px-4 py-3 text-right num">
                   {fmtEUR0(l.real)}
                   {l.real < capital && (
-                    <span className="block text-xs text-up">perde poder de compra</span>
+                    <span className="block text-rotulo text-up">perde poder de compra</span>
                   )}
                 </td>
               </tr>

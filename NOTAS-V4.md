@@ -126,3 +126,74 @@ canónica com TSU; protótipo da moeda).
   visual continua no bruto.
 - Apagar os .mp4 do historial do git (BFG/filter-repo + force-push) ou
   aceitar que ficam na história? Foram removidos do índice e do worktree.
+
+## S1-03 · Tokens de raio e tipografia — escala fechada (2026-09-23)
+
+**O que foi feito**
+
+- Quatro raios com significado em `:root` — `--raio-papel` (0),
+  `--raio-pormenor` (2 px, derivado: `instrumento ÷ 7`),
+  `--raio-instrumento` (14 px), `--raio-controlo` (999 px) — e os
+  utilitários `rounded-papel/pormenor/instrumento/controlo` gerados por
+  `@theme inline`. Todos os `border-radius` literais do chrome foram
+  substituídos: papel nos talões/campos/picotados; pormenor nos
+  carimbos, trilhos, gauges e marcadores quadrados; instrumento no
+  cartão `.leitura`; controlo em `.btn`, `.regua-pill`, `.skip-link`,
+  `.tema-ponto` e nos discos do euro (50% ≡ pílula).
+- Escala tipográfica fechada em `@theme` com `--text-*: initial` — a
+  escala por omissão do Tailwind deixou de gerar utilitários; só os
+  degraus da casa produzem `text-*`. Sete papéis: kicker, rótulo,
+  corpo, insight, número de leitura, número herói, título. Sub-escalas
+  com nome próprio: `--text-svg-*` (texto dentro de viewBox — unidades
+  do desenho) e `--text-talao-*` (typesetting de impressora térmica —
+  o documento não usa o cromado do site).
+- Títulos: exactamente dois estilos — `.titulo-pagina` (Archivo
+  expandido, `wdth` 125, caixa-alta; 30→36→60 px) e `.titulo-hero`
+  (Archivo condensado, `wdth` 75; 36→60→72 px, só na home). Todos os
+  `h1` migraram; o 404 passou a usar `.titulo-pagina`. Os `h2` usam a
+  escada `text-display-*` + `.font-display` — degraus, não um terceiro
+  estilo de título.
+- ~140 utilitários `text-*` ad hoc migrados 1:1 (xs→rotulo, sm→
+  corpo-sm, lg→grande, xl→display-xs, 2xl→display-sm, 3xl→display-md,
+  4xl→display-lg, 5xl→display-xl, 6xl→display-2xl, 7xl→display-3xl,
+  arbitrários → mini/kicker/nota). Os que viviam dentro de `.talao`
+  migraram para `text-talao-*` (TalaoCompras, CadernetaAforro,
+  SimuladorDesemprego). `fontSize` de svg passou a `style` com
+  `var(--text-svg-*)` (atributo de apresentação não resolve `var()`).
+- OG: `OG_TIPO` em `src/lib/og.tsx` — escala nomeada do cartão raster
+  (rótulo 34 · marca 52 · manchete 96 · herói 128 px numa imagem
+  1200×630); `opengraph-image.tsx` consome-a.
+- `/estilo`: secções «Tipografia — escala fechada» e «Raio — a aresta
+  diz a matéria» reescritas com exemplos vivos (o inline
+  `borderRadius: 999px` do exemplo «proibido» desapareceu — a pílula
+  deixou de ser proibida, é o raio do controlo). `PRODUTO.md` §6 tem a
+  tabela da escala e os dois títulos.
+
+**Decisões e fusões (conservadoras, a confirmar)**
+
+- `--raio-pormenor` (2 px) entra como quarto raio — o pedido pedia três,
+  mas o carimbo/trilhos/gauges de 2 px existiam e não são papel, papel
+  de instrumento (14 px) nem pílula: ficou derivado do instrumento
+  (÷7), não um valor avulso. Sem ele, os 2 px ficariam literais.
+- Fusões sub-pixéis: `.regua-valor` 28 px → `display-md` (30 px);
+  `.eu-li-val` 21,6 px → `numero` (22 px); `.qcell-meta` 11 px →
+  `kicker` (11 px = 0,6875 rem); legendas de talão 12 px →
+  `talao-head` (11,2 px); nota do desemprego 14 px → `talao-corpo`
+  (13,12 px); `[10px]` → `talao-sub` (9,92 px).
+- O lede da home tinha `text-sm md:text-base` mortos (a classe `.lede`
+  vencia por estar fora das layers) — removidos, o lede manda.
+- `text-[11px]` → `text-kicker` (11 px exactos).
+- Em razões `em` (`.num-unit`, `.num-sign`, `.regua-un`, print
+  `a::after`) não há token — são proporções dentro do mesmo registo,
+  não degraus da escala. Documentado em PRODUTO §6.
+- `rx`/`ry` de svg e discos a 50 % (geometria) não são raio de objecto.
+- O mínimo de 20 px do shrink de `NumHero` é um piso de runtime, não um
+  degrau — fica.
+
+**Perguntas ao dono**
+
+- `.titulo-hero` ficou condensado (`wdth` 75) para se separar do
+  expandido da página — se preferires o herói também expandido, troca-se
+  o `font-variation-settings` numa linha.
+- O pormenor (2 px) como quarto raio derivado — ou preferes fundi-lo em
+  `instrumento` nos sítios pequenos?

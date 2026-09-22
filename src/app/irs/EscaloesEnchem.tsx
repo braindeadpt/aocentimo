@@ -45,7 +45,7 @@ export function EscaloesEnchem({ ano }: { ano: number }) {
           </p>
         </div>
         {/* o desmentido, em números */}
-        <div className="bg-panel border border-line px-5 py-4 text-sm space-y-1.5" aria-live="polite">
+        <div className="bg-panel border border-line px-5 py-4 text-corpo-sm space-y-1.5" aria-live="polite">
           <p className="flex justify-between">
             <span className="text-ink2">Taxa do último escalão tocado</span>
             <span className="num">{fmtPct(marginal.taxa)}</span>
@@ -78,7 +78,7 @@ export function EscaloesEnchem({ ano }: { ano: number }) {
         <div className="space-y-2">
           {fatias.map((f, i) => (
             <div key={f.n}>
-              <div className="flex items-baseline justify-between gap-3 text-xs">
+              <div className="flex items-baseline justify-between gap-3 text-rotulo">
                 <span className="text-ink2">
                   {f.n}.º escalão ·{" "}
                   {f.ate === null ? `mais de ${fmtEUR0(f.de)}` : `até ${fmtEUR0(f.ate)}`}
@@ -98,7 +98,7 @@ export function EscaloesEnchem({ ano }: { ano: number }) {
                   }}
                 />
               </div>
-              <p className="flex justify-between text-xs text-muted">
+              <p className="flex justify-between text-rotulo text-muted">
                 <span>{f.fatia > 0 ? `${fmtEUR(f.fatia)} dentro` : "vazio"}</span>
                 <span className="num">{f.imposto > 0 ? `−${fmtEUR(f.imposto)}` : ""}</span>
               </p>

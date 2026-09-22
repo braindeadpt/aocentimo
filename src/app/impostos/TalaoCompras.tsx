@@ -229,7 +229,7 @@ export function TalaoCompras() {
 
             <div className="talao-cut mt-1 flex items-baseline justify-between gap-4 py-3">
               <span className="talao-total">Total</span>
-              <span className="text-3xl font-bold">{fmtEUR(total)}</span>
+              <span className="text-talao-hero font-bold">{fmtEUR(total)}</span>
             </div>
           </div>
         </div>
@@ -278,7 +278,7 @@ export function TalaoCompras() {
 
             <div className="talao-cut mt-1 flex items-baseline justify-between gap-4 py-1.5">
               <span className="talao-total">Deste total é IVA</span>
-              <span className="whitespace-nowrap text-lg font-bold">
+              <span className="whitespace-nowrap text-talao-destaque font-bold">
                 {fmtEUR(totalIva)}
                 <span className="talao-note talao-dim ml-2 whitespace-nowrap">
                   {fmtPct(total > 0 ? totalIva / total : 0)}

@@ -95,7 +95,7 @@ export default function CasaPage() {
         )}
       />
       <p className="kicker">Comprar casa</p>
-      <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
+      <h1 className="titulo-pagina">
         O que a casa custa de verdade
       </h1>
       <p className="lede mt-5">
@@ -136,7 +136,7 @@ export default function CasaPage() {
       </Figure>
 
       <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
-        <h2 className="font-display text-2xl text-ink">Os impostos da escritura</h2>
+        <h2 className="font-display text-display-sm text-ink">Os impostos da escritura</h2>
         <p>
           <strong>IMT</strong> incide sobre o maior valor entre preço e VPT, em
           escalões — isento até {fmtEUR0(imt.hpp[0].ate ?? 0)} em habitação própria e

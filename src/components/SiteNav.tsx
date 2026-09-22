@@ -93,7 +93,7 @@ export function SiteNav() {
                 key={href}
                 href={href}
                 aria-current={ativo(href) ? "page" : undefined}
-                className={`border-b border-line px-4 py-2.5 text-sm last:border-0 hover:bg-floor ${
+                className={`border-b border-line px-4 py-2.5 text-corpo-sm last:border-0 hover:bg-floor ${
                   ativo(href) ? "text-accent" : "text-ink2"
                 }`}
               >

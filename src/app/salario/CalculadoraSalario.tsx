@@ -339,7 +339,7 @@ export function CalculadoraSalario({
                   <dt className="talao-total">
                     Líquido no fim do mês
                   </dt>
-                  <dd className="text-4xl font-bold">
+                  <dd className="text-display-lg font-bold">
                     {fmtEUR(recibo.liquido)}
                   </dd>
                 </div>
@@ -389,9 +389,9 @@ export function CalculadoraSalario({
       <div className="md:col-span-2 bg-raised border border-line shadow-raised" aria-live="polite">
         <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
           <span className="kicker">O ano inteiro, a 14 meses</span>
-          <span className="num text-xs text-muted">estimativa IRS {ano}</span>
+          <span className="num text-rotulo text-muted">estimativa IRS {ano}</span>
         </div>
-        <dl className="px-5 py-4 text-sm">
+        <dl className="px-5 py-4 text-corpo-sm">
           <div className="flex justify-between py-1.5 border-b border-line/60">
             <dt className="text-ink2">Salário bruto anual</dt>
             <dd className="num">{fmtEUR(resultado.brutoAnualTotal)}</dd>
@@ -418,7 +418,7 @@ export function CalculadoraSalario({
           </div>
         </dl>
 
-        <div className="border-t border-line px-5 py-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+        <div className="border-t border-line px-5 py-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-corpo-sm">
           <div>
             <p className="kicker">Taxa efetiva IRS</p>
             <p className="num-read mt-1">{fmtPct(resultado.taxaEfetiva)}</p>

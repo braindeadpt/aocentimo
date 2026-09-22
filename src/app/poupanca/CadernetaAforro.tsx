@@ -108,11 +108,11 @@ export function CadernetaAforro() {
                     className={cadArm("talao-linha") + " talao-sep flex items-baseline justify-between gap-3 py-1"}
                     style={{ "--linha": i } as React.CSSProperties}
                   >
-                    <dt className="talao-dim text-xs">
+                    <dt className="talao-dim text-talao-head">
                       ano {p.ano} · +{fmtEUR0(p.juro)} juro ·{" "}
                       <span className="talao-retido">−{fmtEUR0(p.imposto)} fisco</span>
                     </dt>
-                    <dd className="num text-sm">{fmtEUR(p.saldo)}</dd>
+                    <dd className="num text-talao-corpo">{fmtEUR(p.saldo)}</dd>
                   </div>
                 ))}
               </Fragment>
@@ -131,7 +131,7 @@ export function CadernetaAforro() {
                 <path d={nomPath} fill="none" stroke="var(--color-ink)" strokeWidth={1.6} />
               </g>
             </svg>
-            <div className="mt-1 flex items-center gap-4 text-xs talao-dim">
+            <div className="mt-1 flex items-center gap-4 text-talao-head talao-dim">
               <span className="flex items-center gap-1.5">
                 <svg width="16" height="4" aria-hidden><line x1="0" x2="16" y1="2" y2="2" stroke="currentColor" strokeWidth="1.6" /></svg>
                 na conta
@@ -146,7 +146,7 @@ export function CadernetaAforro() {
               style={{ "--linha": traj.length } as React.CSSProperties}
             >
               <span className="talao-total">Vale mesmo</span>
-              <span className="text-xl font-bold">{ultimo ? fmtEUR0(ultimo.real) : "—"}</span>
+              <span className="text-talao-numero font-bold">{ultimo ? fmtEUR0(ultimo.real) : "—"}</span>
             </div>
             <p
               className={cadArm("talao-linha") + " talao-note talao-dim"}

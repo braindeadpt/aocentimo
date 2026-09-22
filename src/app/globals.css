@@ -119,6 +119,34 @@
   /* ciclo do ticker — loop contínuo de velocidade editorial, não é uma
      transição e não faz parte da escala */
   --dur-ticker: 55s;
+
+  /* ————— raio com significado (V4) — a aresta diz a matéria —————
+     papel        é cortado — aresta recta, nunca arredondada
+     pormenor     aresta mínima de peça maquinada/carimbo — derivada do
+                  instrumento (14 ÷ 7), não é um valor avulso
+     instrumento  objecto completo — cartão, resultado, overlay: é
+                  maquinado. Elevação ≥ 1 = objecto; a chapa de nível 1
+                  (bg-panel com hairline) é o plano de montagem e fica
+                  recta por omissão
+     controlo     pílula — presets, toggles, botões, marcadores */
+  --raio-papel: 0;
+  --raio-pormenor: calc(var(--raio-instrumento) / 7);
+  --raio-instrumento: 14px;
+  --raio-controlo: 999px;
+
+  /* ————— escala tipográfica fechada (V4) — um papel por degrau —————
+     Os degraus vivem em @theme (em baixo) para gerarem utilitários
+     text-*; aqui ficam só os que a escala não gera:
+       svg        texto dentro de viewBox — unidades do desenho, não px
+                  de página; escalam com o svg
+       impressao  typesetting de papel de imprensa (pt, não rem) */
+  --text-svg-mini: 7px;
+  --text-svg-micro: 10px;
+  --text-svg-rotulo: 11px;
+  --text-svg-valor: 13px;
+  --text-svg-numero: 32px;
+  --text-svg-hero: 40px;
+  --text-impressao: 11pt;
 }
 
 :root[data-theme="dark"] {
@@ -220,15 +248,131 @@
   --shadow-raised: var(--elev-raised);
   --shadow-overlay: var(--elev-overlay);
 
+  /* raio com significado — os utilitários rounded-* apontam para os
+     tokens de :root (papel · pormenor · instrumento · controlo) */
+  --radius-papel: var(--raio-papel);
+  --radius-pormenor: var(--raio-pormenor);
+  --radius-instrumento: var(--raio-instrumento);
+  --radius-controlo: var(--raio-controlo);
+
   --font-display: var(--font-archivo), "Arial Black", sans-serif;
   --font-sans: var(--font-grotesk), "Segoe UI", system-ui, sans-serif;
   --font-editorial: var(--font-serif), Georgia, "Times New Roman", serif;
   --font-mono: var(--font-space), "Courier New", monospace;
 }
 
+/* ————— escala tipográfica fechada (V4) — um papel por degrau —————
+   kicker · rótulo · corpo · insight · número de leitura · número herói ·
+   título de página · título de herói. Nada escreve um tamanho fora
+   desta escala; o talão tem a sua própria sub-escala (text-talao-*)
+   porque é um documento — typesetting de impressora térmica, não chrome.
+   --text-*: initial fecha a escala por omissão do Tailwind — só estes
+   degraus geram utilitários. */
+@theme {
+  --text-*: initial;
+
+  /* micro-tipografia — mono, caixa-alta (kickers e meta) */
+  --text-micro: 0.6rem;      /* kicker-xs · carimbo do instrumento · selo */
+  --text-mini: 0.625rem;     /* 10px — micro-demos · escala da régua · id de série */
+  --text-kicker-sm: 0.65rem; /* kicker-sm · breadcrumb · meta de cartão */
+  --text-kicker: 0.6875rem;  /* kicker · rodapé/legenda de cartão · pill · ticker · skip-link */
+  /* rótulo e nota */
+  --text-rotulo: 0.75rem;    /* rótulo · readout · btn · meta de lista */
+  --text-nota: 0.8125rem;    /* footnote · num-dense · detalhe */
+  /* corpo */
+  --text-corpo-sm: 0.875rem; /* corpo denso · tabelas · etiqueta de campo */
+  --text-corpo-sm--line-height: 1.25rem;
+  --text-corpo: 0.95rem;     /* corpo corrido · field */
+  /* editorial serifada */
+  --text-grande: 1.125rem;   /* lede · valor destacado · título de figura */
+  --text-grande--line-height: 1.75rem;
+  --text-insight: 1.1875rem; /* frase-insight do cartão */
+  /* número de leitura */
+  --text-numero: 1.375rem;   /* num-read */
+  /* degraus de display — títulos e números grandes partilham a mesma
+     escada; o papel vem da classe (titulo-* · font-display · num · talao) */
+  --text-display-xs: 1.25rem;   /* h2 de cartão · stat */
+  --text-display-xs--line-height: 1.75rem;
+  --text-display-sm: 1.5rem;    /* h2 de secção */
+  --text-display-sm--line-height: 2rem;
+  --text-display-md: 1.875rem;  /* h2 md · título de página (base) · leitura grande */
+  --text-display-md--line-height: 2.25rem;
+  --text-display-lg: 2.25rem;   /* título sm · herói base */
+  --text-display-lg--line-height: 2.5rem;
+  --text-display-xl: 3rem;      /* manchete · adivinha */
+  --text-display-xl--line-height: 1;
+  --text-display-2xl: 3.75rem;  /* título de página md · herói sm */
+  --text-display-2xl--line-height: 1;
+  --text-display-3xl: 4.5rem;   /* herói lg · 404 */
+  --text-display-3xl--line-height: 1;
+  --text-moeda: 2.75rem;        /* a face do euro (/inflacao) */
+  /* números heróis — fluidos, Archivo tnum */
+  --text-valor: clamp(2.25rem, 4vw + 1rem, 3rem);        /* herói do cartão Leitura */
+  --text-valor-amplo: clamp(2.5rem, 4.5vw + 1rem, 3.5rem);
+  --text-hero-sm: clamp(2.5rem, 4.5vw + 1rem, 4.5rem);   /* herói sem teto conhecido */
+  --text-hero: clamp(3rem, 6vw + 1.5rem, 6rem);          /* num-hero */
+  /* escala do papel — o talão é um documento, não chrome do site */
+  --text-talao-micro: 0.58rem;    /* carimbo retido/recebe */
+  --text-talao-meta: 0.6rem;      /* meta do talão · rodapé da declaração */
+  --text-talao-sub: 0.62rem;      /* subtítulo · carimbo SIMULAÇÃO */
+  --text-talao-nota: 0.68rem;     /* nota de linha */
+  --text-talao-head: 0.7rem;      /* cabeçalho do documento */
+  --text-talao-total: 0.72rem;    /* rótulo da linha total */
+  --text-talao-corpo: 0.82rem;    /* corpo do documento */
+  --text-talao-destaque: 1.125rem;/* valor destacado no papel */
+  --text-talao-numero: 1.25rem;   /* número de leitura no papel */
+  --text-talao-hero: 1.875rem;    /* total do documento */
+  --text-talao-hero-lg: 2.25rem;  /* o líquido no recibo */
+}
+
 /* display = Archivo expandido */
 .font-display {
   font-variation-settings: "wdth" 125;
+}
+
+/* ————— títulos — só dois estilos; o eixo wdth do Archivo é o
+   instrumento expressivo que os separa —————
+   página = expandido (wdth 125): a manchete institucional, caixa-alta
+   herói  = condensado (wdth 75): o monumento da home — a mesma fonte,
+            apertada, para a frase grande caber e pesar */
+.titulo-pagina,
+.titulo-hero {
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-weight: 700;
+  color: var(--ink);
+}
+.titulo-pagina {
+  font-variation-settings: "wdth" 125;
+  font-size: var(--text-display-md);
+  line-height: 1.1;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  hyphens: auto;
+  margin-top: 0.5rem;
+}
+.titulo-hero {
+  font-variation-settings: "wdth" 75;
+  font-size: var(--text-display-lg);
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+}
+@media (min-width: 640px) {
+  .titulo-pagina {
+    font-size: var(--text-display-lg);
+  }
+  .titulo-hero {
+    font-size: var(--text-display-2xl);
+  }
+}
+@media (min-width: 768px) {
+  .titulo-pagina {
+    font-size: var(--text-display-2xl);
+  }
+}
+@media (min-width: 1024px) {
+  .titulo-hero {
+    font-size: var(--text-display-3xl);
+  }
 }
 
 /* ————— wordmark — texto real; o C é o sinal de cêntimo, em verde-keep ————— */
@@ -344,8 +488,9 @@ body::before {
   background: var(--overlay);
   color: var(--ink);
   border: 2px solid var(--ink);
+  border-radius: var(--raio-controlo);
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: var(--text-kicker);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   text-decoration: none;
@@ -363,7 +508,7 @@ body::before {
   display: inline-block;
   width: 0.5rem;
   height: 0.5rem;
-  border-radius: 9999px;
+  border-radius: var(--raio-controlo);
   border: 1px solid var(--ink2);
   background: transparent;
   transition:
@@ -378,7 +523,7 @@ html[data-theme="dark"] .tema-ponto {
 /* utilidades editoriais */
 .lede {
   font-family: var(--font-editorial);
-  font-size: 1.125rem;
+  font-size: var(--text-grande);
   line-height: 1.7;
   color: var(--ink2);
   max-width: 42rem;
@@ -402,7 +547,7 @@ html[data-theme="dark"] .tema-ponto {
   font-family: var(--font-archivo), "Arial Black", sans-serif;
   font-variation-settings: "wdth" 125;
   font-weight: 650;
-  font-size: clamp(3rem, 6vw + 1.5rem, 6rem);
+  font-size: var(--text-hero);
   line-height: 0.95;
   letter-spacing: -0.015em;
   font-variant-numeric: tabular-nums;
@@ -412,7 +557,7 @@ html[data-theme="dark"] .tema-ponto {
 /* variante para valores sem teto conhecido (ex.: poder de compra com
    input livre) — o mesmo registo, cabeça mais baixa */
 .num-hero-compact {
-  font-size: clamp(2.5rem, 4.5vw + 1rem, 4.5rem);
+  font-size: var(--text-hero-sm);
 }
 .num-unit {
   font-size: 0.28em;
@@ -431,13 +576,17 @@ html[data-theme="dark"] .tema-ponto {
 .num-read {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 1.375rem;
+  font-size: var(--text-numero);
   line-height: 1.15;
+}
+/* leitura grande — o degrau seguinte do mesmo registo */
+.num-read-lg {
+  font-size: var(--text-display-md);
 }
 .num-dense {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 0.8125rem;
+  font-size: var(--text-nota);
 }
 
 .rule {
@@ -449,7 +598,7 @@ html[data-theme="dark"] .tema-ponto {
 }
 
 .footnote {
-  font-size: 0.8125rem;
+  font-size: var(--text-nota);
   color: var(--muted);
   line-height: 1.5;
 }
@@ -467,30 +616,31 @@ html[data-theme="dark"] .tema-ponto {
     color: var(--muted);
   }
   .kicker {
-    font-size: 0.6875rem;
+    font-size: var(--text-kicker);
     letter-spacing: 0.14em;
   }
   .kicker-sm {
-    font-size: 0.65rem;
+    font-size: var(--text-kicker-sm);
     letter-spacing: 0.16em;
   }
   .kicker-xs {
-    font-size: 0.6rem;
+    font-size: var(--text-micro);
     letter-spacing: 0.14em;
   }
 }
 
-/* botões — rectângulos de tinta, mono maiúsculo */
+/* botões — mono maiúsculo; são controlos, logo pílula (raio V4) */
 .btn {
   display: inline-flex;
   align-items: baseline;
   gap: 0.5rem;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--text-rotulo);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   padding: 0.7rem 1.1rem;
   border: 1px solid var(--ink);
+  border-radius: var(--raio-controlo);
   color: var(--ink);
   background: transparent;
   cursor: pointer;
@@ -525,9 +675,9 @@ html[data-theme="dark"] .tema-ponto {
   box-shadow: var(--recess);
   color: var(--ink);
   font-family: var(--font-mono);
-  font-size: 0.95rem;
+  font-size: var(--text-corpo);
   padding: 0.55rem 0.7rem;
-  border-radius: 0;
+  border-radius: var(--raio-papel);
 }
 .field:hover {
   border-color: var(--ink2);
@@ -535,7 +685,7 @@ html[data-theme="dark"] .tema-ponto {
 
 /* corpo editorial repetido nas páginas */
 .body-copy {
-  font-size: 0.95rem;
+  font-size: var(--text-corpo);
   line-height: 1.625;
   color: var(--ink2);
 }
@@ -548,7 +698,7 @@ html[data-theme="dark"] .tema-ponto {
 }
 
 .ticker-item {
-  font-size: 0.68rem;
+  font-size: var(--text-kicker);
   letter-spacing: 0.06em;
 }
 .ticker-track {
@@ -645,6 +795,7 @@ html[data-theme="dark"] .tema-ponto {
   background: var(--talao-paper);
   color: var(--talao-ink);
   font-family: var(--font-mono);
+  border-radius: var(--raio-papel);
 }
 /* dentes picotados — triângulos SVG por data-URI, em cima e em baixo */
 .talao::before,
@@ -755,7 +906,7 @@ html[data-theme="dark"] .tema-ponto {
 .md-cap {
   margin-top: 5px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--text-mini);
   line-height: 1.4;
   letter-spacing: 0.02em;
   color: var(--muted);
@@ -767,7 +918,7 @@ html[data-theme="dark"] .tema-ponto {
 .md-linha-rotulo {
   display: block;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--text-mini);
   letter-spacing: 0.02em;
   color: var(--muted);
   margin-bottom: 2px;
@@ -777,7 +928,7 @@ html[data-theme="dark"] .tema-ponto {
   height: 12px;
   background: var(--panel);
   border: 1px solid var(--line2);
-  border-radius: 2px;
+  border-radius: var(--raio-pormenor);
   overflow: hidden;
 }
 .md-linha-trilho .md-seg {
@@ -798,14 +949,14 @@ html[data-theme="dark"] .tema-ponto {
   height: 38px;
   background: var(--panel);
   border: 1px solid var(--line2);
-  border-radius: 2px;
+  border-radius: var(--raio-pormenor);
   overflow: hidden;
 }
 .md-vaso-taxa {
   display: block;
   margin-top: 3px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--text-mini);
   color: var(--muted);
   text-align: center;
 }
@@ -833,7 +984,7 @@ html[data-theme="dark"] .tema-ponto {
   display: block;
   margin-top: 3px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--text-mini);
   color: var(--muted);
   text-align: center;
 }
@@ -875,7 +1026,7 @@ html[data-theme="dark"] .tema-ponto {
   margin: 3px 0 2px;
   background: var(--panel);
   border: 1px solid var(--line2);
-  border-radius: 2px;
+  border-radius: var(--raio-pormenor);
   overflow: hidden;
 }
 /* o último escalão não tem teto — o recipiente abre em seta: "cheio"
@@ -918,7 +1069,7 @@ html[data-theme="dark"] .tema-ponto {
   gap: 4px;
   padding: 6px 2px;
   border: 1px solid var(--line);
-  border-radius: 3px;
+  border-radius: var(--raio-pormenor);
   background: var(--panel);
   color: var(--ink2);
   font-family: var(--font-mono);
@@ -939,7 +1090,7 @@ html[data-theme="dark"] .tema-ponto {
   color: var(--ink);
 }
 .jovem-passo-ano {
-  font-size: 0.62rem;
+  font-size: var(--text-mini);
   letter-spacing: 0.08em;
 }
 .jovem-gauge {
@@ -947,7 +1098,7 @@ html[data-theme="dark"] .tema-ponto {
   height: 26px;
   width: 8px;
   border: 1px solid var(--line2);
-  border-radius: 2px;
+  border-radius: var(--raio-pormenor);
   overflow: hidden;
   display: flex;
   flex-direction: column-reverse;
@@ -960,7 +1111,7 @@ html[data-theme="dark"] .tema-ponto {
   transition: height var(--dur-media) var(--ease-entra);
 }
 .jovem-passo-val {
-  font-size: 0.6rem;
+  font-size: var(--text-micro);
   font-variant-numeric: tabular-nums;
 }
 /* o euro a encolher (/inflacao, M-17) — a moeda cheia é o poder de
@@ -976,7 +1127,7 @@ html[data-theme="dark"] .tema-ponto {
   position: absolute;
   inset: 0;
   border: 1.5px dashed var(--line2);
-  border-radius: 50%;
+  border-radius: var(--raio-controlo);
 }
 .euro-disc {
   position: absolute;
@@ -984,38 +1135,38 @@ html[data-theme="dark"] .tema-ponto {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: var(--raio-controlo);
   background: var(--ink);
   color: var(--floor);
   font-family: var(--font-display);
-  font-size: 2.75rem;
+  font-size: var(--text-moeda);
   transform-origin: center;
   transition: transform var(--dur-longa) var(--ease-entra);
 }
 /* micro-escala própria do talão — typesetting de impressora térmica,
    independente da escala de rótulos do site */
 .talao-head {
-  font-size: 0.7rem;
+  font-size: var(--text-talao-head);
   letter-spacing: 0.3em;
   text-transform: uppercase;
 }
 .talao-sub {
-  font-size: 0.62rem;
+  font-size: var(--text-talao-sub);
 }
 .talao-body {
-  font-size: 0.82rem;
+  font-size: var(--text-talao-corpo);
   line-height: 1.625;
 }
 .talao-note {
-  font-size: 0.68rem;
+  font-size: var(--text-talao-nota);
 }
 .talao-total {
-  font-size: 0.72rem;
+  font-size: var(--text-talao-total);
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 .talao-meta {
-  font-size: 0.6rem;
+  font-size: var(--text-talao-meta);
 }
 /* campo de preço dentro do talão — tinta editável: sem moldura,
    sublinhado picotado como um valor escrito à máquina */
@@ -1025,7 +1176,7 @@ html[data-theme="dark"] .tema-ponto {
   background: transparent;
   border: 0;
   border-bottom: 1px dashed rgba(44, 36, 19, 0.55);
-  border-radius: 0;
+  border-radius: var(--raio-papel);
   appearance: textfield;
   -moz-appearance: textfield;
 }
@@ -1048,10 +1199,10 @@ html[data-theme="dark"] .tema-ponto {
   color: rgba(157, 42, 13, 0.8);
   padding: 0.15rem 0.55rem;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: var(--text-talao-sub);
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  border-radius: 2px;
+  border-radius: var(--raio-pormenor);
   pointer-events: none;
 }
 /* ecrã estreito: junto ao código de barras — espaço livre; em cima
@@ -1088,9 +1239,9 @@ html[data-theme="dark"] .tema-ponto {
   margin-left: 0.5rem;
   padding: 0 0.3rem;
   border: 1.5px solid rgba(157, 42, 13, 0.8);
-  border-radius: 2px;
+  border-radius: var(--raio-pormenor);
   color: rgba(157, 42, 13, 0.85);
-  font-size: 0.58rem;
+  font-size: var(--text-talao-micro);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   transform: rotate(-3deg);
@@ -1102,9 +1253,9 @@ html[data-theme="dark"] .tema-ponto {
   margin-left: 0.5rem;
   padding: 0 0.3rem;
   border: 1.5px solid var(--papel-fica-tinta);
-  border-radius: 2px;
+  border-radius: var(--raio-pormenor);
   color: var(--papel-fica-tinta);
-  font-size: 0.58rem;
+  font-size: var(--text-talao-micro);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   transform: rotate(-3deg);
@@ -1366,7 +1517,7 @@ html[data-theme="dark"] .tema-ponto {
   transform: translateX(-50%);
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 1.75rem;
+  font-size: var(--text-display-md);
   line-height: 1;
   color: var(--ink);
   white-space: nowrap;
@@ -1427,7 +1578,7 @@ html[data-theme="dark"] .tema-ponto {
   transform: translate(-50%, -50%);
   background: var(--accent);
   border: 1px solid var(--ink);
-  border-radius: 3px;
+  border-radius: var(--raio-pormenor);
 }
 /* as duas ranhuras do grip — tinta a meia força sobre o acento */
 .regua-polegar::after {
@@ -1479,7 +1630,7 @@ html[data-theme="dark"] .tema-ponto {
   margin-top: 1px;
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 10px;
+  font-size: var(--text-mini);
   line-height: 1.05;
   color: var(--ink2);
 }
@@ -1509,12 +1660,12 @@ html[data-theme="dark"] .tema-ponto {
 .regua-pill {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 0.68rem;
+  font-size: var(--text-kicker);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   padding: 0.38rem 0.72rem;
   border: 1px solid var(--line2);
-  border-radius: 999px;
+  border-radius: var(--raio-controlo);
   background: transparent;
   color: var(--ink2);
   cursor: pointer;
@@ -1560,7 +1711,7 @@ html[data-theme="dark"] .tema-ponto {
 .chart-readout {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 0.75rem;
+  font-size: var(--text-rotulo);
   color: var(--ink2);
   border-bottom: 1px solid var(--line);
   padding: 0.45rem 0;
@@ -1603,7 +1754,7 @@ html[data-theme="dark"] .tema-ponto {
   margin-top: -4px;
   background: var(--ink);
   border: none;
-  border-radius: 0;
+  border-radius: var(--raio-papel);
 }
 .chart-scrub::-moz-range-track {
   height: 1px;
@@ -1614,7 +1765,7 @@ html[data-theme="dark"] .tema-ponto {
   height: 9px;
   background: var(--ink);
   border: none;
-  border-radius: 0;
+  border-radius: var(--raio-papel);
 }
 /* marca interrogada: acende; as irmãs recuam */
 .chart-hit {
@@ -1679,7 +1830,7 @@ html[data-theme="dark"] .tema-ponto {
 }
 .qcell-id {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--text-mini);
   letter-spacing: 0.02em;
   /* id de série a 10px — muted (4.46:1) fica a um fio do AA; ink2 passa */
   color: var(--ink2);
@@ -1688,7 +1839,7 @@ html[data-theme="dark"] .tema-ponto {
 .qcell-meta {
   margin-top: 3px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--text-kicker);
   color: var(--ink2);
   font-variant-numeric: tabular-nums;
 }
@@ -1772,7 +1923,7 @@ html[data-theme="dark"] .tema-ponto {
 .lc-evento-rot {
   fill: var(--muted);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--text-svg-micro);
   letter-spacing: 0.04em;
 }
 .lc-evento-faixa {
@@ -1803,7 +1954,7 @@ html[data-theme="dark"] .tema-ponto {
   background: var(--l-bg);
   color: var(--l-ink);
   border: 1px solid var(--l-line);
-  border-radius: 14px;
+  border-radius: var(--raio-instrumento);
   box-shadow: var(--elev-raised);
   transition: background-color var(--dur-curta) var(--ease-entra),
     color var(--dur-curta) var(--ease-entra),
@@ -1865,7 +2016,7 @@ html[data-theme="dark"] .tema-ponto {
 }
 .leitura-breadcrumb {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: var(--text-kicker-sm);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--l-muted);
@@ -1876,7 +2027,7 @@ html[data-theme="dark"] .tema-ponto {
   gap: 0.9rem;
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 0.65rem;
+  font-size: var(--text-kicker-sm);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--l-muted);
@@ -1891,7 +2042,7 @@ html[data-theme="dark"] .tema-ponto {
 }
 .leitura-insight {
   font-family: var(--font-editorial);
-  font-size: 1.1875rem;
+  font-size: var(--text-insight);
   line-height: 1.45;
   color: var(--l-ink2);
   max-width: 44rem;
@@ -1905,12 +2056,12 @@ html[data-theme="dark"] .tema-ponto {
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum" 1;
   font-weight: 650;
-  font-size: clamp(2.25rem, 4vw + 1rem, 3rem);
+  font-size: var(--text-valor);
   line-height: 1.05;
   letter-spacing: -0.02em;
 }
 .leitura-amplo .leitura-valor {
-  font-size: clamp(2.5rem, 4.5vw + 1rem, 3.5rem);
+  font-size: var(--text-valor-amplo);
 }
 .lq-graf {
   margin-top: 0.8rem;
@@ -1935,7 +2086,7 @@ html[data-theme="dark"] .tema-ponto {
   border-top: 1px solid var(--l-line);
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 0.68rem;
+  font-size: var(--text-kicker);
   color: var(--l-muted);
 }
 .leitura-acoes {
@@ -1957,7 +2108,7 @@ html[data-theme="dark"] .tema-ponto {
 .lq-txt {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 11px;
+  font-size: var(--text-svg-rotulo);
   fill: var(--l-muted);
 }
 .lq-ext-main {
@@ -1967,7 +2118,7 @@ html[data-theme="dark"] .tema-ponto {
 .lq-anot-rot {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 11px;
+  font-size: var(--text-svg-rotulo);
   fill: var(--l-ink);
 }
 
@@ -1981,7 +2132,7 @@ html[data-theme="dark"] .tema-ponto {
   margin-top: 0.55rem;
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 0.68rem;
+  font-size: var(--text-kicker);
   letter-spacing: 0.02em;
   color: var(--l-muted);
 }
@@ -2103,7 +2254,7 @@ html[data-theme="dark"] .tema-ponto {
 }
 .eu-rot-r {
   fill: var(--l-ink);
-  font-size: 11px;
+  font-size: var(--text-svg-rotulo);
   letter-spacing: 0.04em;
 }
 /* tom semântico da peça (S1-02): --accent é SÓ para o dinheiro que sai
@@ -2111,7 +2262,7 @@ html[data-theme="dark"] .tema-ponto {
    custo da empresa — são neutros, tinta da casa */
 .eu-rot-v {
   fill: var(--l-ink);
-  font-size: 13px;
+  font-size: var(--text-svg-valor);
   font-weight: 700;
 }
 .eu-rot-v.eu-tom-corte {
@@ -2122,24 +2273,24 @@ html[data-theme="dark"] .tema-ponto {
 }
 .eu-rot-d {
   fill: var(--l-muted);
-  font-size: 11px;
+  font-size: var(--text-svg-rotulo);
 }
 .eu-kicker {
   fill: var(--l-muted);
-  font-size: 11px;
+  font-size: var(--text-svg-rotulo);
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 .eu-num {
   fill: var(--l-keep);
-  font-size: 40px;
+  font-size: var(--text-svg-hero);
   font-weight: 700;
 }
 /* variante compacta — os euros do mês («1 167 €») são mais largos
    que os cêntimos; 32 px mantém o número à esquerda da placa base
    sem lhe tocar */
 .eu-num-m {
-  font-size: 32px;
+  font-size: var(--text-svg-numero);
 }
 /* as elipses também invertem com o papel — o bloco .leitura svg não
    cobre <ellipse> */
@@ -2196,7 +2347,7 @@ html[data-theme="dark"] .tema-ponto {
 }
 .eu-li-rot {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--text-rotulo);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--l-ink2);
@@ -2204,7 +2355,7 @@ html[data-theme="dark"] .tema-ponto {
 .eu-li-val {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 1.35rem;
+  font-size: var(--text-numero);
   font-weight: 700;
   color: var(--l-ink);
 }
@@ -2216,7 +2367,7 @@ html[data-theme="dark"] .tema-ponto {
 }
 .eu-li-det {
   margin-top: 0.15rem;
-  font-size: 0.8125rem;
+  font-size: var(--text-nota);
   line-height: 1.5;
   color: var(--l-muted);
 }
@@ -2429,7 +2580,7 @@ html[data-theme="dark"] .tema-ponto {
     background: #fff !important;
     background-image: none !important;
     color: #000;
-    font-size: 11pt;
+    font-size: var(--text-impressao);
   }
   .font-display,
   h1, h2, h3 {

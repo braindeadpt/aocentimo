@@ -124,7 +124,7 @@ export function EuroExplodido({
         <h2 id="euro-titulo" className="kicker">
           {rotulos.titulo}
         </h2>
-        <p className="num text-right text-xs text-muted">{rotulos.nota}</p>
+        <p className="num text-right text-rotulo text-muted">{rotulos.nota}</p>
       </div>
 
       <article

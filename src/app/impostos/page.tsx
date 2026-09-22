@@ -27,7 +27,7 @@ export default function ImpostosPage() {
           "O imposto dentro do preço: IVA por produto e decomposição do preço dos combustíveis (ISP, taxa de carbono, IVA sobre impostos)."
         )}
       />
-      <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
+      <h1 className="titulo-pagina">
         O imposto dentro do preço
       </h1>
       <p className="lede mt-5">
@@ -85,7 +85,7 @@ export default function ImpostosPage() {
       </Figure>
 
       <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
-        <h2 className="font-display text-2xl text-ink">A cascata que ninguém vê</h2>
+        <h2 className="font-display text-display-sm text-ink">A cascata que ninguém vê</h2>
         <p>
           No combustível acontece uma coisa peculiar: o IVA de 23 % incide sobre
           o preço <em>depois</em> de somar ISP e taxa de carbono. Ou seja,

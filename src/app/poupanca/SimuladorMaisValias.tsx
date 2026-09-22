@@ -104,7 +104,7 @@ export function SimuladorMaisValias() {
         <div className="border-b border-line px-5 py-3">
           <span className="kicker">O imposto sobre o ganho</span>
         </div>
-        <dl className="px-5 py-4 text-sm">
+        <dl className="px-5 py-4 text-corpo-sm">
           <div className="flex justify-between py-1.5 border-b border-line/60">
             <dt className="text-ink2">Mais-valia</dt>
             <dd className="num">{fmtEUR(r.maisValia)}</dd>
@@ -128,7 +128,7 @@ export function SimuladorMaisValias() {
               <dt className="font-medium">Pagas</dt>
               <dd className="num-read font-medium text-up">{fmtEUR(imposto)}</dd>
             </div>
-            <dd className="mt-1 text-xs text-muted">
+            <dd className="mt-1 text-rotulo text-muted">
               {r.melhor === "autonomo"
                 ? "a taxa autónoma é a que fica mais barata"
                 : r.melhor === "englobado"

@@ -92,7 +92,7 @@ export default function PrecosPage() {
         )}
       />
       <p className="kicker">Preços oficiais, quase diários</p>
-      <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
+      <h1 className="titulo-pagina">
         Quanto custa o litro hoje?
       </h1>
       <p className="lede mt-5">
@@ -140,7 +140,7 @@ export default function PrecosPage() {
       </Figure>
 
       <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
-        <h2 className="font-display text-2xl text-ink">Porque não há preços de supermercado aqui</h2>
+        <h2 className="font-display text-display-sm text-ink">Porque não há preços de supermercado aqui</h2>
         <p>
           Não existe uma API oficial com o preço do leite ou do pão em cada
           loja, ao longo do tempo. O Estado publica índices (o que está na

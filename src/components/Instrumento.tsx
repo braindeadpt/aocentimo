@@ -56,7 +56,7 @@ export function Instrumento({
         )}
         {rotulo}
       </p>
-      <p className={`num-read mt-2 ${grande ? "text-3xl" : ""}`}>{valor}</p>
+      <p className={`num-read mt-2 ${grande ? "num-read-lg" : ""}`}>{valor}</p>
       {spark && spark.length > 1 && (
         <div className="mt-2 text-muted">
           <Spark

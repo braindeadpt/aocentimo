@@ -118,7 +118,7 @@ export default function MetodologiaPage() {
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
       <p className="kicker">Transparência</p>
-      <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
+      <h1 className="titulo-pagina">
         Metodologia e fontes
       </h1>
       <p className="lede mt-5">
@@ -128,16 +128,16 @@ export default function MetodologiaPage() {
       </p>
 
       <section className="stack-sec">
-        <h2 className="font-display text-2xl mb-6">Fontes</h2>
+        <h2 className="font-display text-display-sm mb-6">Fontes</h2>
         <div className="divide-y divide-line border-y border-line">
           {FONTES_FIXAS.map((f) => (
             <div key={f.nome} className="py-4 grid md:grid-cols-[260px_1fr] gap-2">
-              <p className="font-medium text-ink text-sm">
+              <p className="font-medium text-ink text-corpo-sm">
                 <a href={f.url} className="hover:text-accent underline decoration-line2 underline-offset-2">
                   {f.nome}
                 </a>
               </p>
-              <div className="text-sm text-ink2">
+              <div className="text-corpo-sm text-ink2">
                 <p>{f.uso}</p>
                 <p className="footnote mt-1">{f.nota}</p>
               </div>
@@ -147,7 +147,7 @@ export default function MetodologiaPage() {
       </section>
 
       <section className="stack-sec">
-        <h2 className="font-display text-2xl mb-6">Estado dos dados</h2>
+        <h2 className="font-display text-display-sm mb-6">Estado dos dados</h2>
         {fontes.length === 0 ? (
           <p className="footnote">Pipeline ainda não executada.</p>
         ) : (
@@ -163,7 +163,7 @@ export default function MetodologiaPage() {
               <span className="serie-estado atrasada" aria-hidden /> atrasada
               · <span className="serie-estado sem-sla" aria-hidden /> sem SLA
             </p>
-            <p className="num text-sm text-ink2 mb-2">
+            <p className="num text-corpo-sm text-ink2 mb-2">
               {resumo}
             </p>
             <ul className="quadro-vivo">
@@ -203,7 +203,7 @@ export default function MetodologiaPage() {
       </section>
 
       <section className="body-copy stack-sec max-w-2xl space-y-4 pb-8">
-        <h2 className="font-display text-2xl text-ink">Limitações honestas</h2>
+        <h2 className="font-display text-display-sm text-ink">Limitações honestas</h2>
         <ul className="list-disc pl-5 space-y-2">
           <li>A inflação oficial é um índice de cabaz médio — não o preço do teu cabaz.</li>
           <li>A retenção na fonte mensal segue as tabelas do Despacho n.º 233-A/2026 (continente, sem deficiência). Faltam deduções de saúde/educação, IRS Jovem, pensões e regimes especiais. Açores e Madeira têm regras próprias.</li>

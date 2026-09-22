@@ -47,7 +47,7 @@ export function TermoRef({
       <span
         ref={cartao}
         aria-hidden="true"
-        className="absolute left-0 top-full z-40 mt-2 hidden w-72 max-w-[80vw] border border-line bg-overlay px-4 py-3 text-left font-sans text-sm font-normal normal-case not-italic tracking-normal text-ink2 shadow-overlay group-hover/termo:block group-focus-visible/termo:block"
+        className="absolute left-0 top-full z-40 mt-2 hidden w-72 max-w-[80vw] border border-line bg-overlay px-4 py-3 text-left font-sans text-corpo-sm font-normal normal-case not-italic tracking-normal text-ink2 shadow-overlay group-hover/termo:block group-focus-visible/termo:block"
       >
         <span className="kicker-xs block">{termo}</span>
         <span className="mt-1 block leading-relaxed">{definicao}</span>

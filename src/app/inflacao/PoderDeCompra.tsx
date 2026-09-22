@@ -70,7 +70,7 @@ export function PoderDeCompra({ serie }: Props) {
             </div>
           </div>
           <div className="min-w-0">
-            <p className="text-ink2 text-sm">
+            <p className="text-ink2 text-corpo-sm">
               {fmtEUR(valor)} em janeiro de {ano} compram hoje o equivalente a
             </p>
             <NumHero compacto valor={fmtEUR(resultado)} animar={resultado} className="mt-1" />
@@ -82,7 +82,7 @@ export function PoderDeCompra({ serie }: Props) {
           </div>
         </div>
       ) : (
-        <p className="mt-5 text-ink2 text-sm">Sem dados suficientes.</p>
+        <p className="mt-5 text-ink2 text-corpo-sm">Sem dados suficientes.</p>
       )}
     </div>
   );
