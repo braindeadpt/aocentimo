@@ -5,7 +5,10 @@ import { simularSalario } from "@/lib/engines/irs";
 import { TSU_ENTIDADE, TSU_TRABALHADOR } from "@/lib/engines/seg-social";
 import { reciboMensal, FormaPagamentoSA } from "@/lib/engines/recibo";
 import { SituacaoRetencao } from "@/lib/engines/retencao";
-import { FitaTalao } from "@/components/FitaTalao";
+import {
+  CustoExplodido,
+  type RotulosCusto,
+} from "@/components/CustoExplodido";
 import { TweenNum } from "@/components/TweenNum";
 import { SITE_URL } from "@/lib/site";
 import { useArmado } from "@/lib/useArmado";
@@ -41,9 +44,12 @@ export interface ReguaSalario {
 export function CalculadoraSalario({
   ano,
   regua,
+  custo,
 }: {
   ano: number;
   regua: ReguaSalario;
+  /** strings da explosão do custo — messages/pt.json → salario.custo */
+  custo: RotulosCusto;
 }) {
   const [bruto, setBruto] = useState(1500);
   const [situacao, setSituacao] = useState<Situacao>("solteiro");
@@ -97,9 +103,12 @@ export function CalculadoraSalario({
   let linha = -1;
   const prox = () => ++linha;
 
-  // a outra metade da história — a fita liga o recibo ao custo total:
-  // o talão mostra o que tu vês; a fita mostra o que a empresa paga
-  const medidasFita = {
+  // a outra metade da história — a explosão liga o recibo ao custo
+  // total: o talão mostra o que tu vês; as placas mostram o que a
+  // empresa paga. Invariante do desenho: custo − tsu − irs − ss =
+  // líquido (a placa «TSU» é o que a empresa gasta além do teu bruto
+  // e subsídios — com subs. de alimentação isento absorve a diferença)
+  const medidasCusto = {
     custo: recibo.custoEmpresa,
     tsu: recibo.custoEmpresa - recibo.bruto - recibo.saTotal,
     irs: recibo.retencao,
@@ -108,6 +117,7 @@ export function CalculadoraSalario({
     estado: recibo.custoEmpresa - recibo.liquido,
     taxaTsu: TSU_ENTIDADE,
     taxaSs: TSU_TRABALHADOR,
+    taxaIrs: recibo.taxaEfetiva,
   };
 
   return (
@@ -256,7 +266,7 @@ export function CalculadoraSalario({
           </p>
           <p className="footnote mt-1">
             de {fmtEUR(recibo.bruto + recibo.saTotal)} brutos por mês — o
-            recibo em baixo, o custo total na fita
+            recibo em baixo, o custo total na explosão no fim
           </p>
         </div>
         <div className="talao-wrap mt-6 self-start md:sticky md:top-6" ref={talaoRef}>
@@ -433,14 +443,13 @@ export function CalculadoraSalario({
       </div>
 
       {/* a outra metade da história — o recibo conta o que tu vês; a
-          fita liga-o ao custo total que a empresa paga (M-11). A mesma
-          história do EuroBar, no artefacto-assinatura, em variante
-          compacta — aqui a fita é peça de apoio, não a hero da home */}
+          explosão liga-o ao custo total que a empresa paga (R-05, V3
+          §6 — a gramática do euro, não mais papel). Reage à régua do
+          bruto: os valores contam --dur-curta, as placas não se
+          remontam */}
       <div className="md:col-span-2">
-        <p className="kicker-sm mb-3">
-          O que o recibo não mostra — o custo total para a empresa
-        </p>
-        <FitaTalao compacta medidas={medidasFita} />
+        <p className="kicker-sm mb-3">{custo.titulo}</p>
+        <CustoExplodido medidas={medidasCusto} rotulos={custo} ano={ano} />
       </div>
     </div>
   );

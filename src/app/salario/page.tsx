@@ -60,6 +60,7 @@ export default function SalarioPage() {
             ],
             descricao: m.regua.dica,
           }}
+          custo={m.salario.custo}
         />
       </Figure>
 

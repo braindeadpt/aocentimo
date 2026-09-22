@@ -356,6 +356,38 @@
     "longe": "longe — a maioria erra para cima",
     "centimos": "cêntimos"
   },
+  "salario": {
+    "custo": {
+      "titulo": "O que o recibo não mostra — o custo total para a empresa",
+      "breadcrumb": "O TEU SALÁRIO / CUSTO TOTAL · MOTORES {ano}",
+      "meta": "o Estado leva {valor} /mês",
+      "chegaConta": "chega à conta",
+      "porMes": "por mês",
+      "fontes": "Fontes: retenção — Despacho n.º 233-A/2026 · escalões — art. 68.º CIRS · TSU — seg-social.pt",
+      "pecas": {
+        "empresa": {
+          "rotulo": "A empresa paga",
+          "detalhe": "o bruto mais a TSU dela"
+        },
+        "tsu": {
+          "rotulo": "TSU · {taxa}",
+          "detalhe": "a entidade paga — fora do recibo"
+        },
+        "irs": {
+          "rotulo": "IRS retido",
+          "detalhe": "retenção na fonte · efetiva {taxa}"
+        },
+        "ss": {
+          "rotulo": "Seg. Social",
+          "detalhe": "{taxa} — a tua TSU, sai do recibo"
+        },
+        "conta": {
+          "rotulo": "Chega à conta",
+          "detalhe": "o líquido do mês"
+        }
+      }
+    }
+  },
   "escada": {
     "titulo": "a escada, degrau a degrau",
     "p0": "A empresa paga {valor} por mês por ti — mais do que o teu bruto.",

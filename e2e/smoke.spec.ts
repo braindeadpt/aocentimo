@@ -343,6 +343,43 @@ test("a fita do salário interroga-se por teclado e tem equivalente textual", as
   );
 });
 
+test("a explosão do custo em /salario interroga-se e reage à régua", async ({
+  page,
+}) => {
+  // R-05: o custo do trabalho é uma explosão isométrica (a gramática do
+  // euro), não papel — svg decorativo + equivalente visível na mesma
+  // carta, e peças interrogáveis por foco de teclado
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/salario");
+  const cartao = page.locator(".eu-card").first();
+  await expect(cartao).toBeVisible();
+
+  // o desenho é decorativo; o custo existe em texto — 5 passos
+  await expect(cartao.locator("svg").first()).toHaveAttribute(
+    "aria-hidden",
+    "true"
+  );
+  const lista = cartao.locator("[data-custo-lista]");
+  await expect(lista.locator("li")).toHaveCount(5);
+  await expect(lista).toContainText("A empresa paga");
+  await expect(lista).toContainText("TSU");
+  await expect(lista).toContainText("Chega à conta");
+
+  // foco de teclado num passo acende a peça correspondente (e a sua
+  // chamada — .eu-rotg.eu-peca-on)
+  await lista.locator("li").nth(1).focus();
+  await expect(cartao.locator("g.eu-peca.eu-peca-on")).toHaveCount(1);
+  await page.keyboard.press("Escape");
+
+  // a régua do bruto muda a explosão — o líquido e o selo do Estado
+  // acompanham; reduced-motion → valor final imediato, sem interpolação
+  const conta = lista.locator("li").last();
+  const antes = await conta.innerText();
+  await page.locator("#bruto").fill("2000");
+  await expect(conta).not.toHaveText(antes);
+  await expect(cartao.locator(".leitura-meta")).toContainText("Estado leva");
+});
+
 test("cada gráfico tem exactamente um equivalente textual alcançável", async ({
   page,
 }) => {

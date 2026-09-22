@@ -2195,6 +2195,12 @@ html[data-theme="dark"] .tema-ponto {
   font-size: 40px;
   font-weight: 700;
 }
+/* variante compacta — os euros do mês («1 167 €») são mais largos
+   que os cêntimos; 32 px mantém o número à esquerda da placa base
+   sem lhe tocar */
+.eu-num-m {
+  font-size: 32px;
+}
 /* as elipses também invertem com o papel — o bloco .leitura svg não
    cobre <ellipse> */
 .eu-card svg ellipse {

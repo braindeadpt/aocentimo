@@ -20,6 +20,7 @@ export function TweenNum({
   valor,
   casas = 2,
   texto,
+  prefixo = "",
   sufixo = "",
   dur = 320,
 }: {
@@ -30,6 +31,8 @@ export function TweenNum({
   /** o dígito já formatado no SSR — é o que o sr-only lê e anuncia
       (inclui a unidade, ex.: "1 234,56 €") */
   texto: string;
+  /** sinal/unidade antes do número, estático — «−» nos cortes */
+  prefixo?: string;
   /** unidade estática dentro do span visual — nunca interpola */
   sufixo?: string;
   /** ms — da gramática (--dur-curta 320 por defeito: a resposta a um
@@ -44,6 +47,7 @@ export function TweenNum({
         {texto}
       </span>
       <span className="tabular-nums" aria-hidden="true">
+        {prefixo}
         {fmtNum(animado, casas)}
         {sufixo}
       </span>
