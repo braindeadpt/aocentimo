@@ -9,9 +9,13 @@ import { EuroBar } from "@/components/EuroBar";
 import { Source } from "@/components/Source";
 import { Logo, LogoMark } from "@/components/Logo";
 import { MotionDemo } from "./MotionDemo";
+import { CampoCentimosDemo } from "./CampoCentimosDemo";
+import { CampoCentimos } from "@/components/CampoCentimos";
 import { PapelDefs } from "@/components/Papel";
 import { PecaPapel } from "@/components/PecaPapel";
 import { arestaRasgada } from "@/lib/materia";
+import { cenarioCanonico, BRUTO_CANONICO } from "@/lib/canonico";
+import { fmtEUR0, fmtNum } from "@/lib/format";
 import eur1m from "@data/sources/bpstat/euribor-1m-mensal.json";
 import eur3m from "@data/sources/bpstat/euribor-3m-mensal.json";
 import eur6m from "@data/sources/bpstat/euribor-6m-mensal.json";
@@ -28,6 +32,26 @@ export const metadata: Metadata = {
 const EURIBOR = [eur1m, eur3m, eur6m, eur12m].map((s) =>
   s.series.slice(-24)
 );
+
+// A história canónica em cêntimos por euro de custo — a demonstração do
+// campo. Os valores saem do motor canónico (servidor), nunca escritos à mão.
+const EURO_CENTIMOS = (() => {
+  const c = cenarioCanonico(BRUTO_CANONICO);
+  const porEuro = 100 / c.custoEmpresaMes;
+  const mes = (v: number) => `${fmtEUR0(v)}/mês`;
+  return {
+    bruto: c.brutoMes,
+    custo: c.custoEmpresaMes,
+    partes: [
+      { id: "tsu", rotulo: "TSU da empresa", rotuloCurto: "TSU", valor: c.tsuEntidadeMes * porEuro, tom: "sai" as const, detalhe: mes(c.tsuEntidadeMes) },
+      { id: "irs", rotulo: "IRS retido", rotuloCurto: "IRS", valor: c.irsRetidoMes * porEuro, tom: "sai" as const, detalhe: mes(c.irsRetidoMes) },
+      { id: "ss", rotulo: "Segurança Social", rotuloCurto: "SS", valor: c.ssMes * porEuro, tom: "sai" as const, detalhe: mes(c.ssMes) },
+      { id: "fica", rotulo: "Chegam à tua conta", rotuloCurto: "Ficam-te", valor: c.liquidoMes * porEuro, tom: "fica" as const, detalhe: mes(c.liquidoMes) },
+    ],
+  };
+})();
+const EURO_SAEM = 100 - EURO_CENTIMOS.partes[3].valor;
+const EURO_EQ = `De cada euro que a empresa gasta contigo (bruto de ${fmtEUR0(EURO_CENTIMOS.bruto)}): ${fmtNum(EURO_CENTIMOS.partes[3].valor)} cêntimos chegam à tua conta; ${fmtNum(EURO_CENTIMOS.partes[0].valor)} vão para a TSU da empresa, ${fmtNum(EURO_CENTIMOS.partes[1].valor)} para o IRS e ${fmtNum(EURO_CENTIMOS.partes[2].valor)} para a Segurança Social.`;
 
 const TOKENS: [string, string, string][] = [
   ["floor", "bg-floor", "#f4f3ec / #0d0b08 — nível 0, fundo"],
@@ -729,6 +753,61 @@ export default function EstiloPage() {
           Verde só para o que fica contigo; tudo o que sai vive na família
           vermilhão/tinta.
         </p>
+      </section>
+
+      <section className="stack-sec">
+        <h2 className="kicker mb-4">O campo de cêntimos — 1 ponto = 1 cêntimo</h2>
+        <p className="footnote mb-4 max-w-xl">
+          A unidade da V4: partes de um todo em dinheiro desenham-se em
+          pontos contáveis. Em repouso é a moeda de 1 € desenhada a sério;
+          ao revelar desfaz-se nos seus 100 cêntimos e cada ponto voa para
+          o monte de quem o leva. O texto diz o valor real («63,2 c»), o
+          desenho conta pontos inteiros (maior resto — somam sempre 100).
+          Sem JS o servidor serve o estado pedido em SVG com os mesmos
+          números; o equivalente textual está sempre presente.
+        </p>
+        <CampoCentimosDemo
+          partes={EURO_CENTIMOS.partes}
+          equivalente={EURO_EQ}
+          textos={{
+            pausa: (
+              <>
+                Um euro são <b>100 cêntimos</b>. Cada ponto é um.
+              </>
+            ),
+            saiem: (
+              <>
+                Destes 100 cêntimos, <b>{fmtNum(EURO_SAEM)}</b> saem antes de
+                chegar à tua conta.
+              </>
+            ),
+            pronto: (
+              <>
+                De cada euro, <b>{fmtNum(EURO_CENTIMOS.partes[3].valor)} c</b>{" "}
+                chegam-te à conta.
+              </>
+            ),
+          }}
+        />
+        <ul className="mt-4 space-y-1">
+          {[
+            "Usa-se para partes de um todo em dinheiro — salário, impostos, o preço de um litro. Nunca para estrutura (isso é o isométrico) nem séries temporais.",
+            "A parte que fica contigo é a última da lista — fica à direita e em verde; o que sai é vermelhão; neutro é cinzento.",
+            "Sem JS ou com reduced-motion o estado final está servido — abaixo, os mesmos montes como o SSR os entrega.",
+          ].map((r) => (
+            <li key={r} className="footnote">
+              <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-mark align-middle" />
+              {r}
+            </li>
+          ))}
+        </ul>
+        <div className="mt-6">
+          <CampoCentimos
+            partes={EURO_CENTIMOS.partes}
+            layout="montes"
+            equivalente={EURO_EQ}
+          />
+        </div>
       </section>
 
       <section className="stack-sec">

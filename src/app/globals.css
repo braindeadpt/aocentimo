@@ -2477,6 +2477,139 @@ html[data-theme="dark"] .tema-ponto {
     color var(--dur-micro) var(--ease-entra);
 }
 
+/* ————— campo de cêntimos — <CampoCentimos> (V4, S1-04) —————
+   O palco é uma zona de medição (pontos de fundo, família .blueprint);
+   o svg de SSR cobre tudo até ao primeiro frame do canvas — sem salto
+   de layout porque o canvas é absoluto por cima. Os rótulos dos montes
+   são HTML posicionado em % — os centros dos montes são fracções da
+   largura, logo coincidem a qualquer tamanho e em SSR. */
+.cc-palco {
+  position: relative;
+  container-type: inline-size;
+  height: clamp(320px, 52vw, 460px);
+  background-image: radial-gradient(var(--line) 1px, transparent 1.2px);
+  background-size: 22px 22px;
+  background-position: center;
+}
+.cc-svg,
+.cc-tela {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.cc-svg {
+  transition: opacity var(--dur-curta) var(--ease-entra);
+}
+.cc-palco[data-pronto] .cc-svg {
+  opacity: 0;
+}
+/* pontos do svg de SSR — a cor semântica vem dos tokens, como no canvas */
+.cc-d-sai { fill: var(--accent); }
+.cc-d-fica { fill: var(--keep); }
+.cc-d-neutro { fill: var(--ink2); }
+
+.cc-rotulos {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.cc-rot {
+  position: absolute;
+  transform: translateX(-50%) translateY(6px);
+  text-align: center;
+  white-space: nowrap;
+  opacity: 0;
+  transition:
+    opacity var(--dur-curta) var(--ease-entra),
+    transform var(--dur-curta) var(--ease-entra);
+}
+.cc-rot.on {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.cc-rot-n {
+  font-family: var(--font-mono);
+  font-size: var(--text-mini);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.cc-rot-c {
+  display: none;
+}
+.cc-rot-v {
+  display: block;
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-numero);
+  color: var(--ink2);
+  margin-top: 3px;
+}
+.cc-rot[data-tom="sai"] .cc-rot-v { color: var(--accent); }
+.cc-rot[data-tom="fica"] .cc-rot-v {
+  color: var(--keep);
+  font-size: var(--text-display-lg);
+  line-height: 1;
+}
+.cc-rot[data-zero] .cc-rot-v { color: var(--muted); }
+.cc-rot-e {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-kicker);
+  color: var(--ink2);
+  margin-top: 2px;
+}
+/* palco estreito: rótulo curto e a linha secundária só fica no «fica»
+   e nas partes a zero — nunca dois rótulos a disputar espaço */
+@container (max-width: 560px) {
+  .cc-rot-l { display: none; }
+  .cc-rot-c { display: inline; }
+  .cc-rot:not([data-tom="fica"]):not([data-zero]) .cc-rot-e {
+    display: none;
+  }
+  .cc-rot-v { font-size: var(--text-grande); }
+  .cc-rot[data-tom="fica"] .cc-rot-v { font-size: var(--text-display-md); }
+  .cc-rot-n { letter-spacing: 0.1em; }
+}
+
+/* a frase do palco — a pausa «um euro são 100 cêntimos» e o fecho */
+.cc-legenda {
+  position: absolute;
+  left: 20px;
+  top: 16px;
+  max-width: min(46ch, 72%);
+  margin: 0;
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: var(--text-grande);
+  line-height: 1.45;
+  color: var(--ink2);
+  opacity: 0;
+  transition: opacity var(--dur-media) var(--ease-entra);
+  pointer-events: none;
+}
+.cc-legenda.on {
+  opacity: 1;
+}
+.cc-legenda b,
+.cc-legenda strong {
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-style: normal;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+@container (max-width: 560px) {
+  .cc-legenda {
+    font-size: var(--text-corpo);
+    left: 14px;
+    top: 12px;
+  }
+}
+
 /* transição de tema — suave, sem flash; o atributo é removido pelo
    toggle após a transição e o bloco inteiro desliga-se em reduced-motion */
 @media (prefers-reduced-motion: no-preference) {

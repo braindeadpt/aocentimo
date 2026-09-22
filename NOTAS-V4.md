@@ -197,3 +197,112 @@ canónica com TSU; protótipo da moeda).
   o `font-variation-settings` numa linha.
 - O pormenor (2 px) como quarto raio derivado — ou preferes fundi-lo em
   `instrumento` nos sítios pequenos?
+
+## S1-04 · O motor de pontos e o campo de cêntimos (2026-09-23)
+
+**O que foi feito**
+
+- `src/lib/pontos/repartir.ts` — `repartir(partes, total=100)` pelo
+  MAIOR RESTO (Hamilton): floor da quota exacta + os pontos que faltam
+  aos maiores restos, empate ganha quem vem primeiro (determinista).
+  Invariante: Σpontos = total sempre que a soma dos valores é > 0,
+  mesmo com valores a somar 99,99 ou 100,01 (as quotas normalizam-se à
+  soma). Devolve `{valor real, pontos}` por parte — o texto escreve o
+  real («62,86 c»), o desenho conta pontos. Parte a 0 → 0 pontos, é
+  informação («não te toca»), nunca erro. Se TODAS valem 0, os pontos
+  ficam em `livres` e desenham-se neutros — o euro tem 100 cêntimos na
+  mesma.
+- `src/lib/pontos/layouts.ts` — geometria pura dos três estados:
+  `faceMoeda`/`geoMoeda`/`posNaFace` (100 pontos na face bicolor do 1 €,
+  anel de latão-níquel + disco de cuproníquel via `ANEL_DISCO`,
+  espessura da aresta, oscilação limitada — nunca de perfil),
+  `geoGrelha`/`slotGrelha` (10×10), `geoMontes`/`slotMonte`/`colsMonte`
+  (um aglomerado por parte, centros em fracção da largura — os rótulos
+  HTML alinham a qualquer escala e em SSR), `atribuirSectores`/
+  `atribuirSequencia`/`reatribuir` (cada ponto tem dono determinista;
+  os sem dono têm destino próprio na grelha neutra), `molaPasso`/
+  `molaAssentou` (mola amortecida própria — zero bibliotecas).
+- `src/lib/pontos/tela.ts` — `CampoTela`: o runtime de canvas. Canvas
+  2D com DPR (cap ×2), `ResizeObserver`, rAF só quando activo — pausa
+  fora do ecrã (`IntersectionObserver`), com o separador escondido
+  (`visibilitychange`) e desliga-se em `prefers-reduced-motion`
+  (estado final imediato). Cores lidas de `getComputedStyle` a cada
+  arranque/troca de tema — os tokens (`--accent`/`--keep`/`--ink2`)
+  mandam nos dois temas. Máquina de estados `repouso → revelar →
+  montes|grelha`, `voltar`; a revelação é a coreografia do protótipo:
+  a moeda pára de frente, desfaz-se em pontos com o metal da face,
+  pausa («um euro são 100 cêntimos»), acendem as cores e cada ponto
+  voa para o seu monte com atraso escalonado.
+- `src/components/CampoCentimos.tsx` — `"use client"`, props puros.
+  SSR: svg do estado pedido (moeda gravada a sério — «1» serifado,
+  EURO, seis linhas com doze estrelas, aresta — ou os montes finais)
+  com os mesmos números; o canvas cobre-o sem salto (absoluto por
+  cima, `data-pronto` esvanece o svg ao primeiro frame). Rótulos e
+  legenda são HTML em % sobre o palco. Palco `aria-hidden`; UM
+  equivalente `.sr-only[data-cc-equivalente]` por figura, gerado das
+  partes se omitido.
+- `/estilo`: secção «O campo de cêntimos — 1 ponto = 1 cêntimo» com o
+  exemplo vivo (moeda → grelha → montes, três botões) sobre a história
+  canónica calculada por `cenarioCanonico(1 500 €)` no servidor + os
+  mesmos montes como o SSR os serve + regras de uso.
+- Testes: `pontos.test.ts` (21 casos — invariante da soma em ~200
+  repartições aleatórias, maior resto, zeros, uma parte, 99,99/100,01,
+  geometria e donos); `e2e/campo-centimos.spec.ts` (5 casos — sem JS o
+  SVG tem os 100 pontos e o equivalente; um equivalente por figura;
+  reduced-motion sem rotação, dois frames idênticos; a revelação
+  assenta e acende rótulos; montes estáticos servidos).
+
+**API final (congelada — as sessões paralelas usam-na sem a mudar)**
+
+```ts
+<CampoCentimos
+  partes={ParteCentimos[]}           // obrigatório — a última é a que fica
+  layout?: "moeda" | "grelha" | "montes"   // "moeda" por omissão
+  total?: number                     // 100 por omissão (um euro)
+  equivalente?: string               // gerado das partes se omitido
+  textos?: { pausa?; saiem?; pronto?; zero? }   // frases do palco (ReactNode)
+  className?: string
+/>
+interface ParteCentimos {
+  id: string; rotulo: string; rotuloCurto?: string;
+  valor: number;                     // real, com decimais — o texto diz-o
+  tom: "sai" | "fica" | "neutro";    // vermelhão / verde / cinzento
+  detalhe?: string;                  // «356 €/mês»
+}
+```
+
+Motor: `repartir(partes: {valor}[], total=100) → {partes: {valor,
+pontos}[], livres, total}`; layouts e mola exportados por
+`src/lib/pontos/index.ts` (`NomeLayout`, `TomParte`, `geoMontes`, …).
+
+**Decisões (conservadoras, a confirmar)**
+
+- Os pontos herdam o metal da face (ouro/prata) até as cores acenderem
+  — «a moeda desfaz-se em cêntimos» literal; a cor semântica só chega
+  com a pausa, como no protótipo.
+- O palco mede-se por `container-type: inline-size` e os montes por
+  fracção da largura — os rótulos HTML nunca precisam de medir o
+  canvas e coincidem com o svg de SSR.
+- `livres` (nenhuma parte com valor) desenha-se na grelha neutra atrás
+  dos montes — nunca pontos órfãos a flutuar.
+- O svg de SSR da moeda é a face comum simplificada; o canvas repete
+  o mesmo desenho — não é uma ilustração diferente à espera de JS.
+- Reduced-motion: `mudarLayout` chama `saltarPara` — estado final num
+  frame, rótulos/legenda ligados de imediato, sem rAF de rotação.
+
+**Copy novo a rever pelo dono**
+
+- `/estilo`: «O campo de cêntimos — 1 ponto = 1 cêntimo» + parágrafo +
+  três regras de uso; botões «Moeda/Grelha/Montes».
+- Frases do palco (demo): «Um euro são 100 cêntimos. Cada ponto é
+  um.» · «Destes 100 cêntimos, X saem antes de chegar à tua conta.» ·
+  «De cada euro, X c chegam-te à conta.» · equivalente «De cada euro
+  que a empresa gasta contigo (bruto de 1 500 €): …».
+- Rótulos de zero: «não te toca» / «menos de um ponto».
+
+**Perguntas ao dono**
+
+- A demonstração usa o custo total da empresa (1 856 €) como «euro»
+  repartido — TSU da empresa incluída. Se preferires o euro do bruto
+  (TSU fora), é trocar o denominador na página.
+

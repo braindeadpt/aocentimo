@@ -168,7 +168,7 @@ de construídos.
 
 | Codificação | Quando se usa | Quando NÃO se usa | Componente |
 |---|---|---|---|
-| **Campo de cêntimos** (pontos) | partes de um todo em dinheiro (1 ponto = 1 cêntimo) | estrutura sem quantidade; séries temporais; totais que não se repartem | `CampoCentimos` *(a construir, S1-04)* |
+| **Campo de cêntimos** (pontos) | partes de um todo em dinheiro (1 ponto = 1 cêntimo) | estrutura sem quantidade; séries temporais; totais que não se repartem | `CampoCentimos` + `src/lib/pontos` (S1-04 — congelado) |
 | **Linha anotada** | série temporal com UM facto a assinalar (chamada + insight escrito) | partes de um todo; comparações instantâneas sem tempo | `Leitura`, `LineChart`, `Spark` |
 | **Haltere** | antes ● — ○ agora, por categoria, sobre grelha pontilhada | mais de dois pontos no tempo; série contínua | `Haltere` *(a construir, S1-05)* |
 | **Barra de traços** | contagem, limite, duração — «1 traço = x» com a unidade escrita no cartão | dinheiro contínuo; proporções de um todo | `BarraTracos` *(a construir, S1-05)* |
