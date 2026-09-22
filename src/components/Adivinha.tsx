@@ -5,24 +5,16 @@ import { Odometer } from "@/components/Odometer";
 import { m, t } from "@/lib/messages";
 
 /**
- * Guess-first — antes de mostrar a fita, o visitante aposta quantos
+ * Guess-first — antes da explosão do euro, o visitante aposta quantos
  * cêntimos de cada euro de custo da empresa lhe chegam. Ao revelar, o
- * odometer mostra a realidade e a fita volta a imprimir-se e a rasgar-se
- * (remount por key = replay da sequência). Números do motor fiscal.
+ * odometer mostra a realidade; a decomposição completa é a secção
+ * seguinte («O TEU EURO»). Números do motor fiscal, calculados no
+ * servidor (page.tsx) — aqui só se compara com a aposta.
  */
-export function Adivinha({
-  real,
-  children,
-}: {
-  /** cêntimos de cada euro de custo da empresa que chegam ao trabalhador
-   *  — calculado no servidor (page.tsx), aqui só se compara com a aposta */
-  real: number;
-  children: React.ReactNode;
-}) {
+export function Adivinha({ real }: { real: number }) {
   const estado = 100 - real;
 
   const [aposta, setAposta] = useState<number | null>(null);
-  const [ronda, setRonda] = useState(0);
 
   const diff = aposta === null ? null : Math.abs(aposta - real);
   const veredicto =
@@ -38,7 +30,6 @@ export function Adivinha({
           const n = Number(v);
           if (v !== null && v !== "" && Number.isFinite(n)) {
             setAposta(Math.max(0, Math.min(100, n)));
-            setRonda((r) => r + 1);
           }
         }}
       >
@@ -94,10 +85,6 @@ export function Adivinha({
           </div>
         )}
       </div>
-
-      {/* a fita — remount rejoga a sequência impressão→rasgo a cada
-          aposta; é o momento de assinatura do site */}
-      <div key={ronda}>{children}</div>
     </div>
   );
 }

@@ -5,7 +5,6 @@ import {
   type PassoEuro,
   type RotulosEuro,
 } from "@/components/EuroExplodido";
-import { FitaTalao } from "@/components/FitaTalao";
 import { Kinetic } from "@/components/Kinetic";
 import { Leitura } from "@/components/Leitura";
 import { loadFonte, loadPainel } from "@/lib/data";
@@ -20,18 +19,11 @@ import {
 import { decomporCombustivel } from "@/lib/engines/impostos";
 import { simularSalario } from "@/lib/engines/irs";
 import { retencaoNaFonte } from "@/lib/engines/retencao";
-import { TSU_ENTIDADE, TSU_TRABALHADOR } from "@/lib/engines/seg-social";
+import { TSU_TRABALHADOR } from "@/lib/engines/seg-social";
 import isp from "@data/fiscal/isp.json";
 import retencaoJson from "@data/fiscal/retencao-2026.json";
 import ssJson from "@data/fiscal/ss.json";
-import {
-  fmtLitro,
-  fmtNum,
-  fmtPct,
-  fmtEUR0,
-  fmtPeriodo,
-  fmtDataHora,
-} from "@/lib/format";
+import { fmtLitro, fmtNum, fmtPeriodo, fmtDataHora } from "@/lib/format";
 import { m, t } from "@/lib/messages";
 import { SITE_URL } from "@/lib/site";
 
@@ -210,38 +202,11 @@ export default function Home() {
 
   // Fronteira servidor/cliente: o motor fiscal corre UMA vez aqui —
   // simularSalario puxa os JSON de data/fiscal (IRS, retenção, SS) que
-  // assim nunca entram no bundle do browser. Adivinha/FitaTalao
-  // recebem números prontos por props (serializáveis); interactivos
-  // ficam só o form da aposta e o observer do scrolly.
+  // assim nunca entram no bundle do browser. Adivinha recebe a
+  // «realidade» pronta por props; a decomposição completa é contada
+  // uma só vez, pelo EuroExplodido mais abaixo.
   const med = simularSalario([1500], 0, 2026);
-  const mensal = (v: number) => v / 14;
-  const medidas = {
-    custo: mensal(med.custoEmpresaAnual),
-    tsu: mensal(med.brutoAnualTotal * TSU_ENTIDADE),
-    irs: mensal(med.irsAnual),
-    ss: mensal(med.ssAnual),
-    liquido: mensal(med.liquidoAnual),
-    estado: mensal(med.brutoAnualTotal * TSU_ENTIDADE + med.irsAnual + med.ssAnual),
-    taxaTsu: TSU_ENTIDADE,
-    taxaSs: TSU_TRABALHADOR,
-  };
   const real = (med.liquidoAnual / med.custoEmpresaAnual) * 100;
-
-  // a escada narrada, comprimida a legenda plana — a fita já conta a
-  // história; estas frases ficam como notas de leitura (M-10)
-  const { custo, tsu, irs, ss, liquido, estado, taxaTsu, taxaSs } = medidas;
-  const passos = [
-    t(m.escada.p0, { valor: fmtEUR0(custo) }),
-    t(m.escada.p1, { valor: fmtEUR0(tsu), taxa: fmtPct(taxaTsu, 2) }),
-    t(m.escada.p2, { valor: fmtEUR0(custo - tsu) }),
-    t(m.escada.p3, { valor: `−${fmtEUR0(irs)}` }),
-    t(m.escada.p4, { valor: `−${fmtEUR0(ss)}`, taxa: fmtPct(taxaSs, 0) }),
-    t(m.escada.p5, {
-      valor: fmtEUR0(liquido),
-      custo: fmtEUR0(custo),
-      estado: fmtEUR0(estado),
-    }),
-  ];
 
   // ————— «o teu euro» (R-02): a decomposição de 1 € bruto —————
   // Tudo sai dos motores e das fontes, para um salário bruto de
@@ -389,10 +354,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* o instrumento — a pergunta primeiro, a fita depois: ao revelar,
-          a FitaTalao reimprime-se e rasga-se (remount por ronda). Em
-          largura total — é a peça-assinatura. A escada do scrolly foi
-          comprimida a legenda plana: a fita já narra sozinha. */}
+      {/* a pergunta antes da resposta — o visitante aposta quantos
+          cêntimos de cada euro de custo lhe chegam; a decomposição
+          completa vem depois, na explosão */}
       <section
         aria-labelledby="instrumento"
         className="stack-sec border border-line bg-panel px-5 py-6 md:px-8 md:py-8"
@@ -401,28 +365,14 @@ export default function Home() {
           <h2 id="instrumento" className="kicker">{h.euroTitulo}</h2>
           <p className="num text-right text-xs text-muted">{h.euroNota}</p>
         </div>
-        <Adivinha real={real}>
-          <div className="blueprint mt-6 border-t border-dashed border-line2 px-3 py-6">
-            <FitaTalao medidas={medidas} />
-          </div>
-          <ol className="mt-5 grid gap-x-8 gap-y-2 md:grid-cols-2">
-            {passos.map((p, i) => (
-              <li
-                key={i}
-                className="border-l-2 border-line pl-4 text-sm leading-relaxed text-ink2"
-              >
-                {p}
-              </li>
-            ))}
-          </ol>
-        </Adivinha>
+        <Adivinha real={real} />
       </section>
 
       {/* «O TEU EURO» (R-02) — o euro bruto em explosão isométrica:
           camadas wireframe afastadas na vertical, chamadas tracejadas
           até aos rótulos mono; a lista é o equivalente sempre visível.
-          Depois do painel de leituras, antes dos capítulos — e depois
-          do instrumento, para a adivinha não chegar respondida. */}
+          Depois do painel de leituras e da adivinha — é a resposta à
+          pergunta —, antes dos capítulos. */}
       <EuroExplodido passos={passosEuro} rotulos={rotulosEuro} />
 
       {/* capítulos — o percurso do euro */}

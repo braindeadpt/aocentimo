@@ -25,11 +25,23 @@ import { useArmado } from "@/lib/useArmado";
 import { useValorAnimado } from "@/lib/useValorAnimado";
 import { fmtEUR0, fmtPct } from "@/lib/format";
 import { t } from "@/lib/t";
-import type { MedidasEuro } from "@/components/FitaTalao";
 
-/** As mesmas medidas mensais da antiga fita + a taxa efetiva de IRS
-    (detalhe da placa). Calculadas no simulador a partir de
-    reciboMensal — o componente não importa motores nem data/. */
+/** Medidas mensais do custo do trabalho — calculadas UMA vez no
+    servidor/simulador e passadas por props; o componente não importa
+    motores nem data/. (Herdado da antiga FitaTalao, removida em R-06.) */
+export interface MedidasEuro {
+  custo: number; // custo mensal para a empresa (bruto + TSU entidade)
+  tsu: number; // TSU da entidade patronal
+  irs: number; // retenção de IRS
+  ss: number; // TSU do trabalhador
+  liquido: number; // o que chega à conta
+  estado: number; // tsu + irs + ss
+  taxaTsu: number; // taxa da entidade (rótulos)
+  taxaSs: number; // taxa do trabalhador (rótulos)
+}
+
+/** As medidas mensais + a taxa efetiva de IRS (detalhe da placa).
+    Calculadas no simulador a partir de reciboMensal. */
 export interface MedidasCusto extends MedidasEuro {
   /** taxa efetiva de retenção na fonte — rótulo da placa do IRS */
   taxaIrs: number;

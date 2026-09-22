@@ -60,35 +60,6 @@
     "menos05": "−0,5 p.p.",
     "mais05": "+0,5 p.p."
   },
-  "fluxo": {
-    "aria": "A empresa paga {custo} por mês; chegam-te {liquido} líquidos.",
-    "empresa": "A empresa paga",
-    "bruto": "salário bruto {valor}",
-    "tsu": "TSU · {taxa}",
-    "irs": "IRS · retenção",
-    "ss": "Seg. Social · {taxa}",
-    "liquido": "líquido → {valor}",
-    "porMes": "por mês",
-    "pctCusto": "{pct} % do custo",
-    "brutoLabel": "salário bruto",
-    "estado": "o Estado leva {valor} /mês",
-    "estadoLabel": "Total para o Estado",
-    "tu": "Tu",
-    "linkEstado": "o que o Estado leva",
-    "linkTu": "o teu recibo",
-    "linkBanco": "e o banco?",
-    "linkBomba": "e na bomba?"
-  },
-  "fita": {
-    "emissao": "EMISSÃO",
-    "ficaContigo": "FICA CONTIGO",
-    "centimos": "cêntimos de cada euro",
-    "arrancados": "{valor} arrancados",
-    "antesDaConta": "todos os meses, antes da tua conta",
-    "naoToca": "não te toca",
-    "naoProp": "pedaço em largura mínima — o desenho já não é proporcional aí",
-    "aria": "A fita do salário: a empresa paga {custo}; saem {tsu} de TSU, {irs} de IRS e {ss} de Segurança Social. Ficam contigo {liquido}."
-  },
   "ticker": {
     "label": "Dados em direto",
     "euribor3m": "EURIBOR 3M",
@@ -387,14 +358,5 @@
         }
       }
     }
-  },
-  "escada": {
-    "titulo": "a escada, degrau a degrau",
-    "p0": "A empresa paga {valor} por mês por ti — mais do que o teu bruto.",
-    "p1": "Antes do recibo existir, o Estado já cortou {valor} — a TSU que a entidade paga ({taxa}).",
-    "p2": "O teu bruto: {valor}. É daqui que partem os teus descontos.",
-    "p3": "IRS retido na fonte: {valor} por mês.",
-    "p4": "A tua Segurança Social: {valor} ({taxa}).",
-    "p5": "Chegam-te {valor}. Dos {custo} que a empresa gastou, o Estado ficou com {estado}."
   }
 }

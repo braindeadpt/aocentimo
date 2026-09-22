@@ -604,94 +604,6 @@ html[data-theme="dark"] .tema-ponto {
   to { transform: scaleX(1); }
 }
 
-/* ————— a fita do salário — a peça-assinatura (M-05) —————
-   A sequência lê-se como uma coisa só: a cabeça de impressão marca o
-   topo, a fita emerge de cima para baixo, cada pedaço resiste um
-   instante e rasga-se quando a aresta passa a sua perfuração, os
-   valores contam ao aparecer, o troço final acende. Todos os estados
-   base são o estado FINAL — reduced-motion mostra a fita impressa. */
-.fita-wipe {
-  animation: fita-sair var(--dur-longa) var(--ease-entra) both;
-}
-@keyframes fita-sair {
-  from { transform: translateY(-740px); }
-  to { transform: translateY(0); }
-}
-
-.fita-cabeca {
-  animation: fita-aparece var(--dur-micro) var(--ease-entra) both;
-}
-@keyframes fita-aparece {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* o pedaço nasce anexado ao seu notch (a fita ainda o inclui), resiste
-   um instante, solta-se, roda e cai na pilha à direita — --ax/--ay é a
-   posição anexada, --fx/--fy a aterragem, --r a rotação final */
-.fita-pedaco {
-  transform: translate(var(--fx), var(--fy)) rotate(var(--r));
-  animation: fita-rasga var(--dur-media) var(--ease-rasgo) backwards;
-  animation-delay: var(--d, 0ms);
-}
-@keyframes fita-rasga {
-  0% {
-    opacity: 0;
-    transform: translate(var(--ax), var(--ay)) rotate(0deg);
-  }
-  12% {
-    opacity: 1;
-    transform: translate(var(--ax), var(--ay)) rotate(0deg);
-  }
-  26% {
-    transform: translate(calc(var(--ax) + 1.5px), var(--ay))
-      rotate(-1.4deg);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(var(--fx), var(--fy)) rotate(var(--r));
-  }
-}
-
-/* sombra pintada do pedaço — aparece no voo; transform/opacity apenas
-   (orçamento M-01: filtros só em estático) */
-.fita-sombra {
-  opacity: 0.5;
-  animation: fita-sombra var(--dur-media) var(--ease-entra) backwards;
-  animation-delay: var(--d, 0ms);
-}
-@keyframes fita-sombra {
-  0%,
-  55% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0.5;
-  }
-}
-
-/* textos que aterrissam com o pedaço ou marcam um corte de 0 € */
-.fita-atraso {
-  animation: fita-aparece var(--dur-curta) var(--ease-entra) backwards;
-  animation-delay: var(--d, 0ms);
-}
-
-/* realce do troço final — acende depois da última perfuração */
-.fita-brilho {
-  animation: fita-aparece var(--dur-curta) var(--ease-entra) backwards;
-  animation-delay: var(--d, 0ms);
-}
-
-/* interrogação — o elemento lido fica pleno, os irmãos recuam */
-.fita-passo {
-  transition: opacity var(--dur-curta) var(--ease-entra);
-}
-.fita-passo.fita-off {
-  opacity: 0.16;
-}
-
-/* ————— tipografia impressa da fita (e do talão) ————— */
-
 /* ————— odometer — rodas de dígitos, reactivas —————
    O transform base é a posição final (--d) e a TRANSIÇÃO faz o resto:
    a montagem começa em 0 via .od-zero (só com JS — SSR e no-JS mostram
@@ -1211,16 +1123,6 @@ html[data-theme="dark"] .tema-ponto {
     transform: rotate(-3deg) scale(1);
   }
 }
-/* fita em variante compacta — o mesmo artefacto, mais estreito: nas
-   páginas de simulador é peça de apoio, não a hero da home */
-.fita-compacta {
-  max-width: 36rem;
-  margin-inline: auto;
-}
-.fita-compacta .chart-readout {
-  font-size: 0.95rem;
-}
-
 /* ————— talão de compras: matéria + separação do IVA (M-12) ————— */
 /* aresta rasgada — a silhueta vem de mascaraFaixaRasgo (materia.ts):
    dentes irregulares deterministas, não o zig-zag regular da versão
@@ -2342,34 +2244,6 @@ html[data-theme="dark"] .tema-ponto {
   to {
     transform: none;
   }
-}
-
-/* painel-blueprint: grelha de pontos atrás do diagrama */
-.blueprint {
-  background-image: radial-gradient(var(--line2) 1px, transparent 1px);
-  background-size: 22px 22px;
-  background-position: center;
-}
-
-.fluxo-label {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.fluxo-valor-mini {
-  font-family: var(--font-mono);
-  font-size: 15px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-.fluxo-valor {
-  font-family: var(--font-mono);
-  font-size: 24px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
 }
 
 /* capítulos — hover inverte a linha inteira, como um instrumento

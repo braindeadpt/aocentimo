@@ -229,12 +229,6 @@ export function Leitura({
   const rotAcima = ay > H / 2; // extremo baixo → rótulo por cima
   const ancor =
     ax < W * 0.28 ? "start" : ax > W * 0.72 ? "end" : "middle";
-  const lx = grampo(
-    ax + (ancor === "start" ? 4 : ancor === "end" ? -4 : 0),
-    pad.l + 4,
-    W - pad.r - 4
-  );
-  const ly = rotAcima ? ay - 30 : ay + 34;
 
   // rótulo da referência constante — por cima da linha, encostado à
   // direita do plot; se colidir com o rótulo de fim da principal, desce
@@ -255,6 +249,74 @@ export function Leitura({
   const dyFim = yFimRef - yFimMain;
   const yRotRefFim =
     Math.abs(dyFim) < 14 ? yFimRef + (dyFim < 0 ? -9 : 15) : yFimRef + 4;
+
+  // posição do rótulo da anotação — com anti-colisão contra os rótulos
+  // de fim no gutter direito (quando o extremo anotado cai perto do
+  // fim da série — gasóleo, habitação — a chamada ficava a tocar o
+  // valor final; em cartões estreitos o rótulo largo até transbordava
+  // a borda do svg). Mede-se a distância entre caixas de texto
+  // estimadas (baseline + capa/descendente do mono 11 px): a menos de
+  // ~26 px o rótulo recua para a esquerda e, se a margem esquerda não
+  // chegar, separa-se na vertical — a chamada tracejada acompanha.
+  let lx = grampo(
+    ax + (ancor === "start" ? 4 : ancor === "end" ? -4 : 0),
+    pad.l + 4,
+    W - pad.r - 4
+  );
+  let ly = rotAcima ? ay - 30 : ay + 34;
+  if (anotacao && pontoAnot) {
+    const GAP_ROT = 26;
+    // caixa real do mono 11 px medida no browser: ~baseline −12,5/+3,5
+    // — com margem, para a estimativa nunca ficar curta
+    const TEXTO = { sobe: 13, desce: 4 };
+    const wAnot = anotacao.rotulo.length * MONO_CH + 6; // folga ~1 car.
+    const dirRot =
+      ancor === "start" ? wAnot : ancor === "middle" ? wAnot / 2 : 0;
+    const lxMin =
+      pad.l +
+      4 +
+      (ancor === "end" ? wAnot : ancor === "middle" ? wAnot / 2 : 0);
+    const xFim = W - pad.r + 10; // aresta esquerda dos rótulos de fim
+    const alvos = [
+      { x: xFim, y: yFimMain + 4, w: rotFim.length * MONO_CH },
+      ...(refSerie
+        ? [{ x: xFim, y: yRotRefFim, w: rotRefFim.length * MONO_CH }]
+        : []),
+    ];
+    for (const alvo of alvos) {
+      const caixaAnot = () => ({
+        l: lx + dirRot - wAnot,
+        r: lx + dirRot,
+        t: ly - TEXTO.sobe,
+        b: ly + TEXTO.desce,
+      });
+      const caixaFim = {
+        l: alvo.x,
+        r: alvo.x + alvo.w,
+        t: alvo.y - TEXTO.sobe,
+        b: alvo.y + TEXTO.desce,
+      };
+      // colisão = proximidade nos DOIS eixos (rótulos vizinhos na mesma
+      // linha); um eixo já separado ≥ GAP_ROT é afastamento suficiente
+      const folgas = () => {
+        const a = caixaAnot();
+        return {
+          x: Math.max(0, caixaFim.l - a.r, a.l - caixaFim.r),
+          y: Math.max(0, a.t - caixaFim.b, caixaFim.t - a.b),
+        };
+      };
+      if (folgas().x >= GAP_ROT || folgas().y >= GAP_ROT) continue;
+      // 1) a chamada recua para a esquerda até abrir o intervalo
+      lx = Math.max(lxMin, lx - (GAP_ROT - (caixaFim.l - caixaAnot().r)));
+      if (folgas().x >= GAP_ROT) continue;
+      // 2) a margem não chegou — separa na vertical, no lado onde está
+      const base =
+        ly <= alvo.y
+          ? alvo.y - GAP_ROT - TEXTO.sobe - TEXTO.desce
+          : alvo.y + GAP_ROT + TEXTO.sobe + TEXTO.desce;
+      ly = grampo(base, 8, H - pad.b - 6);
+    }
+  }
 
   const ariaLabel = temGrafico
     ? rotulos.aria

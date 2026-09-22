@@ -290,57 +290,57 @@ test("o primeiro Tab foca o skip-link", async ({ page }) => {
   await expect(focado).toHaveAttribute("href", "#conteudo");
 });
 
-test("a fita do salário interroga-se por teclado e tem equivalente textual", async ({
+test("a explosão do euro interroga-se por teclado e tem equivalente textual", async ({
   page,
 }) => {
-  // M-05/M-10: reduced-motion → a fita nasce já no estado final, sem
-  // destaques — leitura determinística
+  // R-06: a fita de papel saiu da home — a decomposição do euro é a
+  // explosão isométrica. O svg é decorativo; o equivalente sempre
+  // visível é a lista, que interroga as peças por foco de teclado.
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  const zona = page.locator(".blueprint").first();
+  const cartao = page.locator(".eu-card").first();
+  await expect(cartao).toBeVisible();
 
   // o desenho é decorativo; a viagem do euro existe em texto
-  await expect(zona.locator("svg").first()).toHaveAttribute(
+  await expect(cartao.locator("svg").first()).toHaveAttribute(
     "aria-hidden",
     "true"
   );
-  const tabela = zona.locator("table");
-  await expect(tabela.locator("caption")).toContainText("A fita do salário");
-  await expect(tabela).toContainText("Total para o Estado");
+  const lista = cartao.locator("[data-euro-lista]");
+  const passos = lista.locator("li");
+  expect(await passos.count()).toBeGreaterThanOrEqual(4);
+  await expect(lista).toContainText("Segurança Social");
+  await expect(lista).toContainText("Fica-te");
 
-  // leitura por omissão: o resumo empresa → tu
-  const readout = zona.locator(".chart-readout");
-  const titulo = readout.locator(".chart-readout-t");
-  const valor = readout.locator(".chart-readout-v");
-  await expect(titulo).toContainText("A empresa paga");
-  await expect(valor).toContainText("Tu");
+  // foco de teclado num passo realça a peça correspondente (e a sua
+  // chamada — g.eu-peca.eu-peca-on / .eu-rotg.eu-peca-on); Tab anda
+  // passo a passo
+  await passos.nth(1).focus();
+  await expect(passos.nth(1)).toHaveClass(/eu-li-on/);
+  await expect(cartao.locator("g.eu-peca.eu-peca-on")).toHaveCount(1);
+  await expect(cartao.locator("g.eu-rotg.eu-peca-on")).toHaveCount(1);
+  await page.keyboard.press("Tab");
+  await expect(passos.nth(2)).toHaveClass(/eu-li-on/);
+  await expect(cartao.locator("g.eu-peca.eu-peca-on")).toHaveCount(1);
 
-  // a régua percorre as 7 paradas: End → Estado, Home → empresa,
-  // setas andam parada a parada
-  const scrub = zona.locator(".chart-scrub");
-  await scrub.focus();
-  await page.keyboard.press("ArrowLeft");
-  await expect(titulo).toContainText("Tu");
-  await expect(valor).toContainText("do custo");
-  await page.keyboard.press("ArrowLeft");
-  await expect(titulo).toContainText("Seg. Social");
-  await page.keyboard.press("Home");
-  await expect(titulo).toContainText("A empresa paga");
-  await expect(valor).toContainText("do custo");
-  await page.keyboard.press("End");
-  await expect(titulo).toContainText("Estado leva");
-  await page.keyboard.press("Escape");
-  await expect(valor).toContainText("Tu");
-
-  // os links de capítulo do antigo Fluxo continuam cá
-  await expect(zona.getByRole("link", { name: /o que o Estado leva/ })).toHaveAttribute(
-    "href",
-    "/impostos"
-  );
-  await expect(zona.getByRole("link", { name: /o teu recibo/ })).toHaveAttribute(
-    "href",
-    "/salario"
-  );
+  // a ordem narrativa é pergunta → resposta: painel → adivinha →
+  // explosão → capítulos — medido na posição real do documento
+  const ordem = await page.evaluate(() => {
+    const pos = (el: Element | null | undefined) =>
+      el ? el.getBoundingClientRect().top + window.scrollY : Infinity;
+    const capitulos = [...document.querySelectorAll("h2")].find((h) =>
+      h.textContent?.includes("PERCURSO")
+    );
+    return {
+      painel: pos(document.getElementById("painel-leituras")),
+      adivinha: pos(document.getElementById("instrumento")),
+      euro: pos(document.getElementById("euro-titulo")),
+      capitulos: pos(capitulos),
+    };
+  });
+  expect(ordem.painel).toBeLessThan(ordem.adivinha);
+  expect(ordem.adivinha).toBeLessThan(ordem.euro);
+  expect(ordem.euro).toBeLessThan(ordem.capitulos);
 });
 
 test("a explosão do custo em /salario interroga-se e reage à régua", async ({
