@@ -4,6 +4,7 @@ import { Fragment, useMemo, useState } from "react";
 import { simularSalario } from "@/lib/engines/irs";
 import { TSU_ENTIDADE, TSU_TRABALHADOR } from "@/lib/engines/seg-social";
 import { reciboMensal, FormaPagamentoSA } from "@/lib/engines/recibo";
+import { BRUTO_CANONICO } from "@/lib/canonico";
 import { SituacaoRetencao } from "@/lib/engines/retencao";
 import {
   CustoExplodido,
@@ -51,9 +52,10 @@ export function CalculadoraSalario({
   /** strings da explosão do custo — messages/pt.json → salario.custo */
   custo: RotulosCusto;
 }) {
-  const [bruto, setBruto] = useState(1500);
+  // o bruto inicial é o do cenário canónico — a mesma história da home
+  const [bruto, setBruto] = useState(BRUTO_CANONICO);
   const [situacao, setSituacao] = useState<Situacao>("solteiro");
-  const [conjuge, setConjuge] = useState(1500);
+  const [conjuge, setConjuge] = useState(BRUTO_CANONICO);
   const [dependentes, setDependentes] = useState(0);
   const [saPorDia, setSaPorDia] = useState(0);
   const [formaSA, setFormaSA] = useState<FormaPagamentoSA>("cartao");
@@ -435,7 +437,10 @@ export function CalculadoraSalario({
           </div>
         </div>
         <p className="footnote px-5 pb-4">
-          &ldquo;Para o Estado&rdquo; soma IRS, a tua SS (11 %) e a TSU da
+          Esta leitura é anual e a 14 meses — soma subsídios de férias e
+          de Natal e estima o IRS da liquidação; por isso difere do
+          recibo mensal, que usa a retenção real. &ldquo;Para o
+          Estado&rdquo; soma IRS, a tua SS (11 %) e a TSU da
           empresa (23,75 %) sobre o custo total. O <em>dia da liberdade
           fiscal</em> marca a data em que, se trabalhasses primeiro só para
           essa fatia, passavas a trabalhar para ti.

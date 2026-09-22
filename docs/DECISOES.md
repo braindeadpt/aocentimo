@@ -324,3 +324,26 @@ defeitos do relatório e constrói os componentes partilhados
 `OrbeEstado`), que **congelam** antes das sessões paralelas 2 e 3A–3D.
 As decisões em aberto do relatório §7 entraram em «Perguntas ao dono»
 acima.
+
+## 2026-09-22 — A história canónica do euro (uma só, em `canonico.ts`)
+
+**Contexto.** O relatório V4 apontou que a home e `/salario` contavam o
+mesmo euro com números diferentes: a home calculava à mão
+(`TSU_TRABALHADOR`, `retencaoNaFonte`, `simularSalario` — três motores,
+histórias distintas) e a razão «cêntimos por euro de custo» da adivinha
+saía da estimativa anual a 14 meses, não do recibo.
+
+**Escolha.** Uma só função — `cenarioCanonico(bruto, ano)` em
+`src/lib/canonico.ts` — produz o cenário de referência a partir de
+`reciboMensal` (solteiro, sem dependentes, sem SA, continente). A
+história começa no custo total para a empresa (bruto + TSU patronal) e
+o «líquido» é sempre o recibo mensal com retenção real × 12. A média a
+14 meses e a estimativa anual ficam em `/salario`, explicadas com uma
+frase. A home consome `cenarioCanonico`; `/salario` parte da régua em
+`BRUTO_CANONICO` e o herói é o mesmo `recibo.liquido`.
+
+**Consequência.** Um número, uma fonte de verdade: mudar o ano fiscal ou
+o caso-base muda as duas páginas de uma vez. Em aberto para o dono
+(NOTAS-V4 §S1-02): se a explosão da home deve começar no custo total
+(1 856 €) em vez do bruto (1 500 €) — hoje mantém-se o bruto como
+moeda-mãe.

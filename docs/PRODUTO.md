@@ -123,6 +123,29 @@ peças por valor.
 Cada página termina com **a pergunta seguinte**, para ninguém chegar a um
 beco. Os níveis têm marcação semântica coerente (landmarks/headings).
 
+### A história canónica do euro
+
+Uma só história do salário, contada da mesma maneira em todo o site
+(implementação única: `src/lib/canonico.ts` — quem mostra estes números
+consome de lá, nunca recalcula):
+
+1. **Começa no custo total para a empresa** — bruto + TSU patronal. É o
+   facto revelador: a empresa paga mais do que o salário que o
+   trabalhador vê no contrato.
+2. **Desce pelos cortes** — TSU da entidade, IRS retido, Seg. Social do
+   trabalhador.
+3. **O «líquido» é o do recibo** — o valor mensal com a retenção na
+   fonte real das tabelas em vigor. O ano canónico é esse recibo × 12.
+
+O caso-base é solteiro(a), sem dependentes, continente, sem subsídio de
+alimentação, bruto de referência 1 500 €/mês (`BRUTO_CANONICO`).
+
+**Outras leituras não se misturam.** A média a 14 meses (duodécimos) e a
+estimativa de IRS anual (liquidação) são representações diferentes —
+cada uma vive na sua página, com uma frase a explicar a diferença
+(`/salario` tem as duas). Nenhum cartão fora delas as usa como
+«líquido».
+
 ### A navegação: quatro perguntas + Aprender
 
 Substitui a lista de itens soltos (implementação: sessão S1-07 da V4;

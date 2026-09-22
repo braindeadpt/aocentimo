@@ -10,7 +10,10 @@
 > escura (estilo «Ledger») — cartões com breadcrumb, uma cor de sinal,
 > anotações com linhas de chamada tracejadas, controlos físicos (régua,
 > slider com «now», presets), explosão isométrica com rótulos, inversão
-> claro/escuro do cartão focado. `docs/brand/referencias/` guarda os ficheiros.
+> claro/escuro do cartão focado. As capturas ficam em
+`docs/brand/referencias/`; os dois mp4, por serem de terceiros, saíram
+do repo para `referencias/` (fora do git — ficam na história; ver
+DECISOES/NOTAS-V4).
 
 ## A linguagem (regras, não sugestões)
 
@@ -33,7 +36,8 @@
 - Qualquer animação cuja ausência não se note.
 
 ## Fontes de referência (canónicas, escolhidas pelo dono 2026-09-21)
-- `docs/brand/referencias/` — os 2 mp4 Ledger + 4 capturas (a base desta direcção).
+- `docs/brand/referencias/` — as capturas; os 2 mp4 Ledger estão em
+  `referencias/` (locais, fora do repo — material de terceiros).
 - `designeer.xyz` → sobretudo **60fps.design** (movimento real gravado),
   **details.so** (micro-interacções) e **Sombra** (dark-mode).
 - `inspora.design` — mecânicas concretas (cards interactivos, timelines, pickers).

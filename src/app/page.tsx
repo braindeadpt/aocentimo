@@ -17,9 +17,8 @@ import {
   type Cartao,
 } from "@/lib/leitura";
 import { decomporCombustivel } from "@/lib/engines/impostos";
-import { simularSalario } from "@/lib/engines/irs";
-import { retencaoNaFonte } from "@/lib/engines/retencao";
 import { TSU_TRABALHADOR } from "@/lib/engines/seg-social";
+import { BRUTO_CANONICO, cenarioCanonico } from "@/lib/canonico";
 import isp from "@data/fiscal/isp.json";
 import retencaoJson from "@data/fiscal/retencao-2026.json";
 import ssJson from "@data/fiscal/ss.json";
@@ -200,26 +199,26 @@ export default function Home() {
       : null,
   ];
 
-  // Fronteira servidor/cliente: o motor fiscal corre UMA vez aqui —
-  // simularSalario puxa os JSON de data/fiscal (IRS, retenção, SS) que
+  // Fronteira servidor/cliente: o cenário canónico corre UMA vez aqui
+  // — cenarioCanonico puxa os motores e os JSON de data/fiscal que
   // assim nunca entram no bundle do browser. Adivinha recebe a
   // «realidade» pronta por props; a decomposição completa é contada
-  // uma só vez, pelo EuroExplodido mais abaixo.
-  const med = simularSalario([1500], 0, 2026);
-  const real = (med.liquidoAnual / med.custoEmpresaAnual) * 100;
+  // pelo EuroExplodido mais abaixo. A história é a mesma de /salario:
+  // custo total da empresa → cortes → líquido do mês (retenção real).
+  const can = cenarioCanonico(BRUTO_CANONICO, retencaoJson.ano);
+  const real = can.centimosPorEuroCusto;
 
   // ————— «o teu euro» (R-02, valores em € do mês desde R-07) —————
-  // Tudo sai dos motores e das fontes, para um salário bruto de
+  // Tudo sai do cenário canónico e das fontes, para um salário bruto de
   // 1 500 €/mês (solteiro, sem dependentes, regras 2026): SS do
   // trabalhador, retenção de IRS, líquido, os impostos dentro de 50 L
   // de gasóleo ao PMD mais recente (ISP + carbono + IVA) e o que fica
-  // — os mesmos euros do recibo de /salario. Nada escrito à mão:
-  // 1500 − 165 − 168 = 1167; 1167 − ~44 de impostos = ~1123.
+  // — os mesmos euros do recibo de /salario. Nada escrito à mão.
   const e3 = m.euroV3;
-  const brutoMes = 1500;
-  const ssEuro = brutoMes * TSU_TRABALHADOR;
-  const retEuro = retencaoNaFonte(brutoMes, "naoCasado", 0, 2026).retencao;
-  const liquidoEuro = brutoMes - ssEuro - retEuro;
+  const brutoMes = can.brutoMes;
+  const ssEuro = can.ssMes;
+  const retEuro = can.irsRetidoMes;
+  const liquidoEuro = can.liquidoMes;
   const pmdEuro = loadFonte("dgeg", "pmd-gasoleo-diario");
   const precoEuro = pmdEuro?.series[pmdEuro.series.length - 1]?.v ?? 0;
   const decGasoleo = decomporCombustivel(
