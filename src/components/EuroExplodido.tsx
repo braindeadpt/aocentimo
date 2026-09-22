@@ -7,8 +7,9 @@
  * chamada até ao rótulo mono à direita. A metáfora é a da referência
  * (o vault em peças): «o euro desmontado», nunca a moeda a rolar.
  *
- * O desenho é o Explodido (partilhado com o CustoExplodido de
- * /salario desde R-05): desde R-07 as peças são EUROS REAIS DO MÊS —
+ * O desenho é o Isometrico (partilhado com o CustoExplodido de
+ * /salario desde R-05; renomeado em S1-05): desde R-07 as peças são
+ * EUROS REAIS DO MÊS —
  * os mesmos números que /salario mostra no recibo (165 € de SS,
  * 168 € de IRS, 1 167 € na conta…), já não cêntimos por euro. Os
  * valores são estáticos — os passos chegam do servidor.
@@ -19,7 +20,7 @@
  * a <ol data-euro-lista> com os mesmos passos e valores; hover/focus
  * num passo realça a peça e vice-versa.
  *
- * Montagem (só com .eu-on, via useArmado abaixo da dobra): cada peça
+ * Montagem (só com .iso-on, via useArmado abaixo da dobra): cada peça
  * nasce ~40 px acima e converge para o stack (stagger 80 ms,
  * --ease-entra), as chamadas revelam-se depois por clip-path (o dash
  * "2 3" é semântico, não serve de truque de desenho) e os rótulos
@@ -28,7 +29,10 @@
  * final e a inversão é instantânea (bloco global).
  */
 import Link from "next/link";
-import { Explodido, type PecaExplodida } from "@/components/Explodido";
+import {
+  Isometrico,
+  type CamadaIsometrica,
+} from "@/components/Isometrico";
 import { Odometer } from "@/components/Odometer";
 import { fmtEUR0 } from "@/lib/format";
 import { useArmado } from "@/lib/useArmado";
@@ -81,21 +85,21 @@ export function EuroExplodido({
 
   // o stack: a moeda-mãe no topo (fora da lista — é o todo, não um
   // passo), os passos por ordem, a base no fundo
-  const pecas: PecaExplodida[] = [
+  const camadas: CamadaIsometrica[] = [
     {
       id: "bruto",
-      kind: "moeda",
+      forma: "moeda",
       rotulo: rotulos.brutoRotulo,
-      valorSvg: fmtEUR0(bruto),
+      texto: fmtEUR0(bruto),
       tom: "neutro", // o bruto não sai nem fica — é o ponto de partida
       detalhe: rotulos.brutoDetalhe,
     },
-    ...passos.map<PecaExplodida>((p) => ({
+    ...passos.map<CamadaIsometrica>((p) => ({
       id: p.id,
-      kind: p.id === "fica" ? "base" : p.id === "liquido" ? "disco" : "placa",
+      forma: p.id === "fica" ? "base" : p.id === "liquido" ? "disco" : "placa",
       rotulo: p.rotulo,
-      valorSvg: `${p.corte ? "−" : ""}${fmtEUR0(p.euros)}`,
-      valorLista: (
+      texto: `${p.corte ? "−" : ""}${fmtEUR0(p.euros)}`,
+      textoLista: (
         <Odometer
           valor={p.euros}
           casas={0}
@@ -129,7 +133,7 @@ export function EuroExplodido({
 
       <article
         ref={ref}
-        className={`leitura leitura-amplo eu-card mt-5 ${arm("eu-on")}`}
+        className={`leitura leitura-amplo iso-card mt-5 ${arm("iso-on")}`}
       >
         <header className="leitura-head">
           <p className="leitura-breadcrumb">{rotulos.breadcrumb}</p>
@@ -141,9 +145,9 @@ export function EuroExplodido({
         </header>
 
         <div className="leitura-corpo">
-          <Explodido
+          <Isometrico
             nome="euro"
-            pecas={pecas}
+            camadas={camadas}
             numero={{
               kicker: rotulos.ficamTe,
               valor: fica ? `~${fmtEUR0(fica.euros)}` : "",

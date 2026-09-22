@@ -2210,78 +2210,81 @@ html[data-theme="dark"] .tema-ponto {
   }
 }
 
-/* ————— euro explodido — «o teu euro» em explosão isométrica (R-02) —————
+/* ————— isométrico de traço — a explosão do catálogo V4 (§5; núcleo
+   R-02/R-05, renomeado de «Explodido» para «Isometrico» em S1-05) —————
    Reusa a gramática .leitura (vars --l-*, inversão para papel). As
-   peças são wireframe — traço --l-ink, fill só no bruto (8 %) e na
-   placa base (--keep 14 %); a peça em foco ganha fill --accent a 12 %
-   e a sua chamada acende. Estado base = stack montado e legendado;
-   a montagem só existe com .eu-on (useArmado abaixo da dobra). */
-.eu-grid {
+   camadas são wireframe — traço --l-ink, fill só na peça-mãe (8 %) e
+   na placa base «fica» (--keep 14 %); a camada em foco ganha fill
+   fraco no SEU tom (12 %) e a sua chamada acende. Estrutura, nunca
+   quantidade: nenhuma medida do desenho vem de um valor. Estado base
+   = stack montado e legendado; a montagem só existe com .iso-on
+   (useArmado abaixo da dobra). */
+.iso-grid {
   display: grid;
   gap: 1.5rem;
   align-items: center;
 }
 @media (max-width: 899.98px) {
   /* mobile empilhado: a explosão primeiro, a lista depois */
-  .eu-stage {
+  .iso-stage {
     order: -1;
   }
 }
 @media (min-width: 900px) {
-  .eu-grid {
+  .iso-grid {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   }
   /* desktop: a lista à esquerda, a explosão à direita */
-  .eu-lista {
+  .iso-lista {
     order: -1;
   }
 }
-.eu-stage {
+.iso-stage {
   min-width: 0;
 }
 /* a 375 px o svg escala para ~0,6 — o detalhe ficaria ruído
    ilegível; o equivalente textual está logo abaixo, na lista */
 @media (max-width: 640px) {
-  .eu-rot-d {
+  .iso-rot-d {
     display: none;
   }
 }
 
 /* texto dentro do svg — a mesma voz mono dos rótulos do sistema */
-.eu-txt {
+.iso-txt {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
-.eu-rot-r {
+.iso-rot-r {
   fill: var(--l-ink);
   font-size: var(--text-svg-rotulo);
   letter-spacing: 0.04em;
 }
-/* tom semântico da peça (S1-02): --accent é SÓ para o dinheiro que sai
-   (cortes); --keep para o que fica (líquido, «fica»); totais — bruto,
-   custo da empresa — são neutros, tinta da casa */
-.eu-rot-v {
+/* tom semântico da camada (S1-02): --accent é SÓ para o dinheiro que
+   sai (cortes); --keep para o que fica (líquido, «fica»); totais —
+   bruto, custo da empresa — são neutros, tinta da casa */
+.iso-rot-v {
   fill: var(--l-ink);
   font-size: var(--text-svg-valor);
   font-weight: 700;
 }
-.eu-rot-v.eu-tom-corte {
+.iso-rot-v.iso-tom-corte {
   fill: var(--l-accent);
 }
-.eu-rot-v.eu-tom-fica {
+.iso-rot-v.iso-tom-fica {
   fill: var(--l-keep);
 }
-.eu-rot-d {
+.iso-rot-d {
   fill: var(--l-muted);
   font-size: var(--text-svg-rotulo);
 }
-.eu-kicker {
+.iso-kicker {
   fill: var(--l-muted);
   font-size: var(--text-svg-rotulo);
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
-.eu-num {
+.iso-num {
   fill: var(--l-keep);
   font-size: var(--text-svg-hero);
   font-weight: 700;
@@ -2289,38 +2292,38 @@ html[data-theme="dark"] .tema-ponto {
 /* variante compacta — os euros do mês («1 167 €») são mais largos
    que os cêntimos; 32 px mantém o número à esquerda da placa base
    sem lhe tocar */
-.eu-num-m {
+.iso-num-m {
   font-size: var(--text-svg-numero);
 }
 /* as elipses também invertem com o papel — o bloco .leitura svg não
    cobre <ellipse> */
-.eu-card svg ellipse {
+.iso-card svg ellipse {
   transition:
     fill var(--dur-curta) var(--ease-entra),
     stroke var(--dur-curta) var(--ease-entra),
     fill-opacity var(--dur-curta) var(--ease-entra);
 }
-/* a peça em foco realça-se no SEU tom (--eu-tom, definido por peça):
-   um corte acende a vermelho, o «fica» a verde — nunca vermelho no
-   dinheiro que fica */
-.eu-peca-on .eu-face {
-  fill: var(--eu-tom, var(--l-accent));
+/* a camada em foco realça-se no SEU tom (--iso-tom, definido por
+   camada): um corte acende a vermelho, o «fica» a verde — nunca
+   vermelho no dinheiro que fica */
+.iso-camada-on .iso-face {
+  fill: var(--iso-tom, var(--l-accent));
   fill-opacity: 0.12;
 }
-.eu-chamada {
+.iso-chamada {
   stroke: var(--l-ink2);
   stroke-width: 1;
   stroke-dasharray: 2 3;
 }
-.eu-rotg.eu-peca-on .eu-chamada {
-  stroke: var(--eu-tom, var(--l-accent));
+.iso-rotg.iso-camada-on .iso-chamada {
+  stroke: var(--iso-tom, var(--l-accent));
 }
-.eu-rotg.eu-peca-on .eu-rot-r {
-  fill: var(--eu-tom, var(--l-accent));
+.iso-rotg.iso-camada-on .iso-rot-r {
+  fill: var(--iso-tom, var(--l-accent));
 }
 
 /* a lista — o equivalente sempre visível, parte do cartão */
-.eu-lista {
+.iso-lista {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -2328,68 +2331,68 @@ html[data-theme="dark"] .tema-ponto {
   flex-direction: column;
   gap: 2px;
 }
-.eu-li {
+.iso-li {
   border-left: 2px solid var(--l-line);
   padding: 0.55rem 0.9rem;
   transition:
     background-color var(--dur-micro) var(--ease-entra),
     border-color var(--dur-micro) var(--ease-entra);
 }
-.eu-li-on {
-  background: color-mix(in srgb, var(--eu-tom, var(--l-accent)) 8%, transparent);
-  border-left-color: var(--eu-tom, var(--l-accent));
+.iso-li-on {
+  background: color-mix(in srgb, var(--iso-tom, var(--l-accent)) 8%, transparent);
+  border-left-color: var(--iso-tom, var(--l-accent));
 }
-.eu-li-top {
+.iso-li-top {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 0.75rem;
 }
-.eu-li-rot {
+.iso-li-rot {
   font-family: var(--font-mono);
   font-size: var(--text-rotulo);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--l-ink2);
 }
-.eu-li-val {
+.iso-li-val {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   font-size: var(--text-numero);
   font-weight: 700;
   color: var(--l-ink);
 }
-.eu-li-val.eu-tom-corte {
+.iso-li-val.iso-tom-corte {
   color: var(--l-accent);
 }
-.eu-li-val.eu-tom-fica {
+.iso-li-val.iso-tom-fica {
   color: var(--l-keep);
 }
-.eu-li-det {
+.iso-li-det {
   margin-top: 0.15rem;
   font-size: var(--text-nota);
   line-height: 1.5;
   color: var(--l-muted);
 }
 
-/* ————— montagem da explosão — só com .eu-on —————
-   cada peça nasce ~40 px acima da posição final e converge para o
+/* ————— montagem da explosão — só com .iso-on —————
+   cada camada nasce ~40 px acima da posição final e converge para o
    stack, escalonadas por 80 ms; as chamadas revelam-se depois por
    clip-path (o dash "2 3" é semântico); os rótulos assentam por
    último e o número grande fecha a sequência (~1,2 s). */
-.eu-on .eu-peca {
-  animation: eu-desce var(--dur-media) var(--ease-entra) var(--pd, 0ms) both;
+.iso-on .iso-camada {
+  animation: iso-desce var(--dur-media) var(--ease-entra) var(--iso-pd, 0ms) both;
 }
-.eu-on .eu-chamada {
-  animation: eu-traca var(--dur-curta) var(--ease-entra) var(--ld, 0ms) both;
+.iso-on .iso-chamada {
+  animation: iso-traca var(--dur-curta) var(--ease-entra) var(--iso-ld, 0ms) both;
 }
-.eu-on .eu-rot {
-  animation: eu-surge var(--dur-curta) var(--ease-entra) var(--rd, 0ms) both;
+.iso-on .iso-rot {
+  animation: iso-surge var(--dur-curta) var(--ease-entra) var(--iso-rd, 0ms) both;
 }
-.eu-on .eu-num-grupo {
-  animation: eu-surge var(--dur-curta) var(--ease-entra) 1020ms both;
+.iso-on .iso-num-grupo {
+  animation: iso-surge var(--dur-curta) var(--ease-entra) 1020ms both;
 }
-@keyframes eu-desce {
+@keyframes iso-desce {
   from {
     opacity: 0;
     transform: translateY(-40px);
@@ -2399,7 +2402,7 @@ html[data-theme="dark"] .tema-ponto {
     transform: none;
   }
 }
-@keyframes eu-traca {
+@keyframes iso-traca {
   from {
     clip-path: inset(-8px 100% -8px -8px);
   }
@@ -2407,7 +2410,7 @@ html[data-theme="dark"] .tema-ponto {
     clip-path: inset(-8px -8px -8px -8px);
   }
 }
-@keyframes eu-surge {
+@keyframes iso-surge {
   from {
     opacity: 0;
   }
@@ -2416,6 +2419,336 @@ html[data-theme="dark"] .tema-ponto {
   }
 }
 
+/* ————— barra de traços — <BarraTracos> (catálogo V4 §5, S1-05) —————
+   contagens/limites/durações em traços contáveis — «1 traço = x»
+   escrito no cartão. Traços HTML (gramática da .regua-tq): fino 16 px,
+   forte 26 px a fechar cada bloco. A varredura esq→dir só corre com
+   .bt-on; o estado base é já o final. */
+.bt {
+  container-type: inline-size;
+}
+.bt-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.bt-rot {
+  margin: 0;
+}
+.bt-un {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-mini);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.bt-pista {
+  position: relative;
+  height: 34px;
+  margin-top: 0.6rem;
+}
+.bt-tq {
+  position: absolute;
+  top: 50%;
+  width: 2px;
+  height: 16px;
+  transform: translate(-50%, -50%);
+  background: var(--ink2);
+}
+.bt-tq.bt-f {
+  height: 26px;
+}
+.bt-tom-fica {
+  background: var(--keep);
+}
+.bt-tom-sai {
+  background: var(--accent);
+}
+.bt-tom-marca {
+  background: var(--mark);
+}
+.bt-tom-vago {
+  background: var(--line2);
+}
+.bt-tom-vago.bt-f {
+  background: var(--muted);
+}
+.bt-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.9rem;
+  margin-top: 0.45rem;
+}
+.bt-val {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-numero);
+  font-weight: 700;
+  color: var(--ink);
+}
+.bt-nota {
+  margin: 0;
+  font-size: var(--text-nota);
+  color: var(--muted);
+}
+/* a montagem conta como se mede — a pista revela-se esq→dir, linear */
+.bt-on .bt-pista {
+  animation: bt-varre var(--dur-media) var(--ease-lin) both;
+}
+@keyframes bt-varre {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@container (max-width: 480px) {
+  .bt-head {
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+  .bt-tq {
+    height: 13px;
+  }
+  .bt-tq.bt-f {
+    height: 21px;
+  }
+}
+
+/* ————— haltere — <Haltere> (catálogo V4 §5, S1-05) —————
+   antes ● — ○ agora por categoria sobre grelha pontilhada. A cor é
+   a do Delta: subir é «mau» (up) salvo bomSubir — e nunca o único
+   canal (a variação fica escrita com ▲/▼ na coluna da categoria). */
+.hal {
+  container-type: inline-size;
+}
+.hal-txt {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+.hal-leg {
+  fill: var(--muted);
+  font-size: var(--text-svg-micro);
+  letter-spacing: 0.06em;
+}
+.hal-rot {
+  fill: var(--ink);
+  font-size: var(--text-svg-rotulo);
+  letter-spacing: 0.04em;
+}
+.hal-rot-c {
+  display: none;
+}
+.hal-delta {
+  fill: var(--muted);
+  font-size: var(--text-svg-micro);
+}
+.hal-delta.hal-mau {
+  fill: var(--up);
+}
+.hal-delta.hal-bom {
+  fill: var(--down);
+}
+.hal-grid {
+  stroke: var(--line2);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-dasharray: 0.5 5.5;
+  opacity: 0.65;
+}
+.hal-grid-rot {
+  fill: var(--muted);
+  font-size: var(--text-svg-micro);
+}
+.hal-link {
+  stroke: var(--ink2);
+  stroke-width: 2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.hal-link.hal-mau {
+  stroke: var(--up);
+}
+.hal-link.hal-bom {
+  stroke: var(--down);
+}
+.hal-antes-dot {
+  fill: var(--ink2);
+}
+.hal-agora-dot {
+  fill: var(--panel);
+  stroke: var(--ink2);
+  stroke-width: 2;
+}
+.hal-agora-dot.hal-mau {
+  stroke: var(--up);
+}
+.hal-agora-dot.hal-bom {
+  stroke: var(--down);
+}
+.hal-v {
+  fill: var(--ink);
+  font-size: var(--text-svg-rotulo);
+  font-weight: 700;
+}
+.hal-v-antes {
+  fill: var(--ink2);
+  font-weight: 400;
+}
+/* cartão estreito: rótulo curto e a grelha fica só com os extremos */
+@container (max-width: 460px) {
+  .hal-rot-l {
+    display: none;
+  }
+  .hal-rot-c {
+    display: inline;
+  }
+  .hal-grid-rot:not(.hal-ext) {
+    display: none;
+  }
+}
+/* a entrada: o traço desenha-se de «antes» para «agora» e os pontos
+   assentam a seguir — escalonado por linha (--hd). Estado base = final. */
+.hal-on .hal-link {
+  animation: hal-traca var(--dur-media) var(--ease-entra) var(--hd, 0ms) both;
+}
+.hal-on .hal-dot {
+  animation: hal-surge var(--dur-curta) var(--ease-entra)
+    calc(var(--hd, 0ms) + 240ms) both;
+}
+.hal-on .hal-txt {
+  animation: hal-surge var(--dur-curta) var(--ease-entra)
+    calc(var(--hd, 0ms) + 120ms) both;
+}
+@keyframes hal-traca {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes hal-surge {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ————— anel de pontos — <AnelPontos> (catálogo V4 §5, S1-05) —————
+   o ciclo em pontos contáveis; o número do ciclo é HTML ao centro —
+   nítido a qualquer escala. O «atual» tem anel torrado (marca). */
+.ap {
+  container-type: inline-size;
+}
+.ap-palco {
+  position: relative;
+  aspect-ratio: 1;
+  width: min(340px, 100%);
+  margin-inline: auto;
+}
+.ap-pista {
+  stroke: var(--line);
+  stroke-width: 1;
+  stroke-dasharray: 2 5;
+}
+.ap-dot {
+  fill: var(--ink2);
+}
+.ap-tom-fica {
+  fill: var(--keep);
+}
+.ap-tom-sai {
+  fill: var(--accent);
+}
+.ap-tom-marca {
+  fill: var(--mark);
+}
+.ap-tom-vago {
+  fill: var(--panel);
+  stroke: var(--line2);
+  stroke-width: 1.5;
+}
+.ap-anel-agora {
+  fill: none;
+  stroke: var(--mark);
+  stroke-width: 1.5;
+}
+.ap-rot {
+  fill: var(--muted);
+  font-size: var(--text-svg-micro);
+  letter-spacing: 0.04em;
+}
+.ap-rot-atual {
+  fill: var(--ink);
+  font-weight: 700;
+}
+/* palco estreito: só fica o rótulo do «agora» — nunca texto a 6 px */
+@container (max-width: 300px) {
+  .ap-rot:not(.ap-rot-atual) {
+    display: none;
+  }
+}
+.ap-centro {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+.ap-num {
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-display-md);
+  line-height: 1.05;
+  color: var(--ink);
+}
+.ap-centro-rot {
+  margin-top: 0.2rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-mini);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+/* a entrada: os pontos assentam no sentido dos ponteiros (--ad por
+   ponto), o anel do «agora» e o centro fecham a sequência */
+.ap-ponto {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.ap-on .ap-ponto {
+  animation: ap-surge var(--dur-curta) var(--ease-entra) var(--ad, 0ms) both;
+}
+.ap-on .ap-anel-agora {
+  animation: ap-surge var(--dur-curta) var(--ease-entra)
+    calc(var(--ad, 0ms) + 300ms) both;
+}
+.ap-on .ap-centro {
+  animation: ap-surge var(--dur-curta) var(--ease-entra) 700ms both;
+}
+@keyframes ap-surge {
+  from {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
 /* kinetic type — palavras sobem de trás de uma máscara de linha */
 .kin-line {
   display: inline-block;

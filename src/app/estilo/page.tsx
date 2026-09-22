@@ -11,11 +11,16 @@ import { Logo, LogoMark } from "@/components/Logo";
 import { MotionDemo } from "./MotionDemo";
 import { CampoCentimosDemo } from "./CampoCentimosDemo";
 import { CampoCentimos } from "@/components/CampoCentimos";
+import { Haltere } from "@/components/Haltere";
+import { BarraTracos } from "@/components/BarraTracos";
+import { AnelPontos } from "@/components/AnelPontos";
+import { IsometricoDemo } from "./IsometricoDemo";
 import { PapelDefs } from "@/components/Papel";
 import { PecaPapel } from "@/components/PecaPapel";
 import { arestaRasgada } from "@/lib/materia";
 import { cenarioCanonico, BRUTO_CANONICO } from "@/lib/canonico";
-import { fmtEUR0, fmtNum } from "@/lib/format";
+import { loadPainel } from "@/lib/data";
+import { fmtEUR0, fmtNum, fmtPeriodo } from "@/lib/format";
 import eur1m from "@data/sources/bpstat/euribor-1m-mensal.json";
 import eur3m from "@data/sources/bpstat/euribor-3m-mensal.json";
 import eur6m from "@data/sources/bpstat/euribor-6m-mensal.json";
@@ -35,8 +40,9 @@ const EURIBOR = [eur1m, eur3m, eur6m, eur12m].map((s) =>
 
 // A história canónica em cêntimos por euro de custo — a demonstração do
 // campo. Os valores saem do motor canónico (servidor), nunca escritos à mão.
+const CAN = cenarioCanonico(BRUTO_CANONICO);
 const EURO_CENTIMOS = (() => {
-  const c = cenarioCanonico(BRUTO_CANONICO);
+  const c = CAN;
   const porEuro = 100 / c.custoEmpresaMes;
   const mes = (v: number) => `${fmtEUR0(v)}/mês`;
   return {
@@ -52,6 +58,69 @@ const EURO_CENTIMOS = (() => {
 })();
 const EURO_SAEM = 100 - EURO_CENTIMOS.partes[3].valor;
 const EURO_EQ = `De cada euro que a empresa gasta contigo (bruto de ${fmtEUR0(EURO_CENTIMOS.bruto)}): ${fmtNum(EURO_CENTIMOS.partes[3].valor)} cêntimos chegam à tua conta; ${fmtNum(EURO_CENTIMOS.partes[0].valor)} vão para a TSU da empresa, ${fmtNum(EURO_CENTIMOS.partes[1].valor)} para o IRS e ${fmtNum(EURO_CENTIMOS.partes[2].valor)} para a Segurança Social.`;
+
+// ————— catálogo V4 (S1-05): dados das demonstrações —————
+
+// Haltere: taxas oficiais «há um ano → agora», todas em % — a mesma
+// série que a home usa (loadPainel), antes = valor − variação homóloga.
+const HALTERE = (() => {
+  const painel = loadPainel();
+  const busca = (id: string) => painel?.series.find((s) => s.id === id);
+  const defs = [
+    { id: "inflacao-homologa", rotulo: "Inflação", rotuloCurto: "Infl." },
+    { id: "euribor-3m-mensal", rotulo: "Euribor 3M", rotuloCurto: "Eur 3M" },
+    { id: "euribor-12m-mensal", rotulo: "Euribor 12M", rotuloCurto: "Eur 12M" },
+    { id: "ca-base", rotulo: "Cert. Aforro", rotuloCurto: "CA" },
+    { id: "une-pt-total", rotulo: "Desemprego", rotuloCurto: "Desemp." },
+  ];
+  const categorias = defs
+    .map((d) => {
+      const s = busca(d.id);
+      if (!s) return null;
+      return { ...d, antes: s.valor - s.variacao.abs, agora: s.valor };
+    })
+    .filter((c): c is NonNullable<typeof c> => c !== null);
+  const ref = busca("inflacao-homologa");
+  return {
+    categorias,
+    antes: ref ? fmtPeriodo(ref.variacao.periodo) : "antes",
+    agora: ref ? fmtPeriodo(ref.t) : "agora",
+  };
+})();
+
+// BarraTracos: o ano em pagamentos — 12 salários + subsídios de férias
+// e de Natal (a estrutura do ano português, parte da história canónica).
+const TRACOS_ANO = [
+  { n: 12, tom: "neutro" as const, rotulo: "salários mensais" },
+  { n: 2, tom: "fica" as const, rotulo: "subsídios de férias e de Natal" },
+];
+
+// AnelPontos: os 12 meses do ano canónico — cada ponto é um recibo de
+// CAN.liquidoMes; jun e dez (verde) trazem os subsídios; o mês «agora»
+// vem da série oficial mais recente (o HICP do painel).
+const MESES_PT = [
+  "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+  "julho", "agosto", "setembro", "outubro", "novembro", "dezembro",
+];
+const MESES_CURTO = [
+  "jan", "fev", "mar", "abr", "mai", "jun",
+  "jul", "ago", "set", "out", "nov", "dez",
+];
+const ANEL_ANO = (() => {
+  const hicp = loadPainel()?.series.find((s) => s.id === "hicp-pt-cp00");
+  const mesAgora = Number(hicp?.t.split("-")[1] ?? 0);
+  return {
+    mesAgora,
+    periodoAgora: hicp ? fmtPeriodo(hicp.t) : "",
+    pontos: MESES_PT.map((rotulo, i) => ({
+      id: `m${i + 1}`,
+      rotulo,
+      rotuloCurto: MESES_CURTO[i],
+      tom: (i === 5 || i === 11 ? "fica" : "neutro") as "fica" | "neutro",
+      atual: i + 1 === mesAgora,
+    })),
+  };
+})();
 
 const TOKENS: [string, string, string][] = [
   ["floor", "bg-floor", "#f4f3ec / #0d0b08 — nível 0, fundo"],
@@ -807,6 +876,103 @@ export default function EstiloPage() {
             layout="montes"
             equivalente={EURO_EQ}
           />
+        </div>
+      </section>
+
+      <section className="stack-sec">
+        <h2 className="kicker mb-4">O catálogo de codificações — a forma é do dado</h2>
+        <p className="footnote mb-4 max-w-xl">
+          O catálogo fechado da V4 (PRODUTO.md §5): cada tipo de dado tem a
+          sua forma — o tipo escolhe o desenho, nunca o contrário. Pontos
+          medem quantidade («1 ponto = 1 cêntimo», acima); traços contam;
+          o isométrico mostra estrutura. Todos com o valor final no HTML
+          do servidor e um único equivalente textual.
+        </p>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <div className="border border-line bg-panel px-5 py-4 lg:col-span-2">
+            <p className="kicker-xs mb-3">
+              Haltere — antes ● — ○ agora, por categoria
+            </p>
+            <Haltere
+              categorias={HALTERE.categorias}
+              rotuloAntes={HALTERE.antes}
+              rotuloAgora={HALTERE.agora}
+              formato="pct"
+            />
+            <p className="footnote mt-3">
+              <strong>quando usar:</strong> o mesmo indicador em dois
+              momentos, por categoria — «há um ano → agora».{" "}
+              <strong>quando não usar:</strong> uma série temporal (é a
+              linha anotada) ou um valor sem par de comparação. Taxas
+              oficiais do painel (BdP/Eurostat/IGCP); a cor é a do Delta —
+              sobe/desce com leitura boa/má — e a variação fica escrita
+              com ▲/▼, nunca só na cor.
+            </p>
+          </div>
+          <div className="border border-line bg-panel px-5 py-4">
+            <p className="kicker-xs mb-3">Barra de traços — contagem e limite</p>
+            <BarraTracos
+              grupos={TRACOS_ANO}
+              unidadeTraco="1 pagamento"
+              rotulo="O ano em pagamentos"
+              valor="14"
+              nota={`${fmtNum(TRACOS_ANO[0].n)} salários + ${fmtNum(TRACOS_ANO[1].n)} subsídios`}
+            />
+            <p className="footnote mt-3">
+              <strong>quando usar:</strong> contagens que se leem uma a
+              uma — os 14 pagamentos do ano, os meses do fundo de
+              emergência, um limite legal. A unidade fica escrita no
+              cartão («1 traço = x»).{" "}
+              <strong>quando não usar:</strong> partes de um todo (é o
+              campo de pontos) nem valores contínuos.
+            </p>
+          </div>
+          <div className="border border-line bg-panel px-5 py-4">
+            <p className="kicker-xs mb-3">Anel de pontos — o ciclo</p>
+            <AnelPontos
+              pontos={ANEL_ANO.pontos}
+              centro={{
+                valor: fmtEUR0(CAN.liquidoAno12),
+                rotulo: "nos 12 meses",
+              }}
+              equivalente={`O ano em 12 pontos: cada um é um recibo de ${fmtEUR0(CAN.liquidoMes)} líquidos — ${fmtEUR0(CAN.liquidoAno12)} no ano. Junho e dezembro trazem os subsídios de férias e de Natal. Agora: ${MESES_PT[ANEL_ANO.mesAgora - 1] ?? "mês em leitura"}.`}
+            />
+            <p className="footnote mt-3">
+              <strong>quando usar:</strong> o tempo que fecha — os 12
+              meses, os trimestres; o mês 12 encosta no mês 1. O número
+              do ciclo vai ao centro e o «agora» ganha o anel de marca.{" "}
+              <strong>quando não usar:</strong> progressão que não fecha
+              (linha ou traços) ou parte-todo (campo de pontos). O «agora»
+              é o mês da série oficial (HICP, {ANEL_ANO.periodoAgora}).
+            </p>
+          </div>
+          <div className="border border-line bg-panel px-5 py-4 lg:col-span-2">
+            <p className="kicker-xs mb-3">Isométrico — estrutura explodida</p>
+            <IsometricoDemo />
+            <p className="footnote mt-3">
+              <strong>quando usar:</strong> «o que é» — a composição de um
+              valor ou de um processo em camadas com chamadas.{" "}
+              <strong>quando não usar:</strong> «quanto é» — as camadas
+              nunca medem quantidade; medida é dos pontos e dos traços. A
+              camada focada (rato ou teclado na lista) ganha o
+              preenchimento ténue do seu tom.
+            </p>
+          </div>
+          <div className="border border-line bg-panel px-5 py-4 lg:col-span-2">
+            <p className="kicker-xs mb-2">E os outros três</p>
+            <p className="footnote">
+              <strong>linha anotada</strong> — séries temporais: o cartão{" "}
+              <Link href="/dados" className="underline decoration-line2 underline-offset-2">
+                Leitura
+              </Link>{" "}
+              das páginas. <strong>régua</strong> — o número que entra:{" "}
+              <Link href="/salario" className="underline decoration-line2 underline-offset-2">
+                /salario
+              </Link>
+              . <strong>percurso</strong> — caminho com marcos: entra com
+              o motor da poupança.
+            </p>
+          </div>
         </div>
       </section>
 

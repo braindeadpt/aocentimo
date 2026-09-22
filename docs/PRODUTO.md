@@ -170,12 +170,12 @@ de construídos.
 |---|---|---|---|
 | **Campo de cêntimos** (pontos) | partes de um todo em dinheiro (1 ponto = 1 cêntimo) | estrutura sem quantidade; séries temporais; totais que não se repartem | `CampoCentimos` + `src/lib/pontos` (S1-04 — congelado) |
 | **Linha anotada** | série temporal com UM facto a assinalar (chamada + insight escrito) | partes de um todo; comparações instantâneas sem tempo | `Leitura`, `LineChart`, `Spark` |
-| **Haltere** | antes ● — ○ agora, por categoria, sobre grelha pontilhada | mais de dois pontos no tempo; série contínua | `Haltere` *(a construir, S1-05)* |
-| **Barra de traços** | contagem, limite, duração — «1 traço = x» com a unidade escrita no cartão | dinheiro contínuo; proporções de um todo | `BarraTracos` *(a construir, S1-05)* |
+| **Haltere** | antes ● — ○ agora, por categoria, sobre grelha pontilhada | mais de dois pontos no tempo; série contínua | `Haltere` (S1-05 — congelado) |
+| **Barra de traços** | contagem, limite, duração — «1 traço = x» com a unidade escrita no cartão | dinheiro contínuo; proporções de um todo | `BarraTracos` (S1-05 — congelado) |
 | **Recipientes** | escalões e bandas que enchem por ordem | série temporal; parte-todo fora de escalões | `EscaloesEnchem` (`/irs`) |
 | **Papel** | documentos oficiais: recibo, talão, escritura, caderneta, nota de liquidação | chrome do instrumento; decoração; qualquer peça que troque de cor com o tema | `PecaPapel`, `Papel` |
-| **Isométrico de traço** | **estrutura** — o que compõe algo, em camadas com linha de chamada | **nunca quantidade** — nenhuma prop de valor dimensiona camadas | `Explodido`/`EuroExplodido`/`CustoExplodido`; `Isometrico` *(a construir, S1-05)* |
-| **Anel de pontos** | ciclos (ex.: os 12 meses), número ao centro | progressão linear; parte-todo | `AnelPontos` *(a construir, S1-05)* |
+| **Isométrico de traço** | **estrutura** — o que compõe algo, em camadas com linha de chamada | **nunca quantidade** — nenhuma prop de valor dimensiona camadas | `Isometrico` + `EuroExplodido`/`CustoExplodido` (S1-05 — congelado) |
+| **Anel de pontos** | ciclos (ex.: os 12 meses), número ao centro | progressão linear; parte-todo | `AnelPontos` (S1-05 — congelado) |
 | **Régua** | todo o input numérico (traços de unidade, marcador «agora», presets) | como saída/leitura — é controlo, não visualização | `Regua` |
 
 O **orbe de estado** (`OrbeEstado`, *a construir, S1-08*) é o selo de

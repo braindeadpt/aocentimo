@@ -1,7 +1,8 @@
-// _video-euro — grava «O TEU EURO» em movimento: chegada à secção
-// (as peças convergem para o stack, as chamadas desenham-se depois)
-// e o hover num passo da lista que realça a peça + inverte o cartão.
-//   node scripts/_video-euro.mjs [base]   (default http://localhost:3100)
+// _video-catalogo — grava as entradas das codificações novas de S1-05
+// em /estilo: o haltere a desenhar os traços «antes → agora», a barra
+// de traços a varrer esq→dir, o anel a assentar os pontos no sentido
+// dos ponteiros e o isométrico a convergir as camadas.
+//   node scripts/_video-catalogo.mjs [base]  (default http://localhost:3100)
 import { chromium } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import { mkdirSync, readdirSync, unlinkSync } from "node:fs";
@@ -21,24 +22,20 @@ const ctx = await b.newContext({
   reducedMotion: "no-preference",
 });
 const p = await ctx.newPage();
-await p.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
-await p.waitForSelector(".iso-card");
+await p.goto(`${BASE}/estilo`, { waitUntil: "domcontentloaded" });
+await p.waitForSelector(".hal");
 await p.waitForTimeout(400);
 
-// 1 — chegada à secção: as peças convergem, as chamadas desenham-se
-await p.evaluate(() =>
-  document
-    .getElementById("euro-titulo")
-    ?.scrollIntoView({ behavior: "smooth", block: "start" })
-);
-await p.waitForTimeout(2800);
-
-// 2 — hover num passo da lista: a peça acende, o cartão inverte
-await p.locator("[data-euro-lista] > li").nth(1).hover();
-await p.waitForTimeout(1600);
-// 3 — hover na placa base via a lista («fica»)
-await p.locator("[data-euro-lista] > li").nth(4).hover();
-await p.waitForTimeout(1600);
+// cada codificação arma ao entrar no viewport — o scrollIntoView faz
+// a sequência uma a uma (as de cima já estão armadas quando a de baixo
+// chega — é o comportamento real da dobra)
+for (const sel of [".hal", ".bt", ".ap", ".iso-card"]) {
+  await p.locator(sel).last().evaluate((el) => {
+    const r = el.getBoundingClientRect();
+    window.scrollBy({ top: r.top - 160, behavior: "smooth" });
+  });
+  await p.waitForTimeout(2400);
+}
 
 await p.close();
 await ctx.close();
@@ -49,7 +46,7 @@ const webm = readdirSync(OUT)
   .map((f) => join(OUT, f))
   .at(-1);
 if (webm) {
-  const folha = join(OUT, "euro-sheet.png");
+  const folha = join(OUT, "catalogo-sheet.png");
   execFileSync("ffmpeg", [
     "-v", "error", "-y", "-i", webm,
     "-vf", "fps=2,scale=480:-1,tile=4x4:padding=4:color=black",

@@ -59,12 +59,12 @@ const html = renderToStaticMarkup(
 
 // cada rótulo de valor no svg tem o seu tom — emparelha-se pela ordem:
 // bruto, ss, irs, liquido, fica
-const tonsSvg = [...html.matchAll(/eu-rot-v eu-tom-(neutro|corte|fica)/g)].map(
+const tonsSvg = [...html.matchAll(/iso-rot-v iso-tom-(neutro|corte|fica)/g)].map(
   (m) => m[1]
 );
-const tonsLista = [...html.matchAll(/eu-li-val eu-tom-(neutro|corte|fica)/g)].map(
-  (m) => m[1]
-);
+const tonsLista = [
+  ...html.matchAll(/iso-li-val iso-tom-(neutro|corte|fica)/g),
+].map((m) => m[1]);
 
 describe("EuroExplodido — cor por tipo de peça", () => {
   it("o bruto é neutro — não sai nem fica", () => {
@@ -86,7 +86,10 @@ describe("EuroExplodido — cor por tipo de peça", () => {
     expect(tonsLista).toEqual(["corte", "corte", "fica", "fica"]);
   });
 
-  it("nenhuma peça usa o antigo booleano eu-keep", () => {
+  it("nenhuma peça usa o antigo booleano eu-keep nem o nome «Explodido»", () => {
     expect(html).not.toContain("eu-keep");
+    // S1-05: o núcleo renomeou-se Isometrico — as classes são iso-*
+    expect(html).not.toMatch(/eu-(peca|rot|li|num|chamada)/);
+    expect(html).toContain("iso-camada");
   });
 });

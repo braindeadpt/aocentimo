@@ -27,7 +27,7 @@ const ctx = await b.newContext({
 });
 const p = await ctx.newPage();
 await p.goto(`${BASE}/salario`, { waitUntil: "domcontentloaded" });
-const cartao = p.locator(".eu-card").first();
+const cartao = p.locator(".iso-card").first();
 await cartao.waitFor();
 await p.waitForTimeout(400);
 
@@ -39,7 +39,7 @@ await cartao.evaluate((el) =>
 await p.waitForTimeout(2600);
 console.log(
   `explosão armada por scroll: ${await cartao.evaluate((el) =>
-    el.classList.contains("eu-on")
+    el.classList.contains("iso-on")
   )}`
 );
 
@@ -101,7 +101,7 @@ async function shot(nome, largura, tema, antes) {
   await pg.goto(`${BASE}/salario`, { waitUntil: "domcontentloaded" });
   if (tema === "dark")
     await pg.evaluate(() => (document.documentElement.dataset.theme = "dark"));
-  const alvo = pg.locator(".eu-card").first();
+  const alvo = pg.locator(".iso-card").first();
   await alvo.scrollIntoViewIfNeeded();
   if (antes) await antes(pg, alvo);
   await pg.waitForTimeout(350);

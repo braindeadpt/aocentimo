@@ -306,3 +306,138 @@ pontos}[], livres, total}`; layouts e mola exportados por
   repartido — TSU da empresa incluída. Se preferires o euro do bruto
   (TSU fora), é trocar o denominador na página.
 
+## S1-05 · O catálogo de codificações (2026-09-23)
+
+**O que foi feito**
+
+- `src/components/Isometrico.tsx` — o antigo núcleo `Explodido`
+  generalizado e renomeado: camadas `moeda|disco|placa|base` em traço
+  fino sobre eixo tracejado, chamadas tracejadas a rótulos mono, tom
+  semântico `neutro|corte|fica`, realce de foco por `--iso-tom`, `<ol>`
+  como equivalente sempre visível e interrogável (hover/teclado).
+  **A API não aceita quantidade** — `texto`/`textoLista` são nós de
+  rótulo e a geometria é fixa (viewBox 520×440): é impossível passar um
+  valor que dimensione camadas. Todos os selectores `.eu-*` migraram
+  para `.iso-*` (componente, CSS, teste, e2e, `_video-euro`, `_video-custo`).
+  `EuroExplodido` e `CustoExplodido` mantêm as suas APIs de domínio.
+- `src/lib/viz/formatos.ts` — registo serializável de formatos
+  (`FormatoViz`: num/num1/eur/eur0/pct/pct1/litro/pp/kwh) + `fmtViz`,
+  `casasViz`, `unidadeDeltaViz`. Props de client components não podem
+  ser funções — a chave resolve o formatador partilhado, e a variação
+  de séries em % escreve-se honestamente em «p.p.».
+- `src/components/Haltere.tsx` — «antes ● — ○ agora» por categoria:
+  ponto cheio = antes, ponto oco = agora, traço na cor da leitura
+  (`--up`/`--down`, semântica do Delta + `bomSubir`), grelha pontilhada
+  (família blueprint), coluna de categoria com a variação escrita em
+  ▲/▼ — a cor nunca é o único canal. Geometria em px medida por
+  ResizeObserver (padrão Leitura); o SSR calcula com W=640 e serve o
+  markup completo. Rótulos de valor sempre para fora do par; pontos
+  colados → «antes» desce, «agora» sobe. Container query <460 px:
+  `rotuloCurto` e só os extremos da grelha.
+- `src/components/BarraTracos.tsx` — traços HTML contáveis (gramática
+  da `Regua`), «1 traço = x» obrigatório e escrito no cartão, tons
+  `neutro|fica|sai|marca|vago`, traço forte a fechar cada bloco
+  (passo automático ≤10 blocos) e o último da barra. Varredura
+  esq→dir (`clip-path`, linear — mede-se como se conta) só com `.bt-on`.
+- `src/components/AnelPontos.tsx` — o ciclo em pontos contáveis
+  (viewBox fixa 300×300, sentido dos ponteiros a partir do topo), o
+  número do ciclo em HTML ao centro (Archivo), o «agora» com anel de
+  marca torrado, rótulos curtos até 16 pontos (só o «atual» sobrevive
+  em palco <300 px). Entrada: pontos a assentar em ordem horária
+  (`--ad` por ponto), anel e centro a fechar.
+- `/estilo`: secção «O catálogo de codificações» com os quatro
+  exemplos vivos + usa/não-usa. Dados: Haltere = taxas oficiais do
+  painel (inflação, Euribor 3M/12M, CA, desemprego — «há um ano →
+  agora» por `valor − variacao.abs`); BarraTracos = os 14 pagamentos
+  do ano (estrutura canónica); AnelPontos = os 12 meses do ano
+  canónico (`liquidoAno12` ao centro, jun/dez em `fica`, «agora» = mês
+  do HICP); Isometrico = a mensalidade do crédito decomposta em
+  capital/juro/seguros — estrutura sem medida.
+- Testes SSR: `Haltere.test.tsx` (8), `AnelPontos.test.tsx` (7),
+  `BarraTracos.test.tsx` (8) — contagem, unidade escrita, direcção
+  boa/má, equivalente único, svg decorativo, sem classe de entrada no
+  HTML servido.
+- `docs/PRODUTO.md` §5: a tabela regista os três componentes novos e o
+  `Isometrico` como construídos/congelados (S1-05).
+
+**APIs finais (congeladas — as sessões paralelas usam-nas sem as mudar)**
+
+```ts
+<Haltere
+  categorias={CategoriaHaltere[]}   // {id, rotulo, rotuloCurto?, antes, agora}
+  formato?: FormatoViz              // "num1" por omissão; "pct" → «3,55 %»
+  unidadeDelta?: string             // " p.p." por omissão em formatos de %
+  rotuloAntes: string               // os dois momentos na legenda
+  rotuloAgora: string
+  bomSubir?: boolean                // false por omissão (preços)
+  equivalente?: string              // omitido → <ul> gerada por categoria
+  className?: string
+/>
+
+<BarraTracos
+  grupos={GrupoTracos[]}            // {n, tom?, rotulo?} — em ordem
+  unidadeTraco: string              // escreve-se «1 traço = {unidadeTraco}»
+  rotulo: string
+  valor?: ReactNode                 // número de leitura («14», «3 de 10»)
+  nota?: string
+  equivalente?: string              // gerado dos grupos se omitido
+  className?: string
+/>
+
+<AnelPontos
+  pontos={PontoAnel[]}              // {id, rotulo, rotuloCurto?, tom?, atual?}
+  centro={{ valor: ReactNode, rotulo?: ReactNode }}
+  comRotulos?: boolean              // rótulos curtos até 16 pontos
+  equivalente?: string              // gerado dos pontos se omitido
+  className?: string
+/>
+
+<Isometrico
+  camadas={CamadaIsometrica[]}      // {id, forma, rotulo, detalhe, tom,
+                                    //  texto?, textoLista?} — sem quantidade
+  numero?: NumeroIsometrico         // {kicker, valor, pequeno?, compacto?}
+  nome: string                      // data-{nome}-lista na <ol>
+/>
+```
+
+**Decisões (conservadoras, a confirmar)**
+
+- O Haltere tem escala partilhada por todas as categorias — é o que
+  torna os halteres comparáveis entre si; uma linha com valores noutra
+  ordem de grandeza deve ir para outro cartão, não alargar a escala.
+- A cor de direcção do Haltere é a do Delta (`--up`/`--down` +
+  `bomSubir`) — «bom/mau» é leitura, não decoração; e fica sempre
+  escrita (▲/▼ + valor).
+- A demo do Isometrico em `/estilo` usa `numero.valor="P + J + S"` —
+  a fórmula no lugar do número: reforça que ali não há medida.
+- O «atual» do AnelPontos vem da série oficial mais recente (HICP do
+  painel) — o anel marca o mês real em leitura, não `hoje` do relógio.
+- Os traços são HTML, não svg — mesma gramática dos traços da Regua;
+  a varredura é `clip-path` na pista inteira (linear, como quem conta).
+- `Isometrico` é o nome da codificação; `EuroExplodido`/`CustoExplodido`
+  ficam como componentes de domínio (história + dados + invólucro
+  `.leitura`) por cima dele — não se renomearam para não partir rotas,
+  testes e scripts existentes.
+
+**Copy novo a rever pelo dono**
+
+- `/estilo` secção «O catálogo de codificações»: kickers («haltere —
+  antes ● — ○ agora, por categoria», …) e os blocos usa/não-usa.
+- BarraTracos: «O ano em pagamentos» / «1 traço = 1 pagamento» /
+  «12 salários + 2 subsídios».
+- AnelPontos: centro «{líquido ano} — nos 12 meses»; meses jun/dez em
+  verde como «meses de subsídio».
+- IsometricoDemo: camadas «A mensalidade / Capital / Juro / Seguros /
+  A tua conta», textos «amortiza», «ao banco», «à seguradora», «sai
+  por mês», número «P + J + S», pé «estrutura — as camadas não medem o
+  que pagas».
+
+**Perguntas ao dono**
+
+- Subsídio de férias marcado em junho (e Natal em dezembro) no anel —
+  convenção habitual; se preferires julho troca-se o índice.
+- O demo do isométrico usa a mensalidade do crédito (estrutura sem
+  euros) — se preferires um exemplo com valores reais nas chamadas,
+  troca-se `texto`/`textoLista` por valores do motor.
+
+
