@@ -10,7 +10,8 @@ import { TweenNum } from "@/components/TweenNum";
 import { SITE_URL } from "@/lib/site";
 import { useArmado } from "@/lib/useArmado";
 import { Cascata } from "@/components/Cascata";
-import { fmtEUR, fmtPct, fmtData } from "@/lib/format";
+import { Regua } from "@/components/Regua";
+import { fmtEUR, fmtNum, fmtPct, fmtData } from "@/lib/format";
 import sa from "@data/fiscal/subsidio-alimentacao.json";
 import irsJovem from "@data/fiscal/irs-jovem.json";
 
@@ -28,7 +29,22 @@ function diaDoAno(fracao: number, ano: number): string {
   return fmtData(d.toISOString().slice(0, 10));
 }
 
-export function CalculadoraSalario({ ano }: { ano: number }) {
+/** config da régua do bruto — strings e marcador chegam do servidor
+    (client components não leem messages nem data) */
+export interface ReguaSalario {
+  rotulo: string;
+  marcador: { valor: number; rotulo: string } | null;
+  presets: { rotulo: string; valor: number }[];
+  descricao?: string;
+}
+
+export function CalculadoraSalario({
+  ano,
+  regua,
+}: {
+  ano: number;
+  regua: ReguaSalario;
+}) {
   const [bruto, setBruto] = useState(1500);
   const [situacao, setSituacao] = useState<Situacao>("solteiro");
   const [conjuge, setConjuge] = useState(1500);
@@ -98,20 +114,22 @@ export function CalculadoraSalario({ ano }: { ano: number }) {
     <div className="grid md:grid-cols-[1fr_1.2fr] gap-10">
       {/* inputs */}
       <div className="space-y-5">
-        <div>
-          <label className="kicker block mb-1.5" htmlFor="bruto">
-            Salário bruto mensal
-          </label>
-          <input
-            id="bruto"
-            type="number"
-            min={0}
-            step={50}
-            value={bruto}
-            onChange={(e) => setBruto(Number(e.target.value) || 0)}
-            className="field"
-          />
-        </div>
+        {/* o bruto é uma régua física (V3 §5): o input range real cobre
+            a pista — o id e o rótulo acessível não mudam */}
+        <Regua
+          id="bruto"
+          rotulo={regua.rotulo}
+          valor={bruto}
+          onChange={setBruto}
+          min={870}
+          max={5000}
+          passo={10}
+          unidade=" €"
+          formato={(v) => fmtNum(v, 0)}
+          marcadorAgora={regua.marcador ?? undefined}
+          presets={regua.presets}
+          descricao={regua.descricao}
+        />
 
         <div>
           <label className="kicker block mb-1.5" htmlFor="situacao">

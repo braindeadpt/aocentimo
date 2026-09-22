@@ -4,8 +4,9 @@ import { useMemo, useState } from "react";
 import { simularPrestacao } from "@/lib/engines/prestacao";
 import { JuroCapital } from "@/components/JuroCapital";
 import { NumHero } from "@/components/NumHero";
+import { Regua } from "@/components/Regua";
 import { TweenNum } from "@/components/TweenNum";
-import { fmtData, fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
+import { fmtData, fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
 
 /**
  * Crédito — o mapa de amortização e o choque.
@@ -23,9 +24,25 @@ import { fmtData, fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
 export function SimuladorPrestacao({
   euriborAtual,
   euriborAte,
+  euribor12m,
+  mediana12m,
+  rotulos,
 }: {
   euriborAtual: number | null;
   euriborAte: string | null;
+  /** Euribor 12M actual — o marcador «agora» da régua da taxa */
+  euribor12m: number | null;
+  /** mediana de 10 anos da Euribor 12M (painel derivado) — preset */
+  mediana12m: number | null;
+  rotulos: {
+    capital: string;
+    euribor: string;
+    spread: string;
+    agora12m: string;
+    mediana10: string;
+    menos: string;
+    mais: string;
+  };
 }) {
   const [capital, setCapital] = useState(200000);
   const [anos, setAnos] = useState(30);
@@ -50,34 +67,82 @@ export function SimuladorPrestacao({
   );
   const runMapa = `${capital}-${anos}-${eurEf}-${spread}`;
 
+  // presets da taxa — âncora é o valor oficial de hoje (12M): a mediana
+  // de 10 anos do painel e ±0,5 p.p. em redor do «agora»
+  const presetsTaxa = [
+    ...(mediana12m !== null
+      ? [{ rotulo: rotulos.mediana10, valor: mediana12m }]
+      : []),
+    ...(euribor12m !== null
+      ? [
+          { rotulo: rotulos.menos, valor: euribor12m - 0.5 },
+          { rotulo: rotulos.mais, valor: euribor12m + 0.5 },
+        ]
+      : []),
+  ];
+
   return (
     <div className="grid md:grid-cols-2 gap-10">
       <div className="space-y-5">
-        <div>
-          <label className="kicker block mb-1.5" htmlFor="cap">Capital em dívida</label>
-          <input id="cap" type="number" min={0} step={5000} value={capital}
-            onChange={(e) => setCapital(Number(e.target.value) || 0)} className="field" />
-        </div>
+        {/* capital e taxas são réguas físicas (V3 §5) — os motores
+            recebem os mesmos números, só o controlo mudou */}
+        <Regua
+          id="cap"
+          rotulo={rotulos.capital}
+          valor={capital}
+          onChange={setCapital}
+          min={10000}
+          max={1000000}
+          passo={5000}
+          unidade=" €"
+          formato={(v) => fmtNum(v, 0)}
+        />
         <div>
           <label className="kicker block mb-1.5" htmlFor="prazo">Prazo (anos)</label>
           <input id="prazo" type="number" min={1} max={50} value={anos}
             onChange={(e) => setAnos(Number(e.target.value) || 1)} className="field" />
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        {/* regra nº1: se o BPstat falhou o campo da taxa fica livre —
+            o input simples de sempre, nunca um número inventado */}
+        {euribor === null ? (
           <div>
             <label className="kicker block mb-1.5" htmlFor="eur">Euribor (%)</label>
-            <input id="eur" type="number" step={0.1} value={euribor ?? ""}
+            <input id="eur" type="number" step={0.1} value=""
               onChange={(e) =>
                 setEuribor(e.target.value === "" ? null : Number(e.target.value))
               }
               className="field" />
           </div>
-          <div>
-            <label className="kicker block mb-1.5" htmlFor="spr">Spread (%)</label>
-            <input id="spr" type="number" step={0.1} min={0} value={spread}
-              onChange={(e) => setSpread(Number(e.target.value) || 0)} className="field" />
-          </div>
-        </div>
+        ) : (
+          <Regua
+            id="eur"
+            rotulo={rotulos.euribor}
+            valor={euribor}
+            onChange={setEuribor}
+            min={-0.5}
+            max={7}
+            passo={0.01}
+            unidade=" %"
+            formato={(v) => fmtNum(v, 2)}
+            marcadorAgora={
+              euribor12m !== null
+                ? { valor: euribor12m, rotulo: rotulos.agora12m }
+                : undefined
+            }
+            presets={presetsTaxa}
+          />
+        )}
+        <Regua
+          id="spr"
+          rotulo={rotulos.spread}
+          valor={spread}
+          onChange={setSpread}
+          min={0}
+          max={3}
+          passo={0.05}
+          unidade=" %"
+          formato={(v) => fmtNum(v, 2)}
+        />
         {/* o choque é um acto — não uma nota de rodapé */}
         <label className="flex items-center gap-2 text-sm text-ink">
           <input

@@ -4,7 +4,8 @@ import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { LineChart } from "@/components/LineChart";
 import { SimuladorPrestacao } from "./SimuladorPrestacao";
-import { loadFonte, loadFreshness } from "@/lib/data";
+import { loadFonte, loadFreshness, loadPainel } from "@/lib/data";
+import { m } from "@/lib/messages";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 import eventos from "@data/fiscal/eventos.json";
 
@@ -18,6 +19,12 @@ export const metadata: Metadata = {
 export default function CreditoPage() {
   const eur = loadFonte("bpstat", "euribor-3m-mensal");
   const ultimo = eur?.series.at(-1) ?? null;
+  // o marcador «agora» da régua da taxa é a Euribor 12M — a referência
+  // de contrato mais comum; a mediana de 10 anos vem do painel derivado
+  const ultimo12 = loadFonte("bpstat", "euribor-12m-mensal")?.series.at(-1) ?? null;
+  const mediana12 =
+    loadPainel()?.series.find((s) => s.id === "euribor-12m-mensal")?.referencia
+      ?.valor ?? null;
   const fresh = loadFreshness();
   const estado =
     fresh?.series.find((s) => s.id === "euribor-3m-mensal")?.estado ?? "sem-sla";
@@ -51,7 +58,21 @@ export default function CreditoPage() {
           />
         }
       >
-        <SimuladorPrestacao euriborAtual={ultimo?.v ?? null} euriborAte={ultimo?.t ?? null} />
+        <SimuladorPrestacao
+          euriborAtual={ultimo?.v ?? null}
+          euriborAte={ultimo?.t ?? null}
+          euribor12m={ultimo12?.v ?? null}
+          mediana12m={mediana12}
+          rotulos={{
+            capital: m.regua.capital,
+            euribor: m.regua.euribor,
+            spread: m.regua.spread,
+            agora12m: m.regua.agora12m,
+            mediana10: m.regua.mediana10,
+            menos: m.regua.menos05,
+            mais: m.regua.mais05,
+          }}
+        />
       </Figure>
 
       <Figure

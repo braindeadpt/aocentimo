@@ -4,8 +4,10 @@ import { CalculadoraSalario } from "./CalculadoraSalario";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { fmtEUR, fmtPct } from "@/lib/format";
+import { m } from "@/lib/messages";
 import irs from "@data/fiscal/irs-2026.json";
 import ss from "@data/fiscal/ss.json";
+import smn from "@data/fiscal/smn.json";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
@@ -47,7 +49,18 @@ export default function SalarioPage() {
           />
         }
       >
-        <CalculadoraSalario ano={ANO} />
+        <CalculadoraSalario
+          ano={ANO}
+          regua={{
+            rotulo: m.regua.salarioBruto,
+            marcador: { valor: smn.regioes.continente, rotulo: m.regua.minimo },
+            presets: [
+              { rotulo: m.regua.minimo, valor: smn.regioes.continente },
+              { rotulo: m.regua.doisMil, valor: 2000 },
+            ],
+            descricao: m.regua.dica,
+          }}
+        />
       </Figure>
 
       <Figure

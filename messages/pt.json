@@ -47,6 +47,19 @@
     "sparkDesc": "{rotulo}: últimos {n} pontos entre {min} e {max}; último {ult}",
     "eventosAria": "Eventos marcados no gráfico — cada um abre a fonte oficial"
   },
+  "regua": {
+    "dica": "arrasta, clica na régua ou usa ← → · PageUp/PageDown saltam 10× · Home/End vão aos extremos",
+    "salarioBruto": "Salário bruto mensal",
+    "minimo": "mínimo",
+    "doisMil": "2 000 €",
+    "capital": "Capital em dívida",
+    "euribor": "Euribor (%)",
+    "spread": "Spread (%)",
+    "agora12m": "agora 12M",
+    "mediana10": "mediana 10 anos",
+    "menos05": "−0,5 p.p.",
+    "mais05": "+0,5 p.p."
+  },
   "fluxo": {
     "aria": "A empresa paga {custo} por mês; chegam-te {liquido} líquidos.",
     "empresa": "A empresa paga",
