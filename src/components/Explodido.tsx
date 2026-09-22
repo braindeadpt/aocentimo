@@ -22,13 +22,26 @@ import { r1 } from "@/lib/materia";
 
 export type TipoPeca = "moeda" | "disco" | "placa" | "base";
 
+/** cor semântica da peça (S1-02): «corte» = dinheiro que sai do bolso
+    (SS, IRS, impostos) → --accent; «fica» = dinheiro que fica contigo
+    (líquido, «fica», «chega à conta») → --keep; «neutro» = totais que
+    não são nem saída nem sobra (bruto, custo da empresa) → tinta. */
+export type TomPeca = "neutro" | "corte" | "fica";
+
+/** var de cor por tom — também alimenta o realce de foco (--eu-tom) */
+export const TOM_VAR: Record<TomPeca, string> = {
+  neutro: "var(--l-ink)",
+  corte: "var(--l-accent)",
+  fica: "var(--l-keep)",
+};
+
 export interface PecaExplodida {
   id: string;
   kind: TipoPeca;
   rotulo: string;
   detalhe: string;
-  /** a base «fica» — face e valor em --keep */
-  keep: boolean;
+  /** tom semântico — decide cor do valor, da face e do realce */
+  tom: TomPeca;
   /** valor junto à chamada — nó dentro do <text> (string, ou <tspan>
       animado quando a peça responde a um input) */
   valorSvg: ReactNode;
@@ -159,7 +172,10 @@ export function Explodido({
           {/* as peças — wireframe; cada uma desce do céu ao armar */}
           {geo.map((p, i) => {
             const on = activo === p.id ? " eu-peca-on" : "";
-            const pd = { "--pd": `${i * 80}ms` } as CSSProperties;
+            const pd = {
+              "--pd": `${i * 80}ms`,
+              "--eu-tom": TOM_VAR[p.tom],
+            } as CSSProperties;
             const entra = () => setActivo(p.id);
             const sai = () => setActivo(null);
 
@@ -206,8 +222,8 @@ export function Explodido({
                   <path
                     className="eu-face"
                     d={face}
-                    fill="var(--l-keep)"
-                    fillOpacity={0.14}
+                    fill={p.tom === "fica" ? "var(--l-keep)" : "none"}
+                    fillOpacity={p.tom === "fica" ? 0.14 : undefined}
                     stroke="var(--l-ink)"
                     strokeWidth={1.2}
                   />
@@ -284,6 +300,7 @@ export function Explodido({
               das peças aterrarem */}
           {geo.map((p, i) => {
             const on = activo === p.id ? " eu-peca-on" : "";
+            const estilo = { "--eu-tom": TOM_VAR[p.tom] } as CSSProperties;
             const edgeX =
               p.kind === "base"
                 ? CX + BW
@@ -291,7 +308,7 @@ export function Explodido({
                   ? CX + RXC
                   : CX + RX;
             return (
-              <g key={`rot-${p.id}`} className={`eu-rotg${on}`}>
+              <g key={`rot-${p.id}`} className={`eu-rotg${on}`} style={estilo}>
                 <line
                   className="eu-chamada"
                   style={
@@ -316,7 +333,7 @@ export function Explodido({
                     {p.rotulo}
                   </text>
                   <text
-                    className={`eu-txt eu-rot-v${p.keep ? " eu-keep" : ""}`}
+                    className={`eu-txt eu-rot-v eu-tom-${p.tom}`}
                     x={LX}
                     y={p.cy + 2}
                   >
@@ -365,6 +382,7 @@ export function Explodido({
             key={p.id}
             tabIndex={0}
             className={`eu-li${activo === p.id ? " eu-li-on" : ""}`}
+            style={{ "--eu-tom": TOM_VAR[p.tom] } as CSSProperties}
             onMouseEnter={() => setActivo(p.id)}
             onMouseLeave={() => setActivo(null)}
             onFocus={() => setActivo(p.id)}
@@ -372,7 +390,7 @@ export function Explodido({
           >
             <div className="eu-li-top">
               <span className="eu-li-rot">{p.rotulo}</span>
-              <span className={`eu-li-val${p.keep ? " eu-keep" : ""}`}>
+              <span className={`eu-li-val eu-tom-${p.tom}`}>
                 {p.valorLista}
               </span>
             </div>

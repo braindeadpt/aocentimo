@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { fmtNum } from "@/lib/format";
 
 /**
  * Odometer — cada dígito é uma roda de 0–9 que roda até ao valor.
@@ -28,10 +29,7 @@ export function Odometer({
 }) {
   const ref = useRef<HTMLSpanElement>(null);
 
-  const texto = `${prefixo}${new Intl.NumberFormat("pt-PT", {
-    minimumFractionDigits: casas,
-    maximumFractionDigits: casas,
-  }).format(valor)}${sufixo}`;
+  const texto = `${prefixo}${fmtNum(valor, casas)}${sufixo}`;
 
   // roll de entrada — só uma vez, só com motion, e só quando nasce
   // abaixo da primeira dobra (M-09: acima da dobra nada entra a animar

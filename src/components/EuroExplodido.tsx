@@ -87,7 +87,7 @@ export function EuroExplodido({
       kind: "moeda",
       rotulo: rotulos.brutoRotulo,
       valorSvg: fmtEUR0(bruto),
-      keep: false,
+      tom: "neutro", // o bruto não sai nem fica — é o ponto de partida
       detalhe: rotulos.brutoDetalhe,
     },
     ...passos.map<PecaExplodida>((p) => ({
@@ -104,7 +104,9 @@ export function EuroExplodido({
           dur={700}
         />
       ),
-      keep: p.id === "fica",
+      // corte = sai do bolso (vermelho); tudo o resto é dinheiro que
+      // fica contigo — líquido e «fica» verdes (S1-02)
+      tom: p.corte ? "corte" : "fica",
       detalhe: p.detalhe,
     })),
   ];

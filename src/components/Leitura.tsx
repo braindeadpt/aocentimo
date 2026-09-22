@@ -202,21 +202,61 @@ export function Leitura({
   const dRef = refSerie ? pathLinha(refPts) : "";
   const regioes = refPts.length >= 2 ? regioesEntre(pts, refPts) : [];
 
-  // exactamente 3 ticks: pede-se ao helper até dar ≥3 e espaçam-se
-  // (o passo escolhido pelo ticksTempo pode render só 2 marcas na
-  // janela — p.ex. 10 anos cai no passo de 5 anos)
+  // ————— rótulos do svg: caixas estimadas, nunca dois se tocam —————
+  // o modelo é o do anti-colisão da anotação: mono 11 px ≈ 6,9 px por
+  // carácter; a caixa vai da baseline −13 a +4 (com folga)
+  const TEXTO = { sobe: 13, desce: 4 };
+  interface CaixaRot {
+    l: number;
+    r: number;
+    t: number;
+    b: number;
+  }
+  const caixaDe = (
+    cx: number,
+    cy: number,
+    w: number,
+    anchor: "start" | "middle" | "end" = "start"
+  ): CaixaRot => {
+    const l =
+      anchor === "end" ? cx - w : anchor === "middle" ? cx - w / 2 : cx;
+    return { l, r: l + w, t: cy - TEXTO.sobe, b: cy + TEXTO.desce };
+  };
+  /** folga entre caixas por eixo — 0 = tocam-se */
+  const folga = (a: CaixaRot, b: CaixaRot) => ({
+    x: Math.max(0, b.l - a.r, a.l - b.r),
+    y: Math.max(0, a.t - b.b, b.t - a.b),
+  });
+
+  // exactamente 3 ticks, nunca a menos de ~46 px — «jul 26» e «set 26»
+  // lado a lado tocavam-se em cartões estreitos; sem espaço para o do
+  // meio ficam só os extremos (rótulos nunca se sobrepõem)
+  const TICK_GAP = 46;
   let ticks: { x: number; rotulo: string }[] = [];
   if (temGrafico) {
     for (const n of [3, 4, 6, 9, 12]) {
       const tks = ticksTempo(x, n);
-      if (tks.length >= 3) {
-        ticks =
-          tks.length === 3
-            ? tks
-            : [tks[0], tks[Math.floor(tks.length / 2)], tks[tks.length - 1]];
+      if (tks.length < 3) {
+        ticks = tks;
+        continue;
+      }
+      const ini = tks[0];
+      const fim = tks[tks.length - 1];
+      const midX = (ini.x + fim.x) / 2;
+      const meios = tks
+        .slice(1, -1)
+        .filter(
+          (tk) => tk.x - ini.x >= TICK_GAP && fim.x - tk.x >= TICK_GAP
+        );
+      if (!meios.length) {
+        ticks = [ini, fim];
         break;
       }
-      ticks = tks;
+      const meio = meios.reduce((a, b) =>
+        Math.abs(b.x - midX) < Math.abs(a.x - midX) ? b : a
+      );
+      ticks = [ini, meio, fim];
+      break;
     }
   }
 
@@ -230,91 +270,104 @@ export function Leitura({
   const ancor =
     ax < W * 0.28 ? "start" : ax > W * 0.72 ? "end" : "middle";
 
+  // caixas dos rótulos fixos — extremos da série, fim da referência,
+  // faixa dos ticks de tempo. Nenhum outro rótulo lhes pode tocar.
+  const yFimMain = pts.length ? pts[pts.length - 1][1] : 0;
+  const yFimRef = refPts.length ? refPts[refPts.length - 1][1] : 0;
+  const cxExtIni = pts.length
+    ? caixaDe(pts[0][0] + 1, pts[0][1] - 9, FMT(primeiro.v).length * MONO_CH)
+    : null;
+  const cxExtFim = caixaDe(
+    W - pad.r + 10,
+    yFimMain + 4,
+    rotFim.length * MONO_CH
+  );
+  // série de referência: rótulo de fim afasta-se do da principal
+  const dyFim = yFimRef - yFimMain;
+  const yRotRefFim =
+    Math.abs(dyFim) < 14 ? yFimRef + (dyFim < 0 ? -9 : 15) : yFimRef + 4;
+  const cxRefFim = refSerie
+    ? caixaDe(W - pad.r + 10, yRotRefFim, rotRefFim.length * MONO_CH)
+    : null;
+  // a faixa do eixo do tempo — nenhum rótulo de valor lhe entra
+  const faixaTicks: CaixaRot = { l: 0, r: W, t: H - 22, b: H };
+
   // rótulo da referência constante — por cima da linha, encostado à
-  // direita do plot; se colidir com o rótulo de fim da principal, desce
-  // para debaixo da linha de mediana. Em cartões estreitos (grelhas a
-  // 3 col.) o rótulo pode não caber entre a borda e o fim do plot —
-  // encosta-se à esquerda em vez de cortar na margem do svg
+  // direita do plot; se não couber sem tocar noutro rótulo desce para
+  // debaixo da linha; se nem assim couber não se desenha (abaixo do
+  // limiar do cartão a CSS já o troca pela linha de texto)
   const rotRefLinha = refLinha
     ? `${refLinha.rotulo} · ${FMT(refLinha.valor)}`
     : "";
   const wRotRefLinha = rotRefLinha.length * MONO_CH;
   const xRotRefLinha = Math.max(pad.l + 2, W - pad.r - 6 - wRotRefLinha);
   const yLinhaRef = refLinha ? y(refLinha.valor) : 0;
-  const yFimMain = pts.length ? pts[pts.length - 1][1] : 0;
-  const yFimRef = refPts.length ? refPts[refPts.length - 1][1] : 0;
-  const refColide = Math.abs(yLinhaRef - yFimMain) < 16;
-  const yRotRefLinha = refColide ? yLinhaRef + 19 : yLinhaRef - 7;
-  // série de referência: rótulo de fim afasta-se do da principal
-  const dyFim = yFimRef - yFimMain;
-  const yRotRefFim =
-    Math.abs(dyFim) < 14 ? yFimRef + (dyFim < 0 ? -9 : 15) : yFimRef + 4;
+  let yRotRefLinha = 0; // 0 = sem lugar limpo → não renderiza
+  if (refLinha) {
+    const obstaculos = [
+      ...(cxExtIni ? [cxExtIni] : []),
+      cxExtFim,
+      ...(cxRefFim ? [cxRefFim] : []),
+      faixaTicks,
+    ];
+    for (const cand of [yLinhaRef - 7, yLinhaRef + 19]) {
+      const c = caixaDe(xRotRefLinha, cand, wRotRefLinha);
+      if (obstaculos.every((o) => folga(c, o).x > 2 || folga(c, o).y > 2)) {
+        yRotRefLinha = cand;
+        break;
+      }
+    }
+  }
 
-  // posição do rótulo da anotação — com anti-colisão contra os rótulos
-  // de fim no gutter direito (quando o extremo anotado cai perto do
-  // fim da série — gasóleo, habitação — a chamada ficava a tocar o
-  // valor final; em cartões estreitos o rótulo largo até transbordava
-  // a borda do svg). Mede-se a distância entre caixas de texto
-  // estimadas (baseline + capa/descendente do mono 11 px): a menos de
-  // ~26 px o rótulo recua para a esquerda e, se a margem esquerda não
-  // chegar, separa-se na vertical — a chamada tracejada acompanha.
+  // posição do rótulo da anotação — anti-colisão contra TODOS os
+  // rótulos fixos (extremos, referência, ticks): a menos de ~26 px
+  // nos dois eixos o rótulo afasta-se na horizontal para o lado com
+  // margem; sem margem, separa-se na vertical — a chamada acompanha.
+  const wAnot = anotacao ? anotacao.rotulo.length * MONO_CH + 6 : 0;
+  const lxMin =
+    pad.l +
+    4 +
+    (ancor === "end" ? wAnot : ancor === "middle" ? wAnot / 2 : 0);
+  const lxMax = Math.max(
+    lxMin,
+    W - pad.r - 4 - (ancor === "start" ? wAnot : ancor === "middle" ? wAnot / 2 : 0)
+  );
   let lx = grampo(
     ax + (ancor === "start" ? 4 : ancor === "end" ? -4 : 0),
-    pad.l + 4,
-    W - pad.r - 4
+    lxMin,
+    lxMax
   );
-  let ly = rotAcima ? ay - 30 : ay + 34;
+  let ly = grampo(rotAcima ? ay - 30 : ay + 34, TEXTO.sobe + 2, H - pad.b - 10);
   if (anotacao && pontoAnot) {
     const GAP_ROT = 26;
-    // caixa real do mono 11 px medida no browser: ~baseline −12,5/+3,5
-    // — com margem, para a estimativa nunca ficar curta
-    const TEXTO = { sobe: 13, desce: 4 };
-    const wAnot = anotacao.rotulo.length * MONO_CH + 6; // folga ~1 car.
-    const dirRot =
-      ancor === "start" ? wAnot : ancor === "middle" ? wAnot / 2 : 0;
-    const lxMin =
-      pad.l +
-      4 +
-      (ancor === "end" ? wAnot : ancor === "middle" ? wAnot / 2 : 0);
-    const xFim = W - pad.r + 10; // aresta esquerda dos rótulos de fim
-    const alvos = [
-      { x: xFim, y: yFimMain + 4, w: rotFim.length * MONO_CH },
-      ...(refSerie
-        ? [{ x: xFim, y: yRotRefFim, w: rotRefFim.length * MONO_CH }]
+    const cxAnot = () => caixaDe(lx, ly, wAnot, ancor);
+    const fixos = [
+      ...(cxExtIni ? [cxExtIni] : []),
+      cxExtFim,
+      ...(cxRefFim ? [cxRefFim] : []),
+      ...(yRotRefLinha !== 0
+        ? [caixaDe(xRotRefLinha, yRotRefLinha, wRotRefLinha)]
         : []),
+      faixaTicks,
     ];
-    for (const alvo of alvos) {
-      const caixaAnot = () => ({
-        l: lx + dirRot - wAnot,
-        r: lx + dirRot,
-        t: ly - TEXTO.sobe,
-        b: ly + TEXTO.desce,
-      });
-      const caixaFim = {
-        l: alvo.x,
-        r: alvo.x + alvo.w,
-        t: alvo.y - TEXTO.sobe,
-        b: alvo.y + TEXTO.desce,
-      };
-      // colisão = proximidade nos DOIS eixos (rótulos vizinhos na mesma
-      // linha); um eixo já separado ≥ GAP_ROT é afastamento suficiente
-      const folgas = () => {
-        const a = caixaAnot();
-        return {
-          x: Math.max(0, caixaFim.l - a.r, a.l - caixaFim.r),
-          y: Math.max(0, a.t - caixaFim.b, caixaFim.t - a.b),
-        };
-      };
-      if (folgas().x >= GAP_ROT || folgas().y >= GAP_ROT) continue;
-      // 1) a chamada recua para a esquerda até abrir o intervalo
-      lx = Math.max(lxMin, lx - (GAP_ROT - (caixaFim.l - caixaAnot().r)));
-      if (folgas().x >= GAP_ROT) continue;
-      // 2) a margem não chegou — separa na vertical, no lado onde está
+    for (const alvo of fixos) {
+      // colisão = proximidade nos DOIS eixos; um eixo já separado
+      // ≥ GAP_ROT é afastamento suficiente
+      if (folga(cxAnot(), alvo).x >= GAP_ROT || folga(cxAnot(), alvo).y >= GAP_ROT)
+        continue;
+      // 1) empurra na horizontal para o lado com margem
+      const alvoAEsquerda =
+        (alvo.l + alvo.r) / 2 <= (cxAnot().l + cxAnot().r) / 2;
+      lx = alvoAEsquerda
+        ? Math.min(lxMax, lx + (GAP_ROT - (cxAnot().l - alvo.r)))
+        : Math.max(lxMin, lx - (GAP_ROT - (alvo.l - cxAnot().r)));
+      if (folga(cxAnot(), alvo).x >= GAP_ROT) continue;
+      // 2) sem margem — separa na vertical, no lado onde está
       const base =
-        ly <= alvo.y
-          ? alvo.y - GAP_ROT - TEXTO.sobe - TEXTO.desce
-          : alvo.y + GAP_ROT + TEXTO.sobe + TEXTO.desce;
-      ly = grampo(base, 8, H - pad.b - 6);
+        ly <= (alvo.t + alvo.b) / 2
+          ? alvo.t - GAP_ROT - TEXTO.desce
+          : alvo.b + GAP_ROT + TEXTO.sobe;
+      ly = grampo(base, TEXTO.sobe + 2, H - pad.b - 10);
     }
   }
 
@@ -419,7 +472,7 @@ export function Leitura({
                   strokeDasharray="5 4"
                 />
               )}
-              {refLinha && (
+              {refLinha && yRotRefLinha !== 0 && (
                 <text
                   className="lq-txt lq-ref-rotulo"
                   x={xRotRefLinha}
@@ -486,7 +539,7 @@ export function Leitura({
 
               {/* valores nos extremos das linhas */}
               <text
-                className="lq-txt lq-ext lq-ext-main"
+                className="lq-txt lq-ext lq-ext-main lq-ext-ini"
                 x={pts[0][0] + 1}
                 y={pts[0][1] - 9}
                 textAnchor="start"
@@ -548,6 +601,19 @@ export function Leitura({
               )}
             </svg>
           </div>
+        )}
+
+        {/* em cartão estreito os rótulos posicionados do gráfico
+            tornam-se texto — só a anotação-insight fica no svg
+            (@container .leitura no globals); a linha resume os
+            extremos e a referência, sem copy nova */}
+        {temGrafico && (
+          <p className="lq-legenda">
+            {FMT(primeiro.v)} {fmtPeriodo(primeiro.t)} → {rotFim}{" "}
+            {fmtPeriodo(ultimo.t)}
+            {refLinha && <> · {rotRefLinha}</>}
+            {refSerie && <> · {rotRefFim}</>}
+          </p>
         )}
       </div>
 

@@ -1,16 +1,27 @@
+/* Regra de dinheiro do site (V4, S1-02): os milhares agrupam-se SEMPRE a
+   partir de 1 000 — o CLDR pt-PT só agrupa a partir de 5 dígitos, o que
+   punha «1 500 €» (copy) e «1167 €» (formatador) no mesmo cartão.
+   useGrouping:"always" em TODOS os formatadores numéricos. */
+const GRUPO = { useGrouping: "always" } as const;
+
 const eur = new Intl.NumberFormat("pt-PT", {
   style: "currency",
   currency: "EUR",
   maximumFractionDigits: 2,
+  ...GRUPO,
 });
 
 const eur0 = new Intl.NumberFormat("pt-PT", {
   style: "currency",
   currency: "EUR",
   maximumFractionDigits: 0,
+  ...GRUPO,
 });
 
-const num = new Intl.NumberFormat("pt-PT", { maximumFractionDigits: 2 });
+const num = new Intl.NumberFormat("pt-PT", {
+  maximumFractionDigits: 2,
+  ...GRUPO,
+});
 const numFixos = new Map<number, Intl.NumberFormat>();
 function numFixo(casas: number): Intl.NumberFormat {
   let f = numFixos.get(casas);
@@ -18,6 +29,7 @@ function numFixo(casas: number): Intl.NumberFormat {
     f = new Intl.NumberFormat("pt-PT", {
       minimumFractionDigits: casas,
       maximumFractionDigits: casas,
+      ...GRUPO,
     });
     numFixos.set(casas, f);
   }

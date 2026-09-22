@@ -1788,6 +1788,9 @@ html[data-theme="dark"] .tema-ponto {
    custom props locais --l-* trocadas de uma vez, e a transição é
    a mesma --dur-curta em background/color/fill/stroke. */
 .leitura {
+  /* contexto de container query — o conteúdo do cartão reage à
+     largura DO CARTÃO, não da viewport (grelhas a 2–3 col.) */
+  container-type: inline-size;
   --l-bg: var(--panel);
   --l-ink: var(--ink);
   --l-ink2: var(--ink2);
@@ -1895,8 +1898,13 @@ html[data-theme="dark"] .tema-ponto {
 }
 .leitura-valor {
   margin-top: 0.3rem;
-  font-family: var(--font-mono);
+  /* número herói = Archivo tabular (S1-02): em Space Mono a vírgula
+     ocupa uma célula inteira e «3,55» lê-se «3 , 55»; tnum medido na
+     fonte real — «11111.11» e «88888.88» têm a mesma largura */
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
   font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  font-weight: 650;
   font-size: clamp(2.25rem, 4vw + 1rem, 3rem);
   line-height: 1.05;
   letter-spacing: -0.02em;
@@ -1961,6 +1969,30 @@ html[data-theme="dark"] .tema-ponto {
   font-variant-numeric: tabular-nums;
   font-size: 11px;
   fill: var(--l-ink);
+}
+
+/* cartão estreito (S1-02): no svg fica SÓ a anotação-insight — os
+   rótulos de extremo e da referência viram a linha de texto
+   .lq-legenda (os valores continuam visíveis, como texto). A regra
+   dura é nunca haver dois rótulos sobrepostos; abaixo de ~460 px de
+   cartão não há geometria que garanta isso para todos. */
+.lq-legenda {
+  display: none;
+  margin-top: 0.55rem;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+  color: var(--l-muted);
+}
+@container (max-width: 460px) {
+  .lq-ext,
+  .lq-ref-rotulo {
+    display: none;
+  }
+  .lq-legenda {
+    display: block;
+  }
 }
 
 /* ————— desenho de entrada — só com .leitura-on (useArmado ao entrar
@@ -2074,12 +2106,18 @@ html[data-theme="dark"] .tema-ponto {
   font-size: 11px;
   letter-spacing: 0.04em;
 }
+/* tom semântico da peça (S1-02): --accent é SÓ para o dinheiro que sai
+   (cortes); --keep para o que fica (líquido, «fica»); totais — bruto,
+   custo da empresa — são neutros, tinta da casa */
 .eu-rot-v {
-  fill: var(--l-accent);
+  fill: var(--l-ink);
   font-size: 13px;
   font-weight: 700;
 }
-.eu-rot-v.eu-keep {
+.eu-rot-v.eu-tom-corte {
+  fill: var(--l-accent);
+}
+.eu-rot-v.eu-tom-fica {
   fill: var(--l-keep);
 }
 .eu-rot-d {
@@ -2111,9 +2149,11 @@ html[data-theme="dark"] .tema-ponto {
     stroke var(--dur-curta) var(--ease-entra),
     fill-opacity var(--dur-curta) var(--ease-entra);
 }
-/* a peça em foco: fill âmbar fraco + chamada em acento */
+/* a peça em foco realça-se no SEU tom (--eu-tom, definido por peça):
+   um corte acende a vermelho, o «fica» a verde — nunca vermelho no
+   dinheiro que fica */
 .eu-peca-on .eu-face {
-  fill: var(--l-accent);
+  fill: var(--eu-tom, var(--l-accent));
   fill-opacity: 0.12;
 }
 .eu-chamada {
@@ -2122,10 +2162,10 @@ html[data-theme="dark"] .tema-ponto {
   stroke-dasharray: 2 3;
 }
 .eu-rotg.eu-peca-on .eu-chamada {
-  stroke: var(--l-accent);
+  stroke: var(--eu-tom, var(--l-accent));
 }
 .eu-rotg.eu-peca-on .eu-rot-r {
-  fill: var(--l-accent);
+  fill: var(--eu-tom, var(--l-accent));
 }
 
 /* a lista — o equivalente sempre visível, parte do cartão */
@@ -2145,8 +2185,8 @@ html[data-theme="dark"] .tema-ponto {
     border-color var(--dur-micro) var(--ease-entra);
 }
 .eu-li-on {
-  background: color-mix(in srgb, var(--l-accent) 8%, transparent);
-  border-left-color: var(--l-accent);
+  background: color-mix(in srgb, var(--eu-tom, var(--l-accent)) 8%, transparent);
+  border-left-color: var(--eu-tom, var(--l-accent));
 }
 .eu-li-top {
   display: flex;
@@ -2166,9 +2206,12 @@ html[data-theme="dark"] .tema-ponto {
   font-variant-numeric: tabular-nums;
   font-size: 1.35rem;
   font-weight: 700;
+  color: var(--l-ink);
+}
+.eu-li-val.eu-tom-corte {
   color: var(--l-accent);
 }
-.eu-li-val.eu-keep {
+.eu-li-val.eu-tom-fica {
   color: var(--l-keep);
 }
 .eu-li-det {

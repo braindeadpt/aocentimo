@@ -126,7 +126,7 @@ export function CustoExplodido({
     kind: "placa",
     rotulo,
     detalhe,
-    keep: false,
+    tom: "corte",
     valorSvg: <ValorSvg v={v} sinal="−" />,
     valorLista: <ValorCorte v={v} />,
   });
@@ -137,7 +137,7 @@ export function CustoExplodido({
       kind: "moeda",
       rotulo: R.empresa.rotulo,
       detalhe: R.empresa.detalhe,
-      keep: false,
+      tom: "neutro", // o custo total não é um corte — é o ponto de partida
       valorSvg: <ValorSvg v={custo} />,
       valorLista: (
         <TweenNum valor={custo} casas={0} texto={fmtEUR0(custo)} sufixo=" €" />
@@ -156,7 +156,7 @@ export function CustoExplodido({
       kind: "base",
       rotulo: R.conta.rotulo,
       detalhe: R.conta.detalhe,
-      keep: true,
+      tom: "fica",
       valorSvg: <ValorSvg v={liquido} />,
       valorLista: (
         <TweenNum
