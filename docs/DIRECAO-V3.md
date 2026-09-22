@@ -26,6 +26,15 @@
 - Anotações sem linha de chamada; mais de uma anotação por gráfico.
 - Qualquer animação cuja ausência não se note.
 
+## Fontes de referência (canónicas, escolhidas pelo dono 2026-09-21)
+- `docs/brand/referencias/` — os 2 mp4 Ledger + 4 capturas (a base desta direcção).
+- `designeer.xyz` → sobretudo **60fps.design** (movimento real gravado),
+  **details.so** (micro-interacções) e **Sombra** (dark-mode).
+- `inspora.design` — mecânicas concretas (cards interactivos, timelines, pickers).
+- `rewampui.com` — só mecânica/estrutura de componentes; nunca pele.
+Processo: o dono aponta 3–5 itens concretos → extraímos a mecânica para
+aqui → aplicamos à peça seguinte. Não se desenha «de cabeça».
+
 ## Verificação de movimento (regra nova, permanente)
 Nenhuma animação é «aprovada» por screenshot. Cada peça animada entrega
 `scripts/_video.mjs` (Playwright `recordVideo` + ffmpeg → folha de contacto
