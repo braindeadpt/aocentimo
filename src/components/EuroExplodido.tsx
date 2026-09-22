@@ -8,7 +8,9 @@
  * (o vault em peças): «o euro desmontado», nunca a moeda a rolar.
  *
  * O desenho é o Explodido (partilhado com o CustoExplodido de
- * /salario desde R-05): aqui as peças são cêntimos de um euro e os
+ * /salario desde R-05): desde R-07 as peças são EUROS REAIS DO MÊS —
+ * os mesmos números que /salario mostra no recibo (165 € de SS,
+ * 168 € de IRS, 1 167 € na conta…), já não cêntimos por euro. Os
  * valores são estáticos — os passos chegam do servidor.
  *
  * O cartão reusa a gramática .leitura: breadcrumb + corpo + rodapé,
@@ -28,15 +30,17 @@
 import Link from "next/link";
 import { Explodido, type PecaExplodida } from "@/components/Explodido";
 import { Odometer } from "@/components/Odometer";
-import { fmtNum } from "@/lib/format";
+import { fmtEUR0 } from "@/lib/format";
 import { useArmado } from "@/lib/useArmado";
 
 export interface PassoEuro {
   id: string;
   rotulo: string;
   detalhe: string;
-  /** cêntimos por cada euro bruto */
-  centimos: number;
+  /** euros por mês — o valor real do cenário, não cêntimos por euro */
+  euros: number;
+  /** corte (SS, IRS, impostos do gasóleo) → sinal «−» à casa */
+  corte?: boolean;
   fonteNome: string;
   fonteUrl?: string;
 }
@@ -48,12 +52,15 @@ export interface RotulosEuro {
   nota: string;
   /** breadcrumb mono do cartão — «O TEU DINHEIRO / DECOMPOSIÇÃO · …» */
   breadcrumb: string;
-  /** selo do lado direito do cabeçalho — «PMD gasóleo · {quando}» */
+  /** selo do lado direito do cabeçalho — «o Estado e os impostos
+      levam {valor}/mês», já resolvido no servidor */
   meta: string;
   brutoRotulo: string;
   brutoDetalhe: string;
   /** kicker junto ao número grande — «ficam-te» */
   ficamTe: string;
+  /** linha pequena por baixo do número — «por mês» */
+  porMes: string;
   fontes: string;
   simulador: string;
 }
@@ -61,9 +68,12 @@ export interface RotulosEuro {
 export function EuroExplodido({
   passos,
   rotulos,
+  bruto,
 }: {
   passos: PassoEuro[];
   rotulos: RotulosEuro;
+  /** o bruto do cenário, em €/mês — a placa-mãe do stack */
+  bruto: number;
 }) {
   const { ref, arm } = useArmado<HTMLElement>("euro:explodido");
 
@@ -76,7 +86,7 @@ export function EuroExplodido({
       id: "bruto",
       kind: "moeda",
       rotulo: rotulos.brutoRotulo,
-      valorSvg: "100 c",
+      valorSvg: fmtEUR0(bruto),
       keep: false,
       detalhe: rotulos.brutoDetalhe,
     },
@@ -84,9 +94,15 @@ export function EuroExplodido({
       id: p.id,
       kind: p.id === "fica" ? "base" : p.id === "liquido" ? "disco" : "placa",
       rotulo: p.rotulo,
-      valorSvg: `${fmtNum(p.centimos, 1)} c`,
+      valorSvg: `${p.corte ? "−" : ""}${fmtEUR0(p.euros)}`,
       valorLista: (
-        <Odometer valor={p.centimos} casas={1} sufixo=" c" dur={700} />
+        <Odometer
+          valor={p.euros}
+          casas={0}
+          prefixo={p.corte ? "−" : ""}
+          sufixo=" €"
+          dur={700}
+        />
       ),
       keep: p.id === "fica",
       detalhe: p.detalhe,
@@ -128,7 +144,9 @@ export function EuroExplodido({
             pecas={pecas}
             numero={{
               kicker: rotulos.ficamTe,
-              valor: fica ? `${fmtNum(fica.centimos, 1)} c` : "",
+              valor: fica ? `~${fmtEUR0(fica.euros)}` : "",
+              pequeno: rotulos.porMes,
+              compacto: true,
             }}
           />
         </div>

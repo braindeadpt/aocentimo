@@ -282,19 +282,20 @@
   },
   "euroV3": {
     "titulo": "O TEU EURO",
-    "nota": "salário de 1 500 € brutos · solteiro, sem dependentes · regras 2026",
+    "nota": "de um salário de 1 500 € brutos, por mês · solteiro, sem dependentes · regras 2026",
     "breadcrumb": "O TEU DINHEIRO / DECOMPOSIÇÃO · MOTORES 2026",
-    "meta": "PMD gasóleo · {quando}",
-    "brutoRotulo": "1 € bruto",
-    "brutoDetalhe": "1 500 € por mês",
+    "meta": "o Estado e os impostos levam {valor}/mês",
+    "brutoRotulo": "1 500 € brutos",
+    "brutoDetalhe": "por mês, antes de qualquer corte",
     "ficamTe": "ficam-te",
+    "porMes": "por mês",
     "fontes": "Fontes",
     "simulador": "simulador",
     "motor": "AO CÊNTIMO · motores do recibo e do litro",
     "passos": {
       "ss": {
         "rotulo": "Segurança Social",
-        "detalhe": "TSU do trabalhador — sai do recibo"
+        "detalhe": "{taxa} do bruto — sai do recibo"
       },
       "irs": {
         "rotulo": "IRS retido",
@@ -306,11 +307,11 @@
       },
       "gasoleo": {
         "rotulo": "Gasóleo · 50 L",
-        "detalhe": "ISP, carbono e IVA a {preco}"
+        "detalhe": "ISP, carbono e IVA ({quando})"
       },
       "fica": {
         "rotulo": "Fica-te",
-        "detalhe": "o resto de cada euro, antes do IVA"
+        "detalhe": "o resto do mês, já sem estes impostos"
       }
     }
   },

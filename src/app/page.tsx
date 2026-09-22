@@ -23,7 +23,7 @@ import { TSU_TRABALHADOR } from "@/lib/engines/seg-social";
 import isp from "@data/fiscal/isp.json";
 import retencaoJson from "@data/fiscal/retencao-2026.json";
 import ssJson from "@data/fiscal/ss.json";
-import { fmtLitro, fmtNum, fmtPeriodo, fmtDataHora } from "@/lib/format";
+import { fmtEUR0, fmtLitro, fmtNum, fmtPct, fmtPeriodo, fmtDataHora } from "@/lib/format";
 import { m, t } from "@/lib/messages";
 import { SITE_URL } from "@/lib/site";
 
@@ -208,12 +208,13 @@ export default function Home() {
   const med = simularSalario([1500], 0, 2026);
   const real = (med.liquidoAnual / med.custoEmpresaAnual) * 100;
 
-  // ————— «o teu euro» (R-02): a decomposição de 1 € bruto —————
+  // ————— «o teu euro» (R-02, valores em € do mês desde R-07) —————
   // Tudo sai dos motores e das fontes, para um salário bruto de
   // 1 500 €/mês (solteiro, sem dependentes, regras 2026): SS do
   // trabalhador, retenção de IRS, líquido, os impostos dentro de 50 L
   // de gasóleo ao PMD mais recente (ISP + carbono + IVA) e o que fica
-  // — cada valor em cêntimos por euro bruto. Nada escrito à mão.
+  // — os mesmos euros do recibo de /salario. Nada escrito à mão:
+  // 1500 − 165 − 168 = 1167; 1167 − ~44 de impostos = ~1123.
   const e3 = m.euroV3;
   const brutoMes = 1500;
   const ssEuro = brutoMes * TSU_TRABALHADOR;
@@ -227,7 +228,9 @@ export default function Home() {
     isp.gasoleo.carbonoELitro
   );
   const impostos50 = decGasoleo.impostos * 50;
-  const porEuro = (v: number) => (v / brutoMes) * 100;
+  const temGasoleo = pmdEuro !== null && precoEuro > 0;
+  // o selo do cabeçalho: o que o Estado e os impostos levam do mês
+  const estadoMes = ssEuro + retEuro + (temGasoleo ? impostos50 : 0);
   const motorEuro = { nome: e3.motor, url: "/salario" };
   const passoGasoleo: PassoEuro | null =
     pmdEuro && precoEuro > 0
@@ -235,9 +238,10 @@ export default function Home() {
           id: "gasoleo",
           rotulo: e3.passos.gasoleo.rotulo,
           detalhe: t(e3.passos.gasoleo.detalhe, {
-            preco: fmtLitro(precoEuro),
+            quando: fmtPeriodo(pmdEuro.meta.serieAte),
           }),
-          centimos: porEuro(impostos50),
+          euros: impostos50,
+          corte: true,
           fonteNome: `${pmdEuro.meta.fonte} + ${isp.fonte.split(";")[0]}`,
           fonteUrl: pmdEuro.meta.url,
         }
@@ -246,8 +250,11 @@ export default function Home() {
     {
       id: "ss",
       rotulo: e3.passos.ss.rotulo,
-      detalhe: e3.passos.ss.detalhe,
-      centimos: porEuro(ssEuro),
+      detalhe: t(e3.passos.ss.detalhe, {
+        taxa: fmtPct(TSU_TRABALHADOR, 0),
+      }),
+      euros: ssEuro,
+      corte: true,
       fonteNome: ssJson.fonte,
       fonteUrl: ssJson.fonteUrl,
     },
@@ -255,7 +262,8 @@ export default function Home() {
       id: "irs",
       rotulo: e3.passos.irs.rotulo,
       detalhe: e3.passos.irs.detalhe,
-      centimos: porEuro(retEuro),
+      euros: retEuro,
+      corte: true,
       fonteNome: retencaoJson.fonte,
       fonteUrl: retencaoJson.fonteUrl,
     },
@@ -263,7 +271,7 @@ export default function Home() {
       id: "liquido",
       rotulo: e3.passos.liquido.rotulo,
       detalhe: e3.passos.liquido.detalhe,
-      centimos: porEuro(liquidoEuro),
+      euros: liquidoEuro,
       fonteNome: motorEuro.nome,
       fonteUrl: motorEuro.url,
     },
@@ -271,7 +279,7 @@ export default function Home() {
       id: "fica",
       rotulo: e3.passos.fica.rotulo,
       detalhe: e3.passos.fica.detalhe,
-      centimos: porEuro(liquidoEuro - impostos50),
+      euros: liquidoEuro - (temGasoleo ? impostos50 : 0),
       fonteNome: motorEuro.nome,
       fonteUrl: motorEuro.url,
     },
@@ -282,13 +290,11 @@ export default function Home() {
     titulo: e3.titulo,
     nota: e3.nota,
     breadcrumb: e3.breadcrumb,
-    meta:
-      pmdEuro && precoEuro > 0
-        ? t(e3.meta, { quando: fmtPeriodo(pmdEuro.meta.serieAte) })
-        : "",
+    meta: t(e3.meta, { valor: fmtEUR0(estadoMes) }),
     brutoRotulo: e3.brutoRotulo,
     brutoDetalhe: e3.brutoDetalhe,
     ficamTe: e3.ficamTe,
+    porMes: e3.porMes,
     fontes: e3.fontes,
     simulador: e3.simulador,
   };
@@ -368,12 +374,12 @@ export default function Home() {
         <Adivinha real={real} />
       </section>
 
-      {/* «O TEU EURO» (R-02) — o euro bruto em explosão isométrica:
-          camadas wireframe afastadas na vertical, chamadas tracejadas
-          até aos rótulos mono; a lista é o equivalente sempre visível.
-          Depois do painel de leituras e da adivinha — é a resposta à
-          pergunta —, antes dos capítulos. */}
-      <EuroExplodido passos={passosEuro} rotulos={rotulosEuro} />
+      {/* «O TEU EURO» (R-02/R-07) — o salário do mês em explosão
+          isométrica: camadas wireframe afastadas na vertical, chamadas
+          tracejadas até aos rótulos mono; a lista é o equivalente
+          sempre visível. Depois do painel de leituras e da adivinha —
+          é a resposta à pergunta —, antes dos capítulos. */}
+      <EuroExplodido passos={passosEuro} rotulos={rotulosEuro} bruto={brutoMes} />
 
       {/* capítulos — o percurso do euro */}
       <section className="stack-cap">

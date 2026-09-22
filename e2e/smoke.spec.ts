@@ -312,6 +312,18 @@ test("a explosão do euro interroga-se por teclado e tem equivalente textual", a
   await expect(lista).toContainText("Segurança Social");
   await expect(lista).toContainText("Fica-te");
 
+  // R-07: os valores são euros reais do mês (salário de 1 500 €), já
+  // não cêntimos por euro — cada passo mostra «N €» e nenhum «c»
+  const textoLista = await lista.innerText();
+  expect(textoLista).not.toMatch(/\d+,\d\s*c\b/);
+  for (const li of await passos.all()) {
+    await expect(li).toContainText(/\d[\d\s]*€/);
+  }
+  // plausíveis do cenário 1 500 €/mês (motores 2026): SS = 11 % ≈ 165 €,
+  // líquido ≈ 1 167 € — intervalos, não números escritos à mão
+  await expect(passos.nth(0)).toContainText(/1[5-7]\d\s*€/);
+  await expect(lista).toContainText(/1\s?1[0-9]{2}\s*€/);
+
   // foco de teclado num passo realça a peça correspondente (e a sua
   // chamada — g.eu-peca.eu-peca-on / .eu-rotg.eu-peca-on); Tab anda
   // passo a passo
