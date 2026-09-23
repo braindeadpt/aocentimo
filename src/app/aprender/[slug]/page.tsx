@@ -9,10 +9,21 @@ import {
   relacionados,
   termoPorSlug,
 } from "@/content/glossario";
+import { DEMOS } from "@/content/demos";
 import { JsonLd, definedTerm } from "@/lib/jsonld";
 import { TermoRef } from "@/components/TermoRef";
 import { MicroDemo } from "@/components/MicroDemo";
-import { TituloPagina } from "@/components/Voo";
+import { Pagina, PaginaDetalhe } from "@/components/Pagina";
+import { Source } from "@/components/Source";
+import { m } from "@/lib/messages";
+import {
+  exemploDe,
+  FICHA,
+  fraseDe,
+  grupoDe,
+  proximoTermo,
+} from "../conteudo";
+import type { GrupoId } from "../conteudo";
 
 export const dynamicParams = false;
 
@@ -34,6 +45,13 @@ export async function generateMetadata({
     alternates: { canonical: `/aprender/${t.slug}`, types: ALT_FEED },
   };
 }
+
+const ROTULO_GRUPO: Record<GrupoId, keyof typeof m.nav> = {
+  ganhas: "grupoGanhas",
+  pagas: "grupoPagas",
+  banco: "grupoBanco",
+  pais: "grupoPais",
+};
 
 /** Texto corrido com glossário inline — cada menção literal a outro termo
  *  vira ligação tracejada com a definição ao foco/passar. Uma ligação por
@@ -68,53 +86,132 @@ export default async function TermoPage({
   const t = termoPorSlug(slug);
   if (!t) notFound();
   const verTambem = relacionados(t.slug);
+  const grupo = m.nav[ROTULO_GRUPO[grupoDe(t.slug)]];
+  const exemplo = exemploDe(t);
+  const ficha = FICHA[t.slug];
+  const demo = DEMOS[t.slug];
+  const prox = proximoTermo(t.slug);
 
   return (
-    <div className="mx-auto max-w-5xl px-5 pt-14">
+    <>
       <JsonLd data={definedTerm(t)} />
-      <p className="kicker">
-        <Link href="/aprender" className="hover:text-ink2">
-          Glossário
-        </Link>
-      </p>
-      <TituloPagina rota={`/aprender/${t.slug}`}>{t.termo}</TituloPagina>
+      <Pagina
+        pergunta={`O que é «${t.termo}»?`}
+        rota={`/aprender/${t.slug}`}
+        kicker={
+          <>
+            <Link href="/aprender" className="hover:text-ink2">
+              {m.nav.aprender}
+            </Link>
+            {" · "}
+            {grupo}
+          </>
+        }
+        resposta={{
+          /* nível 1 do termo: a frase simples (pg-frase) + o exemplo
+             com números como instrumento — o conceito aterrissa num
+             caso concreto antes de qualquer jargão */
+          instrumento: exemplo ? (
+            <figure className="border border-line bg-panel px-5 py-5">
+              <figcaption className="kicker-xs">
+                {m.aprender.exemplo}
+              </figcaption>
+              <p className="leitura-insight mt-2">
+                <TextoComTermos texto={exemplo} excluir={t.slug} />
+              </p>
+            </figure>
+          ) : (
+            <p className="sr-only">{t.termo}</p>
+          ),
+          frase: fraseDe(t),
+        }}
+        explora={
+          <div>
+            <p className="kicker mb-3">{m.aprender.demoKicker}</p>
+            {demo ? (
+              <>
+                <MicroDemo slug={t.slug} />
+                {/* o equivalente textual também visível — quem aprende
+                    lê o desenho E a frase que o descreve */}
+                <p className="footnote mt-3 max-w-xl">{demo.alt}</p>
+              </>
+            ) : (
+              <p className="footnote">
+                Este termo ainda não tem demonstração desenhada.
+              </p>
+            )}
+          </div>
+        }
+        confirma={
+          <>
+            <PaginaDetalhe rotulo={m.aprender.definicaoCompleta}>
+              <div className="body-copy max-w-2xl space-y-3">
+                <p>
+                  <TextoComTermos texto={t.definicao} excluir={t.slug} />
+                </p>
+                {t.exemplo && (
+                  <p className="footnote">
+                    <span className="text-muted">Exemplo — </span>
+                    <TextoComTermos texto={t.exemplo} excluir={t.slug} />
+                  </p>
+                )}
+              </div>
+            </PaginaDetalhe>
 
-      <div className="body-copy mt-6 max-w-2xl">
-        <p>
-          <TextoComTermos texto={t.definicao} excluir={t.slug} />
-        </p>
-        <MicroDemo slug={t.slug} />
-        {t.exemplo && (
-          <p className="footnote mt-3">
-            <span className="text-muted">Exemplo — </span>
-            <TextoComTermos texto={t.exemplo} excluir={t.slug} />
-          </p>
-        )}
-      </div>
+            {ficha && (
+              <PaginaDetalhe
+                rotulo={
+                  ficha.legislacao
+                    ? m.aprender.fonteLegislacao
+                    : m.aprender.conceito
+                }
+              >
+                <div className="body-copy max-w-2xl space-y-3">
+                  <p>{ficha.legislacao ?? ficha.conceito}</p>
+                </div>
+                <div className="mt-3">
+                  <Source nome={ficha.fonte} url={ficha.url} />
+                </div>
+              </PaginaDetalhe>
+            )}
 
-      {verTambem.length > 0 && (
-        <nav aria-label="Termos relacionados" className="mt-10 max-w-2xl border-t border-line pt-6">
-          <p className="kicker-sm">Ver também</p>
-          <ul className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
-            {verTambem.map((r) => (
-              <li key={r.slug}>
-                <Link
-                  href={`/aprender/${r.slug}`}
-                  className="text-corpo-sm text-ink2 underline decoration-dashed decoration-line2 underline-offset-4 hover:text-ink hover:decoration-mark"
-                >
-                  {r.termo}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )}
+            {verTambem.length > 0 && (
+              <nav aria-label={m.aprender.verTambem} className="pt-6">
+                <p className="kicker-sm">{m.aprender.verTambem}</p>
+                <ul className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+                  {verTambem.map((r) => (
+                    <li key={r.slug}>
+                      <Link
+                        href={`/aprender/${r.slug}`}
+                        className="text-corpo-sm text-ink2 underline decoration-dashed decoration-line2 underline-offset-4 hover:text-ink hover:decoration-mark"
+                      >
+                        {r.termo}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )}
 
-      <p className="footnote mt-10">
-        <Link href="/aprender" className="underline decoration-line2 underline-offset-2">
-          ← Todos os termos
-        </Link>
-      </p>
-    </div>
+            <p className="footnote mt-8">
+              <Link
+                href="/aprender"
+                className="underline decoration-line2 underline-offset-2"
+              >
+                {m.aprender.voltarGlossario}
+              </Link>
+            </p>
+          </>
+        }
+        seguinte={
+          prox
+            ? {
+                href: `/aprender/${prox.slug}`,
+                rotulo: `O que é «${prox.termo}»?`,
+              }
+            : { href: "/metodologia", rotulo: "De onde vêm os números?" }
+        }
+      />
+    </>
   );
 }

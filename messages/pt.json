@@ -422,5 +422,25 @@
         }
       }
     }
+  },
+  "aprender": {
+    "kicker": "Aprender · glossário",
+    "navGrupos": "O glossário pelas quatro perguntas",
+    "frase": "{total} termos do dinheiro em Portugal — cada um numa frase simples, com um exemplo de números reais.",
+    "pesquisa": "Procurar no glossário",
+    "pesquisaPlaceholder": "Escreve o termo — ex.: TAEG",
+    "contagem": "{n} de {total} termos",
+    "vazio": "Nenhum termo corresponde a «{q}».",
+    "vazioNota": "Sugerir o termo em falta →",
+    "paisVazio": "Os números do país não são termos — vivem, com fonte e data, em /dados.",
+    "exemplo": "Exemplo com números",
+    "demoKicker": "A ideia, desenhada",
+    "definicaoCompleta": "A definição completa",
+    "fonteLegislacao": "Legislação e fonte",
+    "conceito": "De onde vem",
+    "verTambem": "Termos relacionados",
+    "comoFeito": "Como está feito este glossário",
+    "faltaTermo": "Falta um termo?",
+    "voltarGlossario": "← Todos os termos"
   }
 }
