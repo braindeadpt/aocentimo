@@ -38,15 +38,27 @@ export function Odometer({
   // roll de entrada — só uma vez, só com motion, e só quando nasce
   // abaixo da primeira dobra (M-09: acima da dobra nada entra a animar
   // ao carregar); o .od-zero sai depois de o browser pintar o 0, e a
-  // transição faz o resto
+  // transição faz o resto. A decisão corre DENTRO do callback do
+  // observer: a medição no mount pode correr antes de o layout assentar
+  // (webfonts mudam a dobra) e um cartão que acaba à vista ao carregar
+  // chegava a rodar — o primeiro callback com isIntersecting significa
+  // «já estava visível», e aí nunca se roda (1D-03)
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     if (typeof IntersectionObserver === "undefined") return;
     if (el.getBoundingClientRect().top < window.innerHeight) return;
+    let primeira = true;
     const obs = new IntersectionObserver(
       ([e]) => {
+        if (primeira) {
+          primeira = false;
+          if (e.isIntersecting) {
+            obs.disconnect();
+            return;
+          }
+        }
         if (!e.isIntersecting) return;
         obs.disconnect();
         el.classList.add("od-zero");

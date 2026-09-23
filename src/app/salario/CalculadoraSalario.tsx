@@ -79,6 +79,7 @@ export function CalculadoraSalario({
   saIsento,
   irsJovemIsencao,
   custo,
+  seloNaoRetido,
 }: {
   ano: number;
   regua: ReguaSalario;
@@ -92,6 +93,9 @@ export function CalculadoraSalario({
   irsJovemIsencao: readonly number[];
   /** strings da explosão do custo — messages/pt.json → salario.custo */
   custo: RotulosCusto;
+  /** o carimbo neutro do IRS zero — messages/pt.json →
+      salario.naoRetido (1D-02) */
+  seloNaoRetido: string;
 }) {
   // o bruto inicial é o do cenário canónico — a mesma história da home
   const [bruto, setBruto] = useState(cenarios.meta.brutoRef);
@@ -423,14 +427,25 @@ export function CalculadoraSalario({
                   </dt>
                   <dd>
                     {recibo.retencao === 0 ? (
-                      // zero como informação (1B-05): ao salário
-                      // mínimo o IRS não toca — diz-se, não se carimba
-                      // «Retido» sobre um corte que não existe
-                      <ZeroInformativo
-                        valor={fmtNum(0, 2)}
-                        unidade="€"
-                        nota="não te toca"
-                      />
+                      // zero como informação (1B-05) + carimbo neutro
+                      // «Não retido» (1D-02): diz-se o corte que não
+                      // existe — nunca tinta de saída nem de «fica»
+                      <>
+                        <ZeroInformativo
+                          valor={fmtNum(0, 2)}
+                          unidade="€"
+                          nota="não te toca"
+                        />
+                        <span
+                          className={
+                            "talao-retido talao-retido-neutro " +
+                            talaoArm("talao-carimbo-anim")
+                          }
+                          aria-hidden
+                        >
+                          {seloNaoRetido}
+                        </span>
+                      </>
                     ) : (
                       <>
                         {fmtEUR(recibo.retencao)} −

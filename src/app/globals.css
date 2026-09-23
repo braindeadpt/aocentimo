@@ -1637,6 +1637,14 @@ h3 {
   text-transform: uppercase;
   transform: rotate(-3deg);
 }
+/* carimbo NEUTRO — «Não retido» sobre o IRS zero: o mesmo gesto de
+   tinta de borracha, mas na tinta do papel atenuada — nunca --accent
+   (dinheiro que sai) nem --keep (o IRS zero não é dinheiro que fica,
+   é um corte que não existe). Decisão do dono, 1D-02 */
+.talao-retido-neutro {
+  border-color: rgba(44, 36, 19, 0.55);
+  color: rgba(44, 36, 19, 0.6);
+}
 /* carimbo na cor "fica" — o veredito positivo da nota de liquidação:
    tinta de borracha verde, mesmo gesto do RETIDO */
 .talao-recebe {
@@ -2249,24 +2257,37 @@ h3 {
   animation-duration: var(--dur-media);
   animation-timing-function: var(--ease-entra);
 }
-/* o link origem rende-se depressa — o que fica a viajar é a forma;
-   o h1 novo assenta com a curva de entrada */
+/* o cartão origem VIAJA VISÍVEL até ao h1 — o snapshot antigo fica
+   opaco durante todo o voo (decisão do dono, 1D-02). O keyframe segura
+   a opacidade a 1 em vez de `animation: none` para o pseudo-elemento
+   continuar a existir para getAnimations (teste e2e) e para a UA não
+   aplicar o fade-out por omissão; o h1 novo só cristaliza no fim —
+   a forma chega, o texto assenta. Tudo dentro de --dur-media
+   (600 ms é o tecto) */
 ::view-transition-old(pg-voo) {
-  animation-name: pg-voo-sai;
+  animation-name: pg-voo-fica;
+  animation-duration: var(--dur-media);
 }
 ::view-transition-new(pg-voo) {
   animation-name: pg-voo-chega;
+  animation-duration: var(--dur-media);
 }
-@keyframes pg-voo-sai {
+@keyframes pg-voo-fica {
+  from {
+    opacity: 1;
+  }
   to {
-    opacity: 0;
+    opacity: 1;
   }
 }
 @keyframes pg-voo-chega {
-  from {
-    opacity: 0.35;
+  0% {
+    opacity: 0;
   }
-  to {
+  72% {
+    opacity: 0;
+  }
+  100% {
     opacity: 1;
   }
 }

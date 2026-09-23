@@ -1018,14 +1018,14 @@ link seguinte da página nova com o `h1`).
 - `data-voo`/marcador nunca chega ao SSR — sem hidratação nem
   mismatch; sem JS a navegação é normal.
 
-**Perguntas ao dono**
+**Perguntas ao dono — respondidas 2026-09-23 (1D-02)**
 
-- O voo dura `--dur-media` (600 ms) com `ease-entra` — queres mais
-  lento/solenne (`--dur-longa`) ou está certo assim? Vídeo em
-  `.videos/voo-sheet.png` para rever.
-- O cartão «a pergunta seguinte» desaparece rápido e o h1 assenta —
-  preferes que o cartão viaje visível até ao título (old snapshot
-  mais longo)?
+- O voo dura `--dur-media` (600 ms) com `ease-entra` — **fica; é o
+  tecto — nenhum voo passa de 600 ms.**
+- O cartão «a pergunta seguinte» desaparecia rápido e o h1 assentava —
+  **decidido: o cartão VIAJA VISÍVEL até ao título** (snapshot antigo
+  opaco durante todo o voo; o h1 cristaliza no fim). Aplicado em
+  `globals.css` (`::view-transition-old(pg-voo)` sem fade).
 
 **Motor lazy do dono** — intacto: nada tocou `carregarGsap`/`tela.ts`
 nem os motores fiscais; a pausa do canvas usa os gatilhos que já
@@ -1087,13 +1087,18 @@ número»).
 - «{0,00 €} — não te toca» (zero informativo; U+202F entre valor e €,
   travessão antes da nota).
 
-**Perguntas ao dono:**
+**Perguntas ao dono — respondidas 2026-09-23 (1D-02)**
 
-- A ilustração do vazio é fixa (sempre três placas + peça tracejada) —
-  queres variação por contexto (ex.: série vs. instrumento) ou a
-  uniformidade é a marca certa?
-- No talão, o IRS zero mostra a linha «0,00 € — não te toca» sem
-  carimbo «Retido»; preferes carimbo neutro («Não retido») ou assim?
+- A ilustração do vazio é fixa — **decidido: FIXA, a mesma em todo o
+  lado. Não criar variações.**
+- No talão, o IRS zero — **decidido: carimbo NEUTRO «Não retido»**
+  (tinta do papel atenuada — nunca `--accent` nem `--keep`), a linha
+  «0,00 € — não te toca» mantém-se. Aplicado: `.talao-retido-neutro` +
+  `salario.naoRetido` em `messages/pt.json`.
+- **Copy novo: fica como está**, marcado para revisão do dono (autor
+  único) — sem reescrita.
+- `public/brand/logo.svg` e `public/brand/mark.svg`: **apagados**
+  (confirmado: nada os referencia; ficam no histórico do git).
 
 **Motor lazy do dono** — intacto: nada tocou `carregarGsap`/`tela.ts`,
 os motores fiscais nem os orbes (`OrbeEstado` só se consome).

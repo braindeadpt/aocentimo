@@ -542,3 +542,25 @@ corta pressão, deslize e ressalto; o valor final está sempre no lugar.
 Cobertura: `Controlos.test.tsx` (11 unitários) + `e2e/controlos.spec.ts`
 (16 casos — nomes acessíveis, switch, radios, régua por teclado,
 «Copiado», dica por âncora, foco, reduced-motion).
+
+## 2026-09-23 — Respostas do dono às perguntas da 1B (1D-02)
+
+**Decidido pelo dono** (aplicar, não redesenhar):
+
+1. **Voo entre páginas**: `--dur-media` (600 ms) é o tecto — nenhum voo
+   passa de 600 ms.
+2. **O cartão «a pergunta seguinte» viaja visível** até ao h1: o
+   snapshot antigo mantém-se opaco durante todo o voo em vez de
+   desvanecer rápido; o h1 novo cristaliza no fim. Reduced-motion: sem
+   voo.
+3. **Talão com IRS zero**: carimbo NEUTRO «Não retido» (tinta do papel
+   atenuada — nunca `--accent`, que é dinheiro que sai; nunca
+   `--keep`, porque um corte inexistente não é dinheiro que fica). A
+   linha «0,00 € — não te toca» mantém-se. String em
+   `messages/pt.json` → `salario.naoRetido`, na lista de copy a rever.
+4. **Ilustração do `EstadoVazio`: FIXA** — a mesma em todo o lado; não
+   criar variações.
+5. **Copy novo da 1B fica como está**, marcado para revisão do dono
+   (autor único) — nada se reescreve.
+6. **`public/brand/logo.svg` e `public/brand/mark.svg` apagados** —
+   confirmado que nada os referencia; ficam no histórico do git.
