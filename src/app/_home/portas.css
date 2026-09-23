@@ -1,0 +1,578 @@
+/* ————— S2-03 · «Escolhe a tua pergunta» — as quatro portas —————
+   (sessao-2 · ficheiro próprio; o orquestrador funde-o no globals.css)
+
+   Cada cartão é uma ligação inteira. Em repouso é uma chapa de
+   instrumento (panel, hairline, raio-instrumento, sombra raised);
+   ao passar o rato ou focar por teclado inverte para papel — a
+   mecânica do vídeo de referência 2 e a mesma técnica das vars
+   --l-* do .leitura: o conjunto --pq-* troca de uma vez, a aresta
+   endireita (raio-papel — papel é cortado, não arredondado), a fibra
+   aparece e o rebordo picotado sai por baixo — o cartão torna-se a
+   folha que imprimiu.
+
+   As mini-prévias são os artefactos reais em escala, com dados do
+   build por props: o recibo imprime linha a linha (.pq-imprime
+   escalonado por --i, sempre --stagger), as fatias de IVA caem das
+   linhas para o cupão, a divisória juro/capital oscila entre a 1.ª
+   e a última prestação (--j1 → --jN, vars por instância) e os orbes
+   respiram. Tudo CSS puro — hover só onde hover existe
+   (@media hover), foco sempre (:focus-visible + :focus-within).
+   Em reduced-motion o bloco global corta transições e animações:
+   a inversão é instantânea e o estado impresso é o estado base —
+   nada falta, nada anima. */
+
+.pq-grelha {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+@media (min-width: 640px) {
+  .pq-grelha {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1100px) {
+  .pq-grelha {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+/* o <li> estica e a ligação enche-o — as quatro portas com a mesma
+   compostura e a mesma altura de linha */
+.pq-item {
+  display: flex;
+}
+.pq-porta {
+  /* o instrumento em repouso — os pares --pq-* são os que a inversão
+     troca (mesma palete de papel das --l-* do .leitura) */
+  --pq-bg: var(--panel);
+  --pq-ink: var(--ink);
+  --pq-ink2: var(--ink2);
+  --pq-muted: var(--muted);
+  --pq-line: var(--line);
+  --pq-line2: var(--line2);
+  --pq-accent: var(--accent);
+  --pq-keep: var(--keep);
+  /* o emblema partilhado lê --l-*: apontamos-lhe as vars da porta e
+     ele inverte junto, sem tocar no componente */
+  --l-line2: var(--pq-line2);
+  --l-ink2: var(--pq-ink2);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  padding: 0.9rem 1.05rem 0.85rem;
+  background: var(--pq-bg);
+  color: var(--pq-ink);
+  border: 1px solid var(--pq-line);
+  border-radius: var(--raio-instrumento);
+  box-shadow: var(--elev-raised);
+  text-decoration: none;
+  transition:
+    background-color var(--dur-curta) var(--ease-entra),
+    color var(--dur-curta) var(--ease-entra),
+    border-color var(--dur-curta) var(--ease-entra),
+    border-radius var(--dur-curta) var(--ease-entra),
+    box-shadow var(--dur-curta) var(--ease-entra),
+    transform var(--dur-curta) var(--ease-rasgo);
+}
+/* fibra do papel — a mesma do .talao-face; entra com a inversão
+   (background-image não transita — o salto é invisível sob a troca
+   de cor) */
+.pq-porta::after {
+  /* o picotado por onde a folha se destacou — o mesmo SVG de
+     triângulos do .talao, papel fixo nos dois temas */
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  height: 9px;
+  background-repeat: repeat-x;
+  background-size: 14px 9px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M0 0 L7 9 L14 0 Z' fill='%23f7f1e1'/%3E%3C/svg%3E");
+  opacity: 0;
+  transition: opacity var(--dur-curta) var(--ease-entra);
+  pointer-events: none;
+}
+
+/* ————— a inversão para papel — foco (sempre) e rato (só onde o
+   hover existe), como no .leitura ————— */
+.pq-porta:is(:focus-visible, :focus-within) {
+  --pq-bg: var(--talao-paper);
+  --pq-ink: var(--talao-ink);
+  --pq-ink2: rgba(44, 36, 19, 0.78);
+  --pq-muted: rgba(44, 36, 19, 0.62);
+  --pq-line: rgba(44, 36, 19, 0.2);
+  --pq-line2: rgba(44, 36, 19, 0.42);
+  --pq-accent: #9d2a0d;
+  --pq-keep: var(--papel-fica-tinta);
+
+  background-image: radial-gradient(
+    rgba(44, 36, 19, 0.05) 1px,
+    transparent 1px
+  );
+  background-size: 11px 11px;
+  border-color: rgba(44, 36, 19, 0.3);
+  border-radius: var(--raio-papel);
+  box-shadow:
+    0 1px 0 rgba(27, 24, 17, 0.08),
+    0 16px 30px -14px rgba(27, 24, 17, 0.4);
+  transform: translateY(-2px) rotate(-0.3deg);
+}
+.pq-porta:is(:focus-visible, :focus-within)::after {
+  opacity: 1;
+}
+@media (hover: hover) {
+  .pq-porta:hover {
+    --pq-bg: var(--talao-paper);
+    --pq-ink: var(--talao-ink);
+    --pq-ink2: rgba(44, 36, 19, 0.78);
+    --pq-muted: rgba(44, 36, 19, 0.62);
+    --pq-line: rgba(44, 36, 19, 0.2);
+    --pq-line2: rgba(44, 36, 19, 0.42);
+    --pq-accent: #9d2a0d;
+    --pq-keep: var(--papel-fica-tinta);
+
+    background-image: radial-gradient(
+      rgba(44, 36, 19, 0.05) 1px,
+      transparent 1px
+    );
+    background-size: 11px 11px;
+    border-color: rgba(44, 36, 19, 0.3);
+    border-radius: var(--raio-papel);
+    box-shadow:
+      0 1px 0 rgba(27, 24, 17, 0.08),
+      0 16px 30px -14px rgba(27, 24, 17, 0.4);
+    transform: translateY(-2px) rotate(-0.3deg);
+  }
+  .pq-porta:hover::after {
+    opacity: 1;
+  }
+}
+
+/* as cores do conteúdo seguem a inversão — a transição é a mesma
+   --dur-curta do cartão */
+.pq-topo,
+.pq-crumb,
+.pq-pergunta,
+.pq-frase,
+.pq-previa,
+.pq-pe,
+.pq-doc,
+.pq-doc-dim,
+.pq-linha,
+.pq-orbe-nome,
+.pq-orbe-estado {
+  transition:
+    color var(--dur-curta) var(--ease-entra),
+    border-color var(--dur-curta) var(--ease-entra),
+    background-color var(--dur-curta) var(--ease-entra);
+}
+
+/* ————— a anatomia Ledger em miniatura: topo mono · pergunta ·
+   frase · prévia · pé ————— */
+.pq-topo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--pq-line);
+}
+.pq-crumb {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-kicker-sm);
+  letter-spacing: var(--tracking-kicker-denso);
+  text-transform: uppercase;
+  color: var(--pq-muted);
+  min-width: 0;
+}
+.pq-pergunta {
+  margin-top: 0.85rem;
+  /* a pergunta é o título do cartão — Archivo condensada, o registo
+     de herói em escala de cartão */
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-variation-settings: "wdth" 75;
+  font-weight: 700;
+  font-size: var(--text-display-sm);
+  line-height: 1.05;
+  letter-spacing: var(--tracking-manchete);
+  color: var(--pq-ink);
+}
+.pq-frase {
+  margin-top: 0.45rem;
+  font-family: var(--font-editorial);
+  font-size: var(--text-nota);
+  line-height: 1.45;
+  color: var(--pq-ink2);
+}
+.pq-previa {
+  display: block;
+  /* encosta ao pé — as quatro prévias alinham por baixo mesmo com
+     frases de comprimento diferente */
+  margin-top: auto;
+  padding-top: 0.9rem;
+}
+.pq-pe {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--pq-line);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-kicker);
+  letter-spacing: var(--tracking-controlo);
+  text-transform: uppercase;
+  color: var(--pq-muted);
+}
+.pq-rota {
+  color: var(--pq-muted);
+}
+.pq-ver {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  color: var(--pq-ink2);
+}
+/* o traço do «ver» desenha-se pela regra global dos ícones
+   (a:hover .icone path) — aqui só muda a cor ao inverter */
+
+/* ————— a prévia como documento — typesetting de impressora térmica
+   sobre a sub-escala do talão (tokens --text-talao-*), tinta pelas
+   vars --pq-*: em repouso é esquema de instrumento, no papel ganha
+   a tinta do talão ————— */
+.pq-doc {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--pq-ink);
+  border: 1px dashed var(--pq-line2);
+  border-radius: var(--raio-pormenor);
+  padding: 0.6rem 0.7rem 0.55rem;
+}
+.pq-doc-head {
+  font-size: var(--text-talao-head);
+  letter-spacing: var(--tracking-documento);
+  text-transform: uppercase;
+  text-align: center;
+}
+.pq-doc-sub {
+  margin-top: 0.15rem;
+  font-size: var(--text-talao-sub);
+  text-align: center;
+}
+.pq-doc-body {
+  margin-top: 0.5rem;
+  font-size: var(--text-talao-corpo);
+  line-height: 1.5;
+}
+.pq-doc-dim {
+  color: var(--pq-ink2);
+}
+.pq-doc-sep {
+  border-top: 1px dashed var(--pq-line2);
+}
+.pq-doc-cut {
+  border-top: 1.5px solid var(--pq-ink);
+}
+.pq-doc-total {
+  font-size: var(--text-talao-total);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+}
+.pq-doc-meta {
+  font-size: var(--text-talao-meta);
+  letter-spacing: var(--tracking-mono-md);
+  text-transform: uppercase;
+}
+.pq-doc-num {
+  font-weight: 700;
+}
+.pq-doc-hero {
+  font-size: var(--text-talao-destaque);
+  font-weight: 700;
+}
+.pq-linha {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.28rem 0;
+}
+/* «falhou a fonte» — a frase honesta no lugar da figura */
+.pq-vazio {
+  padding: 0.7rem 0.6rem;
+  text-transform: none;
+}
+
+/* as três bases de papel das prévias: talão de caixa estreito
+   (salário), talão de compras (IVA) e nota mais larga (banco) —
+   centradas na prévia; o acabamento vem de .pq-doc e das vars
+   --pq-* que invertem com o cartão */
+.pq-recibo {
+  width: min(84%, 13rem);
+  margin-inline: auto;
+}
+.pq-iva {
+  width: min(88%, 14rem);
+  margin-inline: auto;
+}
+.pq-banco {
+  width: min(94%, 15rem);
+  margin-inline: auto;
+}
+
+/* ————— a impressão: cada .pq-imprime revela-se de cima para baixo
+   quando a porta ganha papel (a regra vale para o recibo, o talão
+   de IVA e as linhas do banco) ————— */
+@keyframes pq-imprime {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 -20% 0);
+  }
+}
+.pq-porta:is(:focus-visible, :focus-within) .pq-imprime {
+  animation: pq-imprime var(--dur-curta) var(--ease-entra) both;
+  animation-delay: calc(var(--i, 0) * var(--stagger));
+}
+@media (hover: hover) {
+  .pq-porta:hover .pq-imprime {
+    animation: pq-imprime var(--dur-curta) var(--ease-entra) both;
+    animation-delay: calc(var(--i, 0) * var(--stagger));
+  }
+}
+
+/* ————— «O que pagas» — a fatia de IVA separa-se da linha e cai
+   para o cupão (a mecânica do talão de /impostos, em miniatura) ————— */
+.pq-iva-item {
+  padding: 0.28rem 0;
+}
+.pq-iva-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.pq-iva-mini {
+  display: flex;
+  align-self: center;
+  flex: none;
+  width: 4.5rem;
+  height: 3px;
+  background: var(--pq-line);
+  overflow: visible;
+}
+.pq-iva-base {
+  display: block;
+  height: 100%;
+  background: var(--pq-ink2);
+}
+.pq-iva-fatia {
+  display: block;
+  height: 100%;
+  background: var(--pq-accent);
+}
+.pq-iva-cupao {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.15rem;
+  padding: 0.28rem 0;
+  border-top: 1px dashed var(--pq-line2);
+}
+.pq-iva-barra {
+  display: block;
+  flex: 1;
+  height: 4px;
+  background: var(--pq-line);
+}
+.pq-iva-barra-f {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: left;
+  background: var(--pq-accent);
+}
+@keyframes pq-iva-sai {
+  to {
+    transform: translateY(14px);
+    opacity: 0;
+  }
+}
+@keyframes pq-enche {
+  from {
+    transform: scaleX(0);
+  }
+}
+.pq-porta:is(:focus-visible, :focus-within) .pq-iva-fatia {
+  animation: pq-iva-sai var(--dur-curta) var(--ease-sai) both;
+  animation-delay: calc(180ms + var(--i, 0) * 80ms);
+}
+.pq-porta:is(:focus-visible, :focus-within) .pq-iva-barra-f {
+  animation: pq-enche var(--dur-media) var(--ease-entra) both;
+  animation-delay: 520ms;
+}
+@media (hover: hover) {
+  .pq-porta:hover .pq-iva-fatia {
+    animation: pq-iva-sai var(--dur-curta) var(--ease-sai) both;
+    animation-delay: calc(180ms + var(--i, 0) * 80ms);
+  }
+  .pq-porta:hover .pq-iva-barra-f {
+    animation: pq-enche var(--dur-media) var(--ease-entra) both;
+    animation-delay: 520ms;
+  }
+}
+
+/* ————— «O banco» — a divisória que troca de peso: o segmento de
+   juro oscila entre o peso real da 1.ª prestação (--j1) e o da
+   última (--jN) enquanto a porta está em papel ————— */
+.pq-banco-barra {
+  display: flex;
+  height: 10px;
+  margin: 0.45rem 0 0.2rem;
+  background: var(--pq-line);
+  border: 1px solid var(--pq-line2);
+  border-radius: var(--raio-pormenor);
+  overflow: hidden;
+}
+.pq-banco-juro {
+  display: block;
+  height: 100%;
+  background: var(--pq-accent);
+}
+.pq-banco-cap {
+  display: block;
+  height: 100%;
+  flex: 1;
+  background: var(--pq-keep);
+  opacity: 0.8;
+}
+.pq-banco-escala {
+  display: flex;
+  justify-content: space-between;
+}
+.pq-banco-leg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.8rem;
+  margin-top: 0.35rem;
+}
+.pq-sw {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  margin-right: 0.3rem;
+}
+@keyframes pq-troca {
+  from {
+    width: var(--j1);
+  }
+  to {
+    width: var(--jN);
+  }
+}
+.pq-porta:is(:focus-visible, :focus-within) .pq-banco-juro {
+  animation: pq-troca 2.6s var(--ease-entra) 0.5s infinite alternate;
+}
+@media (hover: hover) {
+  .pq-porta:hover .pq-banco-juro {
+    animation: pq-troca 2.6s var(--ease-entra) 0.5s infinite alternate;
+  }
+}
+
+/* ————— «O país» — a grelha de orbes: a forma diz o estado, o texto
+   repete-o; ao pegar na porta os orbes respiram, escalonados ————— */
+.pq-orbes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.55rem 0.4rem;
+  margin: 0;
+  padding: 0.6rem 0 0.2rem;
+  list-style: none;
+  border: 1px dashed var(--pq-line2);
+  border-radius: var(--raio-pormenor);
+  transition: border-color var(--dur-curta) var(--ease-entra);
+}
+.pq-orbe-celula {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.12rem;
+  min-width: 0;
+  text-align: center;
+}
+.pq-orbe {
+  /* o .orbe-estado traz margin-right inline — na célula centrada
+     não serve */
+  margin-right: 0;
+}
+.pq-orbe-nome {
+  font-family: var(--font-mono);
+  font-size: var(--text-mini);
+  letter-spacing: var(--tracking-mono-sm);
+  text-transform: uppercase;
+  color: var(--pq-ink);
+}
+.pq-orbe-estado {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  letter-spacing: var(--tracking-micro);
+  text-transform: uppercase;
+  color: var(--pq-muted);
+}
+@keyframes pq-respira {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.18);
+  }
+}
+.pq-porta:is(:focus-visible, :focus-within) .pq-orbe {
+  animation: pq-respira 2.6s var(--ease-entra) infinite;
+  animation-delay: calc(var(--i, 0) * 140ms);
+}
+@media (hover: hover) {
+  .pq-porta:hover .pq-orbe {
+    animation: pq-respira 2.6s var(--ease-entra) infinite;
+    animation-delay: calc(var(--i, 0) * 140ms);
+  }
+}
+/* os orbes leem as cores globais do tema — no papel recebem as
+   tintas da família do talão (mark/warn escurecidos, AA sobre creme) */
+.pq-porta:is(:focus-visible, :focus-within) .orbe-em-dia,
+.pq-porta:is(:focus-visible, :focus-within) .orbe-no-limite,
+.pq-porta:is(:focus-visible, :focus-within) .orbe-a-recolher {
+  color: #7a5c10;
+}
+.pq-porta:is(:focus-visible, :focus-within) .orbe-atrasada {
+  color: #8a5a00;
+}
+.pq-porta:is(:focus-visible, :focus-within) .orbe-sem-sla {
+  color: rgba(44, 36, 19, 0.5);
+}
+@media (hover: hover) {
+  .pq-porta:hover .orbe-em-dia,
+  .pq-porta:hover .orbe-no-limite,
+  .pq-porta:hover .orbe-a-recolher {
+    color: #7a5c10;
+  }
+  .pq-porta:hover .orbe-atrasada {
+    color: #8a5a00;
+  }
+  .pq-porta:hover .orbe-sem-sla {
+    color: rgba(44, 36, 19, 0.5);
+  }
+}

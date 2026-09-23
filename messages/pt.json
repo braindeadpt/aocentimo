@@ -132,6 +132,99 @@
       "fonteMotores": "Motores AO CÊNTIMO",
       "fonteEscaloes": "escalões do art. 68.º CIRS"
     },
+    "portas": {
+      "titulo": "Escolhe a tua pergunta",
+      "nota": "cada pergunta abre um instrumento",
+      "ver": "ver",
+      "ganhas": {
+        "frase": "De {bruto} brutos chegam-te {liquido} por mês — o recibo diz quem leva o resto.",
+        "recibo": {
+          "titulo": "Recibo de vencimento",
+          "sub": "* * * o cenário-base * * *",
+          "bruto": "SALÁRIO BRUTO",
+          "ss": "SEG. SOCIAL 11%",
+          "irs": "IRS RETIDO",
+          "liquido": "Líquido no fim do mês",
+          "meta": "TABELA {tabela} · {ano}",
+          "metaSemTabela": "{ano}"
+        }
+      },
+      "pagas": {
+        "frase": "Num cabaz de {total}, {iva} são imposto — o talão separa o IVA do preço.",
+        "talao": {
+          "titulo": "Talão de compras",
+          "sub": "* * * exemplo · taxas reais * * *",
+          "total": "Total",
+          "resumo": "Deste total é IVA",
+          "meta": "CIVA · LISTAS I/II"
+        },
+        "cabaz": [
+          {
+            "nome": "PÃO DE TRIGO 400G",
+            "preco": 0.69,
+            "taxa": "reduzida"
+          },
+          {
+            "nome": "VINHO TINTO 75CL",
+            "preco": 3.99,
+            "taxa": "intermedia"
+          },
+          {
+            "nome": "T-SHIRT ALGODÃO",
+            "preco": 9.99,
+            "taxa": "normal"
+          }
+        ]
+      },
+      "banco": {
+        "frase": "Na primeira prestação, {pesoJuro} é juro — na última é quase tudo capital.",
+        "fraseSemSerie": "Na primeira prestação quase tudo é juro — na última é quase tudo capital.",
+        "prestacao": "PRESTAÇÃO MENSAL",
+        "mesA": "mês 1",
+        "mesB": "mês {meses}",
+        "legJuro": "juro — vai para o banco",
+        "legCap": "capital — fica teu",
+        "juros": "juro do mês 1: {a} · do mês {n}: {b}",
+        "nota": "{capital} · {meses} meses · TAN {tan}",
+        "falhou": "A série da Euribor não chegou da fonte — a troca de peso fica por medir."
+      },
+      "pais": {
+        "frase": "{n} séries oficiais com fonte e data — e o estado de cada uma à vista.",
+        "estados": {
+          "em-dia": "em dia",
+          "a-recolher": "a recolher",
+          "no-limite": "no limite",
+          "atrasada": "atrasada",
+          "sem-sla": "sem SLA"
+        },
+        "orbes": [
+          {
+            "id": "inflacao-homologa",
+            "rotulo": "Inflação"
+          },
+          {
+            "id": "euribor-12m-mensal",
+            "rotulo": "Euribor 12M"
+          },
+          {
+            "id": "pmd-gasoleo-diario",
+            "rotulo": "Gasóleo"
+          },
+          {
+            "id": "une-pt-total",
+            "rotulo": "Desemprego"
+          },
+          {
+            "id": "hpi-pt",
+            "rotulo": "Habitação"
+          },
+          {
+            "id": "pib-pt-homologo",
+            "rotulo": "PIB"
+          }
+        ]
+      }
+    },
     "h1a": "PARA ONDE",
     "h1b": "VAI O TEU",
     "h1c": "DINHEIRO",
