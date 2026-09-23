@@ -6,7 +6,7 @@
 import { chromium } from "playwright";
 import { readFileSync } from "node:fs";
 
-const porta = process.argv[2] ?? "3100";
+const porta = process.argv[2] ?? process.env.PORTA ?? "3100";
 const rotas = process.argv[3]
   ? process.argv[3].split(",")
   : [...readFileSync("out/sitemap.xml", "utf8").matchAll(/<loc>([^<]+)<\/loc>/g)]

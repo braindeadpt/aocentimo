@@ -25,3 +25,4 @@ scripts/tmp/
 
 # material de referência (terceiros, capturas, PDFs) — nunca commitar
 referencias/
+.ref/

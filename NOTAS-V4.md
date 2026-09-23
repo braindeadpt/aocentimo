@@ -1197,3 +1197,31 @@ nem os motores; a animação é a já existente dos corpos
 (`--ei`/`--stagger` + `entrada` do `Leitura`) — sem peça animada nova,
 não houve vídeo novo a rever (o e2e de coreografia/motion segue verde:
 reduced-motion, acima da dobra, pausa fora do ecrã).
+
+---
+
+## 1C — Sessões paralelas: porta por `PORTA` (2026-09-23, v4/paralelo)
+
+**Problema.** O estático e os e2e estavam presos à :3100 e o Playwright
+tinha `reuseExistingServer:true` fora do CI — com cinco sessões em
+worktrees, a segunda reutilizaria o servidor da primeira e **testaria o
+build errado sem dar erro**.
+
+**Solução.** `PORTA` no ambiente governa tudo: `_serve-static` escuta em
+`Number(process.env.PORTA ?? 3100)`; `playwright.config.ts` monta
+`baseURL`/`webServer.url` de `${PORTA ?? 3100}` e, com `PORTA` definida,
+`reuseExistingServer` passa a `false` — porta ocupada falha alto. Todos
+os scripts com :3100 (`_sweep`, `_overflow-sweep`, `_mede-logo`,
+`_js-por-rota`, `_shots-fp`, `_video*`) assumem agora
+`http://localhost:${PORTA ?? 3100}`; argumentos de linha de comandos
+mantêm prioridade. `package.json` sem portas novas. `.ref/` ignorado.
+
+**Prova (1C-02).** Dois worktrees de teste (`aocentimo-teste-a/b`) correram
+`campo-centimos.spec.ts` ao mesmo tempo — 5/5 em `PORTA=3191` e 5/5 em
+`PORTA=3192`, cada um contra o seu servidor (build próprio incluído).
+Com um servidor manual na 3191 de pé, `PORTA=3191 npx playwright test`
+falhou alto: «http://localhost:3191 is already used…» — nunca reutiliza.
+Worktrees de teste removidos.
+
+**Uso.** Cada sessão paralela define `PORTA` (o brief sugere 3102–3106)
+-se como antes (3100, reutiliza servidor existente).

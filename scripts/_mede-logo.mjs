@@ -11,7 +11,9 @@ for (const w of [1440, 375]) {
   for (const tema of ["dark", "light"]) {
     const page = await b.newPage({ viewport: { width: w, height: 900 } });
     await page.addInitScript((t) => localStorage.setItem("aocentimo-theme", t), tema);
-    await page.goto("http://localhost:3100/", { waitUntil: "networkidle" });
+    await page.goto(`http://localhost:${process.env.PORTA ?? 3100}/`, {
+      waitUntil: "networkidle",
+    });
     await page.evaluate(() => document.fonts.ready);
     const med = await page.evaluate(() => {
       const out = {};
