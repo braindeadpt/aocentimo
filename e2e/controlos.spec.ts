@@ -46,6 +46,18 @@ test.describe("/estilo — um sistema, todos os estados", () => {
     // aria-disabled não sai da ordem de tabulação — a razão lê-se
     await b.focus();
     await expect(b).toBeFocused();
+    // o scroll-behavior: smooth do foco ainda vai a meio — espera que
+    // assente (elemento inteiro no viewport) antes do clique real
+    await b.evaluate((el) =>
+      new Promise((res) => {
+        const v = () => {
+          const r = el.getBoundingClientRect();
+          if (r.top >= 0 && r.bottom <= innerHeight) return res(r);
+          requestAnimationFrame(v);
+        };
+        v();
+      })
+    );
     // e não navega nem activa
     await b.click({ force: true });
     await expect(b).toHaveAttribute("aria-disabled", "true");
