@@ -1704,6 +1704,20 @@ html[data-theme="dark"] .tema-ponto {
   animation: none;
 }
 
+/* a folha inferior da nav mobile (S1-07) sobe de baixo ao abrir —
+   o bloco global de reduced-motion corta-a; sem JS o <details> abre-a
+   na mesma (a animação é ornamento, não pré-condição) */
+@media (prefers-reduced-motion: no-preference) {
+  .nav-sheet {
+    animation: nav-sheet-sobe var(--dur-curta) var(--ease-entra) both;
+  }
+  @keyframes nav-sheet-sobe {
+    from {
+      transform: translateY(100%);
+    }
+  }
+}
+
 /* ————— interrogação — a gramática dos instrumentos —————
    readout fixo: o valor interrogado vive numa faixa própria, nunca num
    tooltip flutuante que tapa dados; é o mesmo para rato, toque e teclado

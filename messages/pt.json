@@ -7,6 +7,11 @@
   },
   "nav": {
     "index": "Índice",
+    "fechar": "Fechar",
+    "grupoGanhas": "O que ganhas",
+    "grupoPagas": "O que pagas",
+    "grupoBanco": "O banco",
+    "grupoPais": "O país",
     "salario": "Salário",
     "impostos": "Impostos",
     "inflacao": "Inflação",

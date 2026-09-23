@@ -548,3 +548,50 @@ pontos}[], livres, total}`; layouts e mola exportados por
   marcador visível «1 · a resposta» no nível 1 (hoje só kicker+h1)?
 - Os controlos do `Cartao` ficam separados por hairline tracejada —
   ou preferes a zona sem separador (só espaço)?
+
+---
+
+## S1-07 — Navegação por quatro perguntas
+
+Os 11 itens deram lugar a quatro grupos + Aprender
+(`src/components/SiteNav.tsx`):
+
+- **O que ganhas** — Salário · IRS · Trabalho
+- **O que pagas** — Impostos · Preços · Inflação
+- **O banco** — Crédito · Casa · Poupança
+- **O país** — Dados
+- **Aprender** — ligação directa, fora dos grupos
+
+**Decisões (conservadoras, a confirmar)**
+
+- Desktop: os menus abrem por CSS (`:hover`/`:focus-within` no
+  `.group`) — navegam sem JS; o JS só sincroniza `aria-expanded`
+  (pointerenter/leave + focus/blur com guarda cruzada rato↔foco) e o
+  Escape (tira o foco → o focus-within cai). Sem estado de "aberto"
+  duplicado em dois sítios.
+- O indicador partilhado `nav-ind` (view transition) sobe para o botão
+  do grupo quando a página activa está dentro dele; em Aprender fica
+  como estava. `aria-current` só na ligação da página.
+- O botão do grupo não navega — não há rota para «O que ganhas»; a
+  ordem dos itens dentro do grupo segue a arquitectura do brief.
+- Mobile: a folha inferior é um `<details>` — sem JS abre e navega na
+  mesma; com JS ganha foco preso (Tab/Shift+Tab ciclam dentro, o
+  sumário incluído no anel), Escape devolve o foco ao «Índice», clique
+  na cortina fecha, mudança de rota fecha e o scroll do body tranca
+  enquanto aberta. Sobe de baixo (nav-sheet-sobe, ~320ms) — o bloco
+  global de reduced-motion corta-a.
+- Breakpoint da nav desceu de `xl` para `lg` — cinco itens cabem com
+  folga ao lado do logótipo.
+
+**Copy novo a rever pelo dono**
+
+- `m.nav`: «O que ganhas», «O que pagas», «O banco», «O país»,
+  «Fechar» (a folha mobile).
+
+**Perguntas ao dono**
+
+- A ordem dentro dos grupos é a do brief (ex.: ganhas = Salário · IRS ·
+  Trabalho) — confirmas, ou preferes outra leitura (ex.: IRS antes de
+  Trabalho)?
+- No mobile o rótulo do gatilho continua «Índice» — queres mantê-lo ou
+  trocar por «Menu»/«Navegar»?
