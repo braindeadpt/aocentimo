@@ -23,10 +23,11 @@ export default function Home() {
   const cartoes = cartoesHome();
 
   // ————— «Escolhe a tua pergunta» (S2-03) — dados reais do build —————
-  // O recibo é a linha canónica da grelha (S1-09); as taxas de IVA
-  // vêm de data/fiscal/iva.json por nome; a prestação usa os defeitos
-  // do simulador de /credito com a Euribor 3M mais recente — se a
-  // série falhar passa null e o cartão diz a falha (regra nº1).
+  // O recibo é a linha canónica da grelha (S1-09); o talão usa os PMD
+  // do dia da DGEG com o IVA normal de iva.json (S2-05); a prestação
+  // usa os defeitos do simulador de /credito com a Euribor 3M mais
+  // recente — se uma série falhar passa null e o cartão diz a falha
+  // (regra nº1).
   const cenarios = cenariosJson as unknown as CenariosSalario;
   const linha =
     cenarios.linhas.find((l) => l.bruto === cenarios.meta.brutoRef) ??
@@ -41,16 +42,25 @@ export default function Home() {
   };
   // o nome da taxa é o contrato do JSON fiscal — se mudar, o build
   // falha aqui em voz alta em vez de servir um IVA inventado
-  const taxaDe = (nome: string): number => {
-    const x = ivaJson.taxas.find((tx) => tx.nome === nome);
-    if (!x) throw new Error(`iva.json: taxa «${nome}» não existe`);
+  const taxaNormal = (() => {
+    const x = ivaJson.taxas.find((tx) => tx.nome === "Normal");
+    if (!x) throw new Error("iva.json: taxa «Normal» não existe");
     return x.taxa;
-  };
-  const ivaTaxas = {
-    reduzida: taxaDe("Reduzida"),
-    intermedia: taxaDe("Intermédia"),
-    normal: taxaDe("Normal"),
-  };
+  })();
+  // o talão de «O que pagas» mostra os PMD do dia da DGEG — se uma
+  // série falhar a porta diz a falha, nunca inventa o preço (S2-05)
+  const fonteGasoleo = loadFonte("dgeg", "pmd-gasoleo-diario");
+  const fonteGasolina = loadFonte("dgeg", "pmd-gasolina95-diario");
+  const ultGasoleo = fonteGasoleo?.series.at(-1);
+  const ultGasolina = fonteGasolina?.series.at(-1);
+  const combustiveis =
+    fonteGasoleo && ultGasoleo && ultGasolina
+      ? {
+          gasoleo: { preco: ultGasoleo.v, quando: ultGasoleo.t },
+          gasolina95: { preco: ultGasolina.v, quando: ultGasolina.t },
+          fonte: fonteGasoleo.meta.fonte,
+        }
+      : null;
   const eur3m = loadFonte("bpstat", "euribor-3m-mensal");
   const eurUltimo = eur3m?.series[eur3m.series.length - 1]?.v ?? null;
   const estados = Object.fromEntries(
@@ -107,7 +117,8 @@ export default function Home() {
           menus, cada uma com a mini-prévia viva da página que abre */}
       <EscolhePergunta
         recibo={recibo}
-        ivaTaxas={ivaTaxas}
+        ivaNormal={taxaNormal}
+        combustiveis={combustiveis}
         prestacao={{
           capital: 200000,
           meses: 360,

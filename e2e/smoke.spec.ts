@@ -235,7 +235,9 @@ test("com reduced-motion o número-herói mostra o valor final sem interpolaçã
 test("nada acima da dobra entra com animação ao carregar", async ({
   page,
 }) => {
-  test.setTimeout(120_000);
+  // ~38 rotas × 2 amostras × (goto + scan completo do DOM): debaixo de
+  // carga os 120 s não chegam — o mesmo tecto do sweep de contraste
+  test.setTimeout(240_000);
   // contrato M-09: animações de ENTRADA (iterações finitas) não podem
   // correr em elementos visíveis no primeiro viewport ao carregar.
   // Loops contínuos (ticker) têm iterações infinitas e não são entrada.

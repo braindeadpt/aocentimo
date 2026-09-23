@@ -142,7 +142,7 @@
           "titulo": "Recibo de vencimento",
           "sub": "* * * o cenário-base * * *",
           "bruto": "SALÁRIO BRUTO",
-          "ss": "SEG. SOCIAL 11%",
+          "ss": "SEG. SOCIAL 11 %",
           "irs": "IRS RETIDO",
           "liquido": "Líquido no fim do mês",
           "meta": "TABELA {tabela} · {ano}",
@@ -150,31 +150,18 @@
         }
       },
       "pagas": {
-        "frase": "Num cabaz de {total}, {iva} são imposto — o talão separa o IVA do preço.",
+        "frase": "Num litro de gasóleo a {preco}, {iva} são IVA — o talão separa o imposto do preço.",
         "talao": {
-          "titulo": "Talão de compras",
-          "sub": "* * * exemplo · taxas reais * * *",
+          "titulo": "Talão de combustível",
+          "sub": "* * * preço médio do dia * * *",
+          "gasoleo": "GASÓLEO 1 L",
+          "gasolina": "GASOLINA 95 1 L",
           "total": "Total",
           "resumo": "Deste total é IVA",
-          "meta": "CIVA · LISTAS I/II"
+          "meta": "{fonte} · {quando}",
+          "falhou": "As séries da DGEG não chegaram da fonte — o IVA do litro fica por medir."
         },
-        "cabaz": [
-          {
-            "nome": "PÃO DE TRIGO 400G",
-            "preco": 0.69,
-            "taxa": "reduzida"
-          },
-          {
-            "nome": "VINHO TINTO 75CL",
-            "preco": 3.99,
-            "taxa": "intermedia"
-          },
-          {
-            "nome": "T-SHIRT ALGODÃO",
-            "preco": 9.99,
-            "taxa": "normal"
-          }
-        ]
+        "fraseSemSerie": "O preço médio do dia não chegou da DGEG — quando a série voltar, o talão separa aqui o IVA do preço."
       },
       "banco": {
         "frase": "Na primeira prestação, {pesoJuro} é juro — na última é quase tudo capital.",
@@ -183,7 +170,7 @@
         "mesA": "mês 1",
         "mesB": "mês {meses}",
         "legJuro": "juro — vai para o banco",
-        "legCap": "capital — fica teu",
+        "legCap": "capital — abate à dívida",
         "juros": "juro do mês 1: {a} · do mês {n}: {b}",
         "nota": "{capital} · {meses} meses · TAN {tan}",
         "falhou": "A série da Euribor não chegou da fonte — a troca de peso fica por medir."
@@ -195,7 +182,7 @@
           "a-recolher": "a recolher",
           "no-limite": "no limite",
           "atrasada": "atrasada",
-          "sem-sla": "sem SLA"
+          "sem-sla": "sem prazo"
         },
         "orbes": [
           {

@@ -171,16 +171,26 @@ test.describe("«Escolhe a tua pergunta» @1440", () => {
     await page.goto("/");
     const s = sec(page);
 
-    // o IVA real (23 % de data/fiscal/iva.json) e o cupão-resumo
+    // o talão: 1 L de gasóleo e 1 L de gasolina 95 ao PMD do dia
+    // (DGEG), IVA a 23 % separado e a fonte+data carimbadas (S2-05)
     // (\s* cobre o FINO U+202F que fmtPct põe antes do «%»)
     const iva = s.locator(".pq-iva");
+    await expect(iva).toContainText("GASÓLEO 1 L");
+    await expect(iva).toContainText("GASOLINA 95 1 L");
     await expect(iva).toContainText(/IVA 23\s?%/);
     await expect(iva).toContainText("Deste total é IVA");
+    await expect(iva).toContainText("DGEG");
     const fatias = await iva.locator(".pq-iva-fatia").count();
-    expect(fatias).toBe(3);
+    expect(fatias).toBe(2);
 
-    // o banco: a divisória juro/capital existe com os dois extremos
+    // o recibo: «SEG. SOCIAL 11 %» com o fino U+202F do lettering
+    const recibo = s.locator(".pq-recibo");
+    await expect(recibo).toContainText(/SEG\. SOCIAL 11\s?%/);
+
+    // o banco: a divisória juro/capital existe com os dois extremos;
+    // o capital «abate à dívida» e a sua cor é neutra, não --keep
     const banco = s.locator(".pq-banco");
+    await expect(banco).toContainText(/abate à dívida/);
     await expect(banco).toContainText("mês 1");
     const juro = banco.locator(".pq-banco-juro");
     await expect(juro).toBeVisible();

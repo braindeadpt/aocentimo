@@ -70,6 +70,28 @@ faixa final. Nada mais. Um h1, secções com h2.
 ## Copy nova — PROPOSTA, a rever pelo dono
 
 Todo o texto novo de `home.hero` e `home.portas` (incl. frases dos
-cartões, veredictos do palpite, equivalentes textuais e o cabaz
-exemplar do talão de IVA) é proposta da sessão — a publicação editorial
-fica com o dono do repo.
+cartões, veredictos do palpite e equivalentes textuais) é proposta da
+sessão — a publicação editorial fica com o dono do repo.
+
+## S2-05 — decisões do dono sobre a copy (23.09.2026)
+
+De `referencias/V4/REVISAO-COPY-SESSAO-2.md`, aplicadas:
+
+- **«O banco»**: «capital — fica teu» → «capital — abate à dívida»; a
+  cor do capital passa a neutra (`--pq-ink2`) — `--keep` é só para o
+  que fica contigo e `--accent` fica do juro. `--pq-keep` ficou sem
+  uso e foi removida da folha.
+- **«O que pagas»**: o cabaz com preços inventados saiu — a Regra nº1
+  não tolera exemplos sem fonte. O talão passa a 1 L de gasóleo + 1 L
+  de gasolina 95 ao PMD do dia (DGEG, `pmd-gasoleo-diario` /
+  `pmd-gasolina95-diario`), IVA a 23 % (Continente, de `iva.json`)
+  separado do preço por `ivaContido`, com fonte e data carimbadas
+  (`{fonte} · {quando}` — se as datas das duas séries divergirem, o
+  talão mostra as duas). Série em falha → frase honesta (`falhou` /
+  `fraseSemSerie`), nunca um número. A frase da porta —
+  «Num litro de gasóleo a {preco}, {iva} são IVA — o talão separa o
+  imposto do preço» — é **PROPOSTA** (sugestão da própria revisão).
+- **Recibo**: «SEG. SOCIAL 11 %» com espaço fino U+202F (lettering 1B-02).
+- **Estados**: «sem SLA» → «sem prazo», só em `home.portas` — o
+  `semSla` partilhado fica para a Sessão 4.
+- Todo o resto da copy da sessão: **aprovado** pelo dono.

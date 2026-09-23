@@ -4,7 +4,7 @@ import { Icone, IconeEmblema, type NomeIcone } from "@/components/Icone";
 import type { EstadoOrbe } from "@/components/OrbeEstado";
 import { ivaContido } from "@/lib/engines/impostos";
 import { simularPrestacao } from "@/lib/engines/prestacao";
-import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
+import { fmtEUR, fmtEUR0, fmtLitro, fmtPct, fmtPeriodo } from "@/lib/format";
 import { m, t } from "@/lib/messages";
 import "./portas.css";
 import {
@@ -43,9 +43,17 @@ export interface EscolhePerguntaProps {
   /** o cenário canónico resumido — cenarioCanonico() + a tabela de
       retenção da linha de data/derived/cenarios-salario.json */
   recibo: PortaRecibo;
-  /** as três taxas do continente, por nome — de data/fiscal/iva.json
-      (Reduzida / Intermédia / Normal); nunca escritas à mão */
-  ivaTaxas: { reduzida: number; intermedia: number; normal: number };
+  /** a taxa normal do continente — de data/fiscal/iva.json por nome;
+      é a taxa dos combustíveis no talão */
+  ivaNormal: number;
+  /** os PMD do dia da DGEG (pmd-gasoleo-diario / pmd-gasolina95-diario)
+      — cada litro com o seu «t»; null = série não recolhida (regra
+      nº1: a porta diz a falha, nunca inventa o preço) */
+  combustiveis: {
+    gasoleo: { preco: number; quando: string };
+    gasolina95: { preco: number; quando: string };
+    fonte: string;
+  } | null;
   /** o crédito canónico da miniatura — os mesmos defeitos do
       simulador de /credito (200 000 € · 30 anos · spread 1 %); a
       Euribor é a 3M mais recente do painel — null = série não
@@ -63,21 +71,36 @@ export interface EscolhePerguntaProps {
 
 export function EscolhePergunta({
   recibo,
-  ivaTaxas,
+  ivaNormal,
+  combustiveis,
   prestacao,
   estados,
 }: EscolhePerguntaProps) {
   const s = m.home.portas;
-  // «O que pagas» — o mini-cabaz de m.home.portas com as taxas reais
-  // de iva.json, decomposto pelo motor (iva contido no preço final);
-  // item.taxa é a chave do JSON («reduzida»/«intermedia»/«normal»)
-  const linhasIva = s.pagas.cabaz.map((item) => {
-    const taxa = ivaTaxas[item.taxa as keyof typeof ivaTaxas];
-    const r = ivaContido(item.preco, taxa);
-    return { nome: item.nome, preco: item.preco, taxa, iva: r.iva, semIva: r.semIva };
-  });
-  const total = linhasIva.reduce((a, l) => a + l.preco, 0);
-  const totalIva = linhasIva.reduce((a, l) => a + l.iva, 0);
+  // «O que pagas» — 1 L de gasóleo e 1 L de gasolina 95 ao PMD do dia
+  // (DGEG, prop `combustiveis`), IVA a 23 % de iva.json decomposto
+  // pelo motor (iva contido no preço final). As datas das duas séries
+  // andam juntas; se divergirem o talão carimba as duas.
+  const linhasIva = combustiveis
+    ? [
+        { nome: s.pagas.talao.gasoleo, preco: combustiveis.gasoleo.preco },
+        { nome: s.pagas.talao.gasolina, preco: combustiveis.gasolina95.preco },
+      ].map((l) => {
+        const r = ivaContido(l.preco, ivaNormal);
+        return { ...l, taxa: ivaNormal, iva: r.iva, semIva: r.semIva };
+      })
+    : null;
+  const total = linhasIva?.reduce((a, l) => a + l.preco, 0) ?? 0;
+  const totalIva = linhasIva?.reduce((a, l) => a + l.iva, 0) ?? 0;
+  const quandoComb =
+    combustiveis === null
+      ? ""
+      : combustiveis.gasoleo.quando === combustiveis.gasolina95.quando
+        ? fmtPeriodo(combustiveis.gasoleo.quando)
+        : `${fmtPeriodo(combustiveis.gasoleo.quando)} / ${fmtPeriodo(combustiveis.gasolina95.quando)}`;
+  const ivaLitroGasoleo = combustiveis
+    ? ivaContido(combustiveis.gasoleo.preco, ivaNormal).iva
+    : 0;
 
   // «O banco» — o plano do motor; a miniatura mostra os extremos
   // reais (1.ª e última prestação), nunca valores interpolados
@@ -132,15 +155,19 @@ export function EscolhePergunta({
       icone: "impostos",
       pergunta: m.nav.grupoPagas,
       crumb: [m.nav.impostos, m.nav.precos, m.nav.inflacao].join(" · "),
-      frase: t(s.pagas.frase, {
-        total: fmtEUR(total),
-        iva: fmtEUR(totalIva),
-      }),
+      frase: combustiveis
+        ? t(s.pagas.frase, {
+            preco: fmtLitro(combustiveis.gasoleo.preco),
+            iva: fmtEUR(ivaLitroGasoleo),
+          })
+        : s.pagas.fraseSemSerie,
       previa: (
         <PreviewIva
           linhas={linhasIva}
           total={total}
           totalIva={totalIva}
+          quando={quandoComb}
+          fonte={combustiveis?.fonte ?? ""}
           s={s.pagas.talao}
         />
       ),

@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { OrbeEstado, type EstadoOrbe } from "@/components/OrbeEstado";
-import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
+import { fmtEUR, fmtEUR0, fmtLitro, fmtPct } from "@/lib/format";
 import { t, type Messages } from "@/lib/messages";
 
 /** a copy da secção — o bloco `home.portas` do pt.json */
@@ -18,7 +18,7 @@ export type PortasStrings = Messages["home"]["portas"];
  *
  * Tudo o que é número vem por props do servidor (o motor fiscal e a
  * prestação nunca entram no cliente); toda a copy vem na prop `s`
- * (fatia de portas.strings.ts — pt.json está congelada nesta sessão).
+ * (o bloco `home.portas` do pt.json).
  * Os valores dentro do cartão são `aria-hidden` — a frase do cartão é
  * o equivalente textual com os números-chave.
  */
@@ -113,21 +113,32 @@ export function PreviewRecibo({
   );
 }
 
-/** «O que pagas» — o talão de compras com o IVA a separar-se: cada
-    linha traz a mini-barra [sem IVA | IVA]; ao foco a fatia destacada
-    sai da linha e o cupão RESUMO IVA recebe-a. Taxas reais de
-    data/fiscal/iva.json (prop), carimbado «exemplo». */
+/** «O que pagas» — o talão de combustível com o IVA a separar-se:
+    cada linha traz a mini-barra [sem IVA | IVA]; ao foco a fatia
+    destacada sai da linha e o cupão RESUMO IVA recebe-a. Preços
+    médios do dia da DGEG (prop), IVA a 23 % de iva.json pelo motor
+    (ivaContido), fonte e data da série carimbadas no talão.
+    linhas = null → a série falhou: frase honesta, nunca um número. */
 export function PreviewIva({
   linhas,
   total,
   totalIva,
+  quando,
+  fonte,
   s,
 }: {
-  linhas: PortaIvaLinha[];
+  linhas: PortaIvaLinha[] | null;
   total: number;
   totalIva: number;
+  quando: string;
+  fonte: string;
   s: PortasStrings["pagas"]["talao"];
 }) {
+  if (!linhas) {
+    return (
+      <p className="pq-doc pq-vazio pq-doc-meta pq-doc-dim">{s.falhou}</p>
+    );
+  }
   return (
     <div className="pq-doc pq-iva">
       <p className="pq-doc-head">{s.titulo}</p>
@@ -141,7 +152,7 @@ export function PreviewIva({
           >
             <span className="pq-iva-row">
               <span className="pq-doc-dim">{l.nome}</span>
-              <span>{fmtEUR(l.preco)}</span>
+              <span>{fmtLitro(l.preco)}</span>
             </span>
             <span className="pq-iva-row">
               <span className="pq-doc-meta pq-doc-dim">
@@ -179,7 +190,7 @@ export function PreviewIva({
         className="pq-doc-meta pq-doc-dim pq-imprime"
         style={varI(linhas.length + 2)}
       >
-        {s.meta}
+        {t(s.meta, { fonte, quando })}
       </p>
     </div>
   );
@@ -242,7 +253,7 @@ export function PreviewBanco({
         <span className="pq-doc-dim">
           <span
             className="pq-sw"
-            style={{ background: "var(--pq-keep)" }}
+            style={{ background: "var(--pq-ink2)" }}
             aria-hidden="true"
           />
           {s.legCap}
