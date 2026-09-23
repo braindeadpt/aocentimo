@@ -1,4 +1,5 @@
 import { Spark, type EstadoSerie } from "@/components/Spark";
+import { OrbeEstado } from "@/components/OrbeEstado";
 import { fmtNum } from "@/lib/format";
 import { m } from "@/lib/messages";
 
@@ -51,9 +52,7 @@ export function Instrumento({
   return (
     <div className={className}>
       <p className="kicker-xs flex items-center">
-        {estado && (
-          <span aria-hidden className={`serie-estado ${estado}`} />
-        )}
+        {estado && <OrbeEstado estado={estado} tamanho={16} />}
         {rotulo}
       </p>
       <p className={`num-read mt-2 ${grande ? "num-read-lg" : ""}`}>{valor}</p>

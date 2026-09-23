@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { loadFontes, loadFreshness } from "@/lib/data";
 import { fmtData } from "@/lib/format";
+import { OrbeEstado, type EstadoOrbe } from "@/components/OrbeEstado";
 
 export const metadata: Metadata = {
   title: "Metodologia e fontes",
@@ -87,7 +88,7 @@ export default function MetodologiaPage() {
       const s = porId.get(f.id);
       const folga = s ? folgaPeriodos(s) : null;
       const [unS, unP] = UN_FOLGA[s?.frequencia ?? "mensal"];
-      const classe = !s
+      const classe: EstadoOrbe = !s
         ? "sem-sla"
         : s.estado === "atrasada"
           ? "atrasada"
@@ -156,12 +157,12 @@ export default function MetodologiaPage() {
                 torna-se mural — a margem de cada série vê-se, e o que
                 está no fio (serieAte == esperadoAte) sobe para o topo */}
             <p className="footnote mb-3">
-              <span className="serie-estado em-dia" aria-hidden /> em dia com
+              <OrbeEstado estado="em-dia" tamanho={14} /> em dia com
               folga ·{" "}
-              <span className="serie-estado no-limite" aria-hidden /> em dia,
+              <OrbeEstado estado="no-limite" tamanho={14} /> em dia,
               no limite ·{" "}
-              <span className="serie-estado atrasada" aria-hidden /> atrasada
-              · <span className="serie-estado sem-sla" aria-hidden /> sem SLA
+              <OrbeEstado estado="atrasada" tamanho={14} /> atrasada
+              · <OrbeEstado estado="sem-sla" tamanho={14} /> sem SLA
             </p>
             <p className="num text-corpo-sm text-ink2 mb-2">
               {resumo}
@@ -181,7 +182,7 @@ export default function MetodologiaPage() {
                 >
                   <p className="qcell-id">{c.id}</p>
                   <p className="qcell-meta">
-                    <span className={`serie-estado ${c.classe}`} aria-hidden />
+                    <OrbeEstado estado={c.classe} tamanho={14} />
                     {fmtData(c.serieAte)}
                     <span className="qcell-folga"> · {c.folgaTxt}</span>
                   </p>

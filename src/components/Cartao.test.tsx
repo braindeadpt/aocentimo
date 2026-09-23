@@ -35,8 +35,9 @@ describe("Cartao — a anatomia Ledger", () => {
     expect(html).toContain('class="leitura-breadcrumb"');
     expect(html).toContain("PREÇOS / CABAZ · EUROSTAT");
     expect(html).toContain("leitura ago 2026");
-    // o estado existe como forma E texto — nunca só o quadrado
-    expect(html).toContain('serie-estado em-dia');
+    // o estado existe como forma (o orbe, aria-hidden) E texto — nunca
+    // só a forma
+    expect(html).toContain("orbe-estado orbe-em-dia");
     expect(html).toContain("em dia");
   });
 

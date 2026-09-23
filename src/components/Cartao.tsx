@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode, Ref } from "react";
+import { OrbeEstado } from "@/components/OrbeEstado";
 
 /**
  * Cartao — a anatomia Ledger fixa (V3 regra 1, S1-06): cabeçalho
@@ -14,13 +15,13 @@ import type { ReactNode, Ref } from "react";
  * usar. Container queries: .leitura é `container-type: inline-size`,
  * o conteúdo reage à largura do cartão, não da viewport.
  *
- * O orbe de estado (S1-08) monta-se dentro de `.leitura-estado` — o
- * quadrado `.serie-estado` é o selo actual; a prop `estado` já é a
- * API estável e o estado existe sempre também em texto
- * (`estadoRotulo`).
+ * O selo de frescura é o <OrbeEstado> (S1-08) — a forma diz o estado;
+ * a prop `estado` é a API estável e o estado existe sempre também em
+ * texto (`estadoRotulo`) — nunca só a forma.
  */
 
-/** selos de frescura — os mesmos da classe .serie-estado */
+/** selos de frescura — os estados do orbe (sem «a-recolher»: a
+    ingestão ainda não o expõe) */
 export type EstadoCartao = "em-dia" | "atrasada" | "sem-sla" | "no-limite";
 
 export interface AcaoCartao {
@@ -126,10 +127,7 @@ export function Cartao({
             {meta?.map((item, i) => <span key={i}>{item}</span>)}
             {estado && (
               <span className="leitura-estado">
-                {/* S1-08 · ponto de montagem do <OrbeEstado estado={estado}/> —
-                    o quadrado .serie-estado é o selo actual; trocar aqui
-                    mantém esta API estável */}
-                <span aria-hidden className={`serie-estado ${estado}`} />
+                <OrbeEstado estado={estado} />
                 {estadoRotulo}
               </span>
             )}

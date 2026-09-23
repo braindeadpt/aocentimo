@@ -436,6 +436,7 @@ build && test:e2e`.
 |---|---|---|
 | `LineChart`/`Spark`/`Kinetic` | séries temporais | svg `aria-hidden` + equivalente (tabela sr-only); animam só abaixo da dobra ou em interacção |
 | `Cartao` | anatomia Ledger de qualquer cartão | cabeçalho/corpo/controlos/rodapé; selo de estado sempre com texto; inversão para papel |
+| `OrbeEstado` | selo de frescura — a forma diz o estado | disco cheio/anel oco/esburacado/anel em rotação; SVG aria-hidden + texto ao lado; rotação pára fora do ecrã |
 | `Pagina`/`PaginaDetalhe` | template de três níveis das rotas de conteúdo | níveis = `section aria-labelledby`; confirma em `<details>` fechado |
 | `Leitura` | cartão Ledger de leitura | insight escrito, anotação com chamada, fonte+estado no rodapé |
 | `EuroBar`/`Cascata`/`JuroCapital`/`EuroExplodido`/`CustoExplodido` | comparações e decomposições | equivalente textual único; SSR no estado final |

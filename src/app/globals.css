@@ -1788,35 +1788,41 @@ html[data-theme="dark"] .tema-ponto {
 .chart-hit-off {
   opacity: 0.3;
 }
-/* marcador de estado de série — quadrado, como as legendas do EuroBar */
-.serie-estado {
+/* ————— orbe de estado (S1-08) — a forma diz o estado, o texto ao
+   lado repete-o; a cor segue a semântica do selo que já existia ————— */
+.orbe-estado {
   display: inline-block;
-  width: 0.55em;
-  height: 0.55em;
   margin-right: 0.45em;
-  vertical-align: baseline;
+  vertical-align: -0.18em;
+  flex: none;
 }
-.serie-estado.em-dia {
-  background: var(--mark);
+.orbe-em-dia {
+  color: var(--mark);
 }
-.serie-estado.atrasada {
-  background: var(--warn);
+.orbe-no-limite {
+  color: var(--mark);
 }
-/* sem SLA definido: não é possível dizer se está atrasada — quadrado
-   oco, nem verificado nem falhado */
-.serie-estado.sem-sla {
-  background: transparent;
-  border: 1px solid var(--muted);
+.orbe-a-recolher {
+  color: var(--mark);
 }
-/* no limite — em dia mas sem folga: a próxima publicação decide;
-   hachura torrada, o selo "de fio" do quadro vivo (/metodologia) */
-.serie-estado.no-limite {
-  background: repeating-linear-gradient(
-    -45deg,
-    var(--mark) 0 1.5px,
-    transparent 1.5px 3px
-  );
-  border: 1px solid var(--mark);
+.orbe-atrasada {
+  color: var(--warn);
+}
+.orbe-sem-sla {
+  color: var(--muted);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .orbe-roda {
+    animation: orbe-gira 6s linear infinite;
+  }
+  @keyframes orbe-gira {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+.orbe-pausado .orbe-roda {
+  animation-play-state: paused;
 }
 
 /* quadro vivo (/metodologia) — mural de azulejos: cada série uma célula,

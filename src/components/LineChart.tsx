@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { fmtData, fmtNum } from "@/lib/format";
 import { EmptyState } from "@/components/EmptyState";
+import { OrbeEstado } from "@/components/OrbeEstado";
 import { chaveSeries, interpDom, interpPts, type Dominio, type PontoTV } from "@/lib/grafico";
 import { easeEntra } from "@/lib/useValorAnimado";
 import { m } from "@/lib/messages";
@@ -408,7 +409,7 @@ export function LineChart({
       <div className="chart-readout" aria-live="polite">
         {estado === "atrasada" && (
           <span className="inline-flex items-center gap-1.5">
-            <span aria-hidden className="serie-estado atrasada" />
+            <OrbeEstado estado="atrasada" tamanho={14} />
             <span className="chart-readout-t text-warn">{m.chart.atrasada}</span>
           </span>
         )}

@@ -595,3 +595,37 @@ Os 11 itens deram lugar a quatro grupos + Aprender
   Trabalho)?
 - No mobile o rótulo do gatilho continua «Índice» — queres mantê-lo ou
   trocar por «Menu»/«Navegar»?
+
+---
+
+## S1-08 — OrbeEstado
+
+`<OrbeEstado estado>` — o selo de frescura feito de pontos, montado em
+todos os sítios do antigo quadrado `.serie-estado` (Cartao, Instrumento,
+LineChart, Ticker, mural da /metodologia). A forma diz o estado:
+
+- **em-dia** — disco cheio (19 pontos), calmo;
+- **no-limite** — cheio por dentro, anel oco na borda (a próxima
+  publicação decide);
+- **a-recolher** — anel em rotação com ponto-líder (RESERVADO: a
+  ingestão ainda não produz este estado — fica na API e em /estilo);
+- **atrasada** — o mesmo disco menos o centro: esburacado;
+- **sem-sla** — só o anel oco: não há como dizer.
+
+**Decisões (conservadoras, a confirmar)**
+
+- `EstadoOrbe` é superset dos estados reais de freshness (em-dia,
+  atrasada, no-limite, sem-sla) + «a-recolher» do brief — a prop
+  `estado` do `Cartao` não muda.
+- Tamanho por omissão 18 px (o brief pede 16–20); contextos densos
+  usam `tamanho` menor — 16 no Instrumento, 14 no ticker, readout e
+  células do mural.
+- A rotação é CSS (`orbe-roda`, 6 s) — pausa fora do ecrã por
+  IntersectionObserver e o bloco global de reduced-motion corta-a.
+- `.serie-estado` (o quadrado) ficou sem usos — as regras CSS saíram;
+  os qcells do mural mantêm as cores próprias por cima.
+
+**Copy novo a rever pelo dono**
+
+- `/estilo`: «OrbeEstado — a forma diz o estado» (no bloco do Selo de
+  evidência) — quando usar / quando não usar.

@@ -16,6 +16,7 @@ import { BarraTracos } from "@/components/BarraTracos";
 import { AnelPontos } from "@/components/AnelPontos";
 import { IsometricoDemo } from "./IsometricoDemo";
 import { Cartao } from "@/components/Cartao";
+import { OrbeEstado } from "@/components/OrbeEstado";
 import { Pagina, PaginaDetalhe } from "@/components/Pagina";
 import { PapelDefs } from "@/components/Papel";
 import { PecaPapel } from "@/components/PecaPapel";
@@ -1157,6 +1158,41 @@ export default function EstiloPage() {
           />
           <Source nome="Lei n.º 73-A/2025" vigencia="2026" />
           <Source nome="IGCP — ficha técnica CA Série F" nota="divergência entre fontes, ambas mostradas" />
+        </div>
+        <div className="mt-6 border border-line bg-panel px-5 py-4">
+          <p className="kicker-xs mb-3">OrbeEstado — a forma diz o estado</p>
+          <p className="footnote mb-4 max-w-xl">
+            O selo de frescura dos cartões: um objecto pequeno feito de
+            pontos, não um quadrado colorido. Cheio e calmo quando a série
+            está em dia; anel oco na borda quando está no limite;
+            esburacado quando atrasada; só o anel quando não há SLA. A
+            rotação de «a recolher» (reservado — a ingestão ainda não o
+            expõe) pára fora do ecrã e desliga-se em reduced-motion. O
+            estado existe sempre em texto ao lado — a forma nunca é o
+            único canal.
+          </p>
+          <ul className="flex flex-wrap items-center gap-x-8 gap-y-3">
+            {(
+              [
+                ["em-dia", "em dia"],
+                ["no-limite", "em dia, no limite"],
+                ["a-recolher", "a recolher"],
+                ["atrasada", "atrasada"],
+                ["sem-sla", "sem SLA"],
+              ] as const
+            ).map(([est, rotulo]) => (
+              <li key={est} className="flex items-center gap-2">
+                <OrbeEstado estado={est} />
+                <span className="num text-rotulo text-ink2">{rotulo}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="footnote mt-3">
+            <strong>Quando usar</strong> — só como selo de frescura, sempre
+            com o rótulo de texto ao lado.{" "}
+            <strong>Quando não usar</strong> — nunca como decoração nem
+            como semáforo de outra coisa que não a frescura dos dados.
+          </p>
         </div>
       </section>
 

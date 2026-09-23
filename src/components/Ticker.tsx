@@ -1,4 +1,5 @@
 import { loadFonte, loadFreshness, loadSerie, variacao } from "@/lib/data";
+import { OrbeEstado } from "@/components/OrbeEstado";
 import { fmtData, fmtLitro, fmtNum, fmtPct } from "@/lib/format";
 import { m } from "@/lib/messages";
 import smn from "@data/fiscal/smn.json";
@@ -100,9 +101,9 @@ export function Ticker() {
               className="num ticker-item inline-flex items-baseline gap-2 whitespace-nowrap px-6 py-1.5"
             >
               {est && (
-                <span
-                  aria-hidden
-                  className={`serie-estado ${est === "atrasada" ? "atrasada" : "em-dia"}`}
+                <OrbeEstado
+                  estado={est === "atrasada" ? "atrasada" : "em-dia"}
+                  tamanho={14}
                 />
               )}
               <span className="text-muted">{it.label}</span>
