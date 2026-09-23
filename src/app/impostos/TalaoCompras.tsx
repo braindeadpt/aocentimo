@@ -4,8 +4,8 @@ import { useMemo, useState } from "react";
 import { ivaContido } from "@/lib/engines/impostos";
 import { fmtEUR, fmtPct } from "@/lib/format";
 import { mascaraFaixaRasgo, r1, sementeDe } from "@/lib/materia";
-import { m } from "@/lib/messages";
 import { useArmado } from "@/lib/useArmado";
+import { CABAZ } from "./cabaz";
 
 /**
  * O talão de supermercado — o segundo artefacto de papel do site.
@@ -14,6 +14,8 @@ import { useArmado } from "@/lib/useArmado";
  * e o IVA de cada linha e o RESUMO IVA por taxa saem do motor real
  * (ivaContido + taxas de data/fiscal/iva.json). Carimbado SIMULAÇÃO
  * porque os preços de exemplo são isso mesmo; as taxas são as legais.
+ * O cabaz mora em ./cabaz — o nível 1 da página conta os mesmos
+ * cêntimos de IVA sobre ele.
  *
  * Matéria (M-12): o talão são DUAS peças de papel — o corpo de compras
  * e o cupão RESUMO IVA — separadas por uma linha de perfuração a sério
@@ -26,31 +28,12 @@ import { useArmado } from "@/lib/useArmado";
  * cima, linhas ao ponteiro, régua com setas para teclado.
  */
 
-interface Item {
-  nome: string;
-  preco: number;
-  taxa: number;
-}
-
-const CABAZ: Item[] = [
-  { nome: "PÃO DE TRIGO 400G", preco: 0.69, taxa: 0.06 },
-  { nome: "LEITE UHT M.G. 1L", preco: 0.94, taxa: 0.06 },
-  { nome: "MAÇÃS GALA KG", preco: 2.15, taxa: 0.06 },
-  { nome: "ÁGUA MINERAL 1,5L", preco: 0.55, taxa: 0.06 },
-  { nome: "ARROZ AGULHA KG", preco: 1.59, taxa: 0.06 },
-  { nome: "ATUM CONSERVA ×3", preco: 4.49, taxa: 0.13 },
-  { nome: "VINHO TINTO 75CL", preco: 3.99, taxa: 0.13 },
-  { nome: "PILHAS AA ×4", preco: 4.99, taxa: 0.23 },
-  { nome: "CHAMPÔ 400ML", preco: 3.29, taxa: 0.23 },
-  { nome: "T-SHIRT ALGODÃO", preco: 9.99, taxa: 0.23 },
-];
-
 /** largura de referência da silhueta rasgada (max-w-80 = 320px);
  *  mask-size 100% 100% acompanha a largura real */
 const COMP = 320;
 const SEMENTE = sementeDe(20260918);
 
-export function TalaoCompras() {
+export function TalaoCompras({ scrubAria }: { scrubAria: string }) {
   const [precos, setPrecos] = useState<number[]>(CABAZ.map((i) => i.preco));
   const [ativo, setAtivo] = useState<number | null>(null);
 
@@ -126,7 +109,7 @@ export function TalaoCompras() {
             min={0}
             max={linhas.length - 1}
             value={ativo ?? linhas.length - 1}
-            aria-label={m.chart.scrubAria}
+            aria-label={scrubAria}
             aria-valuetext={
               lida ? `${lida.nome}: ${fmtEUR(lida.preco)}` : undefined
             }
