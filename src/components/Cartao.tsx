@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode, Ref } from "react";
 import { OrbeEstado } from "@/components/OrbeEstado";
+import { IconeEmblema, type NomeIcone } from "@/components/Icone";
 
 /**
  * Cartao — a anatomia Ledger fixa (V3 regra 1, S1-06): cabeçalho
@@ -46,6 +47,9 @@ export interface FonteCartao {
 export interface CartaoProps {
   /** breadcrumb mono do cabeçalho — "PREÇOS / CABAZ · EUROSTAT" */
   breadcrumb: ReactNode;
+  /** ícone do cartão (1B-01) — o nome do conjunto fechado; desenha o
+      <IconeEmblema> (quadrado tracejado) à esquerda do breadcrumb */
+  icone?: NomeIcone;
   /** spans do lado direito do cabeçalho, antes do selo de estado
       (ex.: "leitura set 2026") */
   meta?: ReactNode[];
@@ -92,6 +96,7 @@ function ItemFonte({ nome, url }: { nome: ReactNode; url?: string }) {
 
 export function Cartao({
   breadcrumb,
+  icone,
   meta,
   estado,
   estadoRotulo,
@@ -121,6 +126,7 @@ export function Cartao({
       className={`leitura ${amplo ? "leitura-amplo" : ""} ${className ?? ""}`}
     >
       <header className="leitura-head">
+        {icone && <IconeEmblema nome={icone} />}
         <p className="leitura-breadcrumb">{breadcrumb}</p>
         {temMeta && (
           <p className="leitura-meta num">

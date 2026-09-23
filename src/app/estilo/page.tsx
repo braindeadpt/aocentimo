@@ -18,6 +18,7 @@ import { AnelPontos } from "@/components/AnelPontos";
 import { IsometricoDemo } from "./IsometricoDemo";
 import { Cartao } from "@/components/Cartao";
 import { OrbeEstado } from "@/components/OrbeEstado";
+import { Icone, IconeEmblema, type NomeIcone } from "@/components/Icone";
 import { Pagina, PaginaDetalhe } from "@/components/Pagina";
 import { PapelDefs } from "@/components/Papel";
 import { PecaPapel } from "@/components/PecaPapel";
@@ -156,6 +157,19 @@ const REGRAS = [
   "Escuro por omissão — o instrumento é a cara; o claro é o documento.",
 ];
 
+// 1B-01 — o conjunto fechado de ícones, por família
+const ICONES_PAGINAS: readonly NomeIcone[] = [
+  "salario", "irs", "trabalho", "impostos", "precos", "inflacao",
+  "credito", "casa", "poupanca", "dados", "aprender",
+];
+const ICONES_ACCOES: readonly NomeIcone[] = [
+  "ver", "json", "copiar-ligacao", "repor", "abrir", "menu",
+  "pesquisa", "sol", "lua",
+];
+const ICONES_ESTADO: readonly NomeIcone[] = [
+  "em-dia", "a-recolher", "atrasado", "aviso", "informacao",
+];
+
 const REGRAS_SUPERFICIE = [
   "Textura só no nível 0: papel milimetrado no claro; no escuro a mesma malha em fósforo esbatido — ecrã de registo, não papel.",
   "panel, raised e overlay nunca têm textura — a leitura manda.",
@@ -278,6 +292,121 @@ export default function EstiloPage() {
             </ul>
           </div>
         </div>
+      </section>
+
+      <section id="icones" className="stack-sec">
+        <h2 className="kicker mb-4">Ícones — traço próprio, conjunto fechado</h2>
+        <p className="footnote mb-4 max-w-xl">
+          Um sistema de símbolos, não uma biblioteca: <strong>25 desenhos
+          à mão</strong> numa grelha de <code className="num">20×20</code>,
+          traço de <code className="num">1,5 px</code>, terminações
+          redondas, sem preenchimentos — em{" "}
+          <code className="num">currentColor</code> para seguirem a tinta
+          do sítio onde vivem. Iconografia stock é proibida; o conjunto é
+          fechado — um nome fora da lista falha. Passa o rato por cima de
+          cada célula: o traço desenha-se uma vez (
+          <code className="num">--dur-micro</code>), como faz dentro dos
+          controlos.
+        </p>
+
+        {/* os três grupos — cada célula é gatilho do desenho ao passar */}
+        {(
+          [
+            ["páginas — um sinal por pergunta", ICONES_PAGINAS],
+            ["acções — dentro de <button>/<a> com nome acessível", ICONES_ACCOES],
+            ["estado — a família do OrbeEstado, em pontos de traço", ICONES_ESTADO],
+          ] as const
+        ).map(([grupo, nomes]) => (
+          <div key={grupo} className="mb-5">
+            <p className="kicker-xs mb-2">{grupo}</p>
+            <div className="flex flex-wrap gap-2">
+              {nomes.map((n) => (
+                <span
+                  key={n}
+                  data-icone={n}
+                  data-icone-gatilho
+                  className="flex flex-col items-center gap-2 border border-line bg-panel px-3 py-3 text-ink"
+                >
+                  <Icone nome={n} className="h-6 w-6" />
+                  <span className="kicker-xs">{n}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        {/* o emblema + as acções com nome acessível */}
+        <div className="mt-3 grid gap-3 md:grid-cols-2">
+          <div className="border border-line bg-panel p-6">
+            <p className="kicker-xs mb-4">
+              IconeEmblema — o quadrado de contorno tracejado
+            </p>
+            <div className="flex items-center gap-4">
+              <IconeEmblema nome="salario" />
+              <IconeEmblema nome="poupanca" />
+              <IconeEmblema nome="inflacao" />
+            </div>
+            <p className="footnote mt-4">
+              A moldura da referência — contorno tracejado, raio pormenor —
+              para o cabeçalho dos cartões <code className="num">Cartao</code>{" "}
+              (prop <code className="num">icone</code>). Dentro de um cartão
+              o traço desenha-se ao foco/à passagem, com a inversão para
+              papel.
+            </p>
+          </div>
+          <div className="border border-line bg-panel p-6">
+            <p className="kicker-xs mb-4">
+              acções — o nome acessível é o do controlo, nunca o do ícone
+            </p>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                aria-label="Repor valores"
+                className="border border-line2 px-3 py-2 text-ink2 transition-colors hover:border-ink hover:text-ink"
+              >
+                <Icone nome="repor" className="h-5 w-5" />
+              </button>
+              <button
+                type="button"
+                aria-label="Copiar ligação"
+                className="border border-line2 px-3 py-2 text-ink2 transition-colors hover:border-ink hover:text-ink"
+              >
+                <Icone nome="copiar-ligacao" className="h-5 w-5" />
+              </button>
+              <button
+                type="button"
+                aria-label="Abrir detalhe"
+                aria-expanded="false"
+                className="border border-line2 px-3 py-2 text-ink2 transition-colors hover:border-ink hover:text-ink"
+              >
+                <Icone nome="abrir" className="h-5 w-5" />
+              </button>
+              <a
+                href="/dados"
+                aria-label="Ver dados"
+                className="border border-line2 px-3 py-2 text-ink2 transition-colors hover:border-ink hover:text-ink"
+              >
+                <Icone nome="ver" className="h-5 w-5" />
+              </a>
+            </div>
+            <p className="footnote mt-4">
+              O svg é <code className="num">aria-hidden</code> por omissão —
+              quem ouve o ecrã escuta o <code className="num">aria-label</code>{" "}
+              do botão, não o desenho. Ícone solto com significado próprio
+              (o caso raro) leva <code className="num">rotulo</code> e fica{" "}
+              <code className="num">role=&quot;img&quot;</code>.
+            </p>
+          </div>
+        </div>
+
+        <p className="footnote mt-4 max-w-xl">
+          O <strong>¢</strong> não é um ícone — é a marca. Fora do logótipo
+          só pode aparecer como símbolo da casa (o azulejo{" "}
+          <code className="num">LogoMark</code>: favicons, OG, partilha) e
+          como marcador do selo «1 ponto = 1 cêntimo» nos campos de pontos —
+          nunca como glifo de menu, nem junto de um número (aí escreve-se
+          «cêntimos» ou «c»). Regras completas em PRODUTO.md §6.
+        </p>
       </section>
 
       <section className="stack-sec">
@@ -1085,6 +1214,7 @@ export default function EstiloPage() {
             <p className="kicker-xs mb-3">Cartao — quatro partes, uma ideia</p>
             <Cartao
               breadcrumb="ESTILO / ANATOMIA · AO CÊNTIMO"
+              icone="aprender"
               meta={["exercício 2026"]}
               estado="em-dia"
               estadoRotulo="em dia"
@@ -1121,8 +1251,8 @@ export default function EstiloPage() {
               </p>
             </Cartao>
             <p className="footnote mt-3">
-              <strong>cabeçalho</strong> — breadcrumb mono + meta + selo de
-              estado · <strong>corpo</strong> — UMA ideia ·{" "}
+              <strong>cabeçalho</strong> — emblema opcional (<code className="num">icone</code>) +
+              breadcrumb mono + meta + selo de estado · <strong>corpo</strong> — UMA ideia ·{" "}
               <strong>controlos</strong> — hairline tracejada, a zona de
               medição · <strong>rodapé</strong> — fonte + «ver →» + «JSON».
               Passa o rato ou o foco: inverte para papel. O conteúdo do

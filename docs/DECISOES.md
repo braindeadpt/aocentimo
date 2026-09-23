@@ -400,3 +400,51 @@ ou em quadrado o símbolo; área de proteção x = capitular; proibido haste
 noutra cor, haste sem recorte, esticar/redesenhar letras. Os paths não
 se editam à mão — regeneram-se com `scratchpad/logo/gerar-ficheiros.mjs`.
 Registado em PRODUTO.md §6 «Marca»; demonstrado em `/estilo`.
+
+## 2026-09-23 — Sistema de ícones: traço próprio, conjunto fechado
+
+**Contexto.** Até aqui não havia sistema de símbolos — só o ¢ do
+logótipo e os glifos ▲▼ do `Delta`. As referências da V4 (cartões com
+ícone de traço num quadrado de contorno tracejado, controlos com
+ícones) pedem um sistema partilhado antes das sessões paralelas
+(1B-01). Existia ainda o `<Glifo>` 12×12 do trabalho B-03, revertido em
+86a9830 — a tarefa mandava avaliá-lo antes de desenhar do zero.
+
+**Avaliação do Glifo revertido (commit 2da28c6).** Reutiliza-se a
+técnica, não o componente: `pathLength=1` + `stroke-dashoffset` em
+`currentColor`, terminações redondas, `aria-hidden`. Não serve de base
+directa porque: (a) grelha 12×12 — a referência pede 20×20 e as
+metáforas de página precisam do espaço; (b) cinco tipos soltos
+(sobe/desce/euro/pct/fluxo), não um conjunto fechado por função;
+(c) é `"use client"` com `useLayoutEffect` para redesenhar numa
+mudança de `tipo` — o novo gatilho é o hover/focus do controlo, que em
+CSS puro não precisa de JS nenhum e serve em server components
+(o `Cartao` é um). O `Glifo` era um mecanismo para o `Delta`; o
+`Icone` é um sistema para o produto.
+
+**Alternativas.** (a) Biblioteca de ícones (Lucide/Feather) — proibida
+pelo brief e pela lista negra (iconografia stock); (b) glifos de texto
+(▲▼, emoji) — dependem da fonte e não são desenho próprio; (c) recuperar
+o `Glifo` tal qual — os três motivos acima.
+
+**Escolha.** `Icone`/`IconeEmblema`: 25 desenhos à mão na grelha 20×20,
+traço 1,5 px, terminações redondas, sem preenchimento, conjunto fechado
+(nome fora da lista falha). Três famílias: páginas (11), acções (9),
+estado (5 — a família do `OrbeEstado` em pontos de traço).
+`aria-hidden` por omissão; acções sempre dentro de controlo nomeado;
+`rotulo` só para o ícone sozinho com significado próprio. O traço
+desenha-se uma vez ao hover/focus do controlo (`--dur-micro` + passo
+por traço, CSS puro); estático em reduced-motion. `IconeEmblema` =
+quadrado de contorno tracejado no cabeçalho do `Cartao` (prop `icone`
+nova, opcional — API alargada antes do congelamento das paralelas). O ¢
+fica fora do conjunto: as suas posições permitidas fora do logótipo
+(azulejo/`LogoMark` e o selo «1 ponto = 1 cêntimo») e proibidas (nunca
+ícone, nunca unidade junto de número, nunca decoração) estão escritas
+em PRODUTO.md §6.
+
+**Consequência.** Existe uma voz de símbolos própria e fechada; um
+nome novo exige tarefa de fundação. Os ▲▼ do `Delta`/`Haltere` ficam —
+são sinais tipográficos de variação escritos em texto, não ícones de
+controlo (pode reavaliar-se numa sessão de polimento). Folha completa
+em `/estilo` §Ícones; testes unit (conjunto, aria, falha) e e2e
+(folha, controlos nomeados, desenho micro, reduced-motion).

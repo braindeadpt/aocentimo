@@ -283,6 +283,58 @@ rasterizados dos desenhos próprios de cada grelha; `apple-icon.png` e
 `favicon.ico` (16+32) saem do azulejo e das grelhas de favicon. A imagem
 OG usa a palavra em contornos — nunca texto com a fonte.
 
+### O ¢ como símbolo da casa — onde pode e não pode aparecer
+
+O ¢ desenhado (o C com haste) é **marca**, não ícone nem carácter de
+texto. Regra fixa (1B-01):
+
+- **PODE** aparecer como `LogoMark`/azulejo onde a casa assina:
+  favicons e `icon.svg`, `apple-icon`, manifest, imagem OG e cartões de
+  partilha, o cabeçalho/rodapé onde já vive o logótipo, a página
+  `/estilo` e o `/sobre` (contextos de marca).
+- **PODE** aparecer como **marcador do selo «1 ponto = 1 cêntimo»** —
+  o azulejo pequeno ao lado da legenda dos campos de pontos
+  (`CampoCentimos` e famílias de pontos), porque ali a unidade *é* o
+  cêntimo. É a única posição funcional permitida fora da marca.
+- **NUNCA** como ícone de menu/acção — esses são os traços do conjunto
+  fechado (`Icone`), e o ¢ não entra nele.
+- **NUNCA** junto de um número nem como unidade — escreve-se
+  «cêntimos» ou «c» («63,2 c»), nunca «63,2 ¢».
+- **NUNCA** como marcador de lista, ornamento de fundo, marca de água,
+  nem recolorido — a haste é sempre `--keep` (ver §6 «Marca») e o
+  azulejo tem a sua paleta fixa.
+
+### Ícones — conjunto fechado de traço próprio (1B-01)
+
+Um sistema de símbolos, não uma biblioteca: **25 desenhos à mão** na
+grelha **20×20**, traço **1,5 px**, terminações e juntas redondas, sem
+preenchimentos, em `currentColor`. Iconografia stock é proibida e o
+conjunto é fechado — `<Icone nome>` falha num nome fora da lista.
+
+| Família | Nomes |
+|---|---|
+| páginas (um por pergunta) | `salario` `irs` `trabalho` `impostos` `precos` `inflacao` `credito` `casa` `poupanca` `dados` `aprender` |
+| acções | `ver` `json` `copiar-ligacao` `repor` `abrir` (chevron, roda 180° no estado aberto) `menu` `pesquisa` `sol` `lua` |
+| estado (a família do `OrbeEstado`, em pontos de traço) | `em-dia` `a-recolher` `atrasado` `aviso` `informacao` |
+
+Regras:
+
+- **Acessibilidade.** `aria-hidden` por omissão — o significado mora no
+  texto ao lado. Ícones de acção vivem **sempre** dentro de
+  `<button>`/`<a>` com nome acessível próprio (`aria-label` ou texto
+  visível); a prop `rotulo` existe só para o caso raro de um ícone
+  sozinho com significado próprio (`role="img"`).
+- **Movimento (tipo 2).** Ao passar/focar o controlo que o envolve, o
+  traço desenha-se **uma vez** (`stroke-dashoffset` sobre
+  `pathLength=1`, `--dur-micro`, passo de ~22 ms por traço) — CSS puro,
+  sem JS; em `prefers-reduced-motion` nasce já desenhado.
+- **`<IconeEmblema>`** é o ícone dentro do **quadrado de contorno
+  tracejado** da referência (raio pormenor), para o cabeçalho dos
+  cartões `Cartao` — monta-se com a prop `icone` e desenha-se com a
+  inversão para papel no foco/à passagem.
+- Um nome novo entra só por tarefa de fundação — nunca ad hoc numa
+  página; a folha completa com as regras vive em `/estilo` §Ícones.
+
 ### Raio com significado (V4 — substitui o «radius 0 em todo o lado»)
 
 | Token | Valor | Significado |
@@ -421,7 +473,9 @@ A rampa candidata `seqb` (âmbar escurecido) está desenhada em `/estilo`
 ## 7. Intocável
 
 - **O ¢** — o C do wordmark é o sinal de cêntimo desenhado (arco à
-  cap-height + haste verde-keep); `LogoMark` é o ¢ sozinho.
+  cap-height + haste verde-keep); `LogoMark` é o ¢ sozinho. Fora do
+  logótipo só onde a casa assina e no selo «1 ponto = 1 cêntimo» —
+  regras completas em §6 «O ¢ como símbolo da casa».
 - **O papel** — os documentos fiscais são peças físicas (recibo, talão,
   escritura, declaração, caderneta, nota de liquidação); o talão de
   `/salario` tem escala tipográfica própria (`talao-*`) porque é um
@@ -485,6 +539,7 @@ build && test:e2e`.
 | `LineChart`/`Spark`/`Kinetic` | séries temporais | svg `aria-hidden` + equivalente (tabela sr-only); animam só abaixo da dobra ou em interacção |
 | `Cartao` | anatomia Ledger de qualquer cartão | cabeçalho/corpo/controlos/rodapé; selo de estado sempre com texto; inversão para papel |
 | `OrbeEstado` | selo de frescura — a forma diz o estado | disco cheio/anel oco/esburacado/anel em rotação; SVG aria-hidden + texto ao lado; rotação pára fora do ecrã |
+| `Icone`/`IconeEmblema` | símbolos — páginas, acções, estado | conjunto fechado 20×20, traço 1,5; `aria-hidden` por omissão; acções sempre em controlo nomeado; desenham-se uma vez ao foco/passo |
 | `Pagina`/`PaginaDetalhe` | template de três níveis das rotas de conteúdo | níveis = `section aria-labelledby`; confirma em `<details>` fechado |
 | `Leitura` | cartão Ledger de leitura | insight escrito, anotação com chamada, fonte+estado no rodapé |
 | `EuroBar`/`Cascata`/`JuroCapital`/`EuroExplodido`/`CustoExplodido` | comparações e decomposições | equivalente textual único; SSR no estado final |

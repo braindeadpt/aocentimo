@@ -690,3 +690,102 @@ não se editam nas sessões paralelas.
 - Níveis de página: mostrar ou não o rótulo «1 · A resposta».
 - Separador tracejado acima dos controlos do cartão: manter?
 - Rótulos da navegação por quatro perguntas (S1-07).
+
+---
+
+## 1B-01 · Símbolos — um sistema de ícones próprio (2026-09-23)
+
+**O que foi feito**
+
+- `src/components/Icone.tsx` — `Icone` + `IconeEmblema` + `ICONES`: o
+  conjunto FECHADO de 25 desenhos à mão na grelha **20×20**, traço
+  **1,5 px**, terminações/juntas redondas, sem preenchimento, em
+  `currentColor`. Três famílias: páginas (`salario`…`aprender` — um por
+  pergunta), acções (`ver` `json` `copiar-ligacao` `repor` `abrir`
+  `menu` `pesquisa` `sol` `lua`), estado (`em-dia` `a-recolher`
+  `atrasado` — a família do `OrbeEstado` em pontos de traço — `aviso`
+  `informacao`). Nome fora da lista = `throw` (conjunto fechado).
+  `aria-hidden` por omissão; `rotulo` → `role="img"` só para ícone
+  sozinho com significado.
+- `IconeEmblema` — o quadrado de contorno tracejado da referência
+  (raio `--raio-pormenor`, 2,25 rem), montado no cabeçalho do `Cartao`
+  pela prop nova `icone?: NomeIcone` (opcional — o cabeçalho alinha ao
+  centro e o breadcrumb encosta ao emblema via `:has`).
+- Movimento: `:hover`/`:focus-visible` do controlo (`a`, `button`,
+  `summary`, `[role=button]`, `[data-icone-gatilho]`) e do cartão
+  `.leitura` (emblema) desenha o traço uma vez — `stroke-dashoffset`
+  sobre `pathLength=1`, `--dur-micro` (120 ms) + passo de 22 ms por
+  traço (`--i`). CSS puro, sem JS; o bloco global de reduced-motion
+  deixa-o desenhado. Verificado: probe mede o `dashoffset` 1→0; frames
+  gravados com a duração abrandada mostram o traço a meio (380→106 px
+  de diferença até assentar); vídeo + folha em `.videos/icones-sheet.png`
+  (`scripts/_video-icones.mjs`).
+- `/estilo` §Ícones: folha completa — os 25 nomes em três grupos, cada
+  célula é gatilho do desenho; emblemas; quatro controlos de acção com
+  `aria-label`; a nota das regras do ¢. A demo do `Cartao` na anatomia
+  ganhou `icone="aprender"`.
+- `docs/PRODUTO.md` §6: subsecções «O ¢ como símbolo da casa» e
+  «Ícones — conjunto fechado»; §7 (intocável) e §10 (tabela de
+  instrumentos) actualizados. `docs/DECISOES.md`: ADR datado.
+- Testes: `Icone.test.tsx` (9 — conjunto exacto, falha em nome inválido,
+  20×20/traço, sem fills, pathLength=1, aria-hidden, rotulo, emblema);
+  `e2e/icones.spec.ts` (6 — folha lista o conjunto, nomes, aria-hidden,
+  acções nomeadas, emblema no Cartao, desenho micro no hover, estático
+  em reduced-motion).
+
+**Avaliação do `<Glifo>` revertido (commit 2da28c6) — o que ficou e porquê**
+
+Reutilizada a **técnica**, não o componente: `pathLength=1` +
+`stroke-dashoffset`, círculos escritos em arcos (o `pathLength` funciona
+em todo o lado), `currentColor`, caps redondas, `aria-hidden`. Não serviu
+de base porque: (1) grelha 12×12 — a referência pede 20×20 e as
+metáforas de página precisam do espaço; (2) cinco tipos soltos, não um
+conjunto fechado por função; (3) `"use client"` + `useLayoutEffect`
+para redesenhar em mudança de `tipo` — o novo gatilho é o hover/focus
+do controlo, que em CSS puro não precisa de JS e serve em server
+components (`Cartao` é um). Registado também no ADR.
+
+**APIs finais (congeladas — as sessões paralelas usam-nas sem as mudar)**
+
+```ts
+<Icone nome={NomeIcone} className?: string rotulo?: string />
+<IconeEmblema nome={NomeIcone} className?: string />
+type NomeIcone =
+  | "salario"|"irs"|"trabalho"|"impostos"|"precos"|"inflacao"
+  | "credito"|"casa"|"poupanca"|"dados"|"aprender"          // páginas
+  | "ver"|"json"|"copiar-ligacao"|"repor"|"abrir"|"menu"
+  | "pesquisa"|"sol"|"lua"                                  // acções
+  | "em-dia"|"a-recolher"|"atrasado"|"aviso"|"informacao";  // estado
+// Cartao ganha a prop opcional: icone?: NomeIcone
+// Gatilho extra p/ demonstrações: data-icone-gatilho no elemento pai
+```
+
+**Decisões (conservadoras, a confirmar)**
+
+- `abrir` é um chevron único (roda 180° no estado aberto, via CSS do
+  controlo) — o par `+`/`-` tipográfico do `PaginaDetalhe` mantém-se:
+  é marcador de formulário de papel, não ícone.
+- `tema` entrou como dois nomes (`sol`/`lua`) — o toggle mostra o destino,
+  não o estado; desenhos próprios para cada um.
+- Estado em traço usa pontos stroked (círculos em arco), não fills —
+  respeita «sem preenchimentos» e mantém a família do `OrbeEstado`.
+- O passo do desenho por traço é 22 ms — nos ícones de 9 traços o
+  desenho completo fica ≈ 300 ms, abaixo de `--dur-curta`.
+- Os ▲▼ do `Delta`/`Haltere` ficam — sinais tipográficos escritos em
+  texto, não ícones; não entraram no conjunto (podem reavaliar-se).
+- `copiar-ligacao` desenha o elo (a ligação), não o rectângulo duplo de
+  «copiar» — mais literal ao nome e à função (copiar o URL da página).
+
+**Copy novo a rever pelo dono**
+
+- `/estilo` §Ícones: título «Ícones — traço próprio, conjunto fechado»,
+  a prosa das regras e dos três grupos, a nota do ¢.
+- Legendas dos ícones na folha = os próprios nomes do conjunto
+  (sem copy nova).
+
+**Perguntas ao dono**
+
+- O conjunto cobre as 25 posições do brief — falta algum nome que as
+  sessões 2/3 já saibam precisar (ex.: `imprimir`, `partilhar`, `audio`)?
+- `repor` usa seta circular própria; se preferires o glifo «↺» na mesma
+  gramática, troca-se o desenho sem mudar a API.

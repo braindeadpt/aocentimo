@@ -1809,6 +1809,72 @@ html[data-theme="dark"] .tema-ponto {
   animation-play-state: paused;
 }
 
+/* ————— ícones (1B-01) — traço próprio na grelha 20×20, 1,5 px,
+   terminações redondas, sem preenchimento. O traço desenha-se uma vez
+   ao passar/focar o controlo que o envolve: stroke-dashoffset sobre
+   pathLength=1 em --dur-micro, com um passo por traço (--i) — CSS puro,
+   sem JS; o bloco global de reduced-motion corta-o (nasce desenhado) ————— */
+.icone {
+  display: inline-block;
+  /* 1,25 em ≈ o desenho de 20 px na caixa de 16 — escala com a voz
+     do rótulo que acompanha (o emblema fixa 20 px exactos) */
+  width: 1.25em;
+  height: 1.25em;
+  flex: none;
+  vertical-align: -0.22em;
+}
+.icone path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+:where(a, button, summary, [role="button"], [data-icone-gatilho]):is(
+    :hover,
+    :focus-visible
+  )
+  .icone
+  path,
+.leitura:is(:hover, :focus-within) .icone-emblema .icone path {
+  animation: icone-desenha var(--dur-micro) var(--ease-entra) both;
+  animation-delay: calc(var(--i, 0) * 22ms);
+}
+@keyframes icone-desenha {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* o emblema — o quadrado de contorno tracejado da referência, no
+   cabeçalho dos cartões: moldura de instrumento (raio pormenor),
+   segue as cores --l-* do cartão, que invertem para papel no foco */
+.icone-emblema {
+  display: inline-grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin-right: 0.65rem;
+  flex: none;
+  align-self: center;
+  border: 1px dashed var(--l-line2, var(--line2));
+  border-radius: var(--raio-pormenor);
+  color: var(--l-ink2, var(--ink2));
+}
+.icone-emblema .icone {
+  width: 1.25rem;
+  height: 1.25rem;
+  vertical-align: 0;
+}
+/* com emblema o cabeçalho alinha ao centro e o breadcrumb encosta a
+   ele — o margin-right:auto empurra o meta para a direita */
+.leitura-head:has(.icone-emblema) {
+  align-items: center;
+}
+.leitura-head:has(.icone-emblema) .leitura-breadcrumb {
+  margin-right: auto;
+}
+
 /* quadro vivo (/metodologia) — mural de azulejos: cada série uma célula,
    ordenadas por urgência; o cinzento uniforme sai, a margem entra */
 .quadro-vivo {
