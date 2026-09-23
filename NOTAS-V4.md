@@ -650,15 +650,18 @@ não entra no cliente por import — AGENTS). No perfil canónico o
 recibo e o painel anual vêm da linha da tabela; a régua passou de
 870–5 000/10 para a grelha 920–6 000.
 
-**Decisão a confirmar pelo dono — motor no bundle de /salario.**
-Fora do perfil canónico (casado, dependentes, subs. alimentação, IRS
-Jovem) o simulador continua a chamar `reciboMensal`/`simularSalario`
-no cliente — o bruto do cônjuge é um número livre e não é tabelável,
-por isso a regra «o motor fiscal não entra no bundle» fica cumprida
-só no caminho canónico. Alternativas se quiseres cumprir à letra:
-(a) cortar os controlos avançados de /salario; (b) aceitar o motor
-nesta rota (delta medido ~72 kB total da rota). Implementei (b) por
-ser conservador — não tira funcionalidade existente.
+**Motor fora do first-load — decidido pelo dono (2026-09-23).**
+Fora do perfil canónico o simulador pede o motor por `import()`
+dinâmico (`Promise.all([import(engines/recibo), import(engines/irs)])`
+no primeiro controlo não-canónico). Verificado no build exportado:
+`retencaoNaFonte`/`escalaoMarginal`/`minimoExistencia` não existem em
+nenhum `<script>` inicial de /salario — só em chunks lazy (~60 KB,
+pedidos uma vez). Enquanto carrega mostra-se a linha canónica do
+bruto actual — que é, por definição, o último valor calculado antes
+da primeira desviação. `sa.isentoPorDia`, `irsJovem.isencaoPorAno`,
+`BRUTO_CANONICO` e as taxas TSU deixaram de ser imports do cliente:
+chegam por props/`cenarios.meta` (sem isso `canonico.ts` arrastava o
+motor pelo `BRUTO_CANONICO`). ADR em docs/DECISOES.md.
 
 **APIs finais (congeladas — as sessões paralelas usam-nas sem as mudar)**
 

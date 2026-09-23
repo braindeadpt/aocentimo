@@ -1,13 +1,17 @@
 "use client";
 
-import { Fragment, useMemo, useState } from "react";
-import { simularSalario } from "@/lib/engines/irs";
-import { TSU_ENTIDADE, TSU_TRABALHADOR } from "@/lib/engines/seg-social";
-import { reciboMensal, FormaPagamentoSA } from "@/lib/engines/recibo";
-import type { ResultadoRecibo } from "@/lib/engines/recibo";
-import type { CenariosSalario } from "@/lib/cenarios";
-import { BRUTO_CANONICO } from "@/lib/canonico";
-import { SituacaoRetencao } from "@/lib/engines/retencao";
+import { Fragment, useEffect, useMemo, useState } from "react";
+// o motor fiscal NÃO entra no first-load de /salario (decisão do dono,
+// S1-09): chega por import() dinâmico quando um controlo sai do perfil
+// canónico — daqui só saem TIPOS, que desaparecem na compilação
+import type {
+  ResultadoRecibo,
+  FormaPagamentoSA,
+  reciboMensal,
+} from "@/lib/engines/recibo";
+import type { simularSalario } from "@/lib/engines/irs";
+import type { CenariosSalario, LinhaCenario } from "@/lib/cenarios";
+import type { SituacaoRetencao } from "@/lib/engines/retencao";
 import {
   CustoExplodido,
   type RotulosCusto,
@@ -18,8 +22,27 @@ import { useArmado } from "@/lib/useArmado";
 import { Cascata } from "@/components/Cascata";
 import { Regua } from "@/components/Regua";
 import { fmtEUR, fmtNum, fmtPct, fmtData } from "@/lib/format";
-import sa from "@data/fiscal/subsidio-alimentacao.json";
-import irsJovem from "@data/fiscal/irs-jovem.json";
+
+type MotorFiscal = {
+  reciboMensal: typeof reciboMensal;
+  simularSalario: typeof simularSalario;
+};
+
+/** recibo sintético a partir da linha da tabela — o perfil canónico
+    nunca precisa do motor no cliente */
+const deLinha = (l: LinhaCenario): ResultadoRecibo => ({
+  bruto: l.bruto,
+  saTotal: 0,
+  saIsento: 0,
+  saTributavel: 0,
+  ss: l.ss,
+  retencao: l.irs,
+  taxaEfetiva: l.taxaEfetiva,
+  tabela: l.tabela,
+  liquido: l.liquido,
+  tsuEntidade: l.tsu,
+  custoEmpresa: l.custo,
+});
 
 type Situacao = "solteiro" | "casado2" | "casado1";
 const PARA_RETENCAO: Record<Situacao, SituacaoRetencao> = {
@@ -48,6 +71,8 @@ export function CalculadoraSalario({
   ano,
   regua,
   cenarios,
+  saIsento,
+  irsJovemIsencao,
   custo,
 }: {
   ano: number;
@@ -55,68 +80,97 @@ export function CalculadoraSalario({
   /** tabela canónica gerada no build — a régua só pára nestes pontos;
       no perfil canónico os números vêm daqui, nunca interpolados */
   cenarios: CenariosSalario;
+  /** isenção do subs. alimentação por forma de pagamento — data/fiscal
+      chega por props do servidor */
+  saIsento: Record<FormaPagamentoSA, number>;
+  /** % isenta por ano de gozo do IRS Jovem (opções do select) */
+  irsJovemIsencao: readonly number[];
   /** strings da explosão do custo — messages/pt.json → salario.custo */
   custo: RotulosCusto;
 }) {
   // o bruto inicial é o do cenário canónico — a mesma história da home
-  const [bruto, setBruto] = useState(BRUTO_CANONICO);
+  const [bruto, setBruto] = useState(cenarios.meta.brutoRef);
   const [situacao, setSituacao] = useState<Situacao>("solteiro");
-  const [conjuge, setConjuge] = useState(BRUTO_CANONICO);
+  const [conjuge, setConjuge] = useState(cenarios.meta.brutoRef);
   const [dependentes, setDependentes] = useState(0);
   const [saPorDia, setSaPorDia] = useState(0);
   const [formaSA, setFormaSA] = useState<FormaPagamentoSA>("cartao");
   const [anoJovem, setAnoJovem] = useState(0);
 
-  // no perfil canónico (solteiro, 0 dependentes, sem SA, sem IRS Jovem)
-  // o recibo sai da tabela gerada no build — pontos exactos do motor,
-  // nunca interpolados; fora dele o motor calcula no cliente
-  const linhaCan =
-    situacao === "solteiro" && dependentes === 0 && saPorDia === 0 && anoJovem === 0
-      ? cenarios.linhas.find((l) => l.bruto === bruto)
-      : undefined;
+  // fora do perfil canónico (solteiro, 0 dependentes, sem SA, sem IRS
+  // Jovem) o recibo precisa do motor — que chega por import() dinâmico,
+  // fora do first-load de /salario
+  const foraDoCan =
+    situacao !== "solteiro" ||
+    dependentes !== 0 ||
+    saPorDia !== 0 ||
+    anoJovem !== 0;
 
-  const recibo = useMemo<ResultadoRecibo>(
-    () =>
-      linhaCan
-        ? {
-            bruto: linhaCan.bruto,
-            saTotal: 0,
-            saIsento: 0,
-            saTributavel: 0,
-            ss: linhaCan.ss,
-            retencao: linhaCan.irs,
-            taxaEfetiva: linhaCan.taxaEfetiva,
-            tabela: linhaCan.tabela,
-            liquido: linhaCan.liquido,
-            tsuEntidade: linhaCan.tsu,
-            custoEmpresa: linhaCan.custo,
-          }
-        : reciboMensal({
-            bruto,
-            situacao: PARA_RETENCAO[situacao],
-            dependentes,
-            saPorDia,
-            formaSA,
-            anoIrsJovem: anoJovem,
-            ano,
-          }),
-    [linhaCan, bruto, situacao, dependentes, saPorDia, formaSA, anoJovem, ano]
-  );
+  const [motor, setMotor] = useState<MotorFiscal | null>(null);
+  useEffect(() => {
+    if (!foraDoCan || motor) return;
+    let vivo = true;
+    Promise.all([
+      import("@/lib/engines/recibo"),
+      import("@/lib/engines/irs"),
+    ]).then(([rec, irs]) => {
+      if (vivo)
+        setMotor({
+          reciboMensal: rec.reciboMensal,
+          simularSalario: irs.simularSalario,
+        });
+    });
+    return () => {
+      vivo = false;
+    };
+  }, [foraDoCan, motor]);
+
+  // a régua só emite pontos da grelha — a linha existe sempre
+  const linhaBase =
+    cenarios.linhas.find((l) => l.bruto === bruto) ?? cenarios.linhas[0];
+
+  // enquanto o motor carrega mostra-se o último valor calculado: o
+  // motor só é null antes do primeiro import(), e até aí tudo o que
+  // esteve no ecrã veio da linha canónica — mostrá-la é mostrar o
+  // último valor, sem saltar nem ficar em branco
+  const recibo = useMemo<ResultadoRecibo>(() => {
+    if (!foraDoCan || !motor) return deLinha(linhaBase);
+    return motor.reciboMensal({
+      bruto,
+      situacao: PARA_RETENCAO[situacao],
+      dependentes,
+      saPorDia,
+      formaSA,
+      anoIrsJovem: anoJovem,
+      ano,
+    });
+  }, [
+    foraDoCan,
+    linhaBase,
+    motor,
+    bruto,
+    situacao,
+    dependentes,
+    saPorDia,
+    formaSA,
+    anoJovem,
+    ano,
+  ]);
 
   // Em "casado único titular" o cônjuge sem rendimentos conta para o
   // quociente conjugal (÷2) mas não tem dedução específica própria.
-  const resultado = useMemo(() => {
-    if (linhaCan) return linhaCan.ano14;
+  const resultado = useMemo<LinhaCenario["ano14"]>(() => {
+    if (!foraDoCan || !motor) return linhaBase.ano14;
     const brutos =
       situacao === "solteiro"
         ? [bruto]
         : situacao === "casado2"
           ? [bruto, conjuge]
           : [bruto, 0];
-    return simularSalario(brutos, dependentes, ano);
-  }, [linhaCan, bruto, conjuge, situacao, dependentes, ano]);
+    return motor.simularSalario(brutos, dependentes, ano);
+  }, [foraDoCan, linhaBase, motor, bruto, conjuge, situacao, dependentes, ano]);
 
-  const limiteSA = sa.isentoPorDia[formaSA];
+  const limiteSA = saIsento[formaSA];
 
   // reimpressão: dados novos = recibo novo — o <dl> remonta-se e cada
   // linha imprime escalonada (talao-linha + --linha); o contador repõe-se
@@ -146,8 +200,8 @@ export function CalculadoraSalario({
     ss: recibo.ss,
     liquido: recibo.liquido,
     estado: recibo.custoEmpresa - recibo.liquido,
-    taxaTsu: TSU_ENTIDADE,
-    taxaSs: TSU_TRABALHADOR,
+    taxaTsu: cenarios.meta.taxas.tsu,
+    taxaSs: cenarios.meta.taxas.ss,
     taxaIrs: recibo.taxaEfetiva,
   };
 
@@ -232,7 +286,7 @@ export function CalculadoraSalario({
               className="field"
             >
               <option value={0}>Não</option>
-              {irsJovem.isencaoPorAno.map((p, i) => (
+              {irsJovemIsencao.map((p, i) => (
                 <option key={i + 1} value={i + 1}>
                   {i + 1}.º ano — {fmtPct(p, 0)} isento
                 </option>

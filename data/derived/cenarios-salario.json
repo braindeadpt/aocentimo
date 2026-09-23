@@ -3,6 +3,11 @@
     "ano": 2026,
     "perfil": "solteiro, sem dependentes, continente, sem subsídio de alimentação, sem IRS Jovem",
     "smn": 920,
+    "brutoRef": 1500,
+    "taxas": {
+      "tsu": 0.2375,
+      "ss": 0.11
+    },
     "passo": 50,
     "inicio": 920,
     "fim": 6000,

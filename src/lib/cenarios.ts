@@ -19,8 +19,10 @@
 import smn from "@data/fiscal/smn.json";
 import { reciboMensal } from "./engines/recibo";
 import { simularSalario } from "./engines/irs";
+import { TSU_ENTIDADE, TSU_TRABALHADOR } from "./engines/seg-social";
 import type { TabelaId } from "./engines/retencao";
 import { repartir } from "./pontos";
+import { BRUTO_CANONICO } from "./canonico";
 
 export const ANO_CENARIO = 2026;
 export const PASSO_GRELHA = 50;
@@ -74,6 +76,10 @@ export interface CenariosSalario {
     ano: number;
     perfil: string;
     smn: number;
+    /** bruto de abertura — o cenário canónico da história */
+    brutoRef: number;
+    /** taxas TSU do motor — para rótulos sem importar o motor */
+    taxas: { tsu: number; ss: number };
     passo: number;
     inicio: number;
     fim: number;
@@ -152,6 +158,8 @@ export function gerarCenarios(ano = ANO_CENARIO): CenariosSalario {
       perfil:
         "solteiro, sem dependentes, continente, sem subsídio de alimentação, sem IRS Jovem",
       smn: smn.regioes.continente,
+      brutoRef: BRUTO_CANONICO,
+      taxas: { tsu: TSU_ENTIDADE, ss: TSU_TRABALHADOR },
       passo: PASSO_GRELHA,
       inicio: grelha[0],
       fim: grelha[grelha.length - 1],

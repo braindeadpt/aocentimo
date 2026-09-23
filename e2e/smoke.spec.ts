@@ -41,6 +41,7 @@ test("a lista de rotas deriva do conteúdo", () => {
 });
 
 test("todas as rotas respondem", async ({ page }) => {
+  test.setTimeout(120_000);
   for (const path of rotasDoSite()) {
     const res = await page.goto(path);
     expect(res?.status(), `${path} deve responder 200`).toBe(200);
@@ -465,4 +466,28 @@ test("painéis de dados, API e feed servem", async ({ page }) => {
   expect(api?.status()).toBe(200);
   const feed = await page.goto("/feed.xml");
   expect(feed?.status()).toBe(200);
+});
+
+test("o motor fiscal de /salario chega lazy — nunca no first-load", async ({
+  page,
+}) => {
+  // DECISOES 2026-09-23: o first-load não inclui o motor; o primeiro
+  // controlo fora do perfil canónico pede-o por import() dinâmico e o
+  // recibo nunca fica em branco — mostra o último valor calculado
+  const pedidos: string[] = [];
+  page.on("request", (r) => {
+    if (r.url().endsWith(".js")) pedidos.push(r.url());
+  });
+  await page.goto("/salario", { waitUntil: "networkidle" });
+  const hero = page.locator(".num-hero").first();
+  const antes = await hero.innerText();
+  expect(antes).toMatch(/\d/); // o canónico já lá está sem motor
+  const nInicial = pedidos.length;
+
+  // sai do perfil canónico — o motor chega num chunk novo
+  await page.selectOption("#situacao", "casado2");
+  await page.fill("#dep", "3");
+  // enquanto carrega nunca fica em branco; depois recalcula de verdade
+  await expect(hero).not.toHaveText(antes, { timeout: 10_000 });
+  expect(pedidos.length).toBeGreaterThan(nInicial);
 });

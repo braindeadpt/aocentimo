@@ -348,6 +348,30 @@ o caso-base muda as duas páginas de uma vez. Em aberto para o dono
 (1 856 €) em vez do bruto (1 500 €) — hoje mantém-se o bruto como
 moeda-mãe.
 
+## 2026-09-23 — O motor fiscal carrega lazy: nunca no first-load de /salario
+
+**Contexto.** S1-09 gerou a grelha canónica (`cenarios-salario.json`) e o
+perfil canónico passou a ler dela por props. Ficava a questão do
+simulador completo: casado, dependentes, subs. alimentação e IRS Jovem
+têm dimensões não tabeláveis (o bruto do cônjuge é um número livre) e o
+motor calculava no cliente — incluído no bundle inicial da rota.
+
+**Alternativas.** (a) Cortar os controlos avançados; (b) aceitar o motor
+no bundle de /salario; (c) `import()` dinâmico.
+
+**Escolha (dono).** (c) — o motor chega por `import()` só quando um
+controlo sai do perfil canónico. O first-load de /salario não o inclui
+(medido com `scripts/_js-por-rota.mjs` e por inspecção dos scripts do
+HTML exportado: `retencaoNaFonte`/`escalaoMarginal` só existem em chunks
+lazy). Enquanto carrega, o recibo mostra o último valor calculado — a
+linha canónica do bruto actual, sem saltar nem ficar em branco.
+
+**Consequência.** `/salario` abre sem o motor nem os JSON fiscais do
+motor; constantes e rótulos necessários (TSU 23,75 %/11 %, isenções do
+SA e do IRS Jovem, `brutoRef`) chegam pela tabela de cenários e por
+props do servidor. Quem desvia do canónico paga o custo do chunk uma
+vez (~60 KB) e fica com o simulador completo.
+
 ## 2026-09-22 — Logótipo redesenhado a partir dos contornos da Archivo
 
 **Contexto.** O wordmark anterior era texto vivo (Archivo expandido) com
