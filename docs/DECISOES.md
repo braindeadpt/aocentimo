@@ -347,3 +347,56 @@ o caso-base muda as duas páginas de uma vez. Em aberto para o dono
 (NOTAS-V4 §S1-02): se a explosão da home deve começar no custo total
 (1 856 €) em vez do bruto (1 500 €) — hoje mantém-se o bruto como
 moeda-mãe.
+
+## 2026-09-23 — O motor fiscal carrega lazy: nunca no first-load de /salario
+
+**Contexto.** S1-09 gerou a grelha canónica (`cenarios-salario.json`) e o
+perfil canónico passou a ler dela por props. Ficava a questão do
+simulador completo: casado, dependentes, subs. alimentação e IRS Jovem
+têm dimensões não tabeláveis (o bruto do cônjuge é um número livre) e o
+motor calculava no cliente — incluído no bundle inicial da rota.
+
+**Alternativas.** (a) Cortar os controlos avançados; (b) aceitar o motor
+no bundle de /salario; (c) `import()` dinâmico.
+
+**Escolha (dono).** (c) — o motor chega por `import()` só quando um
+controlo sai do perfil canónico. O first-load de /salario não o inclui
+(medido com `scripts/_js-por-rota.mjs` e por inspecção dos scripts do
+HTML exportado: `retencaoNaFonte`/`escalaoMarginal` só existem em chunks
+lazy). Enquanto carrega, o recibo mostra o último valor calculado — a
+linha canónica do bruto actual, sem saltar nem ficar em branco.
+
+**Consequência.** `/salario` abre sem o motor nem os JSON fiscais do
+motor; constantes e rótulos necessários (TSU 23,75 %/11 %, isenções do
+SA e do IRS Jovem, `brutoRef`) chegam pela tabela de cenários e por
+props do servidor. Quem desvia do canónico paga o custo do chunk uma
+vez (~60 KB) e fica com o simulador completo.
+
+## 2026-09-22 — Logótipo redesenhado a partir dos contornos da Archivo
+
+**Contexto.** O wordmark anterior era texto vivo (Archivo expandido) com
+um ¢ desenhado à mão no meio: dependia da fonte carregar, do espaçamento
+do navegador e da linha de base — e o arco do C era mais fino e estreito
+que as letras à volta. A revisão de marca de 22.09.2026
+(`referencias/V4/logo/apresentacao-marca.html`) leu os contornos reais
+da Archivo variável (instância wdth 125 · wght 800) e propôs duas hastes
+e dois símbolos.
+
+**Alternativas.** Haste interrompida (a construção do ¢ da Archivo —
+mais fina, mas a ler-se como dois traços soltos nos tamanhos pequenos);
+símbolo em moeda (perde para o azulejo a 16 px). Manter texto vivo —
+rejeitado: frágil e dependente da fonte.
+
+**Escolha (do dono, 22.09.2026).** HASTE A contínua + SÍMBOLO EM
+QUADRADO (azulejo `#1B1811`, C `#F2ECDD`, haste `#63D6A4` a sangrar de
+ponta a ponta, raio 22 %). `Logo.tsx` passa a ser vetor de dois `<path>`
+(tinta `currentColor`, haste `var(--keep)`); `LogoMark` o azulejo de
+três `<path>`; favicon/apple-icon/OG regenerados dos mesmos contornos —
+a imagem OG usa a palavra em paths, não texto com a fonte.
+
+**Regras que ficam.** A haste é sempre `--keep` (nunca `--accent` nem a
+tinta); mestre `normal` ≥ 20 px de capitular, `pequeno` 12–20 px, abaixo
+ou em quadrado o símbolo; área de proteção x = capitular; proibido haste
+noutra cor, haste sem recorte, esticar/redesenhar letras. Os paths não
+se editam à mão — regeneram-se com `scratchpad/logo/gerar-ficheiros.mjs`.
+Registado em PRODUTO.md §6 «Marca»; demonstrado em `/estilo`.

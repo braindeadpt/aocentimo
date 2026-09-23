@@ -375,29 +375,13 @@
   }
 }
 
-/* ————— wordmark — texto real; o C é o sinal de cêntimo, em verde-keep ————— */
-.logo-word {
-  font-family: var(--font-archivo), "Arial Black", sans-serif;
-  font-variation-settings: "wdth" 125;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  line-height: 1;
-  color: var(--ink);
-  text-transform: uppercase;
-  display: inline-block;
-  white-space: nowrap;
-}
-/* o ¢ desenhado: viewBox 0 -6 30 34 — o arco ocupa a cap height (0–22),
-   a haste trespassa acima e abaixo como no sinal real */
-.logo-cent {
-  display: inline-block;
-  height: 1.11em;
+/* ————— wordmark — contornos da Archivo (vetor, não texto): a tinta é
+   currentColor e a haste é sempre --keep. A altura CSS é a do SVG —
+   do topo ao fim da haste; a capitular é 63,95 % dela ————— */
+.logo {
+  display: block;
   width: auto;
-  vertical-align: -0.2em;
-  margin-right: 0.04em;
-}
-.logo-cent-bar {
-  fill: var(--keep);
+  color: var(--ink);
 }
 html {
   scroll-behavior: smooth;

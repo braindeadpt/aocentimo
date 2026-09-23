@@ -1,19 +1,22 @@
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { OG_TIPO } from "@/lib/og";
+import { MESTRES, MARCA } from "@/components/Logo";
 
 export const dynamic = "force-static";
 export const alt = "AO CÊNTIMO — literacia financeira para Portugal";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default async function OpengraphImage() {
-  const data = await readFile(
-    join(process.cwd(), "src/app/fonts/Archivo-ExtraBold.ttf")
-  );
-  const fonts = [{ name: "Archivo", data, weight: 800 as const, style: "normal" as const }];
+/* A palavra são os contornos da Archivo (mestre normal), não texto:
+   tinta #1B1811 e haste #1F6B4D — as cores do mestre claro, sobre o
+   papel claro do cartão OG. O azulejo é o símbolo (cores fixas). */
+const PALAVRA = MESTRES.normal;
+// aspecto do mestre normal: 8479.3 / 1075.15 — 110 px de SVG ≈ 70 px de
+// capitular, a mesma escala que o texto «hero» tinha antes
+const PALAVRA_H = 110;
+const PALAVRA_W = Math.round((PALAVRA_H * 8479.3) / 1075.15); // ≈ 868
 
+export default function OpengraphImage() {
   return new ImageResponse(
     (
       <div
@@ -25,32 +28,22 @@ export default async function OpengraphImage() {
           justifyContent: "space-between",
           background: "#FAF7EE",
           padding: "72px",
-          fontFamily: "Archivo",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "36px" }}>
-          {/* a marca — o ¢: arco de C em tinta, haste verde (o que é teu) */}
-          <svg width="170" height="170" viewBox="0 0 64 64">
-            <rect width="64" height="64" rx="14" fill="#221F19" />
-            <path
-              d="M44.2 20.6 A16 16 0 1 0 44.2 43.4"
-              fill="none"
-              stroke="#F0E9DA"
-              strokeWidth="9"
-            />
-            <rect x="29" y="10" width="6" height="44" fill="#63D6A4" />
+        <div style={{ display: "flex", alignItems: "center", gap: "32px" }}>
+          <svg width="150" height="150" viewBox="0 0 1000 1000">
+            <path d={MARCA.fundo} fill="#1B1811" />
+            <path d={MARCA.c} fill="#F2ECDD" />
+            <path d={MARCA.haste} fill="#63D6A4" />
           </svg>
-          <div
-            style={{
-              fontSize: OG_TIPO.hero,
-              fontWeight: 800,
-              color: "#221F19",
-              letterSpacing: "-0.01em",
-              lineHeight: 1,
-            }}
+          <svg
+            width={PALAVRA_W}
+            height={PALAVRA_H}
+            viewBox={PALAVRA.vb}
           >
-            AO CÊNTIMO
-          </div>
+            <path d={PALAVRA.tinta} fill="#1B1811" />
+            <path d={PALAVRA.haste} fill="#1F6B4D" />
+          </svg>
         </div>
         <div
           style={{
@@ -66,6 +59,6 @@ export default async function OpengraphImage() {
         </div>
       </div>
     ),
-    { ...size, fonts }
+    { ...size }
   );
 }
