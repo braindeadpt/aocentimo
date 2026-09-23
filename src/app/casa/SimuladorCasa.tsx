@@ -1,29 +1,32 @@
 "use client";
 
-import { Fragment, useMemo, useState } from "react";
-import { simularPrestacao } from "@/lib/engines/prestacao";
-import { custoCompra } from "@/lib/engines/imt";
-import { EuroBar } from "@/components/EuroBar";
+import { Fragment } from "react";
 import { Interruptor } from "@/components/Interruptor";
 import { JuroCapital } from "@/components/JuroCapital";
 import { NumHero } from "@/components/NumHero";
-import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
+import { Regua } from "@/components/Regua";
+import { Segmentado } from "@/components/Segmentado";
+import { comUnidade, fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
 import { mascaraFaixaRasgo, sementeDe } from "@/lib/materia";
 import { useArmado } from "@/lib/useArmado";
+import { useCasa } from "./CasaSim";
 
 /**
- * Comprar casa — a escritura e os trinta anos.
+ * Comprar casa — o nível 2 de /casa: a escritura e os trinta anos.
+ *
+ * O estado vive no <CasaProvider> — o mesmo preço, a mesma entrada e o
+ * mesmo contrato que a resposta do nível 1 lê e que as tabelas do
+ * nível 3 confirmam.
  *
  * A escritura é papel (matéria M-01): arestas rasgadas, carimbo,
  * linhas que se imprimem em sequência (talao-linha). A acreção — o
- * preço a somar IMT, Selo e registos — vê-se duas vezes: nas linhas
- * que imprimem uma a uma e na barra que empilha uma camada por custo,
- * ao mesmo ritmo (a camada cresce quando a sua linha imprime).
+ * preço a somar IMT, Selo e registos — vê-se nas linhas que imprimem
+ * uma a uma e na barra que empilha uma camada por custo, ao mesmo
+ * ritmo (a camada cresce quando a sua linha imprime).
  *
  * A segunda transformação: os N anos de prestações — a faixa anual
- * divide-se em capital (verde-keep: fica teu, é património) e juro
- * (up: sai para o banco). A divisória troca de peso ao longo do tempo
- * — o gráfico revela-se da esquerda para a direita, o tempo a passar.
+ * divide-se em capital (keep: fica teu, é património) e juro (up: sai
+ * para o banco). A divisória troca de peso ao longo do tempo.
  * Interrogável por ano (régua + readout).
  */
 
@@ -34,30 +37,35 @@ const SEMENTE = sementeDe(20260101);
 const TINTA = "rgba(44,36,19,";
 const TORRADO = "rgba(157,42,13,";
 
-export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null }) {
-  const [preco, setPreco] = useState(200000);
-  const [tipo, setTipo] = useState<"hpp" | "secundaria">("hpp");
-  const [jovem, setJovem] = useState(false);
-  const [entrada, setEntrada] = useState(20000);
-  const [anos, setAnos] = useState(30);
-  // valor inicial arredondado a 2 casas — a mesma precisão do resto do site
-  const [euribor, setEuribor] = useState(
-    euriborAtual !== null ? Math.round(euriborAtual * 100) / 100 : 2.5
-  );
-  const [spread, setSpread] = useState(1.0);
-
-  const credito = Math.max(0, preco - entrada);
-
-  const compra = useMemo(
-    () => custoCompra(preco, { tipo, jovem, montanteCredito: credito }),
-    [preco, tipo, jovem, credito]
-  );
-  const prest = useMemo(
-    () => simularPrestacao(credito, anos * 12, euribor / 100, spread / 100),
-    [credito, anos, euribor, spread]
-  );
-
-  const dinheiroEntrada = entrada + compra.totalCustos;
+export function SimuladorCasa({
+  euriborAtual,
+  euriborAte,
+}: {
+  euriborAtual: number | null;
+  /** período da série («2026-08» → fmtPeriodo no texto) */
+  euriborAte: string | null;
+}) {
+  const {
+    preco,
+    tipo,
+    jovem,
+    entradaEf,
+    anos,
+    euribor,
+    spread,
+    credito,
+    compra,
+    prest,
+    dinheiroEntrada,
+    realEscritura,
+    setPreco,
+    setTipo,
+    setJovem,
+    setEntrada,
+    setAnos,
+    setEuribor,
+    setSpread,
+  } = useCasa();
 
   // re-animações por mudança de valores — spans/grupos efémeros, nunca inputs
   const runEscritura = `${preco}-${tipo}-${jovem}-${credito}`;
@@ -71,11 +79,10 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
   const camadas = [
     { nome: "Preço na placa", v: preco, cor: `${TINTA}0.75)`, txt: `${TINTA}0.9)` },
     { nome: "IMT", v: compra.imt, cor: `${TORRADO}0.85)`, txt: `${TORRADO}1)` },
-    { nome: "Imposto de Selo — compra (0,8 %)", v: compra.isAquisicao, cor: `${TORRADO}0.62)`, txt: `${TORRADO}0.9)` },
-    { nome: "Imposto de Selo — crédito (0,6 %)", v: compra.isCredito, cor: `${TORRADO}0.45)`, txt: `${TORRADO}0.8)` },
+    { nome: `Imposto de Selo — compra (${comUnidade("0,8", "%")})`, v: compra.isAquisicao, cor: `${TORRADO}0.62)`, txt: `${TORRADO}0.9)` },
+    { nome: `Imposto de Selo — crédito (${comUnidade("0,6", "%")})`, v: compra.isCredito, cor: `${TORRADO}0.45)`, txt: `${TORRADO}0.8)` },
     { nome: "Escritura e registos (Casa Pronta)", v: compra.registos, cor: `${TINTA}0.35)`, txt: `${TINTA}0.7)` },
   ];
-  const realEscritura = preco + compra.totalCustos;
 
   const arestaTopo = mascaraFaixaRasgo(COMP, { semente: SEMENTE, ponta: "topo", grosseria: 0.35 });
   const arestaFundo = mascaraFaixaRasgo(COMP, { semente: SEMENTE + 3, ponta: "fundo", grosseria: 0.35 });
@@ -83,19 +90,28 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
   return (
     <div className="grid md:grid-cols-2 gap-10">
       <div className="space-y-5">
-        <div>
-          <label className="kicker block mb-1.5" htmlFor="preco">Preço da casa</label>
-          <input id="preco" type="number" min={0} step={5000} value={preco}
-            onChange={(e) => setPreco(Number(e.target.value) || 0)} className="field" />
-        </div>
-        <div>
-          <label className="kicker block mb-1.5" htmlFor="tipo">Finalidade</label>
-          <select id="tipo" value={tipo}
-            onChange={(e) => setTipo(e.target.value as typeof tipo)} className="field w-full">
-            <option value="hpp">Habitação própria e permanente</option>
-            <option value="secundaria">Secundária / investimento</option>
-          </select>
-        </div>
+        {/* todo o input numérico é régua (catálogo V4 §5); a finalidade
+            é uma escolha exclusiva — o segmentado do sistema */}
+        <Regua
+          id="preco"
+          rotulo="Preço da casa"
+          valor={preco}
+          onChange={setPreco}
+          min={20000}
+          max={1000000}
+          passo={5000}
+          unidade="€"
+          formato={(v) => fmtNum(v, 0)}
+        />
+        <Segmentado
+          rotulo="Finalidade"
+          valor={tipo}
+          onChange={(id) => setTipo(id as "hpp" | "secundaria")}
+          opcoes={[
+            { id: "hpp", rotulo: "Habitação própria" },
+            { id: "secundaria", rotulo: "Secundária" },
+          ]}
+        />
         <div>
           {/* desactivado fora da HPP — a razão fica acessível no
               próprio interruptor (title + nota visível) */}
@@ -108,36 +124,74 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
             className="text-corpo-sm"
           />
         </div>
-        <div>
-          <label className="kicker block mb-1.5" htmlFor="entrada">Entrada</label>
-          <input id="entrada" type="number" min={0} step={1000} value={entrada}
-            onChange={(e) => setEntrada(Number(e.target.value) || 0)} className="field" />
-          <p className="footnote mt-1">
-            {fmtPct(preco > 0 ? entrada / preco : 0, 0)} do preço · crédito de{" "}
-            {fmtEUR0(credito)}
-          </p>
-        </div>
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <label className="kicker block mb-1.5" htmlFor="prazo">Prazo (anos)</label>
-            <input id="prazo" type="number" min={1} max={50} value={anos}
-              onChange={(e) => setAnos(Number(e.target.value) || 1)} className="field" />
-          </div>
+        <Regua
+          id="entrada"
+          rotulo="Entrada"
+          valor={entradaEf}
+          onChange={setEntrada}
+          min={0}
+          max={Math.max(0, preco)}
+          passo={1000}
+          unidade="€"
+          formato={(v) => fmtNum(v, 0)}
+          limites={{ max: "não podes entrar com mais do que a casa" }}
+          descricao={`${fmtPct(preco > 0 ? entradaEf / preco : 0, 0)} do preço · crédito de ${fmtEUR0(credito)}`}
+        />
+        <Regua
+          id="prazo"
+          rotulo="Prazo"
+          valor={anos}
+          onChange={(v) => setAnos(Math.round(v))}
+          min={1}
+          max={50}
+          passo={1}
+          unidade="anos"
+          formato={(v) => fmtNum(v, 0)}
+        />
+        {euribor === null ? (
           <div>
             <label className="kicker block mb-1.5" htmlFor="eur">Euribor (%)</label>
-            <input id="eur" type="number" step={0.1} value={euribor}
-              onChange={(e) => setEuribor(Number(e.target.value) || 0)} className="field" />
+            <input id="eur" type="number" step={0.1} value=""
+              onChange={(e) =>
+                setEuribor(e.target.value === "" ? null : Number(e.target.value))
+              }
+              className="field" />
           </div>
-          <div>
-            <label className="kicker block mb-1.5" htmlFor="spr">Spread (%)</label>
-            <input id="spr" type="number" step={0.1} min={0} value={spread}
-              onChange={(e) => setSpread(Number(e.target.value) || 0)} className="field" />
-          </div>
-        </div>
+        ) : (
+          <Regua
+            id="eur"
+            rotulo="Euribor"
+            valor={euribor}
+            onChange={setEuribor}
+            min={-0.5}
+            max={7}
+            passo={0.01}
+            unidade="%"
+            formato={(v) => fmtNum(v, 2)}
+            marcadorAgora={
+              euriborAtual !== null
+                ? { valor: euriborAtual, rotulo: "agora 3M" }
+                : undefined
+            }
+          />
+        )}
+        <Regua
+          id="spr"
+          rotulo="Spread"
+          valor={spread}
+          onChange={setSpread}
+          min={0}
+          max={3}
+          passo={0.05}
+          unidade="%"
+          formato={(v) => fmtNum(v, 2)}
+        />
         <p className="footnote">
-          Euribor 3M real em {euriborAtual !== null ? fmtPct(euriborAtual / 100, 2) : "—"} (BPstat,
-          média mensal mais recente) — o valor vem preenchido, muda-o à
-          vontade. IMT incide sobre o maior de preço ou VPT.
+          Euribor 3M real em{" "}
+          {euriborAtual !== null ? fmtPct(euriborAtual / 100, 2) : "—"} (BPstat,
+          média de {euriborAte ?? "série mais recente"}) — o valor vem
+          preenchido, muda-o à vontade. IMT incide sobre o maior de preço ou
+          VPT.
         </p>
       </div>
 
@@ -208,7 +262,7 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
                 key={`note-${runEscritura}`}
               >
                 à entrada saem-te {fmtEUR0(dinheiroEntrada)} do bolso —{" "}
-                {fmtEUR0(entrada)} de entrada + {fmtEUR0(compra.totalCustos)} de custos
+                {fmtEUR0(entradaEf)} de entrada + {fmtEUR0(compra.totalCustos)} de custos
               </p>
             </div>
           </div>
@@ -224,42 +278,28 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
             <span className="kicker">Todos os meses</span>
           </div>
           <div className="px-5 py-5">
-            <NumHero valor={fmtEUR(prest.prestacao)} sufixo="/mês" animar={prest.prestacao} />
+            <NumHero valor={prest ? fmtEUR(prest.prestacao) : "—"} sufixo={prest ? "/mês" : undefined} animar={prest?.prestacao} />
             <dl className="mt-4 text-corpo-sm space-y-2">
               <div className="flex justify-between border-b border-line/60 pb-1.5">
                 <dt className="text-ink2">TAN (Euribor + spread)</dt>
-                <dd className="num">{fmtPct(prest.tan)}</dd>
+                <dd className="num">{prest ? fmtPct(prest.tan) : "—"}</dd>
               </div>
               <div className="flex justify-between border-b border-line/60 pb-1.5">
-                <dt className="text-ink2">Juros totais em {anos} anos</dt>
-                <dd className="num">{fmtEUR0(prest.jurosTotais)}</dd>
+                <dt className="text-ink2">Juros totais em {comUnidade(fmtNum(anos, 0), "anos")}</dt>
+                <dd className="num">{prest ? fmtEUR0(prest.jurosTotais) : "—"}</dd>
               </div>
               <div className="flex justify-between pb-1.5">
                 <dt className="text-ink2">A casa custa, no fim</dt>
                 <dd className="num font-medium">
-                  {fmtEUR0(realEscritura + prest.jurosTotais)}
+                  {prest ? fmtEUR0(realEscritura + prest.jurosTotais) : "—"}
                 </dd>
               </div>
             </dl>
 
             {/* juro vs capital — a divisória que troca de peso:
                 capital (keep) fica teu, juro (up) sai para o banco */}
-            <JuroCapital linhas={prest.linhas} runKey={runTempo} />
+            {prest && <JuroCapital linhas={prest.linhas} runKey={runTempo} />}
           </div>
-        </div>
-
-        <div>
-          <p className="kicker-sm mb-3">
-            O dinheiro do dia da escritura, partido
-          </p>
-          <EuroBar
-            total={realEscritura}
-            segmentos={[
-              { label: "A casa (preço)", valor: preco, cor: "var(--color-ink)" },
-              { label: "IMT + IS", valor: compra.imt + compra.isAquisicao + compra.isCredito, cor: "var(--color-accent)" },
-              { label: "Registos", valor: compra.registos, cor: "var(--color-ink2)" },
-            ]}
-          />
         </div>
       </div>
     </div>

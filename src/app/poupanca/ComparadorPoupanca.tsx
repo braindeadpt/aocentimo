@@ -2,26 +2,31 @@
 
 import { useMemo, useState } from "react";
 import {
-  simularPoupanca,
-  simularCA,
-  simularCTPC,
   trajetoriaDeposito,
   trajetoriaCA,
   trajetoriaCTPC,
   trajetoriaColchao,
 } from "@/lib/engines/poupanca";
-import { fmtEUR0, fmtPct } from "@/lib/format";
+import { Regua } from "@/components/Regua";
+import { fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
 import { useArmado } from "@/lib/useArmado";
-import ca from "@data/fiscal/ca.json";
-import capitais from "@data/fiscal/capitais.json";
+import { PRAZO_CA, usePoupanca } from "./PoupancaSim";
 
 /**
  * O comparador como divergência: quatro produtos partem do mesmo
  * capital e afastam-se — a abertura vê-se acontecer no tempo
- * (revelação esq→dir = os anos a passar, como no mapa de /casa).
- * Cheio = nominal (o número na conta); tracejado da mesma cor = o que
- * esse dinheiro realmente vale hoje — distinção visual sem ler texto.
- * A tabela por baixo é o equivalente textual (valores finais).
+ * (revelação esq→dir = os anos a passar). Cheio = nominal (o número na
+ * conta); tracejado da mesma cor = o que esse dinheiro realmente vale
+ * hoje — distinção visual sem ler texto. A tabela por baixo é o
+ * equivalente textual (valores finais).
+ *
+ * O estado vem do <PoupancaProvider> — o mesmo capital, prazo e
+ * inflação que a resposta do nível 1 e a caderneta leem. Os parâmetros
+ * fiscais e as taxas oficiais entram por props (data/fiscal fica no
+ * servidor).
+ *
+ * Os produtos acabam onde acabam: CA aos 15 anos, CTPC aos 7 — a linha
+ * para aí, não se inventa trajectória.
  */
 
 const W = 320;
@@ -34,51 +39,52 @@ const SERIES = [
   { id: "colchao", nome: "Debaixo do colchão", cor: "var(--color-muted)" },
 ] as const;
 
-export function ComparadorPoupanca() {
-  const [capital, setCapital] = useState(10000);
-  const [anos, setAnos] = useState(10);
-  const [taxaDeposito, setTaxaDeposito] = useState(1.5);
-  const [inflacao, setInflacao] = useState(2.0);
+export function ComparadorPoupanca({
+  taxaCA,
+  premiosCA,
+  taxasCtpc,
+  premioCtpc,
+  inflacaoReal,
+}: {
+  /** taxa bruta CA Série F (ca.json) */
+  taxaCA: number;
+  premiosCA: { de: number; ate: number; pp: number }[];
+  taxasCtpc: number[];
+  premioCtpc: number;
+  /** inflação homóloga real do IHPC, em % — marcador «agora» da régua */
+  inflacaoReal: number | null;
+}) {
+  const {
+    capital,
+    anos,
+    taxaDeposito,
+    inflacao,
+    taxaImposto,
+    dep,
+    caf,
+    ctpc,
+    setCapital,
+    setAnos,
+    setTaxaDeposito,
+    setInflacao,
+  } = usePoupanca();
   const [anoLido, setAnoLido] = useState<number | null>(null);
 
-  const taxaImposto = capitais.retencaoLiberatoria.taxa;
-  const taxaCA = ca.serieF.taxaBrutaNovasSubscricoes;
-  const premios = ca.serieF.premiosPermanencia;
-
-  const dep = useMemo(
-    () => simularPoupanca(capital, anos, taxaDeposito / 100, taxaImposto, inflacao / 100),
-    [capital, anos, taxaDeposito, taxaImposto, inflacao]
-  );
-  const caf = useMemo(
-    () => simularCA(capital, anos, taxaCA, premios, taxaImposto, inflacao / 100),
-    [capital, anos, taxaCA, premios, taxaImposto, inflacao]
-  );
-  const ctpc = useMemo(
-    () =>
-      simularCTPC(
-        capital,
-        Math.min(anos, ca.ctpc.taxasPorAno.length),
-        ca.ctpc.taxasPorAno,
-        ca.ctpc.premio.atual,
-        taxaImposto,
-        inflacao / 100
-      ),
-    [capital, anos, taxaImposto, inflacao]
-  );
+  const anosCA = Math.min(anos, PRAZO_CA);
 
   // as quatro trajectórias — nominal líquido e real, por ano
   const traj = useMemo(
     () => ({
-      ca: trajetoriaCA(capital, anos, taxaCA, premios, taxaImposto, inflacao / 100),
-      ctpc: trajetoriaCTPC(capital, anos, ca.ctpc.taxasPorAno, ca.ctpc.premio.atual, taxaImposto, inflacao / 100),
+      ca: trajetoriaCA(capital, anosCA, taxaCA, premiosCA, taxaImposto, inflacao / 100),
+      ctpc: trajetoriaCTPC(capital, anos, taxasCtpc, premioCtpc, taxaImposto, inflacao / 100),
       dep: trajetoriaDeposito(capital, anos, taxaDeposito / 100, taxaImposto, inflacao / 100),
       colchao: trajetoriaColchao(capital, anos, inflacao / 100),
     }),
-    [capital, anos, taxaCA, premios, taxaImposto, inflacao, taxaDeposito]
+    [capital, anos, anosCA, taxaCA, premiosCA, taxasCtpc, premioCtpc, taxaImposto, inflacao, taxaDeposito]
   );
 
-  // CTPC tem prazo de 7 anos — a linha para aí (ponto repetido até ao fim
-  // seria inventar trajectória: a série acaba onde o produto acaba)
+  // CTPC tem prazo de 7 anos, CA 15 — a linha para onde o produto
+  // acaba (ponto repetido até ao fim seria inventar trajectória)
   const maxY = Math.max(
     capital,
     ...SERIES.flatMap((s) => traj[s.id].map((p) => p.saldo))
@@ -118,7 +124,7 @@ export function ComparadorPoupanca() {
       taxa: ctpc.taxaLiquida,
     },
     {
-      nome: `Certificados de Aforro F (${fmtPct(taxaCA, 2)} brutos)`,
+      nome: `Certificados de Aforro F (${fmtPct(taxaCA, 2)} brutos)${anos > PRAZO_CA ? " (15 anos, na data)" : ""}`,
       final: caf.capitalFinalLiquido,
       real: caf.valorReal,
       taxa: caf.taxaLiquida,
@@ -128,34 +134,63 @@ export function ComparadorPoupanca() {
   return (
     <div className="grid md:grid-cols-2 gap-10">
       <div className="space-y-5">
-        <div>
-          <label className="kicker block mb-1.5" htmlFor="cap">Capital inicial</label>
-          <input id="cap" type="number" min={0} step={500} value={capital}
-            onChange={(e) => setCapital(Number(e.target.value) || 0)} className="field" />
-        </div>
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <label className="kicker block mb-1.5" htmlFor="anos">Anos</label>
-            <input id="anos" type="number" min={1} max={30} value={anos}
-              onChange={(e) => setAnos(Number(e.target.value) || 1)} className="field" />
-          </div>
-          <div>
-            <label className="kicker block mb-1.5" htmlFor="tdep">Depósito (%)</label>
-            <input id="tdep" type="number" step={0.1} min={0} value={taxaDeposito}
-              onChange={(e) => setTaxaDeposito(Number(e.target.value) || 0)} className="field" />
-          </div>
-          <div>
-            <label className="kicker block mb-1.5" htmlFor="infl">Inflação (%)</label>
-            <input id="infl" type="number" step={0.1} value={inflacao}
-              onChange={(e) => setInflacao(Number(e.target.value) || 0)} className="field" />
-          </div>
-        </div>
+        {/* todo o input numérico é régua (catálogo V4 §5) */}
+        <Regua
+          id="cap"
+          rotulo="Capital inicial"
+          valor={capital}
+          onChange={setCapital}
+          min={100}
+          max={100000}
+          passo={100}
+          unidade="€"
+          formato={(v) => fmtNum(v, 0)}
+        />
+        <Regua
+          id="anos"
+          rotulo="Prazo"
+          valor={anos}
+          onChange={(v) => setAnos(Math.round(v))}
+          min={1}
+          max={30}
+          passo={1}
+          unidade="anos"
+          formato={(v) => fmtNum(v, 0)}
+          descricao="CA matura aos 15 anos e o CTPC aos 7 — para lá disso a linha acaba."
+        />
+        <Regua
+          id="tdep"
+          rotulo="Depósito a prazo (TANB)"
+          valor={taxaDeposito}
+          onChange={setTaxaDeposito}
+          min={0}
+          max={5}
+          passo={0.05}
+          unidade="%"
+          formato={(v) => fmtNum(v, 2)}
+        />
+        <Regua
+          id="infl"
+          rotulo="Inflação"
+          valor={inflacao}
+          onChange={setInflacao}
+          min={-1}
+          max={10}
+          passo={0.1}
+          unidade="%"
+          formato={(v) => fmtNum(v, 1)}
+          marcadorAgora={
+            inflacaoReal !== null
+              ? { valor: inflacaoReal, rotulo: "agora" }
+              : undefined
+          }
+        />
         <p className="footnote">
           Juros tributados a {fmtPct(taxaImposto, 0)} (retenção liberatória).
-          CA Série F: taxa base = média da Euribor 3M, limitada a 2,50 %,
+          CA Série F: taxa base = média da Euribor 3M, limitada a 2,50 %,
           capitalização trimestral e prémios de permanência incluídos. CTPC:
-          taxa crescente de 0,75 % a 2,25 % + prémio PIB atual de{" "}
-          {fmtPct(ca.ctpc.premio.atual, 2)}, prazo máximo de 7 anos — simulado
+          taxa crescente de 0,75 % a 2,25 % + prémio PIB atual de{" "}
+          {fmtPct(premioCtpc, 2)}, prazo máximo de 7 anos — simulado
           a taxas constantes, sem prever o PIB futuro.
         </p>
       </div>

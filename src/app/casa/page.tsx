@@ -4,24 +4,23 @@ import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { Leitura } from "@/components/Leitura";
 import { EstadoVazio } from "@/components/EstadoVazio";
+import { Pagina, PaginaDetalhe } from "@/components/Pagina";
+import { CasaProvider } from "./CasaSim";
+import { FraseEscritura, InstrumentoEscritura } from "./HeroEscritura";
 import { SimuladorCasa } from "./SimuladorCasa";
 import { loadFonte, loadDerivado, loadFreshness } from "@/lib/data";
-import { comUnidade, fmtEUR0, fmtNum, fmtPeriodo } from "@/lib/format";
+import { fmtEUR0, fmtNum, fmtPeriodo, fmtPct } from "@/lib/format";
 import {
   anotacaoDe,
   estadoDe,
-  homologa,
   janela10,
   rotulosLeitura,
-  type Cartao,
+  type Cartao as CartaoLeitura,
   type Ponto,
 } from "@/lib/leitura";
 import { m, t } from "@/lib/messages";
-import { readFileSync } from "fs";
-import path from "path";
 import imt from "@data/fiscal/imt-2026.json";
 import { JsonLd, webApplication } from "@/lib/jsonld";
-import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "Comprar casa — IMT, Imposto de Selo e prestação",
@@ -30,65 +29,114 @@ export const metadata: Metadata = {
   alternates: { canonical: "/casa", types: ALT_FEED },
 };
 
-/** Último ponto da Euribor 3M mensal recolhido do BPstat. */
-function euriborAtual(): { valor: number; ate: string } | null {
-  try {
-    const p = path.join(process.cwd(), "data/sources/bpstat/euribor-3m-mensal.json");
-    const d = JSON.parse(readFileSync(p, "utf8")) as { series: { t: string; v: number }[] };
-    const u = d.series.at(-1);
-    return u ? { valor: u.v, ate: u.t } : null;
-  } catch {
-    return null;
-  }
-}
-
 /** derivado casa-em-salarios: índice de preços da habitação ÷ custo do
     trabalho reindexado (2015=100) — razão de índices, não salários reais */
 interface CasaSalarios {
-  meta: { fonte: string; url: string; serieAte: string };
+  meta: {
+    fonte: string;
+    url: string;
+    serieAte: string;
+    rotuloAte?: string;
+  };
   series: Ponto[];
 }
 
+/** escalão da tabela de IMT — ate null = último escalão sem tecto */
+interface EscalaoImt {
+  ate: number | null;
+  taxa: number;
+  taxaUnica?: boolean;
+  parcelaAbater: number;
+}
+
+function TabelaImt({
+  titulo,
+  escaloes,
+  nota,
+}: {
+  titulo: string;
+  escaloes: readonly EscalaoImt[];
+  nota?: string;
+}) {
+  return (
+    <div>
+      <p className="kicker-xs mb-3">{titulo}</p>
+      <table className="w-full text-corpo-sm bg-raised border border-line shadow-raised">
+        <thead>
+          <tr className="text-left border-b-2 border-ink">
+            <th scope="col" className="px-4 py-2 font-medium">Valor tributável</th>
+            <th scope="col" className="px-4 py-2 font-medium text-right">Taxa</th>
+            <th scope="col" className="px-4 py-2 font-medium text-right">Parcela a abater</th>
+          </tr>
+        </thead>
+        <tbody>
+          {escaloes.map((e, i) => (
+            <tr key={i} className="border-b border-line last:border-0">
+              <td className="px-4 py-1.5 text-ink2">
+                {i === 0
+                  ? `até ${fmtEUR0(e.ate ?? 0)}`
+                  : e.ate === null
+                    ? `acima de ${fmtEUR0(escaloes[i - 1].ate ?? 0)}`
+                    : `de ${fmtEUR0(escaloes[i - 1].ate ?? 0)} a ${fmtEUR0(e.ate)}`}
+              </td>
+              <td className="px-4 py-1.5 text-right num">
+                {fmtPct(e.taxa, 1)}
+                {e.taxaUnica && (
+                  <span className="block text-rotulo text-muted">taxa única</span>
+                )}
+              </td>
+              <td className="px-4 py-1.5 text-right num">
+                {e.parcelaAbater > 0 ? fmtEUR0(e.parcelaAbater) : "—"}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {nota && <p className="footnote mt-2">{nota}</p>}
+    </div>
+  );
+}
+
 export default function CasaPage() {
-  const eur = euriborAtual();
+  // a Euribor 3M é a mesma de /credito — mesma fonte, mesma data (3C-04)
+  const eur = loadFonte("bpstat", "euribor-3m-mensal");
+  const ultimo = eur?.series.at(-1) ?? null;
   const rotulos = rotulosLeitura();
   const fresh = loadFreshness();
 
-  // ————— o preço das casas como instrumento: índice Eurostat da
-  //   habitação em taxa homóloga (série trimestral, passo 4) —————
-  const hpi = loadFonte("eurostat", "hpi-pt");
-  const serieHpi = hpi ? janela10(homologa(hpi.series, 4)) : [];
-  const ultHpi = serieHpi[serieHpi.length - 1];
-  const cartao: Cartao | null =
-    hpi && ultHpi
+  // ————— a casa contra o salário: o derivado razão de índices
+  //   (preços da habitação ÷ custo do trabalho, 2015=100) — a linha
+  //   anotada do catálogo com o nível de 2015 como referência —————
+  const razao = loadDerivado<CasaSalarios>("casa-em-salarios");
+  const serieRazao = razao ? janela10(razao.series) : [];
+  const ultRazao = serieRazao[serieRazao.length - 1];
+  const cartaoRazao: CartaoLeitura | null =
+    razao && ultRazao
       ? {
-          breadcrumb: m.painel.cartoes.habitacao.breadcrumb,
-          titulo: m.painel.cartoes.habitacao.titulo,
-          insight: t(m.painel.insightHabitacao, {
-            direcao: ultHpi.v >= 0 ? m.painel.subiu : m.painel.desceu,
-            v: fmtNum(Math.abs(ultHpi.v), 1),
+          breadcrumb: "O BANCO / CASA VS TRABALHO · EUROSTAT",
+          titulo: "A casa contra o salário",
+          insight: t(m.painel.insightCasaTrabalho, {
+            v: fmtNum(Math.abs(ultRazao.v - 100), 0),
+            direcao: ultRazao.v >= 100 ? m.painel.acima : m.painel.abaixo,
           }),
-          valor: ultHpi.v,
-          unidade: "%",
-          formato: "pct1",
-          serie: serieHpi,
-          anotacao: anotacaoDe(serieHpi, "max", (v) => `${comUnidade(fmtNum(v, 1), "%")}`),
-          leitura: fmtPeriodo(ultHpi.t),
-          estado: estadoDe(fresh, "hpi-pt"),
-          fonteNome: hpi.meta.fonte,
-          fonteUrl: hpi.meta.url,
+          valor: ultRazao.v,
+          unidade: "",
+          formato: "num",
+          serie: serieRazao,
+          referencia: { valor: 100, rotulo: "nível de 2015" },
+          anotacao: anotacaoDe(serieRazao, "max", (v) => fmtNum(v, 0)),
+          leitura: fmtPeriodo(ultRazao.t),
+          estado: estadoDe(fresh, "casa-em-salarios"),
+          fonteNome: razao.meta.fonte,
+          fonteUrl: razao.meta.url,
           href: "/casa",
-          hrefJson: "/api/hpi-pt.json",
+          hrefJson: "/api/casa-em-salarios.json",
           amplo: true,
         }
       : null;
 
-  // a razão casa/trabalho — a conclusão do derivado, em prosa curta
-  const razao = loadDerivado<CasaSalarios>("casa-em-salarios");
-  const ultRazao = razao?.series.at(-1) ?? null;
-
   return (
-    <div className="mx-auto max-w-5xl px-5 pt-14">
+    <>
       <JsonLd
         data={webApplication(
           "Custo de comprar casa — simulador",
@@ -96,78 +144,143 @@ export default function CasaPage() {
           "O custo real de comprar casa em Portugal: IMT, Imposto de Selo, registos e a prestação com a Euribor atual."
         )}
       />
-      <p className="kicker">Comprar casa</p>
-      <TituloPagina rota="/casa">O que a casa custa de verdade</TituloPagina>
-      <p className="lede mt-5">
-        O preço na placa não é o que pagas. No dia da escritura junta-se o IMT,
-        o Imposto de Selo e os registos; nos trinta anos seguintes, os juros.
-        Este simulador soma tudo — com as tabelas oficiais de {imt.ano} e a
-        Euribor real do Banco de Portugal.
-      </p>
+      {/* a compra é uma só — a resposta, a escritura e as tabelas
+          partilham preço, entrada e contrato via provider */}
+      <CasaProvider euriborInicial={ultimo?.v ?? null}>
+        <Pagina
+          pergunta="Quanto custa mesmo comprar esta casa?"
+          rota="/casa"
+          kicker="O banco · Comprar casa"
+          resposta={{
+            instrumento: (
+              <InstrumentoEscritura
+                anoImt={imt.ano}
+                estado={estadoDe(fresh, "fiscal-imt-2026")}
+                estadoRotulo={
+                  rotulos.estados[estadoDe(fresh, "fiscal-imt-2026")]
+                }
+              />
+            ),
+            frase: <FraseEscritura />,
+          }}
+          explora={
+            <>
+              <Figure
+                title="A escritura, camada a camada — e os trinta anos"
+                source={
+                  <Source
+                    nome={`IMT — ${imt.fonte}; Euribor 3M — BPstat (Banco de Portugal)`}
+                    vigencia={imt.vigencia}
+                    serieAte={ultimo?.t}
+                  />
+                }
+              >
+                <SimuladorCasa
+                  euriborAtual={ultimo?.v ?? null}
+                  euriborAte={ultimo ? fmtPeriodo(ultimo.t) : null}
+                />
+              </Figure>
 
-      {/* o índice de preços da habitação em leitura — homóloga do
-          trimestre; a razão casa/trabalho fica em prosa por baixo */}
-      {cartao ? (
-        <div className="mt-8">
-          <Leitura {...cartao} rotulos={rotulos} />
-          {razao && ultRazao && (
-            <p className="footnote mt-3">
-              Face ao custo do trabalho, a casa está{" "}
-              {comUnidade(fmtNum(Math.abs(ultRazao.v - 100), 0), "%")}{" "}
-              {ultRazao.v >= 100 ? "acima" : "abaixo"} do nível de 2015
-              ({fmtPeriodo(ultRazao.t)} — razão de índices Eurostat, não
-              salários reais).
-            </p>
-          )}
-        </div>
-      ) : (
-        // a falha mostra-se no lugar do instrumento — nunca um buraco
-        <div className="mt-8">
-          <EstadoVazio
-            titulo="o índice de preços da habitação"
-            falha={m.estados.serieFalhou}
-            desde={
-              hpi?.meta.serieAte ? fmtPeriodo(hpi.meta.serieAte) : undefined
-            }
-            fonte={{
-              nome: hpi?.meta.fonte ?? "Eurostat",
-              url: hpi?.meta.url ?? "https://ec.europa.eu/eurostat",
-            }}
-          />
-        </div>
-      )}
+              {/* a casa contra o salário — a razão de índices, com o
+                  nível de 2015 a tracejado como referência */}
+              {cartaoRazao ? (
+                <Leitura {...cartaoRazao} rotulos={rotulos} />
+              ) : (
+                <EstadoVazio
+                  titulo="a razão casa/trabalho"
+                  falha={m.estados.serieFalhou}
+                  desde={
+                    razao?.meta.serieAte
+                      ? fmtPeriodo(razao.meta.serieAte)
+                      : undefined
+                  }
+                  fonte={{
+                    nome: razao?.meta.fonte ?? "Eurostat",
+                    url: razao?.meta.url ?? "https://ec.europa.eu/eurostat",
+                  }}
+                />
+              )}
+            </>
+          }
+          confirma={
+            <>
+              <PaginaDetalhe rotulo={`A tabela do IMT ${imt.ano} — habitação própria e permanente`}>
+                <TabelaImt
+                  titulo="IMT — habitação própria e permanente"
+                  escaloes={imt.hpp}
+                  nota="IMT incide sobre o maior valor entre o preço de escritura e o valor patrimonial tributário (VPT). O imposto é valor × taxa − parcela a abater; nos dois últimos escalões a taxa é única."
+                />
+              </PaginaDetalhe>
 
-      <Figure
-        title="Simulador de compra"
-        source={
-          <Source
-            nome={`IMT — ${imt.fonte}; Euribor 3M — BPstat (Banco de Portugal)`}
-            vigencia={imt.vigencia}
-            serieAte={eur?.ate}
-          />
-        }
-      >
-        <SimuladorCasa euriborAtual={eur?.valor ?? null} />
-      </Figure>
+              <PaginaDetalhe rotulo="IMT — segunda habitação ou investimento">
+                <TabelaImt
+                  titulo="IMT — secundária / investimento"
+                  escaloes={imt.secundaria}
+                />
+              </PaginaDetalhe>
 
-      <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
-        <h2 className="font-display text-display-sm text-ink">Os impostos da escritura</h2>
-        <p>
-          <strong>IMT</strong> incide sobre o maior valor entre preço e VPT, em
-          escalões — isento até {fmtEUR0(imt.hpp[0].ate ?? 0)} em habitação própria e
-          permanente. Com o <strong>IMT Jovem</strong> (≤35 anos, primeira
-          casa) a isenção sobe a {fmtEUR0(imt.jovem.isentoAte)}, e entre isso e{" "}
-          {fmtEUR0(imt.jovem.limiteBeneficio)} só o excedente tributa a 8 %.{" "}
-          <strong>Imposto de Selo</strong>: 0,8 % sobre a compra e 0,6 % sobre
-          o crédito. Os registos usam o valor típico do Casa Pronta — nas
-          conservatórias avulsas pode diferir.
-        </p>
-        <p>
-          O IMT Jovem isenta também o Imposto de Selo na mesma proporção —
-          nunca o IS do crédito. Ilhas e imóveis para arrendamento têm regras
-          próprias.
-        </p>
-      </section>
-    </div>
+              <PaginaDetalhe rotulo="IMT Jovem — a isenção dos ≤35 anos">
+                <div className="body-copy max-w-2xl space-y-3">
+                  <p>{imt.jovem.nota}</p>
+                  <p>
+                    O IMT Jovem isenta também o Imposto de Selo da compra na
+                    mesma proporção — nunca o IS do crédito. Ilhas e imóveis
+                    para arrendamento têm regras próprias.
+                  </p>
+                </div>
+              </PaginaDetalhe>
+
+              <PaginaDetalhe rotulo="Imposto de Selo e registos">
+                <div className="body-copy max-w-2xl space-y-3">
+                  <p>{imt.impostoSelo.aquisicao.nota}</p>
+                  <p>{imt.impostoSelo.credito.nota}</p>
+                  <p>
+                    Registos: {fmtEUR0(imt.registos.semCredito)} sem crédito,{" "}
+                    {fmtEUR0(imt.registos.comCredito)} com crédito —{" "}
+                    {imt.registos.nota}.
+                  </p>
+                </div>
+              </PaginaDetalhe>
+
+              <PaginaDetalhe rotulo="Fontes e dados">
+                <div className="body-copy max-w-2xl space-y-3">
+                  <Source
+                    nome={imt.fonte}
+                    url={imt.fonteUrl}
+                    vigencia={imt.vigencia}
+                  />
+                  <Source
+                    nome="Euribor 3M, média mensal — Banco de Portugal, BPstat"
+                    url="https://bpstat.bportugal.pt"
+                    serieAte={ultimo?.t}
+                  />
+                  <Source
+                    nome={razao?.meta.fonte ?? "Eurostat — prc_hpi_q ÷ ei_lmlc_q"}
+                    url={razao?.meta.url}
+                    serieAte={razao?.meta.serieAte}
+                    nota="razão de índices oficiais — não mede salários reais"
+                  />
+                  <p className="footnote">
+                    API estática:{" "}
+                    <a href="/api/euribor-3m-mensal.json" className="lq-link">
+                      /api/euribor-3m-mensal.json
+                    </a>{" "}
+                    ·{" "}
+                    <a href="/api/casa-em-salarios.json" className="lq-link">
+                      /api/casa-em-salarios.json
+                    </a>
+                    .
+                  </p>
+                </div>
+              </PaginaDetalhe>
+            </>
+          }
+          seguinte={{
+            href: "/poupanca",
+            rotulo: "Onde rende mais o teu dinheiro?",
+          }}
+        />
+      </CasaProvider>
+    </>
   );
 }

@@ -1,26 +1,28 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { simularPrestacao } from "@/lib/engines/prestacao";
 import { Interruptor } from "@/components/Interruptor";
 import { JuroCapital } from "@/components/JuroCapital";
 import { NumHero } from "@/components/NumHero";
 import { Regua } from "@/components/Regua";
 import { TweenNum } from "@/components/TweenNum";
-import { FINO, fmtData, fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
+import { FINO, comUnidade, fmtData, fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
+import { useCredito } from "./CreditoSim";
 
 /**
- * Crédito — o mapa de amortização e o choque.
+ * Crédito — o nível 2 de /credito: as réguas do contrato e o mapa.
  *
- * A prestação é um número que esconde uma divisão: no início quase
- * tudo é juro, no fim quase tudo é capital. O <JuroCapital> mostra
- * essa troca de peso ao longo dos anos — é a leitura que o banco
- * nunca desenha.
+ * O estado vive no <CreditoProvider> — é o mesmo contrato que a
+ * resposta do nível 1 lê (a prestação-herói e a frase do total mudam
+ * com estas réguas) e que a tabela do nível 3 confirma.
  *
- * O choque +1 p.p. é um interruptor, não uma linha de texto: ao ligar,
+ * A prestação esconde uma divisão: no início quase tudo é juro, no fim
+ * quase tudo é capital. O <JuroCapital> mostra essa troca de peso ao
+ * longo dos anos — é a leitura que o banco nunca desenha.
+ *
+ * O choque +1 p.p. é um interruptor, não uma linha de texto: ao ligar,
  * TODA a resposta muda de estado — o NumHero desliza para a prestação
  * chocada, os juros totais interpolam a inchar (TweenNum) e o mapa
- * re-desenha a divisória. Tudo sobre o mesmo token de duração (M-09).
+ * re-desenha a divisória.
  */
 export function SimuladorPrestacao({
   euriborAtual,
@@ -39,37 +41,31 @@ export function SimuladorPrestacao({
     capital: string;
     euribor: string;
     spread: string;
+    prazo: string;
     agora12m: string;
     mediana10: string;
     menos: string;
     mais: string;
   };
 }) {
-  const [capital, setCapital] = useState(200000);
-  const [anos, setAnos] = useState(30);
-  const [choqueOn, setChoqueOn] = useState(false);
-  // regra nº1: se o BPstat falhar, o campo fica vazio — nunca um valor inventado
-  const [euribor, setEuribor] = useState<number | null>(
-    euriborAtual !== null ? Math.round(euriborAtual * 100) / 100 : null
-  );
-  const [spread, setSpread] = useState(1.0);
-
-  // a taxa em vigor no painel — com o choque ligado, +1 p.p.
-  const eurEf = euribor === null ? null : euribor + (choqueOn ? 1 : 0);
-
-  const r = useMemo(
-    () => (eurEf === null ? null : simularPrestacao(capital, anos * 12, eurEf / 100, spread / 100)),
-    [capital, anos, eurEf, spread]
-  );
-  // a simulação de base — para ler o custo do choque em euros
-  const base = useMemo(
-    () => (euribor === null ? null : simularPrestacao(capital, anos * 12, euribor / 100, spread / 100)),
-    [capital, anos, euribor, spread]
-  );
-  const runMapa = `${capital}-${anos}-${eurEf}-${spread}`;
+  const {
+    capital,
+    anos,
+    euribor,
+    spread,
+    choque,
+    sim: r,
+    base,
+    setCapital,
+    setAnos,
+    setEuribor,
+    setSpread,
+    setChoque,
+  } = useCredito();
+  const runMapa = `${capital}-${anos}-${r?.tan ?? "sem-taxa"}-${spread}-${choque}`;
 
   // presets da taxa — âncora é o valor oficial de hoje (12M): a mediana
-  // de 10 anos do painel e ±0,5 p.p. em redor do «agora»
+  // de 10 anos do painel e ±0,5 p.p. em redor do «agora»
   const presetsTaxa = [
     ...(mediana12m !== null
       ? [{ rotulo: rotulos.mediana10, valor: mediana12m }]
@@ -85,8 +81,8 @@ export function SimuladorPrestacao({
   return (
     <div className="grid md:grid-cols-2 gap-10">
       <div className="space-y-5">
-        {/* capital e taxas são réguas físicas (V3 §5) — os motores
-            recebem os mesmos números, só o controlo mudou */}
+        {/* capital, prazo e taxas são réguas físicas (catálogo V4 §5:
+            todo o input numérico é régua) */}
         <Regua
           id="cap"
           rotulo={rotulos.capital}
@@ -98,11 +94,17 @@ export function SimuladorPrestacao({
           unidade="€"
           formato={(v) => fmtNum(v, 0)}
         />
-        <div>
-          <label className="kicker block mb-1.5" htmlFor="prazo">Prazo (anos)</label>
-          <input id="prazo" type="number" min={1} max={50} value={anos}
-            onChange={(e) => setAnos(Number(e.target.value) || 1)} className="field" />
-        </div>
+        <Regua
+          id="prazo"
+          rotulo={rotulos.prazo}
+          valor={anos}
+          onChange={(v) => setAnos(Math.round(v))}
+          min={1}
+          max={50}
+          passo={1}
+          unidade="anos"
+          formato={(v) => fmtNum(v, 0)}
+        />
         {/* regra nº1: se o BPstat falhou o campo da taxa fica livre —
             o input simples de sempre, nunca um número inventado */}
         {euribor === null ? (
@@ -146,14 +148,11 @@ export function SimuladorPrestacao({
         />
         {/* o choque é um acto — não uma nota de rodapé */}
         <Interruptor
-          ligado={choqueOn}
-          onChange={setChoqueOn}
+          ligado={choque}
+          onChange={setChoque}
           rotulo={`Simular choque: Euribor sobe +1${FINO}p.p.`}
           className="text-corpo-sm"
         />
-        <label className="hidden flex items-center gap-2 text-corpo-sm text-ink">
-          Simular choque: Euribor sobe +1 p.p.
-        </label>
         <p className="footnote">
           TAN = Euribor + spread = {r ? fmtPct(r.tan) : "—"}. A TAEG junta seguros e
           comissões — é o número a comparar entre bancos, não o spread sozinho.
@@ -175,15 +174,15 @@ export function SimuladorPrestacao({
       <div className="bg-raised border border-line shadow-raised self-start md:sticky md:top-6" aria-live="polite">
         <div className="border-b border-line px-5 py-3 flex items-baseline justify-between gap-3">
           <span className="kicker">A tua prestação</span>
-          {choqueOn && (
-            <span className="kicker-sm text-up">choque +1 p.p.</span>
+          {choque && (
+            <span className="kicker-sm text-up">choque +1{FINO}p.p.</span>
           )}
         </div>
         <div className="px-5 py-5">
           <NumHero valor={r ? fmtEUR(r.prestacao) : "—"} sufixo={r ? "/mês" : undefined} animar={r?.prestacao} />
           <dl className="mt-5 text-corpo-sm space-y-2">
             <div className="flex justify-between border-b border-line/60 pb-1.5">
-              <dt className="text-ink2">Juros totais em {anos} anos</dt>
+              <dt className="text-ink2">Juros totais em {comUnidade(fmtNum(anos, 0), "anos")}</dt>
               <dd className="num">
                 {r ? (
                   <TweenNum valor={r.jurosTotais} casas={0} texto={fmtEUR0(r.jurosTotais)} sufixo="€" />
@@ -201,7 +200,7 @@ export function SimuladorPrestacao({
             <div className="flex justify-between pb-1.5">
               <dt className="text-ink2">O choque custa</dt>
               <dd className="num text-up">
-                {choqueOn && r && base
+                {choque && r && base
                   ? `+${fmtEUR(r.prestacao - base.prestacao)}/mês · +${fmtEUR0(r.jurosTotais - base.jurosTotais)} juros`
                   : "—"}
               </dd>
