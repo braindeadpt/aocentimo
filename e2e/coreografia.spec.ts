@@ -18,14 +18,21 @@ type Janela = Window & { __vt?: Set<string> };
 const COLETOR_VT = `(() => {
   window.__vt = new Set();
   const fim = performance.now() + 3200;
-  const loop = () => {
+  const colhe = () => {
     for (const a of document.getAnimations({ subtree: true })) {
       const pe = a.effect && a.effect.pseudoElement;
       if (pe) window.__vt.add(pe);
     }
+  };
+  const loop = () => {
+    colhe();
     if (performance.now() < fim) requestAnimationFrame(loop);
   };
   requestAnimationFrame(loop);
+  const t = setInterval(() => {
+    colhe();
+    if (performance.now() >= fim) clearInterval(t);
+  }, 20);
 })()`;
 
 test("a pergunta seguinte morfa no h1 da página de destino", async ({
@@ -45,6 +52,7 @@ test("a pergunta seguinte morfa no h1 da página de destino", async ({
     () => [...((window as Janela).__vt ?? [])] as string[]
   );
   // a pergunta voou: o grupo partilhado existiu com velho e novo
+  // (1D-02: o old corre pg-voo-fica — viaja opaco até ao h1)
   expect(vistos).toContain("::view-transition-group(pg-voo)");
   expect(vistos).toContain("::view-transition-old(pg-voo)");
   expect(vistos).toContain("::view-transition-new(pg-voo)");
@@ -242,4 +250,41 @@ test("o canvas do CampoCentimos pára fora do ecrã e com o separador escondido"
   expect(await mudou(), "o canvas não retomou depois do separador").toBe(
     true
   );
+});
+
+test("acima da dobra o valor nasce final — nenhuma roda roda ao carregar (1D-03)", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  // o primeiro cartão do painel está acima da dobra; a amostra corre a
+  // ~350 ms — um roll de entrada duraria ~1,4 s e ainda estaria a correr
+  const primeiro = page.locator("[data-painel] .leitura-valor").first();
+  await expect(primeiro).toBeVisible();
+  await page.waitForTimeout(350);
+  const aRodar = await primeiro.evaluate((el) =>
+    Array.from(el.querySelectorAll(".od-strip")).some((s) =>
+      s.getAnimations().some((a) => a.playState === "running")
+    )
+  );
+  expect(aRodar, "o valor do cartão acima da dobra rolou ao carregar").toBe(
+    false
+  );
+  // e nasce no valor final — cada roda assenta em translateY(−d·1em);
+  // um roll iniciado (ou rodas paradas a 0) falhava aqui
+  const posicoes = await primeiro.locator(".od-strip").evaluateAll((ss) =>
+    ss.map((s) => ({
+      d: Number((s as HTMLElement).style.getPropertyValue("--d")),
+      y: new DOMMatrix(getComputedStyle(s).transform).f,
+    }))
+  );
+  const em = await primeiro
+    .locator(".od-digit")
+    .first()
+    .evaluate((el) => el.getBoundingClientRect().height);
+  for (const { d, y } of posicoes)
+    expect(
+      Math.abs(y - -d * em),
+      `roda no dígito ${d} devia assentar a −${d}em`
+    ).toBeLessThan(1.5);
 });

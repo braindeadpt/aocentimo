@@ -390,6 +390,7 @@
     "centimos": "cêntimos"
   },
   "salario": {
+    "naoRetido": "Não retido",
     "custo": {
       "titulo": "O que o recibo não mostra — o custo total para a empresa",
       "breadcrumb": "O TEU SALÁRIO / CUSTO TOTAL · MOTORES {ano}",

@@ -71,6 +71,7 @@ export default function SalarioPage() {
             },
           }}
           custo={m.salario.custo}
+          seloNaoRetido={m.salario.naoRetido}
         />
       </Figure>
 

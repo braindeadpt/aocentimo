@@ -108,7 +108,7 @@ test.describe("/estilo — a família de estados", () => {
 });
 
 test.describe("os estados no produto", () => {
-  test("/salario ao mínimo: o IRS é zero como informação, sem carimbo", async ({
+  test("/salario ao mínimo: o IRS é zero como informação, carimbo neutro «Não retido»", async ({
     page,
   }) => {
     await page.goto("/salario");
@@ -116,12 +116,16 @@ test.describe("os estados no produto", () => {
     await input.focus();
     await page.keyboard.press("Home"); // 920 € — o salário mínimo
     const talao = page.locator(".talao");
-    // a linha do IRS diz o zero que é informação — nunca «Retido»
+    // a linha do IRS diz o zero que é informação + carimbo NEUTRO
+    // «Não retido» (1D-02) — nunca o vermelho «Retido» nem o verde
     const linhaIrs = talao.locator(".talao-linha", { hasText: "IRS RETIDO" });
     await expect(linhaIrs.locator(".zero-info")).toContainText(
       "0,00 € — não te toca"
     );
-    await expect(linhaIrs.locator(".talao-retido")).toHaveCount(0);
+    const carimbo = linhaIrs.locator(".talao-retido");
+    await expect(carimbo).toHaveCount(1);
+    await expect(carimbo).toHaveClass(/talao-retido-neutro/);
+    await expect(carimbo).toHaveText("Não retido");
     // a cascata também diz porque o corte é zero — na linha do IRS
     await expect(
       page.locator(".chart-hit", { hasText: "IRS retido" })
