@@ -2085,6 +2085,143 @@ h3 {
 .regua-desc {
   margin-top: 0.45rem;
 }
+/* a nota do limite (1B-05): quando a tentativa é para lá do fim, o
+   rótulo do extremo cede o lugar à explicação — «limite — 920 € · o
+   salário mínimo». Discreta (tinta, nunca vermelho — não é erro, é a
+   régua a fazer o dela), com o traço que a liga ao polegar */
+.regua-nota {
+  left: 0;
+  color: var(--ink);
+}
+.regua-nota-max {
+  left: auto;
+  right: 0;
+}
+.regua-nota::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 1px;
+  height: 3px;
+  background: var(--ink2);
+}
+.regua-nota-max::before {
+  left: auto;
+  right: 0;
+}
+
+/* ————— estados partilhados (1B-05) —————
+   Cada estado tem desenho e texto, e é partilhado: o vazio/falha de
+   fonte (ilustração isométrica fantasma + orbe atrasada + frase), o
+   a-carregar (mini-orbe de pontos + rótulo) e o zero informativo
+   (ponto oco + «não te toca»). */
+
+/* a carregar — o estado transitório onde há espera real */
+.acarregar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.acarregar-orbe {
+  flex: none;
+}
+
+/* zero informativo — «0 € — não te toca»: o ponto oco é o cêntimo
+   que não existe (a mesma leitura do repartir: uma parte a 0 não
+   tem pontos, e isso é informação, não erro) */
+.zero-info {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+.zero-info-ponto {
+  width: 0.5em;
+  height: 0.5em;
+  flex: none;
+  align-self: center;
+  border: 1.2px solid currentColor;
+  border-radius: 50%;
+}
+.zero-info-un {
+  font-size: 0.75em;
+  color: var(--ink2);
+}
+.zero-info-nota {
+  color: var(--ink2);
+}
+
+/* vazio / fonte indisponível — o lugar do instrumento fica marcado:
+   moldura a tracejado (o buraco desenhado, não escondido), a peça em
+   falta só em contorno tracejado no isométrico fantasma, orbe
+   «atrasada» e a frase honesta — o que falhou, desde quando e onde
+   ver a fonte oficial. Nunca um número inventado. */
+.estado-vazio {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  margin: 0;
+  padding: 1.4rem 1.6rem;
+  border: 1px dashed var(--line2);
+  border-radius: var(--raio-instrumento);
+  background: var(--panel);
+}
+.ev-iso {
+  width: 148px;
+  flex: none;
+}
+.estado-vazio-c {
+  gap: 1rem;
+  padding: 0.9rem 1.1rem;
+}
+.estado-vazio-c .ev-iso {
+  width: 96px;
+}
+.ev-txt {
+  min-width: 0;
+}
+.ev-selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+.ev-frase {
+  margin: 0.55rem 0 0;
+  font-size: var(--text-corpo);
+  line-height: 1.45;
+  color: var(--ink);
+}
+.ev-desde {
+  margin: 0.3rem 0 0;
+  font-size: var(--text-rotulo);
+  color: var(--ink2);
+}
+.ev-fonte {
+  margin: 0.35rem 0 0;
+  font-size: var(--text-corpo-sm);
+}
+.ev-link {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--line2);
+  text-underline-offset: 2px;
+}
+.ev-link:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}
+.ev-regra {
+  margin-top: 0.35rem;
+}
+@media (max-width: 480px) {
+  .estado-vazio {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+  }
+}
 
 /* ————— view transitions — cross-fade de página, rápido e quieto ————— */
 ::view-transition-old(*),

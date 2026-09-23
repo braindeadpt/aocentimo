@@ -34,7 +34,16 @@ import { Chip } from "@/components/Chip";
  * fica 1:1 com o dedo. A cada paragem o corpo do polegar encaixa com
  * um ressalto contido (.regua-encaixa, --dur-micro + --ease-rasgo) —
  * durante o arrasto a cada snap da grelha, fora dele ao aterrar no
- * fim da transição. Reduced-motion corta tudo no bloco global.
+ * fim da transição. Reduced-motion corta-o no bloco global.
+ *
+ * Limites (1B-05): a régua nunca deixa sair — e quando a tentativa é
+ * mesmo para lá do fim (seta no extremo, PageUp que transborda,
+ * preset fora da gama, dedo para lá da pista) o limite explica-se
+ * junto ao polegar: uma nota discreta em --ink2 («limite — 920 €»,
+ * nunca vermelho de erro — não é erro, é a régua a fazer o dela) e
+ * o mesmo texto num live region sr-only para o leitor de ecrã.
+ * A nota mora no lugar do rótulo do extremo enquanto dura; sai na
+ * próxima paragem interior.
  */
 
 export interface ReguaProps {
@@ -61,6 +70,10 @@ export interface ReguaProps {
   presets?: { rotulo: string; valor: number }[];
   /** nota de rodapé (ajuda de teclado, contexto) */
   descricao?: string;
+  /** a razão do limite por lado, quando a régua a sabe dizer —
+      junta-se ao valor («limite — 920 € · o salário mínimo»);
+      sem ela a nota fica só «limite — {valor}» */
+  limites?: { min?: string; max?: string };
   id?: string;
 }
 
@@ -109,6 +122,7 @@ export function Regua({
   marcadorAgora,
   presets,
   descricao,
+  limites,
   pontos,
   id: idProp,
 }: ReguaProps) {
@@ -128,7 +142,15 @@ export function Regua({
   // nonce do ressalto — sobe a cada paragem (snap no arrasto, aterragem
   // no fim da transição); o key do corpo do polegar rearma a keyframe
   const [encaixe, setEncaixe] = useState(0);
+  // a tentativa para lá do fim: lado marcado + nonce (o leitor de
+  // ecrã re-anuncia cada insistência de teclado; o dedo encostado à
+  // borda anuncia uma vez — não é sirene)
+  const [limite, setLimite] = useState<{
+    lado: "min" | "max";
+    n: number;
+  } | null>(null);
   const palcoRef = useRef<HTMLDivElement>(null);
+  const pistaRef = useRef<HTMLDivElement>(null);
   const valorRef = useRef<HTMLSpanElement>(null);
 
   const casas = (String(passo).split(".")[1] ?? "").length;
@@ -151,9 +173,19 @@ export function Regua({
           min,
           max
         );
+  const marcaLimite = (lado: "min" | "max", repetir = false) =>
+    setLimite((l) =>
+      l && l.lado === lado && !repetir ? l : { lado, n: (l?.n ?? 0) + 1 }
+    );
+
   const emit = (v: number) => {
     setVivo(true);
     const alvo = ajustar(v);
+    // o pedido cru passou o fim (preset fora da gama, PageUp que
+    // transborda) → o limite explica-se; uma paragem interior limpa-o
+    const fora = v > max + 1e-9 ? "max" : v < min - 1e-9 ? "min" : null;
+    if (fora) marcaLimite(fora, true);
+    else if (alvo !== valor) setLimite(null);
     // snap durante o arrasto: cada paragem da grelha encaixa com o
     // ressalto (fora do arrasto o ressalto vem do transitionend — a
     // aterragem no fim do trajecto)
@@ -223,6 +255,14 @@ export function Regua({
     setArrasto(false);
   };
 
+  // a nota do limite — «limite — {valor}» sempre com o número do
+  // fim (é a informação); a razão por prop junta-se-lhe atrás:
+  // «limite — 920 € · o salário mínimo»
+  const notaLimite = limite
+    ? `limite — ${comUnidade(formato(limite.lado === "min" ? min : max), unidade)}` +
+      (limites?.[limite.lado] ? ` · ${limites[limite.lado]}` : "")
+    : "";
+
   return (
     <div className={`regua${vivo && !arrasto ? " regua-suave" : ""}`}>
       <label className="kicker regua-rotulo" htmlFor={id}>
@@ -249,7 +289,7 @@ export function Regua({
           </span>
         </div>
 
-        <div className="regua-pista">
+        <div className="regua-pista" ref={pistaRef}>
           <div className="regua-desenho" aria-hidden="true">
             <span className="regua-linha" />
             {tracos.map((tr, i) => (
@@ -318,9 +358,28 @@ export function Regua({
                     0,
                     pontos.length - 1
                   );
+                  // já se está no ponto do extremo — a insistência é
+                  // tentativa de sair: o limite explica-se
+                  if (pontos[i] === valor) {
+                    marcaLimite(salto > 0 ? "max" : "min", true);
+                  }
                   emit(pontos[i]);
                 }
                 return;
+              }
+              // sem grelha de pontos o nativo trata das setas — quando
+              // já se está no extremo nada acontece (nem onChange):
+              // detecta-se aqui para o limite se explicar
+              if (
+                (e.key === "ArrowRight" || e.key === "ArrowUp") &&
+                valor >= max
+              ) {
+                marcaLimite("max", true);
+              } else if (
+                (e.key === "ArrowLeft" || e.key === "ArrowDown") &&
+                valor <= min
+              ) {
+                marcaLimite("min", true);
               }
               if (e.key === "PageUp" || e.key === "PageDown") {
                 e.preventDefault();
@@ -335,6 +394,14 @@ export function Regua({
               if (premido.current && e.buttons > 0) {
                 movido.current = true;
                 if (!arrasto) setArrasto(true);
+                // o dedo saiu da pista para lá de um extremo — o valor
+                // já está grampeado pelo nativo; a nota diz porquê
+                const pista = pistaRef.current;
+                if (pista) {
+                  const r = pista.getBoundingClientRect();
+                  if (e.clientX > r.right + 6) marcaLimite("max");
+                  else if (e.clientX < r.left - 6) marcaLimite("min");
+                }
               }
             }}
             onPointerUp={solta}
@@ -345,9 +412,15 @@ export function Regua({
         </div>
 
         <div className="regua-escala" aria-hidden="true">
-          <span className="regua-min">
-            {comUnidade(formato(min), unidade)}
-          </span>
+          {/* no extremo marcado a nota do limite toma o lugar do
+              rótulo — é junto ao polegar, que aí está colado ao fim */}
+          {limite?.lado === "min" ? (
+            <span className="regua-nota">{notaLimite}</span>
+          ) : (
+            <span className="regua-min">
+              {comUnidade(formato(min), unidade)}
+            </span>
+          )}
           {agora && (
             <span
               className="regua-agora"
@@ -358,11 +431,26 @@ export function Regua({
               {textoAgora}
             </span>
           )}
-          <span className="regua-max">
-            {comUnidade(formato(max), unidade)}
-          </span>
+          {limite?.lado === "max" ? (
+            <span className="regua-nota regua-nota-max">{notaLimite}</span>
+          ) : (
+            <span className="regua-max">
+              {comUnidade(formato(max), unidade)}
+            </span>
+          )}
         </div>
       </div>
+
+      {/* o mesmo limite para o leitor de ecrã — live region sr-only;
+          a key rearma a região a cada insistência de teclado para a
+          frase voltar a ser anunciada */}
+      <span
+        role="status"
+        className="sr-only"
+        key={limite ? `${limite.lado}-${limite.n}` : "repouso"}
+      >
+        {notaLimite}
+      </span>
 
       {presets && presets.length > 0 && (
         <div className="regua-pills">

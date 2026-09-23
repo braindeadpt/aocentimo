@@ -1030,3 +1030,70 @@ link seguinte da página nova com o `h1`).
 **Motor lazy do dono** — intacto: nada tocou `carregarGsap`/`tela.ts`
 nem os motores fiscais; a pausa do canvas usa os gatilhos que já
 existiam (`visivel` + `document.hidden`).
+
+## 1B-05 · Estados partilhados — vazio, carregar, zero e limites (2026-09-29)
+
+**Feito.** A regra nº 1 passa a ter peças: `EstadoVazio` (peça em falta
+isométrica a tracejado + orbe `atrasada` + frase honesta com
+título/falha/último-dado/fonte oficial em separador novo), `ACarregar`
+(mini-orbe `a-recolher` + rótulo em `role="status"`; o `aCarregar` do
+`Botao` consome-o), `ZeroInformativo` (ponto oco + valor formatado +
+nota «não te toca»), e a nota de limite da `Regua` (no lugar do rótulo
+do extremo, junto ao polegar encostado, + live region sr-only com
+nonce; setas/PageUp/Home/End/presets/arrasto todos tapados; nunca
+vermelho). `EmptyState` delega no `EstadoVazio`.
+
+Buracos de fonte tapados em todas as rotas — o slot nunca desaparece,
+nunca aparece «—» cru nem número inventado: grelhas de `Leitura`
+(home, /precos, /inflacao, /dados) renderizam `EstadoVazio` no lugar do
+cartão; /trabalho (SMN), /casa (IPHab) e /credito (Euribor +
+prestação-ref) ganham `EstadoVazio`/`role="status"` onde antes
+saltavam a peça ou punham um parágrafo solto. Zero informativo ligado
+no IRS ao salário mínimo: talão (sem carimbo «Retido»), ano a 14
+meses, `Cascata` (`nota` do `Passo` junto ao rótulo; menos não se
+aplica a zero) e `CustoExplodido` (`RotulosCusto.zero` na
+`textoLista`). Secção «Estados» nova em /estilo com demo controlada
+(`data-demo`). Testes: `src/components/Estados.test.tsx` (11) +
+`e2e/estados.spec.ts` (5 — inclui «série a falhar → orbe+frase, nunca
+número»).
+
+**Decisões tomadas:**
+
+- **`EstadoVazio` é ilustração fixa, não `Isometrico`.** A referência
+  «Nothing on the schedule yet» é um desenho estático: três placas
+  sólidas + a peça em falta só a tracejado com linha de chamada. O
+  `Isometrico` mede estrutura por camadas — usar o componente com
+  props falsas seria inventar dados.
+- **A nota de limite substitui o rótulo do extremo** (não empilha um
+  tooltip novo): é o lugar onde já se lê o valor da borda, fica
+  sempre adjacente ao polegar encostado, e some na próxima paragem
+  interior. `role="status"` global (não por lado) — um live region já
+  cobre os dois extremos.
+- **«não te toca»** como nota por omissão do zero (o zero explica-se,
+  não se esconde); `nota={null}` omite. Na `Cascata` a `nota` do
+  `Passo` passou a aceitar texto por degrau.
+- **`Botao` aCarregar** passa a renderizar `ACarregar` (mesma marca,
+  mesma semântica — `aria-busy`/`aria-disabled` intactos); o rótulo
+  do que se passa vem de `messages`/`textos` como antes.
+- **`Compacto`** do `EstadoVazio` sem borda nem cabeçalho — para
+  dentro de figuras/células (a célula do quadro de frescura em /dados
+  ganha orbe + rótulo em vez do traço «—»).
+
+**Copy novo a rever pelo dono:**
+
+- «a fonte oficial está a falhar — mostramos a falha, nunca um número
+  inventado» (corpo do `EstadoVazio`); «último dado conhecido: {desde}».
+- «limite — {valor} · {razão}» (nota de borda da `Regua`).
+- «{0,00 €} — não te toca» (zero informativo; U+202F entre valor e €,
+  travessão antes da nota).
+
+**Perguntas ao dono:**
+
+- A ilustração do vazio é fixa (sempre três placas + peça tracejada) —
+  queres variação por contexto (ex.: série vs. instrumento) ou a
+  uniformidade é a marca certa?
+- No talão, o IRS zero mostra a linha «0,00 € — não te toca» sem
+  carimbo «Retido»; preferes carimbo neutro («Não retido») ou assim?
+
+**Motor lazy do dono** — intacto: nada tocou `carregarGsap`/`tela.ts`,
+os motores fiscais nem os orbes (`OrbeEstado` só se consome).

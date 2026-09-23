@@ -3,6 +3,7 @@ import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { Leitura } from "@/components/Leitura";
+import { EstadoVazio } from "@/components/EstadoVazio";
 import { SimuladorCasa } from "./SimuladorCasa";
 import { loadFonte, loadDerivado, loadFreshness } from "@/lib/data";
 import { comUnidade, fmtEUR0, fmtNum, fmtPeriodo } from "@/lib/format";
@@ -106,7 +107,7 @@ export default function CasaPage() {
 
       {/* o índice de preços da habitação em leitura — homóloga do
           trimestre; a razão casa/trabalho fica em prosa por baixo */}
-      {cartao && (
+      {cartao ? (
         <div className="mt-8">
           <Leitura {...cartao} rotulos={rotulos} />
           {razao && ultRazao && (
@@ -118,6 +119,21 @@ export default function CasaPage() {
               salários reais).
             </p>
           )}
+        </div>
+      ) : (
+        // a falha mostra-se no lugar do instrumento — nunca um buraco
+        <div className="mt-8">
+          <EstadoVazio
+            titulo="o índice de preços da habitação"
+            falha={m.estados.serieFalhou}
+            desde={
+              hpi?.meta.serieAte ? fmtPeriodo(hpi.meta.serieAte) : undefined
+            }
+            fonte={{
+              nome: hpi?.meta.fonte ?? "Eurostat",
+              url: hpi?.meta.url ?? "https://ec.europa.eu/eurostat",
+            }}
+          />
         </div>
       )}
 

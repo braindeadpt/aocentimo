@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { MouseEventHandler, ReactNode } from "react";
 import { Icone, type NomeIcone } from "@/components/Icone";
-import { OrbeEstado } from "@/components/OrbeEstado";
+import { ACarregar } from "@/components/ACarregar";
 
 /**
  * Botao — o controlo de acção da casa (1B-03). Um sistema, não um
@@ -95,15 +95,23 @@ export function Botao({
   // sem vai como texto escondido no conteúdo (o title cobre o rato)
   const nomeAcessivel =
     ariaLabel && desativado && razao ? `${ariaLabel} — ${razao}` : ariaLabel;
+  // aCarregar: o role=status do ACarregar não entra no nome do
+  // controlo (a região viva é nó próprio na árvore) — o rótulo vai
+  // explícito, 1:1 com o que se lê («A calcular…»)
+  const nome = aCarregar ?? nomeAcessivel;
 
   const conteudo = (
     <>
       {aCarregar ? (
-        <OrbeEstado estado="a-recolher" tamanho={15} className="botao-orbe" />
+        // o estado a-carregar partilhado (1B-05): mini-orbe + rótulo
+        // do que se passa — o Botao é onde a espera real acontece
+        <ACarregar rotulo={aCarregar} className="botao-orbe" />
       ) : (
-        icone && <Icone nome={icone} />
+        <>
+          {icone && <Icone nome={icone} />}
+          {children && <span>{children}</span>}
+        </>
       )}
-      {(aCarregar ?? children) && <span>{aCarregar ?? children}</span>}
       {!ariaLabel && desativado && razao && (
         <span className="sr-only"> — {razao}</span>
       )}
@@ -129,7 +137,7 @@ export function Botao({
           aria-disabled="true"
           aria-busy={aCarregar ? true : undefined}
           title={razao}
-          aria-label={nomeAcessivel}
+          aria-label={nome}
           tabIndex={0}
           className={cls}
           onClick={guarda}
@@ -145,7 +153,7 @@ export function Botao({
           href={href}
           target="_blank"
           rel="noreferrer noopener"
-          aria-label={nomeAcessivel}
+          aria-label={nome}
           className={cls}
           onClick={guarda}
         >
@@ -157,7 +165,7 @@ export function Botao({
       <Link
         id={id}
         href={href}
-        aria-label={nomeAcessivel}
+        aria-label={nome}
         className={cls}
         onClick={guarda}
       >
@@ -173,7 +181,7 @@ export function Botao({
       aria-disabled={inerte || undefined}
       aria-busy={aCarregar ? true : undefined}
       title={desativado ? razao : undefined}
-      aria-label={nomeAcessivel}
+      aria-label={nome}
       className={cls}
       onClick={guarda}
     >

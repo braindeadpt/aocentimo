@@ -3,6 +3,7 @@ import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { Leitura } from "@/components/Leitura";
+import { EstadoVazio } from "@/components/EstadoVazio";
 import { LineChart } from "@/components/LineChart";
 import { SimuladorPrestacao } from "./SimuladorPrestacao";
 import { loadFonte, loadFreshness, loadPainel } from "@/lib/data";
@@ -96,9 +97,22 @@ export default function CreditoPage() {
 
       {/* a Euribor 12M como instrumento — a taxa do contrato, 10 anos
           contra a mediana da própria janela */}
-      {cartao && (
+      {cartao ? (
         <div className="mt-8">
           <Leitura {...cartao} rotulos={rotulos} />
+        </div>
+      ) : (
+        // a falha mostra-se no lugar do instrumento — nunca um buraco
+        <div className="mt-8">
+          <EstadoVazio
+            titulo="a série da Euribor 12M"
+            falha={m.estados.serieFalhou}
+            desde={ultimo12 ? fmtPeriodo(ultimo12.t) : undefined}
+            fonte={{
+              nome: eur12?.meta.fonte ?? "Banco de Portugal — BPstat",
+              url: eur12?.meta.url ?? "https://bpstat.bportugal.pt",
+            }}
+          />
         </div>
       )}
 
@@ -151,10 +165,15 @@ export default function CreditoPage() {
             estado={estado}
           />
         ) : (
-          <p className="footnote">
-            Série da Euribor indisponível — a recolha do BPstat falhou; sem
-            dados oficiais não há gráfico.
-          </p>
+          <EstadoVazio
+            compacto
+            titulo="a série da Euribor 3M"
+            falha="a recolha do BPstat falhou — sem dados oficiais não há gráfico"
+            fonte={{
+              nome: "Banco de Portugal — BPstat",
+              url: "https://bpstat.bportugal.pt",
+            }}
+          />
         )}
       </Figure>
 

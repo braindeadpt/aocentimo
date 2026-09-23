@@ -18,6 +18,7 @@ import {
 } from "@/components/CustoExplodido";
 import { TweenNum } from "@/components/TweenNum";
 import { Valor } from "@/components/Valor";
+import { ZeroInformativo } from "@/components/ZeroInformativo";
 import { SITE_URL } from "@/lib/site";
 import { useArmado } from "@/lib/useArmado";
 import { Cascata } from "@/components/Cascata";
@@ -66,6 +67,9 @@ export interface ReguaSalario {
   marcador: { valor: number; rotulo: string } | null;
   presets: { rotulo: string; valor: number }[];
   descricao?: string;
+  /** a razão de cada extremo — junta-se à nota do limite da régua
+      («limite — 920 € · o salário mínimo») */
+  limites?: { min?: string; max?: string };
 }
 
 export function CalculadoraSalario({
@@ -226,6 +230,7 @@ export function CalculadoraSalario({
           marcadorAgora={regua.marcador ?? undefined}
           presets={regua.presets}
           descricao={regua.descricao}
+          limites={regua.limites}
         />
 
         <div>
@@ -417,8 +422,21 @@ export function CalculadoraSalario({
                     </span>
                   </dt>
                   <dd>
-                    {fmtEUR(recibo.retencao)} −
-                    <span className={"talao-retido " + talaoArm("talao-carimbo-anim")} aria-hidden>Retido</span>
+                    {recibo.retencao === 0 ? (
+                      // zero como informação (1B-05): ao salário
+                      // mínimo o IRS não toca — diz-se, não se carimba
+                      // «Retido» sobre um corte que não existe
+                      <ZeroInformativo
+                        valor={fmtNum(0, 2)}
+                        unidade="€"
+                        nota="não te toca"
+                      />
+                    ) : (
+                      <>
+                        {fmtEUR(recibo.retencao)} −
+                        <span className={"talao-retido " + talaoArm("talao-carimbo-anim")} aria-hidden>Retido</span>
+                      </>
+                    )}
                   </dd>
                 </div>
                 <div
@@ -468,7 +486,13 @@ export function CalculadoraSalario({
               tipo: "base",
             },
             { label: "Segurança Social", valor: -recibo.ss, tipo: "corte" },
-            { label: "IRS retido", valor: -recibo.retencao, tipo: "corte" },
+            {
+              label: "IRS retido",
+              valor: -recibo.retencao,
+              tipo: "corte",
+              // zero como informação — ao mínimo o IRS não toca
+              nota: recibo.retencao === 0 ? "não te toca" : undefined,
+            },
             { label: "Líquido", valor: recibo.liquido, tipo: "total" },
           ]}
         />
@@ -491,7 +515,19 @@ export function CalculadoraSalario({
           </div>
           <div className="flex justify-between py-1.5 border-b border-line/60">
             <dt className="text-ink2">IRS {ano} (estimativa)</dt>
-            <dd className="num text-up">{fmtEUR(resultado.irsAnual)} −</dd>
+            <dd className="num text-up">
+              {resultado.irsAnual === 0 ? (
+                // zero como informação — não é corte, não leva menos
+                <ZeroInformativo
+                  valor={fmtNum(0, 2)}
+                  unidade="€"
+                  nota="não te toca"
+                  className="text-ink2"
+                />
+              ) : (
+                `${fmtEUR(resultado.irsAnual)} −`
+              )}
+            </dd>
           </div>
           <div className="flex justify-between py-2.5 mt-1 border-t-2 border-ink">
             <dt className="font-medium">Líquido anual</dt>

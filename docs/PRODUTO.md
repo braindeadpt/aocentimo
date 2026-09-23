@@ -475,6 +475,51 @@ Regras duras dos estados:
   Reduced-motion corta pressão, deslize e ressalto — o estado final já
   está no lugar.
 
+### Estados partilhados — cada estado tem desenho e texto (1B-05)
+
+A regra nº 1 tem cara: **fonte falha → a falha mostra-se, nunca um
+número inventado** — e nunca um buraco na grelha nem um «—» sem
+explicação. Quatro peças partilhadas, cada uma com desenho + texto:
+
+- **`EstadoVazio`** — VAZIO / FONTE INDISPONÍVEL. A mecânica
+  isométrica de traço fino da referência «Nothing on the schedule
+  yet» na gramática do `Isometrico`: as placas que chegaram sólidas e
+  a peça em falta só a tracejado, com a sua linha de chamada — o
+  contorno do que devia lá estar (ilustração fixa, decorativa; não é
+  o `Isometrico` porque este mede camadas por estrutura). Selo =
+  orbe `atrasada` + «fonte indisponível». A frase é honesta e
+  completa: `titulo` (o que falhou) + `falha` (o que aconteceu) +
+  `desde` (último dado conhecido, já formatado) + `fonte` (nome + url
+  oficial, abre em separador novo). `compacto` para dentro de
+  figuras. Regra dura: **o slot nunca desaparece** — nas grelhas de
+  `Leitura` (home, /precos, /inflacao, /dados) e nos instrumentos de
+  página (/trabalho, /casa, /credito) a fonte em falta renderiza o
+  `EstadoVazio` no lugar, com `role="status"`. O `EmptyState` dos
+  gráficos delega nele.
+- **`ACarregar`** — a espera real: o mini-orbe `a-recolher` do
+  `OrbeEstado` (não se inventa spinner) + o rótulo do que se passa,
+  num `role="status"`. Num site estático quase nada carrega — usa-se
+  só onde há espera real; o `aCarregar` do `Botao` consome-o.
+- **`ZeroInformativo`** — o zero como informação: quando uma parte
+  vale zero de verdade diz-se e vê-se — «0 € — não te toca». Desenho:
+  o **ponto oco** (o cêntimo que não existe — a mesma leitura do
+  campo: uma parte a 0 não tem pontos) + valor já formatado + nota
+  (`"não te toca"` por omissão, `null` omite). Ligado no IRS ao
+  salário mínimo: talão (sem carimbo «Retido» — não há corte), ano a
+  14 meses, `Cascata` (a `nota` do `Passo` aparece junto do rótulo; o
+  menos não se aplica a zero) e `CustoExplodido` (`RotulosCusto.zero`
+  na `textoLista`; no svg o «−» não se aplica a zero).
+- **O limite da `Regua`** — o erro de interacção que não é erro:
+  quando a tentativa é para lá do fim (seta no extremo, PageUp que
+  transborda, preset/pedido fora da gama, dedo para lá da pista) o
+  valor nunca sai — e a nota aparece **no lugar do rótulo do
+  extremo**, junto ao polegar que aí está encostado: «limite — 920 €
+  · {razão}». Tinta discreta, **nunca vermelho** — não é erro, é a
+  régua a fazer o dela. O mesmo texto anuncia-se num live region
+  sr-only (`role="status"`, nonce rearma a cada insistência de
+  teclado); a razão por lado chega por `limites={{min,max}}`. Sai na
+  próxima paragem interior.
+
 ### Motion — gramática (M-02)
 
 O site tem movimento porque o movimento **explica transformações** —

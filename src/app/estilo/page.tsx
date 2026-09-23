@@ -23,6 +23,10 @@ import { Botao } from "@/components/Botao";
 import { BotaoCopiar } from "@/components/BotaoCopiar";
 import { Chip } from "@/components/Chip";
 import { ControlosDemo } from "./ControlosDemo";
+import { EstadosDemo } from "./EstadosDemo";
+import { EstadoVazio } from "@/components/EstadoVazio";
+import { ACarregar } from "@/components/ACarregar";
+import { ZeroInformativo } from "@/components/ZeroInformativo";
 import { Icone, IconeEmblema, type NomeIcone } from "@/components/Icone";
 import { Pagina, PaginaDetalhe } from "@/components/Pagina";
 import { PapelDefs } from "@/components/Papel";
@@ -30,7 +34,7 @@ import { PecaPapel } from "@/components/PecaPapel";
 import { arestaRasgada } from "@/lib/materia";
 import { cenarioCanonico, BRUTO_CANONICO } from "@/lib/canonico";
 import { loadPainel } from "@/lib/data";
-import { fmtEUR0, fmtNum, fmtPeriodo } from "@/lib/format";
+import { FINO, fmtEUR0, fmtNum, fmtPeriodo } from "@/lib/format";
 import eur1m from "@data/sources/bpstat/euribor-1m-mensal.json";
 import eur3m from "@data/sources/bpstat/euribor-3m-mensal.json";
 import eur6m from "@data/sources/bpstat/euribor-6m-mensal.json";
@@ -947,6 +951,99 @@ export default function EstiloPage() {
           chapa de nível 1 com recess (cavidade), borda line2, foco pelo anel
           torrado global. Todos os simuladores usam esta classe.
         </p>
+      </section>
+
+      <section id="estados" className="stack-sec">
+        <h2 className="kicker mb-4">Estados — cada estado tem desenho e texto</h2>
+        <p className="footnote mb-4 max-w-xl">
+          A regra nº 1 com desenho: fonte falha → a falha mostra-se, nunca um
+          número inventado. <code className="num">EstadoVazio</code> marca o
+          lugar do instrumento (peça em falta a tracejado no isométrico
+          fantasma, orbe «atrasada», o que falhou, desde quando e a fonte
+          oficial); <code className="num">ACarregar</code> só onde há espera
+          real; <code className="num">ZeroInformativo</code> diz o zero que é
+          informação; e a <code className="num">Regua</code> explica o limite
+          junto ao polegar — discreta, anunciada ao leitor de ecrã, nunca
+          vermelho de erro.
+        </p>
+
+        {/* vazio / fonte indisponível — o lugar fica marcado */}
+        <div className="grid gap-4 md:grid-cols-2">
+          <div>
+            <p className="kicker-xs mb-3">vazio — a fonte falhou</p>
+            <EstadoVazio
+              titulo="a série da Euribor 12M"
+              falha="a série não chegou da fonte"
+              desde={fmtPeriodo(eur12m.meta.serieAte)}
+              fonte={{
+                nome: eur12m.meta.fonte,
+                url: eur12m.meta.url,
+              }}
+            />
+          </div>
+          <div>
+            <p className="kicker-xs mb-3">vazio compacto — dentro de figuras</p>
+            <EstadoVazio
+              compacto
+              titulo="a série do IHPC"
+              falha="falhou a atualização"
+              fonte={{ nome: "Eurostat" }}
+            />
+          </div>
+        </div>
+        <p className="footnote mt-3 max-w-xl">
+          A ilustração é a mecânica isométrica de traço fino da casa: as placas
+          que chegaram sólidas e a peça em falta só a tracejado, com a sua
+          linha de chamada. A frase diz o que falhou, o último dado conhecido
+          e onde ver a fonte oficial — e a ligação abre em separador novo.
+        </p>
+
+        {/* a carregar + o zero informativo */}
+        <div className="mt-3 grid gap-4 md:grid-cols-2">
+          <div className="border border-line bg-panel p-6">
+            <p className="kicker-xs mb-3">a carregar — espera real</p>
+            <ACarregar rotulo="A calcular…" />
+            <p className="footnote mt-4">
+              O mini-orbe de pontos a rodar (o «a-recolher» do OrbeEstado) +
+              o rótulo do que se passa, num{" "}
+              <code className="num">role=&quot;status&quot;</code>. Num site
+              estático quase nada carrega — usa-se onde há espera real (o{" "}
+              <code className="num">aCarregar</code> do Botao consome-o).
+            </p>
+          </div>
+          <div className="border border-line bg-panel p-6">
+            <p className="kicker-xs mb-3">
+              zero informativo — «0{FINO}c — não te toca»
+            </p>
+            <p className="num text-corpo">
+              <ZeroInformativo valor="0" unidade="c" />
+            </p>
+            <p className="num text-corpo mt-2">
+              <ZeroInformativo valor="0,00" unidade="€" nota="não te toca" />
+            </p>
+            <p className="footnote mt-4">
+              O ponto oco é o cêntimo que não existe — a mesma leitura do
+              campo de cêntimos: uma parte a 0 não tem pontos, e isso é
+              informação, não erro. No recibo ao salário mínimo é a linha do
+              IRS: <em>0,00{FINO}€ — não te toca</em>.
+            </p>
+          </div>
+        </div>
+
+        {/* o limite da régua — explicado junto ao polegar */}
+        <div className="mt-3 border border-line bg-panel p-6">
+          <p className="kicker-xs mb-3">
+            o limite da régua — a régua não deixa sair e explica
+          </p>
+          <EstadosDemo />
+          <p className="footnote mt-4">
+            Seta no extremo, PageUp a transbordar, o preset «para lá do fim»
+            ou o dedo para lá da pista: o valor nunca sai e a nota aparece no
+            lugar do rótulo do extremo — tinta discreta, sem vermelho de erro
+            (não é erro, é a régua a fazer o dela). O mesmo texto anuncia-se
+            num live region sr-only — cada insistência de teclado re-anuncia.
+          </p>
+        </div>
       </section>
 
       <section className="stack-sec">

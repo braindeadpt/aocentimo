@@ -68,7 +68,14 @@
     "agora12m": "agora 12M",
     "mediana10": "mediana 10 anos",
     "menos05": "−0,5 p.p.",
-    "mais05": "+0,5 p.p."
+    "mais05": "+0,5 p.p.",
+    "limiteRazaoMin": "o salário mínimo",
+    "limiteRazaoMax": "o fim da tabela calculada"
+  },
+  "estados": {
+    "serieFalhou": "a série não chegou da fonte",
+    "fonteAtrasada": "falhou a atualização",
+    "naoTeToca": "não te toca"
   },
   "ticker": {
     "label": "Dados em direto",
@@ -346,6 +353,7 @@
       "meta": "o Estado leva {valor} /mês",
       "chegaConta": "chega à conta",
       "porMes": "por mês",
+      "zero": "não te toca",
       "fontes": "Fontes: retenção — Despacho n.º 233-A/2026 · escalões — art. 68.º CIRS · TSU — seg-social.pt",
       "pecas": {
         "empresa": {

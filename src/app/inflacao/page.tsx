@@ -3,6 +3,7 @@ import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Delta } from "@/components/Delta";
 import { Leitura } from "@/components/Leitura";
+import { EstadoVazio } from "@/components/EstadoVazio";
 import { Source } from "@/components/Source";
 import { JsonLd, dataset } from "@/lib/jsonld";
 import { PoderDeCompra } from "./PoderDeCompra";
@@ -114,14 +115,15 @@ export default function InflacaoPage() {
     ["CP045", m.leitura.cabaz.energiaCasa],
     ["CP11", m.leitura.cabaz.restaurantes],
   ];
-  const cartoesDiv: Cartao[] = divisoes.flatMap(([cod, rot]) => {
-    const s = loadSerie(cod);
-    const hom = s ? janela10(homologa(s.series, 12)) : [];
-    const ult = hom[hom.length - 1];
-    if (!s || !ult) return [];
-    const med = mediana(hom.map((p) => p.v));
-    return [
-      {
+  // o slot nunca desaparece: fonte em falta = EstadoVazio no lugar
+  const cartoesDiv: (Cartao | { vazio: true; cod: string; s: Serie | null })[] =
+    divisoes.map(([cod, rot]) => {
+      const s = loadSerie(cod);
+      const hom = s ? janela10(homologa(s.series, 12)) : [];
+      const ult = hom[hom.length - 1];
+      if (!s || !ult) return { vazio: true, cod, s };
+      const med = mediana(hom.map((p) => p.v));
+      return {
         breadcrumb: rot.breadcrumb,
         titulo: rot.titulo,
         insight: insightMediana(
@@ -144,9 +146,8 @@ export default function InflacaoPage() {
         fonteUrl: s.meta.url,
         href: "/inflacao",
         hrefJson: `/api/hicp-pt-${cod.toLowerCase()}.json`,
-      },
-    ];
-  });
+      };
+    });
 
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
@@ -178,29 +179,72 @@ export default function InflacaoPage() {
       {hero ? (
         <div className="stack-fig">
           <Leitura {...hero} rotulos={rotulos} />
-          {cartoesDiv.length > 0 && (
-            <div className="mt-5 grid gap-5 md:grid-cols-3">
-              {cartoesDiv.map((cartao, i) => (
+          <div className="mt-5 grid gap-5 md:grid-cols-3">
+            {cartoesDiv.map((slot, i) =>
+              "vazio" in slot ? (
+                <EstadoVazio
+                  key={slot.cod}
+                  titulo={divisoes[i][1].titulo}
+                  falha={m.estados.serieFalhou}
+                  desde={
+                    slot.s?.meta.serieAte
+                      ? fmtPeriodo(slot.s.meta.serieAte)
+                      : undefined
+                  }
+                  fonte={{
+                    nome: slot.s?.meta.fonte ?? "Eurostat",
+                    url:
+                      slot.s?.meta.url ?? "https://ec.europa.eu/eurostat",
+                  }}
+                />
+              ) : (
                 <Leitura
-                  key={cartao.titulo}
-                  {...cartao}
+                  key={slot.titulo}
+                  {...slot}
                   rotulos={rotulos}
                   entrada={i}
                 />
-              ))}
-            </div>
-          )}
+              )
+            )}
+          </div>
         </div>
       ) : (
-        <Figure title="Índice de preços, Portugal" source="Eurostat, IHPC mensal">
-          <div className="border border-line bg-panel px-5 py-10 text-center text-ink2">
-            <p className="num-read">—</p>
-            <p className="footnote mt-2">
-              Dados ainda não carregados. Corre <code className="num">npm run ingest</code>{" "}
-              para puxar as séries do Eurostat.
-            </p>
+        // a falha mostra-se no lugar do instrumento — nunca um buraco
+        <div className="stack-fig">
+          <EstadoVazio
+            titulo="o índice de preços (IHPC, Portugal)"
+            falha={m.estados.serieFalhou}
+            desde={
+              cp00?.meta.serieAte ? fmtPeriodo(cp00.meta.serieAte) : undefined
+            }
+            fonte={{
+              nome: cp00?.meta.fonte ?? "Eurostat",
+              url: fonte?.url ?? "https://ec.europa.eu/eurostat",
+            }}
+          />
+          <div className="mt-5 grid gap-5 md:grid-cols-3">
+            {cartoesDiv.map((slot, i) =>
+              "vazio" in slot ? (
+                <EstadoVazio
+                  key={slot.cod}
+                  titulo={divisoes[i][1].titulo}
+                  falha={m.estados.serieFalhou}
+                  fonte={{
+                    nome: "Eurostat",
+                    url: "https://ec.europa.eu/eurostat",
+                  }}
+                />
+              ) : (
+                <Leitura
+                  key={slot.titulo}
+                  {...slot}
+                  rotulos={rotulos}
+                  entrada={i}
+                />
+              )
+            )}
           </div>
-        </Figure>
+        </div>
       )}
 
       <Figure
@@ -266,7 +310,12 @@ export default function InflacaoPage() {
         {temDados ? (
           <PoderDeCompra serie={cp00!.series} />
         ) : (
-          <p className="footnote">Indisponível sem dados.</p>
+          <EstadoVazio
+            compacto
+            titulo="a série do IHPC"
+            falha={m.estados.serieFalhou}
+            fonte={{ nome: "Eurostat", url: fonte?.url }}
+          />
         )}
       </Figure>
 
@@ -283,7 +332,12 @@ export default function InflacaoPage() {
         {temDados ? (
           <SalarioReal serie={cp00!.series} />
         ) : (
-          <p className="footnote">Indisponível sem dados.</p>
+          <EstadoVazio
+            compacto
+            titulo="a série do IHPC"
+            falha={m.estados.serieFalhou}
+            fonte={{ nome: "Eurostat", url: fonte?.url }}
+          />
         )}
       </Figure>
 

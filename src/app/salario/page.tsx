@@ -65,6 +65,10 @@ export default function SalarioPage() {
               { rotulo: m.regua.doisMil, valor: 2000 },
             ],
             descricao: m.regua.dica,
+            limites: {
+              min: m.regua.limiteRazaoMin,
+              max: m.regua.limiteRazaoMax,
+            },
           }}
           custo={m.salario.custo}
         />

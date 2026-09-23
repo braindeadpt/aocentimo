@@ -5,6 +5,7 @@ import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { JsonLd, dataset } from "@/lib/jsonld";
 import { Leitura } from "@/components/Leitura";
+import { EstadoVazio } from "@/components/EstadoVazio";
 import { LineChart } from "@/components/LineChart";
 import { Delta } from "@/components/Delta";
 import { Instrumento } from "@/components/Instrumento";
@@ -145,16 +146,51 @@ export default function DadosPage() {
     };
   };
 
-  const leituras = [
-    cartaoPais(loadFonte("eurostat", "pib-pt-homologo"), m.painel.cartoes.pib, {
+  // o slot nunca desaparece: fonte em falta = EstadoVazio no lugar,
+  // com o que falhou, o último dado conhecido e a fonte oficial
+  type SlotPais =
+    | { tipo: "leitura"; cartao: Cartao }
+    | {
+        tipo: "vazio";
+        id: string;
+        titulo: string;
+        desde?: string;
+        fonte: { nome: string; url?: string };
+      };
+  const slotPais = (
+    fonte: {
+      meta: { fonte: string; url: string; serieAte?: string };
+      series: Ponto[];
+    } | null,
+    rot: { breadcrumb: string; titulo: string },
+    o: Parameters<typeof cartaoPais>[2]
+  ): SlotPais => {
+    const cartao = cartaoPais(fonte, rot, o);
+    if (cartao) return { tipo: "leitura", cartao };
+    return {
+      tipo: "vazio",
+      id: o.id,
+      titulo: rot.titulo,
+      desde: fonte?.meta.serieAte
+        ? fmtPeriodo(fonte.meta.serieAte)
+        : undefined,
+      fonte: {
+        nome: fonte?.meta.fonte ?? "Eurostat",
+        url: fonte?.meta.url,
+      },
+    };
+  };
+
+  const leituras: SlotPais[] = [
+    slotPais(loadFonte("eurostat", "pib-pt-homologo"), m.painel.cartoes.pib, {
       id: "pib-pt-homologo", href: "/dados", formato: "pct1", unidade: "%",
       casas: 1, anot: "min", // o fundo é a história — a recessão de 2020
     }),
-    cartaoPais(loadFonte("eurostat", "confianca-pt"), rotPais.confianca, {
+    slotPais(loadFonte("eurostat", "confianca-pt"), rotPais.confianca, {
       id: "confianca-pt", href: "/dados", formato: "pp", unidade: "p.p.",
       casas: 1, anot: "min", // o pessimismo extremo é o dado
     }),
-    cartaoPais(loadFonte("eurostat", "elec-pt-domestico"), rotPais.eletricidade, {
+    slotPais(loadFonte("eurostat", "elec-pt-domestico"), rotPais.eletricidade, {
       id: "elec-pt-domestico", href: "/precos", formato: "kwh",
       unidade: "€/kWh", casas: 4, anot: "max",
       insight: (v, med) =>
@@ -165,15 +201,15 @@ export default function DadosPage() {
             })
           : `${comUnidade(fmtNum(v, 4), "€/kWh")}`,
     }),
-    cartaoPais(loadFonte("eurostat", "lci-pt-homologo"), rotPais.custoTrabalho, {
+    slotPais(loadFonte("eurostat", "lci-pt-homologo"), rotPais.custoTrabalho, {
       id: "lci-pt-homologo", href: "/trabalho", formato: "pct1", unidade: "%",
       casas: 1, anot: "max",
     }),
-    cartaoPais(loadFonte("eurostat", "une-pt-jovem"), rotPais.jovem, {
+    slotPais(loadFonte("eurostat", "une-pt-jovem"), rotPais.jovem, {
       id: "une-pt-jovem", href: "/trabalho", formato: "pct1", unidade: "%",
       casas: 1, anot: "max",
     }),
-    cartaoPais(loadDerivado<Derivado>("desemprego-gap"), rotPais.gap, {
+    slotPais(loadDerivado<Derivado>("desemprego-gap"), rotPais.gap, {
       id: "desemprego-gap", href: "/trabalho", formato: "pp", unidade: "p.p.",
       casas: 1, anot: "max", semSla: true,
       referencia: { valor: 0, rotulo: m.leitura.ue27 },
@@ -183,7 +219,7 @@ export default function DadosPage() {
           direcao: v >= 0 ? m.painel.acima : m.painel.abaixo,
         }),
     }),
-    cartaoPais(loadDerivado<Derivado>("casa-em-salarios"), rotPais.casaTrabalho, {
+    slotPais(loadDerivado<Derivado>("casa-em-salarios"), rotPais.casaTrabalho, {
       id: "casa-em-salarios", href: "/casa", formato: "num",
       unidade: "índice 2015=100", casas: 1, anot: "max", semSla: true,
       rotuloFmt: (v) => fmtNum(v, 1),
@@ -193,7 +229,7 @@ export default function DadosPage() {
           direcao: v >= 100 ? m.painel.acima : m.painel.abaixo,
         }),
     }),
-  ].filter((cartao): cartao is Cartao => cartao !== null);
+  ];
 
   const [qAtual, qProx] = usura.trimestres;
   const hoje = new Date().toISOString().slice(0, 10);
@@ -271,15 +307,15 @@ export default function DadosPage() {
               ultimo(euribor["3M"]) ? `${comUnidade(fmtNum(ultimo(euribor["3M"])!.v, 2), "%")}` : "—"
             }
             meta={
-              <>
-                {ultimo(euribor["3M"]) ? fmtData(ultimo(euribor["3M"])!.t) : ""}
-                {euribor["3M"] && (
-                  <>
-                    {" · "}
-                    <Delta value={variacao(euribor["3M"], 1)} casas={2} /> no mês
-                  </>
-                )}
-              </>
+              ultimo(euribor["3M"]) ? (
+                <>
+                  {fmtData(ultimo(euribor["3M"])!.t)}
+                  {" · "}
+                  <Delta value={variacao(euribor["3M"]!, 1)} casas={2} /> no mês
+                </>
+              ) : (
+                "série não recolhida"
+              )
             }
           />
           <Celula
@@ -291,15 +327,15 @@ export default function DadosPage() {
               ultimo(euribor["12M"]) ? `${comUnidade(fmtNum(ultimo(euribor["12M"])!.v, 2), "%")}` : "—"
             }
             meta={
-              <>
-                {ultimo(euribor["12M"]) ? fmtData(ultimo(euribor["12M"])!.t) : ""}
-                {euribor["12M"] && (
-                  <>
-                    {" · "}
-                    <Delta value={variacao(euribor["12M"], 1)} casas={2} /> no mês
-                  </>
-                )}
-              </>
+              ultimo(euribor["12M"]) ? (
+                <>
+                  {fmtData(ultimo(euribor["12M"])!.t)}
+                  {" · "}
+                  <Delta value={variacao(euribor["12M"]!, 1)} casas={2} /> no mês
+                </>
+              ) : (
+                "série não recolhida"
+              )
             }
           />
           <Celula
@@ -314,7 +350,7 @@ export default function DadosPage() {
                     (vigente.taegMaxima as Record<string, number>)["pessoal-outros"],
                     1
                   ), "%")} · ${fmtData(ultimo(taeg)!.t)}`
-                : "—"
+                : "série não recolhida"
             }
           />
           <Celula
@@ -360,14 +396,24 @@ export default function DadosPage() {
         <section className="stack-sec" aria-label="Leituras do país">
           <p className="kicker">O país, em leituras</p>
           <div className="mt-3 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {leituras.map((cartao, i) => (
-              <Leitura
-                key={cartao.titulo}
-                {...cartao}
-                rotulos={rotulos}
-                entrada={i}
-              />
-            ))}
+            {leituras.map((slot, i) =>
+              slot.tipo === "vazio" ? (
+                <EstadoVazio
+                  key={slot.id}
+                  titulo={slot.titulo}
+                  falha={m.estados.serieFalhou}
+                  desde={slot.desde}
+                  fonte={slot.fonte}
+                />
+              ) : (
+                <Leitura
+                  key={slot.cartao.titulo}
+                  {...slot.cartao}
+                  rotulos={rotulos}
+                  entrada={i}
+                />
+              )
+            )}
           </div>
         </section>
       )}
@@ -428,9 +474,15 @@ export default function DadosPage() {
             </div>
           </>
         ) : (
-          <p className="footnote border border-line bg-panel px-5 py-10 text-center">
-            — indisponível: corre <code className="num">npm run ingest:daily</code>
-          </p>
+          <EstadoVazio
+            compacto
+            titulo="as séries da Euribor"
+            falha={m.estados.serieFalhou}
+            fonte={{
+              nome: "Banco de Portugal — BPstat",
+              url: "https://bpstat.bportugal.pt",
+            }}
+          />
         )}
       </Figure>
 
@@ -590,9 +642,12 @@ export default function DadosPage() {
             </div>
           </div>
         ) : (
-          <p className="footnote border border-line bg-panel px-5 py-10 text-center">
-            — indisponível: corre <code className="num">npm run derive</code>
-          </p>
+          <EstadoVazio
+            compacto
+            titulo="a taxa base dos Certificados de Aforro"
+            falha={m.estados.serieFalhou}
+            fonte={{ nome: "IGCP", url: "https://www.igcp.pt" }}
+          />
         )}
       </Figure>
 

@@ -93,6 +93,14 @@ export function Cascata({ passos }: { passos: Passo[] }) {
             >
               <span className={`text-rotulo md:text-corpo-sm ${l.tipo === "total" ? "font-medium" : "text-ink2"}`}>
                 {l.label}
+                {/* zero como informação (1B-05): a nota junto do
+                    rótulo diz porque é que o corte é zero — ex.:
+                    «não te toca» no IRS ao salário mínimo */}
+                {l.tipo === "corte" && l.valor === 0 && l.nota && (
+                  <span className="block text-micro font-normal text-ink2">
+                    — {l.nota}
+                  </span>
+                )}
               </span>
               <div className="flex h-6 md:h-7">
                 {l.tipo === "corte" ? (
@@ -127,7 +135,8 @@ export function Cascata({ passos }: { passos: Passo[] }) {
                 )}
               </div>
               <span className={`num text-right text-rotulo md:text-corpo-sm ${l.tipo === "corte" ? "text-up" : l.tipo === "total" ? "font-medium" : "text-ink2"}`}>
-                {l.tipo === "corte" ? "−" : ""}
+                {/* o menos é do corte — zero não é corte, não o leva */}
+                {l.tipo === "corte" && l.valor !== 0 ? "−" : ""}
                 {fmtEUR(Math.abs(l.valor))}
               </span>
             </div>

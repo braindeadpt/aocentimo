@@ -24,6 +24,7 @@ import {
   type CamadaIsometrica,
 } from "@/components/Isometrico";
 import { TweenNum } from "@/components/TweenNum";
+import { ZeroInformativo } from "@/components/ZeroInformativo";
 import { useArmado } from "@/lib/useArmado";
 import { useValorAnimado } from "@/lib/useValorAnimado";
 import { fmtEUR0, fmtPct } from "@/lib/format";
@@ -63,6 +64,9 @@ export interface RotulosCusto {
   chegaConta: string;
   /** linha pequena por baixo do número — «por mês» */
   porMes: string;
+  /** a nota do zero informativo num corte a 0 — «não te toca»
+      (o IRS ao salário mínimo) */
+  zero: string;
   /** rodapé — fontes completas numa linha */
   fontes: string;
   pecas: {
@@ -123,15 +127,23 @@ export function CustoExplodido({
     id: string,
     rotulo: string,
     detalhe: string,
-    v: number
+    v: number,
+    /** a nota do zero informativo — quando o corte é 0 a placa e a
+        lista dizem porquê («não te toca») em vez de «−0 €» */
+    notaZero?: string
   ): CamadaIsometrica => ({
     id,
     forma: "placa",
     rotulo,
     detalhe,
     tom: "corte",
-    texto: <ValorSvg v={v} sinal="−" />,
-    textoLista: <ValorCorte v={v} />,
+    texto: <ValorSvg v={v} sinal={v === 0 ? "" : "−"} />,
+    textoLista:
+      v === 0 && notaZero ? (
+        <ZeroInformativo valor="0" unidade="€" nota={notaZero} />
+      ) : (
+        <ValorCorte v={v} />
+      ),
   });
 
   const camadas: CamadaIsometrica[] = [
@@ -151,7 +163,8 @@ export function CustoExplodido({
       "irs",
       R.irs.rotulo,
       t(R.irs.detalhe, { taxa: fmtPct(taxaIrs) }),
-      irs
+      irs,
+      rotulos.zero
     ),
     corte("ss", R.ss.rotulo, t(R.ss.detalhe, { taxa: fmtPct(taxaSs, 0) }), ss),
     {

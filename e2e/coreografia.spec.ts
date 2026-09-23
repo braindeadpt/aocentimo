@@ -160,7 +160,9 @@ test("o canvas do CampoCentimos pára fora do ecrã e com o separador escondido"
   // scroll para o elemento e estragava o teste «fora do ecrã»
   const amostra = () =>
     page.evaluate(() => {
-      const c = document.querySelector("#campo-centimos canvas");
+      const c = document.querySelector<HTMLCanvasElement>(
+        "#campo-centimos canvas"
+      );
       if (!c) return -1;
       const d = c
         .getContext("2d")!

@@ -8,6 +8,7 @@ import {
 } from "@/components/EuroExplodido";
 import { Kinetic } from "@/components/Kinetic";
 import { Leitura } from "@/components/Leitura";
+import { EstadoVazio } from "@/components/EstadoVazio";
 import { loadFonte, loadPainel } from "@/lib/data";
 import {
   anotacaoDe,
@@ -200,6 +201,56 @@ export default function Home() {
       : null,
   ];
 
+  // o lugar do cartão nunca desaparece: fonte em falta = EstadoVazio
+  // no slot — o que falhou, o último dado conhecido e a fonte oficial
+  const vazios = [
+    {
+      id: "euribor-12m-mensal",
+      titulo: c.euribor.titulo,
+      desde: eurFonte?.meta.serieAte ?? eur?.rotuloAte ?? eur?.t,
+      fonte: {
+        nome: eurFonte?.meta.fonte ?? "Banco de Portugal — BPstat",
+        url: eurFonte?.meta.url ?? "https://bpstat.bportugal.pt",
+      },
+    },
+    {
+      id: "une-pt-total",
+      titulo: c.desemprego.titulo,
+      desde: unePt?.meta.serieAte ?? une?.rotuloAte ?? une?.t,
+      fonte: {
+        nome: unePt?.meta.fonte ?? "Eurostat",
+        url: unePt?.meta.url ?? "https://ec.europa.eu/eurostat",
+      },
+    },
+    {
+      id: "hpi-pt",
+      titulo: c.habitacao.titulo,
+      desde: hpiFonte?.meta.serieAte ?? hpi?.rotuloAte ?? hpi?.t,
+      fonte: {
+        nome: hpiFonte?.meta.fonte ?? "Eurostat",
+        url: hpiFonte?.meta.url ?? "https://ec.europa.eu/eurostat",
+      },
+    },
+    {
+      id: "pmd-gasoleo-diario",
+      titulo: c.gasoleo.titulo,
+      desde: gasFonte?.meta.serieAte ?? gas?.rotuloAte ?? gas?.t,
+      fonte: {
+        nome: gasFonte?.meta.fonte ?? "DGEG",
+        url: gasFonte?.meta.url ?? "https://www.dgeg.gov.pt",
+      },
+    },
+    {
+      id: "pib-pt-homologo",
+      titulo: c.pib.titulo,
+      desde: pibFonte?.meta.serieAte ?? pib?.rotuloAte ?? pib?.t,
+      fonte: {
+        nome: pibFonte?.meta.fonte ?? "Eurostat",
+        url: pibFonte?.meta.url ?? "https://ec.europa.eu/eurostat",
+      },
+    },
+  ];
+
   // Fronteira servidor/cliente: o cenário canónico corre UMA vez aqui
   // — cenarioCanonico puxa os motores e os JSON de data/fiscal que
   // assim nunca entram no bundle do browser. Adivinha recebe a
@@ -346,22 +397,52 @@ export default function Home() {
             </p>
           )}
         </div>
-        {hero && (
+        {hero ? (
           <div className="mt-5">
             <Leitura {...hero} rotulos={rotulos} />
           </div>
+        ) : (
+          <div className="mt-5">
+            <EstadoVazio
+              titulo={c.inflacao.titulo}
+              falha={m.estados.serieFalhou}
+              desde={
+                hicp?.meta.serieAte
+                  ? fmtPeriodo(hicp.meta.serieAte)
+                  : infl?.rotuloAte
+                    ? fmtPeriodo(infl.rotuloAte)
+                    : infl?.t
+                      ? fmtPeriodo(infl.t)
+                      : undefined
+              }
+              fonte={{
+                nome: hicp?.meta.fonte ?? "Eurostat",
+                url: hicp?.meta.url ?? "https://ec.europa.eu/eurostat",
+              }}
+            />
+          </div>
         )}
         <div className="mt-5 grid gap-5 lg:grid-cols-2">
-          {cartoes
-            .filter((cartao): cartao is Cartao => cartao !== null)
-            .map((cartao, i) => (
+          {cartoes.map((cartao, i) =>
+            cartao ? (
               <Leitura
                 key={cartao.titulo}
                 {...cartao}
                 rotulos={rotulos}
                 entrada={i}
               />
-            ))}
+            ) : (
+              <EstadoVazio
+                key={vazios[i].id}
+                titulo={vazios[i].titulo}
+                falha={m.estados.serieFalhou}
+                desde={
+                  vazios[i].desde ? fmtPeriodo(vazios[i].desde) : undefined
+                }
+                fonte={vazios[i].fonte}
+              />
+            )
+          )}
         </div>
       </section>
 

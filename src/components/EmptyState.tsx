@@ -1,26 +1,25 @@
+import { EstadoVazio } from "@/components/EstadoVazio";
+
 /**
- * Estado de falha de dados — a regra nº1 feita componente.
- * Quando uma fonte falha ou ainda não foi recolhida, mostramos a falha
- * com contexto — nunca um número inventado, nunca um espaço em branco.
+ * EmptyState — a falha onde um gráfico devia estar. Delega no
+ * EstadoVazio partilhado (1B-05): a falha tem desenho, orbe e
+ * frase honesta — nunca um número inventado. API mínima para os
+ * pontos internos (LineChart) que só sabem o nome da série.
  */
 export function EmptyState({
   titulo = "Dados indisponíveis",
-  detalhe = "A fonte ainda não foi recolhida ou falhou a atualização. Não mostramos valores inventados.",
-  className = "",
+  detalhe,
 }: {
   titulo?: string;
   detalhe?: string;
-  className?: string;
 }) {
   return (
-    <div
-      role="status"
-      className={`flex min-h-24 flex-col items-center justify-center gap-1 border border-dashed border-line2 px-4 py-6 text-center ${className}`}
-    >
-      <p className="kicker text-warn">
-        {titulo}
-      </p>
-      <p className="footnote max-w-sm">{detalhe}</p>
-    </div>
+    <EstadoVazio
+      titulo={titulo}
+      falha={
+        detalhe ?? "a fonte ainda não foi recolhida ou falhou a atualização"
+      }
+      compacto
+    />
   );
 }

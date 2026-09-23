@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Leitura } from "@/components/Leitura";
+import { EstadoVazio } from "@/components/EstadoVazio";
 import { Source } from "@/components/Source";
 import { SimuladorDesemprego } from "./SimuladorDesemprego";
 import { SimuladorIndependente } from "./SimuladorIndependente";
@@ -82,9 +83,30 @@ export default function TrabalhoPage() {
         contado.
       </p>
 
-      {cartao && (
+      {cartao ? (
         <div className="mt-8">
           <Leitura {...cartao} rotulos={rotulos} />
+        </div>
+      ) : (
+        // a falha mostra-se no lugar do instrumento — nunca um buraco
+        <div className="mt-8">
+          <EstadoVazio
+            titulo="a série do desemprego em Portugal"
+            falha={
+              !ultUe && unePt
+                ? "a referência UE 27 não chegou — sem ela não há comparação"
+                : m.estados.serieFalhou
+            }
+            desde={
+              unePt?.meta.serieAte
+                ? fmtPeriodo(unePt.meta.serieAte)
+                : undefined
+            }
+            fonte={{
+              nome: unePt?.meta.fonte ?? "Eurostat",
+              url: unePt?.meta.url ?? "https://ec.europa.eu/eurostat",
+            }}
+          />
         </div>
       )}
 
