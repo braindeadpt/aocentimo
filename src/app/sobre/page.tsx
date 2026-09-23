@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "Sobre",
@@ -15,9 +16,7 @@ export default function SobrePage() {
   return (
     <div className="mx-auto max-w-2xl px-5 pt-14 pb-10">
       <p className="kicker">Sobre</p>
-      <h1 className="titulo-pagina">
-        Porque existe o AO CÊNTIMO
-      </h1>
+      <TituloPagina rota="/sobre">Porque existe o AO CÊNTIMO</TituloPagina>
       <div className="body-copy mt-8 space-y-5">
         <p>
           Em Portugal fala-se de dinheiro todos os dias — escalões, Euribor,

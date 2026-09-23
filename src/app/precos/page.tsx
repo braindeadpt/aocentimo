@@ -16,6 +16,7 @@ import { m, t } from "@/lib/messages";
 import isp from "@data/fiscal/isp.json";
 import iva from "@data/fiscal/iva.json";
 import { JsonLd, webApplication } from "@/lib/jsonld";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "Preços — combustíveis dia a dia",
@@ -92,9 +93,7 @@ export default function PrecosPage() {
         )}
       />
       <p className="kicker">Preços oficiais, quase diários</p>
-      <h1 className="titulo-pagina">
-        Quanto custa o litro hoje?
-      </h1>
+      <TituloPagina rota="/precos">Quanto custa o litro hoje?</TituloPagina>
       <p className="lede mt-5">
         A gasolina e o gasóleo são os únicos bens essenciais em Portugal com
         preços oficiais publicados quase diariamente — pela DGEG. É aqui que a
@@ -106,8 +105,13 @@ export default function PrecosPage() {
           PMD e a variação do mês em cêntimos como insight */}
       {cartoes.length > 0 ? (
         <div className="mt-8 grid gap-5 md:grid-cols-3">
-          {cartoes.map((cartao) => (
-            <Leitura key={cartao.titulo} {...cartao} rotulos={rotulos} />
+          {cartoes.map((cartao, i) => (
+            <Leitura
+              key={cartao.titulo}
+              {...cartao}
+              rotulos={rotulos}
+              entrada={i}
+            />
           ))}
         </div>
       ) : (

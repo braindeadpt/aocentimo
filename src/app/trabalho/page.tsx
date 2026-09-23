@@ -18,6 +18,7 @@ import {
 } from "@/lib/leitura";
 import { m, t } from "@/lib/messages";
 import { JsonLd, webApplication } from "@/lib/jsonld";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "Subsídio de desemprego — quanto e por quanto tempo",
@@ -73,9 +74,7 @@ export default function TrabalhoPage() {
         )}
       />
       <p className="kicker">Proteção no desemprego</p>
-      <h1 className="titulo-pagina">
-        Se ficares sem trabalho
-      </h1>
+      <TituloPagina rota="/trabalho">Se ficares sem trabalho</TituloPagina>
       <p className="lede mt-5">
         Os 11 % que descontas todos os meses pagam isto: se perderes o emprego
         de forma involuntária, a Segurança Social devolve-te uma parte — 65 %

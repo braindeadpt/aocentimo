@@ -19,6 +19,7 @@ import {
 import { m } from "@/lib/messages";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 import eventos from "@data/fiscal/eventos.json";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "Crédito — Euribor, spread e prestação",
@@ -84,9 +85,7 @@ export default function CreditoPage() {
           "Simulador de prestação de crédito habitação em Portugal: Euribor, spread, TAN e custo total do empréstimo."
         )}
       />
-      <h1 className="titulo-pagina">
-        O que a tua prestação esconde
-      </h1>
+      <TituloPagina rota="/credito">O que a tua prestação esconde</TituloPagina>
       <p className="lede mt-5">
         A Euribor é a taxa a que os bancos europeus se emprestam dinheiro entre
         si — e é o chão sobre o qual o teu banco constrói a tua prestação. A

@@ -20,6 +20,7 @@ import {
   type Cartao,
 } from "@/lib/leitura";
 import { m } from "@/lib/messages";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "Inflação — quanto subiu o que compras",
@@ -164,9 +165,7 @@ export default function InflacaoPage() {
         />
       )}
       <p className="kicker">Preços no consumidor</p>
-      <h1 className="titulo-pagina">
-        Quanto subiu o que compras
-      </h1>
+      <TituloPagina rota="/inflacao">Quanto subiu o que compras</TituloPagina>
       <p className="lede mt-5">
         O índice de preços no consumidor é a medida oficial da inflação. Não é
         o preço de um produto numa loja — é a média ponderada de um cabaz
@@ -181,11 +180,12 @@ export default function InflacaoPage() {
           <Leitura {...hero} rotulos={rotulos} />
           {cartoesDiv.length > 0 && (
             <div className="mt-5 grid gap-5 md:grid-cols-3">
-              {cartoesDiv.map((cartao) => (
+              {cartoesDiv.map((cartao, i) => (
                 <Leitura
                   key={cartao.titulo}
                   {...cartao}
                   rotulos={rotulos}
+                  entrada={i}
                 />
               ))}
             </div>

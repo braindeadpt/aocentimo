@@ -13,6 +13,7 @@ import irsJovem from "@data/fiscal/irs-jovem.json";
 import cenariosJson from "@data/derived/cenarios-salario.json";
 import type { CenariosSalario } from "@/lib/cenarios";
 import { JsonLd, webApplication } from "@/lib/jsonld";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "Do bruto ao líquido — salário e IRS",
@@ -33,9 +34,7 @@ export default function SalarioPage() {
           "Do salário bruto ao líquido em Portugal: Segurança Social, retenção de IRS, deduções e o custo total para a empresa."
         )}
       />
-      <h1 className="titulo-pagina">
-        Quanto vais receber mesmo?
-      </h1>
+      <TituloPagina rota="/salario">Quanto vais receber mesmo?</TituloPagina>
       <p className="lede mt-5">
         Entre o que a empresa paga e o que tu recebes há três cortes: a tua
         Segurança Social ({fmtPct(ss.trabalhador.taxa, 0)}), o IRS — que depende

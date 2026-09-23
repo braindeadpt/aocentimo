@@ -35,6 +35,7 @@ import eur1m from "@data/sources/bpstat/euribor-1m-mensal.json";
 import eur3m from "@data/sources/bpstat/euribor-3m-mensal.json";
 import eur6m from "@data/sources/bpstat/euribor-6m-mensal.json";
 import eur12m from "@data/sources/bpstat/euribor-12m-mensal.json";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "Sistema de design",
@@ -188,9 +189,7 @@ export default function EstiloPage() {
   return (
     <div className="mx-auto max-w-6xl px-5 pt-14 pb-10">
       <p className="kicker">Referência viva</p>
-      <h1 className="titulo-pagina">
-        Sistema de design
-      </h1>
+      <TituloPagina rota="/estilo">Sistema de design</TituloPagina>
       <p className="lede mt-5">
         Direcção «Observatório»: um painel de instrumentos sobre o dinheiro.
         Archivo expandido para manchetes, Space Grotesk para a interface,

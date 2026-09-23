@@ -4,6 +4,7 @@ import { ALT_FEED } from "@/lib/meta";
 import { loadFontes, loadFreshness } from "@/lib/data";
 import { comUnidade, fmtData } from "@/lib/format";
 import { OrbeEstado, type EstadoOrbe } from "@/components/OrbeEstado";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "Metodologia e fontes",
@@ -120,9 +121,7 @@ export default function MetodologiaPage() {
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
       <p className="kicker">Transparência</p>
-      <h1 className="titulo-pagina">
-        Metodologia e fontes
-      </h1>
+      <TituloPagina rota="/metodologia">Metodologia e fontes</TituloPagina>
       <p className="lede mt-5">
         Nenhum número neste site é inventado. Cada dado tem fonte oficial,
         data da série e data de recolha — e quando uma fonte falha, mostramos

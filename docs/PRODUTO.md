@@ -534,6 +534,104 @@ primeiro paint, e nunca fica ilegível durante a transição.
 animada grava vídeo com `scripts/_video.mjs` e revêem-se os fotogramas
 antes do commit (regra V3, permanente).
 
+### Coreografia — inventário, assinatura e ritmo (1B-04)
+
+**A transição-assinatura — «a pergunta voa».** O cartão «a pergunta
+seguinte» do `<Pagina>` morfa no `h1` da página de destino: o texto
+sai do cartão e assenta como título — a pergunta é literalmente a
+mesma peça a atravessar a navegação. Implementado em
+`src/components/Voo.tsx` (`LinkVoo` + `TituloPagina` + `VooLimpeza`):
+
+- O clique simples no `LinkVoo` sela a rota alvo num marcador de
+  módulo e dá `view-transition-name: pg-voo` ao próprio link —
+  capturado no fotograma **velho**. Cliques modificados (novo
+  separador, ctrl…) não selam.
+- O `TituloPagina` (o `h1` de todas as páginas de conteúdo) lê o
+  marcador na montagem — dentro da transição do layout: se a rota
+  bate, o `h1` leva o mesmo nome — capturado no fotograma **novo**.
+  O browser emparelha velho↔novo e morfa.
+- O `VooLimpeza` (layout) apaga o marcador depois do commit — as
+  navegações seguintes ficam limpas; uma salvaguarda de 4 s cobre
+  navegações falhadas.
+- **Nome único por fotograma** — por isso os nomes são inline e não
+  regras CSS: a página velha só tem um `pg-voo` (o link) e a nova só
+  tem um (o `h1`). `--dur-media` + `--ease-entra`: é uma
+  transformação explicada, não um toque.
+- **Fallback:** sem View Transitions a navegação é normal; em
+  reduced-motion o corte global anula as animações dos pseudo-
+  elementos — o conteúdo chega na mesma.
+- Decisão registada: `<Link transitionTypes>` + `share` por tipo foi
+  a primeira via — nesta versão (Next 16.3.5 / React 19.3) o tipo só
+  se regista se já houver lanes de transition pendentes no root; com
+  a página idle é descartado e o morph fica dependente de prefetch
+  em voo. O marcador é determinístico — existe exactamente entre o
+  clique e o commit. Coberto por `e2e/coreografia.spec.ts` (positivo
+  e negativo: a nav para a mesma rota não dispara o voo).
+
+**A entrada de grupo — um escalonamento, primitivas e não blocos.**
+Abaixo da dobra, os grupos de cartões entram em sequência com a
+convenção `--ei × --stagger`: cada cartão/filho recebe `--ei` (o seu
+índice na grelha) e os seus atrasos derivam-se de
+`calc(var(--ei) * var(--stagger))`. O que entra é a **primitiva
+visual**, nunca um fade do bloco inteiro — a linha desenha-se, a
+barra cresce, os pontos assentam, o número conta, a etiqueta entra
+por último quando serve. Aplicado em `Cartao` (prop `entrada`),
+`Leitura` (prop `entrada` → `--ei`), nas grelhas da home, `/precos`,
+`/dados` e `/inflacao`, nas células-instrumento de `/dados` e nos
+delays de `EuroBar`/`Cascata`. Acima da dobra continua a regra M-02:
+o valor final está no HTML, nada entra animado ao carregar.
+
+**A pausa ambiente — nenhum fotograma fora da vista.** Animação
+contínua só corre onde se vê e com o separador activo:
+
+- `PausaAmbiente` (wrapper no `Ticker`): IntersectionObserver +
+  `visibilitychange` → `.amb-off` congela `animation-play-state` de
+  tudo o que vive dentro;
+- `OrbeEstado`: o mesmo par de gatilhos → `.orbe-pausado`;
+- `CampoCentimos` (canvas): o `CampoTela` corta o rAF fora do ecrã e
+  com `document.hidden` — o motor pede frame a frame, sem frames não
+  há desenho.
+- Em `prefers-reduced-motion` nada disto corre — o estado final é
+  imediato.
+
+**Inventário** — cada peça animada, o que faz, quando corre:
+
+| Peça · contexto | Acção | Gatilho | Tempo · curva | Pausa / RM | Dobra |
+|---|---|---|---|---|---|
+| Cross-fade de página (root) — todas | transição de vista | navegação SPA | `--dur-curta` · `entra` | RM corta | — |
+| Indicador da nav (`nav-ind`) — header | morph partilhado | mudança de item activo | `--dur-curta` · `entra` | RM corta | acima |
+| `Ticker` — faixa de dados, todas | marquee contínuo | ambiente | loop · `lin` | `amb-off` (IO+hidden), hover/focus; RM corta | acima |
+| Voo da pergunta (`pg-voo`) — `Pagina`→`h1` | morph assinatura | clique no `LinkVoo` | `--dur-media` · `entra`/`sai` | RM corta | abaixo→acima |
+| `nav-sheet` — nav mobile | sobe ao abrir | abrir folha | `--dur-curta` · `entra` | RM corta | acima |
+| `Kinetic` — h1 da home | lettering | — | estático ao carregar | RM — | acima |
+| `Leitura` herói — home | spark desenha + número conta | armada (`useArmado`) | `--dur-media` + `--ei×--stagger` | RM estado final | abaixo |
+| `Adivinha` — home | revelação do palpite | interacção | `--dur-media` | RM estado final | abaixo |
+| `EuroExplodido` — home | partes convergem ao 1 € | armada | `--dur-media` + stagger | RM estado final | abaixo |
+| `NumHero` — `/salario` `/irs` `/impostos` `/poupanca` `/credito` `/casa` `/trabalho` | número interpola | input/estado | `--dur-curta` | RM valor final | acima |
+| `CustoExplodido` — `/salario` | stack empresa↔trabalhador | armada + input | `--dur-curta`/media | RM estado final | abaixo |
+| `Cascata` — `/salario` `/trabalho` | degraus SS→IRS crescem | armada | `--ei×--stagger` | RM estado final | abaixo |
+| `TweenNum` — `/salario` `/credito` | leituras interpolam | estado | `--dur-curta` | RM valor final | ambas |
+| Talão `/salario`, `TalaoCompras` `/impostos`, `CadernetaAforro` `/poupanca` | papel assenta/entra | armada | `--dur-media` | RM estado final | abaixo |
+| `DecomposicaoFuel` — `/impostos` | fatias do litro | armada + input | `--dur-media` | RM estado final | abaixo |
+| `SimuladorIrsJovem` `/irs`, `ComparadorPoupanca` `/poupanca`, `SimuladorDesemprego` `/trabalho` | instrumentos de estado | armada + input | `--dur-curta` | RM estado final | abaixo |
+| `JuroCapital` — `/credito` `/casa` | juro↔capital cresce | armada + input | `--dur-media` | RM estado final | abaixo |
+| `LineChart` — `/credito` `/dados` | série desenha-se | armada (IO) | `--dur-media` | RM estado final | abaixo |
+| `EuroBar` — `/casa` `/precos` `/estilo` | segmentos crescem | armada | `--ei×--stagger` | RM estado final | abaixo |
+| `Leitura` ×N — home `/precos` `/dados` `/inflacao` `/casa` `/credito` `/poupanca` `/trabalho` | spark+odómetro por cartão, em sequência | armada | `--ei×--stagger` | RM estado final | abaixo |
+| Células-instrumento — `/dados` | valores/mini-gráficos | armada | `--ei×--stagger` | RM estado final | abaixo |
+| `Delta` — `/dados` `/inflacao` `/estilo` | ▲/▼ + cor | estado | `--dur-micro` | — | ambas |
+| `OrbeEstado` — selo de estado | anel roda (a-recolher) | ambiente | loop · `lin` | `orbe-pausado` (IO+hidden); RM parado | ambas |
+| `CampoCentimos` — `/estilo` (canvas) | moeda oscila; revelação moeda→pontos→montes | ambiente + interacção | rAF · coreografia `COREO` | rAF corta (IO+hidden); RM 1 frame | abaixo |
+| `AnelPontos` `BarraTracos` `Haltere` `Isometrico` — `/estilo` | demos de gramática | armada | `--dur-media` | RM estado final | abaixo |
+| `MicroDemo` — `/aprender` `…/[slug]` | mini-instrumento do termo | interacção | `--dur-curta` | RM estado final | abaixo |
+| `MotionDemo` — `/estilo` | showcase de curvas | interacção | todos | RM estado final | abaixo |
+| `Icone` — acções/estado | traço desenha-se | foco/passo | `--dur-micro` | RM corta | ambas |
+| `useValorAnimado`→`Odometer`/`TweenNum` — transversal | dígitos rodam / número desliza | mudança de valor | `--dur-curta` | RM valor final | ambas |
+
+O motor lazy de motion (GSAP via `carregarGsap()`) continua
+intocável — a coreografia vive em CSS, rAF próprio e React; nenhuma
+peça nova pede o chunk.
+
 ### Matéria — papel determinista (M-01)
 
 As peças de papel nascem de `src/lib/materia.ts`: rasgo determinista
@@ -667,11 +765,13 @@ rotas e intercepta os pedidos.
 
 ### Orçamento de performance (medido, `_js-por-rota` + `_sweep`)
 
-- JS inicial: piso ~460 KB — o chunk partilhado (459 KB na rota mais
+- JS inicial: piso ~480 KB — o chunk partilhado (~479 KB na rota mais
   leve) é ~100 % framework (react-dom 196 KB + flight/router/
-  segment-cache); código nosso no shared ≈ 4 KB (SiteNav). Rotas:
-  **459–569 KB**. O alvo 450 KB é impossível neste stack — o que
-  controlámos (`pt.json`, `data/*.json`, instrumentos) já saiu.
+  segment-cache); código nosso no shared é residual (SiteNav + os
+  clientes do layout: `PausaAmbiente`, `VooLimpeza` — 1B-04). Rotas:
+  **479–583 KB inicial, 546–620 KB total** (medido 1B-04). O alvo
+  450 KB é impossível neste stack — o que controlámos (`pt.json`,
+  `data/*.json`, instrumentos) já saiu.
   O `CampoCentimos` e o motor de pontos têm tecto próprio de ~15 KB
   gzip por rota (orçamento V4, medido com `_js-por-rota`).
 - LCP medido no sweep local: ~0,5–1,6 s; CLS ≤ 0,09; AA 0 falhas nos

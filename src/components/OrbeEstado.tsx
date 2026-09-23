@@ -135,15 +135,24 @@ export function OrbeEstado({
 }) {
   const ref = useRef<SVGSVGElement>(null);
 
-  // a rotação de «a-recolher» pára fora do ecrã
+  // a rotação de «a-recolher» pára fora do ecrã e com o separador
+  // escondido — animação ambiente só corre onde se vê (1B-04)
   useEffect(() => {
     const el = ref.current;
     if (!el || estado !== "a-recolher") return;
+    let fora = false;
+    const sync = () =>
+      el.classList.toggle("orbe-pausado", fora || document.hidden);
     const io = new IntersectionObserver(([e]) => {
-      el.classList.toggle("orbe-pausado", !e.isIntersecting);
+      fora = !e.isIntersecting;
+      sync();
     });
     io.observe(el);
-    return () => io.disconnect();
+    document.addEventListener("visibilitychange", sync);
+    return () => {
+      io.disconnect();
+      document.removeEventListener("visibilitychange", sync);
+    };
   }, [estado]);
 
   return (

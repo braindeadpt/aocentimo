@@ -11,6 +11,7 @@ import irs from "@data/fiscal/irs-2026.json";
 import retencao from "@data/fiscal/retencao-2026.json";
 import irsJovem from "@data/fiscal/irs-jovem.json";
 import { JsonLd, webApplication } from "@/lib/jsonld";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "IRS — escalões, retenção e IRS Jovem",
@@ -37,9 +38,7 @@ export default function IrsPage() {
         )}
       />
       <p className="kicker">Imposto sobre o rendimento</p>
-      <h1 className="titulo-pagina">
-        Subir de escalão faz-te perder dinheiro?
-      </h1>
+      <TituloPagina rota="/irs">Subir de escalão faz-te perder dinheiro?</TituloPagina>
       <p className="lede mt-5">
         <strong>Não.</strong> Cada escalão tributa só a fatia de rendimento
         que lá cabe — os euros anteriores continuam na taxa deles. E pagas

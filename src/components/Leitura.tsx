@@ -89,6 +89,10 @@ export interface LeituraProps {
   rotulos: RotulosLeitura;
   /** variante em largura total — o Leitura-herói do painel */
   amplo?: boolean;
+  /** índice do cartão no grupo (0, 1, 2…) — a coreografia de entrada
+      desliza `entrada × --stagger`: cartões que entram juntos na dobra
+      desenham-se em sequência, nunca um bloco de uma vez (1B-04) */
+  entrada?: number;
 }
 
 const FORMATOS: Record<
@@ -131,6 +135,7 @@ export function Leitura({
   hrefJson,
   rotulos,
   amplo = false,
+  entrada,
 }: LeituraProps) {
   const F = FORMATOS[formato];
   const idHach = useId();
@@ -397,6 +402,11 @@ export function Leitura({
       ref={ref}
       amplo={amplo}
       className={arm("leitura-on")}
+      style={
+        entrada === undefined
+          ? undefined
+          : ({ "--ei": entrada } as React.CSSProperties)
+      }
       breadcrumb={breadcrumb}
       meta={[`${rotulos.leitura} ${leitura}`]}
       estado={estado}

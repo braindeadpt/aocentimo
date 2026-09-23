@@ -24,6 +24,7 @@ import capitais from "@data/fiscal/capitais.json";
 import ppr from "@data/fiscal/ppr.json";
 import maisValias from "@data/fiscal/mais-valias.json";
 import { JsonLd, webApplication } from "@/lib/jsonld";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "Poupança — Certificados de Aforro, depósitos e inflação",
@@ -96,9 +97,7 @@ export default function PoupancaPage() {
           "Comparador de poupança em Portugal: Certificados de Aforro, depósitos, PPR e mais-valias — a taxa real, não só a nominal."
         )}
       />
-      <h1 className="titulo-pagina">
-        O que sobra do que poupas
-      </h1>
+      <TituloPagina rota="/poupanca">O que sobra do que poupas</TituloPagina>
       <p className="lede mt-5">
         Um depósito a 1,5 % com inflação a 3 % faz-te perder dinheiro — devagar
         e sem aviso. A taxa que interessa é a <strong>real</strong>: nominal

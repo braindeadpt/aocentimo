@@ -1090,6 +1090,12 @@ h3 {
 .ticker:focus-within .ticker-track {
   animation-play-state: paused;
 }
+/* pausa ambiente (1B-04) — o <PausaAmbiente> marca o embrulho quando
+   a faixa sai do ecrã ou o separador fica escondido: qualquer
+   animação dentro congela — nem um fotograma fora da vista */
+.amb-off * {
+  animation-play-state: paused;
+}
 
 @keyframes ticker-scroll {
   from { transform: translateX(0); }
@@ -1148,8 +1154,10 @@ h3 {
   display: flex;
   flex-direction: column;
   transform: translateY(calc(var(--d) * -1em));
+  /* --delay = escalonamento entre rodas; --ei = índice do cartão no
+     grupo (1B-04) — a contagem entra na coreografia do cartão */
   transition: transform var(--dur, var(--dur-longa)) var(--ease-entra)
-    var(--delay, 0ms);
+    calc(var(--delay, 0ms) + var(--ei, 0) * var(--stagger));
 }
 .od-zero .od-strip {
   transform: translateY(0);
@@ -1239,7 +1247,9 @@ h3 {
 }
 .decl-mes-anim {
   animation: decl-mes-sobe var(--dur-curta) var(--ease-entra) both;
-  animation-delay: calc(var(--linha) * 26ms);
+  animation-delay: calc(
+    var(--linha) * 26ms + var(--ei, 0) * var(--stagger)
+  );
 }
 @keyframes decl-mes-sobe {
   from {
@@ -1372,13 +1382,13 @@ h3 {
 .md-draw {
   transform-origin: left;
   animation: md-desenha-x var(--dur-media) var(--ease-entra) both;
-  animation-delay: calc(var(--i, 0) * 70ms);
+  animation-delay: calc(var(--i, 0) * 70ms + var(--ei, 0) * var(--stagger));
 }
 .md-grow,
 .md-fill-v {
   transform-origin: bottom;
   animation: md-desenha-y var(--dur-media) var(--ease-entra) both;
-  animation-delay: calc(var(--i, 0) * 70ms);
+  animation-delay: calc(var(--i, 0) * 70ms + var(--ei, 0) * var(--stagger));
 }
 @keyframes md-desenha-x {
   from {
@@ -1599,7 +1609,9 @@ h3 {
    sem JS/reduced-motion o recibo nasce impresso */
 .talao-linha {
   animation: talao-imprime var(--dur-curta) var(--ease-entra) both;
-  animation-delay: calc(var(--linha, 0) * var(--stagger));
+  animation-delay: calc(
+    (var(--linha, 0) + var(--ei, 0)) * var(--stagger)
+  );
 }
 @keyframes talao-imprime {
   from {
@@ -1641,7 +1653,9 @@ h3 {
 }
 .talao-carimbo-anim {
   animation: talao-carimbo var(--dur-micro) var(--ease-rasgo) both;
-  animation-delay: calc(var(--linha, 0) * var(--stagger) + 220ms);
+  animation-delay: calc(
+    (var(--linha, 0) + var(--ei, 0)) * var(--stagger) + 220ms
+  );
 }
 @keyframes talao-carimbo {
   from {
@@ -1720,7 +1734,9 @@ h3 {
 }
 .iva-voa-anim {
   animation: iva-voa var(--dur-curta) var(--ease-sai) both;
-  animation-delay: calc(var(--linha, 0) * 35ms);
+  animation-delay: calc(
+    var(--linha, 0) * 35ms + var(--ei, 0) * var(--stagger)
+  );
 }
 @keyframes iva-voa {
   from {
@@ -1748,7 +1764,9 @@ h3 {
 }
 .iva-barra-anim {
   animation: iva-chega var(--dur-curta) var(--ease-entra) both;
-  animation-delay: calc(240ms + var(--linha, 0) * 80ms);
+  animation-delay: calc(
+    240ms + var(--linha, 0) * 80ms + var(--ei, 0) * var(--stagger)
+  );
 }
 @keyframes iva-chega {
   from {
@@ -1767,7 +1785,9 @@ h3 {
   transform-box: fill-box;
   transform-origin: center bottom;
   animation: casca-sobe var(--dur-curta) var(--ease-entra) both;
-  animation-delay: calc(var(--seg, 0) * 80ms);
+  animation-delay: calc(
+    var(--seg, 0) * 80ms + var(--ei, 0) * var(--stagger)
+  );
 }
 @keyframes casca-sobe {
   from {
@@ -1782,7 +1802,7 @@ h3 {
 .casca-brace {
   stroke-dasharray: 1;
   animation: casca-mede var(--dur-media) var(--ease-lin) both;
-  animation-delay: 300ms;
+  animation-delay: calc(300ms + var(--ei, 0) * var(--stagger));
 }
 @keyframes casca-mede {
   from {
@@ -1795,7 +1815,7 @@ h3 {
 .casca-iva {
   transform-box: fill-box;
   animation: casca-iva var(--dur-curta) var(--ease-rasgo) both;
-  animation-delay: 580ms;
+  animation-delay: calc(580ms + var(--ei, 0) * var(--stagger));
 }
 @keyframes casca-iva {
   from {
@@ -1829,7 +1849,9 @@ h3 {
 }
 .acre-anim {
   animation: acre-cresce var(--dur-curta) var(--ease-entra) both;
-  animation-delay: calc(var(--cam, 0) * var(--stagger) + 80ms);
+  animation-delay: calc(
+    (var(--cam, 0) + var(--ei, 0)) * var(--stagger) + 80ms
+  );
 }
 @keyframes acre-cresce {
   from {
@@ -1844,6 +1866,7 @@ h3 {
    o clip só existe dentro da animação */
 .tempo-revela {
   animation: tempo-passar var(--dur-longa) var(--ease-lin) both;
+  animation-delay: calc(var(--ei, 0) * var(--stagger));
 }
 @keyframes tempo-passar {
   from {
@@ -2077,6 +2100,38 @@ h3 {
 ::view-transition-old(nav-ind),
 ::view-transition-new(nav-ind) {
   animation: none;
+}
+/* a transição-assinatura (1B-04): a «pergunta seguinte» morfa no h1 do
+   destino — voa e assenta. O nome pg-voo só existe na janela da
+   navegação-assinatura (o LinkVoo sela a rota e dá o nome ao link; o
+   TituloPagina da página de destino dá o mesmo nome ao h1 quando o
+   selo bate — ver src/components/Voo.tsx): links de rodapé ou da nav
+   para a mesma rota não a disparam. --dur-media porque é uma
+   transformação explicada, não um toque — o texto viaja e assenta. */
+::view-transition-group(pg-voo) {
+  animation-duration: var(--dur-media);
+  animation-timing-function: var(--ease-entra);
+}
+/* o link origem rende-se depressa — o que fica a viajar é a forma;
+   o h1 novo assenta com a curva de entrada */
+::view-transition-old(pg-voo) {
+  animation-name: pg-voo-sai;
+}
+::view-transition-new(pg-voo) {
+  animation-name: pg-voo-chega;
+}
+@keyframes pg-voo-sai {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes pg-voo-chega {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* a folha inferior da nav mobile (S1-07) sobe de baixo ao abrir —
@@ -2325,7 +2380,7 @@ h3 {
 .spark-on .spark-line {
   stroke-dasharray: var(--spark-len);
   animation: spark-draw var(--dur-media) var(--ease-entra)
-    calc(var(--spark-delay, 0) * var(--stagger)) forwards;
+    calc((var(--spark-delay, 0) + var(--ei, 0)) * var(--stagger)) forwards;
 }
 @keyframes spark-draw {
   to {
@@ -2343,7 +2398,10 @@ h3 {
 .spark-on .spark-area {
   opacity: 0.09;
   transition: opacity var(--dur-curta) var(--ease-entra)
-    calc(var(--spark-delay, 0) * var(--stagger) + var(--dur-media));
+    calc(
+      (var(--spark-delay, 0) + var(--ei, 0)) * var(--stagger) +
+      var(--dur-media)
+    );
 }
 
 /* linechart — a série desenha-se UMA vez ao entrar no viewport,
@@ -2356,7 +2414,7 @@ h3 {
 }
 .lc-on .lc-line {
   animation: spark-draw var(--dur-longa) var(--ease-entra)
-    calc(var(--lc-delay, 0) * var(--stagger)) forwards;
+    calc((var(--lc-delay, 0) + var(--ei, 0)) * var(--stagger)) forwards;
 }
 /* depois de desenhada a linha é um traço normal — sem restos de dash */
 .lc-done .lc-line {
@@ -2368,7 +2426,10 @@ h3 {
 }
 .lc-on .lc-banda {
   transition: opacity var(--dur-curta) var(--ease-entra)
-    calc(var(--lc-delay, 0) * var(--stagger) + var(--dur-media));
+    calc(
+      (var(--lc-delay, 0) + var(--ei, 0)) * var(--stagger) +
+      var(--dur-media)
+    );
 }
 /* eventos — o carimbo do observatório: tracejado fino, quadrado
    torrado no topo (o mesmo marcador de evidência do Spark) */
@@ -2614,33 +2675,39 @@ h3 {
 /* ————— desenho de entrada — só com .leitura-on (useArmado ao entrar
    no viewport). O estado base é sempre o final: sem JS, acima da
    dobra ou com reduced-motion nasce tudo impresso. ————— */
+/* --ei (1B-04) é o índice do cartão no grupo — toda a coreografia de
+   entrada desliza var(--ei) × --stagger: cartão 2 desenha-se depois do
+   cartão 1, nunca um bloco a esbater-se de uma vez */
 .leitura-on .lq-line,
 .leitura-on .lq-ref {
   stroke-dasharray: 1;
   stroke-dashoffset: 0;
   animation: lq-draw var(--dur-longa) var(--ease-entra) both;
+  animation-delay: calc(var(--ei, 0) * var(--stagger));
 }
 .leitura-on .lq-ref {
-  animation-delay: var(--stagger);
+  animation-delay: calc((1 + var(--ei, 0)) * var(--stagger));
 }
 /* a mediana constante revela-se por varrimento — o dash "5 4" dela é
    semântico, não pode servir de truque de desenho */
 .leitura-on .lq-refmark {
-  animation: lq-clip var(--dur-longa) var(--ease-entra) var(--stagger) both;
+  animation: lq-clip var(--dur-longa) var(--ease-entra)
+    calc((1 + var(--ei, 0)) * var(--stagger)) both;
 }
 /* a hachura assenta a meio do traço; os extremos quando a linha chega */
 .leitura-on .lq-hatch {
   animation: lq-fade var(--dur-media) var(--ease-entra)
-    calc(var(--dur-longa) * 0.5) both;
+    calc(var(--dur-longa) * 0.5 + var(--ei, 0) * var(--stagger)) both;
 }
 .leitura-on .lq-ext,
 .leitura-on .lq-ref-rotulo {
   animation: lq-fade var(--dur-curta) var(--ease-entra)
-    calc(var(--dur-longa) * 0.8) both;
+    calc(var(--dur-longa) * 0.8 + var(--ei, 0) * var(--stagger)) both;
 }
 /* a anotação desenha-se por último — floresce do ponto anotado */
 .leitura-on .lq-anot {
-  animation: lq-anot var(--dur-media) var(--ease-entra) var(--dur-longa) both;
+  animation: lq-anot var(--dur-media) var(--ease-entra)
+    calc(var(--dur-longa) + var(--ei, 0) * var(--stagger)) both;
 }
 @keyframes lq-draw {
   from {
@@ -2966,16 +3033,20 @@ h3 {
    clip-path (o dash "2 3" é semântico); os rótulos assentam por
    último e o número grande fecha a sequência (~1,2 s). */
 .iso-on .iso-camada {
-  animation: iso-desce var(--dur-media) var(--ease-entra) var(--iso-pd, 0ms) both;
+  animation: iso-desce var(--dur-media) var(--ease-entra)
+    calc(var(--iso-pd, 0ms) + var(--ei, 0) * var(--stagger)) both;
 }
 .iso-on .iso-chamada {
-  animation: iso-traca var(--dur-curta) var(--ease-entra) var(--iso-ld, 0ms) both;
+  animation: iso-traca var(--dur-curta) var(--ease-entra)
+    calc(var(--iso-ld, 0ms) + var(--ei, 0) * var(--stagger)) both;
 }
 .iso-on .iso-rot {
-  animation: iso-surge var(--dur-curta) var(--ease-entra) var(--iso-rd, 0ms) both;
+  animation: iso-surge var(--dur-curta) var(--ease-entra)
+    calc(var(--iso-rd, 0ms) + var(--ei, 0) * var(--stagger)) both;
 }
 .iso-on .iso-num-grupo {
-  animation: iso-surge var(--dur-curta) var(--ease-entra) 1020ms both;
+  animation: iso-surge var(--dur-curta) var(--ease-entra)
+    calc(1020ms + var(--ei, 0) * var(--stagger)) both;
 }
 @keyframes iso-desce {
   from {
@@ -3084,6 +3155,7 @@ h3 {
 /* a montagem conta como se mede — a pista revela-se esq→dir, linear */
 .bt-on .bt-pista {
   animation: bt-varre var(--dur-media) var(--ease-lin) both;
+  animation-delay: calc(var(--ei, 0) * var(--stagger));
 }
 @keyframes bt-varre {
   from {
@@ -3201,15 +3273,16 @@ h3 {
 /* a entrada: o traço desenha-se de «antes» para «agora» e os pontos
    assentam a seguir — escalonado por linha (--hd). Estado base = final. */
 .hal-on .hal-link {
-  animation: hal-traca var(--dur-media) var(--ease-entra) var(--hd, 0ms) both;
+  animation: hal-traca var(--dur-media) var(--ease-entra)
+    calc(var(--hd, 0ms) + var(--ei, 0) * var(--stagger)) both;
 }
 .hal-on .hal-dot {
   animation: hal-surge var(--dur-curta) var(--ease-entra)
-    calc(var(--hd, 0ms) + 240ms) both;
+    calc(var(--hd, 0ms) + 240ms + var(--ei, 0) * var(--stagger)) both;
 }
 .hal-on .hal-txt {
   animation: hal-surge var(--dur-curta) var(--ease-entra)
-    calc(var(--hd, 0ms) + 120ms) both;
+    calc(var(--hd, 0ms) + 120ms + var(--ei, 0) * var(--stagger)) both;
 }
 @keyframes hal-traca {
   from {
@@ -3315,14 +3388,16 @@ h3 {
   transform-origin: center;
 }
 .ap-on .ap-ponto {
-  animation: ap-surge var(--dur-curta) var(--ease-entra) var(--ad, 0ms) both;
+  animation: ap-surge var(--dur-curta) var(--ease-entra)
+    calc(var(--ad, 0ms) + var(--ei, 0) * var(--stagger)) both;
 }
 .ap-on .ap-anel-agora {
   animation: ap-surge var(--dur-curta) var(--ease-entra)
-    calc(var(--ad, 0ms) + 300ms) both;
+    calc(var(--ad, 0ms) + 300ms + var(--ei, 0) * var(--stagger)) both;
 }
 .ap-on .ap-centro {
-  animation: ap-surge var(--dur-curta) var(--ease-entra) 700ms both;
+  animation: ap-surge var(--dur-curta) var(--ease-entra)
+    calc(700ms + var(--ei, 0) * var(--stagger)) both;
 }
 @keyframes ap-surge {
   from {
@@ -3347,7 +3422,7 @@ h3 {
    dobra) — acima da dobra nada entra com fade ao carregar (M-09) */
 .kin-on .kin-word {
   animation: kin-up var(--dur-media) var(--ease-entra) both;
-  animation-delay: calc(var(--i) * var(--stagger));
+  animation-delay: calc((var(--i) + var(--ei, 0)) * var(--stagger));
 }
 @keyframes kin-up {
   from {

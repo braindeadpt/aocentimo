@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { Children, Fragment, isValidElement, type ReactNode } from "react";
 import { m } from "@/lib/messages";
+import { LinkVoo, TituloPagina } from "@/components/Voo";
 
 /**
  * Pagina — o template de três níveis (V4, S1-06), obrigatório em todas
@@ -36,6 +36,10 @@ export interface RespostaPagina {
 export interface PaginaProps {
   /** a pergunta da página — o h1 (o único da rota) */
   pergunta: string;
+  /** o caminho desta página ("/salario") — activa a aterragem do voo:
+      o h1 ganha o nome partilhado que a «pergunta seguinte» da página
+      anterior morfa até aqui. Só com `perguntaAs` h1 (o defeito). */
+  rota?: string;
   /** eyebrow sobre o h1 — o tema («Preços no consumidor») */
   kicker?: ReactNode;
   resposta: RespostaPagina;
@@ -89,6 +93,7 @@ function nInstrumentos(node: ReactNode): number {
 
 export function Pagina({
   pergunta,
+  rota,
   kicker,
   resposta,
   explora,
@@ -114,14 +119,24 @@ export function Pagina({
 
   const id = idBase ?? slugDe(pergunta);
   const Pergunta = perguntaAs === "h2" ? "h2" : "h1";
+  // a aterragem do voo é o h1 real da página — a demo h2 da /estilo
+  // não participa (não é o título da rota)
+  const aterragem = rota !== undefined && Pergunta === "h1";
+  const perguntaEl = aterragem ? (
+    <TituloPagina rota={rota} id={`${id}-pergunta`}>
+      {pergunta}
+    </TituloPagina>
+  ) : (
+    <Pergunta id={`${id}-pergunta`} className="titulo-pagina">
+      {pergunta}
+    </Pergunta>
+  );
 
   return (
     <div className="pagina mx-auto max-w-5xl px-5 pt-14">
       <section className="pg-nivel" aria-labelledby={`${id}-pergunta`}>
         {kicker && <p className="kicker">{kicker}</p>}
-        <Pergunta id={`${id}-pergunta`} className="titulo-pagina">
-          {pergunta}
-        </Pergunta>
+        {perguntaEl}
         <div className="pg-instrumento">{resposta.instrumento}</div>
         <p className="pg-frase">{resposta.frase}</p>
       </section>
@@ -149,10 +164,12 @@ export function Pagina({
       {seguinte && (
         <div className="pg-seguinte">
           <p className="kicker-xs">{m.pagina.aSeguir}</p>
-          <Link href={seguinte.href} className="pg-seguinte-lnk">
+          {/* a partida do voo — o selo só existe neste Link: outros
+              caminhos para a mesma rota não morfam (regra 1B-04) */}
+          <LinkVoo href={seguinte.href} className="pg-seguinte-lnk">
             {seguinte.rotulo}
             <span aria-hidden="true"> →</span>
-          </Link>
+          </LinkVoo>
         </div>
       )}
     </div>

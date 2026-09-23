@@ -354,8 +354,13 @@ export default function Home() {
         <div className="mt-5 grid gap-5 lg:grid-cols-2">
           {cartoes
             .filter((cartao): cartao is Cartao => cartao !== null)
-            .map((cartao) => (
-              <Leitura key={cartao.titulo} {...cartao} rotulos={rotulos} />
+            .map((cartao, i) => (
+              <Leitura
+                key={cartao.titulo}
+                {...cartao}
+                rotulos={rotulos}
+                entrada={i}
+              />
             ))}
         </div>
       </section>

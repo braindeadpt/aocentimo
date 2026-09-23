@@ -102,7 +102,7 @@ export function Cascata({ passos }: { passos: Passo[] }) {
                       style={{
                         width: `${fica}%`,
                         backgroundColor: "var(--color-keep)",
-                        animationDelay: `calc(${i} * var(--stagger))`,
+                        animationDelay: `calc((${i} + var(--ei, 0)) * var(--stagger))`,
                       }}
                     />
                     {/* o corte CAI — é dinheiro que sai, não barra que cresce */}
@@ -111,7 +111,7 @@ export function Cascata({ passos }: { passos: Passo[] }) {
                       style={{
                         width: `${sai}%`,
                         backgroundColor: "var(--color-accent)",
-                        animationDelay: `calc(${i} * var(--stagger))`,
+                        animationDelay: `calc((${i} + var(--ei, 0)) * var(--stagger))`,
                       }}
                     />
                   </>
@@ -121,7 +121,7 @@ export function Cascata({ passos }: { passos: Passo[] }) {
                     style={{
                       width: `${fica}%`,
                       backgroundColor: l.tipo === "total" ? "var(--color-keep)" : "var(--color-ink2)",
-                      animationDelay: `calc(${i} * var(--stagger))`,
+                      animationDelay: `calc((${i} + var(--ei, 0)) * var(--stagger))`,
                     }}
                   />
                 )}

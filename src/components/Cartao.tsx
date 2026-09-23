@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ReactNode, Ref } from "react";
+import type { CSSProperties, ReactNode, Ref } from "react";
 import { OrbeEstado } from "@/components/OrbeEstado";
 import { IconeEmblema, type NomeIcone } from "@/components/Icone";
 import { BotaoCopiar } from "@/components/BotaoCopiar";
@@ -74,6 +74,9 @@ export interface CartaoProps {
   /** variante em largura total — o cartão-herói do painel */
   amplo?: boolean;
   className?: string;
+  /** estilos inline do <article> — uso de casa: custom props como o
+      --ei do escalonamento de grupo (1B-04) */
+  style?: CSSProperties;
   /** ref do <article> — ex.: o useArmado que liga o desenho de entrada */
   ref?: Ref<HTMLElement>;
   /** o corpo — UMA ideia (insight + instrumento) */
@@ -112,6 +115,7 @@ export function Cartao({
   acoes,
   amplo = false,
   className,
+  style,
   ref,
   children,
 }: CartaoProps) {
@@ -139,6 +143,7 @@ export function Cartao({
   return (
     <article
       ref={ref}
+      style={style}
       className={`leitura ${amplo ? "leitura-amplo" : ""} ${className ?? ""}`}
     >
       <header className="leitura-head">

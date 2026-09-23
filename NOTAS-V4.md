@@ -961,3 +961,72 @@ comUnidade("123", "")             // «123» — sem cauda
   queres vê-lo em vídeo (`controlos-sheet.png`) antes de congelar?
 - «Copiado» a 2 s chega, ou preferes o padrão de ficar até ao próximo
   gesto?
+
+---
+
+## 1B-04 · Coreografia — inventário, transição-assinatura e ritmo
+
+**O que ficou**
+
+- `src/components/Voo.tsx` — a transição-assinatura: o cartão «a
+  pergunta seguinte» do `<Pagina>` morfa no `h1` do destino
+  (`view-transition-name: pg-voo` partilhado — um nome por fotograma:
+  o link no velho, o `h1` no novo).
+- `TituloPagina` é agora o `h1` de todas as páginas de conteúdo —
+  lê o selo do voo na montagem e nomeia-se só quando é a aterragem.
+- Convenção de entrada `--ei × --stagger`: `Cartao`/`Leitura` ganham
+  `entrada`/`--ei`; ligada nas grelhas da home, `/precos`, `/dados`,
+  `/inflacao`, nas células-instrumento de `/dados` e nos delays de
+  `EuroBar`/`Cascata`. Entram primitivas (linha, barra, pontos,
+  número), não fades de bloco.
+- Pausa ambiente: `PausaAmbiente` (Ticker) + `visibilitychange` no
+  `OrbeEstado` + corte de rAF no `CampoTela` — nada corre fora do
+  ecrã nem com o separador escondido. `.amb-off` no CSS.
+- `e2e/coreografia.spec.ts` — 5 testes: morph assinatura, negativo
+  (nav para a mesma rota sem voo), ticker offscreen/hidden, orbe
+  offscreen/hidden, canvas offscreen/hidden (amostra de pixels).
+- `scripts/_video-voo.mjs` — grava o voo e o escalonamento de grupo;
+  folha de contacto revista (fotograma do morph a meio confirmado).
+- Inventário completo das ~29 linhas de motion no PRODUTO.md §6.
+
+**Decisão relevante — porquê não `transitionTypes` + `share` por tipo**
+
+A primeira via era a idiomática: `<Link transitionTypes={["pg-voo"]}>`
++ `share={{ "pg-voo": "pg-voo", default: "none" }}` em `<ViewTransition>`.
+Falhou deterministicamente: `addTransitionType` corre fora de qualquer
+transition (o click dispatch põe `T=null`) → a `startTransition`
+descartável só regista o tipo no root se já houver lanes de transition
+pendentes — com a página idle os tipos são largados e `share` resolve
+`default:"none"`. Na primeira corrida do probe funcionou uma vez
+(provável prefetch a deixar lanes pendentes) — flaky por desenho nesta
+combinação Next 16.3.5 / React 19.3.
+
+O mecanismo final é determinístico: marcador de módulo
+(`vooAlvo = rota` no clique) + `view-transition-name` inline nos dois
+lados; o `VooLimpeza` apaga o selo após o commit (useEffect corre
+depois da captura). O nome é único por fotograma — por isso inline e
+não CSS (o `h1` da página velha não pode colidir com o link, nem o
+link seguinte da página nova com o `h1`).
+
+**Assunções**
+
+- Uma página tem UM «a pergunta seguinte» e UM `h1.titulo-pagina` —
+  o nome `pg-voo` fica único em cada fotograma.
+- O morph acontece dentro da `<ViewTransition>` global do layout —
+  coexistem sem conflito (verificado: root + `_t_0_` + `pg-voo` na
+  mesma transição).
+- `data-voo`/marcador nunca chega ao SSR — sem hidratação nem
+  mismatch; sem JS a navegação é normal.
+
+**Perguntas ao dono**
+
+- O voo dura `--dur-media` (600 ms) com `ease-entra` — queres mais
+  lento/solenne (`--dur-longa`) ou está certo assim? Vídeo em
+  `.videos/voo-sheet.png` para rever.
+- O cartão «a pergunta seguinte» desaparece rápido e o h1 assenta —
+  preferes que o cartão viaje visível até ao título (old snapshot
+  mais longo)?
+
+**Motor lazy do dono** — intacto: nada tocou `carregarGsap`/`tela.ts`
+nem os motores fiscais; a pausa do canvas usa os gatilhos que já
+existiam (`visivel` + `document.hidden`).

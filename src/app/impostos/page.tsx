@@ -9,6 +9,7 @@ import { fmtPct } from "@/lib/format";
 import iva from "@data/fiscal/iva.json";
 import isp from "@data/fiscal/isp.json";
 import { JsonLd, webApplication } from "@/lib/jsonld";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "Impostos — o imposto dentro do preço",
@@ -27,9 +28,7 @@ export default function ImpostosPage() {
           "O imposto dentro do preço: IVA por produto e decomposição do preço dos combustíveis (ISP, taxa de carbono, IVA sobre impostos)."
         )}
       />
-      <h1 className="titulo-pagina">
-        O imposto dentro do preço
-      </h1>
+      <TituloPagina rota="/impostos">O imposto dentro do preço</TituloPagina>
       <p className="lede mt-5">
         Quase tudo o que compras já traz imposto incluído. No pão são 6 %, num
         telemóvel 23 %, na gasolina mais de metade do litro é Estado.

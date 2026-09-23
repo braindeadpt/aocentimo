@@ -20,6 +20,7 @@ import { readFileSync } from "fs";
 import path from "path";
 import imt from "@data/fiscal/imt-2026.json";
 import { JsonLd, webApplication } from "@/lib/jsonld";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "Comprar casa — IMT, Imposto de Selo e prestação",
@@ -95,9 +96,7 @@ export default function CasaPage() {
         )}
       />
       <p className="kicker">Comprar casa</p>
-      <h1 className="titulo-pagina">
-        O que a casa custa de verdade
-      </h1>
+      <TituloPagina rota="/casa">O que a casa custa de verdade</TituloPagina>
       <p className="lede mt-5">
         O preço na placa não é o que pagas. No dia da escritura junta-se o IMT,
         o Imposto de Selo e os registos; nos trinta anos seguintes, os juros.

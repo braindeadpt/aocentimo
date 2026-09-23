@@ -31,6 +31,7 @@ import { m, t } from "@/lib/messages";
 import usura from "@data/fiscal/usura-2026.json";
 import calendario from "@data/fiscal/calendario-2026.json";
 import eventos from "@data/fiscal/eventos.json";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "Dados — painéis vivos de fontes oficiais",
@@ -72,6 +73,8 @@ function Celula(props: {
   meta: ReactNode;
   estado?: "em-dia" | "atrasada" | "sem-sla";
   spark?: { t: string; v: number }[];
+  /** índice de escalonamento da célula no quadro (× --stagger) */
+  atraso?: number;
 }) {
   return <Instrumento {...props} className="bg-panel px-4 py-4" />;
 }
@@ -232,9 +235,7 @@ export default function DadosPage() {
         />
       )}
       <p className="kicker">Painéis</p>
-      <h1 className="titulo-pagina">
-        Os números, direto da fonte
-      </h1>
+      <TituloPagina rota="/dados">Os números, direto da fonte</TituloPagina>
       <p className="lede mt-5">
         Tudo o que muda por decreto ou por mercado, num só sítio: as leituras
         do país, taxas de juro, tetos legais e prazos fiscais — com a data e a
@@ -263,6 +264,7 @@ export default function DadosPage() {
         <div className="mt-3 grid grid-cols-2 gap-px border border-line bg-line md:grid-cols-3">
           <Celula
             rotulo="Euribor 3M"
+            atraso={0}
             estado={estadoDe(fresh, "euribor-3m-mensal")}
             spark={euribor["3M"]?.series}
             valor={
@@ -282,6 +284,7 @@ export default function DadosPage() {
           />
           <Celula
             rotulo="Euribor 12M"
+            atraso={1}
             estado={estadoDe(fresh, "euribor-12m-mensal")}
             spark={euribor["12M"]?.series}
             valor={
@@ -301,6 +304,7 @@ export default function DadosPage() {
           />
           <Celula
             rotulo="TAEG pessoal · outros"
+            atraso={2}
             estado={estadoDe(fresh, "taeg-pessoal-outros-mensal")}
             spark={taeg?.series}
             valor={ultimo(taeg) ? `${comUnidade(fmtNum(ultimo(taeg)!.v, 1), "%")}` : "—"}
@@ -315,6 +319,7 @@ export default function DadosPage() {
           />
           <Celula
             rotulo="Certificados Aforro F"
+            atraso={3}
             estado={estadoDe(fresh, "fiscal-ca")}
             spark={caBase?.series}
             valor={
@@ -328,6 +333,7 @@ export default function DadosPage() {
           />
           <Celula
             rotulo="Inflação homóloga"
+            atraso={4}
             estado={estadoDe(fresh, "hicp-pt-cp00")}
             spark={ipc?.series}
             valor={
@@ -337,6 +343,7 @@ export default function DadosPage() {
           />
           <Celula
             rotulo="Próximo prazo fiscal"
+            atraso={5}
             valor={
               prazos.find((p) => p.mes >= hoje.slice(0, 7))
                 ? fmtData(prazos.find((p) => p.mes >= hoje.slice(0, 7))!.mes)
@@ -353,8 +360,13 @@ export default function DadosPage() {
         <section className="stack-sec" aria-label="Leituras do país">
           <p className="kicker">O país, em leituras</p>
           <div className="mt-3 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {leituras.map((cartao) => (
-              <Leitura key={cartao.titulo} {...cartao} rotulos={rotulos} />
+            {leituras.map((cartao, i) => (
+              <Leitura
+                key={cartao.titulo}
+                {...cartao}
+                rotulos={rotulos}
+                entrada={i}
+              />
             ))}
           </div>
         </section>
