@@ -55,7 +55,7 @@ export function PoderDeCompra({ serie }: Props) {
         </div>
       </div>
       {resultado !== null ? (
-        <div className="mt-5 flex items-center gap-6">
+        <div className="mt-5 flex flex-wrap items-center gap-6">
           {/* o euro a encolher — a moeda cheia era o poder de compra de
               janeiro do ano escolhido; o disco encolhe para a fração que
               resta hoje. O contorno tracejado fica: é o que foi comido.
@@ -70,7 +70,7 @@ export function PoderDeCompra({ serie }: Props) {
             </div>
           </div>
           <div className="min-w-0">
-            <p className="text-ink2 text-sm">
+            <p className="text-ink2 text-corpo-sm">
               {fmtEUR(valor)} em janeiro de {ano} compram hoje o equivalente a
             </p>
             <NumHero compacto valor={fmtEUR(resultado)} animar={resultado} className="mt-1" />
@@ -82,7 +82,7 @@ export function PoderDeCompra({ serie }: Props) {
           </div>
         </div>
       ) : (
-        <p className="mt-5 text-ink2 text-sm">Sem dados suficientes.</p>
+        <p className="mt-5 text-ink2 text-corpo-sm">Sem dados suficientes.</p>
       )}
     </div>
   );

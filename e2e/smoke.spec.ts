@@ -1,28 +1,11 @@
 import { test, expect } from "@playwright/test";
-import { readdirSync, readFileSync } from "fs";
+import { readFileSync } from "fs";
+import { rotasDoSite } from "./rotas";
 
 // o domínio declarado em public/CNAME é a fonte de verdade do deploy —
 // se divergir do canonical gerado, o SEO aponta para um domínio que
 // não serve o site (defeito real que já aconteceu)
 const HOST = readFileSync("public/CNAME", "utf8").trim().toLowerCase();
-
-/**
- * Lista de rotas derivada, nunca escrita à mão: o sitemap é gerado do
- * conteúdo (expande rotas dinâmicas como /aprender/[slug]) e os .html
- * exportados cobrem as páginas fora do sitemap (ex.: /estilo). Qualquer
- * rota nova nasce coberta por todos os testes abaixo.
- */
-function rotasDoSite(): string[] {
-  const deSitemap = [
-    ...readFileSync("out/sitemap.xml", "utf8").matchAll(/<loc>([^<]+)<\/loc>/g),
-  ].map((m) => new URL(m[1]).pathname);
-  const deHtml = readdirSync("out", { recursive: true })
-    .filter((f): f is string => typeof f === "string" && f.endsWith(".html"))
-    .map((f) => f.replace(/\\/g, "/").replace(/\.html$/, ""))
-    .filter((f) => !f.startsWith("_") && f !== "404")
-    .map((p) => (p === "index" ? "/" : `/${p}`));
-  return [...new Set([...deSitemap, ...deHtml])].sort();
-}
 
 test("home renderiza com os números-chave", async ({ page }) => {
   await page.goto("/");
@@ -298,7 +281,7 @@ test("a explosão do euro interroga-se por teclado e tem equivalente textual", a
   // visível é a lista, que interroga as peças por foco de teclado.
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  const cartao = page.locator(".eu-card").first();
+  const cartao = page.locator(".iso-card").first();
   await expect(cartao).toBeVisible();
 
   // o desenho é decorativo; a viagem do euro existe em texto
@@ -325,15 +308,15 @@ test("a explosão do euro interroga-se por teclado e tem equivalente textual", a
   await expect(lista).toContainText(/1\s?1[0-9]{2}\s*€/);
 
   // foco de teclado num passo realça a peça correspondente (e a sua
-  // chamada — g.eu-peca.eu-peca-on / .eu-rotg.eu-peca-on); Tab anda
+  // chamada — g.iso-camada.iso-camada-on / .iso-rotg.iso-camada-on); Tab anda
   // passo a passo
   await passos.nth(1).focus();
-  await expect(passos.nth(1)).toHaveClass(/eu-li-on/);
-  await expect(cartao.locator("g.eu-peca.eu-peca-on")).toHaveCount(1);
-  await expect(cartao.locator("g.eu-rotg.eu-peca-on")).toHaveCount(1);
+  await expect(passos.nth(1)).toHaveClass(/iso-li-on/);
+  await expect(cartao.locator("g.iso-camada.iso-camada-on")).toHaveCount(1);
+  await expect(cartao.locator("g.iso-rotg.iso-camada-on")).toHaveCount(1);
   await page.keyboard.press("Tab");
-  await expect(passos.nth(2)).toHaveClass(/eu-li-on/);
-  await expect(cartao.locator("g.eu-peca.eu-peca-on")).toHaveCount(1);
+  await expect(passos.nth(2)).toHaveClass(/iso-li-on/);
+  await expect(cartao.locator("g.iso-camada.iso-camada-on")).toHaveCount(1);
 
   // a ordem narrativa é pergunta → resposta: painel → adivinha →
   // explosão → capítulos — medido na posição real do documento
@@ -363,7 +346,7 @@ test("a explosão do custo em /salario interroga-se e reage à régua", async ({
   // carta, e peças interrogáveis por foco de teclado
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/salario");
-  const cartao = page.locator(".eu-card").first();
+  const cartao = page.locator(".iso-card").first();
   await expect(cartao).toBeVisible();
 
   // o desenho é decorativo; o custo existe em texto — 5 passos
@@ -378,9 +361,9 @@ test("a explosão do custo em /salario interroga-se e reage à régua", async ({
   await expect(lista).toContainText("Chega à conta");
 
   // foco de teclado num passo acende a peça correspondente (e a sua
-  // chamada — .eu-rotg.eu-peca-on)
+  // chamada — .iso-rotg.iso-camada-on)
   await lista.locator("li").nth(1).focus();
-  await expect(cartao.locator("g.eu-peca.eu-peca-on")).toHaveCount(1);
+  await expect(cartao.locator("g.iso-camada.iso-camada-on")).toHaveCount(1);
   await page.keyboard.press("Escape");
 
   // a régua do bruto muda a explosão — o líquido e o selo do Estado

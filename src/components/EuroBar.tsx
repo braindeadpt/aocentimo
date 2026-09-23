@@ -98,7 +98,7 @@ export function EuroBar({
             >
               {w >= 12 && (
                 <span
-                  className="num absolute inset-0 flex items-center justify-center text-xs md:text-sm"
+                  className="num absolute inset-0 flex items-center justify-center text-rotulo md:text-corpo-sm"
                   style={{ color: "var(--color-floor)" }}
                 >
                   {fmtPct(s.valor / total, 0)}
@@ -109,7 +109,7 @@ export function EuroBar({
         })}
       </div>
 
-      <table className="mt-3 w-full text-sm">
+      <table className="mt-3 w-full text-corpo-sm">
         <tbody>
           {segmentos.map((s, i) => (
             <tr

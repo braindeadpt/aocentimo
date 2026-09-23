@@ -52,7 +52,7 @@ export function SimuladorDesemprego() {
               onChange={(e) => setAnosDescontos(Number(e.target.value) || 0)} className="field" />
           </div>
         </div>
-        <label className="flex items-center gap-2 text-sm text-ink2">
+        <label className="flex items-center gap-2 text-corpo-sm text-ink2">
           <input type="checkbox" checked={majoracao}
             onChange={(e) => setMajoracao(e.target.checked)}
             className="h-4 w-4 accent-[var(--color-accent)]" />
@@ -160,7 +160,7 @@ export function SimuladorDesemprego() {
                         />
                       ))}
                     </div>
-                    <div className="mt-1.5 flex justify-between text-[10px] uppercase tracking-wider talao-dim">
+                    <div className="mt-1.5 flex justify-between text-talao-sub uppercase tracking-wider talao-dim">
                       <span>1.º mês</span>
                       {temCorte && <span>7.º −10 %</span>}
                       <span>{meses}.º</span>
@@ -168,7 +168,7 @@ export function SimuladorDesemprego() {
                   </div>
                 </>
               ) : (
-                <p className="py-6 text-sm talao-dim">{r.nota}</p>
+                <p className="py-6 text-talao-corpo talao-dim">{r.nota}</p>
               )}
               <p className="talao-sub talao-dim mt-4 text-center">
                 * * * * *

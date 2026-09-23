@@ -38,6 +38,11 @@ export interface ReguaProps {
   min: number;
   max: number;
   passo: number;
+  /** grelha de pontos exactos (ascendente) — quando presente, a régua
+      só pára nestes valores: setas andam ponto a ponto, PageUp/Down
+      saltam ±10 pontos, presets e cliques caem no ponto mais próximo.
+      Nunca se interpola um valor fora da grelha (V4, S1-09) */
+  pontos?: readonly number[];
   /** sufixo da unidade — « €», « %» (com o espaço) */
   unidade?: string;
   /** número → texto sem unidade (ex.: `(v) => fmtNum(v, 0)`) */
@@ -98,6 +103,7 @@ export function Regua({
   marcadorAgora,
   presets,
   descricao,
+  pontos,
   id: idProp,
 }: ReguaProps) {
   const idAuto = useId();
@@ -113,13 +119,25 @@ export function Regua({
   const valorRef = useRef<HTMLSpanElement>(null);
 
   const casas = (String(passo).split(".")[1] ?? "").length;
-  /** o valor pedido cai na grelha do passo (base min), como o nativo */
+  /** índice do ponto da grelha mais próximo de v */
+  const idxProximo = (v: number) => {
+    let melhor = 0;
+    for (let i = 1; i < (pontos?.length ?? 0); i++) {
+      if (Math.abs(pontos![i] - v) < Math.abs(pontos![melhor] - v)) melhor = i;
+    }
+    return melhor;
+  };
+  /** o valor pedido cai na grelha: pontos exactos ou passo (base min) */
   const ajustar = (v: number) =>
-    grampo(
-      Number((min + Math.round((v - min) / passo) * passo).toFixed(casas + 2)),
-      min,
-      max
-    );
+    pontos
+      ? pontos[idxProximo(v)]
+      : grampo(
+          Number(
+            (min + Math.round((v - min) / passo) * passo).toFixed(casas + 2)
+          ),
+          min,
+          max
+        );
   const emit = (v: number) => {
     setVivo(true);
     onChange(ajustar(v));
@@ -242,13 +260,36 @@ export function Regua({
             className="regua-input"
             min={min}
             max={max}
-            step={passo}
+            step={pontos ? "any" : passo}
             value={valor}
             aria-valuetext={`${formato(valor)}${unidade}`}
             onChange={(e) => emit(Number(e.target.value))}
-            // contrato V3 §5: PageUp/Down saltam exactamente 10×passo —
-            // o nativo do Chrome move ~10 % do alcance
+            // com pontos: setas andam ponto a ponto e PageUp/Down ±10
+            // pontos; sem pontos: PageUp/Down saltam exactamente
+            // 10×passo (o nativo do Chrome move ~10 % do alcance)
             onKeyDown={(e) => {
+              if (pontos) {
+                const salto =
+                  e.key === "ArrowRight" || e.key === "ArrowUp"
+                    ? 1
+                    : e.key === "ArrowLeft" || e.key === "ArrowDown"
+                      ? -1
+                      : e.key === "PageUp"
+                        ? 10
+                        : e.key === "PageDown"
+                          ? -10
+                          : 0;
+                if (salto !== 0) {
+                  e.preventDefault();
+                  const i = grampo(
+                    idxProximo(valor) + salto,
+                    0,
+                    pontos.length - 1
+                  );
+                  emit(pontos[i]);
+                }
+                return;
+              }
               if (e.key === "PageUp" || e.key === "PageDown") {
                 e.preventDefault();
                 emit(valor + (e.key === "PageUp" ? 10 : -10) * passo);
@@ -295,7 +336,7 @@ export function Regua({
         <div className="regua-pills">
           {presets.map((p) => {
             const alvo = ajustar(p.valor);
-            const ativo = Math.abs(valor - alvo) < passo / 2;
+            const ativo = Math.abs(valor - alvo) < (pontos ? 1 : passo / 2);
             return (
               <button
                 key={p.rotulo}

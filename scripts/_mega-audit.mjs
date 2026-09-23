@@ -198,6 +198,40 @@ for (const { file, rota: r, html } of paginas) {
       falhas.push(tag(`focável dentro de aria-hidden <${nome}>`));
   }
 
+  // — colisão de rótulos <text> nos svg de leitura —
+  // a estimativa é a do anti-colisão do componente (Leitura.tsx):
+  // mono 11 px ≈ 6,9 px por carácter; a caixa vai da baseline −13 a +4.
+  // Dois rótulos nunca se podem sobrepor (S1-02).
+  for (const m of html.matchAll(/<svg\b[^>]*>[\s\S]*?<\/svg>/g)) {
+    if (!m[0].includes("lq-txt")) continue;
+    const rotulos = [];
+    for (const t of m[0].matchAll(/<text\b([^>]*)>([\s\S]*?)<\/text>/g)) {
+      const a = attrs(t[1]);
+      const txt = strip(t[2]);
+      if (!txt) continue;
+      const x = parseFloat(a.x ?? "0");
+      const y = parseFloat(a.y ?? "0");
+      const w = txt.length * 6.9;
+      const l =
+        a["text-anchor"] === "end"
+          ? x - w
+          : a["text-anchor"] === "middle"
+            ? x - w / 2
+            : x;
+      rotulos.push({ txt, l, r: l + w, t: y - 13, b: y + 4 });
+    }
+    for (let i = 0; i < rotulos.length; i++) {
+      for (let j = i + 1; j < rotulos.length; j++) {
+        const ox = Math.min(rotulos[i].r, rotulos[j].r) - Math.max(rotulos[i].l, rotulos[j].l);
+        const oy = Math.min(rotulos[i].b, rotulos[j].b) - Math.max(rotulos[i].t, rotulos[j].t);
+        if (ox > 1 && oy > 1)
+          falhas.push(
+            tag(`rótulos svg sobrepostos: «${rotulos[i].txt}» ∩ «${rotulos[j].txt}»`)
+          );
+      }
+    }
+  }
+
   // — mojibake / texto partido —
   const texto = strip(html);
   for (const [padrao, nome] of [

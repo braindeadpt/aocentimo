@@ -73,7 +73,7 @@ export default function TrabalhoPage() {
         )}
       />
       <p className="kicker">Proteção no desemprego</p>
-      <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
+      <h1 className="titulo-pagina">
         Se ficares sem trabalho
       </h1>
       <p className="lede mt-5">
@@ -104,7 +104,7 @@ export default function TrabalhoPage() {
       </Figure>
 
       <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
-        <h2 className="font-display text-2xl text-ink">O que a simulação simplifica</h2>
+        <h2 className="font-display text-display-sm text-ink">O que a simulação simplifica</h2>
         <p>
           Assume salário estável nos últimos 14 meses e descontos contínuos —
           na realidade a remuneração de referência soma o que efetivamente

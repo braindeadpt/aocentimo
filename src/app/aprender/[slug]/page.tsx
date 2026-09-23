@@ -76,7 +76,7 @@ export default async function TermoPage({
           Glossário
         </Link>
       </p>
-      <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
+      <h1 className="titulo-pagina">
         {t.termo}
       </h1>
 
@@ -101,7 +101,7 @@ export default async function TermoPage({
               <li key={r.slug}>
                 <Link
                   href={`/aprender/${r.slug}`}
-                  className="text-sm text-ink2 underline decoration-dashed decoration-line2 underline-offset-4 hover:text-ink hover:decoration-mark"
+                  className="text-corpo-sm text-ink2 underline decoration-dashed decoration-line2 underline-offset-4 hover:text-ink hover:decoration-mark"
                 >
                   {r.termo}
                 </Link>

@@ -4,6 +4,9 @@ import { Fragment, useMemo, useState } from "react";
 import { simularSalario } from "@/lib/engines/irs";
 import { TSU_ENTIDADE, TSU_TRABALHADOR } from "@/lib/engines/seg-social";
 import { reciboMensal, FormaPagamentoSA } from "@/lib/engines/recibo";
+import type { ResultadoRecibo } from "@/lib/engines/recibo";
+import type { CenariosSalario } from "@/lib/cenarios";
+import { BRUTO_CANONICO } from "@/lib/canonico";
 import { SituacaoRetencao } from "@/lib/engines/retencao";
 import {
   CustoExplodido,
@@ -44,38 +47,66 @@ export interface ReguaSalario {
 export function CalculadoraSalario({
   ano,
   regua,
+  cenarios,
   custo,
 }: {
   ano: number;
   regua: ReguaSalario;
+  /** tabela canónica gerada no build — a régua só pára nestes pontos;
+      no perfil canónico os números vêm daqui, nunca interpolados */
+  cenarios: CenariosSalario;
   /** strings da explosão do custo — messages/pt.json → salario.custo */
   custo: RotulosCusto;
 }) {
-  const [bruto, setBruto] = useState(1500);
+  // o bruto inicial é o do cenário canónico — a mesma história da home
+  const [bruto, setBruto] = useState(BRUTO_CANONICO);
   const [situacao, setSituacao] = useState<Situacao>("solteiro");
-  const [conjuge, setConjuge] = useState(1500);
+  const [conjuge, setConjuge] = useState(BRUTO_CANONICO);
   const [dependentes, setDependentes] = useState(0);
   const [saPorDia, setSaPorDia] = useState(0);
   const [formaSA, setFormaSA] = useState<FormaPagamentoSA>("cartao");
   const [anoJovem, setAnoJovem] = useState(0);
 
-  const recibo = useMemo(
+  // no perfil canónico (solteiro, 0 dependentes, sem SA, sem IRS Jovem)
+  // o recibo sai da tabela gerada no build — pontos exactos do motor,
+  // nunca interpolados; fora dele o motor calcula no cliente
+  const linhaCan =
+    situacao === "solteiro" && dependentes === 0 && saPorDia === 0 && anoJovem === 0
+      ? cenarios.linhas.find((l) => l.bruto === bruto)
+      : undefined;
+
+  const recibo = useMemo<ResultadoRecibo>(
     () =>
-      reciboMensal({
-        bruto,
-        situacao: PARA_RETENCAO[situacao],
-        dependentes,
-        saPorDia,
-        formaSA,
-        anoIrsJovem: anoJovem,
-        ano,
-      }),
-    [bruto, situacao, dependentes, saPorDia, formaSA, anoJovem, ano]
+      linhaCan
+        ? {
+            bruto: linhaCan.bruto,
+            saTotal: 0,
+            saIsento: 0,
+            saTributavel: 0,
+            ss: linhaCan.ss,
+            retencao: linhaCan.irs,
+            taxaEfetiva: linhaCan.taxaEfetiva,
+            tabela: linhaCan.tabela,
+            liquido: linhaCan.liquido,
+            tsuEntidade: linhaCan.tsu,
+            custoEmpresa: linhaCan.custo,
+          }
+        : reciboMensal({
+            bruto,
+            situacao: PARA_RETENCAO[situacao],
+            dependentes,
+            saPorDia,
+            formaSA,
+            anoIrsJovem: anoJovem,
+            ano,
+          }),
+    [linhaCan, bruto, situacao, dependentes, saPorDia, formaSA, anoJovem, ano]
   );
 
   // Em "casado único titular" o cônjuge sem rendimentos conta para o
   // quociente conjugal (÷2) mas não tem dedução específica própria.
   const resultado = useMemo(() => {
+    if (linhaCan) return linhaCan.ano14;
     const brutos =
       situacao === "solteiro"
         ? [bruto]
@@ -83,7 +114,7 @@ export function CalculadoraSalario({
           ? [bruto, conjuge]
           : [bruto, 0];
     return simularSalario(brutos, dependentes, ano);
-  }, [bruto, conjuge, situacao, dependentes, ano]);
+  }, [linhaCan, bruto, conjuge, situacao, dependentes, ano]);
 
   const limiteSA = sa.isentoPorDia[formaSA];
 
@@ -131,9 +162,10 @@ export function CalculadoraSalario({
           rotulo={regua.rotulo}
           valor={bruto}
           onChange={setBruto}
-          min={870}
-          max={5000}
-          passo={10}
+          min={cenarios.meta.inicio}
+          max={cenarios.meta.fim}
+          passo={cenarios.meta.passo}
+          pontos={cenarios.linhas.map((l) => l.bruto)}
           unidade=" €"
           formato={(v) => fmtNum(v, 0)}
           marcadorAgora={regua.marcador ?? undefined}
@@ -337,7 +369,7 @@ export function CalculadoraSalario({
                   <dt className="talao-total">
                     Líquido no fim do mês
                   </dt>
-                  <dd className="text-4xl font-bold">
+                  <dd className="text-display-lg font-bold">
                     {fmtEUR(recibo.liquido)}
                   </dd>
                 </div>
@@ -387,9 +419,9 @@ export function CalculadoraSalario({
       <div className="md:col-span-2 bg-raised border border-line shadow-raised" aria-live="polite">
         <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
           <span className="kicker">O ano inteiro, a 14 meses</span>
-          <span className="num text-xs text-muted">estimativa IRS {ano}</span>
+          <span className="num text-rotulo text-muted">estimativa IRS {ano}</span>
         </div>
-        <dl className="px-5 py-4 text-sm">
+        <dl className="px-5 py-4 text-corpo-sm">
           <div className="flex justify-between py-1.5 border-b border-line/60">
             <dt className="text-ink2">Salário bruto anual</dt>
             <dd className="num">{fmtEUR(resultado.brutoAnualTotal)}</dd>
@@ -416,7 +448,7 @@ export function CalculadoraSalario({
           </div>
         </dl>
 
-        <div className="border-t border-line px-5 py-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+        <div className="border-t border-line px-5 py-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-corpo-sm">
           <div>
             <p className="kicker">Taxa efetiva IRS</p>
             <p className="num-read mt-1">{fmtPct(resultado.taxaEfetiva)}</p>
@@ -435,7 +467,10 @@ export function CalculadoraSalario({
           </div>
         </div>
         <p className="footnote px-5 pb-4">
-          &ldquo;Para o Estado&rdquo; soma IRS, a tua SS (11 %) e a TSU da
+          Esta leitura é anual e a 14 meses — soma subsídios de férias e
+          de Natal e estima o IRS da liquidação; por isso difere do
+          recibo mensal, que usa a retenção real. &ldquo;Para o
+          Estado&rdquo; soma IRS, a tua SS (11 %) e a TSU da
           empresa (23,75 %) sobre o custo total. O <em>dia da liberdade
           fiscal</em> marca a data em que, se trabalhasses primeiro só para
           essa fatia, passavas a trabalhar para ti.

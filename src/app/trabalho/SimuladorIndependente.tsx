@@ -23,7 +23,7 @@ export function SimuladorIndependente() {
           <input id="fat" type="number" min={0} step={100} value={faturacao}
             onChange={(e) => setFaturacao(Number(e.target.value) || 0)} className="field" />
         </div>
-        <label className="flex items-center gap-2 text-sm text-ink2">
+        <label className="flex items-center gap-2 text-corpo-sm text-ink2">
           <input type="checkbox" checked={primeiroAno}
             onChange={(e) => setPrimeiroAno(e.target.checked)}
             className="h-4 w-4 accent-[var(--color-accent)]" />
@@ -43,7 +43,7 @@ export function SimuladorIndependente() {
           <div className="border-b border-line px-5 py-3">
             <span className="kicker">Por ano, em {fmtEUR0(anual)} faturados</span>
           </div>
-          <dl className="px-5 py-4 text-sm">
+          <dl className="px-5 py-4 text-corpo-sm">
             <div className="flex justify-between py-1.5 border-b border-line/60">
               <dt className="text-ink2">Segurança Social{primeiroAno && " (isento)"}</dt>
               <dd className="num text-up">{fmtEUR(r.ss)} −</dd>

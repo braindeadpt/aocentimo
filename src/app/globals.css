@@ -119,6 +119,34 @@
   /* ciclo do ticker — loop contínuo de velocidade editorial, não é uma
      transição e não faz parte da escala */
   --dur-ticker: 55s;
+
+  /* ————— raio com significado (V4) — a aresta diz a matéria —————
+     papel        é cortado — aresta recta, nunca arredondada
+     pormenor     aresta mínima de peça maquinada/carimbo — derivada do
+                  instrumento (14 ÷ 7), não é um valor avulso
+     instrumento  objecto completo — cartão, resultado, overlay: é
+                  maquinado. Elevação ≥ 1 = objecto; a chapa de nível 1
+                  (bg-panel com hairline) é o plano de montagem e fica
+                  recta por omissão
+     controlo     pílula — presets, toggles, botões, marcadores */
+  --raio-papel: 0;
+  --raio-pormenor: calc(var(--raio-instrumento) / 7);
+  --raio-instrumento: 14px;
+  --raio-controlo: 999px;
+
+  /* ————— escala tipográfica fechada (V4) — um papel por degrau —————
+     Os degraus vivem em @theme (em baixo) para gerarem utilitários
+     text-*; aqui ficam só os que a escala não gera:
+       svg        texto dentro de viewBox — unidades do desenho, não px
+                  de página; escalam com o svg
+       impressao  typesetting de papel de imprensa (pt, não rem) */
+  --text-svg-mini: 7px;
+  --text-svg-micro: 10px;
+  --text-svg-rotulo: 11px;
+  --text-svg-valor: 13px;
+  --text-svg-numero: 32px;
+  --text-svg-hero: 40px;
+  --text-impressao: 11pt;
 }
 
 :root[data-theme="dark"] {
@@ -220,15 +248,131 @@
   --shadow-raised: var(--elev-raised);
   --shadow-overlay: var(--elev-overlay);
 
+  /* raio com significado — os utilitários rounded-* apontam para os
+     tokens de :root (papel · pormenor · instrumento · controlo) */
+  --radius-papel: var(--raio-papel);
+  --radius-pormenor: var(--raio-pormenor);
+  --radius-instrumento: var(--raio-instrumento);
+  --radius-controlo: var(--raio-controlo);
+
   --font-display: var(--font-archivo), "Arial Black", sans-serif;
   --font-sans: var(--font-grotesk), "Segoe UI", system-ui, sans-serif;
   --font-editorial: var(--font-serif), Georgia, "Times New Roman", serif;
   --font-mono: var(--font-space), "Courier New", monospace;
 }
 
+/* ————— escala tipográfica fechada (V4) — um papel por degrau —————
+   kicker · rótulo · corpo · insight · número de leitura · número herói ·
+   título de página · título de herói. Nada escreve um tamanho fora
+   desta escala; o talão tem a sua própria sub-escala (text-talao-*)
+   porque é um documento — typesetting de impressora térmica, não chrome.
+   --text-*: initial fecha a escala por omissão do Tailwind — só estes
+   degraus geram utilitários. */
+@theme {
+  --text-*: initial;
+
+  /* micro-tipografia — mono, caixa-alta (kickers e meta) */
+  --text-micro: 0.6rem;      /* kicker-xs · carimbo do instrumento · selo */
+  --text-mini: 0.625rem;     /* 10px — micro-demos · escala da régua · id de série */
+  --text-kicker-sm: 0.65rem; /* kicker-sm · breadcrumb · meta de cartão */
+  --text-kicker: 0.6875rem;  /* kicker · rodapé/legenda de cartão · pill · ticker · skip-link */
+  /* rótulo e nota */
+  --text-rotulo: 0.75rem;    /* rótulo · readout · btn · meta de lista */
+  --text-nota: 0.8125rem;    /* footnote · num-dense · detalhe */
+  /* corpo */
+  --text-corpo-sm: 0.875rem; /* corpo denso · tabelas · etiqueta de campo */
+  --text-corpo-sm--line-height: 1.25rem;
+  --text-corpo: 0.95rem;     /* corpo corrido · field */
+  /* editorial serifada */
+  --text-grande: 1.125rem;   /* lede · valor destacado · título de figura */
+  --text-grande--line-height: 1.75rem;
+  --text-insight: 1.1875rem; /* frase-insight do cartão */
+  /* número de leitura */
+  --text-numero: 1.375rem;   /* num-read */
+  /* degraus de display — títulos e números grandes partilham a mesma
+     escada; o papel vem da classe (titulo-* · font-display · num · talao) */
+  --text-display-xs: 1.25rem;   /* h2 de cartão · stat */
+  --text-display-xs--line-height: 1.75rem;
+  --text-display-sm: 1.5rem;    /* h2 de secção */
+  --text-display-sm--line-height: 2rem;
+  --text-display-md: 1.875rem;  /* h2 md · título de página (base) · leitura grande */
+  --text-display-md--line-height: 2.25rem;
+  --text-display-lg: 2.25rem;   /* título sm · herói base */
+  --text-display-lg--line-height: 2.5rem;
+  --text-display-xl: 3rem;      /* manchete · adivinha */
+  --text-display-xl--line-height: 1;
+  --text-display-2xl: 3.75rem;  /* título de página md · herói sm */
+  --text-display-2xl--line-height: 1;
+  --text-display-3xl: 4.5rem;   /* herói lg · 404 */
+  --text-display-3xl--line-height: 1;
+  --text-moeda: 2.75rem;        /* a face do euro (/inflacao) */
+  /* números heróis — fluidos, Archivo tnum */
+  --text-valor: clamp(2.25rem, 4vw + 1rem, 3rem);        /* herói do cartão Leitura */
+  --text-valor-amplo: clamp(2.5rem, 4.5vw + 1rem, 3.5rem);
+  --text-hero-sm: clamp(2.5rem, 4.5vw + 1rem, 4.5rem);   /* herói sem teto conhecido */
+  --text-hero: clamp(3rem, 6vw + 1.5rem, 6rem);          /* num-hero */
+  /* escala do papel — o talão é um documento, não chrome do site */
+  --text-talao-micro: 0.58rem;    /* carimbo retido/recebe */
+  --text-talao-meta: 0.6rem;      /* meta do talão · rodapé da declaração */
+  --text-talao-sub: 0.62rem;      /* subtítulo · carimbo SIMULAÇÃO */
+  --text-talao-nota: 0.68rem;     /* nota de linha */
+  --text-talao-head: 0.7rem;      /* cabeçalho do documento */
+  --text-talao-total: 0.72rem;    /* rótulo da linha total */
+  --text-talao-corpo: 0.82rem;    /* corpo do documento */
+  --text-talao-destaque: 1.125rem;/* valor destacado no papel */
+  --text-talao-numero: 1.25rem;   /* número de leitura no papel */
+  --text-talao-hero: 1.875rem;    /* total do documento */
+  --text-talao-hero-lg: 2.25rem;  /* o líquido no recibo */
+}
+
 /* display = Archivo expandido */
 .font-display {
   font-variation-settings: "wdth" 125;
+}
+
+/* ————— títulos — só dois estilos; o eixo wdth do Archivo é o
+   instrumento expressivo que os separa —————
+   página = expandido (wdth 125): a manchete institucional, caixa-alta
+   herói  = condensado (wdth 75): o monumento da home — a mesma fonte,
+            apertada, para a frase grande caber e pesar */
+.titulo-pagina,
+.titulo-hero {
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-weight: 700;
+  color: var(--ink);
+}
+.titulo-pagina {
+  font-variation-settings: "wdth" 125;
+  font-size: var(--text-display-md);
+  line-height: 1.1;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  hyphens: auto;
+  margin-top: 0.5rem;
+}
+.titulo-hero {
+  font-variation-settings: "wdth" 75;
+  font-size: var(--text-display-lg);
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+}
+@media (min-width: 640px) {
+  .titulo-pagina {
+    font-size: var(--text-display-lg);
+  }
+  .titulo-hero {
+    font-size: var(--text-display-2xl);
+  }
+}
+@media (min-width: 768px) {
+  .titulo-pagina {
+    font-size: var(--text-display-2xl);
+  }
+}
+@media (min-width: 1024px) {
+  .titulo-hero {
+    font-size: var(--text-display-3xl);
+  }
 }
 
 /* ————— wordmark — texto real; o C é o sinal de cêntimo, em verde-keep ————— */
@@ -344,8 +488,9 @@ body::before {
   background: var(--overlay);
   color: var(--ink);
   border: 2px solid var(--ink);
+  border-radius: var(--raio-controlo);
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: var(--text-kicker);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   text-decoration: none;
@@ -363,7 +508,7 @@ body::before {
   display: inline-block;
   width: 0.5rem;
   height: 0.5rem;
-  border-radius: 9999px;
+  border-radius: var(--raio-controlo);
   border: 1px solid var(--ink2);
   background: transparent;
   transition:
@@ -378,7 +523,7 @@ html[data-theme="dark"] .tema-ponto {
 /* utilidades editoriais */
 .lede {
   font-family: var(--font-editorial);
-  font-size: 1.125rem;
+  font-size: var(--text-grande);
   line-height: 1.7;
   color: var(--ink2);
   max-width: 42rem;
@@ -402,7 +547,7 @@ html[data-theme="dark"] .tema-ponto {
   font-family: var(--font-archivo), "Arial Black", sans-serif;
   font-variation-settings: "wdth" 125;
   font-weight: 650;
-  font-size: clamp(3rem, 6vw + 1.5rem, 6rem);
+  font-size: var(--text-hero);
   line-height: 0.95;
   letter-spacing: -0.015em;
   font-variant-numeric: tabular-nums;
@@ -412,7 +557,7 @@ html[data-theme="dark"] .tema-ponto {
 /* variante para valores sem teto conhecido (ex.: poder de compra com
    input livre) — o mesmo registo, cabeça mais baixa */
 .num-hero-compact {
-  font-size: clamp(2.5rem, 4.5vw + 1rem, 4.5rem);
+  font-size: var(--text-hero-sm);
 }
 .num-unit {
   font-size: 0.28em;
@@ -431,13 +576,17 @@ html[data-theme="dark"] .tema-ponto {
 .num-read {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 1.375rem;
+  font-size: var(--text-numero);
   line-height: 1.15;
+}
+/* leitura grande — o degrau seguinte do mesmo registo */
+.num-read-lg {
+  font-size: var(--text-display-md);
 }
 .num-dense {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 0.8125rem;
+  font-size: var(--text-nota);
 }
 
 .rule {
@@ -449,7 +598,7 @@ html[data-theme="dark"] .tema-ponto {
 }
 
 .footnote {
-  font-size: 0.8125rem;
+  font-size: var(--text-nota);
   color: var(--muted);
   line-height: 1.5;
 }
@@ -467,30 +616,31 @@ html[data-theme="dark"] .tema-ponto {
     color: var(--muted);
   }
   .kicker {
-    font-size: 0.6875rem;
+    font-size: var(--text-kicker);
     letter-spacing: 0.14em;
   }
   .kicker-sm {
-    font-size: 0.65rem;
+    font-size: var(--text-kicker-sm);
     letter-spacing: 0.16em;
   }
   .kicker-xs {
-    font-size: 0.6rem;
+    font-size: var(--text-micro);
     letter-spacing: 0.14em;
   }
 }
 
-/* botões — rectângulos de tinta, mono maiúsculo */
+/* botões — mono maiúsculo; são controlos, logo pílula (raio V4) */
 .btn {
   display: inline-flex;
   align-items: baseline;
   gap: 0.5rem;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--text-rotulo);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   padding: 0.7rem 1.1rem;
   border: 1px solid var(--ink);
+  border-radius: var(--raio-controlo);
   color: var(--ink);
   background: transparent;
   cursor: pointer;
@@ -525,9 +675,9 @@ html[data-theme="dark"] .tema-ponto {
   box-shadow: var(--recess);
   color: var(--ink);
   font-family: var(--font-mono);
-  font-size: 0.95rem;
+  font-size: var(--text-corpo);
   padding: 0.55rem 0.7rem;
-  border-radius: 0;
+  border-radius: var(--raio-papel);
 }
 .field:hover {
   border-color: var(--ink2);
@@ -535,7 +685,7 @@ html[data-theme="dark"] .tema-ponto {
 
 /* corpo editorial repetido nas páginas */
 .body-copy {
-  font-size: 0.95rem;
+  font-size: var(--text-corpo);
   line-height: 1.625;
   color: var(--ink2);
 }
@@ -548,7 +698,7 @@ html[data-theme="dark"] .tema-ponto {
 }
 
 .ticker-item {
-  font-size: 0.68rem;
+  font-size: var(--text-kicker);
   letter-spacing: 0.06em;
 }
 .ticker-track {
@@ -645,6 +795,7 @@ html[data-theme="dark"] .tema-ponto {
   background: var(--talao-paper);
   color: var(--talao-ink);
   font-family: var(--font-mono);
+  border-radius: var(--raio-papel);
 }
 /* dentes picotados — triângulos SVG por data-URI, em cima e em baixo */
 .talao::before,
@@ -755,7 +906,7 @@ html[data-theme="dark"] .tema-ponto {
 .md-cap {
   margin-top: 5px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--text-mini);
   line-height: 1.4;
   letter-spacing: 0.02em;
   color: var(--muted);
@@ -767,7 +918,7 @@ html[data-theme="dark"] .tema-ponto {
 .md-linha-rotulo {
   display: block;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--text-mini);
   letter-spacing: 0.02em;
   color: var(--muted);
   margin-bottom: 2px;
@@ -777,7 +928,7 @@ html[data-theme="dark"] .tema-ponto {
   height: 12px;
   background: var(--panel);
   border: 1px solid var(--line2);
-  border-radius: 2px;
+  border-radius: var(--raio-pormenor);
   overflow: hidden;
 }
 .md-linha-trilho .md-seg {
@@ -798,14 +949,14 @@ html[data-theme="dark"] .tema-ponto {
   height: 38px;
   background: var(--panel);
   border: 1px solid var(--line2);
-  border-radius: 2px;
+  border-radius: var(--raio-pormenor);
   overflow: hidden;
 }
 .md-vaso-taxa {
   display: block;
   margin-top: 3px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--text-mini);
   color: var(--muted);
   text-align: center;
 }
@@ -833,7 +984,7 @@ html[data-theme="dark"] .tema-ponto {
   display: block;
   margin-top: 3px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--text-mini);
   color: var(--muted);
   text-align: center;
 }
@@ -875,7 +1026,7 @@ html[data-theme="dark"] .tema-ponto {
   margin: 3px 0 2px;
   background: var(--panel);
   border: 1px solid var(--line2);
-  border-radius: 2px;
+  border-radius: var(--raio-pormenor);
   overflow: hidden;
 }
 /* o último escalão não tem teto — o recipiente abre em seta: "cheio"
@@ -918,7 +1069,7 @@ html[data-theme="dark"] .tema-ponto {
   gap: 4px;
   padding: 6px 2px;
   border: 1px solid var(--line);
-  border-radius: 3px;
+  border-radius: var(--raio-pormenor);
   background: var(--panel);
   color: var(--ink2);
   font-family: var(--font-mono);
@@ -939,7 +1090,7 @@ html[data-theme="dark"] .tema-ponto {
   color: var(--ink);
 }
 .jovem-passo-ano {
-  font-size: 0.62rem;
+  font-size: var(--text-mini);
   letter-spacing: 0.08em;
 }
 .jovem-gauge {
@@ -947,7 +1098,7 @@ html[data-theme="dark"] .tema-ponto {
   height: 26px;
   width: 8px;
   border: 1px solid var(--line2);
-  border-radius: 2px;
+  border-radius: var(--raio-pormenor);
   overflow: hidden;
   display: flex;
   flex-direction: column-reverse;
@@ -960,7 +1111,7 @@ html[data-theme="dark"] .tema-ponto {
   transition: height var(--dur-media) var(--ease-entra);
 }
 .jovem-passo-val {
-  font-size: 0.6rem;
+  font-size: var(--text-micro);
   font-variant-numeric: tabular-nums;
 }
 /* o euro a encolher (/inflacao, M-17) — a moeda cheia é o poder de
@@ -976,7 +1127,7 @@ html[data-theme="dark"] .tema-ponto {
   position: absolute;
   inset: 0;
   border: 1.5px dashed var(--line2);
-  border-radius: 50%;
+  border-radius: var(--raio-controlo);
 }
 .euro-disc {
   position: absolute;
@@ -984,38 +1135,38 @@ html[data-theme="dark"] .tema-ponto {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: var(--raio-controlo);
   background: var(--ink);
   color: var(--floor);
   font-family: var(--font-display);
-  font-size: 2.75rem;
+  font-size: var(--text-moeda);
   transform-origin: center;
   transition: transform var(--dur-longa) var(--ease-entra);
 }
 /* micro-escala própria do talão — typesetting de impressora térmica,
    independente da escala de rótulos do site */
 .talao-head {
-  font-size: 0.7rem;
+  font-size: var(--text-talao-head);
   letter-spacing: 0.3em;
   text-transform: uppercase;
 }
 .talao-sub {
-  font-size: 0.62rem;
+  font-size: var(--text-talao-sub);
 }
 .talao-body {
-  font-size: 0.82rem;
+  font-size: var(--text-talao-corpo);
   line-height: 1.625;
 }
 .talao-note {
-  font-size: 0.68rem;
+  font-size: var(--text-talao-nota);
 }
 .talao-total {
-  font-size: 0.72rem;
+  font-size: var(--text-talao-total);
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 .talao-meta {
-  font-size: 0.6rem;
+  font-size: var(--text-talao-meta);
 }
 /* campo de preço dentro do talão — tinta editável: sem moldura,
    sublinhado picotado como um valor escrito à máquina */
@@ -1025,7 +1176,7 @@ html[data-theme="dark"] .tema-ponto {
   background: transparent;
   border: 0;
   border-bottom: 1px dashed rgba(44, 36, 19, 0.55);
-  border-radius: 0;
+  border-radius: var(--raio-papel);
   appearance: textfield;
   -moz-appearance: textfield;
 }
@@ -1048,10 +1199,10 @@ html[data-theme="dark"] .tema-ponto {
   color: rgba(157, 42, 13, 0.8);
   padding: 0.15rem 0.55rem;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: var(--text-talao-sub);
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  border-radius: 2px;
+  border-radius: var(--raio-pormenor);
   pointer-events: none;
 }
 /* ecrã estreito: junto ao código de barras — espaço livre; em cima
@@ -1088,9 +1239,9 @@ html[data-theme="dark"] .tema-ponto {
   margin-left: 0.5rem;
   padding: 0 0.3rem;
   border: 1.5px solid rgba(157, 42, 13, 0.8);
-  border-radius: 2px;
+  border-radius: var(--raio-pormenor);
   color: rgba(157, 42, 13, 0.85);
-  font-size: 0.58rem;
+  font-size: var(--text-talao-micro);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   transform: rotate(-3deg);
@@ -1102,9 +1253,9 @@ html[data-theme="dark"] .tema-ponto {
   margin-left: 0.5rem;
   padding: 0 0.3rem;
   border: 1.5px solid var(--papel-fica-tinta);
-  border-radius: 2px;
+  border-radius: var(--raio-pormenor);
   color: var(--papel-fica-tinta);
-  font-size: 0.58rem;
+  font-size: var(--text-talao-micro);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   transform: rotate(-3deg);
@@ -1366,7 +1517,7 @@ html[data-theme="dark"] .tema-ponto {
   transform: translateX(-50%);
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 1.75rem;
+  font-size: var(--text-display-md);
   line-height: 1;
   color: var(--ink);
   white-space: nowrap;
@@ -1427,7 +1578,7 @@ html[data-theme="dark"] .tema-ponto {
   transform: translate(-50%, -50%);
   background: var(--accent);
   border: 1px solid var(--ink);
-  border-radius: 3px;
+  border-radius: var(--raio-pormenor);
 }
 /* as duas ranhuras do grip — tinta a meia força sobre o acento */
 .regua-polegar::after {
@@ -1479,7 +1630,7 @@ html[data-theme="dark"] .tema-ponto {
   margin-top: 1px;
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 10px;
+  font-size: var(--text-mini);
   line-height: 1.05;
   color: var(--ink2);
 }
@@ -1509,12 +1660,12 @@ html[data-theme="dark"] .tema-ponto {
 .regua-pill {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 0.68rem;
+  font-size: var(--text-kicker);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   padding: 0.38rem 0.72rem;
   border: 1px solid var(--line2);
-  border-radius: 999px;
+  border-radius: var(--raio-controlo);
   background: transparent;
   color: var(--ink2);
   cursor: pointer;
@@ -1553,6 +1704,20 @@ html[data-theme="dark"] .tema-ponto {
   animation: none;
 }
 
+/* a folha inferior da nav mobile (S1-07) sobe de baixo ao abrir —
+   o bloco global de reduced-motion corta-a; sem JS o <details> abre-a
+   na mesma (a animação é ornamento, não pré-condição) */
+@media (prefers-reduced-motion: no-preference) {
+  .nav-sheet {
+    animation: nav-sheet-sobe var(--dur-curta) var(--ease-entra) both;
+  }
+  @keyframes nav-sheet-sobe {
+    from {
+      transform: translateY(100%);
+    }
+  }
+}
+
 /* ————— interrogação — a gramática dos instrumentos —————
    readout fixo: o valor interrogado vive numa faixa própria, nunca num
    tooltip flutuante que tapa dados; é o mesmo para rato, toque e teclado
@@ -1560,7 +1725,7 @@ html[data-theme="dark"] .tema-ponto {
 .chart-readout {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 0.75rem;
+  font-size: var(--text-rotulo);
   color: var(--ink2);
   border-bottom: 1px solid var(--line);
   padding: 0.45rem 0;
@@ -1603,7 +1768,7 @@ html[data-theme="dark"] .tema-ponto {
   margin-top: -4px;
   background: var(--ink);
   border: none;
-  border-radius: 0;
+  border-radius: var(--raio-papel);
 }
 .chart-scrub::-moz-range-track {
   height: 1px;
@@ -1614,7 +1779,7 @@ html[data-theme="dark"] .tema-ponto {
   height: 9px;
   background: var(--ink);
   border: none;
-  border-radius: 0;
+  border-radius: var(--raio-papel);
 }
 /* marca interrogada: acende; as irmãs recuam */
 .chart-hit {
@@ -1623,35 +1788,41 @@ html[data-theme="dark"] .tema-ponto {
 .chart-hit-off {
   opacity: 0.3;
 }
-/* marcador de estado de série — quadrado, como as legendas do EuroBar */
-.serie-estado {
+/* ————— orbe de estado (S1-08) — a forma diz o estado, o texto ao
+   lado repete-o; a cor segue a semântica do selo que já existia ————— */
+.orbe-estado {
   display: inline-block;
-  width: 0.55em;
-  height: 0.55em;
   margin-right: 0.45em;
-  vertical-align: baseline;
+  vertical-align: -0.18em;
+  flex: none;
 }
-.serie-estado.em-dia {
-  background: var(--mark);
+.orbe-em-dia {
+  color: var(--mark);
 }
-.serie-estado.atrasada {
-  background: var(--warn);
+.orbe-no-limite {
+  color: var(--mark);
 }
-/* sem SLA definido: não é possível dizer se está atrasada — quadrado
-   oco, nem verificado nem falhado */
-.serie-estado.sem-sla {
-  background: transparent;
-  border: 1px solid var(--muted);
+.orbe-a-recolher {
+  color: var(--mark);
 }
-/* no limite — em dia mas sem folga: a próxima publicação decide;
-   hachura torrada, o selo "de fio" do quadro vivo (/metodologia) */
-.serie-estado.no-limite {
-  background: repeating-linear-gradient(
-    -45deg,
-    var(--mark) 0 1.5px,
-    transparent 1.5px 3px
-  );
-  border: 1px solid var(--mark);
+.orbe-atrasada {
+  color: var(--warn);
+}
+.orbe-sem-sla {
+  color: var(--muted);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .orbe-roda {
+    animation: orbe-gira 6s linear infinite;
+  }
+  @keyframes orbe-gira {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+.orbe-pausado .orbe-roda {
+  animation-play-state: paused;
 }
 
 /* quadro vivo (/metodologia) — mural de azulejos: cada série uma célula,
@@ -1679,7 +1850,7 @@ html[data-theme="dark"] .tema-ponto {
 }
 .qcell-id {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--text-mini);
   letter-spacing: 0.02em;
   /* id de série a 10px — muted (4.46:1) fica a um fio do AA; ink2 passa */
   color: var(--ink2);
@@ -1688,7 +1859,7 @@ html[data-theme="dark"] .tema-ponto {
 .qcell-meta {
   margin-top: 3px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--text-kicker);
   color: var(--ink2);
   font-variant-numeric: tabular-nums;
 }
@@ -1772,7 +1943,7 @@ html[data-theme="dark"] .tema-ponto {
 .lc-evento-rot {
   fill: var(--muted);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--text-svg-micro);
   letter-spacing: 0.04em;
 }
 .lc-evento-faixa {
@@ -1788,6 +1959,9 @@ html[data-theme="dark"] .tema-ponto {
    custom props locais --l-* trocadas de uma vez, e a transição é
    a mesma --dur-curta em background/color/fill/stroke. */
 .leitura {
+  /* contexto de container query — o conteúdo do cartão reage à
+     largura DO CARTÃO, não da viewport (grelhas a 2–3 col.) */
+  container-type: inline-size;
   --l-bg: var(--panel);
   --l-ink: var(--ink);
   --l-ink2: var(--ink2);
@@ -1800,7 +1974,7 @@ html[data-theme="dark"] .tema-ponto {
   background: var(--l-bg);
   color: var(--l-ink);
   border: 1px solid var(--l-line);
-  border-radius: 14px;
+  border-radius: var(--raio-instrumento);
   box-shadow: var(--elev-raised);
   transition: background-color var(--dur-curta) var(--ease-entra),
     color var(--dur-curta) var(--ease-entra),
@@ -1862,7 +2036,7 @@ html[data-theme="dark"] .tema-ponto {
 }
 .leitura-breadcrumb {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: var(--text-kicker-sm);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--l-muted);
@@ -1873,7 +2047,7 @@ html[data-theme="dark"] .tema-ponto {
   gap: 0.9rem;
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 0.65rem;
+  font-size: var(--text-kicker-sm);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--l-muted);
@@ -1888,21 +2062,26 @@ html[data-theme="dark"] .tema-ponto {
 }
 .leitura-insight {
   font-family: var(--font-editorial);
-  font-size: 1.1875rem;
+  font-size: var(--text-insight);
   line-height: 1.45;
   color: var(--l-ink2);
   max-width: 44rem;
 }
 .leitura-valor {
   margin-top: 0.3rem;
-  font-family: var(--font-mono);
+  /* número herói = Archivo tabular (S1-02): em Space Mono a vírgula
+     ocupa uma célula inteira e «3,55» lê-se «3 , 55»; tnum medido na
+     fonte real — «11111.11» e «88888.88» têm a mesma largura */
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
   font-variant-numeric: tabular-nums;
-  font-size: clamp(2.25rem, 4vw + 1rem, 3rem);
+  font-feature-settings: "tnum" 1;
+  font-weight: 650;
+  font-size: var(--text-valor);
   line-height: 1.05;
   letter-spacing: -0.02em;
 }
 .leitura-amplo .leitura-valor {
-  font-size: clamp(2.5rem, 4.5vw + 1rem, 3.5rem);
+  font-size: var(--text-valor-amplo);
 }
 .lq-graf {
   margin-top: 0.8rem;
@@ -1927,12 +2106,16 @@ html[data-theme="dark"] .tema-ponto {
   border-top: 1px solid var(--l-line);
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 0.68rem;
+  font-size: var(--text-kicker);
   color: var(--l-muted);
 }
 .leitura-acoes {
   display: flex;
   gap: 1rem;
+}
+/* cartão sem fonte no rodapé — as acções encostam à direita na mesma */
+.leitura-acoes:only-child {
+  margin-left: auto;
 }
 .lq-link {
   color: var(--l-ink2);
@@ -1949,7 +2132,7 @@ html[data-theme="dark"] .tema-ponto {
 .lq-txt {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 11px;
+  font-size: var(--text-svg-rotulo);
   fill: var(--l-muted);
 }
 .lq-ext-main {
@@ -1959,8 +2142,32 @@ html[data-theme="dark"] .tema-ponto {
 .lq-anot-rot {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 11px;
+  font-size: var(--text-svg-rotulo);
   fill: var(--l-ink);
+}
+
+/* cartão estreito (S1-02): no svg fica SÓ a anotação-insight — os
+   rótulos de extremo e da referência viram a linha de texto
+   .lq-legenda (os valores continuam visíveis, como texto). A regra
+   dura é nunca haver dois rótulos sobrepostos; abaixo de ~460 px de
+   cartão não há geometria que garanta isso para todos. */
+.lq-legenda {
+  display: none;
+  margin-top: 0.55rem;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-kicker);
+  letter-spacing: 0.02em;
+  color: var(--l-muted);
+}
+@container (max-width: 460px) {
+  .lq-ext,
+  .lq-ref-rotulo {
+    display: none;
+  }
+  .lq-legenda {
+    display: block;
+  }
 }
 
 /* ————— desenho de entrada — só com .leitura-on (useArmado ao entrar
@@ -2027,109 +2234,240 @@ html[data-theme="dark"] .tema-ponto {
   }
 }
 
-/* ————— euro explodido — «o teu euro» em explosão isométrica (R-02) —————
+/* ————— controlos do cartão (S1-06) — slot entre o corpo e o rodapé;
+   a hairline tracejada é a zona de medição — mexer não é ler ————— */
+.leitura-controlos {
+  padding: 0.7rem 1.15rem 0.9rem;
+  border-top: 1px dashed var(--l-line);
+  transition: border-color var(--dur-curta) var(--ease-entra);
+}
+
+/* ————— pagina — o template de três níveis da V4 (PRODUTO §4; S1-06) —————
+   Cada nível é uma <section aria-labelledby>: 1 · a resposta (h1 +
+   UM instrumento + UMA frase), 2 · Explora, 3 · Confirma. Os números
+   são mono — o nível é um passo de formulário, não um capítulo. */
+.pg-nivel + .pg-nivel,
+.pg-nivel + .pg-seguinte {
+  margin-top: var(--gap-sec);
+}
+.pg-h {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  padding-bottom: 0.5rem;
+  margin-bottom: var(--gap-fig);
+  border-bottom: 2px solid var(--ink);
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 125;
+  font-weight: 700;
+  font-size: var(--text-display-sm);
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.pg-h-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-kicker);
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+.pg-instrumento {
+  margin-top: var(--gap-fig);
+}
+/* a frase da resposta — registo de insight (serifada), a mesma voz
+   que o cartão; lê-se sem saber nada */
+.pg-frase {
+  margin-top: 1rem;
+  font-family: var(--font-editorial);
+  font-size: var(--text-grande);
+  line-height: 1.6;
+  color: var(--ink2);
+  max-width: 42rem;
+}
+/* nível 3 — os detalhes nascem fechados; o rótulo diz o que está
+   dentro e o marcador é o "+" / "−" de formulário, não um ícone */
+.pg-detalhe {
+  border-top: 1px solid var(--line);
+}
+.pg-detalhe:last-of-type {
+  border-bottom: 1px solid var(--line);
+}
+.pg-detalhe > summary {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.75rem 0;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-rotulo);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink2);
+}
+.pg-detalhe > summary::-webkit-details-marker {
+  display: none;
+}
+.pg-detalhe > summary::marker {
+  content: "";
+}
+.pg-detalhe > summary::before {
+  content: "+";
+  color: var(--mark);
+  font-weight: 700;
+}
+.pg-detalhe[open] > summary::before {
+  content: "−";
+}
+.pg-detalhe > summary:hover {
+  color: var(--ink);
+}
+.pg-detalhe-corpo {
+  padding: 0.2rem 0 1.4rem;
+}
+/* a pergunta seguinte — nenhuma página é um beco: kicker + a próxima
+   pergunta em display, linkada à rota seguinte */
+.pg-seguinte {
+  border-top: 2px solid var(--ink);
+  padding-top: 0.7rem;
+}
+.pg-seguinte-lnk {
+  display: inline-block;
+  margin-top: 0.45rem;
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 125;
+  font-weight: 700;
+  font-size: var(--text-display-sm);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--line2);
+  text-underline-offset: 4px;
+  transition: color var(--dur-micro) var(--ease-entra),
+    text-decoration-color var(--dur-micro) var(--ease-entra);
+}
+.pg-seguinte-lnk:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}
+
+/* ————— isométrico de traço — a explosão do catálogo V4 (§5; núcleo
+   R-02/R-05, renomeado de «Explodido» para «Isometrico» em S1-05) —————
    Reusa a gramática .leitura (vars --l-*, inversão para papel). As
-   peças são wireframe — traço --l-ink, fill só no bruto (8 %) e na
-   placa base (--keep 14 %); a peça em foco ganha fill --accent a 12 %
-   e a sua chamada acende. Estado base = stack montado e legendado;
-   a montagem só existe com .eu-on (useArmado abaixo da dobra). */
-.eu-grid {
+   camadas são wireframe — traço --l-ink, fill só na peça-mãe (8 %) e
+   na placa base «fica» (--keep 14 %); a camada em foco ganha fill
+   fraco no SEU tom (12 %) e a sua chamada acende. Estrutura, nunca
+   quantidade: nenhuma medida do desenho vem de um valor. Estado base
+   = stack montado e legendado; a montagem só existe com .iso-on
+   (useArmado abaixo da dobra). */
+.iso-grid {
   display: grid;
   gap: 1.5rem;
   align-items: center;
 }
 @media (max-width: 899.98px) {
   /* mobile empilhado: a explosão primeiro, a lista depois */
-  .eu-stage {
+  .iso-stage {
     order: -1;
   }
 }
 @media (min-width: 900px) {
-  .eu-grid {
+  .iso-grid {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   }
   /* desktop: a lista à esquerda, a explosão à direita */
-  .eu-lista {
+  .iso-lista {
     order: -1;
   }
 }
-.eu-stage {
+.iso-stage {
   min-width: 0;
 }
 /* a 375 px o svg escala para ~0,6 — o detalhe ficaria ruído
    ilegível; o equivalente textual está logo abaixo, na lista */
 @media (max-width: 640px) {
-  .eu-rot-d {
+  .iso-rot-d {
     display: none;
   }
 }
 
 /* texto dentro do svg — a mesma voz mono dos rótulos do sistema */
-.eu-txt {
+.iso-txt {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
-.eu-rot-r {
+.iso-rot-r {
   fill: var(--l-ink);
-  font-size: 11px;
+  font-size: var(--text-svg-rotulo);
   letter-spacing: 0.04em;
 }
-.eu-rot-v {
-  fill: var(--l-accent);
-  font-size: 13px;
+/* tom semântico da camada (S1-02): --accent é SÓ para o dinheiro que
+   sai (cortes); --keep para o que fica (líquido, «fica»); totais —
+   bruto, custo da empresa — são neutros, tinta da casa */
+.iso-rot-v {
+  fill: var(--l-ink);
+  font-size: var(--text-svg-valor);
   font-weight: 700;
 }
-.eu-rot-v.eu-keep {
+.iso-rot-v.iso-tom-corte {
+  fill: var(--l-accent);
+}
+.iso-rot-v.iso-tom-fica {
   fill: var(--l-keep);
 }
-.eu-rot-d {
+.iso-rot-d {
   fill: var(--l-muted);
-  font-size: 11px;
+  font-size: var(--text-svg-rotulo);
 }
-.eu-kicker {
+.iso-kicker {
   fill: var(--l-muted);
-  font-size: 11px;
+  font-size: var(--text-svg-rotulo);
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
-.eu-num {
+.iso-num {
   fill: var(--l-keep);
-  font-size: 40px;
+  font-size: var(--text-svg-hero);
   font-weight: 700;
 }
 /* variante compacta — os euros do mês («1 167 €») são mais largos
    que os cêntimos; 32 px mantém o número à esquerda da placa base
    sem lhe tocar */
-.eu-num-m {
-  font-size: 32px;
+.iso-num-m {
+  font-size: var(--text-svg-numero);
 }
 /* as elipses também invertem com o papel — o bloco .leitura svg não
    cobre <ellipse> */
-.eu-card svg ellipse {
+.iso-card svg ellipse {
   transition:
     fill var(--dur-curta) var(--ease-entra),
     stroke var(--dur-curta) var(--ease-entra),
     fill-opacity var(--dur-curta) var(--ease-entra);
 }
-/* a peça em foco: fill âmbar fraco + chamada em acento */
-.eu-peca-on .eu-face {
-  fill: var(--l-accent);
+/* a camada em foco realça-se no SEU tom (--iso-tom, definido por
+   camada): um corte acende a vermelho, o «fica» a verde — nunca
+   vermelho no dinheiro que fica */
+.iso-camada-on .iso-face {
+  fill: var(--iso-tom, var(--l-accent));
   fill-opacity: 0.12;
 }
-.eu-chamada {
+.iso-chamada {
   stroke: var(--l-ink2);
   stroke-width: 1;
   stroke-dasharray: 2 3;
 }
-.eu-rotg.eu-peca-on .eu-chamada {
-  stroke: var(--l-accent);
+.iso-rotg.iso-camada-on .iso-chamada {
+  stroke: var(--iso-tom, var(--l-accent));
 }
-.eu-rotg.eu-peca-on .eu-rot-r {
-  fill: var(--l-accent);
+.iso-rotg.iso-camada-on .iso-rot-r {
+  fill: var(--iso-tom, var(--l-accent));
 }
 
 /* a lista — o equivalente sempre visível, parte do cartão */
-.eu-lista {
+.iso-lista {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -2137,65 +2475,68 @@ html[data-theme="dark"] .tema-ponto {
   flex-direction: column;
   gap: 2px;
 }
-.eu-li {
+.iso-li {
   border-left: 2px solid var(--l-line);
   padding: 0.55rem 0.9rem;
   transition:
     background-color var(--dur-micro) var(--ease-entra),
     border-color var(--dur-micro) var(--ease-entra);
 }
-.eu-li-on {
-  background: color-mix(in srgb, var(--l-accent) 8%, transparent);
-  border-left-color: var(--l-accent);
+.iso-li-on {
+  background: color-mix(in srgb, var(--iso-tom, var(--l-accent)) 8%, transparent);
+  border-left-color: var(--iso-tom, var(--l-accent));
 }
-.eu-li-top {
+.iso-li-top {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 0.75rem;
 }
-.eu-li-rot {
+.iso-li-rot {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--text-rotulo);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--l-ink2);
 }
-.eu-li-val {
+.iso-li-val {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 1.35rem;
+  font-size: var(--text-numero);
   font-weight: 700;
+  color: var(--l-ink);
+}
+.iso-li-val.iso-tom-corte {
   color: var(--l-accent);
 }
-.eu-li-val.eu-keep {
+.iso-li-val.iso-tom-fica {
   color: var(--l-keep);
 }
-.eu-li-det {
+.iso-li-det {
   margin-top: 0.15rem;
-  font-size: 0.8125rem;
+  font-size: var(--text-nota);
   line-height: 1.5;
   color: var(--l-muted);
 }
 
-/* ————— montagem da explosão — só com .eu-on —————
-   cada peça nasce ~40 px acima da posição final e converge para o
+/* ————— montagem da explosão — só com .iso-on —————
+   cada camada nasce ~40 px acima da posição final e converge para o
    stack, escalonadas por 80 ms; as chamadas revelam-se depois por
    clip-path (o dash "2 3" é semântico); os rótulos assentam por
    último e o número grande fecha a sequência (~1,2 s). */
-.eu-on .eu-peca {
-  animation: eu-desce var(--dur-media) var(--ease-entra) var(--pd, 0ms) both;
+.iso-on .iso-camada {
+  animation: iso-desce var(--dur-media) var(--ease-entra) var(--iso-pd, 0ms) both;
 }
-.eu-on .eu-chamada {
-  animation: eu-traca var(--dur-curta) var(--ease-entra) var(--ld, 0ms) both;
+.iso-on .iso-chamada {
+  animation: iso-traca var(--dur-curta) var(--ease-entra) var(--iso-ld, 0ms) both;
 }
-.eu-on .eu-rot {
-  animation: eu-surge var(--dur-curta) var(--ease-entra) var(--rd, 0ms) both;
+.iso-on .iso-rot {
+  animation: iso-surge var(--dur-curta) var(--ease-entra) var(--iso-rd, 0ms) both;
 }
-.eu-on .eu-num-grupo {
-  animation: eu-surge var(--dur-curta) var(--ease-entra) 1020ms both;
+.iso-on .iso-num-grupo {
+  animation: iso-surge var(--dur-curta) var(--ease-entra) 1020ms both;
 }
-@keyframes eu-desce {
+@keyframes iso-desce {
   from {
     opacity: 0;
     transform: translateY(-40px);
@@ -2205,7 +2546,7 @@ html[data-theme="dark"] .tema-ponto {
     transform: none;
   }
 }
-@keyframes eu-traca {
+@keyframes iso-traca {
   from {
     clip-path: inset(-8px 100% -8px -8px);
   }
@@ -2213,7 +2554,7 @@ html[data-theme="dark"] .tema-ponto {
     clip-path: inset(-8px -8px -8px -8px);
   }
 }
-@keyframes eu-surge {
+@keyframes iso-surge {
   from {
     opacity: 0;
   }
@@ -2222,6 +2563,336 @@ html[data-theme="dark"] .tema-ponto {
   }
 }
 
+/* ————— barra de traços — <BarraTracos> (catálogo V4 §5, S1-05) —————
+   contagens/limites/durações em traços contáveis — «1 traço = x»
+   escrito no cartão. Traços HTML (gramática da .regua-tq): fino 16 px,
+   forte 26 px a fechar cada bloco. A varredura esq→dir só corre com
+   .bt-on; o estado base é já o final. */
+.bt {
+  container-type: inline-size;
+}
+.bt-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.bt-rot {
+  margin: 0;
+}
+.bt-un {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-mini);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.bt-pista {
+  position: relative;
+  height: 34px;
+  margin-top: 0.6rem;
+}
+.bt-tq {
+  position: absolute;
+  top: 50%;
+  width: 2px;
+  height: 16px;
+  transform: translate(-50%, -50%);
+  background: var(--ink2);
+}
+.bt-tq.bt-f {
+  height: 26px;
+}
+.bt-tom-fica {
+  background: var(--keep);
+}
+.bt-tom-sai {
+  background: var(--accent);
+}
+.bt-tom-marca {
+  background: var(--mark);
+}
+.bt-tom-vago {
+  background: var(--line2);
+}
+.bt-tom-vago.bt-f {
+  background: var(--muted);
+}
+.bt-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.9rem;
+  margin-top: 0.45rem;
+}
+.bt-val {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-numero);
+  font-weight: 700;
+  color: var(--ink);
+}
+.bt-nota {
+  margin: 0;
+  font-size: var(--text-nota);
+  color: var(--muted);
+}
+/* a montagem conta como se mede — a pista revela-se esq→dir, linear */
+.bt-on .bt-pista {
+  animation: bt-varre var(--dur-media) var(--ease-lin) both;
+}
+@keyframes bt-varre {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@container (max-width: 480px) {
+  .bt-head {
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+  .bt-tq {
+    height: 13px;
+  }
+  .bt-tq.bt-f {
+    height: 21px;
+  }
+}
+
+/* ————— haltere — <Haltere> (catálogo V4 §5, S1-05) —————
+   antes ● — ○ agora por categoria sobre grelha pontilhada. A cor é
+   a do Delta: subir é «mau» (up) salvo bomSubir — e nunca o único
+   canal (a variação fica escrita com ▲/▼ na coluna da categoria). */
+.hal {
+  container-type: inline-size;
+}
+.hal-txt {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+.hal-leg {
+  fill: var(--muted);
+  font-size: var(--text-svg-micro);
+  letter-spacing: 0.06em;
+}
+.hal-rot {
+  fill: var(--ink);
+  font-size: var(--text-svg-rotulo);
+  letter-spacing: 0.04em;
+}
+.hal-rot-c {
+  display: none;
+}
+.hal-delta {
+  fill: var(--muted);
+  font-size: var(--text-svg-micro);
+}
+.hal-delta.hal-mau {
+  fill: var(--up);
+}
+.hal-delta.hal-bom {
+  fill: var(--down);
+}
+.hal-grid {
+  stroke: var(--line2);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-dasharray: 0.5 5.5;
+  opacity: 0.65;
+}
+.hal-grid-rot {
+  fill: var(--muted);
+  font-size: var(--text-svg-micro);
+}
+.hal-link {
+  stroke: var(--ink2);
+  stroke-width: 2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.hal-link.hal-mau {
+  stroke: var(--up);
+}
+.hal-link.hal-bom {
+  stroke: var(--down);
+}
+.hal-antes-dot {
+  fill: var(--ink2);
+}
+.hal-agora-dot {
+  fill: var(--panel);
+  stroke: var(--ink2);
+  stroke-width: 2;
+}
+.hal-agora-dot.hal-mau {
+  stroke: var(--up);
+}
+.hal-agora-dot.hal-bom {
+  stroke: var(--down);
+}
+.hal-v {
+  fill: var(--ink);
+  font-size: var(--text-svg-rotulo);
+  font-weight: 700;
+}
+.hal-v-antes {
+  fill: var(--ink2);
+  font-weight: 400;
+}
+/* cartão estreito: rótulo curto e a grelha fica só com os extremos */
+@container (max-width: 460px) {
+  .hal-rot-l {
+    display: none;
+  }
+  .hal-rot-c {
+    display: inline;
+  }
+  .hal-grid-rot:not(.hal-ext) {
+    display: none;
+  }
+}
+/* a entrada: o traço desenha-se de «antes» para «agora» e os pontos
+   assentam a seguir — escalonado por linha (--hd). Estado base = final. */
+.hal-on .hal-link {
+  animation: hal-traca var(--dur-media) var(--ease-entra) var(--hd, 0ms) both;
+}
+.hal-on .hal-dot {
+  animation: hal-surge var(--dur-curta) var(--ease-entra)
+    calc(var(--hd, 0ms) + 240ms) both;
+}
+.hal-on .hal-txt {
+  animation: hal-surge var(--dur-curta) var(--ease-entra)
+    calc(var(--hd, 0ms) + 120ms) both;
+}
+@keyframes hal-traca {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes hal-surge {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ————— anel de pontos — <AnelPontos> (catálogo V4 §5, S1-05) —————
+   o ciclo em pontos contáveis; o número do ciclo é HTML ao centro —
+   nítido a qualquer escala. O «atual» tem anel torrado (marca). */
+.ap {
+  container-type: inline-size;
+}
+.ap-palco {
+  position: relative;
+  aspect-ratio: 1;
+  width: min(340px, 100%);
+  margin-inline: auto;
+}
+.ap-pista {
+  stroke: var(--line);
+  stroke-width: 1;
+  stroke-dasharray: 2 5;
+}
+.ap-dot {
+  fill: var(--ink2);
+}
+.ap-tom-fica {
+  fill: var(--keep);
+}
+.ap-tom-sai {
+  fill: var(--accent);
+}
+.ap-tom-marca {
+  fill: var(--mark);
+}
+.ap-tom-vago {
+  fill: var(--panel);
+  stroke: var(--line2);
+  stroke-width: 1.5;
+}
+.ap-anel-agora {
+  fill: none;
+  stroke: var(--mark);
+  stroke-width: 1.5;
+}
+.ap-rot {
+  fill: var(--muted);
+  font-size: var(--text-svg-micro);
+  letter-spacing: 0.04em;
+}
+.ap-rot-atual {
+  fill: var(--ink);
+  font-weight: 700;
+}
+/* palco estreito: só fica o rótulo do «agora» — nunca texto a 6 px */
+@container (max-width: 300px) {
+  .ap-rot:not(.ap-rot-atual) {
+    display: none;
+  }
+}
+.ap-centro {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+.ap-num {
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-display-md);
+  line-height: 1.05;
+  color: var(--ink);
+}
+.ap-centro-rot {
+  margin-top: 0.2rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-mini);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+/* a entrada: os pontos assentam no sentido dos ponteiros (--ad por
+   ponto), o anel do «agora» e o centro fecham a sequência */
+.ap-ponto {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.ap-on .ap-ponto {
+  animation: ap-surge var(--dur-curta) var(--ease-entra) var(--ad, 0ms) both;
+}
+.ap-on .ap-anel-agora {
+  animation: ap-surge var(--dur-curta) var(--ease-entra)
+    calc(var(--ad, 0ms) + 300ms) both;
+}
+.ap-on .ap-centro {
+  animation: ap-surge var(--dur-curta) var(--ease-entra) 700ms both;
+}
+@keyframes ap-surge {
+  from {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
 /* kinetic type — palavras sobem de trás de uma máscara de linha */
 .kin-line {
   display: inline-block;
@@ -2281,6 +2952,139 @@ html[data-theme="dark"] .tema-ponto {
 .chapter-arrow {
   transition: transform var(--dur-curta) var(--ease-entra),
     color var(--dur-micro) var(--ease-entra);
+}
+
+/* ————— campo de cêntimos — <CampoCentimos> (V4, S1-04) —————
+   O palco é uma zona de medição (pontos de fundo, família .blueprint);
+   o svg de SSR cobre tudo até ao primeiro frame do canvas — sem salto
+   de layout porque o canvas é absoluto por cima. Os rótulos dos montes
+   são HTML posicionado em % — os centros dos montes são fracções da
+   largura, logo coincidem a qualquer tamanho e em SSR. */
+.cc-palco {
+  position: relative;
+  container-type: inline-size;
+  height: clamp(320px, 52vw, 460px);
+  background-image: radial-gradient(var(--line) 1px, transparent 1.2px);
+  background-size: 22px 22px;
+  background-position: center;
+}
+.cc-svg,
+.cc-tela {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.cc-svg {
+  transition: opacity var(--dur-curta) var(--ease-entra);
+}
+.cc-palco[data-pronto] .cc-svg {
+  opacity: 0;
+}
+/* pontos do svg de SSR — a cor semântica vem dos tokens, como no canvas */
+.cc-d-sai { fill: var(--accent); }
+.cc-d-fica { fill: var(--keep); }
+.cc-d-neutro { fill: var(--ink2); }
+
+.cc-rotulos {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.cc-rot {
+  position: absolute;
+  transform: translateX(-50%) translateY(6px);
+  text-align: center;
+  white-space: nowrap;
+  opacity: 0;
+  transition:
+    opacity var(--dur-curta) var(--ease-entra),
+    transform var(--dur-curta) var(--ease-entra);
+}
+.cc-rot.on {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.cc-rot-n {
+  font-family: var(--font-mono);
+  font-size: var(--text-mini);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.cc-rot-c {
+  display: none;
+}
+.cc-rot-v {
+  display: block;
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-numero);
+  color: var(--ink2);
+  margin-top: 3px;
+}
+.cc-rot[data-tom="sai"] .cc-rot-v { color: var(--accent); }
+.cc-rot[data-tom="fica"] .cc-rot-v {
+  color: var(--keep);
+  font-size: var(--text-display-lg);
+  line-height: 1;
+}
+.cc-rot[data-zero] .cc-rot-v { color: var(--muted); }
+.cc-rot-e {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-kicker);
+  color: var(--ink2);
+  margin-top: 2px;
+}
+/* palco estreito: rótulo curto e a linha secundária só fica no «fica»
+   e nas partes a zero — nunca dois rótulos a disputar espaço */
+@container (max-width: 560px) {
+  .cc-rot-l { display: none; }
+  .cc-rot-c { display: inline; }
+  .cc-rot:not([data-tom="fica"]):not([data-zero]) .cc-rot-e {
+    display: none;
+  }
+  .cc-rot-v { font-size: var(--text-grande); }
+  .cc-rot[data-tom="fica"] .cc-rot-v { font-size: var(--text-display-md); }
+  .cc-rot-n { letter-spacing: 0.1em; }
+}
+
+/* a frase do palco — a pausa «um euro são 100 cêntimos» e o fecho */
+.cc-legenda {
+  position: absolute;
+  left: 20px;
+  top: 16px;
+  max-width: min(46ch, 72%);
+  margin: 0;
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: var(--text-grande);
+  line-height: 1.45;
+  color: var(--ink2);
+  opacity: 0;
+  transition: opacity var(--dur-media) var(--ease-entra);
+  pointer-events: none;
+}
+.cc-legenda.on {
+  opacity: 1;
+}
+.cc-legenda b,
+.cc-legenda strong {
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-style: normal;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+@container (max-width: 560px) {
+  .cc-legenda {
+    font-size: var(--text-corpo);
+    left: 14px;
+    top: 12px;
+  }
 }
 
 /* transição de tema — suave, sem flash; o atributo é removido pelo
@@ -2386,7 +3190,7 @@ html[data-theme="dark"] .tema-ponto {
     background: #fff !important;
     background-image: none !important;
     color: #000;
-    font-size: 11pt;
+    font-size: var(--text-impressao);
   }
   .font-display,
   h1, h2, h3 {

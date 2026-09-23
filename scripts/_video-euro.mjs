@@ -22,7 +22,7 @@ const ctx = await b.newContext({
 });
 const p = await ctx.newPage();
 await p.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
-await p.waitForSelector(".eu-card");
+await p.waitForSelector(".iso-card");
 await p.waitForTimeout(400);
 
 // 1 — chegada à secção: as peças convergem, as chamadas desenham-se

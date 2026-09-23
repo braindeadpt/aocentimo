@@ -62,9 +62,9 @@ export function SimuladorIrsJovem({ ano }: { ano: number }) {
         <div className="bg-raised border border-line shadow-raised">
           <div className="border-b border-line px-5 py-3 flex justify-between items-baseline">
             <span className="kicker">No {anoGozo}.º ano de gozo</span>
-            <span className="num text-xs text-muted">{fmtPct(r.pctIsencao, 0)} isento</span>
+            <span className="num text-rotulo text-muted">{fmtPct(r.pctIsencao, 0)} isento</span>
           </div>
-          <dl className="px-5 py-4 text-sm">
+          <dl className="px-5 py-4 text-corpo-sm">
             <div className="flex justify-between py-1.5 border-b border-line/60">
               <dt className="text-ink2">Rendimento isento</dt>
               <dd className="num">{fmtEUR(r.rendimentoIsento)}/ano</dd>
@@ -124,7 +124,7 @@ export function SimuladorIrsJovem({ ano }: { ano: number }) {
               ))}
             </Fragment>
           </ol>
-          <p className="mt-3 flex items-baseline justify-between border-t-2 border-ink pt-2 text-sm">
+          <p className="mt-3 flex items-baseline justify-between border-t-2 border-ink pt-2 text-corpo-sm">
             <span className="font-medium text-ink">Total em 10 anos</span>
             <span className="num font-medium text-keep">{fmtEUR0(poupanca10)}</span>
           </p>

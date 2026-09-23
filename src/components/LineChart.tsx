@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { fmtData, fmtNum } from "@/lib/format";
 import { EmptyState } from "@/components/EmptyState";
+import { OrbeEstado } from "@/components/OrbeEstado";
 import { chaveSeries, interpDom, interpPts, type Dominio, type PontoTV } from "@/lib/grafico";
 import { easeEntra } from "@/lib/useValorAnimado";
 import { m } from "@/lib/messages";
@@ -408,7 +409,7 @@ export function LineChart({
       <div className="chart-readout" aria-live="polite">
         {estado === "atrasada" && (
           <span className="inline-flex items-center gap-1.5">
-            <span aria-hidden className="serie-estado atrasada" />
+            <OrbeEstado estado="atrasada" tamanho={14} />
             <span className="chart-readout-t text-warn">{m.chart.atrasada}</span>
           </span>
         )}
@@ -471,7 +472,7 @@ export function LineChart({
               x={pad.left - 8}
               y={y(v) + 4}
               textAnchor="end"
-              fontSize={11}
+              style={{ fontSize: "var(--text-svg-rotulo)" }}
               fill="var(--color-muted)"
               fontFamily="var(--font-mono)"
             >
@@ -486,7 +487,7 @@ export function LineChart({
             x={x(t)}
             y={height - 8}
             textAnchor="middle"
-            fontSize={11}
+            style={{ fontSize: "var(--text-svg-rotulo)" }}
             fill="var(--color-muted)"
             fontFamily="var(--font-mono)"
           >
@@ -584,7 +585,7 @@ export function LineChart({
               <text
                 x={w - pad.right + 16}
                 y={f.y + 4}
-                fontSize={11}
+                style={{ fontSize: "var(--text-svg-rotulo)" }}
                 fill="var(--ink2)"
                 fontFamily="var(--font-mono)"
               >
@@ -629,7 +630,7 @@ export function LineChart({
       {evs.length > 0 && (
         <ul aria-label={m.chart.eventosAria} className="mt-1 flex flex-wrap gap-x-5 gap-y-1">
           {evs.map((ev) => (
-            <li key={ev.ms} className="flex items-baseline gap-1.5 text-[11px]">
+            <li key={ev.ms} className="flex items-baseline gap-1.5 text-kicker">
               <span aria-hidden className="inline-block h-2 w-2 self-center bg-mark" />
               <a
                 href={ev.url}
@@ -652,7 +653,7 @@ export function LineChart({
           {dados.map((d) => (
             <span
               key={d.name}
-              className="flex items-center gap-1.5 text-[11px] text-ink2"
+              className="flex items-center gap-1.5 text-kicker text-ink2"
               style={{ fontFamily: "var(--font-mono)" }}
             >
               <span className="inline-block h-2 w-2" style={{ background: d.cor }} />

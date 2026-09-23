@@ -1,44 +1,73 @@
 "use client";
 
 /**
- * Explodido — a explosão isométrica da Direcção V3 §6 generalizada
- * (extraída do EuroExplodido em R-05, para servir também o custo do
- * trabalho em /salario): peças wireframe (moeda/disco/placa/base)
- * afastadas na vertical sobre um eixo tracejado, cada uma com a sua
- * linha de chamada tracejada até ao rótulo mono à direita; à esquerda
- * da base, o número grande. A <ol> é o equivalente sempre visível —
- * faz parte do desenho — e interroga as peças por hover/focus
- * (eu-peca-on acende a face e a chamada).
+ * Isometrico — a estrutura explodida de traço fino do catálogo V4
+ * (§5 «isométrico de traço»): camadas wireframe (moeda/disco/placa/
+ * base) afastadas na vertical sobre um eixo tracejado, cada uma com a
+ * sua linha de chamada tracejada até ao rótulo mono à direita; à
+ * esquerda da base, o número grande opcional. A <ol> é o equivalente
+ * sempre visível — faz parte do desenho — e interroga as camadas por
+ * hover/focus (iso-camada-on acende a face no tom da camada e a
+ * chamada).
+ *
+ * REGRA DE OURO V4: isométrico = ESTRUTURA (o que é), nunca
+ * quantidade. Nenhuma prop dimensiona camadas por valor — a API nem
+ * aceita números: `texto`/`textoLista` são nós de rótulo (podem ser
+ * um valor já formatado, mas é texto — a geometria é fixa). Quanto é
+ * uma coisa codifica-se em pontos (CampoCentimos) ou traços
+ * (BarraTracos), nunca aqui.
  *
  * Geometria toda no HTML (viewBox fixa 520×440, sem medição); o svg é
- * decorativo (aria-hidden). A montagem — peças a convergir de cima,
+ * decorativo (aria-hidden). A montagem — camadas a convergir de cima,
  * chamadas a desenharem-se por clip-path, rótulos a assentar — só
- * existe quando o cartão pai ganha .eu-on (useArmado); sem ela, ou em
- * reduced-motion, o estado base é já o final.
+ * existe quando o cartão pai ganha .iso-on (useArmado); sem ela, ou
+ * em reduced-motion, o estado base é já o final.
+ *
+ * (Núcleo extraído do EuroExplodido em R-05; renomeado de «Explodido»
+ * para «Isometrico» em S1-05 — é a codificação «isométrico de traço»
+ * do catálogo.)
  */
 import { useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { r1 } from "@/lib/materia";
 
-export type TipoPeca = "moeda" | "disco" | "placa" | "base";
+export type FormaCamada = "moeda" | "disco" | "placa" | "base";
 
-export interface PecaExplodida {
+/** cor semântica da camada (S1-02): «corte» = dinheiro que sai do
+    bolso (SS, IRS, impostos) → --accent; «fica» = dinheiro que fica
+    contigo (líquido, «fica», «chega à conta») → --keep; «neutro» =
+    estrutura/totais que não são nem saída nem sobra → tinta. */
+export type TomCamada = "neutro" | "corte" | "fica";
+
+/** var de cor por tom — também alimenta o realce de foco (--iso-tom) */
+export const TOM_CAMADA: Record<TomCamada, string> = {
+  neutro: "var(--l-ink)",
+  corte: "var(--l-accent)",
+  fica: "var(--l-keep)",
+};
+
+export interface CamadaIsometrica {
   id: string;
-  kind: TipoPeca;
+  /** a forma é ESTRUTURAL — posição na explosão, nunca medida por
+      valor: «moeda» = a peça-mãe/o todo, «placa» = uma fatia da
+      estrutura, «disco» = um patamar, «base» = onde se chega */
+  forma: FormaCamada;
   rotulo: string;
   detalhe: string;
-  /** a base «fica» — face e valor em --keep */
-  keep: boolean;
-  /** valor junto à chamada — nó dentro do <text> (string, ou <tspan>
-      animado quando a peça responde a um input) */
-  valorSvg: ReactNode;
-  /** valor na lista-equivalente — nó resolvido (Odometer/TweenNum).
-      Ausente → a peça não entra na lista (a moeda-mãe é o todo, não
+  /** tom semântico — decide cor do texto, da face em foco e do
+      realce na lista */
+  tom: TomCamada;
+  /** texto junto à chamada — nó dentro do <text> (string, ou <tspan>
+      animado quando a camada responde a um input). Pode ser um valor
+      formatado, mas é só legenda: nunca dimensiona a camada. */
+  texto?: ReactNode;
+  /** texto na lista-equivalente — nó resolvido (Odometer/TweenNum).
+      Ausente → a camada não entra na lista (a peça-mãe é o todo, não
       um passo) */
-  valorLista?: ReactNode;
+  textoLista?: ReactNode;
 }
 
-export interface NumeroExplodido {
+export interface NumeroIsometrico {
   /** kicker mono por cima do número — «ficam-te», «chega à conta» */
   kicker: string;
   /** o valor — nó dentro do <text> */
@@ -55,15 +84,15 @@ const VH = 440;
 const CX = 264; // eixo do stack — a coluna de rótulos fica à direita
 const RX = 88; // discos cheios («1 € bruto», «chega à conta»)
 const RY = 24;
-const RXC = 74; // fatias de imposto — mais pequenas e finas
+const RXC = 74; // fatias — mais pequenas e finas
 const RYC = 20;
-const BW = 104; // placa base «fica» — losango arredondado
+const BW = 104; // placa base — losango arredondado
 const BH = 30;
 const BTH = 12; // extrusão da base
 const BR = 11; // raio dos vértices do losango
 const LX = 392; // coluna de rótulos (mono 11 px ≈ 19 car. por linha)
 const LEAD = LX - 8;
-const TOP = 54; // cy da peça do topo
+const TOP = 54; // cy da camada do topo
 const BOT = 362; // cy da placa base
 const NUM_X = 12; // o número grande, à esquerda da placa base
 
@@ -117,34 +146,39 @@ function embrulha(txt: string, max = 19): string[] {
   return linhas.length > 2 ? [linhas[0], linhas.slice(1).join(" ")] : linhas;
 }
 
-type PecaGeo = PecaExplodida & { cy: number };
+type CamadaGeo = CamadaIsometrica & { cy: number };
 
-export function Explodido({
-  pecas,
+export function Isometrico({
+  camadas,
   numero,
   nome,
 }: {
-  pecas: PecaExplodida[];
-  numero: NumeroExplodido;
+  camadas: CamadaIsometrica[];
+  /** o número grande à esquerda da base — opcional: numa estrutura
+      pura (sem leitura de valor) o bloco simplesmente não se desenha */
+  numero?: NumeroIsometrico;
   /** nome do equivalente — vira data-{nome}-lista na <ol> */
   nome: string;
 }) {
-  const [activo, setActivo] = useState<string | null>(null);
+  const [activa, setActiva] = useState<string | null>(null);
 
   // o stack: a peça-mãe no topo, os passos por ordem, a base no fundo
-  const gap = (BOT - TOP) / Math.max(1, pecas.length - 1);
-  const geo: PecaGeo[] = pecas.map((p, i) => ({ ...p, cy: r1(TOP + i * gap) }));
-  const itens = geo.filter((p) => p.valorLista !== undefined);
+  const gap = (BOT - TOP) / Math.max(1, camadas.length - 1);
+  const geo: CamadaGeo[] = camadas.map((p, i) => ({
+    ...p,
+    cy: r1(TOP + i * gap),
+  }));
+  const itens = geo.filter((p) => p.textoLista !== undefined);
 
   return (
-    <div className="eu-grid">
-      <div className="eu-stage">
+    <div className="iso-grid">
+      <div className="iso-stage">
         <svg
           viewBox={`0 0 ${VW} ${VH}`}
           aria-hidden="true"
           className="block h-auto w-full"
         >
-          {/* o eixo da explosão — a haste por onde as peças descem */}
+          {/* o eixo da explosão — a haste por onde as camadas descem */}
           <line
             x1={CX}
             x2={CX}
@@ -156,19 +190,22 @@ export function Explodido({
             opacity={0.7}
           />
 
-          {/* as peças — wireframe; cada uma desce do céu ao armar */}
+          {/* as camadas — wireframe; cada uma desce do céu ao armar */}
           {geo.map((p, i) => {
-            const on = activo === p.id ? " eu-peca-on" : "";
-            const pd = { "--pd": `${i * 80}ms` } as CSSProperties;
-            const entra = () => setActivo(p.id);
-            const sai = () => setActivo(null);
+            const on = activa === p.id ? " iso-camada-on" : "";
+            const pd = {
+              "--iso-pd": `${i * 80}ms`,
+              "--iso-tom": TOM_CAMADA[p.tom],
+            } as CSSProperties;
+            const entra = () => setActiva(p.id);
+            const sai = () => setActiva(null);
 
-            if (p.kind === "base") {
+            if (p.forma === "base") {
               const face = losango(CX, p.cy, BW, BH, BR);
               return (
                 <g
                   key={p.id}
-                  className={`eu-peca${on}`}
+                  className={`iso-camada${on}`}
                   style={pd}
                   onMouseEnter={entra}
                   onMouseLeave={sai}
@@ -204,10 +241,10 @@ export function Explodido({
                     />
                   ))}
                   <path
-                    className="eu-face"
+                    className="iso-face"
                     d={face}
-                    fill="var(--l-keep)"
-                    fillOpacity={0.14}
+                    fill={p.tom === "fica" ? "var(--l-keep)" : "none"}
+                    fillOpacity={p.tom === "fica" ? 0.14 : undefined}
                     stroke="var(--l-ink)"
                     strokeWidth={1.2}
                   />
@@ -226,13 +263,13 @@ export function Explodido({
               );
             }
 
-            const rx = p.kind === "placa" ? RXC : RX;
-            const ry = p.kind === "placa" ? RYC : RY;
-            const th = p.kind === "moeda" ? 9 : p.kind === "disco" ? 8 : 5;
+            const rx = p.forma === "placa" ? RXC : RX;
+            const ry = p.forma === "placa" ? RYC : RY;
+            const th = p.forma === "moeda" ? 9 : p.forma === "disco" ? 8 : 5;
             return (
               <g
                 key={p.id}
-                className={`eu-peca${on}`}
+                className={`iso-camada${on}`}
                 style={pd}
                 onMouseEnter={entra}
                 onMouseLeave={sai}
@@ -253,17 +290,17 @@ export function Explodido({
                   strokeWidth={1}
                 />
                 <ellipse
-                  className="eu-face"
+                  className="iso-face"
                   cx={CX}
                   cy={p.cy}
                   rx={rx}
                   ry={ry}
-                  fill={p.kind === "moeda" ? "var(--l-ink)" : "none"}
-                  fillOpacity={p.kind === "moeda" ? 0.08 : undefined}
+                  fill={p.forma === "moeda" ? "var(--l-ink)" : "none"}
+                  fillOpacity={p.forma === "moeda" ? 0.08 : undefined}
                   stroke="var(--l-ink)"
                   strokeWidth={1.2}
                 />
-                {p.kind === "moeda" && (
+                {p.forma === "moeda" && (
                   <ellipse
                     cx={CX}
                     cy={p.cy}
@@ -281,22 +318,23 @@ export function Explodido({
           })}
 
           {/* chamadas tracejadas + rótulos mono — revelam-se depois
-              das peças aterrarem */}
+              das camadas aterrarem */}
           {geo.map((p, i) => {
-            const on = activo === p.id ? " eu-peca-on" : "";
+            const on = activa === p.id ? " iso-camada-on" : "";
+            const estilo = { "--iso-tom": TOM_CAMADA[p.tom] } as CSSProperties;
             const edgeX =
-              p.kind === "base"
+              p.forma === "base"
                 ? CX + BW
-                : p.kind === "placa"
+                : p.forma === "placa"
                   ? CX + RXC
                   : CX + RX;
             return (
-              <g key={`rot-${p.id}`} className={`eu-rotg${on}`}>
+              <g key={`rot-${p.id}`} className={`iso-rotg${on}`} style={estilo}>
                 <line
-                  className="eu-chamada"
+                  className="iso-chamada"
                   style={
                     {
-                      "--ld": `${380 + i * 55}ms`,
+                      "--iso-ld": `${380 + i * 55}ms`,
                     } as CSSProperties
                   }
                   x1={edgeX + 6}
@@ -305,27 +343,29 @@ export function Explodido({
                   y2={p.cy}
                 />
                 <g
-                  className="eu-rot"
+                  className="iso-rot"
                   style={
                     {
-                      "--rd": `${440 + i * 55}ms`,
+                      "--iso-rd": `${440 + i * 55}ms`,
                     } as CSSProperties
                   }
                 >
-                  <text className="eu-txt eu-rot-r" x={LX} y={p.cy - 13}>
+                  <text className="iso-txt iso-rot-r" x={LX} y={p.cy - 13}>
                     {p.rotulo}
                   </text>
-                  <text
-                    className={`eu-txt eu-rot-v${p.keep ? " eu-keep" : ""}`}
-                    x={LX}
-                    y={p.cy + 2}
-                  >
-                    {p.valorSvg}
-                  </text>
+                  {p.texto !== undefined && (
+                    <text
+                      className={`iso-txt iso-rot-v iso-tom-${p.tom}`}
+                      x={LX}
+                      y={p.cy + 2}
+                    >
+                      {p.texto}
+                    </text>
+                  )}
                   {embrulha(p.detalhe).map((l, li) => (
                     <text
                       key={li}
-                      className="eu-txt eu-rot-d"
+                      className="iso-txt iso-rot-d"
                       x={LX}
                       y={p.cy + 16 + li * 12}
                     >
@@ -338,45 +378,48 @@ export function Explodido({
           })}
 
           {/* o número grande, à esquerda da placa base */}
-          <g className="eu-num-grupo">
-            <text className="eu-txt eu-kicker" x={NUM_X} y={BOT - 34}>
-              {numero.kicker}
-            </text>
-            <text
-              className={`eu-txt eu-num${numero.compacto ? " eu-num-m" : ""}`}
-              x={NUM_X}
-              y={BOT + 12}
-            >
-              {numero.valor}
-            </text>
-            {numero.pequeno && (
-              <text className="eu-txt eu-kicker" x={NUM_X} y={BOT + 34}>
-                {numero.pequeno}
+          {numero && (
+            <g className="iso-num-grupo">
+              <text className="iso-txt iso-kicker" x={NUM_X} y={BOT - 34}>
+                {numero.kicker}
               </text>
-            )}
-          </g>
+              <text
+                className={`iso-txt iso-num${numero.compacto ? " iso-num-m" : ""}`}
+                x={NUM_X}
+                y={BOT + 12}
+              >
+                {numero.valor}
+              </text>
+              {numero.pequeno && (
+                <text className="iso-txt iso-kicker" x={NUM_X} y={BOT + 34}>
+                  {numero.pequeno}
+                </text>
+              )}
+            </g>
+          )}
         </svg>
       </div>
 
       {/* o equivalente sempre visível — os mesmos passos e valores */}
-      <ol {...{ [`data-${nome}-lista`]: true }} className="eu-lista">
+      <ol {...{ [`data-${nome}-lista`]: true }} className="iso-lista">
         {itens.map((p) => (
           <li
             key={p.id}
             tabIndex={0}
-            className={`eu-li${activo === p.id ? " eu-li-on" : ""}`}
-            onMouseEnter={() => setActivo(p.id)}
-            onMouseLeave={() => setActivo(null)}
-            onFocus={() => setActivo(p.id)}
-            onBlur={() => setActivo(null)}
+            className={`iso-li${activa === p.id ? " iso-li-on" : ""}`}
+            style={{ "--iso-tom": TOM_CAMADA[p.tom] } as CSSProperties}
+            onMouseEnter={() => setActiva(p.id)}
+            onMouseLeave={() => setActiva(null)}
+            onFocus={() => setActiva(p.id)}
+            onBlur={() => setActiva(null)}
           >
-            <div className="eu-li-top">
-              <span className="eu-li-rot">{p.rotulo}</span>
-              <span className={`eu-li-val${p.keep ? " eu-keep" : ""}`}>
-                {p.valorLista}
+            <div className="iso-li-top">
+              <span className="iso-li-rot">{p.rotulo}</span>
+              <span className={`iso-li-val iso-tom-${p.tom}`}>
+                {p.textoLista}
               </span>
             </div>
-            <p className="eu-li-det">{p.detalhe}</p>
+            <p className="iso-li-det">{p.detalhe}</p>
           </li>
         ))}
       </ol>

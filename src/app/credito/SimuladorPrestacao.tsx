@@ -144,7 +144,7 @@ export function SimuladorPrestacao({
           formato={(v) => fmtNum(v, 2)}
         />
         {/* o choque é um acto — não uma nota de rodapé */}
-        <label className="flex items-center gap-2 text-sm text-ink">
+        <label className="flex items-center gap-2 text-corpo-sm text-ink">
           <input
             type="checkbox"
             checked={choqueOn}
@@ -180,7 +180,7 @@ export function SimuladorPrestacao({
         </div>
         <div className="px-5 py-5">
           <NumHero valor={r ? fmtEUR(r.prestacao) : "—"} sufixo={r ? "/mês" : undefined} animar={r?.prestacao} />
-          <dl className="mt-5 text-sm space-y-2">
+          <dl className="mt-5 text-corpo-sm space-y-2">
             <div className="flex justify-between border-b border-line/60 pb-1.5">
               <dt className="text-ink2">Juros totais em {anos} anos</dt>
               <dd className="num">

@@ -96,7 +96,7 @@ export default function PoupancaPage() {
           "Comparador de poupança em Portugal: Certificados de Aforro, depósitos, PPR e mais-valias — a taxa real, não só a nominal."
         )}
       />
-      <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide mt-2 uppercase">
+      <h1 className="titulo-pagina">
         O que sobra do que poupas
       </h1>
       <p className="lede mt-5">
@@ -146,7 +146,7 @@ export default function PoupancaPage() {
       </Figure>
 
       <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
-        <h2 className="font-display text-2xl text-ink">Três ideias que valem dinheiro</h2>
+        <h2 className="font-display text-display-sm text-ink">Três ideias que valem dinheiro</h2>
         <p>
           <strong>1.</strong> Os juros de depósitos e CA pagam{" "}
           {fmtPct(capitais.retencaoLiberatoria.taxa, 0)} de imposto

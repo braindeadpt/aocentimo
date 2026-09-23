@@ -8,6 +8,8 @@ import { m } from "@/lib/messages";
 import irs from "@data/fiscal/irs-2026.json";
 import ss from "@data/fiscal/ss.json";
 import smn from "@data/fiscal/smn.json";
+import cenariosJson from "@data/derived/cenarios-salario.json";
+import type { CenariosSalario } from "@/lib/cenarios";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
@@ -29,7 +31,7 @@ export default function SalarioPage() {
           "Do salário bruto ao líquido em Portugal: Segurança Social, retenção de IRS, deduções e o custo total para a empresa."
         )}
       />
-      <h1 className="font-display text-3xl hyphens-auto sm:text-4xl md:text-6xl tracking-wide uppercase">
+      <h1 className="titulo-pagina">
         Quanto vais receber mesmo?
       </h1>
       <p className="lede mt-5">
@@ -51,6 +53,7 @@ export default function SalarioPage() {
       >
         <CalculadoraSalario
           ano={ANO}
+          cenarios={cenariosJson as unknown as CenariosSalario}
           regua={{
             rotulo: m.regua.salarioBruto,
             marcador: { valor: smn.regioes.continente, rotulo: m.regua.minimo },
@@ -86,7 +89,7 @@ export default function SalarioPage() {
       </Figure>
 
       <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
-        <h2 className="font-display text-2xl text-ink">O que a calculadora faz</h2>
+        <h2 className="font-display text-display-sm text-ink">O que a calculadora faz</h2>
         <p>
           1. Soma os 14 meses (salário + subsídios de férias e Natal).{" "}
           2. Abate a <strong>dedução específica</strong> (

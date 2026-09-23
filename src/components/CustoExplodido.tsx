@@ -12,14 +12,17 @@
  * Reactivo: as medidas chegam do reciboMensal e seguem a régua do
  * bruto — os valores contam --dur-curta (useValorAnimado no svg,
  * TweenNum na lista), as peças não se remontam nem reanimam a cada
- * mudança. A montagem é a do Explodido: uma vez, ao entrar no
+ * mudança. A montagem é a do Isometrico: uma vez, ao entrar no
  * viewport (useArmado); reduced-motion = estado final.
  *
  * O cartão é gramática .leitura: breadcrumb + corpo + rodapé com
  * fontes; hover/focus-within inverte para papel e a <ol> (equivalente
  * sempre visível) interroga as peças por teclado.
  */
-import { Explodido, type PecaExplodida } from "@/components/Explodido";
+import {
+  Isometrico,
+  type CamadaIsometrica,
+} from "@/components/Isometrico";
 import { TweenNum } from "@/components/TweenNum";
 import { useArmado } from "@/lib/useArmado";
 import { useValorAnimado } from "@/lib/useValorAnimado";
@@ -121,25 +124,25 @@ export function CustoExplodido({
     rotulo: string,
     detalhe: string,
     v: number
-  ): PecaExplodida => ({
+  ): CamadaIsometrica => ({
     id,
-    kind: "placa",
+    forma: "placa",
     rotulo,
     detalhe,
-    keep: false,
-    valorSvg: <ValorSvg v={v} sinal="−" />,
-    valorLista: <ValorCorte v={v} />,
+    tom: "corte",
+    texto: <ValorSvg v={v} sinal="−" />,
+    textoLista: <ValorCorte v={v} />,
   });
 
-  const pecas: PecaExplodida[] = [
+  const camadas: CamadaIsometrica[] = [
     {
       id: "empresa",
-      kind: "moeda",
+      forma: "moeda",
       rotulo: R.empresa.rotulo,
       detalhe: R.empresa.detalhe,
-      keep: false,
-      valorSvg: <ValorSvg v={custo} />,
-      valorLista: (
+      tom: "neutro", // o custo total não é um corte — é o ponto de partida
+      texto: <ValorSvg v={custo} />,
+      textoLista: (
         <TweenNum valor={custo} casas={0} texto={fmtEUR0(custo)} sufixo=" €" />
       ),
     },
@@ -153,12 +156,12 @@ export function CustoExplodido({
     corte("ss", R.ss.rotulo, t(R.ss.detalhe, { taxa: fmtPct(taxaSs, 0) }), ss),
     {
       id: "conta",
-      kind: "base",
+      forma: "base",
       rotulo: R.conta.rotulo,
       detalhe: R.conta.detalhe,
-      keep: true,
-      valorSvg: <ValorSvg v={liquido} />,
-      valorLista: (
+      tom: "fica",
+      texto: <ValorSvg v={liquido} />,
+      textoLista: (
         <TweenNum
           valor={liquido}
           casas={0}
@@ -172,7 +175,7 @@ export function CustoExplodido({
   return (
     <article
       ref={ref}
-      className={`leitura leitura-amplo eu-card ${arm("eu-on")}`}
+      className={`leitura leitura-amplo iso-card ${arm("iso-on")}`}
     >
       <header className="leitura-head">
         <p className="leitura-breadcrumb">
@@ -184,9 +187,9 @@ export function CustoExplodido({
       </header>
 
       <div className="leitura-corpo">
-        <Explodido
+        <Isometrico
           nome="custo"
-          pecas={pecas}
+          camadas={camadas}
           numero={{
             kicker: rotulos.chegaConta,
             valor: <ValorSvg v={liquido} />,

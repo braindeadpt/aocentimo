@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
+import { OG_TIPO } from "@/lib/og";
 
 export const dynamic = "force-static";
 export const alt = "AO CÊNTIMO — literacia financeira para Portugal";
@@ -41,7 +42,7 @@ export default async function OpengraphImage() {
           </svg>
           <div
             style={{
-              fontSize: 128,
+              fontSize: OG_TIPO.hero,
               fontWeight: 800,
               color: "#221F19",
               letterSpacing: "-0.01em",
@@ -57,7 +58,7 @@ export default async function OpengraphImage() {
             justifyContent: "space-between",
             alignItems: "baseline",
             color: "#6B6455",
-            fontSize: 34,
+            fontSize: OG_TIPO.rotulo,
           }}
         >
           <span>Literacia financeira para Portugal</span>

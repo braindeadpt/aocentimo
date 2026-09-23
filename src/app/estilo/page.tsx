@@ -9,9 +9,21 @@ import { EuroBar } from "@/components/EuroBar";
 import { Source } from "@/components/Source";
 import { Logo, LogoMark } from "@/components/Logo";
 import { MotionDemo } from "./MotionDemo";
+import { CampoCentimosDemo } from "./CampoCentimosDemo";
+import { CampoCentimos } from "@/components/CampoCentimos";
+import { Haltere } from "@/components/Haltere";
+import { BarraTracos } from "@/components/BarraTracos";
+import { AnelPontos } from "@/components/AnelPontos";
+import { IsometricoDemo } from "./IsometricoDemo";
+import { Cartao } from "@/components/Cartao";
+import { OrbeEstado } from "@/components/OrbeEstado";
+import { Pagina, PaginaDetalhe } from "@/components/Pagina";
 import { PapelDefs } from "@/components/Papel";
 import { PecaPapel } from "@/components/PecaPapel";
 import { arestaRasgada } from "@/lib/materia";
+import { cenarioCanonico, BRUTO_CANONICO } from "@/lib/canonico";
+import { loadPainel } from "@/lib/data";
+import { fmtEUR0, fmtNum, fmtPeriodo } from "@/lib/format";
 import eur1m from "@data/sources/bpstat/euribor-1m-mensal.json";
 import eur3m from "@data/sources/bpstat/euribor-3m-mensal.json";
 import eur6m from "@data/sources/bpstat/euribor-6m-mensal.json";
@@ -28,6 +40,90 @@ export const metadata: Metadata = {
 const EURIBOR = [eur1m, eur3m, eur6m, eur12m].map((s) =>
   s.series.slice(-24)
 );
+
+// A história canónica em cêntimos por euro de custo — a demonstração do
+// campo. Os valores saem do motor canónico (servidor), nunca escritos à mão.
+const CAN = cenarioCanonico(BRUTO_CANONICO);
+const EURO_CENTIMOS = (() => {
+  const c = CAN;
+  const porEuro = 100 / c.custoEmpresaMes;
+  const mes = (v: number) => `${fmtEUR0(v)}/mês`;
+  return {
+    bruto: c.brutoMes,
+    custo: c.custoEmpresaMes,
+    partes: [
+      { id: "tsu", rotulo: "TSU da empresa", rotuloCurto: "TSU", valor: c.tsuEntidadeMes * porEuro, tom: "sai" as const, detalhe: mes(c.tsuEntidadeMes) },
+      { id: "irs", rotulo: "IRS retido", rotuloCurto: "IRS", valor: c.irsRetidoMes * porEuro, tom: "sai" as const, detalhe: mes(c.irsRetidoMes) },
+      { id: "ss", rotulo: "Segurança Social", rotuloCurto: "SS", valor: c.ssMes * porEuro, tom: "sai" as const, detalhe: mes(c.ssMes) },
+      { id: "fica", rotulo: "Chegam à tua conta", rotuloCurto: "Ficam-te", valor: c.liquidoMes * porEuro, tom: "fica" as const, detalhe: mes(c.liquidoMes) },
+    ],
+  };
+})();
+const EURO_SAEM = 100 - EURO_CENTIMOS.partes[3].valor;
+const EURO_EQ = `De cada euro que a empresa gasta contigo (bruto de ${fmtEUR0(EURO_CENTIMOS.bruto)}): ${fmtNum(EURO_CENTIMOS.partes[3].valor)} cêntimos chegam à tua conta; ${fmtNum(EURO_CENTIMOS.partes[0].valor)} vão para a TSU da empresa, ${fmtNum(EURO_CENTIMOS.partes[1].valor)} para o IRS e ${fmtNum(EURO_CENTIMOS.partes[2].valor)} para a Segurança Social.`;
+
+// ————— catálogo V4 (S1-05): dados das demonstrações —————
+
+// Haltere: taxas oficiais «há um ano → agora», todas em % — a mesma
+// série que a home usa (loadPainel), antes = valor − variação homóloga.
+const HALTERE = (() => {
+  const painel = loadPainel();
+  const busca = (id: string) => painel?.series.find((s) => s.id === id);
+  const defs = [
+    { id: "inflacao-homologa", rotulo: "Inflação", rotuloCurto: "Infl." },
+    { id: "euribor-3m-mensal", rotulo: "Euribor 3M", rotuloCurto: "Eur 3M" },
+    { id: "euribor-12m-mensal", rotulo: "Euribor 12M", rotuloCurto: "Eur 12M" },
+    { id: "ca-base", rotulo: "Cert. Aforro", rotuloCurto: "CA" },
+    { id: "une-pt-total", rotulo: "Desemprego", rotuloCurto: "Desemp." },
+  ];
+  const categorias = defs
+    .map((d) => {
+      const s = busca(d.id);
+      if (!s) return null;
+      return { ...d, antes: s.valor - s.variacao.abs, agora: s.valor };
+    })
+    .filter((c): c is NonNullable<typeof c> => c !== null);
+  const ref = busca("inflacao-homologa");
+  return {
+    categorias,
+    antes: ref ? fmtPeriodo(ref.variacao.periodo) : "antes",
+    agora: ref ? fmtPeriodo(ref.t) : "agora",
+  };
+})();
+
+// BarraTracos: o ano em pagamentos — 12 salários + subsídios de férias
+// e de Natal (a estrutura do ano português, parte da história canónica).
+const TRACOS_ANO = [
+  { n: 12, tom: "neutro" as const, rotulo: "salários mensais" },
+  { n: 2, tom: "fica" as const, rotulo: "subsídios de férias e de Natal" },
+];
+
+// AnelPontos: os 12 meses do ano canónico — cada ponto é um recibo de
+// CAN.liquidoMes; jun e dez (verde) trazem os subsídios; o mês «agora»
+// vem da série oficial mais recente (o HICP do painel).
+const MESES_PT = [
+  "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+  "julho", "agosto", "setembro", "outubro", "novembro", "dezembro",
+];
+const MESES_CURTO = [
+  "jan", "fev", "mar", "abr", "mai", "jun",
+  "jul", "ago", "set", "out", "nov", "dez",
+];
+const ANEL_ANO = (() => {
+  const hicp = loadPainel()?.series.find((s) => s.id === "hicp-pt-cp00");
+  const mesAgora = Number(hicp?.t.split("-")[1] ?? 0);
+  return {
+    mesAgora,
+    periodoAgora: hicp ? fmtPeriodo(hicp.t) : "",
+    pontos: MESES_PT.map((rotulo, i) => ({
+      id: `m${i + 1}`,
+      rotulo,
+      rotuloCurto: MESES_CURTO[i],
+      tom: (i === 5 || i === 11 ? "fica" : "neutro") as "fica" | "neutro",
+      atual: i + 1 === mesAgora,
+    })),
+  };
+})();
 
 const TOKENS: [string, string, string][] = [
   ["floor", "bg-floor", "#f4f3ec / #0d0b08 — nível 0, fundo"],
@@ -72,7 +168,7 @@ export default function EstiloPage() {
   return (
     <div className="mx-auto max-w-6xl px-5 pt-14 pb-10">
       <p className="kicker">Referência viva</p>
-      <h1 className="font-display mt-2 text-3xl uppercase tracking-wide hyphens-auto sm:text-4xl md:text-6xl">
+      <h1 className="titulo-pagina">
         Sistema de design
       </h1>
       <p className="lede mt-5">
@@ -87,7 +183,7 @@ export default function EstiloPage() {
       <section className="stack-sec">
         <h2 className="kicker mb-4">Marca — «o cêntimo»</h2>
         <div className="border border-line bg-panel flex flex-wrap items-center gap-10 p-8">
-          <Logo className="text-2xl sm:text-5xl lg:text-6xl" />
+          <Logo className="text-display-sm sm:text-display-xl lg:text-display-2xl" />
           <LogoMark className="h-16 w-16" />
           <p className="footnote max-w-sm">
             O C do wordmark é o sinal de cêntimo — ¢ — cortado por uma haste
@@ -110,7 +206,7 @@ export default function EstiloPage() {
           {TOKENS.map(([nome, cls, desc]) => (
             <div key={nome} className="border border-line bg-panel">
               <div className={`h-14 ${cls}`} />
-              <p className="num px-2 py-1.5 text-xs text-ink2">{nome}</p>
+              <p className="num px-2 py-1.5 text-rotulo text-ink2">{nome}</p>
               <p className="footnote px-2 pb-2">{desc}</p>
             </div>
           ))}
@@ -165,7 +261,7 @@ export default function EstiloPage() {
                   </svg>
                   <div className="mt-1 flex justify-between">
                     {["1M", "3M", "6M", "12M"].map((k, i) => (
-                      <span key={k} className="num flex items-center gap-1.5 text-xs text-muted">
+                      <span key={k} className="num flex items-center gap-1.5 text-rotulo text-muted">
                         <span aria-hidden className="inline-block size-2.5" style={{ background: `var(--color-${rampa}-${i + 1})` }} />
                         {k}
                       </span>
@@ -204,7 +300,7 @@ export default function EstiloPage() {
             </svg>
             <div className="mt-1 flex justify-between">
               {[1, 2, 3, 4].map((i) => (
-                <span key={i} className="num flex items-center gap-1.5 text-xs text-muted">
+                <span key={i} className="num flex items-center gap-1.5 text-rotulo text-muted">
                   <span aria-hidden className="inline-block size-2.5" style={{ background: `var(--color-dink-${i})` }} />
                   dink-{i}
                 </span>
@@ -302,7 +398,7 @@ export default function EstiloPage() {
           </div>
           <div className="border border-line bg-overlay px-4 py-6 shadow-overlay">
             <p className="kicker-xs text-ink">3 — overlay</p>
-            <p className="mt-2 text-[0.8125rem] leading-normal text-ink2">
+            <p className="mt-2 text-nota leading-normal text-ink2">
               menu e tooltip · só ink/ink2, nunca muted
             </p>
           </div>
@@ -334,7 +430,7 @@ export default function EstiloPage() {
             <div key={nome} className="border border-line bg-panel px-5 py-4">
               <div className="flex items-baseline justify-between">
                 <span className="kicker-xs">{nome}</span>
-                <span className="num text-xs text-muted">{val}</span>
+                <span className="num text-rotulo text-muted">{val}</span>
               </div>
               <div className={`${h} my-3 w-full border-y border-dashed border-line2`} aria-hidden />
               <p className="footnote">{uso}</p>
@@ -344,13 +440,13 @@ export default function EstiloPage() {
         <p className="kicker mb-3 mt-8">Larguras — três molduras, sem excepções</p>
         <div className="space-y-3" aria-hidden>
           <div className="border border-line bg-panel px-4 py-2.5">
-            <span className="num text-xs text-muted">referência — esta página · max-w-6xl</span>
+            <span className="num text-rotulo text-muted">referência — esta página · max-w-6xl</span>
           </div>
           <div className="mx-auto max-w-5xl border border-line bg-panel px-4 py-2.5">
-            <span className="num text-xs text-muted">instrumento — todas as páginas de dados e simuladores · max-w-5xl</span>
+            <span className="num text-rotulo text-muted">instrumento — todas as páginas de dados e simuladores · max-w-5xl</span>
           </div>
           <div className="mx-auto max-w-2xl border border-line bg-panel px-4 py-2.5">
-            <span className="num text-xs text-muted">leitura — prosa corrida, ~68 caracteres · max-w-2xl</span>
+            <span className="num text-rotulo text-muted">leitura — prosa corrida, ~68 caracteres · max-w-2xl</span>
           </div>
         </div>
         <p className="footnote mt-4">
@@ -363,44 +459,103 @@ export default function EstiloPage() {
       </section>
 
       <section className="stack-sec">
-        <h2 className="kicker mb-4">Tipografia</h2>
+        <h2 className="kicker mb-4">Tipografia — escala fechada</h2>
+        <p className="footnote mb-4 max-w-xl">
+          Sete papéis e nada mais: <strong>kicker</strong>,{" "}
+          <strong>rótulo</strong>, <strong>corpo</strong>,{" "}
+          <strong>insight</strong>, <strong>número de leitura</strong>,{" "}
+          <strong>número herói</strong> e <strong>título</strong>. Cada
+          degrau é um token <code className="num">--text-*</code> que gera
+          o utilitário <code className="num">text-*</code> — nenhum
+          elemento escreve um tamanho fora da escala. Os tamanhos dentro
+          de viewBox vivem em <code className="num">--text-svg-*</code>{" "}
+          (unidades do desenho, não da página) e o talão tem a sua
+          sub-escala <code className="num">--text-talao-*</code>: é um
+          documento de impressora térmica, não chrome do site.
+        </p>
         <div className="divide-y divide-line border-y border-line">
           <div className="py-5">
-            <p className="kicker mb-2">Display — Archivo expandido (wdth 125)</p>
-            <p className="font-display text-5xl uppercase tracking-wide">
-              Para onde vai o teu dinheiro.
+            <p className="kicker mb-2">
+              Título de herói — .titulo-hero · Archivo condensado (wdth 75)
             </p>
-          </div>
-          <div className="py-5">
-            <p className="kicker mb-2">Interface — Space Grotesk · .body-copy</p>
-            <p className="body-copy">
-              O corpo da interface e das páginas. Neutro, técnico, sem ser
-              genérico — o par natural do Space Mono dos números.
+            <p className="titulo-hero !mt-0">
+              Onde pára o teu euro.
             </p>
-          </div>
-          <div className="py-5">
-            <p className="kicker mb-2">Rótulos — .kicker, mono maiúsculo</p>
-            <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
-              <p className="kicker">.kicker · 0.6875rem / 0.14em</p>
-              <p className="kicker-sm">.kicker-sm · 0.65rem / 0.16em</p>
-              <p className="kicker-xs">.kicker-xs · 0.6rem / 0.14em</p>
-            </div>
             <p className="footnote mt-2">
-              A cor por defeito é muted; contextos com outra cor sobrepõem com
-              text-* (acento, tinta, aviso). O talão tem escala própria
-              (talao-*) — é um documento, não chrome do site.
+              Só na home — o monumento. O eixo wdth aperta a manchete para
+              ela pesar; nunca se usa em mais lado nenhum.
             </p>
           </div>
           <div className="py-5">
-            <p className="kicker mb-2">Editorial — Source Serif 4 (só ledes)</p>
+            <p className="kicker mb-2">
+              Título de página — .titulo-pagina · Archivo expandido (wdth 125)
+            </p>
+            <p className="titulo-pagina !mt-0">Para onde vai o teu dinheiro</p>
+            <p className="footnote mt-2">
+              Um por página, caixa-alta. Os dois estilos de título são a
+              mesma fonte — o wdth é o que os separa; não há terceiro.
+            </p>
+          </div>
+          <div className="py-5">
+            <p className="kicker mb-2">
+              Display de secção — .font-display + escada text-display-*
+            </p>
+            <p className="font-display text-display-sm tracking-wide text-ink md:text-display-md">
+              Os capítulos e as secções
+            </p>
+            <p className="footnote mt-2">
+              Os h2 e números grandes partilham a escada{" "}
+              <code className="num">text-display-xs → 3xl</code> — não são
+              um estilo de título, são degraus da mesma escala.
+            </p>
+          </div>
+          <div className="py-5">
+            <p className="kicker mb-2">Insight — Source Serif 4 · .lede / .leitura-insight</p>
             <p className="lede">
               Entre o que a empresa paga e o que tu recebes há três cortes:
               Segurança Social, IRS e a TSU que nunca vês no recibo.
             </p>
           </div>
           <div className="py-5">
-            <p className="kicker mb-2">Dados — Space Mono, tabular</p>
-            <p className="num text-3xl">1 234 567,89 € · ▲ 12,5 %</p>
+            <p className="kicker mb-2">Corpo — Space Grotesk · .body-copy / text-corpo(-sm)</p>
+            <p className="body-copy">
+              O corpo da interface e das páginas. Neutro, técnico, sem ser
+              genérico — o par natural do Space Mono dos números.
+            </p>
+          </div>
+          <div className="py-5">
+            <p className="kicker mb-2">Kicker — mono maiúsculo · .kicker, .kicker-sm, .kicker-xs</p>
+            <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
+              <p className="kicker">.kicker · text-kicker</p>
+              <p className="kicker-sm">.kicker-sm · text-kicker-sm</p>
+              <p className="kicker-xs">.kicker-xs · text-micro</p>
+            </div>
+          </div>
+          <div className="py-5">
+            <p className="kicker mb-2">Rótulo e nota — text-rotulo · .footnote (text-nota)</p>
+            <p className="num text-rotulo text-muted">
+              rótulos, readouts, meta de lista — 12px
+            </p>
+            <p className="footnote mt-1">
+              a nota de rodapé e o detalhe — 13px, sempre em muted ou ink2.
+            </p>
+          </div>
+          <div className="py-5">
+            <p className="kicker mb-2">Papel — a sub-escala do talão · text-talao-*</p>
+            <div className="talao-wrap mt-3 w-56">
+              <div className="talao">
+                <div className="talao-face px-4 pb-3 pt-4">
+                  <p className="talao-head text-center">Talao</p>
+                  <p className="talao-sub talao-dim mt-1 text-center">
+                    typesetting de impressora térmica
+                  </p>
+                  <p className="talao-total mt-3 flex justify-between">
+                    <span>Total</span>
+                    <span className="num text-talao-hero">38,40 €</span>
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -479,33 +634,74 @@ export default function EstiloPage() {
       </section>
 
       <section className="stack-sec">
-        <h2 className="kicker mb-4">Raio — zero, porque isto é uma régua</h2>
+        <h2 className="kicker mb-4">Raio — a aresta diz a matéria</h2>
         <p className="footnote mb-4 max-w-xl">
-          Um instrumento de medida tem arestas. <code className="num">border-radius</code>{" "}
-          é 0 em todo o chrome — campos, botões, painéis, tabelas. A única
-          excepção é o carimbo (2px): é tinta de borracha, um objecto
-          físico — a excepção prova a regra. Pílulas e cartões macios são
-          linguagem de app de consumo; aqui mede-se dinheiro.
+          Quatro raios com significado, nenhum avulso:{" "}
+          <code className="num">--raio-papel</code> (0 — o documento é
+          cortado, nunca arredondado),{" "}
+          <code className="num">--raio-pormenor</code> (2px, derivado do
+          instrumento — carimbos, trilhos, peças maquinadas),{" "}
+          <code className="num">--raio-instrumento</code> (14px — o
+          objecto completo: cartão, resultado, overlay) e{" "}
+          <code className="num">--raio-controlo</code> (999px — a pílula:
+          presets, toggles, botões, marcadores). Geometria de desenho
+          (círculos, <code className="num">rx</code> de svg) não é raio
+          de objecto — fica fora da escala por natureza, não por
+          excepção.
         </p>
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="border border-line bg-panel px-5 py-4">
-            <input className="field w-full" defaultValue="1 500" aria-label="campo real — raio zero" />
-            <p className="footnote mt-3">
-              ✓ o campo é uma cavidade — arestas rectas, recess interno,
-              foco pelo anel torrado
-            </p>
-          </div>
-          <div className="border border-line bg-panel px-5 py-4">
-            <div
-              aria-hidden
-              className="num border-2 border-line2 bg-panel px-3 py-2 text-muted"
-              style={{ borderRadius: "999px" }}
-            >
-              1 500
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="border border-line bg-panel px-4 py-5">
+            <p className="kicker-xs">papel · 0</p>
+            <div className="talao-wrap mt-3">
+              <div className="talao">
+                <div className="talao-face px-3 py-2">
+                  <p className="talao-meta talao-dim text-center">
+                    aresta recta — cortado
+                  </p>
+                </div>
+              </div>
             </div>
             <p className="footnote mt-3">
-              ✗ proibido — a pílula arredondada promete um toque que o
-              instrumento não dá
+              talões, recibos, campos (.field), picotados — o papel nunca
+              é arredondado.
+            </p>
+          </div>
+          <div className="border border-line bg-panel px-4 py-5">
+            <p className="kicker-xs">pormenor · 2px</p>
+            <div className="talao-wrap mt-3">
+              <div className="talao">
+                <div className="talao-face px-3 py-2 text-center">
+                  <span className="carimbo">simulação</span>
+                </div>
+              </div>
+            </div>
+            <p className="footnote mt-3">
+              carimbo de borracha, trilho de barra, gauge — a aresta
+              mínima da peça maquinada. É{" "}
+              <code className="num">--raio-instrumento / 7</code>, não um
+              valor solto.
+            </p>
+          </div>
+          <div className="border border-line bg-panel px-4 py-5">
+            <p className="kicker-xs">instrumento · 14px</p>
+            <div className="mt-3 rounded-instrumento border border-line bg-raised px-3 py-3 shadow-raised">
+              <p className="num text-rotulo text-ink">o cartão Leitura</p>
+              <p className="footnote">resultado · overlay · explosão</p>
+            </div>
+            <p className="footnote mt-3">
+              um objecto completo é maquinado — elevação ≥ 1 pede o raio;
+              a chapa de nível 1 fica recta.
+            </p>
+          </div>
+          <div className="border border-line bg-panel px-4 py-5">
+            <p className="kicker-xs">controlo · 999px</p>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <Link href="/estilo" className="btn">preset</Link>
+              <span className="tema-ponto" aria-hidden />
+            </div>
+            <p className="footnote mt-3">
+              pílulas, toggles, botões e marcadores — o que se carrega é
+              redondo; o que se lê é recto.
             </p>
           </div>
         </div>
@@ -528,7 +724,7 @@ export default function EstiloPage() {
             ["--dur-longa", "1200ms", "sequência orquestrada"],
           ].map(([tok, ms, uso]) => (
             <div key={tok} className="bg-panel px-4 py-3">
-              <p className="num text-sm text-ink">{ms}</p>
+              <p className="num text-corpo-sm text-ink">{ms}</p>
               <p className="kicker-xs mt-1">{tok}</p>
               <p className="footnote mt-1">{uso}</p>
             </div>
@@ -631,6 +827,326 @@ export default function EstiloPage() {
         </p>
       </section>
 
+      <section id="campo-centimos" className="stack-sec">
+        <h2 className="kicker mb-4">O campo de cêntimos — 1 ponto = 1 cêntimo</h2>
+        <p className="footnote mb-4 max-w-xl">
+          A unidade da V4: partes de um todo em dinheiro desenham-se em
+          pontos contáveis. Em repouso é a moeda de 1 € desenhada a sério;
+          ao revelar desfaz-se nos seus 100 cêntimos e cada ponto voa para
+          o monte de quem o leva. O texto diz o valor real («63,2 c»), o
+          desenho conta pontos inteiros (maior resto — somam sempre 100).
+          Sem JS o servidor serve o estado pedido em SVG com os mesmos
+          números; o equivalente textual está sempre presente.
+        </p>
+        <CampoCentimosDemo
+          partes={EURO_CENTIMOS.partes}
+          equivalente={EURO_EQ}
+          textos={{
+            pausa: (
+              <>
+                Um euro são <b>100 cêntimos</b>. Cada ponto é um.
+              </>
+            ),
+            saiem: (
+              <>
+                Destes 100 cêntimos, <b>{fmtNum(EURO_SAEM)}</b> saem antes de
+                chegar à tua conta.
+              </>
+            ),
+            pronto: (
+              <>
+                De cada euro, <b>{fmtNum(EURO_CENTIMOS.partes[3].valor)} c</b>{" "}
+                chegam-te à conta.
+              </>
+            ),
+          }}
+        />
+        <ul className="mt-4 space-y-1">
+          {[
+            "Usa-se para partes de um todo em dinheiro — salário, impostos, o preço de um litro. Nunca para estrutura (isso é o isométrico) nem séries temporais.",
+            "A parte que fica contigo é a última da lista — fica à direita e em verde; o que sai é vermelhão; neutro é cinzento.",
+            "Sem JS ou com reduced-motion o estado final está servido — abaixo, os mesmos montes como o SSR os entrega.",
+          ].map((r) => (
+            <li key={r} className="footnote">
+              <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-mark align-middle" />
+              {r}
+            </li>
+          ))}
+        </ul>
+        <div className="mt-6">
+          <CampoCentimos
+            partes={EURO_CENTIMOS.partes}
+            layout="montes"
+            equivalente={EURO_EQ}
+          />
+        </div>
+      </section>
+
+      <section className="stack-sec">
+        <h2 className="kicker mb-4">O catálogo de codificações — a forma é do dado</h2>
+        <p className="footnote mb-4 max-w-xl">
+          O catálogo fechado da V4 (PRODUTO.md §5): cada tipo de dado tem a
+          sua forma — o tipo escolhe o desenho, nunca o contrário. Pontos
+          medem quantidade («1 ponto = 1 cêntimo», acima); traços contam;
+          o isométrico mostra estrutura. Todos com o valor final no HTML
+          do servidor e um único equivalente textual.
+        </p>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <div className="border border-line bg-panel px-5 py-4 lg:col-span-2">
+            <p className="kicker-xs mb-3">
+              Haltere — antes ● — ○ agora, por categoria
+            </p>
+            <Haltere
+              categorias={HALTERE.categorias}
+              rotuloAntes={HALTERE.antes}
+              rotuloAgora={HALTERE.agora}
+              formato="pct"
+            />
+            <p className="footnote mt-3">
+              <strong>quando usar:</strong> o mesmo indicador em dois
+              momentos, por categoria — «há um ano → agora».{" "}
+              <strong>quando não usar:</strong> uma série temporal (é a
+              linha anotada) ou um valor sem par de comparação. Taxas
+              oficiais do painel (BdP/Eurostat/IGCP); a cor é a do Delta —
+              sobe/desce com leitura boa/má — e a variação fica escrita
+              com ▲/▼, nunca só na cor.
+            </p>
+          </div>
+          <div className="border border-line bg-panel px-5 py-4">
+            <p className="kicker-xs mb-3">Barra de traços — contagem e limite</p>
+            <BarraTracos
+              grupos={TRACOS_ANO}
+              unidadeTraco="1 pagamento"
+              rotulo="O ano em pagamentos"
+              valor="14"
+              nota={`${fmtNum(TRACOS_ANO[0].n)} salários + ${fmtNum(TRACOS_ANO[1].n)} subsídios`}
+            />
+            <p className="footnote mt-3">
+              <strong>quando usar:</strong> contagens que se leem uma a
+              uma — os 14 pagamentos do ano, os meses do fundo de
+              emergência, um limite legal. A unidade fica escrita no
+              cartão («1 traço = x»).{" "}
+              <strong>quando não usar:</strong> partes de um todo (é o
+              campo de pontos) nem valores contínuos.
+            </p>
+          </div>
+          <div className="border border-line bg-panel px-5 py-4">
+            <p className="kicker-xs mb-3">Anel de pontos — o ciclo</p>
+            <AnelPontos
+              pontos={ANEL_ANO.pontos}
+              centro={{
+                valor: fmtEUR0(CAN.liquidoAno12),
+                rotulo: "nos 12 meses",
+              }}
+              equivalente={`O ano em 12 pontos: cada um é um recibo de ${fmtEUR0(CAN.liquidoMes)} líquidos — ${fmtEUR0(CAN.liquidoAno12)} no ano. Junho e dezembro trazem os subsídios de férias e de Natal. Agora: ${MESES_PT[ANEL_ANO.mesAgora - 1] ?? "mês em leitura"}.`}
+            />
+            <p className="footnote mt-3">
+              <strong>quando usar:</strong> o tempo que fecha — os 12
+              meses, os trimestres; o mês 12 encosta no mês 1. O número
+              do ciclo vai ao centro e o «agora» ganha o anel de marca.{" "}
+              <strong>quando não usar:</strong> progressão que não fecha
+              (linha ou traços) ou parte-todo (campo de pontos). O «agora»
+              é o mês da série oficial (HICP, {ANEL_ANO.periodoAgora}).
+            </p>
+          </div>
+          <div className="border border-line bg-panel px-5 py-4 lg:col-span-2">
+            <p className="kicker-xs mb-3">Isométrico — estrutura explodida</p>
+            <IsometricoDemo />
+            <p className="footnote mt-3">
+              <strong>quando usar:</strong> «o que é» — a composição de um
+              valor ou de um processo em camadas com chamadas.{" "}
+              <strong>quando não usar:</strong> «quanto é» — as camadas
+              nunca medem quantidade; medida é dos pontos e dos traços. A
+              camada focada (rato ou teclado na lista) ganha o
+              preenchimento ténue do seu tom.
+            </p>
+          </div>
+          <div className="border border-line bg-panel px-5 py-4 lg:col-span-2">
+            <p className="kicker-xs mb-2">E os outros três</p>
+            <p className="footnote">
+              <strong>linha anotada</strong> — séries temporais: o cartão{" "}
+              <Link href="/dados" className="underline decoration-line2 underline-offset-2">
+                Leitura
+              </Link>{" "}
+              das páginas. <strong>régua</strong> — o número que entra:{" "}
+              <Link href="/salario" className="underline decoration-line2 underline-offset-2">
+                /salario
+              </Link>
+              . <strong>percurso</strong> — caminho com marcos: entra com
+              o motor da poupança.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="stack-sec">
+        <h2 className="kicker mb-4">O cartão e a página — a anatomia fixa</h2>
+        <p className="footnote mb-4 max-w-xl">
+          Duas peças de arquitectura, não de desenho.{" "}
+          <code className="num">Cartao</code> é a casca Ledger que todo o
+          cartão-instrumento partilha — o <code className="num">Leitura</code>{" "}
+          já nasce sobre ela (mesmo DOM, mesma inversão para papel).{" "}
+          <code className="num">Pagina</code> é o template de três níveis
+          obrigatório nas rotas de conteúdo: 1 · a resposta, 2 · Explora,
+          3 · Confirma — e a pergunta seguinte, para nenhuma página ser um
+          beco. O orbe de estado chega em S1-08; o ponto de montagem já
+          existe (a prop <code className="num">estado</code> + o selo
+          textual, que fica sempre — a forma nunca é o único canal).
+        </p>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <div className="border border-line bg-panel px-5 py-4 lg:col-span-2">
+            <p className="kicker-xs mb-3">Cartao — quatro partes, uma ideia</p>
+            <Cartao
+              breadcrumb="ESTILO / ANATOMIA · AO CÊNTIMO"
+              meta={["exercício 2026"]}
+              estado="em-dia"
+              estadoRotulo="em dia"
+              controlos={
+                <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1">
+                  <span className="num text-rotulo">presets:</span>
+                  <a href="/salario" className="lq-link num text-rotulo">
+                    mínimo
+                  </a>
+                  <a href="/salario" className="lq-link num text-rotulo">
+                    1 500 €
+                  </a>
+                  <a href="/salario" className="lq-link num text-rotulo">
+                    2 000 €
+                  </a>
+                </div>
+              }
+              fonte={{
+                rotulo: "Fonte",
+                itens: [{ nome: "metodologia", url: "/metodologia" }],
+              }}
+              acoes={[
+                { href: "/salario", rotulo: "ver →", ariaLabel: "Salário" },
+                { href: "/api/index.json", rotulo: "JSON", externo: true },
+              ]}
+            >
+              <p className="leitura-insight">
+                O ano português paga-se em 14 vezes — junho e dezembro trazem
+                os subsídios.
+              </p>
+              <p className="leitura-valor num">14</p>
+              <p className="leitura-breadcrumb mt-2">
+                12 salários + 2 subsídios
+              </p>
+            </Cartao>
+            <p className="footnote mt-3">
+              <strong>cabeçalho</strong> — breadcrumb mono + meta + selo de
+              estado · <strong>corpo</strong> — UMA ideia ·{" "}
+              <strong>controlos</strong> — hairline tracejada, a zona de
+              medição · <strong>rodapé</strong> — fonte + «ver →» + «JSON».
+              Passa o rato ou o foco: inverte para papel. O conteúdo do
+              corpo fala em <code className="num">--l-*</code> para
+              inverter com o cartão (ou herda a tinta — nunca usa tokens
+              globais de cor).
+            </p>
+          </div>
+          <div className="border border-line bg-panel px-5 py-4 lg:col-span-2">
+            <p className="kicker-xs mb-3">
+              Pagina — o exemplo completo, nos dois temas (troca o tema no topo)
+            </p>
+            <div className="border border-line">
+              <Pagina
+                pergunta="Para onde vai cada euro?"
+                perguntaAs="h2"
+                idBase="estilo-pagina"
+                kicker="Exemplo — a história canónica"
+                resposta={{
+                  instrumento: (
+                    <CampoCentimos
+                      partes={EURO_CENTIMOS.partes}
+                      layout="montes"
+                      equivalente={EURO_EQ}
+                    />
+                  ),
+                  frase: `De cada euro que a empresa gasta contigo, ${fmtNum(EURO_CENTIMOS.partes[3].valor)} cêntimos chegam-te à conta.`,
+                }}
+                explora={
+                  <div className="border border-line bg-panel px-5 py-4">
+                    <BarraTracos
+                      grupos={TRACOS_ANO}
+                      unidadeTraco="1 pagamento"
+                      rotulo="O ano em pagamentos"
+                      valor="14"
+                      nota={`${fmtNum(TRACOS_ANO[0].n)} salários + ${fmtNum(TRACOS_ANO[1].n)} subsídios`}
+                    />
+                  </div>
+                }
+                confirma={
+                  <>
+                    <PaginaDetalhe rotulo="A conta do euro, linha a linha">
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-corpo-sm">
+                          <thead>
+                            <tr className="border-b-2 border-ink text-left">
+                              <th scope="col" className="py-2 pr-4 font-medium">
+                                Linha
+                              </th>
+                              <th scope="col" className="py-2 font-medium text-right">
+                                Por mês
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {[
+                              ["A empresa paga (custo total)", CAN.custoEmpresaMes],
+                              ["− TSU da empresa", CAN.tsuEntidadeMes],
+                              ["− IRS retido", CAN.irsRetidoMes],
+                              ["− Segurança Social", CAN.ssMes],
+                              ["Chega à tua conta", CAN.liquidoMes],
+                            ].map(([rotulo, v]) => (
+                              <tr key={rotulo as string} className="border-b border-line">
+                                <td className="py-2 pr-4 text-ink2">{rotulo}</td>
+                                <td className="py-2 num text-right">{fmtEUR0(v as number)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </PaginaDetalhe>
+                    <PaginaDetalhe rotulo="Fonte e dados">
+                      <Source
+                        nome="AO CÊNTIMO — cenário canónico"
+                        url="/metodologia"
+                        nota={`solteiro, sem dependentes, bruto de ${fmtEUR0(BRUTO_CANONICO)}/mês`}
+                      />
+                      <p className="footnote mt-2">
+                        <a
+                          href="/api/index.json"
+                          className="underline decoration-line2 underline-offset-2 hover:text-accent"
+                        >
+                          JSON
+                        </a>{" "}
+                        — o índice das séries públicas.
+                      </p>
+                    </PaginaDetalhe>
+                  </>
+                }
+                seguinte={{
+                  href: "/salario",
+                  rotulo: "Quanto fica do teu salário?",
+                }}
+              />
+            </div>
+            <p className="footnote mt-3">
+              <strong>1 · a resposta</strong> — a pergunta (h1) + UM
+              instrumento + UMA frase ≤ ~25 palavras;{" "}
+              <strong>2 · Explora</strong> — controlos e a visualização da
+              página; <strong>3 · Confirma</strong> —{" "}
+              <code className="num">PaginaDetalhe</code> fechados por
+              omissão. Cada nível é{" "}
+              <code className="num">section aria-labelledby</code>. Em dev,
+              mais de um instrumento ou uma frase longa demais avisam na
+              consola — nunca falham o build. Aqui a pergunta renderiza em
+              h2 só porque esta página já tem o seu h1.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section className="stack-sec">
         <h2 className="kicker mb-4">Selo de evidência</h2>
         <div className="space-y-3">
@@ -642,6 +1158,41 @@ export default function EstiloPage() {
           />
           <Source nome="Lei n.º 73-A/2025" vigencia="2026" />
           <Source nome="IGCP — ficha técnica CA Série F" nota="divergência entre fontes, ambas mostradas" />
+        </div>
+        <div className="mt-6 border border-line bg-panel px-5 py-4">
+          <p className="kicker-xs mb-3">OrbeEstado — a forma diz o estado</p>
+          <p className="footnote mb-4 max-w-xl">
+            O selo de frescura dos cartões: um objecto pequeno feito de
+            pontos, não um quadrado colorido. Cheio e calmo quando a série
+            está em dia; anel oco na borda quando está no limite;
+            esburacado quando atrasada; só o anel quando não há SLA. A
+            rotação de «a recolher» (reservado — a ingestão ainda não o
+            expõe) pára fora do ecrã e desliga-se em reduced-motion. O
+            estado existe sempre em texto ao lado — a forma nunca é o
+            único canal.
+          </p>
+          <ul className="flex flex-wrap items-center gap-x-8 gap-y-3">
+            {(
+              [
+                ["em-dia", "em dia"],
+                ["no-limite", "em dia, no limite"],
+                ["a-recolher", "a recolher"],
+                ["atrasada", "atrasada"],
+                ["sem-sla", "sem SLA"],
+              ] as const
+            ).map(([est, rotulo]) => (
+              <li key={est} className="flex items-center gap-2">
+                <OrbeEstado estado={est} />
+                <span className="num text-rotulo text-ink2">{rotulo}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="footnote mt-3">
+            <strong>Quando usar</strong> — só como selo de frescura, sempre
+            com o rótulo de texto ao lado.{" "}
+            <strong>Quando não usar</strong> — nunca como decoração nem
+            como semáforo de outra coisa que não a frescura dos dados.
+          </p>
         </div>
       </section>
 
@@ -864,7 +1415,7 @@ export default function EstiloPage() {
           </div>
           <div className="border border-line px-4 py-3">
             <p className="kicker-xs mb-2">✓ tick com a cor da série, nome em tinta</p>
-            <p aria-hidden className="num text-sm text-ink2 flex items-center gap-2">
+            <p aria-hidden className="num text-corpo-sm text-ink2 flex items-center gap-2">
               <span className="inline-block h-0.5 w-3" style={{ background: "var(--seq-2)" }} />
               Euribor 12M — 2,95 %
             </p>

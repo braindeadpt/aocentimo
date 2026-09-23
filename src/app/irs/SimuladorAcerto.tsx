@@ -142,7 +142,7 @@ export function SimuladorAcerto({ ano }: { ano: number }) {
                     style={{ "--linha": prox() } as React.CSSProperties}
                   >
                     <dt className="talao-total">IRS devido</dt>
-                    <dd className="text-2xl font-bold">{fmtEUR(r.irsAnual)}</dd>
+                    <dd className="text-display-sm font-bold">{fmtEUR(r.irsAnual)}</dd>
                   </div>
                   <div
                     className={notaArm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
@@ -164,12 +164,12 @@ export function SimuladorAcerto({ ano }: { ano: number }) {
                 <p className="talao-note talao-dim uppercase tracking-widest">
                   {r.reembolsoEstimado >= 0 ? "Resultado · a receber" : "Resultado · a pagar"}
                 </p>
-                <p className="mt-1 flex items-center justify-between gap-3">
+                <div className="mt-1 flex items-center justify-between gap-3">
                   <NumHero
                     valor={fmtEUR(Math.abs(r.reembolsoEstimado))}
                     animar={Math.abs(r.reembolsoEstimado)}
                     sinal={r.reembolsoEstimado >= 0 ? "+" : "−"}
-                    className="min-w-0 flex-1 text-2xl"
+                    className="min-w-0 flex-1 text-display-sm"
                   />
                   <span
                     className={
@@ -181,7 +181,7 @@ export function SimuladorAcerto({ ano }: { ano: number }) {
                   >
                     {r.reembolsoEstimado >= 0 ? "a receber" : "a pagar"}
                   </span>
-                </p>
+                </div>
                 <p className="talao-note talao-dim mt-2">
                   {r.reembolsoEstimado >= 0
                     ? "REEMBOLSO — FOI UM EMPRÉSTIMO GRÁTIS QUE FIZESTE AO ESTADO, MÊS A MÊS."

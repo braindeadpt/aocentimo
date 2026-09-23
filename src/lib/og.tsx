@@ -5,6 +5,16 @@ import { ImageResponse } from "next/og";
 export const OG_SIZE = { width: 1200, height: 630 };
 export const OG_CONTENT_TYPE = "image/png";
 
+/* escala tipográfica do cartão OG — tipografia raster da imagem
+   1200×630 (Satori), fora do CSS da página mas na mesma lógica
+   fechada: rótulo · marca · manchete · herói */
+export const OG_TIPO = {
+  rotulo: 34,
+  marca: 52,
+  manchete: 96,
+  hero: 128,
+} as const;
+
 /**
  * OG por rota — a mesma composição da imagem raiz (marca + promessa),
  * com o título da rota como manchete. Com output:"export" cada
@@ -45,7 +55,7 @@ export async function ogImage(titulo: string) {
           </svg>
           <div
             style={{
-              fontSize: 52,
+              fontSize: OG_TIPO.marca,
               fontWeight: 800,
               color: "#221F19",
               letterSpacing: "0.02em",
@@ -56,7 +66,7 @@ export async function ogImage(titulo: string) {
         </div>
         <div
           style={{
-            fontSize: 96,
+            fontSize: OG_TIPO.manchete,
             fontWeight: 800,
             color: "#221F19",
             letterSpacing: "-0.01em",
@@ -71,7 +81,7 @@ export async function ogImage(titulo: string) {
             display: "flex",
             justifyContent: "flex-end",
             color: "#6B6455",
-            fontSize: 34,
+            fontSize: OG_TIPO.rotulo,
           }}
         >
           <span style={{ color: "#7E2B1E", fontWeight: 800 }}>

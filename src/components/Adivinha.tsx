@@ -37,7 +37,7 @@ export function Adivinha({ real }: { real: number }) {
           <p className="kicker-xs text-accent">
             {m.guess.kicker}
           </p>
-          <p className="mt-1 font-display text-xl leading-snug tracking-wide text-ink md:text-2xl">
+          <p className="mt-1 font-display text-display-xs leading-snug tracking-wide text-ink md:text-display-sm">
             {m.guess.pergunta}
           </p>
         </div>
@@ -54,7 +54,7 @@ export function Adivinha({ real }: { real: number }) {
               max={100}
               step="any"
               required
-              className="field num mt-1 text-lg"
+              className="field num mt-1 text-grande"
               placeholder="—"
             />
           </label>
@@ -67,19 +67,19 @@ export function Adivinha({ real }: { real: number }) {
       <div aria-live="polite">
         {aposta !== null && (
           <div className="mt-5 flex flex-wrap items-baseline gap-x-6 gap-y-2 border-t border-dashed border-line2 pt-4">
-            <span className="num text-sm text-muted">
+            <span className="num text-corpo-sm text-muted">
               {t(m.guess.disseste, { aposta: String(Math.round(aposta)) })} · {veredicto}
             </span>
-            <span className="kicker text-sm">
+            <span className="kicker">
               {m.guess.realidade}
             </span>
             <Odometer
               valor={real}
               casas={1}
               sufixo=" c"
-              className="num text-5xl text-keep md:text-6xl"
+              className="num text-display-xl text-keep md:text-display-2xl"
             />
-            <span className="text-sm leading-relaxed text-ink2">
+            <span className="text-corpo-sm leading-relaxed text-ink2">
               {t(m.guess.estadoFica, { valor: `${Math.round(estado)} ${m.guess.centimos}` })}
             </span>
           </div>

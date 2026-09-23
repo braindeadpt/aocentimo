@@ -110,7 +110,7 @@ export function DecomposicaoFuel() {
             transform={`rotate(-90 24 ${r1((yBase + yTopoBase) / 2)})`}
             textAnchor="middle"
             className="fill-muted"
-            fontSize={7}
+            style={{ fontSize: "var(--text-svg-mini)" }}
             letterSpacing={1.5}
           >
             BASE DO IVA
@@ -149,7 +149,7 @@ export function DecomposicaoFuel() {
         </svg>
 
         {/* legenda de cor — o número liga-se ao segmento pela cor */}
-        <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm sm:grid-cols-1 md:grid-cols-2">
+        <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-corpo-sm sm:grid-cols-1 md:grid-cols-2">
           {legenda.map((s) => (
             <div key={s.nome} className="flex items-baseline gap-2">
               <span
@@ -159,7 +159,7 @@ export function DecomposicaoFuel() {
               />
               <div>
                 <dt className="kicker">{s.nome}</dt>
-                <dd className="num text-lg mt-0.5">{fmtEUR(s.v)}</dd>
+                <dd className="num text-grande mt-0.5">{fmtEUR(s.v)}</dd>
               </div>
             </div>
           ))}
