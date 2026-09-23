@@ -154,7 +154,7 @@ function ControlosSalario() {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Contador
           id="sa"
           rotulo="Subs. alimentação"
@@ -471,8 +471,8 @@ function AnelLiberdade() {
         />
       </div>
       <p className="footnote mt-3">
-        O peso do Estado soma o IRS, a tua Segurança Social (11&nbsp;%) e a
-        TSU da empresa (23,75&nbsp;%) sobre o custo total — {fmtPct(peso)}
+        O peso do Estado soma o IRS, a tua Segurança Social (11&#8239;%) e a
+        TSU da empresa (23,75&#8239;%) sobre o custo total — {fmtPct(peso)}
         do ano.
       </p>
     </Cartao>

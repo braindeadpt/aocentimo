@@ -21,7 +21,7 @@ import {
  *
  * Regra nº 1: `euribor` pode ser null (o BPstat falhou) — nesse caso
  * `prest` é null e a prestação mostra a falha, nunca um número
- * inventado (antes havia um fallback de 2,5 % — era inventar).
+ * inventado (antes havia um fallback de 2,5 % — era inventar).
  */
 interface EstadoCasa {
   preco: number;

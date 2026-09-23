@@ -10,7 +10,7 @@
 export interface ItemCabaz {
   nome: string;
   preco: number;
-  /** taxa de IVA — os valores legais do continente (6 %, 13 %, 23 %) */
+  /** taxa de IVA — os valores legais do continente (6 %, 13 %, 23 %) */
   taxa: number;
 }
 

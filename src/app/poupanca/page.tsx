@@ -34,7 +34,7 @@ import { JsonLd, webApplication } from "@/lib/jsonld";
 export const metadata: Metadata = {
   title: "Poupança — Certificados de Aforro, depósitos e inflação",
   description:
-    "Como funcionam os Certificados de Aforro, a tributação de 28 % sobre juros, e porque a taxa que importa é a real, não a nominal.",
+    "Como funcionam os Certificados de Aforro, a tributação de 28 % sobre juros, e porque a taxa que importa é a real, não a nominal.",
   alternates: { canonical: "/poupanca", types: ALT_FEED },
 };
 
@@ -115,7 +115,7 @@ export default function PoupancaPage() {
   const centimosFica = 100 - centimosFisco;
 
   const premiosNota = ca.serieF.premiosPermanencia
-    .map((p) => `+${p.pp.toFixed(2).replace(".", ",")} p.p. ${p.anos} ano`)
+    .map((p) => `+${p.pp.toFixed(2).replace(".", ",")} p.p. ${p.anos} ano`)
     .join(" · ");
 
   return (
@@ -271,7 +271,7 @@ export default function PoupancaPage() {
                         <tr key={p.anos} className="border-b border-line last:border-0">
                           <td className="px-4 py-1.5 text-ink2">{p.anos}</td>
                           <td className="px-4 py-1.5 text-right num">
-                            +{fmtNum(p.pp, 2)}&nbsp;p.p.
+                            +{fmtNum(p.pp, 2)}&#8239;p.p.
                           </td>
                         </tr>
                       ))}
@@ -383,7 +383,7 @@ export default function PoupancaPage() {
           }
           seguinte={{
             href: "/dados",
-            rotulo: "E o país, como está?",
+            rotulo: "Como está Portugal hoje?",
           }}
         />
       </PoupancaProvider>

@@ -187,9 +187,9 @@ export function ComparadorPoupanca({
         />
         <p className="footnote">
           Juros tributados a {fmtPct(taxaImposto, 0)} (retenção liberatória).
-          CA Série F: taxa base = média da Euribor 3M, limitada a 2,50 %,
+          CA Série F: taxa base = média da Euribor 3M, limitada a 2,50 %,
           capitalização trimestral e prémios de permanência incluídos. CTPC:
-          taxa crescente de 0,75 % a 2,25 % + prémio PIB atual de{" "}
+          taxa crescente de 0,75 % a 2,25 % + prémio PIB atual de{" "}
           {fmtPct(premioCtpc, 2)}, prazo máximo de 7 anos — simulado
           a taxas constantes, sem prever o PIB futuro.
         </p>

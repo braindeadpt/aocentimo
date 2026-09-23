@@ -17,7 +17,7 @@ import {
  * vive no nível 1 (com a mensalidade e a duração como resposta) e os
  * restantes controlos no nível 2 — o provedor partilha a simulação
  * entre os três níveis do <Pagina>. O ponto de partida é o cenário
- * canónico: o mesmo bruto de 1 500 € que abre /salario e /irs.
+ * canónico: o mesmo bruto de 1 500 € que abre /salario e /irs.
  */
 
 export interface ReguaTrabalho {
@@ -47,7 +47,7 @@ export interface TrabalhoEstado {
   r: ResultadoDesemprego;
   /** duração arredondada a meses — para a barra de traços e a frase */
   meses: number;
-  /** duração ultrapassa os 180 dias — há degrau de −10 % no desenho */
+  /** duração ultrapassa os 180 dias — há degrau de −10 % no desenho */
   temCorte: boolean;
 }
 

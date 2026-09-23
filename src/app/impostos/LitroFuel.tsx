@@ -83,7 +83,7 @@ export function LitroFuel({
     {
       id: "iva",
       forma: "placa",
-      rotulo: "IVA 23 %",
+      rotulo: "IVA 23 %",
       detalhe:
         "calcula-se sobre o preço já com ISP e carbono — imposto sobre imposto",
       tom: "corte",

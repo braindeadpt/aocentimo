@@ -336,7 +336,7 @@ export default function InflacaoPage() {
                   O índice não é um preço — é uma posição relativa. O
                   Eurostat fixa a média de {base ?? "o ano-base"} em 100: um
                   índice de 130 significa que esse cabaz está{" "}
-                  <strong>30 % mais caro</strong> do que em {base ?? "o ano-base"}.
+                  <strong>30 % mais caro</strong> do que em {base ?? "o ano-base"}.
                   A base vem do campo <code>unidade</code> da própria série (
                   {cp00?.meta.unidade ?? "—"}) — quando o Eurostat refizer a
                   base, o texto actualiza-se sozinho.

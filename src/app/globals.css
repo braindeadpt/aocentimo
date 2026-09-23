@@ -374,6 +374,8 @@
   letter-spacing: var(--tracking-manchete-xl);
   text-transform: uppercase;
   text-wrap: balance;
+  overflow-wrap: break-word;
+  hyphens: auto;
   margin-top: 0.5rem;
 }
 .titulo-hero {
@@ -1221,43 +1223,6 @@ h3 {
    do tema em escuro é claro e falhava AA sobre o creme (M-20) */
 .talao .num-unit {
   color: rgba(44, 36, 19, 0.72);
-}
-/* declaração SS (/trabalho) — a linha do tempo: cada mês um pilar de
-   tinta; do 7.º em diante o pilar desce (a altura é o valor, −10 % de
-   lei) e a tinta rala — o subsídio escoa-se */
-.decl-tempo {
-  display: flex;
-  align-items: flex-end;
-  gap: 2px;
-  height: 44px;
-}
-.decl-mes {
-  flex: 1 1 0;
-  min-width: 2px;
-  background: var(--talao-ink);
-  transform-origin: bottom;
-}
-.decl-mes-cut {
-  background: repeating-linear-gradient(
-    -45deg,
-    var(--talao-ink) 0 2px,
-    transparent 2px 4px
-  );
-  opacity: 0.7;
-}
-.decl-mes-anim {
-  animation: decl-mes-sobe var(--dur-curta) var(--ease-entra) both;
-  animation-delay: calc(
-    var(--linha) * 26ms + var(--ei, 0) * var(--stagger)
-  );
-}
-@keyframes decl-mes-sobe {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
 }
 
 /* micro-demonstrações do glossário (M-19) — o conceito desenhado.
@@ -3655,6 +3620,11 @@ h3 {
 }
 .cc-palco[data-pronto] .cc-svg {
   opacity: 0;
+}
+/* acima da dobra ao carregar a troca é instantânea — M-02: nenhuma
+   transição corre na primeira pintura (a resposta já lá está) */
+.cc-palco[data-pronto="imed"] .cc-svg {
+  transition: none;
 }
 /* pontos do svg de SSR — a cor semântica vem dos tokens, como no canvas */
 .cc-d-sai { fill: var(--accent); }

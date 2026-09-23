@@ -214,7 +214,11 @@ test.describe("o sistema nos produtos", () => {
     await page.goto("/casa");
     const sw = page.getByRole("switch", { name: /IMT Jovem/ });
     await expect(sw).toHaveAttribute("aria-checked", "false");
-    await page.getByLabel("Finalidade").selectOption("secundaria");
+    // a finalidade é um Segmentado (radiogroup), não um <select>
+    await page
+      .getByRole("radiogroup", { name: "Finalidade" })
+      .getByRole("radio", { name: /Secundária/ })
+      .click();
     await expect(sw).toHaveAttribute("aria-disabled", "true");
     await expect(sw).toContainText(
       "só se aplica a habitação própria e permanente"

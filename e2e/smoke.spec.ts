@@ -62,7 +62,7 @@ test("todas as rotas respondem", async ({ page }) => {
 
 test("simuladores novos produzem resultado", async ({ page }) => {
   await page.goto("/casa");
-  await expect(page.getByText("Custa mesmo")).toBeVisible();
+  await expect(page.getByText("Custa mesmo", { exact: true })).toBeVisible();
 
   await page.goto("/irs");
   await expect(page.getByText("Poupança por ano")).toBeVisible();
@@ -458,8 +458,10 @@ test("o número herói de cada simulador chega no HTML sem JS", async ({
 
 test("painéis de dados, API e feed servem", async ({ page }) => {
   await page.goto("/dados");
-  await expect(page.getByText("Euribor — médias mensais")).toBeVisible();
-  await expect(page.getByText("Calendário fiscal 2026")).toBeVisible();
+  await expect(page.getByText("Euribor 12M").first()).toBeVisible();
+  await expect(
+    page.getByText(/Todos os prazos fiscais/).first()
+  ).toBeVisible();
 
   await page.goto("/precos");
   // R-04a: cada combustível é um cartão Leitura (breadcrumb DGEG) —

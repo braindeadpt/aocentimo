@@ -76,7 +76,7 @@ export function FraseTrabalho() {
     <>
       Recebes <strong className="num">{fmtEUR(s.r.mensal)}</strong> por mês
       durante cerca de <strong className="num">{s.meses} meses</strong>
-      {s.temCorte && <> — a partir do 7.º mês, desce 10&nbsp;%</>}.
+      {s.temCorte && <> — a partir do 7.º mês, desce 10&#8239;%</>}.
     </>
   );
 }

@@ -31,7 +31,7 @@ const ROTAS = [
     pergunta: "Onde rende mais o teu dinheiro — depois de impostos e inflação?",
     hero: /%\s*\/\s*ano|%\/ano/,
     frase: /impostos e inflação/,
-    seguinte: { href: "/dados", rotulo: "E o país, como está?" },
+    seguinte: { href: "/dados", rotulo: "Como está Portugal hoje?" },
   },
 ] as const;
 

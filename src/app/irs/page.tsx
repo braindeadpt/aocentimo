@@ -37,7 +37,7 @@ const ANO = irs.ano;
  *    as fontes.
  *
  * A régua abre no coletável do cenário canónico — o mesmo bruto de
- * 1 500 € que abre /salario.
+ * 1 500 € que abre /salario.
  */
 export default function IrsPage() {
   const cenarios = cenariosJson as unknown as CenariosSalario;
@@ -209,7 +209,7 @@ export default function IrsPage() {
                 </table>
               </div>
               <p className="footnote mt-3">
-                Com 3+ dependentes a taxa marginal desce 1&nbsp;p.p. Casado
+                Com 3+ dependentes a taxa marginal desce 1&#8239;p.p. Casado
                 único titular e não casado com dependentes usam as tabelas
                 III e II — completas no{" "}
                 <a
@@ -241,7 +241,7 @@ export default function IrsPage() {
                   <tbody className="num">
                     <tr className="border-b border-line">
                       <td className="py-2 pr-4 text-ink2">Despesas gerais</td>
-                      <td className="py-2 pr-4 text-right tabular-nums">35&nbsp;%</td>
+                      <td className="py-2 pr-4 text-right tabular-nums">35&#8239;%</td>
                       <td className="py-2 text-right tabular-nums">
                         {fmtEUR0(irs.despesasGeraisPorTitular)} por titular
                       </td>

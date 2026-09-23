@@ -19,7 +19,7 @@ import { useCredito } from "./CreditoSim";
  * quase tudo é capital. O <JuroCapital> mostra essa troca de peso ao
  * longo dos anos — é a leitura que o banco nunca desenha.
  *
- * O choque +1 p.p. é um interruptor, não uma linha de texto: ao ligar,
+ * O choque +1 p.p. é um interruptor, não uma linha de texto: ao ligar,
  * TODA a resposta muda de estado — o NumHero desliza para a prestação
  * chocada, os juros totais interpolam a inchar (TweenNum) e o mapa
  * re-desenha a divisória.
@@ -65,7 +65,7 @@ export function SimuladorPrestacao({
   const runMapa = `${capital}-${anos}-${r?.tan ?? "sem-taxa"}-${spread}-${choque}`;
 
   // presets da taxa — âncora é o valor oficial de hoje (12M): a mediana
-  // de 10 anos do painel e ±0,5 p.p. em redor do «agora»
+  // de 10 anos do painel e ±0,5 p.p. em redor do «agora»
   const presetsTaxa = [
     ...(mediana12m !== null
       ? [{ rotulo: rotulos.mediana10, valor: mediana12m }]

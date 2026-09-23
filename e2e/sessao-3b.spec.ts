@@ -78,7 +78,10 @@ test("sem JS: a resposta de cada rota está no HTML servido", async ({
   await expect(page.locator(".iso-lista li").first()).toBeVisible();
   await expect(page.locator(".iso-lista")).toContainText(/IVA/);
   // o talão editável declara o resumo de IVA por taxa
-  await expect(page.locator(".talao")).toContainText(/resumo iva/i);
+  // (há dois talões na página — o das compras é o que tem o resumo)
+  await expect(
+    page.locator(".talao", { hasText: /resumo iva/i })
+  ).toBeVisible();
 
   // /precos — o odómetro da bomba serve o valor final
   await page.goto("/precos");

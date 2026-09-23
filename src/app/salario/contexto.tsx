@@ -97,7 +97,7 @@ export interface ReguaSalario {
   presets: { rotulo: string; valor: number }[];
   descricao?: string;
   /** a razão de cada extremo — junta-se à nota do limite da régua
-      («limite — 920 € · o salário mínimo») */
+      («limite — 920 € · o salário mínimo») */
   limites?: { min?: string; max?: string };
 }
 

@@ -16,7 +16,7 @@ import { SimuladorIndependente } from "./SimuladorIndependente";
  * Nível 2 de /trabalho (3A-03) — «Explora»: os controlos físicos do
  * caso (idade, descontos, majoração), a declaração da Segurança
  * Social a provar a mensalidade, os meses de subsídio em barra de
- * traços (1 traço = 1 mês, com o degrau de −10 % a partir do 7.º mês
+ * traços (1 traço = 1 mês, com o degrau de −10 % a partir do 7.º mês
  * desenhado na cor) e os recibos verdes — da faturação ao bolso em
  * campo de cêntimos.
  *
@@ -116,7 +116,7 @@ function ControlosDesemprego() {
       <Interruptor
         ligado={s.majoracao}
         onChange={s.setMajoracao}
-        rotulo="Casal desempregado com filhos / monoparental (+10 %)"
+        rotulo="Casal desempregado com filhos / monoparental (+10 %)"
         className="text-corpo-sm"
       />
       <p className="footnote">
@@ -194,7 +194,7 @@ function DeclaracaoDesemprego({ ias }: { ias: number }) {
                     className={declArm("talao-linha") + " talao-cut mt-1 py-2.5"}
                     style={{ "--linha": prox() } as React.CSSProperties}
                   >
-                    <dt className="talao-total">Mensalidade · 65 %</dt>
+                    <dt className="talao-total">Mensalidade · 65 %</dt>
                     <dd className="mt-1">
                       <NumHero
                         valor={fmtEUR(r.mensal)}
@@ -216,7 +216,7 @@ function DeclaracaoDesemprego({ ias }: { ias: number }) {
                           className={"talao-retido " + declArm("talao-carimbo-anim")}
                           aria-hidden
                         >
-                          −10 %
+                          −10 %
                         </span>
                       </dd>
                     </div>
@@ -252,7 +252,7 @@ function DeclaracaoDesemprego({ ias }: { ias: number }) {
       {r.elegivel && (
         <p className="footnote mt-4 px-1">
           Limites: entre {fmtEUR(ias)} e {fmtEUR(ias * 2.5)} (1–2,5×IAS), e
-          nunca acima de 75 % da remuneração líquida de referência. Pedido
+          nunca acima de 75 % da remuneração líquida de referência. Pedido
           no IEFP até 90 dias após o fim do contrato.
         </p>
       )}
@@ -261,7 +261,7 @@ function DeclaracaoDesemprego({ ias }: { ias: number }) {
 }
 
 /** os meses de subsídio — 1 traço = 1 mês: os primeiros seis a valor
-    inteiro («fica»), do 7.º em diante a marca (−10 % visível na cor,
+    inteiro («fica»), do 7.º em diante a marca (−10 % visível na cor,
     explicado na nota). Calculado do motor, nunca ilustrado. */
 function MesesSubsidio() {
   const s = useTrabalho();
@@ -278,7 +278,7 @@ function MesesSubsidio() {
         <>
           <p className="leitura-insight">
             {s.temCorte
-              ? `${s.meses} meses de subsídio — a partir do 7.º, cada mês vale menos 10 %.`
+              ? `${s.meses} meses de subsídio — a partir do 7.º, cada mês vale menos 10 %.`
               : `${s.meses} meses de subsídio — acaba antes do degrau dos seis.`}
           </p>
           <div className="mt-4">
@@ -290,7 +290,7 @@ function MesesSubsidio() {
                       {
                         n: Math.max(0, s.meses - 6),
                         tom: "marca",
-                        rotulo: "meses a −10 %",
+                        rotulo: "meses a −10 %",
                       },
                     ]
                   : [{ n: s.meses, tom: "fica", rotulo: "meses de subsídio" }]

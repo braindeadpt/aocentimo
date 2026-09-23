@@ -542,7 +542,7 @@ export default function DadosPage() {
                     <p className="kicker">Oficial IGCP — {caBase.meta.vigenciaOficial}</p>
                     <p className="num-read mt-1">{fmtPct(caBase.meta.oficialPct / 100, 3)}</p>
                     <p className="footnote mt-2">
-                      Média da Euribor 3M nos 10 dias úteis anteriores, limitada a 2,50&nbsp;% — a que conta para os juros.
+                      Média da Euribor 3M nos 10 dias úteis anteriores, limitada a 2,50&#8239;% — a que conta para os juros.
                     </p>
                   </div>
                   <div className="bg-panel px-5 py-5">

@@ -78,7 +78,7 @@ export function MapaAmortizacao() {
       <p className="footnote mt-3">
         Agregado por ano do plano mensal ({sim.linhas.length} prestações de{" "}
         {fmtEUR(sim.prestacao)}, TAN {fmtPct(sim.tan)}
-        {choque ? ", com o choque +1 p.p. ligado" : ""}). No primeiro ano{" "}
+        {choque ? ", com o choque +1 p.p. ligado" : ""}). No primeiro ano{" "}
         {fmtPct(
           anos.length && anos[0].prestacoes > 0
             ? anos[0].juro / anos[0].prestacoes

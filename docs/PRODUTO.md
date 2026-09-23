@@ -204,7 +204,7 @@ de construídos.
 | **Barra de traços** | contagem, limite, duração — «1 traço = x» com a unidade escrita no cartão | dinheiro contínuo; proporções de um todo | `BarraTracos` (S1-05 — congelado) |
 | **Recipientes** | escalões e bandas que enchem por ordem | série temporal; parte-todo fora de escalões | `EscaloesEnchem` (`/irs`) |
 | **Papel** | documentos oficiais: recibo, talão, escritura, caderneta, nota de liquidação | chrome do instrumento; decoração; qualquer peça que troque de cor com o tema | `PecaPapel`, `Papel` |
-| **Isométrico de traço** | **estrutura** — o que compõe algo, em camadas com linha de chamada | **nunca quantidade** — nenhuma prop de valor dimensiona camadas | `Isometrico` + `EuroExplodido`/`CustoExplodido` (S1-05 — congelado) |
+| **Isométrico de traço** | **estrutura** — o que compõe algo, em camadas com linha de chamada | **nunca quantidade** — nenhuma prop de valor dimensiona camadas | `Isometrico` + `EuroExplodido` (S1-05 — congelado) |
 | **Anel de pontos** | ciclos (ex.: os 12 meses), número ao centro | progressão linear; parte-todo | `AnelPontos` (S1-05 — congelado) |
 | **Régua** | todo o input numérico (traços de unidade, marcador «agora», presets) | como saída/leitura — é controlo, não visualização | `Regua` |
 
@@ -505,10 +505,9 @@ explicação. Quatro peças partilhadas, cada uma com desenho + texto:
   o **ponto oco** (o cêntimo que não existe — a mesma leitura do
   campo: uma parte a 0 não tem pontos) + valor já formatado + nota
   (`"não te toca"` por omissão, `null` omite). Ligado no IRS ao
-  salário mínimo: talão (sem carimbo «Retido» — não há corte), ano a
-  14 meses, `Cascata` (a `nota` do `Passo` aparece junto do rótulo; o
-  menos não se aplica a zero) e `CustoExplodido` (`RotulosCusto.zero`
-  na `textoLista`; no svg o «−» não se aplica a zero).
+  salário mínimo: talão (carimbo neutro «Não retido» — não há corte),
+  ano a 14 meses e `CampoCentimos` (uma parte a 0 não tem pontos — a
+  mesma leitura do ponto oco).
 - **O limite da `Regua`** — o erro de interacção que não é erro:
   quando a tentativa é para lá do fim (seta no extremo, PageUp que
   transborda, preset/pedido fora da gama, dedo para lá da pista) o
@@ -669,7 +668,7 @@ barra cresce, os pontos assentam, o número conta, a etiqueta entra
 por último quando serve. Aplicado em `Cartao` (prop `entrada`),
 `Leitura` (prop `entrada` → `--ei`), nas grelhas da home, `/precos`,
 `/dados` e `/inflacao`, nas células-instrumento de `/dados` e nos
-delays de `EuroBar`/`Cascata`. Acima da dobra continua a regra M-02:
+delays de `EuroBar`. Acima da dobra continua a regra M-02:
 o valor final está no HTML, nada entra animado ao carregar.
 
 **A pausa ambiente — nenhum fotograma fora da vista.** Animação
@@ -699,12 +698,11 @@ contínua só corre onde se vê e com o separador activo:
 | `Adivinha` — home | revelação do palpite | interacção | `--dur-media` | RM estado final | abaixo |
 | `EuroExplodido` — home | partes convergem ao 1 € | armada | `--dur-media` + stagger | RM estado final | abaixo |
 | `NumHero` — `/salario` `/irs` `/impostos` `/poupanca` `/credito` `/casa` `/trabalho` | número interpola | input/estado | `--dur-curta` | RM valor final | acima |
-| `CustoExplodido` — `/salario` | stack empresa↔trabalhador | armada + input | `--dur-curta`/media | RM estado final | abaixo |
-| `Cascata` — `/salario` `/trabalho` | degraus SS→IRS crescem | armada | `--ei×--stagger` | RM estado final | abaixo |
+| `CampoCentimos` — `/salario` `/trabalho` `/impostos` `/poupanca` | pontos nascem em montes | armada + input | `--dur-media` | rAF pausa fora do ecrã; RM estado final | abaixo |
 | `TweenNum` — `/salario` `/credito` | leituras interpolam | estado | `--dur-curta` | RM valor final | ambas |
 | Talão `/salario`, `TalaoCompras` `/impostos`, `CadernetaAforro` `/poupanca` | papel assenta/entra | armada | `--dur-media` | RM estado final | abaixo |
-| `DecomposicaoFuel` — `/impostos` | fatias do litro | armada + input | `--dur-media` | RM estado final | abaixo |
-| `SimuladorIrsJovem` `/irs`, `ComparadorPoupanca` `/poupanca`, `SimuladorDesemprego` `/trabalho` | instrumentos de estado | armada + input | `--dur-curta` | RM estado final | abaixo |
+| `LitroFuel` — `/impostos` | isométrico do litro + pontos | armada + input | `--dur-media` | RM estado final | abaixo |
+| `SimuladorIrsJovem` `/irs`, `ComparadorPoupanca` `/poupanca`, `BarraTracos` `/trabalho` `/irs` | instrumentos de estado | armada + input | `--dur-curta` | RM estado final | abaixo |
 | `JuroCapital` — `/credito` `/casa` | juro↔capital cresce | armada + input | `--dur-media` | RM estado final | abaixo |
 | `LineChart` — `/credito` `/dados` | série desenha-se | armada (IO) | `--dur-media` | RM estado final | abaixo |
 | `EuroBar` — `/casa` `/precos` `/estilo` | segmentos crescem | armada | `--ei×--stagger` | RM estado final | abaixo |
@@ -817,7 +815,7 @@ build && test:e2e`.
 | `Icone`/`IconeEmblema` | símbolos — páginas, acções, estado | conjunto fechado 20×20, traço 1,5; `aria-hidden` por omissão; acções sempre em controlo nomeado; desenham-se uma vez ao foco/passo |
 | `Pagina`/`PaginaDetalhe` | template de três níveis das rotas de conteúdo | níveis = `section aria-labelledby`; confirma em `<details>` fechado |
 | `Leitura` | cartão Ledger de leitura | insight escrito, anotação com chamada, fonte+estado no rodapé |
-| `EuroBar`/`Cascata`/`JuroCapital`/`EuroExplodido`/`CustoExplodido` | comparações e decomposições | equivalente textual único; SSR no estado final |
+| `EuroBar`/`JuroCapital`/`EuroExplodido`/`CampoCentimos`/`Isometrico` | comparações e decomposições | equivalente textual único; SSR no estado final |
 | `PecaPapel`/`Papel` | documentos | paleta fixa de papel; rasgo determinista |
 | `Regua` | input numérico | range nativo único (teclado/AT); traços + marcador «agora» + presets `Chip`; snap à grelha com ressalto contido |
 | `Botao` | acção/ligação | 4 variantes (primário·secundário·terciário·ícone); `aria-disabled`+razão no nome; `aCarregar` = mini-orbe + `aria-busy` |

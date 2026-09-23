@@ -29,7 +29,7 @@ export function AnoDetalhe() {
         <span className={val}>{fmtEUR(r.brutoAnualTotal)}</span>
       </div>
       <div className={linha}>
-        <span className={rot}>Segurança Social (11&nbsp;%)</span>
+        <span className={rot}>Segurança Social (11&#8239;%)</span>
         <span className={val}>{fmtEUR(r.ssAnual)}</span>
       </div>
       <div className={linha}>

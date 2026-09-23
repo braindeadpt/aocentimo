@@ -223,8 +223,8 @@ export default function ImpostosPage() {
             <div className="body-copy space-y-4">
               <p>
                 O IVA já vem dentro do preço que pagas. Para o separar:{" "}
-                <code>iva = preço − preço ÷ (1 + taxa)</code>. A 23 %, um
-                preço de 1,00 € contém 0,187 € de IVA — não 0,23 €, porque a
+                <code>iva = preço − preço ÷ (1 + taxa)</code>. A 23 %, um
+                preço de 1,00 € contém 0,187 € de IVA — não 0,23 €, porque a
                 taxa mede-se sobre o preço <em>sem</em> imposto.
               </p>
               <p>
@@ -232,13 +232,13 @@ export default function ImpostosPage() {
                 <code>preço com IVA = (produto + margens + carbono + ISP) ×
                 1,23</code>
                 . O IVA incide sobre o preço <em>depois</em> de somar ISP e
-                taxa de carbono — pagas 23 % de IVA sobre… imposto. Quando o
+                taxa de carbono — pagas 23 % de IVA sobre… imposto. Quando o
                 crude sobe, a receita de IVA sobe com ele; é por isso que o
                 Governo às vezes devolve a fatia extra num desconto do ISP.
               </p>
               <p>
                 Na eletricidade há ainda a contribuição audiovisual (CAV,
-                ~3 €/mês) e taxas de acesso à rede dentro da mesma fatura —
+                ~3 €/mês) e taxas de acesso à rede dentro da mesma fatura —
                 impostos e taxas disfarçados de consumo.
               </p>
             </div>

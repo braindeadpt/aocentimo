@@ -34,7 +34,7 @@ export function CadernetaAforro({
   /** taxa bruta CA Série F (ca.json) */
   taxaCA: number;
   premiosCA: { de: number; ate: number; pp: number }[];
-  /** a lista de prémios por extenso — «+0,25 p.p. 2.º ao 5.º ano · …» */
+  /** a lista de prémios por extenso — «+0,25 p.p. 2.º ao 5.º ano · …» */
   premiosNota: string;
   /** «Capital garantido pelo Estado» */
   garantia: string;

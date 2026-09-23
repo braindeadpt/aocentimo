@@ -290,7 +290,7 @@ export function CampoCentimos({
   const palcoRef = useRef<HTMLDivElement>(null);
   const telaRef = useRef<HTMLCanvasElement>(null);
   const simRef = useRef<CampoTela | null>(null);
-  const [pronto, setPronto] = useState(false);
+  const [pronto, setPronto] = useState<"" | "imed" | "suave">("");
   const [rotulosOn, setRotulosOn] = useState(layout === "montes");
   const [legenda, setLegenda] = useState<"pausa" | "saiem" | "pronto" | null>(
     layout === "montes" ? "pronto" : null
@@ -308,7 +308,14 @@ export function CampoCentimos({
       pontos,
       onRotulos: setRotulosOn,
       onLegenda: setLegenda,
-      onPronto: () => setPronto(true),
+      onPronto: () => {
+        // M-02: se o palco já está visível ao montar (acima da dobra),
+        // a troca svg→canvas é instantânea — nenhuma transição corre ao
+        // carregar. Abaixo da dobra o fade acontece ao entrar no ecrã.
+        const r = palco.getBoundingClientRect();
+        const jaVisivel = r.top < window.innerHeight && r.bottom > 0;
+        setPronto(jaVisivel ? "imed" : "suave");
+      },
     });
     simRef.current = sim;
     return () => {
@@ -348,7 +355,7 @@ export function CampoCentimos({
         ref={palcoRef}
         className="cc-palco"
         aria-hidden="true"
-        data-pronto={pronto ? "" : undefined}
+        data-pronto={pronto || undefined}
       >
         <svg className="cc-svg" aria-hidden="true" focusable="false">
           {layout === "moeda" && <SvgMoeda />}

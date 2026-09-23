@@ -39,7 +39,7 @@ export interface ProdutoReal {
   /** nome curto para metas e legendas — «CA» */
   curto: string;
   /** nome com preposição para a frase — «nos Certificados de Aforro»
-   *  (evita concordância verbal: «0,7 % ao ano nos CA») */
+   *  (evita concordância verbal: «0,7 % ao ano nos CA») */
   em: string;
   /** anos efectivos simulados (o produto pode acabar antes do prazo) */
   anosEf: number;

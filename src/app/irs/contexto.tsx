@@ -22,7 +22,7 @@ import {
  * próprio (o acerto e o IRS Jovem são simuladores independentes).
  *
  * O ponto de partida é o coletável do cenário canónico — o mesmo
- * bruto de 1 500 € que abre /salario chega aqui já líquido de
+ * bruto de 1 500 € que abre /salario chega aqui já líquido de
  * dedução específica e mínimo de existência: a faixa conta a mesma
  * história nas três páginas.
  */

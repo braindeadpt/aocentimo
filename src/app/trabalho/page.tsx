@@ -42,12 +42,12 @@ const ANO = irs.ano;
  *    por baixo) e a frase simples com valor e tempo.
  * 2 · Explora — os controlos do caso (idade, descontos, majoração), a
  *    declaração da Segurança Social, os meses de subsídio em barra de
- *    traços com o degrau de −10 %, e os recibos verdes em campo de
+ *    traços com o degrau de −10 %, e os recibos verdes em campo de
  *    cêntimos.
  * 3 · Confirma — as regras do DL 220/2006, os limites em IAS, o que a
  *    simulação simplifica, o dado do país e as fontes.
  *
- * A régua abre no cenário canónico — o mesmo bruto de 1 500 € que
+ * A régua abre no cenário canónico — o mesmo bruto de 1 500 € que
  * abre /salario e /irs.
  */
 export default function TrabalhoPage() {
@@ -100,7 +100,7 @@ export default function TrabalhoPage() {
         inicial: cenarios.meta.brutoRef,
         marcador: { valor: smn.regioes.continente, rotulo: m.regua.minimo },
         descricao:
-          "Os 11 % que descontas todos os meses pagam isto: 65 % da tua remuneração de referência, dentro de limites e por tempo contado.",
+          "Os 11 % que descontas todos os meses pagam isto: 65 % da tua remuneração de referência, dentro de limites e por tempo contado.",
       }}
     >
       <JsonLd

@@ -29,7 +29,7 @@ interface EstadoCredito {
   /** Euribor em vigor na régua — null quando a fonte falhou */
   euribor: number | null;
   spread: number;
-  /** o choque de +1 p.p. — um interruptor, não uma nota de rodapé */
+  /** o choque de +1 p.p. — um interruptor, não uma nota de rodapé */
   choque: boolean;
   /** taxa efectiva = euribor + choque */
   eurEf: number | null;
