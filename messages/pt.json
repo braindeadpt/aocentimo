@@ -89,6 +89,49 @@
     "caNota": "bruta"
   },
   "home": {
+    "hero": {
+      "h1a": "A tua empresa gasta",
+      "h1b": "por mês contigo.",
+      "h1q": "De cada euro, quantos cêntimos te chegam?",
+      "migalhaTitulo": "O teu euro",
+      "migalhaCusto": "1 € de custo do trabalho",
+      "migalhaBruto": "bruto {bruto}",
+      "estadoRotulo": "Regras {ano} · em dia",
+      "palpiteRotulo": "O teu palpite",
+      "semAdivinhar": "Mostrar sem adivinhar",
+      "voltar": "Voltar à moeda",
+      "brutoRotulo": "O teu bruto",
+      "presetMinimo": "salário mínimo",
+      "notaPonto": "1 ponto = 1 cêntimo",
+      "pausa": "Um euro são {cem}. Cada ponto é um.",
+      "saiem": "Destes 100 cêntimos, {valor} saem antes de chegar à tua conta.",
+      "zero": "não te toca",
+      "juizo": {
+        "certeiro": "Certeiro.",
+        "perto": "Perto.",
+        "longe": "Longe."
+      },
+      "veredictoCom": "{juizo} Disseste {palpite}; são {real} — {diff} {direcao}.",
+      "direcaoMais": "a mais",
+      "direcaoMenos": "a menos",
+      "veredictoSem": "De cada euro, {real} chegam-te à conta. Os outros {saem} saem antes.",
+      "partes": {
+        "tsu": "TSU da empresa",
+        "irs": "IRS retido",
+        "ss": "Segurança Social",
+        "fica": "Chegam à tua conta"
+      },
+      "partesCurtas": {
+        "tsu": "TSU",
+        "irs": "IRS",
+        "ss": "SS",
+        "fica": "Ficam-te"
+      },
+      "equivalente": "De cada euro que a empresa gasta contigo (bruto de {bruto}), {fica} cêntimos chegam à tua conta; {tsu} vão para a TSU da empresa, {irs} para o IRS retido e {ss} para a Segurança Social.",
+      "respostaSummary": "A resposta, sem adivinhar",
+      "fonteMotores": "Motores AO CÊNTIMO",
+      "fonteEscaloes": "escalões do art. 68.º CIRS"
+    },
     "h1a": "PARA ONDE",
     "h1b": "VAI O TEU",
     "h1c": "DINHEIRO",
