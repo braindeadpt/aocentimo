@@ -347,3 +347,32 @@ o caso-base muda as duas páginas de uma vez. Em aberto para o dono
 (NOTAS-V4 §S1-02): se a explosão da home deve começar no custo total
 (1 856 €) em vez do bruto (1 500 €) — hoje mantém-se o bruto como
 moeda-mãe.
+
+## 2026-09-22 — Logótipo redesenhado a partir dos contornos da Archivo
+
+**Contexto.** O wordmark anterior era texto vivo (Archivo expandido) com
+um ¢ desenhado à mão no meio: dependia da fonte carregar, do espaçamento
+do navegador e da linha de base — e o arco do C era mais fino e estreito
+que as letras à volta. A revisão de marca de 22.09.2026
+(`referencias/V4/logo/apresentacao-marca.html`) leu os contornos reais
+da Archivo variável (instância wdth 125 · wght 800) e propôs duas hastes
+e dois símbolos.
+
+**Alternativas.** Haste interrompida (a construção do ¢ da Archivo —
+mais fina, mas a ler-se como dois traços soltos nos tamanhos pequenos);
+símbolo em moeda (perde para o azulejo a 16 px). Manter texto vivo —
+rejeitado: frágil e dependente da fonte.
+
+**Escolha (do dono, 22.09.2026).** HASTE A contínua + SÍMBOLO EM
+QUADRADO (azulejo `#1B1811`, C `#F2ECDD`, haste `#63D6A4` a sangrar de
+ponta a ponta, raio 22 %). `Logo.tsx` passa a ser vetor de dois `<path>`
+(tinta `currentColor`, haste `var(--keep)`); `LogoMark` o azulejo de
+três `<path>`; favicon/apple-icon/OG regenerados dos mesmos contornos —
+a imagem OG usa a palavra em paths, não texto com a fonte.
+
+**Regras que ficam.** A haste é sempre `--keep` (nunca `--accent` nem a
+tinta); mestre `normal` ≥ 20 px de capitular, `pequeno` 12–20 px, abaixo
+ou em quadrado o símbolo; área de proteção x = capitular; proibido haste
+noutra cor, haste sem recorte, esticar/redesenhar letras. Os paths não
+se editam à mão — regeneram-se com `scratchpad/logo/gerar-ficheiros.mjs`.
+Registado em PRODUTO.md §6 «Marca»; demonstrado em `/estilo`.

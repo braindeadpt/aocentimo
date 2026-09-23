@@ -166,7 +166,9 @@ A régua (`Regua` com `pontos`) só pára nestes valores: **nunca se
 interpola um número que o motor não calculou.** No perfil canónico o
 cliente lê a linha da tabela; perfis fora do caso-base (casado,
 dependentes, subs. alimentação, IRS Jovem — dimensões não tabeláveis,
-como o bruto livre do cônjuge) caem no motor do cliente.
+como o bruto livre do cônjuge) pedem o motor por `import()` dinâmico —
+fora do first-load, e enquanto carrega o recibo mostra o último valor
+calculado (DECISOES 2026-09-23).
 
 **Outras leituras não se misturam.** A média a 14 meses (duodécimos) e a
 estimativa de IRS anual (liquidação) são representações diferentes —
@@ -248,6 +250,38 @@ global (o vidro do instrumento); `.blueprint` (pontos) não é um nível —
 Regra V4: **bruto e custo total são neutros** — nem `accent` nem `keep`.
 Nunca três cores semânticas no mesmo cartão (regra V3-2). Nos montes de
 pontos: sai = `accent`, fica = `keep`, neutro = cinzento.
+
+### Marca — o logótipo em contornos (decisão do dono, 22.09.2026)
+
+O logótipo são os **contornos reais da Archivo** (instância wdth 125 ·
+wght 800, a fonte que o site já serve): `<Logo>` e `<LogoMark>` em
+`src/components/Logo.tsx` são SVG de dois e três `<path>` — vetor puro,
+sem fonte, sem `clipPath`, certo antes do CSS de texto e sem JavaScript.
+O C de CÊNTIMO é o sinal de cêntimo cortado por uma **haste contínua**
+(opção A aprovada; a interrompida e a variante moeda ficaram de fora).
+
+Regras de uso:
+
+- **Cor.** A tinta é `currentColor` (≡ `--ink` no contexto); a haste é
+  **sempre `--keep`** — nunca `--accent`, nunca a cor da tinta. O símbolo
+  é fixo nos dois temas: azulejo `#1B1811`, C `#F2ECDD`, haste `#63D6A4`
+  a sangrar de ponta a ponta, raio 22 %.
+- **Medida.** A altura CSS é a do SVG (do topo ao fim da haste); a
+  capitular é **63,95 %** dela. Cabeçalho: 20,6 px de capitular no
+  telemóvel, 24,8 px no computador.
+- **Mestres.** `normal` ≥ 20 px de capitular (a fenda do C tem 1 px
+  exato); `pequeno` entre 12 e 20 px (sem fenda, haste mais grossa,
+  espaçamento aberto); abaixo de 12 px ou em espaço quadrado, **símbolo**.
+- **Área de proteção.** Espaço livre à volta da palavra igual à altura
+  das capitulares (x): nada entra aí — nem texto, nem arestas de painel.
+- **Proibições.** Haste noutra cor; haste sem recorte (barra pousada por
+  cima do C); esticar ou redesenhar as letras — os paths vêm da fonte e
+  não se editam à mão (regeneram-se do gerador, mínimo 2 casas decimais).
+
+Ícones: `icon.svg` = grelha de 32; `icon1.png`/`icon2.png` = 16/32 px
+rasterizados dos desenhos próprios de cada grelha; `apple-icon.png` e
+`favicon.ico` (16+32) saem do azulejo e das grelhas de favicon. A imagem
+OG usa a palavra em contornos — nunca texto com a fonte.
 
 ### Raio com significado (V4 — substitui o «radius 0 em todo o lado»)
 

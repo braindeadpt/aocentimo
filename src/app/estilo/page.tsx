@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import { ALT_FEED } from "@/lib/meta";
 import Link from "next/link";
 import { Delta } from "@/components/Delta";
@@ -182,14 +183,100 @@ export default function EstiloPage() {
 
       <section className="stack-sec">
         <h2 className="kicker mb-4">Marca — «o cêntimo»</h2>
-        <div className="border border-line bg-panel flex flex-wrap items-center gap-10 p-8">
-          <Logo className="text-display-sm sm:text-display-xl lg:text-display-2xl" />
-          <LogoMark className="h-16 w-16" />
-          <p className="footnote max-w-sm">
-            O C do wordmark é o sinal de cêntimo — ¢ — cortado por uma haste
-            verde. A marca promete o que o site faz: seguir cada euro ao
-            cêntimo, do salário à bomba. Verde é sempre o que é teu.
-          </p>
+        <p className="footnote mb-4 max-w-xl">
+          O logótipo são os contornos reais da Archivo (largura 125 · peso
+          800): vetor, não texto — fica certo antes de a fonte carregar e sem
+          JavaScript. O C de CÊNTIMO é o sinal de cêntimo, cortado por uma
+          haste verde: o que fica contigo. Decisão do dono de 22.09.2026 —
+          haste contínua (A) e símbolo em azulejo.
+        </p>
+
+        {/* a palavra nos dois temas — tinta = currentColor, haste = --keep */}
+        <div className="grid gap-3 md:grid-cols-2">
+          <div
+            className="border border-line p-8"
+            style={{ background: "#f4f3ec", color: "#1b1811", ["--keep" as string]: "#1f6b4d" } as CSSProperties}
+          >
+            <Logo className="h-[32.2px]" />
+            <p className="num mt-4 text-rotulo" style={{ color: "#57534a" }}>
+              tema claro · tinta #1B1811 · haste #1F6B4D
+            </p>
+          </div>
+          <div
+            className="border border-line p-8"
+            style={{ background: "#0d0b08", color: "#f2ecdd", ["--keep" as string]: "#63d6a4" } as CSSProperties}
+          >
+            <Logo className="h-[32.2px]" />
+            <p className="num mt-4 text-rotulo" style={{ color: "#aba28c" }}>
+              tema escuro · tinta #F2ECDD · haste #63D6A4
+            </p>
+          </div>
+        </div>
+
+        {/* os dois mestres + o símbolo */}
+        <div className="mt-3 grid gap-3 md:grid-cols-3">
+          <div className="border border-line bg-panel p-6">
+            <p className="kicker-xs mb-4">mestre normal</p>
+            <Logo className="h-[39px] w-auto max-w-full" />
+            <p className="footnote mt-4">
+              ≥ 20 px de capitular — a fenda do C tem 1 px exato. É o mestre
+              do cabeçalho (20,6 px no telemóvel · 24,8 px no computador).
+            </p>
+          </div>
+          <div className="border border-line bg-panel p-6">
+            <p className="kicker-xs mb-4">mestre pequeno</p>
+            <Logo massa="pequeno" className="h-[25px] w-auto max-w-full" />
+            <p className="footnote mt-4">
+              12–20 px de capitular — sem fenda, haste mais grossa e
+              espaçamento aberto, para não se colar a ler.
+            </p>
+          </div>
+          <div className="border border-line bg-panel p-6">
+            <p className="kicker-xs mb-4">símbolo — o ¢ em azulejo</p>
+            <div className="flex items-end gap-4">
+              <LogoMark className="h-16 w-16" />
+              <LogoMark className="h-8 w-8" />
+              <LogoMark className="h-4 w-4" />
+            </div>
+            <p className="footnote mt-4">
+              64 · 32 · 16 px. Abaixo de 12 px de capitular, ou em espaço
+              quadrado, usa-se o símbolo — a haste sangra de ponta a ponta.
+            </p>
+          </div>
+        </div>
+
+        {/* área de proteção + proibições */}
+        <div className="mt-3 grid gap-3 md:grid-cols-2">
+          <div className="border border-line bg-panel p-6">
+            <p className="kicker-xs mb-4">área de proteção — x = altura das capitulares</p>
+            <div className="inline-block max-w-full border border-dashed border-mark p-[20.6px]">
+              <Logo className="h-[32.2px] w-auto max-w-full" />
+            </div>
+            <p className="footnote mt-4">
+              À volta da palavra fica um espaço livre de x (aqui 20,6 px de
+              cada lado). Nada entra aí: nem texto, nem arestas de painel.
+            </p>
+          </div>
+          <div className="border border-line bg-panel p-6">
+            <p className="kicker-xs mb-4">proibições — o que protege o desenho</p>
+            <ul className="space-y-2">
+              <li className="footnote">
+                <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-accent align-middle" />
+                A haste nunca noutra cor — é sempre o verde de «fica contigo»
+                (--keep); nunca --accent, nunca a cor da tinta.
+              </li>
+              <li className="footnote">
+                <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-accent align-middle" />
+                A haste nunca sem recorte — a letra abre-se à volta dela; uma
+                barra pousada por cima do C não é a marca.
+              </li>
+              <li className="footnote">
+                <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-accent align-middle" />
+                Nunca esticar nem redesenhar as letras — os contornos vêm da
+                Archivo e não se editam à mão.
+              </li>
+            </ul>
+          </div>
         </div>
       </section>
 

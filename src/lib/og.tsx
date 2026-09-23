@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
+import { MESTRES, MARCA } from "@/components/Logo";
 
 export const OG_SIZE = { width: 1200, height: 630 };
 export const OG_CONTENT_TYPE = "image/png";
@@ -14,6 +15,10 @@ export const OG_TIPO = {
   manchete: 96,
   hero: 128,
 } as const;
+
+/* a palavra AO CÊNTIMO em contornos no cartão OG — altura do SVG tal que
+   a capitular (63,95 %) ≈ a do texto «marca» que substitui (52 × 0,6875) */
+const OG_MARCA = { h: 56, w: Math.round((56 * 8479.3) / 1075.15) } as const;
 
 /**
  * OG por rota — a mesma composição da imagem raiz (marca + promessa),
@@ -43,26 +48,21 @@ export async function ogImage(titulo: string) {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "28px" }}>
-          <svg width="84" height="84" viewBox="0 0 64 64">
-            <rect width="64" height="64" rx="14" fill="#221F19" />
-            <path
-              d="M44.2 20.6 A16 16 0 1 0 44.2 43.4"
-              fill="none"
-              stroke="#F0E9DA"
-              strokeWidth="9"
-            />
-            <rect x="29" y="10" width="6" height="44" fill="#63D6A4" />
+          <svg width="84" height="84" viewBox="0 0 1000 1000">
+            <path d={MARCA.fundo} fill="#1B1811" />
+            <path d={MARCA.c} fill="#F2ECDD" />
+            <path d={MARCA.haste} fill="#63D6A4" />
           </svg>
-          <div
-            style={{
-              fontSize: OG_TIPO.marca,
-              fontWeight: 800,
-              color: "#221F19",
-              letterSpacing: "0.02em",
-            }}
+          {/* a palavra em contornos (mestre normal): tinta e haste do tema
+              claro — o cartão OG é papel claro */}
+          <svg
+            width={OG_MARCA.w}
+            height={OG_MARCA.h}
+            viewBox={MESTRES.normal.vb}
           >
-            AO CÊNTIMO
-          </div>
+            <path d={MESTRES.normal.tinta} fill="#1B1811" />
+            <path d={MESTRES.normal.haste} fill="#1F6B4D" />
+          </svg>
         </div>
         <div
           style={{
