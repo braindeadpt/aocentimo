@@ -34,16 +34,10 @@ import {
   rotulosLeitura,
   type Cartao,
 } from "@/lib/leitura";
-import {
-  comUnidade,
-  fmtLitro,
-  fmtNum,
-  fmtPeriodo,
-} from "@/lib/format";
+import { comUnidade, fmtNum, fmtPeriodo } from "@/lib/format";
 import { JANELA_ORDEM, cortarJanela, type JanelaId } from "@/lib/painel";
-import { decomporCombustivel } from "@/lib/engines/impostos";
 import { m, t } from "@/lib/messages";
-import isp from "@data/fiscal/isp.json";
+import eventos from "@data/fiscal/eventos.json";
 
 type PontoS = PontoLeitura;
 
@@ -158,6 +152,59 @@ export const ROTULO_JANELA = () => m.painel.janela.rotulo;
 
 /* ————— «Hoje em Portugal» — a grelha da home ————— */
 
+/* helpers privados da home — não tocam nos partilhados nem em
+   cartoesDados() (S2-02) */
+
+/** anotações por janela a partir dos eventos curados de
+    data/fiscal/eventos.json (cada evento tem fonte e URL — a regra
+    nº 1 aplica-se também às anotações): por recorte entra o evento
+    MAIS RECENTE cujo mês existe na série; sem evento dentro do
+    recorte, anota-se o mínimo factual da janela (o ponto de
+    inversão visível) — nunca um evento inventado */
+function anotacoesEvento(
+  serie: PontoS[],
+  alvo: string,
+  fmt: (v: number) => string
+): CartaoLinha["linha"]["anotacoes"] {
+  const evs = eventos.eventos
+    .filter((e) => e.alvo === alvo)
+    .sort((a, b) => a.t.localeCompare(b.t));
+  const out: Partial<Record<JanelaId, { t: string; rotulo: string }>> = {};
+  for (const j of JANELA_ORDEM) {
+    const recorte = cortarJanela(serie, j);
+    const meses = new Set(recorte.map((p) => p.t));
+    const ev = evs.filter((e) => meses.has(e.t.slice(0, 7))).pop();
+    const a = ev
+      ? { t: ev.t.slice(0, 7), rotulo: ev.rotulo }
+      : anotacaoDe(recorte, "min", fmt);
+    if (a) out[j] = a;
+  }
+  return out;
+}
+
+/** o ponto ~30 dias antes do último — a DGEG publica diário; usa-se
+    o último registo com t ≤ último−30d (nunca um valor interpolado)
+    e só é aceite se a distância real ficar entre 25 e 45 dias —
+    fora disso o rótulo «30 dias» deixava de ser honesto */
+function pontoHa30Dias(serie: PontoS[]): PontoS | null {
+  const u = ult(serie);
+  if (!u) return null;
+  const alvo = new Date(`${u.t}T00:00:00Z`);
+  if (Number.isNaN(alvo.getTime())) return null;
+  alvo.setUTCDate(alvo.getUTCDate() - 30);
+  const iso = alvo.toISOString().slice(0, 10);
+  let melhor: PontoS | null = null;
+  for (const p of serie) {
+    if (p.t <= iso) melhor = p;
+    else break;
+  }
+  if (!melhor || melhor.t === u.t) return null;
+  const dias =
+    (Date.parse(`${u.t}T00:00:00Z`) - Date.parse(`${melhor.t}T00:00:00Z`)) /
+    86400000;
+  return dias >= 25 && dias <= 45 ? melhor : null;
+}
+
 export function cartoesHome(): CartaoPainel[] {
   const painel = loadPainel();
   const pSerie = (id: string) =>
@@ -212,82 +259,85 @@ export function cartoesHome(): CartaoPainel[] {
           tamanhos: ["L"],
         });
 
-  // ————— Euribor — os quatro prazos em haltere (pontos, M) —————
+  // ————— Euribor 12M — a linha anotada com o evento BCE (M): a
+  //   série mensal com a mediana de 10 anos tracejada e, por janela,
+  //   a decisão do BCE mais recente que lá cai (curadoria com fonte
+  //   em data/fiscal/eventos.json); sem evento no recorte, o mínimo
+  //   factual da janela. O multi-prazo fica em /credito — aqui a
+  //   história é o ciclo da taxa —————
   const eur = pSerie("euribor-12m-mensal");
-  const PRAZOS: { id: string; fonte: string; rotulo: string }[] = [
-    { id: "1M", fonte: "euribor-1m-mensal", rotulo: "Euribor 1M" },
-    { id: "3M", fonte: "euribor-3m-mensal", rotulo: "Euribor 3M" },
-    { id: "6M", fonte: "euribor-6m-mensal", rotulo: "Euribor 6M" },
-    { id: "12M", fonte: "euribor-12m-mensal", rotulo: "Euribor 12M" },
-  ];
-  const eurFontes = PRAZOS.map((p) => ({
-    ...p,
-    dados: loadFonte("bpstat", p.fonte),
-  }));
-  const eur12 = eurFontes[3].dados;
+  const eurFonte = loadFonte("bpstat", "euribor-12m-mensal");
+  const serieEur = eurFonte ? janela10(eurFonte.series) : [];
   const cartaoEur: CartaoPainel =
-    eur && eurFontes.every((f) => f.dados && janela10(f.dados.series).length > 1)
+    eur && serieEur.length > 1
       ? {
           id: "euribor",
-          codificacao: "pontos",
+          codificacao: "linha",
           tamanho: "M",
           janela: true,
-          pontos: {
-            casca: casca({
-              breadcrumb: c.euribor.breadcrumb,
-              leitura: fmtPeriodo(eur.rotuloAte ?? eur.t),
-              estado: eur.estado,
-              estadoRotulo: rotulos.estados[eur.estado],
-              fonteNome: eur.fonte,
-              fonteUrl: eur.url,
-              href: "/credito",
-              hrefJson: "/api/euribor-12m-mensal.json",
-              titulo: c.euribor.titulo,
-            }),
+          linha: {
+            breadcrumb: c.euribor.breadcrumb,
+            titulo: c.euribor.titulo,
             insight: insightMediana(
               eur.valor,
               eur.referencia,
               eur.unidade
             ),
-            valor: { v: eur.valor, casas: 2, unidade: "%" },
-            categorias: eurFontes.map((f) => ({
-              id: f.id,
-              rotulo: f.rotulo,
-              rotuloCurto: f.id,
-              serie: janela10(f.dados!.series),
-            })),
+            valor: eur.valor,
+            unidade: eur.unidade,
             formato: "pct",
-            bomSubir: false,
+            serie: serieEur,
+            referencia: eur.referencia ?? undefined,
+            anotacoes: anotacoesEvento(serieEur, "euribor", (v) =>
+              comUnidade(fmtNum(v, 2), "%")
+            ),
+            leitura: fmtPeriodo(eur.rotuloAte ?? eur.t),
+            estado: eur.estado,
+            fonteNome: eur.fonte,
+            fonteUrl: eur.url,
+            href: "/credito",
+            hrefJson: "/api/euribor-12m-mensal.json",
+            rotulos,
           },
         }
       : vazio({
           id: "euribor",
           titulo: c.euribor.titulo,
-          desde: eur12?.meta.serieAte
-            ? fmtPeriodo(eur12.meta.serieAte)
+          desde: eurFonte?.meta.serieAte
+            ? fmtPeriodo(eurFonte.meta.serieAte)
             : undefined,
           fonte: {
-            nome: eur12?.meta.fonte ?? "Banco de Portugal — BPstat",
-            url: eur12?.meta.url ?? "https://bpstat.bportugal.pt",
+            nome: eurFonte?.meta.fonte ?? "Banco de Portugal — BPstat",
+            url: eurFonte?.meta.url ?? "https://bpstat.bportugal.pt",
           },
         });
 
-  // ————— desemprego — PT contra a UE em linha (S) —————
+  // ————— desemprego — a barra de traços (S): «de cada 100 pessoas
+  //   ativas, N procuram trabalho» — contagem, 1 traço = 1 pessoa
+  //   (não pontos: os pontos são cêntimos). A comparação europeia
+  //   fica no insight — a barra conta pessoas —————
   const une = pSerie("une-pt-total");
   const unePt = loadFonte("eurostat", "une-pt-total");
-  const uneUe = loadFonte("eurostat", "une-ue27-total");
-  const serieUne = unePt ? janela10(unePt.series) : [];
-  const serieUe = uneUe ? janela10(uneUe.series) : [];
+  const nProc = une ? Math.round(une.valor) : 0;
+  const d100 = m.painel.desemprego100;
   const cartaoUne: CartaoPainel =
-    une && serieUne.length > 1 && serieUe.length > 1
+    une && unePt && nProc >= 1 && nProc <= 99
       ? {
           id: "desemprego",
-          codificacao: "linha",
+          codificacao: "tracos",
           tamanho: "S",
-          janela: true,
-          linha: {
-            breadcrumb: c.desemprego.breadcrumb,
-            titulo: c.desemprego.titulo,
+          tracos: {
+            casca: casca({
+              breadcrumb: c.desemprego.breadcrumb,
+              leitura: fmtPeriodo(une.rotuloAte ?? une.t),
+              estado: une.estado,
+              estadoRotulo: rotulos.estados[une.estado],
+              fonteNome: une.fonte,
+              fonteUrl: une.url,
+              href: "/trabalho",
+              hrefJson: "/api/une-pt-total.json",
+              titulo: c.desemprego.titulo,
+            }),
             insight: une.referencia
               ? t(m.painel.insightUe, {
                   abs: fmtNum(
@@ -300,21 +350,23 @@ export function cartoesHome(): CartaoPainel[] {
                       : m.painel.abaixo,
                 })
               : comUnidade(fmtNum(une.valor, 1), "%"),
-            valor: une.valor,
-            unidade: une.unidade,
-            formato: "pct1",
-            serie: serieUne,
-            referencia: { pontos: serieUe, rotulo: m.leitura.ue27 },
-            anotacoes: anotacoes(serieUne, "max", (v) =>
-              comUnidade(fmtNum(v, 1), "%")
-            ),
-            leitura: fmtPeriodo(une.rotuloAte ?? une.t),
-            estado: une.estado,
-            fonteNome: une.fonte,
-            fonteUrl: une.url,
-            href: "/trabalho",
-            hrefJson: "/api/une-pt-total.json",
-            rotulos,
+            valor: { v: une.valor, casas: 1, unidade: "%" },
+            grupos: [
+              {
+                n: nProc,
+                tom: "marca",
+                rotulo: d100.procuram,
+              },
+              {
+                n: 100 - nProc,
+                tom: "vago",
+                rotulo: d100.empregadas,
+              },
+            ],
+            unidadeTraco: d100.unidadeTraco,
+            rotulo: d100.rotulo,
+            valorTracos: fmtNum(nProc, 0),
+            nota: d100.procuram,
           },
         }
       : vazio({
@@ -390,97 +442,52 @@ export function cartoesHome(): CartaoPainel[] {
           },
         });
 
-  // ————— gasóleo — a estrutura do litro em isométrico (S): IVA,
-  //   ISP e carbono sobre o combustível — decomposição real —————
+  // ————— gasóleo — o valor do dia + a variação a 30 dias em
+  //   haltere (pontos, S): «antes ● — ○ agora» é exactamente o que
+  //   uma variação a 30 dias é (dois pontos no tempo, uma categoria).
+  //   O preço herói fica no Odometer do corpo; a estrutura do litro
+  //   (IVA/ISP/carbono) já é contada pelo EuroExplodido na mesma
+  //   página — repeti-la aqui era redundância —————
   const gas = pSerie("pmd-gasoleo-diario");
   const gasFonte = loadFonte("dgeg", "pmd-gasoleo-diario");
-  const precoGas = ult(gasFonte?.series ?? [])?.v;
-  const serieGas10 = gasFonte ? janela10(gasFonte.series) : [];
-  const medGas = mediana(serieGas10.map((p) => p.v));
-  const decGas =
-    precoGas !== undefined
-      ? decomporCombustivel(
-          precoGas,
-          isp.gasoleo.ispELitro,
-          isp.gasoleo.carbonoELitro
-        )
-      : null;
-  const isoGas = m.painel.isoGasoleo;
+  const serieGas = gasFonte?.series ?? [];
+  const gasUlt = ult(serieGas);
+  const gas30 = pontoHa30Dias(serieGas);
+  const medGas = mediana(janela10(serieGas).map((p) => p.v));
   const cartaoGas: CartaoPainel =
-    gas && gasFonte && precoGas !== undefined && decGas && medGas !== null
+    gas && gasFonte && gasUlt && gas30 && medGas !== null
       ? {
           id: "gasoleo",
-          codificacao: "isometrico",
+          codificacao: "pontos",
           tamanho: "S",
-          isometrico: {
-            tipo: "estrutura",
-            nome: "gasoleo",
+          pontos: {
             casca: casca({
               breadcrumb: c.gasoleo.breadcrumb,
               leitura: fmtPeriodo(gas.rotuloAte ?? gas.t),
               estado: gas.estado,
               estadoRotulo: rotulos.estados[gas.estado],
-              fonteNome: `${gasFonte.meta.fonte} + ${isp.fonte.split(";")[0]}`,
+              fonteNome: gasFonte.meta.fonte,
               fonteUrl: gasFonte.meta.url,
               href: "/precos",
               hrefJson: "/api/pmd-gasoleo-diario.json",
               titulo: c.gasoleo.titulo,
             }),
             insight: t(m.painel.insightLitro, {
-              abs: fmtNum(Math.abs(precoGas - medGas) * 100, 1),
-              direcao: precoGas >= medGas ? m.painel.acima : m.painel.abaixo,
+              abs: fmtNum(Math.abs(gas.valor - medGas) * 100, 1),
+              direcao: gas.valor >= medGas ? m.painel.acima : m.painel.abaixo,
             }),
-            numero: {
-              kicker: isoGas.kicker,
-              valor: fmtLitro(precoGas),
-              pequeno: fmtPeriodo(gas.rotuloAte ?? gas.t),
-            },
-            camadas: [
+            valor: { v: gas.valor, casas: 3, unidade: "€/L" },
+            categorias: [
               {
-                id: "litro",
-                forma: "moeda",
-                rotulo: isoGas.litro.rotulo,
-                detalhe: isoGas.litro.detalhe,
-                tom: "neutro",
-                textoLista: fmtLitro(precoGas),
-              },
-              {
-                id: "iva",
-                forma: "placa",
-                rotulo: isoGas.iva.rotulo,
-                detalhe: isoGas.iva.detalhe,
-                tom: "corte",
-                texto: fmtLitro(decGas.iva),
-                textoLista: fmtLitro(decGas.iva),
-              },
-              {
-                id: "isp",
-                forma: "placa",
-                rotulo: isoGas.isp.rotulo,
-                detalhe: isoGas.isp.detalhe,
-                tom: "corte",
-                texto: fmtLitro(decGas.isp),
-                textoLista: fmtLitro(decGas.isp),
-              },
-              {
-                id: "carbono",
-                forma: "placa",
-                rotulo: isoGas.carbono.rotulo,
-                detalhe: isoGas.carbono.detalhe,
-                tom: "corte",
-                texto: fmtLitro(decGas.carbono),
-                textoLista: fmtLitro(decGas.carbono),
-              },
-              {
-                id: "produto",
-                forma: "base",
-                rotulo: isoGas.produto.rotulo,
-                detalhe: isoGas.produto.detalhe,
-                tom: "neutro",
-                texto: fmtLitro(decGas.produto),
-                textoLista: fmtLitro(decGas.produto),
+                id: "gasoleo",
+                rotulo: c.gasoleo.titulo,
+                rotuloCurto: c.gasoleo.titulo,
+                serie: [gas30, gasUlt],
               },
             ],
+            formato: "litro",
+            unidadeDelta: m.painel.delta30dias,
+            bomSubir: false,
           },
         }
       : vazio({
@@ -539,7 +546,10 @@ export function cartoesHome(): CartaoPainel[] {
           },
         });
 
-  return [cartaoInfl, cartaoEur, cartaoUne, cartaoHab, cartaoGas, cartaoPib];
+  // ordem editorial — codificações nunca repetidas em seguida:
+  // linha · tracos · linha · pontos · linha · tracos
+  // (a grelha fecha [L] [S+M] [S+S+S] com zero desvios)
+  return [cartaoInfl, cartaoUne, cartaoEur, cartaoGas, cartaoPib, cartaoHab];
 }
 
 /* ————— «O país, em leituras» — a grelha de /dados ————— */

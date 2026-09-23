@@ -308,6 +308,13 @@
         "breadcrumb": "PAÍS / PIB · EUROSTAT",
         "titulo": "PIB"
       }
+    },
+    "delta30dias": "€/L em 30 dias",
+    "desemprego100": {
+      "rotulo": "de cada 100 pessoas ativas",
+      "unidadeTraco": "1 pessoa em 100 ativas",
+      "procuram": "procuram trabalho",
+      "empregadas": "empregadas"
     }
   },
   "leitura": {
