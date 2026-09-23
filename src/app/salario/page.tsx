@@ -8,6 +8,8 @@ import { m } from "@/lib/messages";
 import irs from "@data/fiscal/irs-2026.json";
 import ss from "@data/fiscal/ss.json";
 import smn from "@data/fiscal/smn.json";
+import cenariosJson from "@data/derived/cenarios-salario.json";
+import type { CenariosSalario } from "@/lib/cenarios";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 
 export const metadata: Metadata = {
@@ -51,6 +53,7 @@ export default function SalarioPage() {
       >
         <CalculadoraSalario
           ano={ANO}
+          cenarios={cenariosJson as unknown as CenariosSalario}
           regua={{
             rotulo: m.regua.salarioBruto,
             marcador: { valor: smn.regioes.continente, rotulo: m.regua.minimo },

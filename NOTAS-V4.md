@@ -629,3 +629,61 @@ LineChart, Ticker, mural da /metodologia). A forma diz o estado:
 
 - `/estilo`: «OrbeEstado — a forma diz o estado» (no bloco do Selo de
   evidência) — quando usar / quando não usar.
+
+## S1-09 — Cenários pré-calculados, grelha da régua e congelamento
+
+`src/lib/cenarios.ts` + `scripts/derive/cenarios.ts` →
+`data/derived/cenarios-salario.json`: o SMN em vigor e depois
+múltiplos exactos de 50 € até 6 000 € (103 pontos, inclui 1 500 €).
+Por ponto: bruto, custo empresa, TSU, SS, IRS retido, líquido, tabela,
+taxa efetiva, repartição em cêntimos por euro de custo (valores reais
++ pontos inteiros Σ=100) e a simulação anual a 14 meses — tudo do
+motor (`reciboMensal` + `simularSalario`), com teste de paridade
+campo a campo (`src/lib/cenarios.test.ts`).
+
+`Regua` ganhou `pontos?: readonly number[]`: com grelha explícita só
+pára nos pontos exactos — setas andam ponto a ponto, PageUp/Down ±10
+pontos, cliques e presets caem no ponto mais próximo. Nunca interpola.
+
+`CalculadoraSalario` recebe `cenarios` por props do servidor (o JSON
+não entra no cliente por import — AGENTS). No perfil canónico o
+recibo e o painel anual vêm da linha da tabela; a régua passou de
+870–5 000/10 para a grelha 920–6 000.
+
+**Decisão a confirmar pelo dono — motor no bundle de /salario.**
+Fora do perfil canónico (casado, dependentes, subs. alimentação, IRS
+Jovem) o simulador continua a chamar `reciboMensal`/`simularSalario`
+no cliente — o bruto do cônjuge é um número livre e não é tabelável,
+por isso a regra «o motor fiscal não entra no bundle» fica cumprida
+só no caminho canónico. Alternativas se quiseres cumprir à letra:
+(a) cortar os controlos avançados de /salario; (b) aceitar o motor
+nesta rota (delta medido ~72 kB total da rota). Implementei (b) por
+ser conservador — não tira funcionalidade existente.
+
+**APIs finais (congeladas — as sessões paralelas usam-nas sem as mudar)**
+
+```
+Regua      { valor, onChange, min, max, passo, pontos?, unidade?,
+             formato, rotulo, marcadorAgora?, presets?, descricao?, id? }
+Cartao     { breadcrumb, meta?, estado?, estadoRotulo?, controlos?,
+             fonte?, acoes?, amplo?, className?, children }
+Pagina     { pergunta, perguntaAs?, instrumento, frase, explora,
+             confirma, proxima? }
+OrbeEstado { estado: "em-dia"|"a-recolher"|"atrasada"|"no-limite"|
+             "sem-sla", tamanho?, className? }
+LinhaCenario / CenariosSalario — a linha da tabela salarial (acima)
+repartir(partes, total=100) → { partes:[{valor,pontos}], livres, total }
+CampoCentimos, Haltere, BarraTracos, AnelPontos, Isometrico (S1-04/05)
+PaginaDetalhe — <details> fechado por omissão (S1-06)
+```
+
+Mudanças a estes componentes pedem-se em `PEDIDOS-PARTILHADOS.md`,
+não se editam nas sessões paralelas.
+
+**Pendentes de copy (revisão do dono, acumulado da fundação)**
+
+- `/estilo`: prosa ainda menciona `FitaTalao` e «a fita em /salario»
+  (componente removido) — alinhar com a realidade.
+- Níveis de página: mostrar ou não o rótulo «1 · A resposta».
+- Separador tracejado acima dos controlos do cartão: manter?
+- Rótulos da navegação por quatro perguntas (S1-07).

@@ -1,0 +1,3412 @@
+{
+  "meta": {
+    "ano": 2026,
+    "perfil": "solteiro, sem dependentes, continente, sem subsídio de alimentação, sem IRS Jovem",
+    "smn": 920,
+    "passo": 50,
+    "inicio": 920,
+    "fim": 6000,
+    "n": 103
+  },
+  "linhas": [
+    {
+      "bruto": 920,
+      "custo": 1138.5,
+      "tsu": 218.5,
+      "ss": 101.2,
+      "irs": 0,
+      "liquido": 818.8,
+      "taxaEfetiva": 0,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 0,
+        "ss": 8.89,
+        "fica": 71.92
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 0,
+        "ss": 9,
+        "fica": 72
+      },
+      "ano14": {
+        "brutoAnualTotal": 12880,
+        "ssAnual": 1416.8,
+        "irsAnual": 0,
+        "liquidoAnual": 11463.2,
+        "liquidoMensal14": 818.8000000000001,
+        "liquidoMensal12": 955.2666666666668,
+        "taxaEfetiva": 0,
+        "taxaMarginal": 0.125,
+        "pesoEstado": 0.28080808080808084
+      }
+    },
+    {
+      "bruto": 950,
+      "custo": 1175.625,
+      "tsu": 225.625,
+      "ss": 104.5,
+      "irs": 13.49875000000003,
+      "liquido": 832.00125,
+      "taxaEfetiva": 0.01420921052631582,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 1.15,
+        "ss": 8.89,
+        "fica": 70.77
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 1,
+        "ss": 9,
+        "fica": 71
+      },
+      "ano14": {
+        "brutoAnualTotal": 13300,
+        "ssAnual": 1463,
+        "irsAnual": 189,
+        "liquidoAnual": 11648,
+        "liquidoMensal14": 832,
+        "liquidoMensal12": 970.6666666666666,
+        "taxaEfetiva": 0.014210526315789474,
+        "taxaMarginal": 0.125,
+        "pesoEstado": 0.29229133439659755
+      }
+    },
+    {
+      "bruto": 1000,
+      "custo": 1237.5,
+      "tsu": 237.5,
+      "ss": 110,
+      "irs": 35.99875000000003,
+      "liquido": 854.00125,
+      "taxaEfetiva": 0.03599875000000003,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 2.91,
+        "ss": 8.89,
+        "fica": 69.01
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 3,
+        "ss": 9,
+        "fica": 69
+      },
+      "ano14": {
+        "brutoAnualTotal": 14000,
+        "ssAnual": 1540,
+        "irsAnual": 504,
+        "liquidoAnual": 11956,
+        "liquidoMensal14": 854,
+        "liquidoMensal12": 996.3333333333334,
+        "taxaEfetiva": 0.036,
+        "taxaMarginal": 0.125,
+        "pesoEstado": 0.3098989898989899
+      }
+    },
+    {
+      "bruto": 1050,
+      "custo": 1299.375,
+      "tsu": 249.375,
+      "ss": 115.5,
+      "irs": 57.8512815,
+      "liquido": 876.6487185,
+      "taxaEfetiva": 0.05509645857142857,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 4.45,
+        "ss": 8.89,
+        "fica": 67.47
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 4,
+        "ss": 9,
+        "fica": 68
+      },
+      "ano14": {
+        "brutoAnualTotal": 14700,
+        "ssAnual": 1617,
+        "irsAnual": 814.2720833333328,
+        "liquidoAnual": 12268.727916666667,
+        "liquidoMensal14": 876.3377083333334,
+        "liquidoMensal12": 1022.3939930555556,
+        "taxaEfetiva": 0.055392658730158695,
+        "taxaMarginal": 0.157,
+        "pesoEstado": 0.3255698252364919
+      }
+    },
+    {
+      "bruto": 1100,
+      "custo": 1361.25,
+      "tsu": 261.25,
+      "ss": 121,
+      "irs": 76.29878149999999,
+      "liquido": 902.7012185,
+      "taxaEfetiva": 0.06936252863636362,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 5.61,
+        "ss": 8.89,
+        "fica": 66.31
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 6,
+        "ss": 9,
+        "fica": 66
+      },
+      "ano14": {
+        "brutoAnualTotal": 15400,
+        "ssAnual": 1694,
+        "irsAnual": 1072.537083333333,
+        "liquidoAnual": 12633.462916666667,
+        "liquidoMensal14": 902.3902083333334,
+        "liquidoMensal12": 1052.788576388889,
+        "taxaEfetiva": 0.06964526515151513,
+        "taxaMarginal": 0.157,
+        "pesoEstado": 0.33708708295071926
+      }
+    },
+    {
+      "bruto": 1150,
+      "custo": 1423.125,
+      "tsu": 273.125,
+      "ss": 126.5,
+      "irs": 85.84000000000002,
+      "liquido": 937.66,
+      "taxaEfetiva": 0.07464347826086958,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 6.03,
+        "ss": 8.89,
+        "fica": 65.89
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 6,
+        "ss": 9,
+        "fica": 66
+      },
+      "ano14": {
+        "brutoAnualTotal": 16100,
+        "ssAnual": 1771,
+        "irsAnual": 1290.58287,
+        "liquidoAnual": 13038.41713,
+        "liquidoMensal14": 931.3155092857143,
+        "liquidoMensal12": 1086.5347608333334,
+        "taxaEfetiva": 0.08016042670807454,
+        "taxaMarginal": 0.157,
+        "pesoEstado": 0.3455841831984441
+      }
+    },
+    {
+      "bruto": 1200,
+      "custo": 1485,
+      "tsu": 285,
+      "ss": 132,
+      "irs": 96.22,
+      "liquido": 971.78,
+      "taxaEfetiva": 0.08018333333333333,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 6.48,
+        "ss": 8.89,
+        "fica": 65.44
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 7,
+        "ss": 9,
+        "fica": 65
+      },
+      "ano14": {
+        "brutoAnualTotal": 16800,
+        "ssAnual": 1848,
+        "irsAnual": 1400.4828699999998,
+        "liquidoAnual": 13551.51713,
+        "liquidoMensal14": 967.9655092857143,
+        "liquidoMensal12": 1129.2930941666666,
+        "taxaEfetiva": 0.08336207559523809,
+        "taxaMarginal": 0.157,
+        "pesoEstado": 0.3481713742183742
+      }
+    },
+    {
+      "bruto": 1250,
+      "custo": 1546.875,
+      "tsu": 296.875,
+      "ss": 137.5,
+      "irs": 107.91999999999999,
+      "liquido": 1004.58,
+      "taxaEfetiva": 0.086336,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 6.98,
+        "ss": 8.89,
+        "fica": 64.94
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 7,
+        "ss": 9,
+        "fica": 65
+      },
+      "ano14": {
+        "brutoAnualTotal": 17500,
+        "ssAnual": 1925,
+        "irsAnual": 1528.3079200000002,
+        "liquidoAnual": 14046.69208,
+        "liquidoMensal14": 1003.3351485714286,
+        "liquidoMensal12": 1170.5576733333335,
+        "taxaEfetiva": 0.08733188114285716,
+        "taxaMarginal": 0.212,
+        "pesoEstado": 0.3513792978932179
+      }
+    },
+    {
+      "bruto": 1300,
+      "custo": 1608.75,
+      "tsu": 308.75,
+      "ss": 143,
+      "irs": 119.97,
+      "liquido": 1037.03,
+      "taxaEfetiva": 0.09228461538461538,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 7.46,
+        "ss": 8.89,
+        "fica": 64.46
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 7,
+        "ss": 9,
+        "fica": 65
+      },
+      "ano14": {
+        "brutoAnualTotal": 18200,
+        "ssAnual": 2002,
+        "irsAnual": 1676.70792,
+        "liquidoAnual": 14521.29208,
+        "liquidoMensal14": 1037.2351485714285,
+        "liquidoMensal12": 1210.1076733333332,
+        "taxaEfetiva": 0.0921268087912088,
+        "taxaMarginal": 0.212,
+        "pesoEstado": 0.3552539869019869
+      }
+    },
+    {
+      "bruto": 1350,
+      "custo": 1670.625,
+      "tsu": 320.625,
+      "ss": 148.5,
+      "irs": 132.01999999999995,
+      "liquido": 1069.48,
+      "taxaEfetiva": 0.09779259259259256,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 7.9,
+        "ss": 8.89,
+        "fica": 64.02
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 8,
+        "ss": 9,
+        "fica": 64
+      },
+      "ano14": {
+        "brutoAnualTotal": 18900,
+        "ssAnual": 2079,
+        "irsAnual": 1825.10792,
+        "liquidoAnual": 14995.89208,
+        "liquidoMensal14": 1071.1351485714285,
+        "liquidoMensal12": 1249.6576733333334,
+        "taxaEfetiva": 0.09656655661375661,
+        "taxaMarginal": 0.212,
+        "pesoEstado": 0.35884166191010636
+      }
+    },
+    {
+      "bruto": 1400,
+      "custo": 1732.5,
+      "tsu": 332.5,
+      "ss": 154,
+      "irs": 144.06999999999996,
+      "liquido": 1101.93,
+      "taxaEfetiva": 0.10290714285714284,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 8.32,
+        "ss": 8.89,
+        "fica": 63.6
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 8,
+        "ss": 9,
+        "fica": 64
+      },
+      "ano14": {
+        "brutoAnualTotal": 19600,
+        "ssAnual": 2156,
+        "irsAnual": 1973.50792,
+        "liquidoAnual": 15470.49208,
+        "liquidoMensal14": 1105.0351485714286,
+        "liquidoMensal12": 1289.2076733333333,
+        "taxaEfetiva": 0.10068917959183674,
+        "taxaMarginal": 0.212,
+        "pesoEstado": 0.36217307441764585
+      }
+    },
+    {
+      "bruto": 1450,
+      "custo": 1794.375,
+      "tsu": 344.375,
+      "ss": 159.5,
+      "irs": 156.11999999999998,
+      "liquido": 1134.38,
+      "taxaEfetiva": 0.10766896551724137,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 8.7,
+        "ss": 8.89,
+        "fica": 63.22
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 9,
+        "ss": 9,
+        "fica": 63
+      },
+      "ano14": {
+        "brutoAnualTotal": 20300,
+        "ssAnual": 2233,
+        "irsAnual": 2121.90792,
+        "liquidoAnual": 15945.09208,
+        "liquidoMensal14": 1138.9351485714285,
+        "liquidoMensal12": 1328.7576733333333,
+        "taxaEfetiva": 0.10452748374384237,
+        "taxaMarginal": 0.212,
+        "pesoEstado": 0.3652747343384585
+      }
+    },
+    {
+      "bruto": 1500,
+      "custo": 1856.25,
+      "tsu": 356.25,
+      "ss": 165,
+      "irs": 168.17,
+      "liquido": 1166.83,
+      "taxaEfetiva": 0.11211333333333333,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 9.06,
+        "ss": 8.89,
+        "fica": 62.86
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 9,
+        "ss": 9,
+        "fica": 63
+      },
+      "ano14": {
+        "brutoAnualTotal": 21000,
+        "ssAnual": 2310,
+        "irsAnual": 2270.30792,
+        "liquidoAnual": 16419.69208,
+        "liquidoMensal14": 1172.8351485714286,
+        "liquidoMensal12": 1368.3076733333335,
+        "taxaEfetiva": 0.10810990095238096,
+        "taxaMarginal": 0.212,
+        "pesoEstado": 0.3681696169312169
+      }
+    },
+    {
+      "bruto": 1550,
+      "custo": 1918.125,
+      "tsu": 368.125,
+      "ss": 170.5,
+      "irs": 180.22,
+      "liquido": 1199.28,
+      "taxaEfetiva": 0.11627096774193549,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 9.4,
+        "ss": 8.89,
+        "fica": 62.52
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 9,
+        "ss": 9,
+        "fica": 63
+      },
+      "ano14": {
+        "brutoAnualTotal": 21700,
+        "ssAnual": 2387,
+        "irsAnual": 2418.70792,
+        "liquidoAnual": 16894.29208,
+        "liquidoMensal14": 1206.7351485714285,
+        "liquidoMensal12": 1407.8576733333332,
+        "taxaEfetiva": 0.11146119447004607,
+        "taxaMarginal": 0.212,
+        "pesoEstado": 0.3708777329050878
+      }
+    },
+    {
+      "bruto": 1600,
+      "custo": 1980,
+      "tsu": 380,
+      "ss": 176,
+      "irs": 192.26999999999995,
+      "liquido": 1231.73,
+      "taxaEfetiva": 0.12016874999999998,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 9.71,
+        "ss": 8.89,
+        "fica": 62.21
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 10,
+        "ss": 9,
+        "fica": 62
+      },
+      "ano14": {
+        "brutoAnualTotal": 22400,
+        "ssAnual": 2464,
+        "irsAnual": 2567.1079200000004,
+        "liquidoAnual": 17368.892079999998,
+        "liquidoMensal14": 1240.6351485714283,
+        "liquidoMensal12": 1447.4076733333332,
+        "taxaEfetiva": 0.11460303214285716,
+        "taxaMarginal": 0.212,
+        "pesoEstado": 0.37341659163059165
+      }
+    },
+    {
+      "bruto": 1650,
+      "custo": 2041.875,
+      "tsu": 391.875,
+      "ss": 181.5,
+      "irs": 204.31999999999996,
+      "liquido": 1264.18,
+      "taxaEfetiva": 0.12383030303030301,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 10.01,
+        "ss": 8.89,
+        "fica": 61.91
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 10,
+        "ss": 9,
+        "fica": 62
+      },
+      "ano14": {
+        "brutoAnualTotal": 23100,
+        "ssAnual": 2541,
+        "irsAnual": 2735.0803100000003,
+        "liquidoAnual": 17823.91969,
+        "liquidoMensal14": 1273.1371207142856,
+        "liquidoMensal12": 1485.3266408333332,
+        "taxaEfetiva": 0.11840174502164504,
+        "taxaMarginal": 0.241,
+        "pesoEstado": 0.37648625860334956
+      }
+    },
+    {
+      "bruto": 1700,
+      "custo": 2103.75,
+      "tsu": 403.75,
+      "ss": 187,
+      "irs": 216.36999999999998,
+      "liquido": 1296.63,
+      "taxaEfetiva": 0.12727647058823527,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 10.28,
+        "ss": 8.89,
+        "fica": 61.63
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 10,
+        "ss": 9,
+        "fica": 62
+      },
+      "ano14": {
+        "brutoAnualTotal": 23800,
+        "ssAnual": 2618,
+        "irsAnual": 2903.78031,
+        "liquidoAnual": 18278.219689999998,
+        "liquidoMensal14": 1305.5871207142857,
+        "liquidoMensal12": 1523.1849741666665,
+        "taxaEfetiva": 0.12200757605042017,
+        "taxaMarginal": 0.241,
+        "pesoEstado": 0.379400061454885
+      }
+    },
+    {
+      "bruto": 1750,
+      "custo": 2165.625,
+      "tsu": 415.625,
+      "ss": 192.5,
+      "irs": 228.42,
+      "liquido": 1329.08,
+      "taxaEfetiva": 0.13052571428571427,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 10.55,
+        "ss": 8.89,
+        "fica": 61.37
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 11,
+        "ss": 9,
+        "fica": 61
+      },
+      "ano14": {
+        "brutoAnualTotal": 24500,
+        "ssAnual": 2695,
+        "irsAnual": 3072.48031,
+        "liquidoAnual": 18732.51969,
+        "liquidoMensal14": 1338.0371207142857,
+        "liquidoMensal12": 1561.0433075,
+        "taxaEfetiva": 0.12540735959183674,
+        "taxaMarginal": 0.241,
+        "pesoEstado": 0.3821473612863327
+      }
+    },
+    {
+      "bruto": 1800,
+      "custo": 2227.5,
+      "tsu": 427.5,
+      "ss": 198,
+      "irs": 240.47,
+      "liquido": 1361.53,
+      "taxaEfetiva": 0.13359444444444443,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 10.8,
+        "ss": 8.89,
+        "fica": 61.12
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 11,
+        "ss": 9,
+        "fica": 61
+      },
+      "ano14": {
+        "brutoAnualTotal": 25200,
+        "ssAnual": 2772,
+        "irsAnual": 3241.18031,
+        "liquidoAnual": 19186.81969,
+        "liquidoMensal14": 1370.4871207142858,
+        "liquidoMensal12": 1598.9016408333334,
+        "taxaEfetiva": 0.12861826626984127,
+        "taxaMarginal": 0.241,
+        "pesoEstado": 0.3847420333493667
+      }
+    },
+    {
+      "bruto": 1850,
+      "custo": 2289.375,
+      "tsu": 439.375,
+      "ss": 203.5,
+      "irs": 254.69,
+      "liquido": 1391.81,
+      "taxaEfetiva": 0.13767027027027026,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 11.12,
+        "ss": 8.89,
+        "fica": 60.79
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 11,
+        "ss": 9,
+        "fica": 61
+      },
+      "ano14": {
+        "brutoAnualTotal": 25900,
+        "ssAnual": 2849,
+        "irsAnual": 3409.88031,
+        "liquidoAnual": 19641.11969,
+        "liquidoMensal14": 1402.9371207142856,
+        "liquidoMensal12": 1636.7599741666666,
+        "taxaEfetiva": 0.1316556104247104,
+        "taxaMarginal": 0.241,
+        "pesoEstado": 0.3871964528684529
+      }
+    },
+    {
+      "bruto": 1900,
+      "custo": 2351.25,
+      "tsu": 451.25,
+      "ss": 209,
+      "irs": 270.23999999999995,
+      "liquido": 1420.76,
+      "taxaEfetiva": 0.1422315789473684,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 11.49,
+        "ss": 8.89,
+        "fica": 60.43
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 12,
+        "ss": 9,
+        "fica": 60
+      },
+      "ano14": {
+        "brutoAnualTotal": 26600,
+        "ssAnual": 2926,
+        "irsAnual": 3578.5803100000003,
+        "liquidoAnual": 20095.41969,
+        "liquidoMensal14": 1435.3871207142856,
+        "liquidoMensal12": 1674.6183075,
+        "taxaEfetiva": 0.13453309436090227,
+        "taxaMarginal": 0.241,
+        "pesoEstado": 0.38952169241285034
+      }
+    },
+    {
+      "bruto": 1950,
+      "custo": 2413.125,
+      "tsu": 463.125,
+      "ss": 214.5,
+      "irs": 285.79,
+      "liquido": 1449.71,
+      "taxaEfetiva": 0.14655897435897436,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 11.84,
+        "ss": 8.89,
+        "fica": 60.08
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 12,
+        "ss": 9,
+        "fica": 60
+      },
+      "ano14": {
+        "brutoAnualTotal": 27300,
+        "ssAnual": 3003,
+        "irsAnual": 3747.28031,
+        "liquidoAnual": 20549.719689999998,
+        "liquidoMensal14": 1467.8371207142857,
+        "liquidoMensal12": 1712.4766408333332,
+        "taxaEfetiva": 0.13726301501831503,
+        "taxaMarginal": 0.241,
+        "pesoEstado": 0.3917276889036889
+      }
+    },
+    {
+      "bruto": 2000,
+      "custo": 2475,
+      "tsu": 475,
+      "ss": 220,
+      "irs": 301.34,
+      "liquido": 1478.66,
+      "taxaEfetiva": 0.15067,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 12.18,
+        "ss": 8.89,
+        "fica": 59.74
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 12,
+        "ss": 9,
+        "fica": 60
+      },
+      "ano14": {
+        "brutoAnualTotal": 28000,
+        "ssAnual": 3080,
+        "irsAnual": 3938.65401,
+        "liquidoAnual": 20981.34599,
+        "liquidoMensal14": 1498.6675707142858,
+        "liquidoMensal12": 1748.4454991666669,
+        "taxaEfetiva": 0.14066621464285714,
+        "taxaMarginal": 0.311,
+        "pesoEstado": 0.3944777492063492
+      }
+    },
+    {
+      "bruto": 2050,
+      "custo": 2536.875,
+      "tsu": 486.875,
+      "ss": 225.5,
+      "irs": 316.88999999999993,
+      "liquido": 1507.6100000000001,
+      "taxaEfetiva": 0.15458048780487801,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 12.49,
+        "ss": 8.89,
+        "fica": 59.43
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 13,
+        "ss": 9,
+        "fica": 59
+      },
+      "ano14": {
+        "brutoAnualTotal": 28700,
+        "ssAnual": 3157,
+        "irsAnual": 4156.35401,
+        "liquidoAnual": 21386.64599,
+        "liquidoMensal14": 1527.6175707142859,
+        "liquidoMensal12": 1782.2204991666667,
+        "taxaEfetiva": 0.14482069721254356,
+        "taxaMarginal": 0.311,
+        "pesoEstado": 0.397834906838419
+      }
+    },
+    {
+      "bruto": 2100,
+      "custo": 2598.75,
+      "tsu": 498.75,
+      "ss": 231,
+      "irs": 332.44,
+      "liquido": 1536.56,
+      "taxaEfetiva": 0.1583047619047619,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 12.79,
+        "ss": 8.89,
+        "fica": 59.13
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 13,
+        "ss": 9,
+        "fica": 59
+      },
+      "ano14": {
+        "brutoAnualTotal": 29400,
+        "ssAnual": 3234,
+        "irsAnual": 4374.05401,
+        "liquidoAnual": 21791.94599,
+        "liquidoMensal14": 1556.5675707142857,
+        "liquidoMensal12": 1815.9954991666666,
+        "taxaEfetiva": 0.14877734727891156,
+        "taxaMarginal": 0.311,
+        "pesoEstado": 0.4010321998213427
+      }
+    },
+    {
+      "bruto": 2150,
+      "custo": 2660.625,
+      "tsu": 510.625,
+      "ss": 236.5,
+      "irs": 349.1599999999999,
+      "liquido": 1564.3400000000001,
+      "taxaEfetiva": 0.16239999999999996,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 13.12,
+        "ss": 8.89,
+        "fica": 58.8
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 13,
+        "ss": 9,
+        "fica": 59
+      },
+      "ano14": {
+        "brutoAnualTotal": 30100,
+        "ssAnual": 3311,
+        "irsAnual": 4591.754010000001,
+        "liquidoAnual": 22197.24599,
+        "liquidoMensal14": 1585.5175707142857,
+        "liquidoMensal12": 1849.7704991666667,
+        "taxaEfetiva": 0.15254996710963456,
+        "taxaMarginal": 0.311,
+        "pesoEstado": 0.404080781502735
+      }
+    },
+    {
+      "bruto": 2200,
+      "custo": 2722.5,
+      "tsu": 522.5,
+      "ss": 242,
+      "irs": 366.60999999999996,
+      "liquido": 1591.39,
+      "taxaEfetiva": 0.16664090909090906,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 13.47,
+        "ss": 8.89,
+        "fica": 58.45
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 14,
+        "ss": 9,
+        "fica": 58
+      },
+      "ano14": {
+        "brutoAnualTotal": 30800,
+        "ssAnual": 3388,
+        "irsAnual": 4809.45401,
+        "liquidoAnual": 22602.54599,
+        "liquidoMensal14": 1614.4675707142856,
+        "liquidoMensal12": 1883.5454991666666,
+        "taxaEfetiva": 0.15615110422077924,
+        "taxaMarginal": 0.311,
+        "pesoEstado": 0.4069907912895186
+      }
+    },
+    {
+      "bruto": 2250,
+      "custo": 2784.375,
+      "tsu": 534.375,
+      "ss": 247.5,
+      "irs": 384.06,
+      "liquido": 1618.44,
+      "taxaEfetiva": 0.17069333333333334,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 13.79,
+        "ss": 8.89,
+        "fica": 58.13
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 14,
+        "ss": 9,
+        "fica": 58
+      },
+      "ano14": {
+        "brutoAnualTotal": 31500,
+        "ssAnual": 3465,
+        "irsAnual": 5027.15401,
+        "liquidoAnual": 23007.84599,
+        "liquidoMensal14": 1643.4175707142858,
+        "liquidoMensal12": 1917.3204991666669,
+        "taxaEfetiva": 0.1595921907936508,
+        "taxaMarginal": 0.311,
+        "pesoEstado": 0.4097714673080006
+      }
+    },
+    {
+      "bruto": 2300,
+      "custo": 2846.25,
+      "tsu": 546.25,
+      "ss": 253,
+      "irs": 401.50999999999993,
+      "liquido": 1645.49,
+      "taxaEfetiva": 0.17456956521739128,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 14.11,
+        "ss": 8.89,
+        "fica": 57.81
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 14,
+        "ss": 9,
+        "fica": 58
+      },
+      "ano14": {
+        "brutoAnualTotal": 32200,
+        "ssAnual": 3542,
+        "irsAnual": 5244.85401,
+        "liquidoAnual": 23413.14599,
+        "liquidoMensal14": 1672.3675707142859,
+        "liquidoMensal12": 1951.0954991666667,
+        "taxaEfetiva": 0.1628836649068323,
+        "taxaMarginal": 0.311,
+        "pesoEstado": 0.4124312443691574
+      }
+    },
+    {
+      "bruto": 2350,
+      "custo": 2908.125,
+      "tsu": 558.125,
+      "ss": 258.5,
+      "irs": 418.96,
+      "liquido": 1672.54,
+      "taxaEfetiva": 0.17828085106382976,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 14.41,
+        "ss": 8.89,
+        "fica": 57.51
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 14,
+        "ss": 9,
+        "fica": 58
+      },
+      "ano14": {
+        "brutoAnualTotal": 32900,
+        "ssAnual": 3619,
+        "irsAnual": 5462.55401,
+        "liquidoAnual": 23818.44599,
+        "liquidoMensal14": 1701.3175707142857,
+        "liquidoMensal12": 1984.8704991666666,
+        "taxaEfetiva": 0.16603507629179332,
+        "taxaMarginal": 0.311,
+        "pesoEstado": 0.41497783942771177
+      }
+    },
+    {
+      "bruto": 2400,
+      "custo": 2970,
+      "tsu": 570,
+      "ss": 264,
+      "irs": 436.4099999999999,
+      "liquido": 1699.5900000000001,
+      "taxaEfetiva": 0.18183749999999996,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 14.69,
+        "ss": 8.89,
+        "fica": 57.23
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 15,
+        "ss": 9,
+        "fica": 57
+      },
+      "ano14": {
+        "brutoAnualTotal": 33600,
+        "ssAnual": 3696,
+        "irsAnual": 5680.254010000001,
+        "liquidoAnual": 24223.74599,
+        "liquidoMensal14": 1730.2675707142857,
+        "liquidoMensal12": 2018.6454991666667,
+        "taxaEfetiva": 0.16905517886904764,
+        "taxaMarginal": 0.311,
+        "pesoEstado": 0.41741832635882636
+      }
+    },
+    {
+      "bruto": 2450,
+      "custo": 3031.875,
+      "tsu": 581.875,
+      "ss": 269.5,
+      "irs": 453.85999999999996,
+      "liquido": 1726.64,
+      "taxaEfetiva": 0.18524897959183673,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 14.97,
+        "ss": 8.89,
+        "fica": 56.95
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 15,
+        "ss": 9,
+        "fica": 57
+      },
+      "ano14": {
+        "brutoAnualTotal": 34300,
+        "ssAnual": 3773,
+        "irsAnual": 5909.95859,
+        "liquidoAnual": 24617.041409999998,
+        "liquidoMensal14": 1758.3601007142856,
+        "liquidoMensal12": 2051.4201175,
+        "taxaEfetiva": 0.1723019997084548,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.4200420199664282
+      }
+    },
+    {
+      "bruto": 2500,
+      "custo": 3093.75,
+      "tsu": 593.75,
+      "ss": 275,
+      "irs": 471.34,
+      "liquido": 1753.66,
+      "taxaEfetiva": 0.18853599999999998,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 15.24,
+        "ss": 8.89,
+        "fica": 56.68
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 15,
+        "ss": 9,
+        "fica": 57
+      },
+      "ano14": {
+        "brutoAnualTotal": 35000,
+        "ssAnual": 3850,
+        "irsAnual": 6154.25859,
+        "liquidoAnual": 24995.74141,
+        "liquidoMensal14": 1785.4101007142856,
+        "liquidoMensal12": 2082.978450833333,
+        "taxaEfetiva": 0.17583595971428573,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.42289774522366524
+      }
+    },
+    {
+      "bruto": 2550,
+      "custo": 3155.625,
+      "tsu": 605.625,
+      "ss": 280.5,
+      "irs": 490.5199999999999,
+      "liquido": 1778.98,
+      "taxaEfetiva": 0.19236078431372547,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 15.54,
+        "ss": 8.89,
+        "fica": 56.37
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 16,
+        "ss": 9,
+        "fica": 56
+      },
+      "ano14": {
+        "brutoAnualTotal": 35700,
+        "ssAnual": 3927,
+        "irsAnual": 6398.558590000001,
+        "liquidoAnual": 25374.44141,
+        "liquidoMensal14": 1812.4601007142858,
+        "liquidoMensal12": 2114.5367841666666,
+        "taxaEfetiva": 0.1792313330532213,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.42564148125512835
+      }
+    },
+    {
+      "bruto": 2600,
+      "custo": 3217.5,
+      "tsu": 617.5,
+      "ss": 286,
+      "irs": 509.7,
+      "liquido": 1804.3,
+      "taxaEfetiva": 0.19603846153846152,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 15.84,
+        "ss": 8.89,
+        "fica": 56.08
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 16,
+        "ss": 9,
+        "fica": 56
+      },
+      "ano14": {
+        "brutoAnualTotal": 36400,
+        "ssAnual": 4004,
+        "irsAnual": 6642.85859,
+        "liquidoAnual": 25753.14141,
+        "liquidoMensal14": 1839.5101007142857,
+        "liquidoMensal12": 2146.0951175,
+        "taxaEfetiva": 0.1824961151098901,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.428279688977689
+      }
+    },
+    {
+      "bruto": 2650,
+      "custo": 3279.375,
+      "tsu": 629.375,
+      "ss": 291.5,
+      "irs": 528.8799999999999,
+      "liquido": 1829.6200000000001,
+      "taxaEfetiva": 0.199577358490566,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 16.13,
+        "ss": 8.89,
+        "fica": 55.79
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 16,
+        "ss": 9,
+        "fica": 56
+      },
+      "ano14": {
+        "brutoAnualTotal": 37100,
+        "ssAnual": 4081,
+        "irsAnual": 6887.15859,
+        "liquidoAnual": 26131.84141,
+        "liquidoMensal14": 1866.5601007142857,
+        "liquidoMensal12": 2177.6534508333334,
+        "taxaEfetiva": 0.18563769784366577,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.4308183416918511
+      }
+    },
+    {
+      "bruto": 2700,
+      "custo": 3341.25,
+      "tsu": 641.25,
+      "ss": 297,
+      "irs": 548.06,
+      "liquido": 1854.94,
+      "taxaEfetiva": 0.20298518518518516,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 16.4,
+        "ss": 8.89,
+        "fica": 55.52
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 16,
+        "ss": 9,
+        "fica": 56
+      },
+      "ano14": {
+        "brutoAnualTotal": 37800,
+        "ssAnual": 4158,
+        "irsAnual": 7131.458590000001,
+        "liquidoAnual": 26510.541409999998,
+        "liquidoMensal14": 1893.6101007142856,
+        "liquidoMensal12": 2209.2117841666663,
+        "taxaEfetiva": 0.18866292566137569,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.43326297023141475
+      }
+    },
+    {
+      "bruto": 2750,
+      "custo": 3403.125,
+      "tsu": 653.125,
+      "ss": 302.5,
+      "irs": 567.24,
+      "liquido": 1880.26,
+      "taxaEfetiva": 0.2062690909090909,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 16.67,
+        "ss": 8.89,
+        "fica": 55.25
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 17,
+        "ss": 9,
+        "fica": 55
+      },
+      "ano14": {
+        "brutoAnualTotal": 38500,
+        "ssAnual": 4235,
+        "irsAnual": 7375.758590000001,
+        "liquidoAnual": 26889.24141,
+        "liquidoMensal14": 1920.6601007142856,
+        "liquidoMensal12": 2240.7701174999997,
+        "taxaEfetiva": 0.19157814519480523,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.4356187031877214
+      }
+    },
+    {
+      "bruto": 2800,
+      "custo": 3465,
+      "tsu": 665,
+      "ss": 308,
+      "irs": 586.4199999999998,
+      "liquido": 1905.5800000000002,
+      "taxaEfetiva": 0.20943571428571423,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 16.92,
+        "ss": 8.89,
+        "fica": 55
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 17,
+        "ss": 9,
+        "fica": 55
+      },
+      "ano14": {
+        "brutoAnualTotal": 39200,
+        "ssAnual": 4312,
+        "irsAnual": 7620.0585900000015,
+        "liquidoAnual": 27267.94141,
+        "liquidoMensal14": 1947.7101007142858,
+        "liquidoMensal12": 2272.328450833333,
+        "taxaEfetiva": 0.194389249744898,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.43789030282415997
+      }
+    },
+    {
+      "bruto": 2850,
+      "custo": 3526.875,
+      "tsu": 676.875,
+      "ss": 313.5,
+      "irs": 605.5999999999999,
+      "liquido": 1930.9,
+      "taxaEfetiva": 0.2124912280701754,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 17.17,
+        "ss": 8.89,
+        "fica": 54.75
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 17,
+        "ss": 9,
+        "fica": 55
+      },
+      "ano14": {
+        "brutoAnualTotal": 39900,
+        "ssAnual": 4389,
+        "irsAnual": 7864.358590000002,
+        "liquidoAnual": 27646.641409999997,
+        "liquidoMensal14": 1974.7601007142855,
+        "liquidoMensal12": 2303.8867841666665,
+        "taxaEfetiva": 0.19710171904761908,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.44008219721019726
+      }
+    },
+    {
+      "bruto": 2900,
+      "custo": 3588.75,
+      "tsu": 688.75,
+      "ss": 319,
+      "irs": 624.78,
+      "liquido": 1956.22,
+      "taxaEfetiva": 0.21544137931034482,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 17.41,
+        "ss": 8.89,
+        "fica": 54.51
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 17,
+        "ss": 9,
+        "fica": 55
+      },
+      "ano14": {
+        "brutoAnualTotal": 40600,
+        "ssAnual": 4466,
+        "irsAnual": 8108.658590000001,
+        "liquidoAnual": 28025.34141,
+        "liquidoMensal14": 2001.8101007142857,
+        "liquidoMensal12": 2335.4451175,
+        "taxaEfetiva": 0.1997206549261084,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.44219850903119867
+      }
+    },
+    {
+      "bruto": 2950,
+      "custo": 3650.625,
+      "tsu": 700.625,
+      "ss": 324.5,
+      "irs": 643.9599999999998,
+      "liquido": 1981.5400000000002,
+      "taxaEfetiva": 0.21829152542372876,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 17.64,
+        "ss": 8.89,
+        "fica": 54.28
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 18,
+        "ss": 9,
+        "fica": 54
+      },
+      "ano14": {
+        "brutoAnualTotal": 41300,
+        "ssAnual": 4543,
+        "irsAnual": 8352.958590000002,
+        "liquidoAnual": 28404.041409999998,
+        "liquidoMensal14": 2028.8601007142856,
+        "liquidoMensal12": 2367.0034508333333,
+        "taxaEfetiva": 0.20225081331719133,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.44424308146843744
+      }
+    },
+    {
+      "bruto": 3000,
+      "custo": 3712.5,
+      "tsu": 712.5,
+      "ss": 330,
+      "irs": 663.1399999999999,
+      "liquido": 2006.8600000000001,
+      "taxaEfetiva": 0.2210466666666666,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 17.86,
+        "ss": 8.89,
+        "fica": 54.06
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 18,
+        "ss": 9,
+        "fica": 54
+      },
+      "ano14": {
+        "brutoAnualTotal": 42000,
+        "ssAnual": 4620,
+        "irsAnual": 8585.773000000001,
+        "liquidoAnual": 28794.227,
+        "liquidoMensal14": 2056.7305,
+        "liquidoMensal12": 2399.5189166666664,
+        "taxaEfetiva": 0.20442316666666668,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.4459985185185185
+      }
+    },
+    {
+      "bruto": 3050,
+      "custo": 3774.375,
+      "tsu": 724.375,
+      "ss": 335.5,
+      "irs": 682.3199999999999,
+      "liquido": 2032.18,
+      "taxaEfetiva": 0.22371147540983605,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 18.08,
+        "ss": 8.89,
+        "fica": 53.84
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 18,
+        "ss": 9,
+        "fica": 54
+      },
+      "ano14": {
+        "brutoAnualTotal": 42700,
+        "ssAnual": 4697,
+        "irsAnual": 8803.2,
+        "liquidoAnual": 29199.8,
+        "liquidoMensal14": 2085.7,
+        "liquidoMensal12": 2433.3166666666666,
+        "taxaEfetiva": 0.20616393442622952,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.4474051995363471
+      }
+    },
+    {
+      "bruto": 3100,
+      "custo": 3836.25,
+      "tsu": 736.25,
+      "ss": 341,
+      "irs": 701.5,
+      "liquido": 2057.5,
+      "taxaEfetiva": 0.22629032258064516,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 18.29,
+        "ss": 8.89,
+        "fica": 53.63
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 18,
+        "ss": 9,
+        "fica": 54
+      },
+      "ano14": {
+        "brutoAnualTotal": 43400,
+        "ssAnual": 4774,
+        "irsAnual": 9020.627,
+        "liquidoAnual": 29605.373,
+        "liquidoMensal14": 2114.6695,
+        "liquidoMensal12": 2467.114416666667,
+        "taxaEfetiva": 0.2078485483870968,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.44876650374714894
+      }
+    },
+    {
+      "bruto": 3150,
+      "custo": 3898.125,
+      "tsu": 748.125,
+      "ss": 346.5,
+      "irs": 720.6799999999998,
+      "liquido": 2082.82,
+      "taxaEfetiva": 0.22878730158730154,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 18.49,
+        "ss": 8.89,
+        "fica": 53.43
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 19,
+        "ss": 9,
+        "fica": 53
+      },
+      "ano14": {
+        "brutoAnualTotal": 44100,
+        "ssAnual": 4851,
+        "irsAnual": 9238.054,
+        "liquidoAnual": 30010.946,
+        "liquidoMensal14": 2143.639,
+        "liquidoMensal12": 2500.9121666666665,
+        "taxaEfetiva": 0.20947968253968255,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.4500845919512586
+      }
+    },
+    {
+      "bruto": 3200,
+      "custo": 3960,
+      "tsu": 760,
+      "ss": 352,
+      "irs": 739.8599999999999,
+      "liquido": 2108.1400000000003,
+      "taxaEfetiva": 0.23120624999999997,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 18.68,
+        "ss": 8.89,
+        "fica": 53.24
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 19,
+        "ss": 9,
+        "fica": 53
+      },
+      "ano14": {
+        "brutoAnualTotal": 44800,
+        "ssAnual": 4928,
+        "irsAnual": 9455.481,
+        "liquidoAnual": 30416.519,
+        "liquidoMensal14": 2172.6085,
+        "liquidoMensal12": 2534.7099166666667,
+        "taxaEfetiva": 0.21105984375,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.4513614898989899
+      }
+    },
+    {
+      "bruto": 3250,
+      "custo": 4021.875,
+      "tsu": 771.875,
+      "ss": 357.5,
+      "irs": 759.04,
+      "liquido": 2133.46,
+      "taxaEfetiva": 0.23355076923076923,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 18.87,
+        "ss": 8.89,
+        "fica": 53.05
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 19,
+        "ss": 9,
+        "fica": 53
+      },
+      "ano14": {
+        "brutoAnualTotal": 45500,
+        "ssAnual": 5005,
+        "irsAnual": 9672.908,
+        "liquidoAnual": 30822.092,
+        "liquidoMensal14": 2201.578,
+        "liquidoMensal12": 2568.507666666667,
+        "taxaEfetiva": 0.2125913846153846,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.45259909867909864
+      }
+    },
+    {
+      "bruto": 3300,
+      "custo": 4083.75,
+      "tsu": 783.75,
+      "ss": 363,
+      "irs": 778.2199999999998,
+      "liquido": 2158.78,
+      "taxaEfetiva": 0.23582424242424235,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 19.06,
+        "ss": 8.89,
+        "fica": 52.86
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 19,
+        "ss": 9,
+        "fica": 53
+      },
+      "ano14": {
+        "brutoAnualTotal": 46200,
+        "ssAnual": 5082,
+        "irsAnual": 9890.335,
+        "liquidoAnual": 31227.665,
+        "liquidoMensal14": 2230.5475,
+        "liquidoMensal12": 2602.3054166666666,
+        "taxaEfetiva": 0.21407651515151513,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.45379920416284053
+      }
+    },
+    {
+      "bruto": 3350,
+      "custo": 4145.625,
+      "tsu": 795.625,
+      "ss": 368.5,
+      "irs": 797.995,
+      "liquido": 2183.505,
+      "taxaEfetiva": 0.23820746268656717,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 19.25,
+        "ss": 8.89,
+        "fica": 52.67
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 19,
+        "ss": 9,
+        "fica": 53
+      },
+      "ano14": {
+        "brutoAnualTotal": 46900,
+        "ssAnual": 5159,
+        "irsAnual": 10107.761999999999,
+        "liquidoAnual": 31633.238,
+        "liquidoMensal14": 2259.5170000000003,
+        "liquidoMensal12": 2636.1031666666668,
+        "taxaEfetiva": 0.21551731343283578,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.45496348560229155
+      }
+    },
+    {
+      "bruto": 3400,
+      "custo": 4207.5,
+      "tsu": 807.5,
+      "ss": 374,
+      "irs": 817.8399999999998,
+      "liquido": 2208.1600000000003,
+      "taxaEfetiva": 0.24054117647058817,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 19.44,
+        "ss": 8.89,
+        "fica": 52.48
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 19,
+        "ss": 9,
+        "fica": 53
+      },
+      "ano14": {
+        "brutoAnualTotal": 47600,
+        "ssAnual": 5236,
+        "irsAnual": 10325.188999999998,
+        "liquidoAnual": 32038.811,
+        "liquidoMensal14": 2288.4865,
+        "liquidoMensal12": 2669.900916666667,
+        "taxaEfetiva": 0.21691573529411762,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.45609352346999404
+      }
+    },
+    {
+      "bruto": 3450,
+      "custo": 4269.375,
+      "tsu": 819.375,
+      "ss": 379.5,
+      "irs": 837.6849999999998,
+      "liquido": 2232.815,
+      "taxaEfetiva": 0.24280724637681156,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 19.62,
+        "ss": 8.89,
+        "fica": 52.3
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 20,
+        "ss": 9,
+        "fica": 52
+      },
+      "ano14": {
+        "brutoAnualTotal": 48300,
+        "ssAnual": 5313,
+        "irsAnual": 10542.616,
+        "liquidoAnual": 32444.384,
+        "liquidoMensal14": 2317.4559999999997,
+        "liquidoMensal12": 2703.6986666666667,
+        "taxaEfetiva": 0.2182736231884058,
+        "taxaMarginal": 0.349,
+        "pesoEstado": 0.4571908066168936
+      }
+    },
+    {
+      "bruto": 3500,
+      "custo": 4331.25,
+      "tsu": 831.25,
+      "ss": 385,
+      "irs": 857.5299999999999,
+      "liquido": 2257.4700000000003,
+      "taxaEfetiva": 0.24500857142857138,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 19.8,
+        "ss": 8.89,
+        "fica": 52.12
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 20,
+        "ss": 9,
+        "fica": 52
+      },
+      "ano14": {
+        "brutoAnualTotal": 49000,
+        "ssAnual": 5390,
+        "irsAnual": 10802.683,
+        "liquidoAnual": 32807.316999999995,
+        "liquidoMensal14": 2343.3797857142854,
+        "liquidoMensal12": 2733.943083333333,
+        "taxaEfetiva": 0.22046291836734697,
+        "taxaMarginal": 0.431,
+        "pesoEstado": 0.45895993403421975
+      }
+    },
+    {
+      "bruto": 3550,
+      "custo": 4393.125,
+      "tsu": 843.125,
+      "ss": 390.5,
+      "irs": 877.3749999999999,
+      "liquido": 2282.125,
+      "taxaEfetiva": 0.24714788732394363,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 19.97,
+        "ss": 8.89,
+        "fica": 51.95
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 20,
+        "ss": 9,
+        "fica": 52
+      },
+      "ano14": {
+        "brutoAnualTotal": 49700,
+        "ssAnual": 5467,
+        "irsAnual": 11071.196,
+        "liquidoAnual": 33161.804000000004,
+        "liquidoMensal14": 2368.700285714286,
+        "liquidoMensal12": 2763.483666666667,
+        "taxaEfetiva": 0.22276048289738432,
+        "taxaMarginal": 0.431,
+        "pesoEstado": 0.4608165518362701
+      }
+    },
+    {
+      "bruto": 3600,
+      "custo": 4455,
+      "tsu": 855,
+      "ss": 396,
+      "irs": 897.2199999999999,
+      "liquido": 2306.78,
+      "taxaEfetiva": 0.24922777777777774,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 20.14,
+        "ss": 8.89,
+        "fica": 51.78
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 20,
+        "ss": 9,
+        "fica": 52
+      },
+      "ano14": {
+        "brutoAnualTotal": 50400,
+        "ssAnual": 5544,
+        "irsAnual": 11339.709,
+        "liquidoAnual": 33516.291,
+        "liquidoMensal14": 2394.0207857142855,
+        "liquidoMensal12": 2793.02425,
+        "taxaEfetiva": 0.2249942261904762,
+        "taxaMarginal": 0.431,
+        "pesoEstado": 0.462621596921597
+      }
+    },
+    {
+      "bruto": 3650,
+      "custo": 4516.875,
+      "tsu": 866.875,
+      "ss": 401.5,
+      "irs": 917.0649999999999,
+      "liquido": 2331.435,
+      "taxaEfetiva": 0.2512506849315068,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 20.3,
+        "ss": 8.89,
+        "fica": 51.62
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 20,
+        "ss": 9,
+        "fica": 52
+      },
+      "ano14": {
+        "brutoAnualTotal": 51100,
+        "ssAnual": 5621,
+        "irsAnual": 11608.222,
+        "liquidoAnual": 33870.778,
+        "liquidoMensal14": 2419.3412857142857,
+        "liquidoMensal12": 2822.5648333333334,
+        "taxaEfetiva": 0.227166771037182,
+        "taxaMarginal": 0.431,
+        "pesoEstado": 0.46437718871691475
+      }
+    },
+    {
+      "bruto": 3700,
+      "custo": 4578.75,
+      "tsu": 878.75,
+      "ss": 407,
+      "irs": 936.91,
+      "liquido": 2356.09,
+      "taxaEfetiva": 0.2532189189189189,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 20.46,
+        "ss": 8.89,
+        "fica": 51.46
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 21,
+        "ss": 9,
+        "fica": 51
+      },
+      "ano14": {
+        "brutoAnualTotal": 51800,
+        "ssAnual": 5698,
+        "irsAnual": 11876.735,
+        "liquidoAnual": 34225.265,
+        "liquidoMensal14": 2444.6617857142855,
+        "liquidoMensal12": 2852.1054166666668,
+        "taxaEfetiva": 0.22928059845559848,
+        "taxaMarginal": 0.431,
+        "pesoEstado": 0.4660853320853321
+      }
+    },
+    {
+      "bruto": 3750,
+      "custo": 4640.625,
+      "tsu": 890.625,
+      "ss": 412.5,
+      "irs": 956.755,
+      "liquido": 2380.745,
+      "taxaEfetiva": 0.2551346666666667,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 20.62,
+        "ss": 8.89,
+        "fica": 51.3
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 21,
+        "ss": 9,
+        "fica": 51
+      },
+      "ano14": {
+        "brutoAnualTotal": 52500,
+        "ssAnual": 5775,
+        "irsAnual": 12147.633000000002,
+        "liquidoAnual": 34577.367,
+        "liquidoMensal14": 2469.8119285714283,
+        "liquidoMensal12": 2881.4472499999997,
+        "taxaEfetiva": 0.23138348571428574,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.46778463492063493
+      }
+    },
+    {
+      "bruto": 3800,
+      "custo": 4702.5,
+      "tsu": 902.5,
+      "ss": 418,
+      "irs": 976.5999999999998,
+      "liquido": 2405.4,
+      "taxaEfetiva": 0.25699999999999995,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 20.77,
+        "ss": 8.89,
+        "fica": 51.15
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 21,
+        "ss": 9,
+        "fica": 51
+      },
+      "ano14": {
+        "brutoAnualTotal": 53200,
+        "ssAnual": 5852,
+        "irsAnual": 12425.491000000002,
+        "liquidoAnual": 34922.509,
+        "liquidoMensal14": 2494.4649285714286,
+        "liquidoMensal12": 2910.209083333333,
+        "taxaEfetiva": 0.23356186090225567,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.4695449381028329
+      }
+    },
+    {
+      "bruto": 3850,
+      "custo": 4764.375,
+      "tsu": 914.375,
+      "ss": 423.5,
+      "irs": 996.4449999999998,
+      "liquido": 2430.0550000000003,
+      "taxaEfetiva": 0.25881688311688306,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 20.91,
+        "ss": 8.89,
+        "fica": 51
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 21,
+        "ss": 9,
+        "fica": 51
+      },
+      "ano14": {
+        "brutoAnualTotal": 53900,
+        "ssAnual": 5929,
+        "irsAnual": 12703.349,
+        "liquidoAnual": 35267.651,
+        "liquidoMensal14": 2519.1179285714284,
+        "liquidoMensal12": 2938.9709166666667,
+        "taxaEfetiva": 0.23568365491651205,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.47125951912445424
+      }
+    },
+    {
+      "bruto": 3900,
+      "custo": 4826.25,
+      "tsu": 926.25,
+      "ss": 429,
+      "irs": 1016.2899999999998,
+      "liquido": 2454.71,
+      "taxaEfetiva": 0.26058717948717947,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 21.06,
+        "ss": 8.89,
+        "fica": 50.86
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 21,
+        "ss": 9,
+        "fica": 51
+      },
+      "ano14": {
+        "brutoAnualTotal": 54600,
+        "ssAnual": 6006,
+        "irsAnual": 12981.207,
+        "liquidoAnual": 35612.793,
+        "liquidoMensal14": 2543.7709285714286,
+        "liquidoMensal12": 2967.7327499999997,
+        "taxaEfetiva": 0.23775104395604396,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.47293013653013655
+      }
+    },
+    {
+      "bruto": 3950,
+      "custo": 4888.125,
+      "tsu": 938.125,
+      "ss": 434.5,
+      "irs": 1036.1349999999998,
+      "liquido": 2479.3650000000002,
+      "taxaEfetiva": 0.26231265822784805,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 21.2,
+        "ss": 8.89,
+        "fica": 50.72
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 21,
+        "ss": 9,
+        "fica": 51
+      },
+      "ano14": {
+        "brutoAnualTotal": 55300,
+        "ssAnual": 6083,
+        "irsAnual": 13259.065,
+        "liquidoAnual": 35957.935,
+        "liquidoMensal14": 2568.4239285714284,
+        "liquidoMensal12": 2996.494583333333,
+        "taxaEfetiva": 0.23976609403254973,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.47455845982428263
+      }
+    },
+    {
+      "bruto": 4000,
+      "custo": 4950,
+      "tsu": 950,
+      "ss": 440,
+      "irs": 1055.98,
+      "liquido": 2504.02,
+      "taxaEfetiva": 0.263995,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 21.33,
+        "ss": 8.89,
+        "fica": 50.59
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 21,
+        "ss": 9,
+        "fica": 51
+      },
+      "ano14": {
+        "brutoAnualTotal": 56000,
+        "ssAnual": 6160,
+        "irsAnual": 13536.923,
+        "liquidoAnual": 36303.077,
+        "liquidoMensal14": 2593.076928571428,
+        "liquidoMensal12": 3025.2564166666666,
+        "taxaEfetiva": 0.24173076785714287,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.4761460750360751
+      }
+    },
+    {
+      "bruto": 4050,
+      "custo": 5011.875,
+      "tsu": 961.875,
+      "ss": 445.5,
+      "irs": 1075.8249999999998,
+      "liquido": 2528.675,
+      "taxaEfetiva": 0.26563580246913576,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 21.47,
+        "ss": 8.89,
+        "fica": 50.45
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 22,
+        "ss": 9,
+        "fica": 50
+      },
+      "ano14": {
+        "brutoAnualTotal": 56700,
+        "ssAnual": 6237,
+        "irsAnual": 13814.781,
+        "liquidoAnual": 36648.219,
+        "liquidoMensal14": 2617.7299285714284,
+        "liquidoMensal12": 3054.0182499999996,
+        "taxaEfetiva": 0.24364693121693123,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.4776944898722677
+      }
+    },
+    {
+      "bruto": 4100,
+      "custo": 5073.75,
+      "tsu": 973.75,
+      "ss": 451,
+      "irs": 1095.67,
+      "liquido": 2553.33,
+      "taxaEfetiva": 0.26723658536585365,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 21.59,
+        "ss": 8.89,
+        "fica": 50.32
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 22,
+        "ss": 9,
+        "fica": 50
+      },
+      "ano14": {
+        "brutoAnualTotal": 57400,
+        "ssAnual": 6314,
+        "irsAnual": 14092.639000000001,
+        "liquidoAnual": 36993.361,
+        "liquidoMensal14": 2642.3829285714282,
+        "liquidoMensal12": 3082.780083333333,
+        "taxaEfetiva": 0.24551635888501744,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.47920513849294344
+      }
+    },
+    {
+      "bruto": 4150,
+      "custo": 5135.625,
+      "tsu": 985.625,
+      "ss": 456.5,
+      "irs": 1115.5149999999999,
+      "liquido": 2577.985,
+      "taxaEfetiva": 0.26879879518072286,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 21.72,
+        "ss": 8.89,
+        "fica": 50.2
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 22,
+        "ss": 9,
+        "fica": 50
+      },
+      "ano14": {
+        "brutoAnualTotal": 58100,
+        "ssAnual": 6391,
+        "irsAnual": 14370.497000000001,
+        "liquidoAnual": 37338.503,
+        "liquidoMensal14": 2667.0359285714285,
+        "liquidoMensal12": 3111.5419166666666,
+        "taxaEfetiva": 0.24734074010327026,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.4806793859420366
+      }
+    },
+    {
+      "bruto": 4200,
+      "custo": 5197.5,
+      "tsu": 997.5,
+      "ss": 462,
+      "irs": 1135.3599999999997,
+      "liquido": 2602.6400000000003,
+      "taxaEfetiva": 0.27032380952380947,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 21.84,
+        "ss": 8.89,
+        "fica": 50.07
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 22,
+        "ss": 9,
+        "fica": 50
+      },
+      "ano14": {
+        "brutoAnualTotal": 58800,
+        "ssAnual": 6468,
+        "irsAnual": 14648.355000000001,
+        "liquidoAnual": 37683.645,
+        "liquidoMensal14": 2691.6889285714283,
+        "liquidoMensal12": 3140.3037499999996,
+        "taxaEfetiva": 0.2491216836734694,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.48211853226138945
+      }
+    },
+    {
+      "bruto": 4250,
+      "custo": 5259.375,
+      "tsu": 1009.375,
+      "ss": 467.5,
+      "irs": 1155.205,
+      "liquido": 2627.295,
+      "taxaEfetiva": 0.2718129411764706,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 21.96,
+        "ss": 8.89,
+        "fica": 49.95
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 22,
+        "ss": 9,
+        "fica": 50
+      },
+      "ano14": {
+        "brutoAnualTotal": 59500,
+        "ssAnual": 6545,
+        "irsAnual": 14926.213000000002,
+        "liquidoAnual": 38028.787,
+        "liquidoMensal14": 2716.3419285714285,
+        "liquidoMensal12": 3169.065583333333,
+        "taxaEfetiva": 0.25086072268907567,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.4835238163144046
+      }
+    },
+    {
+      "bruto": 4300,
+      "custo": 5321.25,
+      "tsu": 1021.25,
+      "ss": 473,
+      "irs": 1175.0499999999997,
+      "liquido": 2651.9500000000003,
+      "taxaEfetiva": 0.27326744186046503,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 22.08,
+        "ss": 8.89,
+        "fica": 49.84
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 22,
+        "ss": 9,
+        "fica": 50
+      },
+      "ano14": {
+        "brutoAnualTotal": 60200,
+        "ssAnual": 6622,
+        "irsAnual": 15204.071,
+        "liquidoAnual": 38373.929000000004,
+        "liquidoMensal14": 2740.9949285714288,
+        "liquidoMensal12": 3197.827416666667,
+        "taxaEfetiva": 0.25255931893687705,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.48489641934293093
+      }
+    },
+    {
+      "bruto": 4350,
+      "custo": 5383.125,
+      "tsu": 1033.125,
+      "ss": 478.5,
+      "irs": 1194.895,
+      "liquido": 2676.605,
+      "taxaEfetiva": 0.27468850574712644,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 22.2,
+        "ss": 8.89,
+        "fica": 49.72
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 22,
+        "ss": 9,
+        "fica": 50
+      },
+      "ano14": {
+        "brutoAnualTotal": 60900,
+        "ssAnual": 6699,
+        "irsAnual": 15481.929,
+        "liquidoAnual": 38719.070999999996,
+        "liquidoMensal14": 2765.647928571428,
+        "liquidoMensal12": 3226.5892499999995,
+        "taxaEfetiva": 0.2542188669950739,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.4862374682788476
+      }
+    },
+    {
+      "bruto": 4400,
+      "custo": 5445,
+      "tsu": 1045,
+      "ss": 484,
+      "irs": 1214.7399999999998,
+      "liquido": 2701.26,
+      "taxaEfetiva": 0.27607727272727267,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 22.31,
+        "ss": 8.89,
+        "fica": 49.61
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 22,
+        "ss": 9,
+        "fica": 50
+      },
+      "ano14": {
+        "brutoAnualTotal": 61600,
+        "ssAnual": 6776,
+        "irsAnual": 15759.787,
+        "liquidoAnual": 39064.213,
+        "liquidoMensal14": 2790.300928571429,
+        "liquidoMensal12": 3255.3510833333335,
+        "taxaEfetiva": 0.25584069805194803,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.487548038829857
+      }
+    },
+    {
+      "bruto": 4450,
+      "custo": 5506.875,
+      "tsu": 1056.875,
+      "ss": 489.5,
+      "irs": 1234.585,
+      "liquido": 2725.915,
+      "taxaEfetiva": 0.27743483146067416,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 22.42,
+        "ss": 8.89,
+        "fica": 49.5
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 22,
+        "ss": 9,
+        "fica": 50
+      },
+      "ano14": {
+        "brutoAnualTotal": 62300,
+        "ssAnual": 6853,
+        "irsAnual": 16037.645,
+        "liquidoAnual": 39409.354999999996,
+        "liquidoMensal14": 2814.953928571428,
+        "liquidoMensal12": 3284.1129166666665,
+        "taxaEfetiva": 0.2574260834670947,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.4888291583572483
+      }
+    },
+    {
+      "bruto": 4500,
+      "custo": 5568.75,
+      "tsu": 1068.75,
+      "ss": 495,
+      "irs": 1254.4299999999998,
+      "liquido": 2750.57,
+      "taxaEfetiva": 0.2787622222222222,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 22.53,
+        "ss": 8.89,
+        "fica": 49.39
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 23,
+        "ss": 9,
+        "fica": 49
+      },
+      "ano14": {
+        "brutoAnualTotal": 63000,
+        "ssAnual": 6930,
+        "irsAnual": 16315.503,
+        "liquidoAnual": 39754.497,
+        "liquidoMensal14": 2839.606928571429,
+        "liquidoMensal12": 3312.8747500000004,
+        "taxaEfetiva": 0.2589762380952381,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.4900818085618085
+      }
+    },
+    {
+      "bruto": 4550,
+      "custo": 5630.625,
+      "tsu": 1080.625,
+      "ss": 500.5,
+      "irs": 1274.275,
+      "liquido": 2775.225,
+      "taxaEfetiva": 0.2800604395604396,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 22.63,
+        "ss": 8.89,
+        "fica": 49.29
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 23,
+        "ss": 9,
+        "fica": 49
+      },
+      "ano14": {
+        "brutoAnualTotal": 63700,
+        "ssAnual": 7007,
+        "irsAnual": 16593.361,
+        "liquidoAnual": 40099.638999999996,
+        "liquidoMensal14": 2864.259928571428,
+        "liquidoMensal12": 3341.636583333333,
+        "taxaEfetiva": 0.26049232339089484,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.49130692799264236
+      }
+    },
+    {
+      "bruto": 4600,
+      "custo": 5692.5,
+      "tsu": 1092.5,
+      "ss": 506,
+      "irs": 1294.12,
+      "liquido": 2799.88,
+      "taxaEfetiva": 0.28133043478260866,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 22.73,
+        "ss": 8.89,
+        "fica": 49.19
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 23,
+        "ss": 9,
+        "fica": 49
+      },
+      "ano14": {
+        "brutoAnualTotal": 64400,
+        "ssAnual": 7084,
+        "irsAnual": 16871.219,
+        "liquidoAnual": 40444.781,
+        "liquidoMensal14": 2888.912928571429,
+        "liquidoMensal12": 3370.398416666667,
+        "taxaEfetiva": 0.261975450310559,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.4925054143923709
+      }
+    },
+    {
+      "bruto": 4650,
+      "custo": 5754.375,
+      "tsu": 1104.375,
+      "ss": 511.5,
+      "irs": 1313.9649999999997,
+      "liquido": 2824.5350000000003,
+      "taxaEfetiva": 0.2825731182795698,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 22.83,
+        "ss": 8.89,
+        "fica": 49.09
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 23,
+        "ss": 9,
+        "fica": 49
+      },
+      "ano14": {
+        "brutoAnualTotal": 65100,
+        "ssAnual": 7161,
+        "irsAnual": 17149.077,
+        "liquidoAnual": 40789.922999999995,
+        "liquidoMensal14": 2913.5659285714282,
+        "liquidoMensal12": 3399.1602499999995,
+        "taxaEfetiva": 0.2634266820276498,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.4936781268910302
+      }
+    },
+    {
+      "bruto": 4700,
+      "custo": 5816.25,
+      "tsu": 1116.25,
+      "ss": 517,
+      "irs": 1333.81,
+      "liquido": 2849.19,
+      "taxaEfetiva": 0.28378936170212765,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 22.93,
+        "ss": 8.89,
+        "fica": 48.99
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 23,
+        "ss": 9,
+        "fica": 49
+      },
+      "ano14": {
+        "brutoAnualTotal": 65800,
+        "ssAnual": 7238,
+        "irsAnual": 17426.935,
+        "liquidoAnual": 41135.065,
+        "liquidoMensal14": 2938.218928571429,
+        "liquidoMensal12": 3427.9220833333334,
+        "taxaEfetiva": 0.26484703647416413,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.4948258880599306
+      }
+    },
+    {
+      "bruto": 4750,
+      "custo": 5878.125,
+      "tsu": 1128.125,
+      "ss": 522.5,
+      "irs": 1353.6549999999997,
+      "liquido": 2873.8450000000003,
+      "taxaEfetiva": 0.28497999999999996,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 23.03,
+        "ss": 8.89,
+        "fica": 48.89
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 23,
+        "ss": 9,
+        "fica": 49
+      },
+      "ano14": {
+        "brutoAnualTotal": 66500,
+        "ssAnual": 7315,
+        "irsAnual": 17704.793,
+        "liquidoAnual": 41480.206999999995,
+        "liquidoMensal14": 2962.8719285714283,
+        "liquidoMensal12": 3456.6839166666664,
+        "taxaEfetiva": 0.2662374887218045,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.4959494858358017
+      }
+    },
+    {
+      "bruto": 4800,
+      "custo": 5940,
+      "tsu": 1140,
+      "ss": 528,
+      "irs": 1373.5,
+      "liquido": 2898.5,
+      "taxaEfetiva": 0.2861458333333333,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 23.12,
+        "ss": 8.89,
+        "fica": 48.8
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 23,
+        "ss": 9,
+        "fica": 49
+      },
+      "ano14": {
+        "brutoAnualTotal": 67200,
+        "ssAnual": 7392,
+        "irsAnual": 17982.651,
+        "liquidoAnual": 41825.349,
+        "liquidoMensal14": 2987.5249285714285,
+        "liquidoMensal12": 3485.4457500000003,
+        "taxaEfetiva": 0.2675989732142857,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.4970496753246753
+      }
+    },
+    {
+      "bruto": 4850,
+      "custo": 6001.875,
+      "tsu": 1151.875,
+      "ss": 533.5,
+      "irs": 1393.3449999999998,
+      "liquido": 2923.155,
+      "taxaEfetiva": 0.28728762886597936,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 23.22,
+        "ss": 8.89,
+        "fica": 48.7
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 23,
+        "ss": 9,
+        "fica": 49
+      },
+      "ano14": {
+        "brutoAnualTotal": 67900,
+        "ssAnual": 7469,
+        "irsAnual": 18260.509000000002,
+        "liquidoAnual": 42170.490999999995,
+        "liquidoMensal14": 3012.1779285714283,
+        "liquidoMensal12": 3514.207583333333,
+        "taxaEfetiva": 0.26893238586156115,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.49812718049419086
+      }
+    },
+    {
+      "bruto": 4900,
+      "custo": 6063.75,
+      "tsu": 1163.75,
+      "ss": 539,
+      "irs": 1413.19,
+      "liquido": 2947.81,
+      "taxaEfetiva": 0.2884061224489796,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 23.31,
+        "ss": 8.89,
+        "fica": 48.61
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 23,
+        "ss": 9,
+        "fica": 49
+      },
+      "ano14": {
+        "brutoAnualTotal": 68600,
+        "ssAnual": 7546,
+        "irsAnual": 18538.367000000002,
+        "liquidoAnual": 42515.633,
+        "liquidoMensal14": 3036.8309285714286,
+        "liquidoMensal12": 3542.969416666667,
+        "taxaEfetiva": 0.27023858600583095,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.4991826957622876
+      }
+    },
+    {
+      "bruto": 4950,
+      "custo": 6125.625,
+      "tsu": 1175.625,
+      "ss": 544.5,
+      "irs": 1433.0349999999999,
+      "liquido": 2972.465,
+      "taxaEfetiva": 0.28950202020202015,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 23.39,
+        "ss": 8.89,
+        "fica": 48.53
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 23,
+        "ss": 9,
+        "fica": 49
+      },
+      "ano14": {
+        "brutoAnualTotal": 69300,
+        "ssAnual": 7623,
+        "irsAnual": 18816.225000000002,
+        "liquidoAnual": 42860.774999999994,
+        "liquidoMensal14": 3061.4839285714284,
+        "liquidoMensal12": 3571.7312499999994,
+        "taxaEfetiva": 0.2715183982683983,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.5002168874896148
+      }
+    },
+    {
+      "bruto": 5000,
+      "custo": 6187.5,
+      "tsu": 1187.5,
+      "ss": 550,
+      "irs": 1452.8799999999997,
+      "liquido": 2997.1200000000003,
+      "taxaEfetiva": 0.29057599999999995,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 23.48,
+        "ss": 8.89,
+        "fica": 48.44
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 24,
+        "ss": 9,
+        "fica": 48
+      },
+      "ano14": {
+        "brutoAnualTotal": 70000,
+        "ssAnual": 7700,
+        "irsAnual": 19094.083000000002,
+        "liquidoAnual": 43205.917,
+        "liquidoMensal14": 3086.1369285714286,
+        "liquidoMensal12": 3600.4930833333333,
+        "taxaEfetiva": 0.2727726142857143,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.5012303953823953
+      }
+    },
+    {
+      "bruto": 5050,
+      "custo": 6249.375,
+      "tsu": 1199.375,
+      "ss": 555.5,
+      "irs": 1472.725,
+      "liquido": 3021.775,
+      "taxaEfetiva": 0.2916287128712871,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 23.57,
+        "ss": 8.89,
+        "fica": 48.35
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 24,
+        "ss": 9,
+        "fica": 48
+      },
+      "ano14": {
+        "brutoAnualTotal": 70700,
+        "ssAnual": 7777,
+        "irsAnual": 19371.941,
+        "liquidoAnual": 43551.059,
+        "liquidoMensal14": 3110.789928571429,
+        "liquidoMensal12": 3629.2549166666668,
+        "taxaEfetiva": 0.27400199434229133,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.5022238338119526
+      }
+    },
+    {
+      "bruto": 5100,
+      "custo": 6311.25,
+      "tsu": 1211.25,
+      "ss": 561,
+      "irs": 1492.5699999999997,
+      "liquido": 3046.4300000000003,
+      "taxaEfetiva": 0.29266078431372544,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 23.65,
+        "ss": 8.89,
+        "fica": 48.27
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 24,
+        "ss": 9,
+        "fica": 48
+      },
+      "ano14": {
+        "brutoAnualTotal": 71400,
+        "ssAnual": 7854,
+        "irsAnual": 19649.799,
+        "liquidoAnual": 43896.201,
+        "liquidoMensal14": 3135.4429285714286,
+        "liquidoMensal12": 3658.0167500000002,
+        "taxaEfetiva": 0.27520726890756303,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.5031977930566166
+      }
+    },
+    {
+      "bruto": 5150,
+      "custo": 6373.125,
+      "tsu": 1223.125,
+      "ss": 566.5,
+      "irs": 1512.415,
+      "liquido": 3071.085,
+      "taxaEfetiva": 0.29367281553398056,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 23.73,
+        "ss": 8.89,
+        "fica": 48.19
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 24,
+        "ss": 9,
+        "fica": 48
+      },
+      "ano14": {
+        "brutoAnualTotal": 72100,
+        "ssAnual": 7931,
+        "irsAnual": 19927.657,
+        "liquidoAnual": 44241.343,
+        "liquidoMensal14": 3160.0959285714284,
+        "liquidoMensal12": 3686.7785833333332,
+        "taxaEfetiva": 0.27638914008321774,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.5041528404712871
+      }
+    },
+    {
+      "bruto": 5200,
+      "custo": 6435,
+      "tsu": 1235,
+      "ss": 572,
+      "irs": 1532.2599999999998,
+      "liquido": 3095.7400000000002,
+      "taxaEfetiva": 0.29466538461538455,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 23.81,
+        "ss": 8.89,
+        "fica": 48.11
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 24,
+        "ss": 9,
+        "fica": 48
+      },
+      "ano14": {
+        "brutoAnualTotal": 72800,
+        "ssAnual": 8008,
+        "irsAnual": 20205.515,
+        "liquidoAnual": 44586.485,
+        "liquidoMensal14": 3184.7489285714287,
+        "liquidoMensal12": 3715.5404166666667,
+        "taxaEfetiva": 0.27754828296703293,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.5050895215895216
+      }
+    },
+    {
+      "bruto": 5250,
+      "custo": 6496.875,
+      "tsu": 1246.875,
+      "ss": 577.5,
+      "irs": 1552.105,
+      "liquido": 3120.395,
+      "taxaEfetiva": 0.29563904761904763,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 23.89,
+        "ss": 8.89,
+        "fica": 48.03
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 24,
+        "ss": 9,
+        "fica": 48
+      },
+      "ano14": {
+        "brutoAnualTotal": 73500,
+        "ssAnual": 8085,
+        "irsAnual": 20483.373,
+        "liquidoAnual": 44931.627,
+        "liquidoMensal14": 3209.4019285714285,
+        "liquidoMensal12": 3744.30225,
+        "taxaEfetiva": 0.2786853469387755,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.5060083611626469
+      }
+    },
+    {
+      "bruto": 5300,
+      "custo": 6558.75,
+      "tsu": 1258.75,
+      "ss": 583,
+      "irs": 1571.9499999999998,
+      "liquido": 3145.05,
+      "taxaEfetiva": 0.2965943396226415,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 23.97,
+        "ss": 8.89,
+        "fica": 47.95
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 24,
+        "ss": 9,
+        "fica": 48
+      },
+      "ano14": {
+        "brutoAnualTotal": 74200,
+        "ssAnual": 8162,
+        "irsAnual": 20761.231,
+        "liquidoAnual": 45276.769,
+        "liquidoMensal14": 3234.0549285714287,
+        "liquidoMensal12": 3773.064083333333,
+        "taxaEfetiva": 0.27980095687331535,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.5069098641400528
+      }
+    },
+    {
+      "bruto": 5350,
+      "custo": 6620.625,
+      "tsu": 1270.625,
+      "ss": 588.5,
+      "irs": 1591.795,
+      "liquido": 3169.705,
+      "taxaEfetiva": 0.2975317757009346,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 24.04,
+        "ss": 8.89,
+        "fica": 47.88
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 24,
+        "ss": 9,
+        "fica": 48
+      },
+      "ano14": {
+        "brutoAnualTotal": 74900,
+        "ssAnual": 8239,
+        "irsAnual": 21039.089,
+        "liquidoAnual": 45621.911,
+        "liquidoMensal14": 3258.7079285714285,
+        "liquidoMensal12": 3801.8259166666667,
+        "taxaEfetiva": 0.2808957142857143,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.5077945165945166
+      }
+    },
+    {
+      "bruto": 5400,
+      "custo": 6682.5,
+      "tsu": 1282.5,
+      "ss": 594,
+      "irs": 1611.6399999999999,
+      "liquido": 3194.36,
+      "taxaEfetiva": 0.2984518518518518,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 24.12,
+        "ss": 8.89,
+        "fica": 47.8
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 24,
+        "ss": 9,
+        "fica": 48
+      },
+      "ano14": {
+        "brutoAnualTotal": 75600,
+        "ssAnual": 8316,
+        "irsAnual": 21316.947,
+        "liquidoAnual": 45967.053,
+        "liquidoMensal14": 3283.3609285714288,
+        "liquidoMensal12": 3830.58775,
+        "taxaEfetiva": 0.28197019841269844,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.50866278659612
+      }
+    },
+    {
+      "bruto": 5450,
+      "custo": 6744.375,
+      "tsu": 1294.375,
+      "ss": 599.5,
+      "irs": 1631.4850000000001,
+      "liquido": 3219.015,
+      "taxaEfetiva": 0.29935504587155964,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 24.19,
+        "ss": 8.89,
+        "fica": 47.73
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 24,
+        "ss": 9,
+        "fica": 48
+      },
+      "ano14": {
+        "brutoAnualTotal": 76300,
+        "ssAnual": 8393,
+        "irsAnual": 21594.805,
+        "liquidoAnual": 46312.195,
+        "liquidoMensal14": 3308.0139285714286,
+        "liquidoMensal12": 3859.349583333333,
+        "taxaEfetiva": 0.28302496723460024,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.5095151250380608
+      }
+    },
+    {
+      "bruto": 5500,
+      "custo": 6806.25,
+      "tsu": 1306.25,
+      "ss": 605,
+      "irs": 1651.33,
+      "liquido": 3243.67,
+      "taxaEfetiva": 0.30024181818181817,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 24.26,
+        "ss": 8.89,
+        "fica": 47.66
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 24,
+        "ss": 9,
+        "fica": 48
+      },
+      "ano14": {
+        "brutoAnualTotal": 77000,
+        "ssAnual": 8470,
+        "irsAnual": 21872.663,
+        "liquidoAnual": 46657.337,
+        "liquidoMensal14": 3332.6669285714283,
+        "liquidoMensal12": 3888.1114166666666,
+        "taxaEfetiva": 0.2840605584415585,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.510351966417421
+      }
+    },
+    {
+      "bruto": 5550,
+      "custo": 6868.125,
+      "tsu": 1318.125,
+      "ss": 610.5,
+      "irs": 1671.3249999999998,
+      "liquido": 3268.175,
+      "taxaEfetiva": 0.30113963963963963,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 24.33,
+        "ss": 8.89,
+        "fica": 47.58
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 24,
+        "ss": 9,
+        "fica": 48
+      },
+      "ano14": {
+        "brutoAnualTotal": 77700,
+        "ssAnual": 8547,
+        "irsAnual": 22150.521,
+        "liquidoAnual": 47002.479,
+        "liquidoMensal14": 3357.3199285714286,
+        "liquidoMensal12": 3916.87325,
+        "taxaEfetiva": 0.28507749034749036,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.5111737295737295
+      }
+    },
+    {
+      "bruto": 5600,
+      "custo": 6930,
+      "tsu": 1330,
+      "ss": 616,
+      "irs": 1693.8000000000002,
+      "liquido": 3290.2,
+      "taxaEfetiva": 0.30246428571428574,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 24.44,
+        "ss": 8.89,
+        "fica": 47.48
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 24,
+        "ss": 9,
+        "fica": 48
+      },
+      "ano14": {
+        "brutoAnualTotal": 78400,
+        "ssAnual": 8624,
+        "irsAnual": 22428.379,
+        "liquidoAnual": 47347.621,
+        "liquidoMensal14": 3381.9729285714284,
+        "liquidoMensal12": 3945.635083333333,
+        "taxaEfetiva": 0.28607626275510206,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.5119808183879613
+      }
+    },
+    {
+      "bruto": 5650,
+      "custo": 6991.875,
+      "tsu": 1341.875,
+      "ss": 621.5,
+      "irs": 1716.275,
+      "liquido": 3312.225,
+      "taxaEfetiva": 0.3037654867256637,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 24.55,
+        "ss": 8.89,
+        "fica": 47.37
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 25,
+        "ss": 9,
+        "fica": 47
+      },
+      "ano14": {
+        "brutoAnualTotal": 79100,
+        "ssAnual": 8701,
+        "irsAnual": 22706.237,
+        "liquidoAnual": 47692.763,
+        "liquidoMensal14": 3406.6259285714286,
+        "liquidoMensal12": 3974.3969166666666,
+        "taxaEfetiva": 0.2870573577749684,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.5127736224444189
+      }
+    },
+    {
+      "bruto": 5700,
+      "custo": 7053.75,
+      "tsu": 1353.75,
+      "ss": 627,
+      "irs": 1738.75,
+      "liquido": 3334.25,
+      "taxaEfetiva": 0.3050438596491228,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 24.65,
+        "ss": 8.89,
+        "fica": 47.27
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 25,
+        "ss": 9,
+        "fica": 47
+      },
+      "ano14": {
+        "brutoAnualTotal": 79800,
+        "ssAnual": 8778,
+        "irsAnual": 22984.095,
+        "liquidoAnual": 48037.905,
+        "liquidoMensal14": 3431.2789285714284,
+        "liquidoMensal12": 4003.15875,
+        "taxaEfetiva": 0.28802124060150375,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.5135525176577809
+      }
+    },
+    {
+      "bruto": 5750,
+      "custo": 7115.625,
+      "tsu": 1365.625,
+      "ss": 632.5,
+      "irs": 1761.225,
+      "liquido": 3356.275,
+      "taxaEfetiva": 0.30629999999999996,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 24.75,
+        "ss": 8.89,
+        "fica": 47.17
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 25,
+        "ss": 9,
+        "fica": 47
+      },
+      "ano14": {
+        "brutoAnualTotal": 80500,
+        "ssAnual": 8855,
+        "irsAnual": 23261.953,
+        "liquidoAnual": 48383.047,
+        "liquidoMensal14": 3455.9319285714287,
+        "liquidoMensal12": 4031.920583333333,
+        "taxaEfetiva": 0.28896836024844724,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.5143178668674321
+      }
+    },
+    {
+      "bruto": 5800,
+      "custo": 7177.5,
+      "tsu": 1377.5,
+      "ss": 638,
+      "irs": 1783.6999999999998,
+      "liquido": 3378.3,
+      "taxaEfetiva": 0.30753448275862066,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 24.85,
+        "ss": 8.89,
+        "fica": 47.07
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 25,
+        "ss": 9,
+        "fica": 47
+      },
+      "ano14": {
+        "brutoAnualTotal": 81200,
+        "ssAnual": 8932,
+        "irsAnual": 23539.811,
+        "liquidoAnual": 48728.189,
+        "liquidoMensal14": 3480.5849285714285,
+        "liquidoMensal12": 4060.6824166666665,
+        "taxaEfetiva": 0.2898991502463054,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.5150700204010549
+      }
+    },
+    {
+      "bruto": 5850,
+      "custo": 7239.375,
+      "tsu": 1389.375,
+      "ss": 643.5,
+      "irs": 1806.1750000000002,
+      "liquido": 3400.325,
+      "taxaEfetiva": 0.3087478632478633,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 24.95,
+        "ss": 8.89,
+        "fica": 46.97
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 25,
+        "ss": 9,
+        "fica": 47
+      },
+      "ano14": {
+        "brutoAnualTotal": 81900,
+        "ssAnual": 9009,
+        "irsAnual": 23817.669,
+        "liquidoAnual": 49073.331,
+        "liquidoMensal14": 3505.2379285714283,
+        "liquidoMensal12": 4089.44425,
+        "taxaEfetiva": 0.29081402930402933,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.5158093166093166
+      }
+    },
+    {
+      "bruto": 5900,
+      "custo": 7301.25,
+      "tsu": 1401.25,
+      "ss": 649,
+      "irs": 1828.65,
+      "liquido": 3422.35,
+      "taxaEfetiva": 0.3099406779661017,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 25.05,
+        "ss": 8.89,
+        "fica": 46.87
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 25,
+        "ss": 9,
+        "fica": 47
+      },
+      "ano14": {
+        "brutoAnualTotal": 82600,
+        "ssAnual": 9086,
+        "irsAnual": 24095.527000000002,
+        "liquidoAnual": 49418.473,
+        "liquidoMensal14": 3529.8909285714285,
+        "liquidoMensal12": 4118.2060833333335,
+        "taxaEfetiva": 0.29171340193704604,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.5165360823733706
+      }
+    },
+    {
+      "bruto": 5950,
+      "custo": 7363.125,
+      "tsu": 1413.125,
+      "ss": 654.5,
+      "irs": 1851.125,
+      "liquido": 3444.375,
+      "taxaEfetiva": 0.3111134453781513,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 25.14,
+        "ss": 8.89,
+        "fica": 46.78
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 25,
+        "ss": 9,
+        "fica": 47
+      },
+      "ano14": {
+        "brutoAnualTotal": 83300,
+        "ssAnual": 9163,
+        "irsAnual": 24373.385000000002,
+        "liquidoAnual": 49763.615,
+        "liquidoMensal14": 3554.5439285714283,
+        "liquidoMensal12": 4146.9679166666665,
+        "taxaEfetiva": 0.29259765906362545,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.517250633586768
+      }
+    },
+    {
+      "bruto": 6000,
+      "custo": 7425,
+      "tsu": 1425,
+      "ss": 660,
+      "irs": 1873.6,
+      "liquido": 3466.4,
+      "taxaEfetiva": 0.31226666666666664,
+      "tabela": "I",
+      "centimos": {
+        "tsu": 19.19,
+        "irs": 25.23,
+        "ss": 8.89,
+        "fica": 46.69
+      },
+      "pontos": {
+        "tsu": 19,
+        "irs": 25,
+        "ss": 9,
+        "fica": 47
+      },
+      "ano14": {
+        "brutoAnualTotal": 84000,
+        "ssAnual": 9240,
+        "irsAnual": 24651.243000000002,
+        "liquidoAnual": 50108.757,
+        "liquidoMensal14": 3579.1969285714285,
+        "liquidoMensal12": 4175.7297499999995,
+        "taxaEfetiva": 0.2934671785714286,
+        "taxaMarginal": 0.446,
+        "pesoEstado": 0.5179532756132756
+      }
+    }
+  ]
+}

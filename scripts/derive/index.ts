@@ -4,6 +4,7 @@ import { runFreshness } from "./freshness";
 import { runFiscalFontes } from "./fiscal-fontes";
 import { runCaBase } from "./paineis";
 import { runDerivados } from "./derivados";
+import { runCenarios } from "./cenarios";
 import { runPainel } from "./painel";
 import { runApi } from "./api";
 
@@ -25,6 +26,11 @@ function main() {
   if (ca) console.log(`✓ ca-base.json: indicativa até ${ca.meta.serieAte}`);
 
   runDerivados(DATA);
+
+  const cen = runCenarios(DATA);
+  console.log(
+    `✓ cenarios-salario.json: ${cen.meta.n} pontos de ${cen.meta.inicio} € a ${cen.meta.fim} € (passo ${cen.meta.passo} €)`
+  );
 
   const fiscais = runFiscalFontes(DATA);
   console.log(`✓ sources.json: ${fiscais.length} fontes fiscais registadas`);

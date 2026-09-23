@@ -4,6 +4,8 @@ import { Fragment, useMemo, useState } from "react";
 import { simularSalario } from "@/lib/engines/irs";
 import { TSU_ENTIDADE, TSU_TRABALHADOR } from "@/lib/engines/seg-social";
 import { reciboMensal, FormaPagamentoSA } from "@/lib/engines/recibo";
+import type { ResultadoRecibo } from "@/lib/engines/recibo";
+import type { CenariosSalario } from "@/lib/cenarios";
 import { BRUTO_CANONICO } from "@/lib/canonico";
 import { SituacaoRetencao } from "@/lib/engines/retencao";
 import {
@@ -45,10 +47,14 @@ export interface ReguaSalario {
 export function CalculadoraSalario({
   ano,
   regua,
+  cenarios,
   custo,
 }: {
   ano: number;
   regua: ReguaSalario;
+  /** tabela canónica gerada no build — a régua só pára nestes pontos;
+      no perfil canónico os números vêm daqui, nunca interpolados */
+  cenarios: CenariosSalario;
   /** strings da explosão do custo — messages/pt.json → salario.custo */
   custo: RotulosCusto;
 }) {
@@ -61,23 +67,46 @@ export function CalculadoraSalario({
   const [formaSA, setFormaSA] = useState<FormaPagamentoSA>("cartao");
   const [anoJovem, setAnoJovem] = useState(0);
 
-  const recibo = useMemo(
+  // no perfil canónico (solteiro, 0 dependentes, sem SA, sem IRS Jovem)
+  // o recibo sai da tabela gerada no build — pontos exactos do motor,
+  // nunca interpolados; fora dele o motor calcula no cliente
+  const linhaCan =
+    situacao === "solteiro" && dependentes === 0 && saPorDia === 0 && anoJovem === 0
+      ? cenarios.linhas.find((l) => l.bruto === bruto)
+      : undefined;
+
+  const recibo = useMemo<ResultadoRecibo>(
     () =>
-      reciboMensal({
-        bruto,
-        situacao: PARA_RETENCAO[situacao],
-        dependentes,
-        saPorDia,
-        formaSA,
-        anoIrsJovem: anoJovem,
-        ano,
-      }),
-    [bruto, situacao, dependentes, saPorDia, formaSA, anoJovem, ano]
+      linhaCan
+        ? {
+            bruto: linhaCan.bruto,
+            saTotal: 0,
+            saIsento: 0,
+            saTributavel: 0,
+            ss: linhaCan.ss,
+            retencao: linhaCan.irs,
+            taxaEfetiva: linhaCan.taxaEfetiva,
+            tabela: linhaCan.tabela,
+            liquido: linhaCan.liquido,
+            tsuEntidade: linhaCan.tsu,
+            custoEmpresa: linhaCan.custo,
+          }
+        : reciboMensal({
+            bruto,
+            situacao: PARA_RETENCAO[situacao],
+            dependentes,
+            saPorDia,
+            formaSA,
+            anoIrsJovem: anoJovem,
+            ano,
+          }),
+    [linhaCan, bruto, situacao, dependentes, saPorDia, formaSA, anoJovem, ano]
   );
 
   // Em "casado único titular" o cônjuge sem rendimentos conta para o
   // quociente conjugal (÷2) mas não tem dedução específica própria.
   const resultado = useMemo(() => {
+    if (linhaCan) return linhaCan.ano14;
     const brutos =
       situacao === "solteiro"
         ? [bruto]
@@ -85,7 +114,7 @@ export function CalculadoraSalario({
           ? [bruto, conjuge]
           : [bruto, 0];
     return simularSalario(brutos, dependentes, ano);
-  }, [bruto, conjuge, situacao, dependentes, ano]);
+  }, [linhaCan, bruto, conjuge, situacao, dependentes, ano]);
 
   const limiteSA = sa.isentoPorDia[formaSA];
 
@@ -133,9 +162,10 @@ export function CalculadoraSalario({
           rotulo={regua.rotulo}
           valor={bruto}
           onChange={setBruto}
-          min={870}
-          max={5000}
-          passo={10}
+          min={cenarios.meta.inicio}
+          max={cenarios.meta.fim}
+          passo={cenarios.meta.passo}
+          pontos={cenarios.linhas.map((l) => l.bruto)}
           unidade=" €"
           formato={(v) => fmtNum(v, 0)}
           marcadorAgora={regua.marcador ?? undefined}

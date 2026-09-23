@@ -154,6 +154,20 @@ consome de lá, nunca recalcula):
 O caso-base é solteiro(a), sem dependentes, continente, sem subsídio de
 alimentação, bruto de referência 1 500 €/mês (`BRUTO_CANONICO`).
 
+**A grelha canónica (S1-09).** O motor fiscal fica no servidor/build.
+Para as réguas de salário no cliente, `npm run derive` gera
+`data/derived/cenarios-salario.json`: o salário mínimo em vigor e
+depois **múltiplos exactos de 50 € até 6 000 €** (103 pontos —
+inclui sempre os redondos como 1 500 €). Cada linha traz bruto, custo
+empresa, TSU entidade, SS, IRS retido, líquido, tabela de retenção,
+a repartição em cêntimos por euro de custo (pontos inteiros, Σ=100) e
+a simulação anual a 14 meses — tudo saído do motor, nunca inventado.
+A régua (`Regua` com `pontos`) só pára nestes valores: **nunca se
+interpola um número que o motor não calculou.** No perfil canónico o
+cliente lê a linha da tabela; perfis fora do caso-base (casado,
+dependentes, subs. alimentação, IRS Jovem — dimensões não tabeláveis,
+como o bruto livre do cônjuge) caem no motor do cliente.
+
 **Outras leituras não se misturam.** A média a 14 meses (duodécimos) e a
 estimativa de IRS anual (liquidação) são representações diferentes —
 cada uma vive na sua página, com uma frase a explicar a diferença
