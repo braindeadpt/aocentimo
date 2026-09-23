@@ -1097,3 +1097,103 @@ número»).
 
 **Motor lazy do dono** — intacto: nada tocou `carregarGsap`/`tela.ts`,
 os motores fiscais nem os orbes (`OrbeEstado` só se consome).
+
+## 1B-06 · Painel — composição com três tamanhos e regras de vizinhança (2026-09-30)
+
+**Feito.** `<Painel>` é a grelha de composição dos dashboards — e o
+«Hoje em Portugal» da home e «O país, em leituras» de /dados migraram
+para ele, com o conteúdo real preservado (séries, codificações,
+insights, fontes, frescura). Três peças:
+
+- `src/lib/painel.ts` — módulo PURO: tipos (`CodificacaoPainel`,
+  `TamanhoPainel`, `JanelaId`), `comporPainel` (DP sobre os tamanhos
+  permitidos por cartão; minimiza desvios ao preferido, determinista),
+  `linhasPainel`/`linhaFecha`, `validarVizinhanca`, `cortarJanela`.
+  Grelha de 6 colunas: S=2 (⅓), M=4 (⅔), L=6. Linhas só fecham em
+  `{L} | {M+S} | {S+M} | {S+S+S}` — o órfão é impossível por
+  construção; se nenhuma atribuição fecha, devolve `null`.
+- `src/components/Painel.tsx` — client: grelha `grid-cols-6`, UM
+  `<Segmentado>` partilhado («1A · 5A · Máx») que fatia os cartões
+  com `janela: true`, renderers por codificação (linha→`Leitura`,
+  pontos→`Haltere`, tracos→`BarraTracos`, anel→`AnelPontos`,
+  isometrico→`Isometrico`; fonte em falta→`EstadoVazio`), `--ei` na
+  célula, `data-cod` para o e2e, aviso de vizinhança em dev.
+- `src/lib/paineis.ts` — builders SERVIDOR `cartoesHome()` /
+  `cartoesDados()` + `opcoesJanela()`/`ROTULO_JANELA()`: montam a
+  configuração declarativa sobre `loadFonte`/`loadDerivado`/
+  `loadPainel`/`loadFreshness`, `janela10`, `insightMediana`,
+  `anotacaoDe` (uma anotação POR janela, calculada no servidor sobre
+  a série já fatiada) e `decomporCombustivel` — nada inventado.
+
+**Composição final (tamanhos atribuídos pelo packing):**
+
+- Home — 6 cartões, linhas `[L] [M+S] [S+S+S]` → 1×L, 1×M, 4×S:
+  inflação (**L**, linha anotada + mediana 10 anos) · Euribor
+  (**M**, pontos — haltere dos 4 prazos 1M/3M/6M/12M) · desemprego
+  (**S**, linha PT vs UE27) · habitação (**S**, traços — risca de
+  trimestres homólogos) · gasóleo (**S**, isométrico — estrutura do
+  litro IVA/ISP/carbono/produto real) · PIB (**S**, linha homóloga).
+  Codificações: linha·pontos·linha·traços·isométrico·linha — zero
+  repetições adjacentes.
+- /dados — 7 cartões, linhas `[M+S] [M+S] [S+S+S]` → 2×M, 5×S:
+  PIB (**M**, linha) · confiança (**S**, anel — os 12 meses em ciclo
+  com o «agora» ao centro) · electricidade (**M**, linha €/kWh) ·
+  custo do trabalho (**S**, traços — risca de trimestres a crescer) ·
+  desemprego jovem (**S**, linha) · gap PT−UE (**S**, pontos —
+  haltere Portugal/UE27) · casa-vs-trabalho (**S**, linha índice
+  2015=100). Codificações: linha·anel·linha·traços·linha·pontos·
+  linha — zero repetições adjacentes.
+
+**Decisões tomadas:**
+
+- **A grelha proíbe o órfão, não o testa depois.** Em vez de medir e
+  remendar, as linhas só existem em padrões completos e o packing
+  escolhe os tamanhos — a regra «nunca um cartão órfão» vira
+  invariante de construção (e o e2e confirma em px com
+  `getBoundingClientRect` a 1440/1024/768/375: cada linha encosta à
+  borda direita). Abaixo de lg todos os cartões são linha inteira.
+- **O vazio conta como `isometrico`** na vizinhança — a ilustração do
+  `EstadoVazio` é isométrica de traço; a regra de alternância mede o
+  que o olho vê.
+- **Mediana de 10 anos por omissão**, declarada no insight do nível
+  1 — cartões com referência declarada diferente mantêm-na:
+  desemprego/gap comparam à média europeia, casa-vs-trabalho ao nível
+  de 2015.
+- **Uma anotação por janela**, calculada no servidor sobre a série já
+  fatiada — a anotação é sempre um dado (extremo real do recorte),
+  nunca uma posição reaproveitada noutra janela.
+- **`Isometrico` sem props de geometria** — o cartão do gasóleo passa
+  camadas com `forma`/`rotulo`/`detalhe`/`texto` (o componente mede a
+  estrutura; nenhum número dimensiona camadas).
+- **`Segmentado` por painel, não por cartão** — uma fatia temporal
+  única para todas as séries que a suportam; a referência da mediana
+  fica sempre desenhada.
+
+**Copy novo a rever pelo dono:**
+
+- «Janela temporal» + opções «1A · 5A · Máx» (`painel.janela`).
+- «{abs} cêntimos por litro {direcao} da mediana de 10 anos»
+  (`insightLitro`), «trimestres seguidos a subir/descer/crescer»,
+  «1 trimestre», «saldo», «Portugal»/«UE 27» (gap), rótulos e
+  detalhes das camadas do gasóleo (`isoGasoleo`).
+
+**Componentes partilhados congelados** (lista actualizada — as
+sessões paralelas usam-nos sem os mudar): Logo, LogoMark, Icone,
+IconeEmblema, Valor, Botao/Interruptor/Chip/Segmentado/BotaoCopiar,
+ACarregar, EstadoVazio, ZeroInformativo, **Painel**,
+Voo/LinkVoo/TituloPagina (coreografia). Pedidos de alteração a APIs
+congeladas: `PEDIDOS-PARTILHADOS.md` — confirmado, existe e está sem
+pedidos registados.
+
+**Testes:** `src/lib/painel.test.ts` (19 — packing sem órfãos,
+vizinhança, cortarJanela e as duas configurações reais: grelha fecha,
+zero repetições, casca de frescura, mediana no insight) +
+`e2e/painel.spec.ts` (12 — linhas fecham a grelha em px a
+1440/1024/768/375 nas duas rotas, `data-cod` adjacentes nunca
+repetidos, orbe + «leitura …» em todos os cartões).
+
+**Motor lazy do dono** — intacto: nada tocou `carregarGsap`/`tela.ts`
+nem os motores; a animação é a já existente dos corpos
+(`--ei`/`--stagger` + `entrada` do `Leitura`) — sem peça animada nova,
+não houve vídeo novo a rever (o e2e de coreografia/motion segue verde:
+reduced-motion, acima da dobra, pausa fora do ecrã).

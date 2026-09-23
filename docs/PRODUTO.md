@@ -520,6 +520,52 @@ explicação. Quatro peças partilhadas, cada uma com desenho + texto:
   teclado); a razão por lado chega por `limites={{min,max}}`. Sai na
   próxima paragem interior.
 
+### Painel — composição de dashboards (1B-06)
+
+O `Painel` é a grelha onde vivem os conjuntos de leituras — o «Hoje
+em Portugal» da home e «O país, em leituras» de /dados. As regras são
+de composição, não de cartão:
+
+- **Três tamanhos, seis colunas.** S ocupa ⅓ (2 col), M ocupa ⅔
+  (4 col), L a linha inteira. As linhas só existem em padrões que
+  fecham exactamente — `{L}`, `{M+S}`, `{S+M}`, `{S+S+S}` — e o
+  packing (`comporPainel`, DP sobre os tamanhos permitidos por
+  cartão) escolhe a atribuição com menos desvios ao tamanho
+  preferido. **Nenhum cartão fica órfão**: a grelha nunca devolve uma
+  composição com a última linha por fechar — se nenhuma atribuição
+  permitida fecha, devolve `null` e em dev o painel avisa. Abaixo de
+  lg todos os cartões são linha inteira. Verificado em e2e com
+  `getBoundingClientRect` a 1440/1024/768/375.
+- **Vizinhança de codificações.** Cada cartão declara a sua
+  `codificacao` — `linha · pontos · tracos · anel · isometrico` (o
+  `EstadoVazio` conta como isométrico, que é a sua ilustração) — e
+  **dois cartões seguidos nunca repetem** a mesma. A linha cansa; a
+  alternância ensina. `validarVizinhanca` reprova no teste unitário
+  sobre a configuração real e avisa em dev.
+- **Comparação por omissão.** Todos os cartões com série comparam à
+  **mediana de 10 anos**, dita em texto no insight do nível 1 —
+  cartões com referência declarada diferente (UE27 no desemprego, o
+  nível de 2015 na casa-vs-trabalho) mantêm a sua.
+- **Janela temporal partilhada.** UM `Segmentado` por painel («1A ·
+  5A · Máx») fatia todas as séries que a suportam (`janela: true`);
+  «Máx» é a janela completa servida (~10 anos). A referência da
+  mediana fica sempre; o que muda é o recorte desenhado — e as
+  anotações são calculadas no servidor por janela, sobre a série já
+  fatiada.
+- **Frescura sempre à vista.** Todos os cartões nascem sobre o
+  `Cartao` (ou o `EstadoVazio`): orbe + «leitura {período}» + fonte +
+  acções — a mesma casca Ledger do `Leitura`, montada à mão para as
+  outras codificações.
+- **Sem dados inventados.** A configuração vem de builders servidor
+  (`src/lib/paineis.ts`: `cartoesHome()`, `cartoesDados()`) que leem
+  `data/`, derivados e motores — e quando a fonte falta o slot
+  renderiza `EstadoVazio` com a fonte e o último dado conhecido.
+
+O componente (`src/components/Painel.tsx`) é client e recebe só specs
+serializáveis por props; a lógica pura (`src/lib/painel.ts`) é
+determinista — SSR e hidratação compõem o mesmo. `--ei` vai na célula
+e alimenta o escalonamento de entrada já existente dos corpos.
+
 ### Motion — gramática (M-02)
 
 O site tem movimento porque o movimento **explica transformações** —

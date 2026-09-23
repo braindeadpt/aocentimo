@@ -197,6 +197,49 @@
     "insightCombustivelZero": "o litro não mexeu num mês",
     "insightElec": "{abs} cêntimos por kWh {direcao} da mediana de 10 anos",
     "insightCasaTrabalho": "face ao custo do trabalho, a casa está {v} % {direcao} do nível de 2015",
+    "insightLitro": "{abs} cêntimos por litro {direcao} da mediana de 10 anos",
+    "janela": {
+      "rotulo": "Janela temporal",
+      "opcoes": {
+        "1a": "1A",
+        "5a": "5A",
+        "max": "Máx"
+      }
+    },
+    "umTrimestre": "1 trimestre",
+    "tracosSubir": "trimestres seguidos a subir",
+    "tracosDescer": "trimestres seguidos a descer",
+    "tracosCrescer": "trimestres seguidos a crescer",
+    "anel": {
+      "saldo": "saldo"
+    },
+    "gap": {
+      "portugal": "Portugal",
+      "ue": "UE 27"
+    },
+    "isoGasoleo": {
+      "kicker": "gasóleo simples · PMD",
+      "litro": {
+        "rotulo": "o litro",
+        "detalhe": "preço médio de venda"
+      },
+      "iva": {
+        "rotulo": "IVA",
+        "detalhe": "23 % sobre o preço com ISP"
+      },
+      "isp": {
+        "rotulo": "ISP",
+        "detalhe": "imposto sobre produtos petrolíferos"
+      },
+      "carbono": {
+        "rotulo": "taxa de carbono",
+        "detalhe": "adicional ao ISP"
+      },
+      "produto": {
+        "rotulo": "o gasóleo",
+        "detalhe": "combustível e margem, sem impostos"
+      }
+    },
     "cartoes": {
       "inflacao": {
         "breadcrumb": "PREÇOS / CABAZ · EUROSTAT",

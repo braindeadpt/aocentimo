@@ -4,8 +4,8 @@ import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { JsonLd, dataset } from "@/lib/jsonld";
-import { Leitura } from "@/components/Leitura";
 import { EstadoVazio } from "@/components/EstadoVazio";
+import { Painel } from "@/components/Painel";
 import { LineChart } from "@/components/LineChart";
 import { Delta } from "@/components/Delta";
 import { Instrumento } from "@/components/Instrumento";
@@ -17,18 +17,10 @@ import {
   variacao,
   type Serie,
 } from "@/lib/data";
-import { comUnidade, fmtData, fmtNum, fmtPct, fmtPeriodo } from "@/lib/format";
-import {
-  anotacaoDe,
-  estadoDe,
-  insightMediana,
-  janela10,
-  mediana,
-  rotulosLeitura,
-  type Cartao,
-  type Ponto,
-} from "@/lib/leitura";
-import { m, t } from "@/lib/messages";
+import { comUnidade, fmtData, fmtNum, fmtPct } from "@/lib/format";
+import { estadoDe } from "@/lib/leitura";
+import { cartoesDados, opcoesJanela, ROTULO_JANELA } from "@/lib/paineis";
+import { m } from "@/lib/messages";
 import usura from "@data/fiscal/usura-2026.json";
 import calendario from "@data/fiscal/calendario-2026.json";
 import eventos from "@data/fiscal/eventos.json";
@@ -43,13 +35,6 @@ export const metadata: Metadata = {
 
 interface CaBase {
   meta: { oficialPct: number; vigenciaOficial: string; serieAte: string; url?: string };
-  series: { t: string; v: number }[];
-}
-
-/** derivados com meta de fonte (desemprego-gap, casa-em-salarios) —
-    a mesma forma mínima de uma Serie de data/sources */
-interface Derivado {
-  meta: { fonte: string; url: string; serieAte: string };
   series: { t: string; v: number }[];
 }
 
@@ -95,141 +80,9 @@ export default function DadosPage() {
   const fresh = loadFreshness();
 
   // ————— o índice visual: as séries-chave do país que ainda não têm
-  //   página temática — um Leitura por ideia, mediana de 10 anos ou
-  //   o nível da UE como referência —————
-  const rotulos = rotulosLeitura();
-  const rotPais = m.leitura.pais;
-  const cartaoPais = (
-    fonte: { meta: { fonte: string; url: string }; series: Ponto[] } | null,
-    rot: { breadcrumb: string; titulo: string },
-    o: {
-      id: string;
-      href: string;
-      formato: Cartao["formato"];
-      unidade: string;
-      casas: number;
-      /** o extremo real anotado no gráfico */
-      anot: "max" | "min";
-      /** derivados não têm watchdog de frescura */
-      semSla?: boolean;
-      insight?: (ult: number, med: number | null) => string;
-      referencia?: Cartao["referencia"];
-      rotuloFmt?: (v: number) => string;
-    }
-  ): Cartao | null => {
-    const serie = fonte ? janela10(fonte.series) : [];
-    const ult = serie[serie.length - 1];
-    if (!fonte || !ult || serie.length < 2) return null;
-    const med = mediana(serie.map((p) => p.v));
-    const fmtRot =
-      o.rotuloFmt ?? ((v: number) => comUnidade(fmtNum(v, o.casas), o.unidade));
-    return {
-      breadcrumb: rot.breadcrumb,
-      titulo: rot.titulo,
-      insight: o.insight
-        ? o.insight(ult.v, med)
-        : insightMediana(ult.v, med !== null ? { valor: med } : null, o.unidade),
-      valor: ult.v,
-      unidade: o.unidade,
-      formato: o.formato,
-      serie,
-      referencia:
-        o.referencia ??
-        (med !== null ? { valor: med, rotulo: m.leitura.mediana10 } : undefined),
-      anotacao: anotacaoDe(serie, o.anot, fmtRot),
-      leitura: fmtPeriodo(ult.t),
-      estado: o.semSla ? "sem-sla" : estadoDe(fresh, o.id),
-      fonteNome: fonte.meta.fonte,
-      fonteUrl: fonte.meta.url,
-      href: o.href,
-      hrefJson: `/api/${o.id}.json`,
-    };
-  };
-
-  // o slot nunca desaparece: fonte em falta = EstadoVazio no lugar,
-  // com o que falhou, o último dado conhecido e a fonte oficial
-  type SlotPais =
-    | { tipo: "leitura"; cartao: Cartao }
-    | {
-        tipo: "vazio";
-        id: string;
-        titulo: string;
-        desde?: string;
-        fonte: { nome: string; url?: string };
-      };
-  const slotPais = (
-    fonte: {
-      meta: { fonte: string; url: string; serieAte?: string };
-      series: Ponto[];
-    } | null,
-    rot: { breadcrumb: string; titulo: string },
-    o: Parameters<typeof cartaoPais>[2]
-  ): SlotPais => {
-    const cartao = cartaoPais(fonte, rot, o);
-    if (cartao) return { tipo: "leitura", cartao };
-    return {
-      tipo: "vazio",
-      id: o.id,
-      titulo: rot.titulo,
-      desde: fonte?.meta.serieAte
-        ? fmtPeriodo(fonte.meta.serieAte)
-        : undefined,
-      fonte: {
-        nome: fonte?.meta.fonte ?? "Eurostat",
-        url: fonte?.meta.url,
-      },
-    };
-  };
-
-  const leituras: SlotPais[] = [
-    slotPais(loadFonte("eurostat", "pib-pt-homologo"), m.painel.cartoes.pib, {
-      id: "pib-pt-homologo", href: "/dados", formato: "pct1", unidade: "%",
-      casas: 1, anot: "min", // o fundo é a história — a recessão de 2020
-    }),
-    slotPais(loadFonte("eurostat", "confianca-pt"), rotPais.confianca, {
-      id: "confianca-pt", href: "/dados", formato: "pp", unidade: "p.p.",
-      casas: 1, anot: "min", // o pessimismo extremo é o dado
-    }),
-    slotPais(loadFonte("eurostat", "elec-pt-domestico"), rotPais.eletricidade, {
-      id: "elec-pt-domestico", href: "/precos", formato: "kwh",
-      unidade: "€/kWh", casas: 4, anot: "max",
-      insight: (v, med) =>
-        med !== null
-          ? t(m.painel.insightElec, {
-              abs: fmtNum(Math.abs(v - med) * 100, 1),
-              direcao: v >= med ? m.painel.acima : m.painel.abaixo,
-            })
-          : `${comUnidade(fmtNum(v, 4), "€/kWh")}`,
-    }),
-    slotPais(loadFonte("eurostat", "lci-pt-homologo"), rotPais.custoTrabalho, {
-      id: "lci-pt-homologo", href: "/trabalho", formato: "pct1", unidade: "%",
-      casas: 1, anot: "max",
-    }),
-    slotPais(loadFonte("eurostat", "une-pt-jovem"), rotPais.jovem, {
-      id: "une-pt-jovem", href: "/trabalho", formato: "pct1", unidade: "%",
-      casas: 1, anot: "max",
-    }),
-    slotPais(loadDerivado<Derivado>("desemprego-gap"), rotPais.gap, {
-      id: "desemprego-gap", href: "/trabalho", formato: "pp", unidade: "p.p.",
-      casas: 1, anot: "max", semSla: true,
-      referencia: { valor: 0, rotulo: m.leitura.ue27 },
-      insight: (v) =>
-        t(m.painel.insightUe, {
-          abs: fmtNum(Math.abs(v), 1),
-          direcao: v >= 0 ? m.painel.acima : m.painel.abaixo,
-        }),
-    }),
-    slotPais(loadDerivado<Derivado>("casa-em-salarios"), rotPais.casaTrabalho, {
-      id: "casa-em-salarios", href: "/casa", formato: "num",
-      unidade: "índice 2015=100", casas: 1, anot: "max", semSla: true,
-      rotuloFmt: (v) => fmtNum(v, 1),
-      insight: (v) =>
-        t(m.painel.insightCasaTrabalho, {
-          v: fmtNum(Math.abs(v - 100), 0),
-          direcao: v >= 100 ? m.painel.acima : m.painel.abaixo,
-        }),
-    }),
-  ];
+  //   página temática — a composição <Painel> (1B-06): três tamanhos,
+  //   codificações alternadas, mediana de 10 anos por omissão —————
+  const leituras = cartoesDados();
 
   const [qAtual, qProx] = usura.trimestres;
   const hoje = new Date().toISOString().slice(0, 10);
@@ -391,30 +244,16 @@ export default function DadosPage() {
       </section>
 
       {/* o índice visual do observatório — as séries do país sem página
-          própria, um Leitura por ideia (R-04b) */}
+          própria, compostas pelo <Painel> (1B-06) */}
       {leituras.length > 0 && (
         <section className="stack-sec" aria-label="Leituras do país">
           <p className="kicker">O país, em leituras</p>
-          <div className="mt-3 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {leituras.map((slot, i) =>
-              slot.tipo === "vazio" ? (
-                <EstadoVazio
-                  key={slot.id}
-                  titulo={slot.titulo}
-                  falha={m.estados.serieFalhou}
-                  desde={slot.desde}
-                  fonte={slot.fonte}
-                />
-              ) : (
-                <Leitura
-                  key={slot.cartao.titulo}
-                  {...slot.cartao}
-                  rotulos={rotulos}
-                  entrada={i}
-                />
-              )
-            )}
-          </div>
+          <Painel
+            className="mt-3"
+            cartoes={leituras}
+            rotuloJanela={ROTULO_JANELA()}
+            opcoesJanela={opcoesJanela()}
+          />
         </section>
       )}
 

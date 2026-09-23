@@ -7,249 +7,27 @@ import {
   type RotulosEuro,
 } from "@/components/EuroExplodido";
 import { Kinetic } from "@/components/Kinetic";
-import { Leitura } from "@/components/Leitura";
-import { EstadoVazio } from "@/components/EstadoVazio";
+import { Painel } from "@/components/Painel";
 import { loadFonte, loadPainel } from "@/lib/data";
-import {
-  anotacaoDe,
-  insightMediana,
-  janela10,
-  homologa,
-  rotulosLeitura,
-  type Cartao,
-} from "@/lib/leitura";
+import { cartoesHome, opcoesJanela, ROTULO_JANELA } from "@/lib/paineis";
 import { decomporCombustivel } from "@/lib/engines/impostos";
 import { TSU_TRABALHADOR } from "@/lib/engines/seg-social";
 import { BRUTO_CANONICO, cenarioCanonico } from "@/lib/canonico";
 import isp from "@data/fiscal/isp.json";
 import retencaoJson from "@data/fiscal/retencao-2026.json";
 import ssJson from "@data/fiscal/ss.json";
-import { comUnidade, fmtEUR0, fmtLitro, fmtNum, fmtPct, fmtPeriodo, fmtDataHora } from "@/lib/format";
+import { fmtEUR0, fmtPct, fmtPeriodo, fmtDataHora } from "@/lib/format";
 import { m, t } from "@/lib/messages";
 import { SITE_URL } from "@/lib/site";
 
 export default function Home() {
   const h = m.home;
   const painel = loadPainel();
-  const pSerie = (id: string) =>
-    painel?.series.find((s) => s.id === id) ?? null;
-  const c = m.painel.cartoes;
 
-  const rotulos = rotulosLeitura();
-
-  // ————— o Leitura-herói: inflação homóloga, histórico de 10 anos —————
-  const infl = pSerie("inflacao-homologa");
-  const hicp = loadFonte("eurostat", "hicp-pt-cp00");
-  const serieInfl = hicp ? janela10(homologa(hicp.series, 12)) : [];
-  const hero: Cartao | null =
-    infl && serieInfl.length > 1
-      ? {
-          breadcrumb: c.inflacao.breadcrumb,
-          titulo: c.inflacao.titulo,
-          insight: insightMediana(infl.valor, infl.referencia, infl.unidade),
-          valor: infl.valor,
-          unidade: infl.unidade,
-          formato: "pct",
-          serie: serieInfl,
-          referencia: infl.referencia ?? undefined,
-          anotacao: anotacaoDe(serieInfl, "max", (v) => `${comUnidade(fmtNum(v, 1), "%")}`),
-          leitura: fmtPeriodo(infl.rotuloAte ?? infl.t),
-          estado: infl.estado,
-          fonteNome: infl.fonte,
-          fonteUrl: infl.url,
-          href: "/inflacao",
-          hrefJson: "/api/hicp-pt-cp00.json",
-          amplo: true,
-        }
-      : null;
-
-  // ————— a grelha de leituras —————
-  const eur = pSerie("euribor-12m-mensal");
-  const eurFonte = loadFonte("bpstat", "euribor-12m-mensal");
-  const serieEur = eurFonte ? janela10(eurFonte.series) : [];
-
-  const une = pSerie("une-pt-total");
-  const unePt = loadFonte("eurostat", "une-pt-total");
-  const uneUe = loadFonte("eurostat", "une-ue27-total");
-  const serieUne = unePt ? janela10(unePt.series) : [];
-  const serieUe = uneUe ? janela10(uneUe.series) : [];
-
-  const hpi = pSerie("hpi-pt");
-  const hpiFonte = loadFonte("eurostat", "hpi-pt");
-  const serieHpi = hpiFonte ? janela10(homologa(hpiFonte.series, 4)) : [];
-  const valorHpi = serieHpi[serieHpi.length - 1]?.v;
-
-  const gas = pSerie("pmd-gasoleo-diario");
-  const gasFonte = loadFonte("dgeg", "pmd-gasoleo-diario");
-  const serieGas = gasFonte ? gasFonte.series.slice(-180) : [];
-  const centimos = gas ? gas.variacao.abs * 100 : 0;
-
-  const pib = pSerie("pib-pt-homologo");
-  const pibFonte = loadFonte("eurostat", "pib-pt-homologo");
-  const seriePib = pibFonte ? janela10(pibFonte.series) : [];
-
-  const cartoes: (Cartao | null)[] = [
-    eur && serieEur.length > 1
-      ? {
-          breadcrumb: c.euribor.breadcrumb,
-          titulo: c.euribor.titulo,
-          insight: insightMediana(eur.valor, eur.referencia, eur.unidade),
-          valor: eur.valor,
-          unidade: eur.unidade,
-          formato: "pct",
-          serie: serieEur,
-          referencia: eur.referencia ?? undefined,
-          anotacao: anotacaoDe(serieEur, "max", (v) => `${comUnidade(fmtNum(v, 2), "%")}`),
-          leitura: fmtPeriodo(eur.rotuloAte ?? eur.t),
-          estado: eur.estado,
-          fonteNome: eur.fonte,
-          fonteUrl: eur.url,
-          href: "/credito",
-          hrefJson: "/api/euribor-12m-mensal.json",
-        }
-      : null,
-    une && serieUne.length > 1 && serieUe.length > 1
-      ? {
-          breadcrumb: c.desemprego.breadcrumb,
-          titulo: c.desemprego.titulo,
-          insight: une.referencia
-            ? t(m.painel.insightUe, {
-                abs: fmtNum(Math.abs(une.valor - une.referencia.valor), 1),
-                direcao:
-                  une.valor >= une.referencia.valor
-                    ? m.painel.acima
-                    : m.painel.abaixo,
-              })
-            : `${comUnidade(fmtNum(une.valor, 1), "%")}`,
-          valor: une.valor,
-          unidade: une.unidade,
-          formato: "pct1",
-          serie: serieUne,
-          referencia: { pontos: serieUe, rotulo: "UE 27" },
-          anotacao: anotacaoDe(serieUne, "max", (v) => `${comUnidade(fmtNum(v, 1), "%")}`),
-          leitura: fmtPeriodo(une.rotuloAte ?? une.t),
-          estado: une.estado,
-          fonteNome: une.fonte,
-          fonteUrl: une.url,
-          href: "/trabalho",
-          hrefJson: "/api/une-pt-total.json",
-        }
-      : null,
-    hpi && serieHpi.length > 1 && valorHpi !== undefined
-      ? {
-          breadcrumb: c.habitacao.breadcrumb,
-          titulo: c.habitacao.titulo,
-          insight: t(m.painel.insightHabitacao, {
-            direcao: valorHpi >= 0 ? m.painel.subiu : m.painel.desceu,
-            v: fmtNum(Math.abs(valorHpi), 1),
-          }),
-          valor: valorHpi,
-          unidade: "%",
-          formato: "pct1",
-          serie: serieHpi,
-          anotacao: anotacaoDe(serieHpi, "max", (v) => `${comUnidade(fmtNum(v, 1), "%")}`),
-          leitura: fmtPeriodo(hpi.rotuloAte ?? hpi.t),
-          estado: hpi.estado,
-          fonteNome: hpi.fonte,
-          fonteUrl: hpi.url,
-          href: "/dados",
-          hrefJson: "/api/hpi-pt.json",
-        }
-      : null,
-    gas && serieGas.length > 1
-      ? {
-          breadcrumb: c.gasoleo.breadcrumb,
-          titulo: c.gasoleo.titulo,
-          insight:
-            Math.abs(centimos) < 0.5
-              ? m.painel.insightCombustivelZero
-              : t(m.painel.insightCombustivel, {
-                  sinal: centimos >= 0 ? "+" : "−",
-                  v: fmtNum(Math.abs(centimos), 1),
-                }),
-          valor: gas.valor,
-          unidade: gas.unidade,
-          formato: "litro",
-          serie: serieGas,
-          anotacao: anotacaoDe(serieGas, "max", fmtLitro),
-          leitura: fmtPeriodo(gas.rotuloAte ?? gas.t),
-          estado: gas.estado,
-          fonteNome: gas.fonte,
-          fonteUrl: gas.url,
-          href: "/precos",
-          hrefJson: "/api/pmd-gasoleo-diario.json",
-        }
-      : null,
-    pib && seriePib.length > 1
-      ? {
-          breadcrumb: c.pib.breadcrumb,
-          titulo: c.pib.titulo,
-          insight: insightMediana(pib.valor, pib.referencia, pib.unidade),
-          valor: pib.valor,
-          unidade: pib.unidade,
-          formato: "pct1",
-          serie: seriePib,
-          referencia: pib.referencia ?? undefined,
-          anotacao: anotacaoDe(seriePib, "min", (v) => `${comUnidade(fmtNum(v, 1), "%")}`),
-          leitura: fmtPeriodo(pib.rotuloAte ?? pib.t),
-          estado: pib.estado,
-          fonteNome: pib.fonte,
-          fonteUrl: pib.url,
-          href: "/dados",
-          hrefJson: "/api/pib-pt-homologo.json",
-        }
-      : null,
-  ];
-
-  // o lugar do cartão nunca desaparece: fonte em falta = EstadoVazio
-  // no slot — o que falhou, o último dado conhecido e a fonte oficial
-  const vazios = [
-    {
-      id: "euribor-12m-mensal",
-      titulo: c.euribor.titulo,
-      desde: eurFonte?.meta.serieAte ?? eur?.rotuloAte ?? eur?.t,
-      fonte: {
-        nome: eurFonte?.meta.fonte ?? "Banco de Portugal — BPstat",
-        url: eurFonte?.meta.url ?? "https://bpstat.bportugal.pt",
-      },
-    },
-    {
-      id: "une-pt-total",
-      titulo: c.desemprego.titulo,
-      desde: unePt?.meta.serieAte ?? une?.rotuloAte ?? une?.t,
-      fonte: {
-        nome: unePt?.meta.fonte ?? "Eurostat",
-        url: unePt?.meta.url ?? "https://ec.europa.eu/eurostat",
-      },
-    },
-    {
-      id: "hpi-pt",
-      titulo: c.habitacao.titulo,
-      desde: hpiFonte?.meta.serieAte ?? hpi?.rotuloAte ?? hpi?.t,
-      fonte: {
-        nome: hpiFonte?.meta.fonte ?? "Eurostat",
-        url: hpiFonte?.meta.url ?? "https://ec.europa.eu/eurostat",
-      },
-    },
-    {
-      id: "pmd-gasoleo-diario",
-      titulo: c.gasoleo.titulo,
-      desde: gasFonte?.meta.serieAte ?? gas?.rotuloAte ?? gas?.t,
-      fonte: {
-        nome: gasFonte?.meta.fonte ?? "DGEG",
-        url: gasFonte?.meta.url ?? "https://www.dgeg.gov.pt",
-      },
-    },
-    {
-      id: "pib-pt-homologo",
-      titulo: c.pib.titulo,
-      desde: pibFonte?.meta.serieAte ?? pib?.rotuloAte ?? pib?.t,
-      fonte: {
-        nome: pibFonte?.meta.fonte ?? "Eurostat",
-        url: pibFonte?.meta.url ?? "https://ec.europa.eu/eurostat",
-      },
-    },
-  ];
+  // «Hoje em Portugal» — a composição <Painel> (1B-06): seis cartões,
+  // três tamanhos, codificações alternadas; construída em paineis.ts
+  // sobre as fontes reais
+  const cartoes = cartoesHome();
 
   // Fronteira servidor/cliente: o cenário canónico corre UMA vez aqui
   // — cenarioCanonico puxa os motores e os JSON de data/fiscal que
@@ -383,9 +161,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* painel — leituras oficiais na linguagem «Leitura»: um cartão
-          por ideia, hachura entre a série e a referência, uma anotação
-          real por gráfico; o carimbo de recolha vem do derivado */}
+      {/* «Hoje em Portugal» — o painel composto (1B-06): três
+          tamanhos numa grelha que nunca deixa órfãos, codificações
+          que nunca se repetem em cartões seguidos, mediana de 10
+          anos como comparação por omissão, uma janela temporal
+          partilhada e a frescura sempre à vista */}
       <section className="mt-6 md:mt-10" aria-labelledby="painel-leituras">
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b-2 border-ink pb-3">
           <h2 id="painel-leituras" className="kicker">
@@ -397,53 +177,12 @@ export default function Home() {
             </p>
           )}
         </div>
-        {hero ? (
-          <div className="mt-5">
-            <Leitura {...hero} rotulos={rotulos} />
-          </div>
-        ) : (
-          <div className="mt-5">
-            <EstadoVazio
-              titulo={c.inflacao.titulo}
-              falha={m.estados.serieFalhou}
-              desde={
-                hicp?.meta.serieAte
-                  ? fmtPeriodo(hicp.meta.serieAte)
-                  : infl?.rotuloAte
-                    ? fmtPeriodo(infl.rotuloAte)
-                    : infl?.t
-                      ? fmtPeriodo(infl.t)
-                      : undefined
-              }
-              fonte={{
-                nome: hicp?.meta.fonte ?? "Eurostat",
-                url: hicp?.meta.url ?? "https://ec.europa.eu/eurostat",
-              }}
-            />
-          </div>
-        )}
-        <div className="mt-5 grid gap-5 lg:grid-cols-2">
-          {cartoes.map((cartao, i) =>
-            cartao ? (
-              <Leitura
-                key={cartao.titulo}
-                {...cartao}
-                rotulos={rotulos}
-                entrada={i}
-              />
-            ) : (
-              <EstadoVazio
-                key={vazios[i].id}
-                titulo={vazios[i].titulo}
-                falha={m.estados.serieFalhou}
-                desde={
-                  vazios[i].desde ? fmtPeriodo(vazios[i].desde) : undefined
-                }
-                fonte={vazios[i].fonte}
-              />
-            )
-          )}
-        </div>
+        <Painel
+          className="mt-5"
+          cartoes={cartoes}
+          rotuloJanela={ROTULO_JANELA()}
+          opcoesJanela={opcoesJanela()}
+        />
       </section>
 
       {/* a pergunta antes da resposta — o visitante aposta quantos
