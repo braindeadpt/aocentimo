@@ -19,6 +19,10 @@ import { Valor } from "@/components/Valor";
 import { IsometricoDemo } from "./IsometricoDemo";
 import { Cartao } from "@/components/Cartao";
 import { OrbeEstado } from "@/components/OrbeEstado";
+import { Botao } from "@/components/Botao";
+import { BotaoCopiar } from "@/components/BotaoCopiar";
+import { Chip } from "@/components/Chip";
+import { ControlosDemo } from "./ControlosDemo";
 import { Icone, IconeEmblema, type NomeIcone } from "@/components/Icone";
 import { Pagina, PaginaDetalhe } from "@/components/Pagina";
 import { PapelDefs } from "@/components/Papel";
@@ -360,42 +364,39 @@ export default function EstiloPage() {
               acções — o nome acessível é o do controlo, nunca o do ícone
             </p>
             <div className="flex items-center gap-3">
-              <button
-                type="button"
-                aria-label="Repor valores"
-                className="border border-line2 px-3 py-2 text-ink2 transition-colors hover:border-ink hover:text-ink"
-              >
-                <Icone nome="repor" className="h-5 w-5" />
-              </button>
-              <button
-                type="button"
-                aria-label="Copiar ligação"
-                className="border border-line2 px-3 py-2 text-ink2 transition-colors hover:border-ink hover:text-ink"
-              >
-                <Icone nome="copiar-ligacao" className="h-5 w-5" />
-              </button>
-              <button
-                type="button"
-                aria-label="Abrir detalhe"
-                aria-expanded="false"
-                className="border border-line2 px-3 py-2 text-ink2 transition-colors hover:border-ink hover:text-ink"
-              >
-                <Icone nome="abrir" className="h-5 w-5" />
-              </button>
-              <a
+              <Botao
+                variante="icone"
+                icone="repor"
+                ariaLabel="Repor valores"
+              />
+              <BotaoCopiar
+                variante="icone"
+                icone="copiar-ligacao"
+                texto="/estilo"
+                ariaLabel="Copiar ligação"
+              />
+              <Botao
+                variante="icone"
+                icone="abrir"
+                ariaLabel="Abrir detalhe"
+              />
+              <Botao
+                variante="icone"
+                icone="ver"
                 href="/dados"
-                aria-label="Ver dados"
-                className="border border-line2 px-3 py-2 text-ink2 transition-colors hover:border-ink hover:text-ink"
-              >
-                <Icone nome="ver" className="h-5 w-5" />
-              </a>
+                ariaLabel="Ver dados"
+              />
             </div>
             <p className="footnote mt-4">
               O svg é <code className="num">aria-hidden</code> por omissão —
               quem ouve o ecrã escuta o <code className="num">aria-label</code>{" "}
               do botão, não o desenho. Ícone solto com significado próprio
               (o caso raro) leva <code className="num">rotulo</code> e fica{" "}
-              <code className="num">role=&quot;img&quot;</code>.
+              <code className="num">role=&quot;img&quot;</code>. Os botões
+              de ícone são a variante <code className="num">icone</code> do{" "}
+              <code className="num">&lt;Botao&gt;</code> (≥44×44); o de
+              copiar é <code className="num">&lt;BotaoCopiar&gt;</code> —
+              carrega e vê o «Copiado».
             </p>
           </div>
         </div>
@@ -832,15 +833,114 @@ export default function EstiloPage() {
         </ul>
       </section>
 
-      <section className="stack-sec">
-        <h2 className="kicker mb-4">Botões e campos</h2>
-        <div className="flex flex-wrap items-center gap-4">
-          <Link href="/estilo" className="btn btn-primary">
-            Acção principal
-          </Link>
-          <Link href="/estilo" className="btn">
-            Acção secundária
-          </Link>
+      <section id="controlos" className="stack-sec">
+        <h2 className="kicker mb-4">Botões e controlos — um sistema, todos os estados</h2>
+        <p className="footnote mb-4 max-w-xl">
+          Um sistema, não peças avulsas: <code className="num">Botao</code>{" "}
+          (primário · secundário · terciário · ícone ≥44×44),{" "}
+          <code className="num">Interruptor</code>, <code className="num">Chip</code>,{" "}
+          <code className="num">Segmentado</code>, <code className="num">Regua</code> e{" "}
+          <code className="num">BotaoCopiar</code> partilham a mesma
+          geometria — pílula de raio-controlo, pressão{" "}
+          <code className="num">scale(.97)</code> em{" "}
+          <code className="num">--dur-micro</code>, foco no anel torrado
+          global. Desactivado é <code className="num">aria-disabled</code>{" "}
+          com a razão acessível; a-carregar troca o ícone pelo mini-orbe
+          e o rótulo diz o que se passa.
+        </p>
+
+        {/* as quatro variantes — repouso; hover/pressão/foco sentem-se */}
+        <div className="border border-line bg-panel p-6">
+          <p className="kicker-xs mb-4">as quatro variantes do Botao</p>
+          <div className="flex flex-wrap items-center gap-3">
+            <Botao variante="primario">Acção principal</Botao>
+            <Botao variante="secundario">Acção secundária</Botao>
+            <Botao variante="terciario">Acção de texto</Botao>
+            <Botao variante="icone" icone="repor" ariaLabel="Repor valores" />
+          </div>
+          <p className="footnote mt-4">
+            Primário = a pílula de tinta cheia; secundário = a pílula com
+            contorno; terciário = texto; ícone = o quadrado de acção
+            (≥44×44, nome em <code className="num">aria-label</code>). Ao
+            passar escurece, ao carregar esmaga{" "}
+            <code className="num">scale(.97)</code>, ao focar aparece o
+            anel <code className="num">--mark</code> de 3 px.
+          </p>
+        </div>
+
+        {/* desativado — a razão acessível na mesma peça */}
+        <div className="mt-3 border border-line bg-panel p-6">
+          <p className="kicker-xs mb-4">desativado — com a razão acessível</p>
+          <div className="flex flex-wrap items-center gap-3">
+            <Botao
+              variante="primario"
+              desativado
+              razao="a série do BPstat está atrasada — sem dados não se calcula"
+            >
+              Calcular
+            </Botao>
+            <Botao
+              variante="icone"
+              icone="repor"
+              ariaLabel="Repor valores"
+              desativado
+              razao="os valores já estão na predefinição"
+            />
+            <Chip desativado razao="o BPstat não publica a Euribor 1 semana nesta série">
+              1S
+            </Chip>
+          </div>
+          <p className="footnote mt-4">
+            Nunca um controlo morto sem explicação: a razão vai em{" "}
+            <code className="num">title</code> e dentro do nome acessível
+            (texto escondido no rótulo) e o controlo fica focável (
+            <code className="num">aria-disabled</code>, não{" "}
+            <code className="num">disabled</code>) para ela se anunciar.
+          </p>
+        </div>
+
+        {/* as peças vivas — interruptor, chips, segmentado, régua,
+            a-carregar e «Copiado» */}
+        <div className="mt-3">
+          <ControlosDemo
+            eur={EURIBOR[3]}
+            agora={eur12m.series.at(-1)?.v ?? null}
+            dicaRegua="arrasta, clica na régua ou usa ← → · PageUp/PageDown saltam 10× · Home/End vão aos extremos"
+          />
+        </div>
+
+        {/* a dica — o tooltip por âncora, onde já existia */}
+        <div className="mt-3 border border-line bg-panel p-6">
+          <p className="kicker-xs mb-4">A dica — tooltip por âncora</p>
+          <span
+            className="dica-alvo inline-block"
+            style={{ "--qa": "--q-estilo" } as CSSProperties}
+          >
+            <span className="dica-mae inline-block border border-line bg-raised px-3 py-2">
+              <span className="num text-rotulo text-ink2">euribor-12m-mensal</span>
+            </span>
+            <span className="dica">
+              euribor-12m-mensal — Banco de Portugal, BPstat
+            </span>
+          </span>
+          <p className="footnote mt-4">
+            Passa o rato: a dica resolve-se contra a célula por CSS anchor
+            positioning (<code className="num">position-anchor</code> por
+            célula via <code className="num">--qa</code>;{" "}
+            <code className="num">flip-block</code> vira-a quando encosta
+            à borda). Sem suporte fica a posição clássica por cima — o
+            mesmo conteúdo. Aplica-se só onde já havia tooltip: as
+            células do quadro de frescura em{" "}
+            <Link href="/metodologia" className="underline decoration-line2 underline-offset-2">
+              /metodologia
+            </Link>
+            ; os gráficos mantêm o readout fixo, nunca tooltips
+            flutuantes.
+          </p>
+        </div>
+
+        <div className="mt-3 border border-line bg-panel p-6">
+          <p className="kicker-xs mb-4">O campo de formulário</p>
           <input className="field max-w-56" defaultValue="1 500" aria-label="exemplo de campo" />
         </div>
         <p className="footnote mt-3">
@@ -913,7 +1013,7 @@ export default function EstiloPage() {
           <div className="border border-line bg-panel px-4 py-5">
             <p className="kicker-xs">controlo · 999px</p>
             <div className="mt-3 flex flex-wrap items-center gap-2">
-              <Link href="/estilo" className="btn">preset</Link>
+              <Chip ativo>preset</Chip>
               <span className="tema-ponto" aria-hidden />
             </div>
             <p className="footnote mt-3">

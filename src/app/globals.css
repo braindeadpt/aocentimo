@@ -642,40 +642,382 @@ html[data-theme="dark"] .tema-ponto {
   }
 }
 
-/* botões — mono maiúsculo; são controlos, logo pílula (raio V4) */
-.btn {
+/* ————— botões e controlos — um sistema, não peças avulsas (1B-03) —————
+   A mesma geometria física em todas as variantes: pílula de
+   raio-controlo, ≥44 px de alvo, pressão scale(.97) em --dur-micro,
+   foco = anel torrado global (3 px + offset 2). Desativado é
+   aria-disabled — o controlo fica focável para a razão se ler.
+   A-carregar troca o ícone pelo mini-orbe de pontos e o rótulo diz
+   o que se passa («A calcular…»). */
+.botao {
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
+  justify-content: center;
   gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.55rem 1.2rem;
   font-family: var(--font-mono);
   font-size: var(--text-rotulo);
   letter-spacing: var(--tracking-controlo);
   text-transform: uppercase;
-  padding: 0.7rem 1.1rem;
-  border: 1px solid var(--ink);
+  text-decoration: none;
+  border: 1px solid transparent;
   border-radius: var(--raio-controlo);
-  color: var(--ink);
   background: transparent;
+  color: var(--ink);
   cursor: pointer;
+  user-select: none;
+  transition: transform var(--dur-micro) var(--ease-entra),
+    background-color var(--dur-micro) var(--ease-entra),
+    color var(--dur-micro) var(--ease-entra),
+    border-color var(--dur-micro) var(--ease-entra);
+}
+.botao:active {
+  transform: scale(0.97);
+}
+.botao .icone {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+/* primário — a pílula de tinta cheia: a acção principal da vista */
+.botao-primario {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--floor);
+}
+.botao-primario:hover:not([aria-disabled="true"]) {
+  background: color-mix(in srgb, var(--ink) 88%, var(--floor));
+}
+/* secundário — a pílula com contorno */
+.botao-secundario {
+  border-color: var(--line2);
+  color: var(--ink2);
+}
+.botao-secundario:hover:not([aria-disabled="true"]) {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+/* terciário — texto discreto; sublinha no hover */
+.botao-terciario {
+  color: var(--ink2);
+  padding-inline: 0.6rem;
+}
+.botao-terciario:hover:not([aria-disabled="true"]) {
+  color: var(--ink);
+}
+.botao-terciario:hover:not([aria-disabled="true"]) > span {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+/* icone — o quadrado de acção ≥44×44 com um Icone da casa */
+.botao-icone {
+  width: 44px;
+  min-width: 44px;
+  padding-inline: 0;
+  border-color: var(--line2);
+  color: var(--ink2);
+}
+.botao-icone:hover:not([aria-disabled="true"]) {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+/* desativado — a razão viaja em title e dentro do nome acessível;
+   o controlo continua focável para ela se anunciar */
+.botao[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.botao[aria-disabled="true"]:active {
+  transform: none;
+}
+/* a carregar — o mini-orbe no lugar do ícone + rótulo do que se passa */
+.botao-carga {
+  cursor: progress;
+}
+.botao-carga:active {
+  transform: none;
+}
+.botao-orbe {
+  flex: none;
+}
+
+/* interruptor — a pílula com nó (role=switch): o estado lê-se na
+   posição do nó e no trilho cheio, nunca só na cor */
+.interruptor {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 44px;
+  padding: 0.35rem 0.6rem 0.35rem 0.35rem;
+  border: 0;
+  border-radius: var(--raio-controlo);
+  background: transparent;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: var(--text-corpo);
+  text-align: left;
+  cursor: pointer;
+  transition: transform var(--dur-micro) var(--ease-entra);
+}
+.interruptor:active {
+  transform: scale(0.97);
+}
+.interruptor-trilho {
+  flex: none;
+  position: relative;
+  width: 46px;
+  height: 26px;
+  border: 1px solid var(--line2);
+  border-radius: var(--raio-controlo);
+  background: var(--panel);
+  box-shadow: var(--recess);
   transition: background-color var(--dur-micro) var(--ease-entra),
+    border-color var(--dur-micro) var(--ease-entra);
+}
+.interruptor-no {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--raised);
+  border: 1px solid var(--line2);
+  box-shadow: var(--elev-raised);
+  transition: transform var(--dur-curta) var(--ease-rasgo),
+    background-color var(--dur-micro) var(--ease-entra),
+    border-color var(--dur-micro) var(--ease-entra);
+}
+.interruptor[aria-checked="true"] .interruptor-trilho {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.interruptor[aria-checked="true"] .interruptor-no {
+  transform: translateX(20px);
+  background: var(--floor);
+  border-color: var(--floor);
+}
+.interruptor-rotulo {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.interruptor-nota {
+  font-family: var(--font-mono);
+  font-size: var(--text-mini);
+  color: var(--ink2);
+}
+.interruptor[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.interruptor[aria-disabled="true"]:active {
+  transform: none;
+}
+
+/* chip — a pill de preset/escolha rápida: seleccionado tem três
+   canais (aria-pressed + pílula cheia + quadrado-marca cheio) */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-kicker);
+  letter-spacing: var(--tracking-mono-md);
+  text-transform: uppercase;
+  padding: 0.38rem 0.72rem;
+  border: 1px solid var(--line2);
+  border-radius: var(--raio-controlo);
+  background: transparent;
+  color: var(--ink2);
+  cursor: pointer;
+  transition: transform var(--dur-micro) var(--ease-entra),
+    background-color var(--dur-micro) var(--ease-entra),
+    color var(--dur-micro) var(--ease-entra),
+    border-color var(--dur-micro) var(--ease-entra);
+}
+.chip::before {
+  content: "";
+  flex: none;
+  width: 0.5em;
+  height: 0.5em;
+  border: 1px solid var(--line2);
+  border-radius: 1px;
+  background: transparent;
+  transition: background-color var(--dur-micro) var(--ease-entra),
+    border-color var(--dur-micro) var(--ease-entra);
+}
+.chip:hover:not([aria-disabled="true"]) {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.chip:active:not([aria-disabled="true"]) {
+  transform: scale(0.97);
+}
+.chip[aria-pressed="true"],
+.chip[aria-pressed="true"]:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--floor);
+}
+.chip[aria-pressed="true"]::before {
+  background: var(--floor);
+  border-color: var(--floor);
+}
+.chip[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* segmentado — uma pílula dividida em segmentos (radiogroup):
+   o seleccionado é a pílula cheia de tinta dentro do trilho */
+.segmentado {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--line2);
+  border-radius: var(--raio-controlo);
+  background: var(--panel);
+  box-shadow: var(--recess);
+}
+.segmentado-op {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0.3rem 0.85rem;
+  border: 0;
+  border-radius: var(--raio-controlo);
+  background: transparent;
+  color: var(--ink2);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-kicker);
+  letter-spacing: var(--tracking-mono-md);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform var(--dur-micro) var(--ease-entra),
+    background-color var(--dur-micro) var(--ease-entra),
     color var(--dur-micro) var(--ease-entra);
 }
-
-.btn:hover {
+.segmentado-op:hover:not([aria-disabled="true"]):not([aria-checked="true"]) {
+  color: var(--ink);
+}
+.segmentado-op:active:not([aria-disabled="true"]) {
+  transform: scale(0.97);
+}
+.segmentado-op[aria-checked="true"],
+.segmentado-op[aria-checked="true"]:hover {
   background: var(--ink);
   color: var(--floor);
+  box-shadow: var(--elev-raised);
+}
+.segmentado-op[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
-.btn-primary {
-  background: var(--accent);
-  border-color: var(--accent);
+/* «Copiado» — a nota discreta junto ao botão de copiar: vive numa
+   região viva (role=status), em repouso está vazia e escondida */
+.copiar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.copiar-lig {
+  border: 0;
+  padding: 0;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+}
+.copiado-nota {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translate(-50%, 0);
+  z-index: 30;
+  padding: 0.22rem 0.55rem;
+  border-radius: var(--raio-pormenor);
+  background: var(--ink);
+  color: var(--floor);
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity var(--dur-micro) var(--ease-entra),
+    transform var(--dur-micro) var(--ease-entra);
+}
+.copiado-nota:empty {
+  opacity: 0;
+  transform: translate(-50%, 5px);
+}
+.copiado-falha {
+  background: var(--warn);
   color: var(--floor);
 }
 
-.btn-primary:hover {
-  background: var(--accent-ink);
-  border-color: var(--accent-ink);
+/* dica — o tooltip por âncora (1B-03): existe onde já havia tooltip
+   (a célula «id — fonte» da metodologia). .dica-alvo é a casca que
+   agrupa âncora + dica (a dica é irmã da âncora — um posicionado não
+   pode ancorar-se a um elemento da sua cadeia de containing block).
+   Fallback clássico em todo o lado; com CSS anchor positioning a
+   dica resolve-se contra a âncora e vira de lado quando encosta à
+   borda do viewport. */
+.dica-alvo {
+  position: relative;
+}
+.dica-mae {
+  position: relative;
+}
+.dica {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translate(-50%, 4px);
+  z-index: 30;
+  padding: 0.4rem 0.6rem;
+  max-width: 16rem;
+  border-radius: var(--raio-pormenor);
+  background: var(--ink);
   color: var(--floor);
+  font-family: var(--font-mono);
+  font-size: var(--text-mini);
+  line-height: 1.35;
+  text-align: left;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur-micro) var(--ease-entra),
+    transform var(--dur-micro) var(--ease-entra);
+}
+.dica-alvo:hover .dica,
+.dica-alvo:focus-within .dica {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+@supports (top: anchor(bottom)) {
+  .dica-mae {
+    anchor-name: var(--qa);
+  }
+  .dica {
+    inset: auto;
+    bottom: anchor(top);
+    justify-self: anchor-center;
+    position-anchor: var(--qa);
+    margin-bottom: 6px;
+    position-try-fallbacks: flip-block;
+    transform: none;
+  }
+  .dica-alvo:hover .dica,
+  .dica-alvo:focus-within .dica {
+    transform: none;
+  }
 }
 
 /* campo de formulário — uma só classe, usada por todos os simuladores.
@@ -1607,18 +1949,41 @@ h3 {
   height: 3px;
   background: var(--accent);
 }
+/* o polegar é só posição (left transita em mudanças discretas); o
+   corpo visível — a peça que encaixa — vive dentro e leva o ressalto:
+   a cada paragem o JS rearma a keyframe e a peça esmaga-se um instante
+   (física contida, --dur-micro + --ease-rasgo), como o detent de um
+   instrumento real. Reduced-motion corta-o no bloco global. */
 .regua-polegar {
   position: absolute;
   top: 30px;
   width: 14px;
   height: 26px;
   transform: translate(-50%, -50%);
+}
+.regua-polegar-corpo {
+  position: absolute;
+  inset: 0;
   background: var(--accent);
   border: 1px solid var(--ink);
   border-radius: var(--raio-pormenor);
 }
+.regua-encaixa {
+  animation: regua-encaixa var(--dur-micro) var(--ease-rasgo);
+}
+@keyframes regua-encaixa {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.16, 0.84);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 /* as duas ranhuras do grip — tinta a meia força sobre o acento */
-.regua-polegar::after {
+.regua-polegar-corpo::after {
   content: "";
   position: absolute;
   inset: 5px 3px;
@@ -1686,40 +2051,13 @@ h3 {
   transform: translateX(-50%);
   color: var(--ink);
 }
-/* presets — chips físicos: borda hairline, hover com 10 % de acento,
-   seleccionado = acento cheio com tinta invertida (AA nos dois temas) */
+/* presets — os chips partilhados do sistema (ver .chip acima):
+   seleccionado = pílula cheia + quadrado-marca + aria-pressed */
 .regua-pills {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 0.55rem;
-}
-.regua-pill {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-  font-size: var(--text-kicker);
-  letter-spacing: var(--tracking-mono-md);
-  text-transform: uppercase;
-  padding: 0.38rem 0.72rem;
-  border: 1px solid var(--line2);
-  border-radius: var(--raio-controlo);
-  background: transparent;
-  color: var(--ink2);
-  cursor: pointer;
-  transition: background-color var(--dur-micro) var(--ease-entra),
-    color var(--dur-micro) var(--ease-entra),
-    border-color var(--dur-micro) var(--ease-entra);
-}
-.regua-pill:hover {
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
-  border-color: var(--accent);
-  color: var(--ink);
-}
-.regua-pill[aria-pressed="true"],
-.regua-pill[aria-pressed="true"]:hover {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--floor);
 }
 .regua-desc {
   margin-top: 0.45rem;
@@ -3281,7 +3619,7 @@ h3 {
   select,
   button,
   .ticker,
-  .btn-primary {
+  .botao {
     display: none !important;
   }
   body::before {

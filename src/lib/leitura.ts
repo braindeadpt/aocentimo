@@ -91,6 +91,7 @@ export function rotulosLeitura(): RotulosLeitura {
     fonte: m.leitura.fonte,
     pagina: m.leitura.pagina,
     json: m.leitura.json,
+    jsonAria: m.leitura.jsonAria,
     estados: {
       "em-dia": m.leitura.emDia,
       atrasada: m.leitura.atrasada,

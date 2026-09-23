@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Botao } from "@/components/Botao";
 import { Odometer } from "@/components/Odometer";
 import { Valor } from "@/components/Valor";
 import { FINO } from "@/lib/format";
@@ -60,9 +61,9 @@ export function Adivinha({ real }: { real: number }) {
               placeholder="—"
             />
           </label>
-          <button type="submit" className="btn btn-primary">
+          <Botao variante="primario" type="submit">
             {m.guess.botao}
-          </button>
+          </Botao>
         </div>
       </form>
 

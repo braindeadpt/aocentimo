@@ -2,11 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { simularPrestacao } from "@/lib/engines/prestacao";
+import { Interruptor } from "@/components/Interruptor";
 import { JuroCapital } from "@/components/JuroCapital";
 import { NumHero } from "@/components/NumHero";
 import { Regua } from "@/components/Regua";
 import { TweenNum } from "@/components/TweenNum";
-import { fmtData, fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
+import { FINO, fmtData, fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
 
 /**
  * Crédito — o mapa de amortização e o choque.
@@ -144,13 +145,13 @@ export function SimuladorPrestacao({
           formato={(v) => fmtNum(v, 2)}
         />
         {/* o choque é um acto — não uma nota de rodapé */}
-        <label className="flex items-center gap-2 text-corpo-sm text-ink">
-          <input
-            type="checkbox"
-            checked={choqueOn}
-            onChange={(e) => setChoqueOn(e.target.checked)}
-            className="h-4 w-4 accent-[var(--color-up)]"
-          />
+        <Interruptor
+          ligado={choqueOn}
+          onChange={setChoqueOn}
+          rotulo={`Simular choque: Euribor sobe +1${FINO}p.p.`}
+          className="text-corpo-sm"
+        />
+        <label className="hidden flex items-center gap-2 text-corpo-sm text-ink">
           Simular choque: Euribor sobe +1 p.p.
         </label>
         <p className="footnote">

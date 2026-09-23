@@ -98,7 +98,7 @@ test("a revelação moeda → montes assenta e acende os rótulos", async ({
   await campo.scrollIntoViewIfNeeded();
   await page.waitForTimeout(300); // o sim hidrata e esconde o svg
 
-  await page.getByRole("button", { name: "Montes" }).click();
+  await page.getByRole("radio", { name: "Montes" }).click();
   // a transição termina: rótulos ligados, legenda final visível
   await expect(campo.locator(".cc-rot.on")).toHaveCount(4, {
     timeout: 12_000,
@@ -111,7 +111,7 @@ test("a revelação moeda → montes assenta e acende os rótulos", async ({
   await expect(rotulos.nth(3)).toContainText(/\d+,\d+ c/);
 
   // voltar à moeda esconde os rótulos outra vez
-  await page.getByRole("button", { name: "Moeda" }).click();
+  await page.getByRole("radio", { name: "Moeda" }).click();
   await expect(campo.locator(".cc-rot.on")).toHaveCount(0, {
     timeout: 12_000,
   });

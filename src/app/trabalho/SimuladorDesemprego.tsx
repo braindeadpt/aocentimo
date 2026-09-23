@@ -3,8 +3,9 @@
 import { Fragment, useMemo, useState } from "react";
 import { simularDesemprego } from "@/lib/engines/desemprego";
 import { REGRAS_IRS } from "@/lib/engines/irs";
+import { Interruptor } from "@/components/Interruptor";
 import { NumHero } from "@/components/NumHero";
-import { fmtEUR } from "@/lib/format";
+import { FINO, fmtEUR } from "@/lib/format";
 import { useArmado } from "@/lib/useArmado";
 import { mascaraFaixaRasgo, sementeDe } from "@/lib/materia";
 
@@ -52,7 +53,13 @@ export function SimuladorDesemprego() {
               onChange={(e) => setAnosDescontos(Number(e.target.value) || 0)} className="field" />
           </div>
         </div>
-        <label className="flex items-center gap-2 text-corpo-sm text-ink2">
+        <Interruptor
+          ligado={majoracao}
+          onChange={setMajoracao}
+          rotulo={`Casal desempregado com filhos / monoparental (+10${FINO}%)`}
+          className="text-corpo-sm"
+        />
+        <label className="hidden flex items-center gap-2 text-corpo-sm text-ink2">
           <input type="checkbox" checked={majoracao}
             onChange={(e) => setMajoracao(e.target.checked)}
             className="h-4 w-4 accent-[var(--color-accent)]" />

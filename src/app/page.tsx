@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Adivinha } from "@/components/Adivinha";
+import { Botao } from "@/components/Botao";
 import {
   EuroExplodido,
   type PassoEuro,
@@ -325,9 +326,9 @@ export default function Home() {
         </div>
         <div className="md:col-span-4">
           <p className="lede !mt-0">{h.lede}</p>
-          <Link href="/salario" className="btn btn-primary mt-4">
+          <Botao href="/salario" variante="primario" className="mt-4">
             {h.cta}
-          </Link>
+          </Botao>
         </div>
       </section>
 

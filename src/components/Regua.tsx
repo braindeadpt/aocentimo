@@ -9,6 +9,7 @@ import {
 } from "react";
 import type { CSSProperties } from "react";
 import { FINO, comUnidade } from "@/lib/format";
+import { Chip } from "@/components/Chip";
 
 /**
  * Regua — a régua física de input da Direcção V3 §5: substitui o
@@ -30,7 +31,10 @@ import { FINO, comUnidade } from "@/lib/format";
  * Motion: o polegar/fill/valor transitam --dur-curta quando o valor
  * muda por preset, teclado ou clique na régua; durante o arrasto
  * (pointer premido + movimento) a classe .regua-suave sai e o polegar
- * fica 1:1 com o dedo. Reduced-motion corta tudo no bloco global.
+ * fica 1:1 com o dedo. A cada paragem o corpo do polegar encaixa com
+ * um ressalto contido (.regua-encaixa, --dur-micro + --ease-rasgo) —
+ * durante o arrasto a cada snap da grelha, fora dele ao aterrar no
+ * fim da transição. Reduced-motion corta tudo no bloco global.
  */
 
 export interface ReguaProps {
@@ -112,11 +116,18 @@ export function Regua({
   const id = idProp ?? idAuto;
 
   const premido = useRef(false);
+  /** pointermove já aconteceu com o botão premido — síncrono, ao
+      contrário de `arrasto` (estado), para o primeiro snap do
+      arrasto também ressoar */
+  const movido = useRef(false);
   const [arrasto, setArrasto] = useState(false);
   // a transição só arma depois da primeira interacção — sem isto, a
   // medida --meia-v na hidratação podia mexer o rótulo 1 px e a
   // transição corria acima da dobra ao carregar (M-09)
   const [vivo, setVivo] = useState(false);
+  // nonce do ressalto — sobe a cada paragem (snap no arrasto, aterragem
+  // no fim da transição); o key do corpo do polegar rearma a keyframe
+  const [encaixe, setEncaixe] = useState(0);
   const palcoRef = useRef<HTMLDivElement>(null);
   const valorRef = useRef<HTMLSpanElement>(null);
 
@@ -142,7 +153,12 @@ export function Regua({
         );
   const emit = (v: number) => {
     setVivo(true);
-    onChange(ajustar(v));
+    const alvo = ajustar(v);
+    // snap durante o arrasto: cada paragem da grelha encaixa com o
+    // ressalto (fora do arrasto o ressalto vem do transitionend — a
+    // aterragem no fim do trajecto)
+    if (movido.current && alvo !== valor) setEncaixe((n) => n + 1);
+    onChange(alvo);
   };
 
   const alcance = max - min;
@@ -203,6 +219,7 @@ export function Regua({
 
   const solta = () => {
     premido.current = false;
+    movido.current = false;
     setArrasto(false);
   };
 
@@ -259,7 +276,15 @@ export function Regua({
             <span
               className="regua-polegar"
               style={{ left: `${pct}%` }}
-            />
+              onTransitionEnd={(e) => {
+                if (e.propertyName === "left") setEncaixe((n) => n + 1);
+              }}
+            >
+              <span
+                key={encaixe}
+                className={`regua-polegar-corpo${encaixe > 0 ? " regua-encaixa" : ""}`}
+              />
+            </span>
           </div>
           <input
             id={id}
@@ -307,8 +332,10 @@ export function Regua({
               setVivo(true);
             }}
             onPointerMove={(e) => {
-              if (premido.current && e.buttons > 0 && !arrasto)
-                setArrasto(true);
+              if (premido.current && e.buttons > 0) {
+                movido.current = true;
+                if (!arrasto) setArrasto(true);
+              }
             }}
             onPointerUp={solta}
             onPointerCancel={solta}
@@ -343,15 +370,13 @@ export function Regua({
             const alvo = ajustar(p.valor);
             const ativo = Math.abs(valor - alvo) < (pontos ? 1 : passo / 2);
             return (
-              <button
+              <Chip
                 key={p.rotulo}
-                type="button"
-                className="regua-pill"
-                aria-pressed={ativo}
+                ativo={ativo}
                 onClick={() => emit(p.valor)}
               >
                 {p.rotulo}
-              </button>
+              </Chip>
             );
           })}
         </div>

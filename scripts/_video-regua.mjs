@@ -44,11 +44,11 @@ await p.mouse.up();
 await p.waitForTimeout(600);
 
 // 2 — clique num preset: o polegar e a faixa transitam
-await p.locator(".regua-pill").last().click();
+await p.locator(".chip").last().click();
 await p.waitForTimeout(900);
 
 // 3 — hover na primeira pill («mínimo»)
-await p.locator(".regua-pill").first().hover();
+await p.locator(".chip").first().hover();
 await p.waitForTimeout(700);
 
 // 4 — teclado: foco + setas movem o polegar com transição
@@ -97,6 +97,6 @@ async function shot(nome, url, largura, alvo, antes) {
 await shot("regua-salario-1440", "/salario", 1440, ".regua");
 await shot("regua-credito-375", "/credito", 375, ".regua:has(#eur)");
 await shot("regua-preset-hover", "/salario", 1280, ".regua", (pg) =>
-  pg.locator(".regua-pill").last().hover()
+  pg.locator(".chip").last().hover()
 );
 await b2.close();

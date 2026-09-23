@@ -342,7 +342,7 @@ Regras:
 | `--raio-papel` | 0 | papel — é cortado, não arredondado (talões, recibos, `.field`) |
 | `--raio-pormenor` | 2 px (= instrumento ÷ 7) | aresta mínima de peça maquinada — carimbo, trilho, gauge |
 | `--raio-instrumento` | 14 px | o objecto completo — cartão Leitura, resultado, overlay |
-| `--raio-controlo` | 999 px (pílula) | o que se carrega — presets, toggles, `.btn`, marcadores |
+| `--raio-controlo` | 999 px (pílula) | o que se carrega — `.botao`, `.chip`, `.interruptor`, `.segmentado`, marcadores |
 
 O raio diz a matéria da peça. Geometria de desenho (`rx`/`ry` de svg,
 círculos) não é raio de objecto — fica fora da escala por natureza. Os
@@ -422,6 +422,58 @@ quebraria a estabilidade dos `tabular-nums`. Auditoria:
 `scripts/_lettering.mjs` corre no `npm run audit` sobre o `out/`
 exportado — falha em hífen numérico, espaço largo junto a unidade,
 aspas erradas e `...` (atributos, `<code>` e geometria SVG de fora).
+
+### Botões e controlos — um sistema, todos os estados (1B-03)
+
+Não há «um botão primário» e avulsos à volta — há **um** sistema com a
+mesma física: pílula de `--raio-controlo`, alvo ≥44 px, pressão
+`scale(.97)` em `--dur-micro` com `--ease-entra`, foco pelo anel
+torrado global (3 px `--mark` + offset). Seis peças, uma gramática:
+
+- **`Botao`** — a acção: `primario` (pílula de tinta cheia), `secundario`
+  (contorno), `terciario` (texto), `icone` (quadrado ≥44×44 do conjunto
+  fechado, `ariaLabel` obrigatório). Com `href` é uma ligação com a cara
+  do sistema — a semântica fica certa (CTA navega, acção é `<button>`).
+- **`Interruptor`** — o toggle: `<button role="switch">`, nó que desliza
+  num trilho; o estado lê-se na posição do nó + trilho cheio + nota —
+  nunca só cor.
+- **`Chip`** — a escolha rápida/preset: `aria-pressed` + pílula cheia +
+  quadrado-marca (três canais). É a peça dos presets da `Regua`.
+- **`Segmentado`** — uma pílula dividida, um seleccionado:
+  `radiogroup` de rádios-botão com tabindex itinerante — setas movem
+  foco e selecção, Home/End aos extremos, opções desactivadas salta-se.
+  É o controlo das janelas temporais («1A · 5A · Máx»).
+- **`BotaoCopiar`** — copiar ligação/JSON: nota «Copiado»/«Não copiado»
+  junto ao botão num `role="status"` permanente; caminhos relativos vão
+  para a clipboard como URL absoluta; falhar diz falhado, nunca finge.
+- **`Regua`** — o input numérico físico: range nativo transparente
+  sobre o desenho (teclado/AT nativos, um só slider), presets em
+  `Chip`, e **ressalto de encaixe** — o corpo do polegar dá um pulso
+  contido (`--dur-micro` + `--ease-rasgo`) a cada snap da grelha no
+  arrasto e ao aterrar no fim da transição.
+
+Regras duras dos estados:
+
+- **Desactivado nunca é morto.** `aria-disabled` (o controlo fica
+  focável — `disabled` esconderia a razão) + `razao` obrigatória que
+  viaja em `title` e **dentro do nome acessível** (texto escondido no
+  rótulo/nota visível; `aria-description` não é suportado nestes
+  roles). Desactivado sem razão é aviso em dev em todas as peças.
+- **A carregar diz-se.** `aCarregar` troca o ícone pelo mini-orbe
+  `OrbeEstado` (a família dos selos — não se inventa spinner) e o
+  rótulo diz o que se passa («A calcular…»); `aria-busy` +
+  `aria-disabled` cortam a repetição do gesto.
+- **A dica é por âncora.** Onde já existia tooltip (as células do
+  quadro de frescura) a `.dica` resolve-se por CSS anchor positioning
+  (`anchor-name` por célula via `--qa`, `position-try-fallbacks:
+  flip-block` vira-a à borda). A dica é **irmã** da âncora dentro de
+  `.dica-alvo` — um posicionado não se ancora a um elemento da sua
+  cadeia de containing block. Sem suporte cai no absoluto clássico.
+- Os estilos vivem em `globals.css` (`.botao-*`, `.chip`,
+  `.interruptor`, `.segmentado`, `.copiado-nota`, `.dica`,
+  `.regua-encaixa`); o sistema `.btn`/`.regua-pill` antigo saiu.
+  Reduced-motion corta pressão, deslize e ressalto — o estado final já
+  está no lugar.
 
 ### Motion — gramática (M-02)
 
@@ -578,7 +630,12 @@ build && test:e2e`.
 | `Leitura` | cartão Ledger de leitura | insight escrito, anotação com chamada, fonte+estado no rodapé |
 | `EuroBar`/`Cascata`/`JuroCapital`/`EuroExplodido`/`CustoExplodido` | comparações e decomposições | equivalente textual único; SSR no estado final |
 | `PecaPapel`/`Papel` | documentos | paleta fixa de papel; rasgo determinista |
-| `Regua` | input numérico | traços de unidade + marcador + presets; valor sempre legível |
+| `Regua` | input numérico | range nativo único (teclado/AT); traços + marcador «agora» + presets `Chip`; snap à grelha com ressalto contido |
+| `Botao` | acção/ligação | 4 variantes (primário·secundário·terciário·ícone); `aria-disabled`+razão no nome; `aCarregar` = mini-orbe + `aria-busy` |
+| `Interruptor` | on/off | `role="switch"` + `aria-checked`; estado na posição do nó, trilho e nota — nunca só cor |
+| `Chip` | preset/escolha | `aria-pressed` + pílula cheia + marca (três canais) |
+| `Segmentado` | escolha exclusiva | `radiogroup`; tabindex itinerante; setas seleccionam; desactivado salta-se com razão |
+| `BotaoCopiar` | copiar URL/JSON | `role="status"` anuncia «Copiado»/«Não copiado»; relativo → URL absoluta |
 | `Odometer`/`TweenNum`/`NumHero` | números | valor final no SSR; `aria-live` num só readout |
 | `Delta` | variações | ▲/▼ + cor semântica; estado neutro existe |
 

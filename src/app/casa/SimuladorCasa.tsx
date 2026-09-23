@@ -4,6 +4,7 @@ import { Fragment, useMemo, useState } from "react";
 import { simularPrestacao } from "@/lib/engines/prestacao";
 import { custoCompra } from "@/lib/engines/imt";
 import { EuroBar } from "@/components/EuroBar";
+import { Interruptor } from "@/components/Interruptor";
 import { JuroCapital } from "@/components/JuroCapital";
 import { NumHero } from "@/components/NumHero";
 import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
@@ -96,12 +97,16 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
           </select>
         </div>
         <div>
-          <label className="flex items-center gap-2 text-corpo-sm text-ink2">
-            <input type="checkbox" checked={jovem} disabled={tipo !== "hpp"}
-              onChange={(e) => setJovem(e.target.checked)}
-              className="h-4 w-4 accent-[var(--color-accent)]" />
-            IMT Jovem (≤35 anos, 1.ª casa)
-          </label>
+          {/* desactivado fora da HPP — a razão fica acessível no
+              próprio interruptor (title + nota visível) */}
+          <Interruptor
+            ligado={jovem}
+            onChange={setJovem}
+            desativado={tipo !== "hpp"}
+            razao="só se aplica a habitação própria e permanente"
+            rotulo="IMT Jovem (≤35 anos, 1.ª casa)"
+            className="text-corpo-sm"
+          />
         </div>
         <div>
           <label className="kicker block mb-1.5" htmlFor="entrada">Entrada</label>

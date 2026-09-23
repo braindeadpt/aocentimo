@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import { ALT_FEED } from "@/lib/meta";
 import { loadFontes, loadFreshness } from "@/lib/data";
 import { comUnidade, fmtData } from "@/lib/format";
@@ -168,24 +169,35 @@ export default function MetodologiaPage() {
               {resumo}
             </p>
             <ul className="quadro-vivo">
-              {celulas.map((c) => (
+              {celulas.map((c, i) => (
                 <li
                   key={c.id}
-                  className={`qcell ${
-                    c.classe === "atrasada"
-                      ? "qcell-atrasada"
-                      : c.classe === "no-limite"
-                        ? "qcell-limite"
-                        : ""
-                  }`}
-                  title={`${c.id} — ${c.fonte}`}
+                  className="dica-alvo"
+                  // a âncora da dica — nome único por célula via
+                  // custom property herdada pela célula e pela dica
+                  // (a dica é IRMÃ da âncora: um posicionado não pode
+                  // ancorar-se a um elemento da sua cadeia de CB)
+                  style={{ "--qa": `--q-${i}` } as CSSProperties}
                 >
-                  <p className="qcell-id">{c.id}</p>
-                  <p className="qcell-meta">
-                    <OrbeEstado estado={c.classe} tamanho={14} />
-                    {fmtData(c.serieAte)}
-                    <span className="qcell-folga"> · {c.folgaTxt}</span>
-                  </p>
+                  <div
+                    className={`qcell dica-mae ${
+                      c.classe === "atrasada"
+                        ? "qcell-atrasada"
+                        : c.classe === "no-limite"
+                          ? "qcell-limite"
+                          : ""
+                    }`}
+                  >
+                    <p className="qcell-id">{c.id}</p>
+                    <p className="qcell-meta">
+                      <OrbeEstado estado={c.classe} tamanho={14} />
+                      {fmtData(c.serieAte)}
+                      <span className="qcell-folga"> · {c.folgaTxt}</span>
+                    </p>
+                  </div>
+                  <span className="dica">
+                    {c.id} — {c.fonte}
+                  </span>
                 </li>
               ))}
             </ul>

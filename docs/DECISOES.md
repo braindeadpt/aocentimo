@@ -493,3 +493,52 @@ uma peça de composição — quem compõe à mão falha a auditoria do build.
 Strings de copy em `data/fiscal/*.json` seguem a mesma regra porque são
 renderizadas verbatim. O FINO nunca entra em dados de máquina (paths,
 viewBox, fontes de canvas, fórmulas).
+
+## 2026-09-23 — Botões e controlos: um sistema, todos os estados (1B-03)
+
+**Contexto.** A casa tinha `.btn`/`.btn-primary` mais peças avulsas:
+checkboxes nativas nos simuladores, pills da régua próprias, botões de
+ícone à mão, e nenhum padrão de «a carregar», «desactivado com razão»
+ou «copiado». A referência 1B-03 pede o que distingue o premium do
+correcto: um sistema único de controlos com todos os estados.
+
+**Alternativas.** (a) `disabled` nativo — esconde o controlo da ordem
+de tabulação e da árvore de acessibilidade: a razão morreria com ele;
+(b) `aria-description` para a razão — o lint
+(`role-supports-aria-props`) não o suporta em `button`/`link`/
+`switch`/`radio`, e o suporte de AT ainda é irregular; (c) `button` +
+`aria-pressed` também para o segmentado — mistura papéis: é uma escolha
+exclusiva, `radiogroup` é a semântica certa; (d) tooltip novo em todos
+os lados — recusado: dicas só onde já existiam (o quadro de frescura).
+
+**Escolha.** Seis peças, uma física (pílula `--raio-controlo`, alvo
+≥44 px, pressão `scale(.97)` em `--dur-micro`, foco no anel torrado
+global): `Botao` (primário·secundário·terciário·ícone — `href` desenha
+ligação, não botão-fingido), `Interruptor` (`role="switch"`),
+`Chip` (`aria-pressed`, três canais de selecção), `Segmentado`
+(`radiogroup` com tabindex itinerante — setas movem foco+selecção e
+saltam desactivados), `BotaoCopiar` («Copiado»/«Não copiado» num
+`role="status"` residente; relativo → URL absoluta na clipboard),
+`Regua` (range nativo único; presets = `Chip`; polegar com ressalto de
+encaixe — `key` por nonce rearma a keyframe `--dur-micro` +
+`--ease-rasgo` a cada snap no arrasto e à aterragem via
+`transitionend`). Desactivado = `aria-disabled` focável + `razao`
+obrigatória em `title` e **dentro do nome acessível** (texto sr-only
+no rótulo ou a nota visível do interruptor) — nunca um controlo morto
+sem explicação. A carregar = mini-orbe `OrbeEstado` no lugar do ícone
++ rótulo que diz o que se passa + `aria-busy`. A `.dica` usa CSS
+anchor positioning com `flip-block` e fallback absoluto — e é **irmã**
+da âncora (`.dica-alvo` agrupa as duas) porque um posicionado não se
+pode ancorar a um elemento da sua cadeia de containing block.
+`.btn`/`.regua-pill` removidos; quatro simuladores migraram as
+checkboxes para `Interruptor`.
+
+**Consequência.** Um só contrato para acção, escolha e confirmação:
+todos os estados existem na mesma peça e demonstram-se em `/estilo`
+(`#controlos`). `Botao`/`Chip`/`Interruptor`/`Segmentado` são client
+components (onClick não serializa) sem estado próprio — server
+components renderizam-nos com props serializáveis. Reduced-motion
+corta pressão, deslize e ressalto; o valor final está sempre no lugar.
+Cobertura: `Controlos.test.tsx` (11 unitários) + `e2e/controlos.spec.ts`
+(16 casos — nomes acessíveis, switch, radios, régua por teclado,
+«Copiado», dica por âncora, foco, reduced-motion).

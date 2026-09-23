@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { simularIndependente } from "@/lib/engines/independente";
 import { Cascata } from "@/components/Cascata";
+import { Interruptor } from "@/components/Interruptor";
 import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
 
 export function SimuladorIndependente() {
@@ -23,12 +24,12 @@ export function SimuladorIndependente() {
           <input id="fat" type="number" min={0} step={100} value={faturacao}
             onChange={(e) => setFaturacao(Number(e.target.value) || 0)} className="field" />
         </div>
-        <label className="flex items-center gap-2 text-corpo-sm text-ink2">
-          <input type="checkbox" checked={primeiroAno}
-            onChange={(e) => setPrimeiroAno(e.target.checked)}
-            className="h-4 w-4 accent-[var(--color-accent)]" />
-          Primeiro ano de atividade (isento de SS)
-        </label>
+        <Interruptor
+          ligado={primeiroAno}
+          onChange={setPrimeiroAno}
+          rotulo="Primeiro ano de atividade (isento de SS)"
+          className="text-corpo-sm"
+        />
         <p className="footnote">
           Regime simplificado: o IRS incide sobre 75 % do que faturas. A SS é
           21,4 % sobre o rendimento relevante (70 % do bruto) — cerca de 15 %

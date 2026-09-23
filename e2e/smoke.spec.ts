@@ -72,6 +72,8 @@ test("nenhuma rota transborda na horizontal a 375 px", async ({ page }) => {
 });
 
 test("nenhuma página mostra undefined, NaN ou Invalid Date", async ({ page }) => {
+  // varredura de todas as rotas — mesmo tecto dos irmãos de varredura
+  test.setTimeout(120_000);
   const proibidas = ["undefined", "NaN", "Invalid Date"];
   for (const path of rotasDoSite()) {
     await page.goto(path);

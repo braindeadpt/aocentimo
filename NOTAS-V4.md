@@ -868,3 +868,96 @@ comUnidade("123", "")             // «123» — sem cauda
 - «cêntimos» por extenso colado a número também com FINO — manter?
 - A unidade do herói a 45 % lê bem nas duas intensidades (valor e
   valor-amplo) ou queres revê-la no /estilo antes de congelar?
+
+## 1B-03 · Botões e controlos — um sistema, todos os estados (2026-09-23)
+
+**O que foi feito**
+
+- `src/components/Botao.tsx` — a acção da casa em quatro variantes
+  (`primario` tinta cheia · `secundario` contorno · `terciario` texto ·
+  `icone` quadrado ≥44×44 com `ariaLabel` obrigatório). `href` desenha
+  uma ligação (`Link`/`<a>`), não um botão-fingido; desactivada vira
+  âncora sem `href` que fica focável. `aCarregar` troca o ícone pelo
+  mini-orbe `OrbeEstado` + `aria-busy`; `desativado`+`razao` =
+  `aria-disabled` focável com a razão em `title` e dentro do nome
+  acessível. `"use client"` (a `guarda` de inércia é handler), sem
+  estado próprio — server components usam-na com props serializáveis.
+- `src/components/Interruptor.tsx` — `<button role="switch">`: trilho
+  com nó que desliza; estado lê-se na posição + trilho cheio + nota.
+  Desactivado mostra a razão como nota visível (entra no nome).
+- `src/components/Chip.tsx` — o preset: `aria-pressed` + pílula cheia +
+  quadrado-marca. Substituiu `.regua-pill` nos presets da `Regua`.
+- `src/components/Segmentado.tsx` — `radiogroup` de rádios-botão,
+  tabindex itinerante (só o seleccionado está no Tab), setas movem
+  foco+selecção e saltam desactivados, Home/End aos extremos. É o
+  controlo das janelas temporais («1A · 5A · Máx») — a demo liga-o à
+  cauda real da Euribor 12M («5A» desactivado com a razão honesta:
+  a série carregada tem só 24 meses).
+- `src/components/BotaoCopiar.tsx` — Clipboard API → fallback
+  `execCommand`; nota «Copiado»/«Não copiado» junto ao botão num
+  `role="status"` residente (vazio/escondido em repouso); caminho
+  relativo → URL absoluta. Variante extra `ligacao` (cara de lq-link)
+  para as acções do `Cartao` — `AcaoCartao` ganhou `copiar`; a acção
+  «JSON» do `Leitura` já a usa.
+- `Regua` — ganhou o ressalto de encaixe: `key` por nonce
+  (`encaixe`) rearma a keyframe `.regua-encaixa` (squash contido,
+  `--dur-micro` + `--ease-rasgo`) a cada snap da grelha durante o
+  arrasto (`emit` com `movido`) e à aterragem fora dele
+  (`transitionend` no `left`). O `setState` ficou fora de efeitos —
+  o lint de renders em cascata agradece.
+- `.dica` — tooltip só onde já existia (quadro de frescura da
+  `/metodologia` + demo em `/estilo`): CSS anchor positioning
+  (`anchor-name` por célula via `--qa` herdada, `position-anchor`,
+  `position-try-fallbacks: flip-block`) com fallback absoluto por cima.
+  Aprendizagem: a dica é **irmã** da âncora dentro de `.dica-alvo` —
+  um posicionado não se ancora a um elemento da sua cadeia de
+  containing block (verificado: filho-da-âncora cai na posição
+  estática).
+- `globals.css` — família `.botao-*`, `.chip`, `.interruptor`,
+  `.segmentado`, `.copiado-nota`, `.dica*`, `.regua-encaixa`;
+  `.btn`/`.regua-pill` removidos (zero ocorrências em `src/`).
+- Migrados: `Adivinha`, CTA da home, `not-found`, checkboxes dos
+  quatro simuladores → `Interruptor` (IMT Jovem desactiva fora da HPP
+  com a razão à vista), `MotionDemo`, `CampoCentimosDemo` (o selector
+  moeda/montes é agora `Segmentado` — spec actualizado para `radio`),
+  acções de ícone da `/estilo`.
+- `/estilo` — `#controlos` demonstra tudo: variantes, desactivado com
+  razão, a-carregar vivo (1600 ms), interruptor, chips, segmentado
+  ligado a dados reais, «Copiado», régua com ressalto, dica por
+  âncora, `.field`.
+- Verificação — `Controlos.test.tsx` (11 unitários), `e2e/controlos.
+  spec.ts` (16 casos), `scripts/_video-controlos.mjs` (vídeo 16,8 s +
+  folha + shots 1440/375/foco). Todos os gates verdes.
+
+```tsx
+<Botao variante="primario|secundario|terciario|icone"
+     href? icone? aCarregar?="A calcular…" desativado? razao? ariaLabel?>
+<Interruptor ligado onChange rotulo nota? desativado? razao? />
+<Chip ativo? onClick desativado? razao?>3M</Chip>
+<Segmentado rotulo="Janela temporal" valor onChange
+    opcoes={[{id, rotulo, desativado?, razao?}]} />
+<BotaoCopiar texto="/api/x.json" variante="ligacao|icone|…"
+    rotulo? ariaLabel? rotuloCopiado? rotuloFalha? />
+// Cartao: acao { copiar: "/api/…", rotulo, ariaLabel }
+```
+
+**Decisões (conservadoras, a confirmar)**
+
+- `aria-disabled` em vez de `disabled` — o controlo morto esconderia a
+  razão; a razão vai no nome acessível (texto escondido/nota), não em
+  `aria-description` (sem suporte no role — o lint barra).
+- Os quatro controlos são `"use client"` — `onClick` não serializa;
+  continuam renderizáveis por server components com props de dados.
+- O segmentado move foco E selecção às setas (padrão rádio ARIA); o
+  clique no desactivado é engolido pela guarda.
+- «Copiado» fica 2 s e desaparece — confirmação transitória, não
+  estado; o `role="status"` vive sempre no DOM.
+- Tooltip por âncora só na frescura — os gráficos mantêm o readout
+  fixo, nunca tooltips flutuantes.
+
+**Perguntas ao dono**
+
+- O ressalto do polegar (squash 1,16/0,84 em 120 ms) está contido —
+  queres vê-lo em vídeo (`controlos-sheet.png`) antes de congelar?
+- «Copiado» a 2 s chega, ou preferes o padrão de ficar até ao próximo
+  gesto?

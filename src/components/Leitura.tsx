@@ -53,6 +53,8 @@ export interface RotulosLeitura {
   fonte: string;
   pagina: string;
   json: string;
+  /** nome acessível da acção «JSON» — «copiar o endereço do JSON» */
+  jsonAria: string;
   estados: Record<EstadoLeitura, string>;
   /** template do aria-label do gráfico — «{insight} — série de {de}
       a {ate}, último {valor}» (o único equivalente textual) */
@@ -405,7 +407,9 @@ export function Leitura({
       }}
       acoes={[
         { href, rotulo: `${rotulos.pagina} →`, ariaLabel: titulo },
-        { href: hrefJson, rotulo: rotulos.json, externo: true },
+        // «JSON» copia o URL do endpoint — é o activo para quem
+        // trabalha com os dados; «Copiado» confirma junto ao botão
+        { copiar: hrefJson, rotulo: rotulos.json, ariaLabel: rotulos.jsonAria },
       ]}
     >
       <p className="leitura-insight">{insight}</p>
