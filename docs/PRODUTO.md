@@ -389,6 +389,40 @@ typesetting próprio). Impressão usa `--text-impressao` (pt de papel,
 não rem). As imagens OG são raster — a sua escala (`OG_TIPO` em
 `src/lib/og.tsx`) é tipografia de imagem 1200×630, não da página.
 
+### Lettering — número, sinal e unidade (1B-02)
+
+Três contratos, uma peça:
+
+- **A ponte é o FINO** — U+202F (NBSP estreita) entre número e
+  unidade-símbolo (`€`, `%`, `c`, `p.p.`, `€/L`, `€/kWh`, `/mês`) e no
+  agrupamento de milhares: «1 856 €», «3,6 %», «63,2 c». Nunca espaço
+  normal nem NBSP largo — o `Intl` é normalizado em `src/lib/format.ts`
+  (`FINO`, `MENOS`, `comUnidade(numero, unidade)` — unidade vazia
+  devolve o número só). O FINO não entra em dados de máquina: paths e
+  `viewBox` de SVG, fontes de canvas e fórmulas guardam espaços
+  normais.
+- **O menos é verdadeiro** — U+2212 em valores negativos e deltas
+  («−1 856,00 €», «−5,2 %»), nunca hífen ASCII. `−`/`+` são membros
+  semânticos da linha (`.num-sign`), herdam a cor — nunca decoração.
+- **A composição é o `<Valor>`** — `src/components/Valor.tsx`: sinal +
+  número (string ou apresentador `TweenNum`/`Odometer`) + unidade em
+  `.num-unit` (~45 % do tamanho, mesma linha de base, tinta atenuada —
+  elemento próprio, não nota de rodapé). `NumHero`, `Leitura`, o hero
+  de `/salario`, `Adivinha` e as demos da `/estilo` compõem por ele;
+  ninguém concatena `" €"`/`" %"` à mão. No sr-only, o `texto` do
+  apresentador leva o número e a unidade visível completa o anúncio.
+
+Lettering PT-PT: aspas «…» (não `"…"` nem `&ldquo;`), reticências «…»
+(U+2026, não `...`), `hyphens: auto` só no corpo (`text-wrap: pretty`),
+nunca em títulos (`text-wrap: balance`). O tracking é por papel —
+tokens `--tracking-*` em `@theme`, sem literais em CSS. O `wdth` do
+Archivo é a expressão dos títulos (125/75, estática): peso cinético no
+herói interactivo foi rejeitado — animar `wght`/`wdth` por input
+quebraria a estabilidade dos `tabular-nums`. Auditoria:
+`scripts/_lettering.mjs` corre no `npm run audit` sobre o `out/`
+exportado — falha em hífen numérico, espaço largo junto a unidade,
+aspas erradas e `...` (atributos, `<code>` e geometria SVG de fora).
+
 ### Motion — gramática (M-02)
 
 O site tem movimento porque o movimento **explica transformações** —

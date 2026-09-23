@@ -8,11 +8,11 @@
     "educacao": { "pct": 0.3, "limite": 800, "por": "agregado" },
     "rendas": { "pct": 0.15, "limite": 900, "por": "agregado", "nota": "Limite OE2026 (norma transitória); juros só em contratos até 31-12-2011" },
     "lares": { "pct": 0.25, "limite": 403.75, "por": "agregado" },
-    "ivaFatura": { "limite": 250, "por": "agregado", "nota": "35 % do IVA em restauração/oficinas/cabeleireiros/vet/ginásios + 100 % do IVA em transportes públicos" },
+    "ivaFatura": { "limite": 250, "por": "agregado", "nota": "35 % do IVA em restauração/oficinas/cabeleireiros/vet/ginásios + 100 % do IVA em transportes públicos" },
     "pensoesAlimentos": { "pct": 0.2, "limite": 419.22, "por": "agregado" }
   },
   "limiteGlobal": {
-    "nota": "Soma de saúde+educação+rendas+lares+IVA+benefícios (exclui dependentes, despesas gerais, dupla tributação): sem limite no 1.º escalão; 1 000 € no último; interpolação entre 2 500 e 1 000 nos intermédios; +5 % por dependente a partir de 3",
+    "nota": "Soma de saúde+educação+rendas+lares+IVA+benefícios (exclui dependentes, despesas gerais, dupla tributação): sem limite no 1.º escalão; 1 000 € no último; interpolação entre 2 500 e 1 000 nos intermédios; +5 % por dependente a partir de 3",
     "max": 2500,
     "min": 1000,
     "majoraçãoPorDependente": 0.05,

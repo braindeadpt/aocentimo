@@ -8,7 +8,7 @@ import { JsonLd, dataset } from "@/lib/jsonld";
 import { PoderDeCompra } from "./PoderDeCompra";
 import { SalarioReal } from "./SalarioReal";
 import { loadSerie, variacao, loadFontes, loadFreshness, type Serie } from "@/lib/data";
-import { fmtNum, fmtPeriodo } from "@/lib/format";
+import { comUnidade, fmtNum, fmtPeriodo } from "@/lib/format";
 import {
   anotacaoDe,
   estadoDe,
@@ -96,7 +96,7 @@ export default function InflacaoPage() {
             medCp00 !== null
               ? { valor: medCp00, rotulo: m.leitura.mediana10 }
               : undefined,
-          anotacao: anotacaoDe(homCp00, "max", (v) => `${fmtNum(v, 1)} %`),
+          anotacao: anotacaoDe(homCp00, "max", (v) => `${comUnidade(fmtNum(v, 1), "%")}`),
           leitura: fmtPeriodo(cp00.meta.serieAte),
           estado: estadoDe(fresh, "hicp-pt-cp00"),
           fonteNome: cp00.meta.fonte,
@@ -136,7 +136,7 @@ export default function InflacaoPage() {
           med !== null
             ? { valor: med, rotulo: m.leitura.mediana10 }
             : undefined,
-        anotacao: anotacaoDe(hom, "max", (v) => `${fmtNum(v, 1)} %`),
+        anotacao: anotacaoDe(hom, "max", (v) => `${comUnidade(fmtNum(v, 1), "%")}`),
         leitura: fmtPeriodo(s.meta.serieAte),
         estado: estadoDe(fresh, `hicp-pt-${cod.toLowerCase()}`),
         fonteNome: s.meta.fonte,
@@ -248,8 +248,8 @@ export default function InflacaoPage() {
         <p className="footnote mt-3">
           ▲ a subir é mau para a carteira em preços; ▼ é bom.{" "}
           {base
-            ? `Índice ${base}=100: um valor de 130 significa +30 % face a ${base}.`
-            : `Índice ${cp00?.meta.unidade ?? "—"}: um valor de 130 significa +30 % face ao ano-base.`}
+            ? `Índice ${base}=100: um valor de 130 significa +30 % face a ${base}.`
+            : `Índice ${cp00?.meta.unidade ?? "—"}: um valor de 130 significa +30 % face ao ano-base.`}
         </p>
       </Figure>
 

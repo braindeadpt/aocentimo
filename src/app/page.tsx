@@ -22,7 +22,7 @@ import { BRUTO_CANONICO, cenarioCanonico } from "@/lib/canonico";
 import isp from "@data/fiscal/isp.json";
 import retencaoJson from "@data/fiscal/retencao-2026.json";
 import ssJson from "@data/fiscal/ss.json";
-import { fmtEUR0, fmtLitro, fmtNum, fmtPct, fmtPeriodo, fmtDataHora } from "@/lib/format";
+import { comUnidade, fmtEUR0, fmtLitro, fmtNum, fmtPct, fmtPeriodo, fmtDataHora } from "@/lib/format";
 import { m, t } from "@/lib/messages";
 import { SITE_URL } from "@/lib/site";
 
@@ -50,7 +50,7 @@ export default function Home() {
           formato: "pct",
           serie: serieInfl,
           referencia: infl.referencia ?? undefined,
-          anotacao: anotacaoDe(serieInfl, "max", (v) => `${fmtNum(v, 1)} %`),
+          anotacao: anotacaoDe(serieInfl, "max", (v) => `${comUnidade(fmtNum(v, 1), "%")}`),
           leitura: fmtPeriodo(infl.rotuloAte ?? infl.t),
           estado: infl.estado,
           fonteNome: infl.fonte,
@@ -97,7 +97,7 @@ export default function Home() {
           formato: "pct",
           serie: serieEur,
           referencia: eur.referencia ?? undefined,
-          anotacao: anotacaoDe(serieEur, "max", (v) => `${fmtNum(v, 2)} %`),
+          anotacao: anotacaoDe(serieEur, "max", (v) => `${comUnidade(fmtNum(v, 2), "%")}`),
           leitura: fmtPeriodo(eur.rotuloAte ?? eur.t),
           estado: eur.estado,
           fonteNome: eur.fonte,
@@ -118,13 +118,13 @@ export default function Home() {
                     ? m.painel.acima
                     : m.painel.abaixo,
               })
-            : `${fmtNum(une.valor, 1)} %`,
+            : `${comUnidade(fmtNum(une.valor, 1), "%")}`,
           valor: une.valor,
           unidade: une.unidade,
           formato: "pct1",
           serie: serieUne,
           referencia: { pontos: serieUe, rotulo: "UE 27" },
-          anotacao: anotacaoDe(serieUne, "max", (v) => `${fmtNum(v, 1)} %`),
+          anotacao: anotacaoDe(serieUne, "max", (v) => `${comUnidade(fmtNum(v, 1), "%")}`),
           leitura: fmtPeriodo(une.rotuloAte ?? une.t),
           estado: une.estado,
           fonteNome: une.fonte,
@@ -145,7 +145,7 @@ export default function Home() {
           unidade: "%",
           formato: "pct1",
           serie: serieHpi,
-          anotacao: anotacaoDe(serieHpi, "max", (v) => `${fmtNum(v, 1)} %`),
+          anotacao: anotacaoDe(serieHpi, "max", (v) => `${comUnidade(fmtNum(v, 1), "%")}`),
           leitura: fmtPeriodo(hpi.rotuloAte ?? hpi.t),
           estado: hpi.estado,
           fonteNome: hpi.fonte,
@@ -188,7 +188,7 @@ export default function Home() {
           formato: "pct1",
           serie: seriePib,
           referencia: pib.referencia ?? undefined,
-          anotacao: anotacaoDe(seriePib, "min", (v) => `${fmtNum(v, 1)} %`),
+          anotacao: anotacaoDe(seriePib, "min", (v) => `${comUnidade(fmtNum(v, 1), "%")}`),
           leitura: fmtPeriodo(pib.rotuloAte ?? pib.t),
           estado: pib.estado,
           fonteNome: pib.fonte,
@@ -210,7 +210,7 @@ export default function Home() {
 
   // ————— «o teu euro» (R-02, valores em € do mês desde R-07) —————
   // Tudo sai do cenário canónico e das fontes, para um salário bruto de
-  // 1 500 €/mês (solteiro, sem dependentes, regras 2026): SS do
+  // 1 500 €/mês (solteiro, sem dependentes, regras 2026): SS do
   // trabalhador, retenção de IRS, líquido, os impostos dentro de 50 L
   // de gasóleo ao PMD mais recente (ISP + carbono + IVA) e o que fica
   // — os mesmos euros do recibo de /salario. Nada escrito à mão.
@@ -305,7 +305,7 @@ export default function Home() {
     url: SITE_URL,
     inLanguage: "pt-PT",
     description:
-      "Literacia financeira para Portugal — seguimos 1 € do salário bruto até ao fim do mês. Simuladores e dados oficiais, cada número com fonte e data.",
+      "Literacia financeira para Portugal — seguimos 1 € do salário bruto até ao fim do mês. Simuladores e dados oficiais, cada número com fonte e data.",
   };
 
   return (
@@ -383,7 +383,7 @@ export default function Home() {
       {/* capítulos — o percurso do euro */}
       <section className="stack-cap">
         <div className="flex items-baseline justify-between border-b-2 border-ink pb-3">
-          <h2 className="font-display text-display-sm tracking-wide md:text-display-md">
+          <h2 className="font-display text-display-sm tracking-manchete-xl md:text-display-md">
             {h.capitulosTitulo}
           </h2>
           <span className="num text-rotulo text-muted">{h.capitulosNota}</span>
@@ -395,7 +395,7 @@ export default function Home() {
                 href={c.href}
                 className="chapter-row group grid grid-cols-[1fr] items-baseline gap-4 px-2 py-6 md:grid-cols-[16rem_1fr_2rem] md:gap-8 md:px-4"
               >
-                <span className="font-display text-display-md tracking-wide transition-colors md:text-display-lg">
+                <span className="font-display text-display-md tracking-manchete-xl transition-colors md:text-display-lg">
                   {c.titulo}
                 </span>
                 <span className="chapter-dim col-span-2 mt-2 max-w-xl text-corpo-sm leading-relaxed text-ink2 transition-colors md:col-span-1 md:mt-0">
@@ -413,7 +413,7 @@ export default function Home() {
       {/* ferramentas — os simuladores novos */}
       <section className="stack-cap">
         <div className="border-b-2 border-ink pb-3">
-          <h2 className="font-display text-display-sm tracking-wide md:text-display-md">
+          <h2 className="font-display text-display-sm tracking-manchete-xl md:text-display-md">
             {h.ferramentasTitulo}
           </h2>
         </div>
@@ -421,7 +421,7 @@ export default function Home() {
           {h.ferramentas.map((f) => (
             <li key={f.href} className="border-t border-line md:border-t-0 md:border-l md:first:border-l-0">
               <Link href={f.href} className="group block px-0 py-6 md:px-6 md:first:pl-0">
-                <span className="font-display text-display-sm tracking-wide text-ink transition-colors group-hover:text-accent">
+                <span className="font-display text-display-sm tracking-manchete-xl text-ink transition-colors group-hover:text-accent">
                   {f.titulo}
                 </span>
                 <span className="mt-2 block max-w-xs text-corpo-sm leading-relaxed text-ink2">
@@ -435,7 +435,7 @@ export default function Home() {
 
       {/* manifesto */}
       <section className="stack-cap grid gap-8 border-t-2 border-ink pt-8 pb-8 md:grid-cols-12">
-        <p className="font-display text-display-md leading-tight tracking-wide text-ink md:col-span-5 md:text-display-lg">
+        <p className="font-display text-display-md leading-tight tracking-manchete-xl text-ink md:col-span-5 md:text-display-lg">
           {h.manifesto1}{" "}
           <br />
           {h.manifesto2}{" "}

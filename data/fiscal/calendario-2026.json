@@ -13,9 +13,9 @@
     },
     {
       "id": "iuc-1",
-      "titulo": "IUC — 1.ª prestação (ou total se ≤ 100 €)",
+      "titulo": "IUC — 1.ª prestação (ou total se ≤ 100 €)",
       "mes": "2026-02",
-      "descricao": "Novo em 2026: o IUC deixa o mês da matrícula. Até 100 € paga-se tudo em fevereiro; acima disso podes dividir — fevereiro e outubro."
+      "descricao": "Novo em 2026: o IUC deixa o mês da matrícula. Até 100 € paga-se tudo em fevereiro; acima disso podes dividir — fevereiro e outubro."
     },
     {
       "id": "irs",
@@ -25,25 +25,25 @@
     },
     {
       "id": "imi-1",
-      "titulo": "IMI — 1.ª prestação (ou total se ≤ 100 €)",
+      "titulo": "IMI — 1.ª prestação (ou total se ≤ 100 €)",
       "mes": "2026-05",
-      "descricao": "Até 100 € paga-se em maio; entre 100 e 500 € em maio e novembro; acima de 500 € em maio, agosto e novembro."
+      "descricao": "Até 100 € paga-se em maio; entre 100 e 500 € em maio e novembro; acima de 500 € em maio, agosto e novembro."
     },
     {
       "id": "imi-2",
-      "titulo": "IMI — 2.ª prestação (se > 500 €)",
+      "titulo": "IMI — 2.ª prestação (se > 500 €)",
       "mes": "2026-08",
-      "descricao": "Segunda prestação de três, para IMI acima de 500 €."
+      "descricao": "Segunda prestação de três, para IMI acima de 500 €."
     },
     {
       "id": "iuc-2",
-      "titulo": "IUC — 2.ª prestação (se > 100 €)",
+      "titulo": "IUC — 2.ª prestação (se > 100 €)",
       "mes": "2026-10",
       "descricao": "Quem dividiu o IUC paga a segunda metade até ao fim de outubro."
     },
     {
       "id": "imi-3",
-      "titulo": "IMI — última prestação (se > 100 €)",
+      "titulo": "IMI — última prestação (se > 100 €)",
       "mes": "2026-11",
       "descricao": "Novembro fecha o IMI: 2.ª de duas prestações ou 3.ª de três."
     }

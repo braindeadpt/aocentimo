@@ -47,7 +47,7 @@ export function simularTaeg(
   };
 
   let lo = 0;
-  let hi = 0.05; // 5 %/mês — tecto mais que suficiente
+  let hi = 0.05; // 5 %/mês — tecto mais que suficiente
   if (f(lo) <= 0) {
     hi = 0; // pagamentos não cobrem o capital — custos impossíveis
   } else {

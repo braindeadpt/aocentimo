@@ -3,7 +3,8 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { Cartao } from "@/components/Cartao";
 import { Odometer } from "@/components/Odometer";
-import { fmtLitro, fmtNum, fmtPeriodo } from "@/lib/format";
+import { Valor } from "@/components/Valor";
+import { comUnidade, fmtLitro, fmtNum, fmtPeriodo } from "@/lib/format";
 import { useArmado } from "@/lib/useArmado";
 import { dataDePeriodo, escalaTempo, escalaValor } from "@/lib/viz/escalas";
 import { ticksTempo } from "@/lib/viz/eixos";
@@ -90,14 +91,20 @@ export interface LeituraProps {
 
 const FORMATOS: Record<
   FormatoLeitura,
-  { fmt: (v: number) => string; casas: number; sufixo: string }
+  { fmt: (v: number) => string; casas: number; unidade: string }
 > = {
-  pct: { fmt: (v) => `${fmtNum(v, 2)} %`, casas: 2, sufixo: " %" },
-  pct1: { fmt: (v) => `${fmtNum(v, 1)} %`, casas: 1, sufixo: " %" },
-  litro: { fmt: fmtLitro, casas: 3, sufixo: " €/L" },
-  num: { fmt: (v) => fmtNum(v), casas: 2, sufixo: "" },
-  pp: { fmt: (v) => `${fmtNum(v, 1)} p.p.`, casas: 1, sufixo: " p.p." },
-  kwh: { fmt: (v) => `${fmtNum(v, 4)} €/kWh`, casas: 4, sufixo: " €/kWh" },
+  // a ponte número→unidade é sempre o fino inseparável (comUnidade,
+  // U+202F); `unidade` vai sem espaço — quem a compõe põe o FINO
+  pct: { fmt: (v) => comUnidade(fmtNum(v, 2), "%"), casas: 2, unidade: "%" },
+  pct1: { fmt: (v) => comUnidade(fmtNum(v, 1), "%"), casas: 1, unidade: "%" },
+  litro: { fmt: fmtLitro, casas: 3, unidade: "€/L" },
+  num: { fmt: (v) => fmtNum(v), casas: 2, unidade: "" },
+  pp: { fmt: (v) => comUnidade(fmtNum(v, 1), "p.p."), casas: 1, unidade: "p.p." },
+  kwh: {
+    fmt: (v) => comUnidade(fmtNum(v, 4), "€/kWh"),
+    casas: 4,
+    unidade: "€/kWh",
+  },
 };
 
 const r1 = (n: number) => Math.round(n * 10) / 10;
@@ -380,7 +387,7 @@ export function Leitura({
         .replace("{insight}", insight)
         .replace("{de}", fmtPeriodo(primeiro.t))
         .replace("{ate}", fmtPeriodo(ultimo.t))
-        .replace("{valor}", `${fmtNum(valor, F.casas)} ${unidade}`)
+        .replace("{valor}", comUnidade(fmtNum(valor, F.casas), unidade))
     : insight;
 
   return (
@@ -403,7 +410,10 @@ export function Leitura({
     >
       <p className="leitura-insight">{insight}</p>
       <p className="leitura-valor num">
-        <Odometer valor={valor} casas={F.casas} sufixo={F.sufixo} />
+        <Valor
+          numero={<Odometer valor={valor} casas={F.casas} />}
+          unidade={F.unidade || undefined}
+        />
       </p>
 
       {temGrafico && (

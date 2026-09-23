@@ -30,9 +30,9 @@ export function SimuladorIndependente() {
           Primeiro ano de atividade (isento de SS)
         </label>
         <p className="footnote">
-          Regime simplificado: o IRS incide sobre 75 % do que faturas. A SS é
-          21,4 % sobre o rendimento relevante (70 % do bruto) — cerca de 15 %
-          do que recebes, com base mínima de 1,5×IAS. Os clientes retêm 23 %
+          Regime simplificado: o IRS incide sobre 75 % do que faturas. A SS é
+          21,4 % sobre o rendimento relevante (70 % do bruto) — cerca de 15 %
+          do que recebes, com base mínima de 1,5×IAS. Os clientes retêm 23 %
           na fonte (2026), que acerta na liquidação.
         </p>
       </div>
@@ -49,7 +49,7 @@ export function SimuladorIndependente() {
               <dd className="num text-up">{fmtEUR(r.ss)} −</dd>
             </div>
             <div className="flex justify-between py-1.5 border-b border-line/60">
-              <dt className="text-ink2">IRS (75 % × escalões)</dt>
+              <dt className="text-ink2">IRS (75 % × escalões)</dt>
               <dd className="num text-up">{fmtEUR(r.irs)} −</dd>
             </div>
             <div className="flex justify-between py-2.5 mt-1 border-t-2 border-ink">

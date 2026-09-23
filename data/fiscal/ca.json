@@ -4,8 +4,8 @@
   "fonteUrl": "https://www.igcp.pt/pt/aforristas/produtos-de-aforro/certificados-de-aforro",
   "serieF": {
     "taxaBrutaNovasSubscricoes": 0.025,
-    "taxaNota": "2,500 % em setembro/2026 (cap atingido); agosto: 2,474 %",
-    "base": "Média da Euribor 3M nos 10 dias úteis anteriores, arredondada ao milésimo; limitada a [0 %, 2,50 %]",
+    "taxaNota": "2,500 % em setembro/2026 (cap atingido); agosto: 2,474 %",
+    "base": "Média da Euribor 3M nos 10 dias úteis anteriores, arredondada ao milésimo; limitada a [0 %, 2,50 %]",
     "juros": "Vencimento trimestral, capitalizados",
     "premiosPermanencia": [
       { "anos": "2.º ao 5.º", "de": 2, "ate": 5, "pp": 0.25 },
@@ -24,7 +24,7 @@
     "premio": {
       "atual": 0.0081,
       "cap": 0.012,
-      "nota": "A partir do 2.º ano: 40 % do crescimento médio real do PIB (4 trimestres, INE), máx. 1,2 %. Valor em vigor setembro/2026: 0,810 % (IGCP, 28 ago 2026)",
+      "nota": "A partir do 2.º ano: 40 % do crescimento médio real do PIB (4 trimestres, INE), máx. 1,2 %. Valor em vigor setembro/2026: 0,810 % (IGCP, 28 ago 2026)",
       "fonteUrl": "https://www.igcp.pt/pt/noticias/premio-de-remuneracao-dos-certificados-do-tesouro-poupanca-crescimento-17"
     },
     "prazo": "7 anos",

@@ -2,15 +2,17 @@
 
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { TweenNum } from "@/components/TweenNum";
+import { Valor } from "@/components/Valor";
 
 // useLayoutEffect no cliente, useEffect no SSR — evita o aviso de hidratação
 const useIso = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 /** O número-resposta — registo herói da escala de números.
- *  Recebe a string já formatada: fmtEUR/fmtPct trazem « €»/« %»; a
- *  unidade é separada e composta como .num-unit, com `sufixo` colado
- *  («€/mês»). O `sinal` («+»/«−») é membro da linha e herda a cor —
- *  nunca decoração. Falha de dados («—») renderiza-se tal qual.
+ *  Recebe a string já formatada: fmtEUR/fmtPct trazem « €»/« %» no
+ *  fino inseparável (U+202F); a unidade é separada e composta pelo
+ *  <Valor> (.num-unit a ~45 %, mesma linha de base), com `sufixo`
+ *  colado («€/mês»). O `sinal` («+»/«−») é membro da linha e herda a
+ *  cor — nunca decoração. Falha de dados («—») renderiza-se tal qual.
  *  `animar`: o mesmo valor em número — quando muda, os dígitos deslizam
  *  (TweenNum) em vez de saltar; o SSR continua a trazer o valor certo.
  *  O clamp do .num-hero mede-se pela viewport, mas quem manda é o painel:
@@ -63,22 +65,24 @@ export function NumHero({
     };
   }, [valor, sufixo, sinal, compacto, animar, casas]);
 
-  const m = /^([\s\d.,+-]+?)\s*(€|%)?$/.exec(valor.trim());
+  // dígitos + separadores + sinais (+, − U+2212, - de valores antigos)
+  // à esquerda; a unidade solta-se à direita — «€», «%», «c»
+  const m = /^([\s\d.,+−-]+?)\s*(€|%|c)?$/.exec(valor.trim());
   const digitos = m ? m[1].trim() : valor;
   const unidade = m ? (m[2] ?? "") + (sufixo ?? "") : "";
   return (
     <p ref={ref} className={`num-hero${compacto ? " num-hero-compact" : ""}${className ? ` ${className}` : ""}`}>
-      {sinal && (
-        <span className="num-sign" aria-hidden="true">
-          {sinal}
-        </span>
-      )}
-      {animar === undefined ? (
-        digitos
-      ) : (
-        <TweenNum valor={animar} casas={casas} texto={digitos} />
-      )}
-      {unidade && <span className="num-unit">{unidade}</span>}
+      <Valor
+        sinal={sinal}
+        numero={
+          animar === undefined ? (
+            digitos
+          ) : (
+            <TweenNum valor={animar} casas={casas} texto={digitos} />
+          )
+        }
+        unidade={unidade || undefined}
+      />
     </p>
   );
 }

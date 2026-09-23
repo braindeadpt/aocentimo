@@ -61,14 +61,14 @@
     "dica": "arrasta, clica na régua ou usa ← → · PageUp/PageDown saltam 10× · Home/End vão aos extremos",
     "salarioBruto": "Salário bruto mensal",
     "minimo": "mínimo",
-    "doisMil": "2 000 €",
+    "doisMil": "2 000 €",
     "capital": "Capital em dívida",
     "euribor": "Euribor (%)",
     "spread": "Spread (%)",
     "agora12m": "agora 12M",
     "mediana10": "mediana 10 anos",
-    "menos05": "−0,5 p.p.",
-    "mais05": "+0,5 p.p."
+    "menos05": "−0,5 p.p.",
+    "mais05": "+0,5 p.p."
   },
   "ticker": {
     "label": "Dados em direto",
@@ -95,15 +95,15 @@
     "smnNota": "2026 · continente",
     "ca": "Certificados de Aforro",
     "caNota": "Série F · bruta",
-    "barraTitulo": "UM SALÁRIO DE 1 500 €, DESMONTADO",
+    "barraTitulo": "UM SALÁRIO DE 1 500 €, DESMONTADO",
     "barraNota": "por ano · solteiro · regras 2026",
     "segLiquido": "Fica contigo (líquido)",
     "segIrs": "IRS",
-    "segSs": "A tua Seg. Social (11 %)",
-    "segTsu": "TSU da empresa (23,75 %)",
+    "segSs": "A tua Seg. Social (11 %)",
+    "segTsu": "TSU da empresa (23,75 %)",
     "barraFoot": "A empresa paga {custo} por ano para te pagar {bruto} brutos por mês — {peso} desse custo vai para o Estado antes de chegar ao teu bolso.",
-    "euroTitulo": "DE CADA 1,00 € QUE A EMPRESA GASTA CONTIGO",
-    "euroNota": "salário de 1 500 € · solteiro · regras 2026",
+    "euroTitulo": "DE CADA 1,00 € QUE A EMPRESA GASTA CONTIGO",
+    "euroNota": "salário de 1 500 € · solteiro · regras 2026",
     "euroFoot": "{keep} chegam ao teu bolso. O resto é IRS, Segurança Social e a TSU que a empresa paga e nunca aparece no recibo.",
     "capitulosTitulo": "O PERCURSO DE UM EURO",
     "capitulosNota": "seis capítulos",
@@ -113,21 +113,21 @@
         "href": "/salario",
         "titulo": "O DESCONTO",
         "tema": "Salário",
-        "descricao": "O euro nasce no teu recibo: 11 % para a Segurança Social, uma fatia de IRS, e uma TSU de 23,75 % que a empresa paga e tu nunca vês."
+        "descricao": "O euro nasce no teu recibo: 11 % para a Segurança Social, uma fatia de IRS, e uma TSU de 23,75 % que a empresa paga e tu nunca vês."
       },
       {
         "n": "02",
         "href": "/impostos",
         "titulo": "O PREÇO",
         "tema": "Impostos",
-        "descricao": "O euro gasta-se com imposto já dentro: 6 % no pão, 23 % no telemóvel, e na gasolina mais de metade do litro é Estado."
+        "descricao": "O euro gasta-se com imposto já dentro: 6 % no pão, 23 % no telemóvel, e na gasolina mais de metade do litro é Estado."
       },
       {
         "n": "03",
         "href": "/inflacao",
         "titulo": "A EROSÃO",
         "tema": "Inflação",
-        "descricao": "O euro parado encolhe: o índice oficial por categoria — pão, energia, restaurantes — e o que os teus 1 000 € de 2015 valem hoje."
+        "descricao": "O euro parado encolhe: o índice oficial por categoria — pão, energia, restaurantes — e o que os teus 1 000 € de 2015 valem hoje."
       },
       {
         "n": "04",
@@ -141,7 +141,7 @@
         "href": "/poupanca",
         "titulo": "O RESTO",
         "tema": "Poupança",
-        "descricao": "O euro que sobra: Certificados de Aforro, depósitos, 28 % de imposto sobre juros — e a taxa real, a única que interessa."
+        "descricao": "O euro que sobra: Certificados de Aforro, depósitos, 28 % de imposto sobre juros — e a taxa real, a única que interessa."
       },
       {
         "n": "06",
@@ -166,7 +166,7 @@
       {
         "href": "/trabalho",
         "titulo": "Subsídio de desemprego",
-        "descricao": "65 % da remuneração de referência — quanto e por quanto tempo."
+        "descricao": "65 % da remuneração de referência — quanto e por quanto tempo."
       }
     ],
     "manifesto1": "NEM CONSELHOS.",
@@ -183,13 +183,13 @@
     "abaixo": "abaixo",
     "subiu": "subiu",
     "desceu": "desceu",
-    "insightMediana": "{abs} p.p. {direcao} da mediana de 10 anos",
-    "insightUe": "{abs} p.p. {direcao} da média europeia",
-    "insightHabitacao": "o preço das casas {direcao} {v} % num ano",
-    "insightCombustivel": "{sinal}{v} cêntimos num mês",
+    "insightMediana": "{abs} p.p. {direcao} da mediana de 10 anos",
+    "insightUe": "{abs} p.p. {direcao} da média europeia",
+    "insightHabitacao": "o preço das casas {direcao} {v} % num ano",
+    "insightCombustivel": "{sinal}{v} cêntimos num mês",
     "insightCombustivelZero": "o litro não mexeu num mês",
-    "insightElec": "{abs} cêntimos por kWh {direcao} da mediana de 10 anos",
-    "insightCasaTrabalho": "face ao custo do trabalho, a casa está {v} % {direcao} do nível de 2015",
+    "insightElec": "{abs} cêntimos por kWh {direcao} da mediana de 10 anos",
+    "insightCasaTrabalho": "face ao custo do trabalho, a casa está {v} % {direcao} do nível de 2015",
     "cartoes": {
       "inflacao": {
         "breadcrumb": "PREÇOS / CABAZ · EUROSTAT",
@@ -292,10 +292,10 @@
   },
   "euroV3": {
     "titulo": "O TEU EURO",
-    "nota": "de um salário de 1 500 € brutos, por mês · solteiro, sem dependentes · regras 2026",
+    "nota": "de um salário de 1 500 € brutos, por mês · solteiro, sem dependentes · regras 2026",
     "breadcrumb": "O TEU DINHEIRO / DECOMPOSIÇÃO · MOTORES 2026",
     "meta": "o Estado e os impostos levam {valor}/mês",
-    "brutoRotulo": "1 500 € brutos",
+    "brutoRotulo": "1 500 € brutos",
     "brutoDetalhe": "por mês, antes de qualquer corte",
     "ficamTe": "ficam-te",
     "porMes": "por mês",
@@ -327,7 +327,7 @@
   },
   "guess": {
     "kicker": "adivinha primeiro",
-    "pergunta": "De cada 1,00 € que a empresa paga por ti, quantos cêntimos achas que te chegam?",
+    "pergunta": "De cada 1,00 € que a empresa paga por ti, quantos cêntimos achas que te chegam?",
     "inputLabel": "a tua aposta, em cêntimos",
     "botao": "revelar",
     "disseste": "disseste {aposta}",

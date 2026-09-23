@@ -33,7 +33,7 @@ describe("Delta — quatro estados", () => {
     expect(h).toContain("text-muted");
   });
 
-  it("o limiar depende de casas: 0,04 % é neutro a 1 casa mas não a 2", () => {
+  it("o limiar depende de casas: 0,04 % é neutro a 1 casa mas não a 2", () => {
     expect(html(<Delta value={0.0004} casas={1} />)).toContain("=");
     expect(html(<Delta value={0.0004} casas={2} />)).toContain("▲");
   });

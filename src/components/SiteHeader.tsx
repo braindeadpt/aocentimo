@@ -31,7 +31,7 @@ export function SiteHeader() {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-5 pb-3 pt-4">
         <Link href="/" aria-label={m.brand.name} className="block shrink-0 transition-opacity hover:opacity-80">
           {/* capitular 20,6 px no telemóvel · 24,8 px no computador
-              (a altura do SVG é a da haste; capitular = 63,95 %) */}
+              (a altura do SVG é a da haste; capitular = 63,95 %) */}
           <Logo className="h-[32.2px] md:h-[38.8px]" />
         </Link>
         <SiteNav />

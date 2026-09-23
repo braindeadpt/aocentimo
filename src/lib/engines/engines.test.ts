@@ -28,7 +28,7 @@ import ca from "@data/fiscal/ca.json";
 import capitais from "@data/fiscal/capitais.json";
 
 describe("simularPrestacao", () => {
-  it("200 000 € a 30 anos com TAN 3 %: prestação ≈ 843 €", () => {
+  it("200 000 € a 30 anos com TAN 3 %: prestação ≈ 843 €", () => {
     const r = simularPrestacao(200000, 360, 0.025, 0.005);
     expect(r.prestacao).toBeCloseTo(843.2, 0);
     expect(r.custoTotal).toBeCloseTo(200000 + r.jurosTotais, 6);
@@ -36,12 +36,12 @@ describe("simularPrestacao", () => {
     expect(r.linhas[359].divida).toBeCloseTo(0, 1);
   });
 
-  it("taxa 0 %: prestação = capital / n", () => {
+  it("taxa 0 %: prestação = capital / n", () => {
     const r = simularPrestacao(12000, 120, -0.0, 0);
     expect(r.prestacao).toBeCloseTo(100, 6);
   });
 
-  it("+1 p.p. na Euribor aumenta a prestação", () => {
+  it("+1 p.p. na Euribor aumenta a prestação", () => {
     const a = simularPrestacao(200000, 360, 0.02, 0.01);
     const b = simularPrestacao(200000, 360, 0.03, 0.01);
     expect(b.prestacao).toBeGreaterThan(a.prestacao);
@@ -49,7 +49,7 @@ describe("simularPrestacao", () => {
 });
 
 describe("simularPoupanca", () => {
-  it("10 000 € a 10 anos a 2,5 % com 28 % de imposto: ≈ 11 953 €", () => {
+  it("10 000 € a 10 anos a 2,5 % com 28 % de imposto: ≈ 11 953 €", () => {
     const r = simularPoupanca(10000, 10, 0.025, 0.28);
     expect(r.taxaLiquida).toBeCloseTo(0.018, 6);
     expect(r.capitalFinalLiquido).toBeCloseTo(11953.3, 0);
@@ -74,7 +74,7 @@ describe("simularCA", () => {
 
   it("ano 1 sem prémio ≈ capitalização trimestral da taxa base", () => {
     const r = simularCA(10000, 1, 0.025, premios, imposto);
-    // juro líquido trimestral: 2,5 %/4 × 0,72
+    // juro líquido trimestral: 2,5 %/4 × 0,72
     const esperado = 10000 * Math.pow(1 + (0.025 / 4) * (1 - imposto), 4);
     expect(r.capitalFinalLiquido).toBeCloseTo(esperado, 6);
   });
@@ -96,14 +96,14 @@ describe("simularCA", () => {
 });
 
 describe("seg-social", () => {
-  it("TSU trabalhador 11 % + entidade 23,75 %", () => {
+  it("TSU trabalhador 11 % + entidade 23,75 %", () => {
     const c = contribuicoes(1000);
     expect(c.trabalhador).toBeCloseTo(110, 6);
     expect(c.entidade).toBeCloseTo(237.5, 6);
     expect(c.custoEmpresa).toBeCloseTo(1237.5, 6);
   });
 
-  it("peso da SS no custo do trabalho ≈ 28,1 %", () => {
+  it("peso da SS no custo do trabalho ≈ 28,1 %", () => {
     const r = custoDoTrabalho(1700);
     expect(r.pesoSS).toBeCloseTo((0.11 + 0.2375) / 1.2375, 6);
     expect(r.antesDeIrs).toBeCloseTo(1700 * 0.89, 6);
@@ -139,7 +139,7 @@ describe("retencaoNaFonte", () => {
     [20221, 0.409],
   ];
   for (const [r, efetiva] of casosTabI) {
-    it(`Tabela I: ${r} € → taxa efetiva ≈ ${(efetiva * 100).toFixed(1)} %`, () => {
+    it(`Tabela I: ${r} € → taxa efetiva ≈ ${(efetiva * 100).toFixed(1)} %`, () => {
       expect(retencaoNaFonte(r, "naoCasado", 0).taxaEfetiva).toBeCloseTo(efetiva, 3);
       expect(retencaoNaFonte(r, "casadoDoisTitulares", 0).taxaEfetiva).toBeCloseTo(efetiva, 3);
     });
@@ -151,12 +151,12 @@ describe("retencaoNaFonte", () => {
     [20265, 0.332],
   ];
   for (const [r, efetiva] of casosTabIII) {
-    it(`Tabela III: ${r} € → taxa efetiva ≈ ${(efetiva * 100).toFixed(1)} %`, () => {
+    it(`Tabela III: ${r} € → taxa efetiva ≈ ${(efetiva * 100).toFixed(1)} %`, () => {
       expect(retencaoNaFonte(r, "casadoUnicoTitular", 0).taxaEfetiva).toBeCloseTo(efetiva, 3);
     });
   }
 
-  it("SMN 920 € não retém; casado único titular isento até 991 €", () => {
+  it("SMN 920 € não retém; casado único titular isento até 991 €", () => {
     expect(retencaoNaFonte(920, "naoCasado").retencao).toBe(0);
     expect(retencaoNaFonte(991, "casadoUnicoTitular").retencao).toBe(0);
     expect(retencaoNaFonte(920.01, "naoCasado").retencao).toBeGreaterThanOrEqual(0);
@@ -172,7 +172,7 @@ describe("retencaoNaFonte", () => {
     expect(com2.retencao).toBeCloseTo(sem.retencao - 2 * 34.29, 6);
   });
 
-  it("3+ dependentes: −1 p.p. na marginal, parcelas inalteradas", () => {
+  it("3+ dependentes: −1 p.p. na marginal, parcelas inalteradas", () => {
     const r = retencaoNaFonte(1500, "naoCasado", 3);
     expect(r.taxaMarginal).toBeCloseTo(0.241 - 0.01, 6);
     expect(r.retencao).toBeCloseTo(1500 * 0.231 - 193.33 - 3 * 34.29, 6);
@@ -188,44 +188,44 @@ describe("imt", () => {
   it("escalões HPP 2026: taxa × valor − parcela a abater", () => {
     expect(imt(100000, "hpp")).toBe(0);
     expect(imt(120000, "hpp")).toBeCloseTo(120000 * 0.02 - 2126.92, 6); // 273,08
-    expect(imt(250000, "hpp")).toBeCloseTo(250000 * 0.07 - 10457.96, 6); // 7 042,04
-    expect(imt(500000, "hpp")).toBeCloseTo(500000 * 0.08 - 13763.35, 6); // 26 236,65
+    expect(imt(250000, "hpp")).toBeCloseTo(250000 * 0.07 - 10457.96, 6); // 7 042,04
+    expect(imt(500000, "hpp")).toBeCloseTo(500000 * 0.08 - 13763.35, 6); // 26 236,65
   });
 
-  it("acima de 660 982 €: taxa única sobre todo o valor", () => {
+  it("acima de 660 982 €: taxa única sobre todo o valor", () => {
     expect(imt(700000, "hpp")).toBeCloseTo(42000, 6);
     expect(imt(2000000, "hpp")).toBeCloseTo(150000, 6);
   });
 
-  it("habitação secundária começa a 1 % sem isenção", () => {
+  it("habitação secundária começa a 1 % sem isenção", () => {
     expect(imt(100000, "secundaria")).toBeCloseTo(1000, 6);
   });
 });
 
 describe("imtJovem", () => {
-  it("isento até 330 539 €; 8 % só sobre o excedente até 660 982 €", () => {
+  it("isento até 330 539 €; 8 % só sobre o excedente até 660 982 €", () => {
     expect(imtJovem(330539)).toBe(0);
     expect(imtJovem(300000)).toBe(0);
-    // 8 % sobre o excedente: 400 000 × 0,08 − 26 443,12 = 5 556,88
+    // 8 % sobre o excedente: 400 000 × 0,08 − 26 443,12 = 5 556,88
     expect(imtJovem(400000)).toBeCloseTo(5556.88, 2);
   });
 
-  it("acima de 660 982 € perde o benefício → tabela geral", () => {
+  it("acima de 660 982 € perde o benefício → tabela geral", () => {
     expect(imtJovem(700000)).toBeCloseTo(imt(700000, "hpp"), 6);
   });
 });
 
 describe("custoCompra", () => {
-  it("250 000 € HPP com crédito de 200 000 €: IMT + IS + registos", () => {
+  it("250 000 € HPP com crédito de 200 000 €: IMT + IS + registos", () => {
     const r = custoCompra(250000, { montanteCredito: 200000 });
     expect(r.imt).toBeCloseTo(7042.04, 2);
-    expect(r.isAquisicao).toBeCloseTo(2000, 6); // 0,8 %
-    expect(r.isCredito).toBeCloseTo(1200, 6); // 0,6 % do crédito
+    expect(r.isAquisicao).toBeCloseTo(2000, 6); // 0,8 %
+    expect(r.isCredito).toBeCloseTo(1200, 6); // 0,6 % do crédito
     expect(r.registos).toBe(700);
     expect(r.totalCustos).toBeCloseTo(10942.04, 2);
   });
 
-  it("IMT Jovem isenta também o IS de aquisição até 330 539 €", () => {
+  it("IMT Jovem isenta também o IS de aquisição até 330 539 €", () => {
     const r = custoCompra(300000, { jovem: true, montanteCredito: 240000 });
     expect(r.imt).toBe(0);
     expect(r.isAquisicao).toBe(0);
@@ -234,7 +234,7 @@ describe("custoCompra", () => {
 });
 
 describe("irs-jovem", () => {
-  it("percentagens por ano de gozo: 100/75/50/25 %", () => {
+  it("percentagens por ano de gozo: 100/75/50/25 %", () => {
     expect(pctIsencao(1)).toBe(1);
     expect(pctIsencao(4)).toBe(0.75);
     expect(pctIsencao(7)).toBe(0.5);
@@ -242,16 +242,16 @@ describe("irs-jovem", () => {
     expect(pctIsencao(11)).toBe(0);
   });
 
-  it("21 000 €/ano no 1.º ano: IRS zero (isenção total)", () => {
+  it("21 000 €/ano no 1.º ano: IRS zero (isenção total)", () => {
     const r = simularIrsJovem(21000, 1);
     expect(r.rendimentoIsento).toBe(21000);
     expect(r.irsComJovem).toBe(0);
-    // sem jovem: coletável 16 412,91 → 2 520,30 − 250 = 2 270,30
+    // sem jovem: coletável 16 412,91 → 2 520,30 − 250 = 2 270,30
     expect(r.irsSemJovem).toBeCloseTo(2270.3, 0);
     expect(r.poupancaAnual).toBeCloseTo(2270.3, 0);
   });
 
-  it("5.º ano (50 %): tributa a parte não isenta à taxa média do total", () => {
+  it("5.º ano (50 %): tributa a parte não isenta à taxa média do total", () => {
     const r = simularIrsJovem(21000, 5);
     expect(r.rendimentoIsento).toBeCloseTo(10500, 6);
     expect(r.irsComJovem).toBeCloseTo(657.9, 0);
@@ -259,21 +259,21 @@ describe("irs-jovem", () => {
   });
 
   it("limite de 55×IAS trava a isenção em salários altos", () => {
-    const r = simularIrsJovem(60000, 2); // 75 % de 60 000 = 45 000 > 29 542,15
+    const r = simularIrsJovem(60000, 2); // 75 % de 60 000 = 45 000 > 29 542,15
     expect(r.rendimentoIsento).toBeCloseTo(29542.15, 2);
   });
 });
 
 describe("desemprego", () => {
-  it("1 500 €/mês: RR 1 750 €, teto de 75 % da RR líquida domina", () => {
+  it("1 500 €/mês: RR 1 750 €, teto de 75 % da RR líquida domina", () => {
     const r = simularDesemprego(1500, 35, 5);
     expect(r.remReferencia).toBeCloseTo(1750, 6);
-    // RR líquida = 1 750 − 192,5 (SS) − 228,42 (retenção) = 1 329,08 → 75 % = 996,81
+    // RR líquida = 1 750 − 192,5 (SS) − 228,42 (retenção) = 1 329,08 → 75 % = 996,81
     expect(r.mensal).toBeCloseTo(996.81, 0);
     expect(r.apos180Dias).toBeCloseTo(r.mensal * 0.9, 6);
   });
 
-  it("salário alto: teto de 2,5×IAS = 1 342,83 €", () => {
+  it("salário alto: teto de 2,5×IAS = 1 342,83 €", () => {
     expect(simularDesemprego(5000, 40, 10).mensal).toBeCloseTo(1342.83, 2);
   });
 
@@ -282,7 +282,7 @@ describe("desemprego", () => {
     expect(r.mensal).toBeCloseTo(537.13, 2);
   });
 
-  it("majoração de 10 % e duração por idade/descontos", () => {
+  it("majoração de 10 % e duração por idade/descontos", () => {
     expect(simularDesemprego(1500, 35, 5, { majoracao: true }).mensal)
       .toBeCloseTo(996.81 * 1.1, 0);
     expect(duracaoSubsidio(25, 1)).toBe(150);
@@ -297,7 +297,7 @@ describe("desemprego", () => {
 });
 
 describe("reciboMensal", () => {
-  it("1 500 € com SA 8 €/dia em cartão: SA isento, retenção da tabela I", () => {
+  it("1 500 € com SA 8 €/dia em cartão: SA isento, retenção da tabela I", () => {
     const r = reciboMensal({ bruto: 1500, saPorDia: 8, formaSA: "cartao" });
     expect(r.saTotal).toBe(176);
     expect(r.saTributavel).toBe(0);
@@ -307,7 +307,7 @@ describe("reciboMensal", () => {
     expect(r.custoEmpresa).toBeCloseTo(1500 * 1.2375, 6);
   });
 
-  it("SA em dinheiro acima de 6,15 €/dia tributa IRS + SS no excedente", () => {
+  it("SA em dinheiro acima de 6,15 €/dia tributa IRS + SS no excedente", () => {
     const r = reciboMensal({ bruto: 1500, saPorDia: 8, formaSA: "dinheiro" });
     expect(r.saIsento).toBeCloseTo(6.15 * 22, 6);
     expect(r.saTributavel).toBeCloseTo(1.85 * 22, 6);
@@ -327,7 +327,7 @@ describe("simularCTPC", () => {
   const premio = ca.ctpc.premio.atual;
   const imposto = capitais.retencaoLiberatoria.taxa;
 
-  it("10 000 € a 7 anos com prémio 0,81 %: ≈ 11 100 € líquidos", () => {
+  it("10 000 € a 7 anos com prémio 0,81 %: ≈ 11 100 € líquidos", () => {
     const r = simularCTPC(10000, 7, taxas, premio, imposto);
     expect(r.capitalFinalLiquido).toBeCloseTo(11099.5, 0);
   });
@@ -355,7 +355,7 @@ describe("repartePorEscaloes", () => {
     }
   });
 
-  it("o mito desmonta-se: 1 € a mais nunca sobe o imposto de tudo", () => {
+  it("o mito desmonta-se: 1 € a mais nunca sobe o imposto de tudo", () => {
     const f1 = repartePorEscaloes(8342, regras);
     const f2 = repartePorEscaloes(8343, regras);
     const i1 = f1.reduce((a, x) => a + x.imposto, 0);
@@ -421,31 +421,31 @@ describe("trajetorias de poupança", () => {
 describe("irs-anual (deduções à coleta)", () => {
   const zero = { saude: 0, educacao: 0, rendas: 0, lares: 0, ivaFatura: 0, pprEntregas: 0 };
 
-  it("categorias com teto próprio: saúde 15 %, educação 30 %, rendas 15 % (máx 900)", () => {
+  it("categorias com teto próprio: saúde 15 %, educação 30 %, rendas 15 % (máx 900)", () => {
     const r = simularIrsAnual(1500, 0, {
       ...zero, saude: 500, educacao: 1000, rendas: 6000, ivaFatura: 150,
     });
     const d = Object.fromEntries(r.linhasDeducao.map((l) => [l.categoria, l.deducao]));
     expect(d["Saúde"]).toBeCloseTo(75, 6);
     expect(d["Educação"]).toBeCloseTo(300, 6);
-    expect(d["Rendas"]).toBeCloseTo(900, 6); // 15 % de 6 000 = 900, no teto
+    expect(d["Rendas"]).toBeCloseTo(900, 6); // 15 % de 6 000 = 900, no teto
     expect(d["IVA das faturas"]).toBeCloseTo(150, 6);
-    // coleta 2 520,30 − 1 425 − 250 (gerais) = 845,30
+    // coleta 2 520,30 − 1 425 − 250 (gerais) = 845,30
     expect(r.irsAnual).toBeCloseTo(845.3, 1);
-    // retido 168,17 × 14 = 2 354,38 → reembolso ≈ 1 509
+    // retido 168,17 × 14 = 2 354,38 → reembolso ≈ 1 509
     expect(r.reembolsoEstimado).toBeCloseTo(1509, 0);
   });
 
-  it("limite global do art. 78.º: interpolação e teto 1 000 € no último escalão", () => {
+  it("limite global do art. 78.º: interpolação e teto 1 000 € no último escalão", () => {
     const lg = limiteGlobalDeducoes(16412.91, 0);
-    expect(lg).toBeCloseTo(2345, 0); // 1 000 + 1 500 × (86 634−RC)/(86 634−8 342)
+    expect(lg).toBeCloseTo(2345, 0); // 1 000 + 1 500 × (86 634−RC)/(86 634−8 342)
     expect(limiteGlobalDeducoes(5000, 0)).toBe(Infinity); // 1.º escalão
     expect(limiteGlobalDeducoes(90000, 0)).toBe(1000);
     const alto = simularIrsAnual(7000, 0, { ...zero, saude: 10000, educacao: 3000, ivaFatura: 250 });
     expect(alto.dentroDoLimiteGlobal).toBe(1000);
   });
 
-  it("PPR: 20 % das entregas com teto por idade", () => {
+  it("PPR: 20 % das entregas com teto por idade", () => {
     expect(limitePpr(30)).toBe(400);
     expect(limitePpr(45)).toBe(350);
     expect(limitePpr(60)).toBe(300);
@@ -455,11 +455,11 @@ describe("irs-anual (deduções à coleta)", () => {
 });
 
 describe("independente (recibos verdes)", () => {
-  it("24 000 €/ano: SS ≈ 15 % do bruto, IRS sobre 75 %", () => {
+  it("24 000 €/ano: SS ≈ 15 % do bruto, IRS sobre 75 %", () => {
     const r = simularIndependente(24000);
-    expect(r.ss).toBeCloseTo(24000 * 0.7 * 0.214, 4); // 3 595,20
+    expect(r.ss).toBeCloseTo(24000 * 0.7 * 0.214, 4); // 3 595,20
     expect(r.coletavel).toBeCloseTo(18000, 6);
-    expect(r.irs).toBeCloseTo(2611.47, 1); // 2 861,47 por escalões − 250 gerais
+    expect(r.irs).toBeCloseTo(2611.47, 1); // 2 861,47 por escalões − 250 gerais
     expect(r.retido).toBeCloseTo(24000 * 0.23, 6);
     expect(r.liquidoAnual).toBeCloseTo(17793.33, 1);
   });
@@ -471,7 +471,7 @@ describe("independente (recibos verdes)", () => {
 });
 
 describe("mais-valias", () => {
-  it("ações 3 anos: exclusão de 10 %, compara autónomo vs englobado", () => {
+  it("ações 3 anos: exclusão de 10 %, compara autónomo vs englobado", () => {
     const r = simularMaisValia(15000, 10000, {
       despesas: 50, anosDetencao: 3, coletavelOutros: 16412.91,
     });
@@ -482,17 +482,17 @@ describe("mais-valias", () => {
     expect(r.melhor).toBe("englobado");
   });
 
-  it("cripto ≥365 dias isenta; <365 paga 28 %", () => {
+  it("cripto ≥365 dias isenta; <365 paga 28 %", () => {
     expect(simularMaisValia(20000, 10000, { tipo: "cripto", diasDetencao: 400 }).tributavel).toBe(0);
     const r = simularMaisValia(20000, 10000, { tipo: "cripto", diasDetencao: 100 });
     expect(r.impostoAutonomo).toBeCloseTo(2800, 6);
   });
 
-  it("imóvel: engloba 50 %, reinvestimento reduz proporcionalmente", () => {
+  it("imóvel: engloba 50 %, reinvestimento reduz proporcionalmente", () => {
     const r = simularMaisValia(200000, 150000, {
       tipo: "imovel", despesas: 5000, pctReinvestida: 0.5,
     });
-    expect(r.tributavel).toBeCloseTo(11250, 6); // 45 000 × 50 % × 50 %
+    expect(r.tributavel).toBeCloseTo(11250, 6); // 45 000 × 50 % × 50 %
     expect(r.impostoAutonomo).toBeNull();
     expect(r.melhor).toBe("impovel");
   });
@@ -507,12 +507,12 @@ describe("deflator IHPC", () => {
     expect(inflacionar(1000, "2020-01", serie)).toBeCloseTo(1200, 6);
     const r = salarioReal(1000, 1100, "2020-01", serie);
     expect(r!.equivalenteHoje).toBeCloseTo(1200, 6);
-    expect(r!.variacaoReal).toBeCloseTo(-0.0833, 3); // perdeu ~8,3 % reais
+    expect(r!.variacaoReal).toBeCloseTo(-0.0833, 3); // perdeu ~8,3 % reais
   });
 });
 
 describe("taxa base CA (série F)", () => {
-  it("Euribor 3M abaixo do cap passa direta; acima corta a 2,5 %", () => {
+  it("Euribor 3M abaixo do cap passa direta; acima corta a 2,5 %", () => {
     expect(taxaBaseCA(2.474)).toBeCloseTo(2.474, 6);
     expect(taxaBaseCA(2.5131)).toBe(2.5);
     expect(taxaBaseCA(-0.5)).toBe(0);
@@ -520,14 +520,14 @@ describe("taxa base CA (série F)", () => {
 });
 
 describe("impostos", () => {
-  it("gasolina a 1,85 €/L: impostos ≈ 51 % do preço", () => {
+  it("gasolina a 1,85 €/L: impostos ≈ 51 % do preço", () => {
     const d = decomporCombustivel(1.85, 0.44354, 0.159);
     expect(d.iva).toBeCloseTo(0.3459, 3);
     expect(d.pesoImpostos).toBeCloseTo(0.513, 2);
     expect(d.produto + d.impostos).toBeCloseTo(1.85, 6);
   });
 
-  it("IVA contido: 1,23 € a 23 % → 0,23 € de imposto", () => {
+  it("IVA contido: 1,23 € a 23 % → 0,23 € de imposto", () => {
     const r = ivaContido(1.23, 0.23);
     expect(r.iva).toBeCloseTo(0.23, 6);
     expect(r.semIva).toBeCloseTo(1.0, 6);

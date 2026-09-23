@@ -5,8 +5,8 @@ export const TSU_TRABALHADOR = ss.trabalhador.taxa;
 export const TSU_ENTIDADE = ss.entidadePatronal.taxa;
 
 export interface Contribuicoes {
-  trabalhador: number; // sai do recibo (11 %)
-  entidade: number; // custo invisível para o trabalhador (23,75 %)
+  trabalhador: number; // sai do recibo (11 %)
+  entidade: number; // custo invisível para o trabalhador (23,75 %)
   total: number;
   custoEmpresa: number; // bruto + TSU entidade
 }

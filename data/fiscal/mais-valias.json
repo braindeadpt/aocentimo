@@ -9,13 +9,13 @@
       { "anosMin": 5, "exclusao": 0.2 },
       { "anosMin": 8, "exclusao": 0.3 }
     ],
-    "exclusoesNota": "Valores mobiliários admitidos em mercado regulamentado UE/EEE: exclusão de 10 % (>2 anos), 20 % (≥5) ou 30 % (≥8) do ganho; fora deste regime, 100 % tributável. Englobamento facultativo.",
+    "exclusoesNota": "Valores mobiliários admitidos em mercado regulamentado UE/EEE: exclusão de 10 % (>2 anos), 20 % (≥5) ou 30 % (≥8) do ganho; fora deste regime, 100 % tributável. Englobamento facultativo.",
     "perdasCompensaveisAnos": 5
   },
   "cripto": {
     "isencaoDetencaoDias": 365,
     "taxa": 0.28,
-    "nota": "Fora da atividade profissional: isento se detido ≥365 dias; caso contrário 28 %"
+    "nota": "Fora da atividade profissional: isento se detido ≥365 dias; caso contrário 28 %"
   },
   "imoveis": {
     "percentagemEnglobada": 0.5,

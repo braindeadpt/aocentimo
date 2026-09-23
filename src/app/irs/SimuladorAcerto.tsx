@@ -62,18 +62,18 @@ export function SimuladorAcerto({ ano }: { ano: number }) {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <Campo id="ac-saude" label="Despesas de saúde/ano" valor={saude} onChange={setSaude}
-            nota="15 %, até 1 000 €" />
+            nota="15 %, até 1 000 €" />
           <Campo id="ac-edu" label="Educação/ano" valor={educacao} onChange={setEducacao}
-            nota="30 %, até 800 €" />
+            nota="30 %, até 800 €" />
           <Campo id="ac-rendas" label="Rendas HPP/ano" valor={rendas} onChange={setRendas}
-            nota="15 %, até 900 € em 2026" />
+            nota="15 %, até 900 € em 2026" />
           <Campo id="ac-lares" label="Lares e apoio/ano" valor={lares} onChange={setLares}
-            nota="25 %, até 403,75 €" />
+            nota="25 %, até 403,75 €" />
           <Campo id="ac-iva" label="IVA das faturas (apurado)" valor={ivaFatura} onChange={setIvaFatura}
-            nota="o valor que o e-Fatura já apurou, até 250 €" />
+            nota="o valor que o e-Fatura já apurou, até 250 €" />
           <div className="grid grid-cols-2 gap-2">
             <Campo id="ac-ppr" label="Entregas PPR/ano" valor={pprEntregas} onChange={setPprEntregas}
-              nota={`20 %, até ${fmtEUR0(limitePpr(idade))}`} />
+              nota={`20 %, até ${fmtEUR0(limitePpr(idade))}`} />
             <Campo id="ac-idade" label="Idade" valor={idade} onChange={setIdade} />
           </div>
         </div>
@@ -161,7 +161,7 @@ export function SimuladorAcerto({ ano }: { ano: number }) {
 
               {/* o veredito — a última linha da nota, carimbada */}
               <div className="talao-cut mt-2 py-3">
-                <p className="talao-note talao-dim uppercase tracking-widest">
+                <p className="talao-note talao-dim uppercase tracking-mono-lg">
                   {r.reembolsoEstimado >= 0 ? "Resultado · a receber" : "Resultado · a pagar"}
                 </p>
                 <div className="mt-1 flex items-center justify-between gap-3">

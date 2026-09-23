@@ -24,7 +24,7 @@ const passos: PassoEuro[] = [
   {
     id: "ss",
     rotulo: "Seg. Social",
-    detalhe: "11 %",
+    detalhe: "11 %",
     euros: 165,
     corte: true,
     fonteNome: "ss",

@@ -17,6 +17,7 @@ import {
   type RotulosCusto,
 } from "@/components/CustoExplodido";
 import { TweenNum } from "@/components/TweenNum";
+import { Valor } from "@/components/Valor";
 import { SITE_URL } from "@/lib/site";
 import { useArmado } from "@/lib/useArmado";
 import { Cascata } from "@/components/Cascata";
@@ -220,7 +221,7 @@ export function CalculadoraSalario({
           max={cenarios.meta.fim}
           passo={cenarios.meta.passo}
           pontos={cenarios.linhas.map((l) => l.bruto)}
-          unidade=" €"
+          unidade="€"
           formato={(v) => fmtNum(v, 0)}
           marcadorAgora={regua.marcador ?? undefined}
           presets={regua.presets}
@@ -343,11 +344,15 @@ export function CalculadoraSalario({
         <div className="border-b-2 border-ink pb-4">
           <p className="kicker-xs">Líquido no fim do mês</p>
           <p className="num-hero mt-1">
-            <TweenNum
-              valor={recibo.liquido}
-              casas={2}
-              texto={fmtEUR(recibo.liquido)}
-              sufixo=" €"
+            <Valor
+              numero={
+                <TweenNum
+                  valor={recibo.liquido}
+                  casas={2}
+                  texto={fmtNum(recibo.liquido, 2)}
+                />
+              }
+              unidade="€"
             />
           </p>
           <p className="footnote mt-1">
@@ -481,7 +486,7 @@ export function CalculadoraSalario({
             <dd className="num">{fmtEUR(resultado.brutoAnualTotal)}</dd>
           </div>
           <div className="flex justify-between py-1.5 border-b border-line/60">
-            <dt className="text-ink2">Segurança Social (11 %)</dt>
+            <dt className="text-ink2">Segurança Social (11 %)</dt>
             <dd className="num text-up">{fmtEUR(resultado.ssAnual)} −</dd>
           </div>
           <div className="flex justify-between py-1.5 border-b border-line/60">
@@ -523,9 +528,9 @@ export function CalculadoraSalario({
         <p className="footnote px-5 pb-4">
           Esta leitura é anual e a 14 meses — soma subsídios de férias e
           de Natal e estima o IRS da liquidação; por isso difere do
-          recibo mensal, que usa a retenção real. &ldquo;Para o
-          Estado&rdquo; soma IRS, a tua SS (11 %) e a TSU da
-          empresa (23,75 %) sobre o custo total. O <em>dia da liberdade
+          recibo mensal, que usa a retenção real. «Para o
+          Estado» soma IRS, a tua SS (11 %) e a TSU da
+          empresa (23,75 %) sobre o custo total. O <em>dia da liberdade
           fiscal</em> marca a data em que, se trabalhasses primeiro só para
           essa fatia, passavas a trabalhar para ti.
         </p>

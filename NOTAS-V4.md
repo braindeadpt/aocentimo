@@ -789,3 +789,82 @@ type NomeIcone =
   sessões 2/3 já saibam precisar (ex.: `imprimir`, `partilhar`, `audio`)?
 - `repor` usa seta circular própria; se preferires o glifo «↺» na mesma
   gramática, troca-se o desenho sem mudar a API.
+
+## 1B-02 · Lettering — os pormenores tipográficos finos (2026-09-23)
+
+**O que foi feito**
+
+- `src/lib/format.ts` — `FINO` (U+202F) e `MENOS` (U+2212) exportados;
+  `comUnidade(numero, unidade)` é a ponte única número→unidade
+  (unidade vazia devolve o número só). O `Intl` é normalizado: o ICU
+  pt-PT emite NBSP largo (U+00A0) — vira FINO — e `-` vira `−`. Os
+  formatadores (`fmtEUR*`, `fmtPct`, `fmtNum`, `fmtLitro`…) saem já
+  certos; testes em `format.test.ts` (23 — FINO exacto, milhares a
+  partir de 1 000, menos verdadeiro, unidade vazia, não-finitos).
+- `src/components/Valor.tsx` — a peça única de composição:
+  `.num-sign` (sinal semântico, herda a cor) + número (string ou
+  apresentador) + `.num-unit` (~45 %, mesma linha de base, tinta
+  atenuada — elemento próprio, não nota de rodapé). A ponte no markup
+  é o FINO literal. Usado por `NumHero` (refactor — delega nele), o
+  hero de `/salario`, `Leitura`, `Adivinha`, `AnelPontos` (demo da
+  `/estilo` passa `valor: <Valor/>`).
+- Apresentadores — `TweenNum`/`Odometer`: `sufixo` passa a ser a
+  unidade SEM espaço («€», «c»); o FINO é posto pelo componente.
+  SSR continua a emitir o valor final; `texto` (sr-only, aria-live)
+  leva só o número — a unidade visível completa o anúncio sem
+  duplicar. `tabular-nums` intacto.
+- Varrição de composições manuais: `Regua`, `Leitura`, `Haltere`,
+  `Ticker`, `CampoCentimos` (`fmtC`), `LineChart` (`yFormat` — o
+  achado da auditoria: `` `${fmtNum(v)} ${unidade}` `` com espaço
+  normal), `metodologia` (folgas «−N períodos»), `viz/formatos`,
+  `leitura.ts`, páginas e `messages/pt.json`. Copy visível em
+  `data/fiscal/*.json` também FINO-ificada (é renderizada verbatim);
+  o template do derive (`paineis.ts`) idem.
+- Corrupção reposta: a primeira varrição automática meteu FINO em
+  `viewBox`/`points`/path de SVG (`estilo`, `DecomposicaoFuel`,
+  `CampoCentimos`, `Logo`) e na fonte do canvas (`tela.ts` —
+  `«600 100px»`). Tudo revertido; o contrato passou a ser verificado
+  no HTML exportado, nunca por regex na fonte.
+- Tracking — literais `letter-spacing` migraram para tokens por papel
+  em `@theme` (`--tracking-display*`, `-manchete*`, `-micro`,
+  `-mono*`, `-controlo`, `-kicker*`, `-carimbo*`, `-documento`):
+  0 literais fora dos tokens.
+- PT-PT — `&ldquo;`/`&rdquo;` → «» na copy; `hyphens: auto` só em
+  `.body-copy`/`.lede`/`.pg-detalhe-corpo` (`text-wrap: pretty`);
+  títulos com `text-wrap: balance`, sem hifenização.
+- Auditoria — `scripts/_lettering.mjs` entrou no `npm run audit`:
+  varre o texto visível do `out/` (atributos, `<script>`, `<style>`,
+  `<code>`, `<pre>` e comentários ficam de fora — geometria SVG não é
+  copy) e falha em: hífen antes de dígito, espaço normal/NBSP entre
+  dígito e unidade (`€` `%` `c` `p.p.`), aspas retas/curvas em texto,
+  `...` em vez de «…». A primeira corrida apanhou 170 falhas reais
+  (a tabela sr-only do `LineChart`) → 0.
+- Docs — PRODUTO.md §6 (subsecção «Lettering»), DECISOES.md (ADR
+  datado), AGENTS.md (comando de audit).
+
+**APIs finais (congeladas)**
+
+```ts
+import { FINO, MENOS, comUnidade } from "@/lib/format";
+comUnidade("1 856", "€")          // «1 856 €» — ponte sempre FINO
+comUnidade("123", "")             // «123» — sem cauda
+<Valor numero="1 234,56" unidade="€" sinal?="+"|"−" />
+<Valor numero={<TweenNum … />} unidade="€" />
+// TweenNum/Odometer: sufixo = unidade SEM espaço; o FINO é deles.
+```
+
+**Decisões (conservadoras, a confirmar)**
+
+- FINO também em unidades-palavra («cêntimos», «meses») quando coladas
+  a número em leitura — consistência com o símbolo, sem quebra de linha.
+- Peso cinético (wght/wdth animado por input) rejeitado no herói de
+  `/salario`: lutaria contra `tabular-nums` e daria shift a cada tick
+  da régua. O `wdth` fica a expressão estática dos títulos (125/75).
+- Strings de `data/fiscal/*.json` são copy — seguem a regra do FINO;
+  campos numéricos e fórmulas ficam intactos.
+
+**Perguntas ao dono**
+
+- «cêntimos» por extenso colado a número também com FINO — manter?
+- A unidade do herói a 45 % lê bem nas duas intensidades (valor e
+  valor-amplo) ou queres revê-la no /estilo antes de congelar?

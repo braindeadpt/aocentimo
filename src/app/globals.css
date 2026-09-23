@@ -323,6 +323,32 @@
   --text-talao-numero: 1.25rem;   /* número de leitura no papel */
   --text-talao-hero: 1.875rem;    /* total do documento */
   --text-talao-hero-lg: 2.25rem;  /* o líquido no recibo */
+
+  /* ————— tracking por papel (1B-02) — escala fechada de
+     letter-spacing; nenhum literal fora dela, medida na fonte real.
+     Números: 0 — o tnum já alinha, dígitos não se espaçam.
+     Display grande: ligeiro aperto — a manchete e o herói cerram-se.
+     Mono caixa-alta: ar proporcional ao corpo (+0,14 a +0,18 em nos
+     kickers) — quanto mais pequeno, mais ar. O talão fala a língua da
+     impressora térmica — os carimbos respiram ainda mais. ————— */
+  --tracking-*: initial;
+
+  --tracking-normal: 0;              /* prosa — repõe o tracking herdado */
+  --tracking-display: -0.015em;      /* .num-hero — o herói aperta */
+  --tracking-display-forte: -0.02em; /* .leitura-valor — leitura grande */
+  --tracking-manchete: 0.01em;       /* .titulo-hero — condensado wdth 75 */
+  --tracking-manchete-xl: 0.025em;   /* .titulo-pagina — expandido caixa-alta */
+  --tracking-micro: 0.02em;          /* legendas mono micro · .num-unit */
+  --tracking-mono-sm: 0.04em;        /* rótulo mono pequeno (svg, notas) */
+  --tracking-mono: 0.06em;           /* meta mono · ticker */
+  --tracking-mono-md: 0.08em;        /* rótulo mono · pills de régua */
+  --tracking-mono-lg: 0.1em;         /* sumário · controlo mono denso */
+  --tracking-controlo: 0.12em;       /* btn · voltar · lista · selo */
+  --tracking-kicker: 0.14em;         /* eyebrow mono caixa-alta */
+  --tracking-kicker-denso: 0.16em;   /* eyebrow compacto · breadcrumb */
+  --tracking-carimbo: 0.18em;        /* carimbos do talão · iso-kicker */
+  --tracking-carimbo-xl: 0.22em;     /* carimbo SIMULAÇÃO */
+  --tracking-documento: 0.3em;       /* cabeçalho do talão */
 }
 
 /* display = Archivo expandido */
@@ -345,16 +371,17 @@
   font-variation-settings: "wdth" 125;
   font-size: var(--text-display-md);
   line-height: 1.1;
-  letter-spacing: 0.025em;
+  letter-spacing: var(--tracking-manchete-xl);
   text-transform: uppercase;
-  hyphens: auto;
+  text-wrap: balance;
   margin-top: 0.5rem;
 }
 .titulo-hero {
   font-variation-settings: "wdth" 75;
   font-size: var(--text-display-lg);
   line-height: 0.95;
-  letter-spacing: 0.01em;
+  letter-spacing: var(--tracking-manchete);
+  text-wrap: balance;
 }
 @media (min-width: 640px) {
   .titulo-pagina {
@@ -475,7 +502,7 @@ body::before {
   border-radius: var(--raio-controlo);
   font-family: var(--font-mono);
   font-size: var(--text-kicker);
-  letter-spacing: 0.12em;
+  letter-spacing: var(--tracking-controlo);
   text-transform: uppercase;
   text-decoration: none;
   transition: transform var(--dur-micro) var(--ease-entra);
@@ -533,7 +560,7 @@ html[data-theme="dark"] .tema-ponto {
   font-weight: 650;
   font-size: var(--text-hero);
   line-height: 0.95;
-  letter-spacing: -0.015em;
+  letter-spacing: var(--tracking-display);
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum" 1;
   white-space: nowrap;
@@ -543,12 +570,14 @@ html[data-theme="dark"] .tema-ponto {
 .num-hero-compact {
   font-size: var(--text-hero-sm);
 }
+/* a unidade — elemento próprio do <Valor> (1B-02): ~45 % do número,
+   na mesma linha de base, em tinta atenuada; a ponte é o FINO
+   (U+202F) no markup — sem margem, nunca nota de rodapé */
 .num-unit {
-  font-size: 0.28em;
+  font-size: 0.45em;
   font-weight: 500;
-  letter-spacing: 0.02em;
+  letter-spacing: var(--tracking-micro);
   color: var(--ink2);
-  margin-left: 0.14em;
 }
 /* o sinal é semântico — herda a cor do número (keep/up), sobe ao óptico */
 .num-sign {
@@ -601,15 +630,15 @@ html[data-theme="dark"] .tema-ponto {
   }
   .kicker {
     font-size: var(--text-kicker);
-    letter-spacing: 0.14em;
+    letter-spacing: var(--tracking-kicker);
   }
   .kicker-sm {
     font-size: var(--text-kicker-sm);
-    letter-spacing: 0.16em;
+    letter-spacing: var(--tracking-kicker-denso);
   }
   .kicker-xs {
     font-size: var(--text-micro);
-    letter-spacing: 0.14em;
+    letter-spacing: var(--tracking-kicker);
   }
 }
 
@@ -620,7 +649,7 @@ html[data-theme="dark"] .tema-ponto {
   gap: 0.5rem;
   font-family: var(--font-mono);
   font-size: var(--text-rotulo);
-  letter-spacing: 0.12em;
+  letter-spacing: var(--tracking-controlo);
   text-transform: uppercase;
   padding: 0.7rem 1.1rem;
   border: 1px solid var(--ink);
@@ -674,6 +703,30 @@ html[data-theme="dark"] .tema-ponto {
   color: var(--ink2);
 }
 
+/* ————— prosa PT-PT (1B-02) — a hifenização automática vive SÓ no
+   corpo de texto (o <html> já traz lang="pt"); títulos e números
+   nunca hifenizam. `pretty` evita viúvas na última linha;
+   `balance` mede os títulos ————— */
+.body-copy,
+.lede,
+.pg-frase,
+.pg-detalhe-corpo,
+.leitura-insight,
+.iso-li-det,
+.footnote {
+  text-wrap: pretty;
+}
+.body-copy,
+.lede,
+.pg-detalhe-corpo {
+  hyphens: auto;
+}
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
 /* ————— o ticker — fio de dados vivos, assinatura do observatório ————— */
 .ticker {
   overflow: hidden;
@@ -683,7 +736,7 @@ html[data-theme="dark"] .tema-ponto {
 
 .ticker-item {
   font-size: var(--text-kicker);
-  letter-spacing: 0.06em;
+  letter-spacing: var(--tracking-mono);
 }
 .ticker-track {
   display: flex;
@@ -892,7 +945,7 @@ html[data-theme="dark"] .tema-ponto {
   font-family: var(--font-mono);
   font-size: var(--text-mini);
   line-height: 1.4;
-  letter-spacing: 0.02em;
+  letter-spacing: var(--tracking-micro);
   color: var(--muted);
 }
 .md-barras {
@@ -903,7 +956,7 @@ html[data-theme="dark"] .tema-ponto {
   display: block;
   font-family: var(--font-mono);
   font-size: var(--text-mini);
-  letter-spacing: 0.02em;
+  letter-spacing: var(--tracking-micro);
   color: var(--muted);
   margin-bottom: 2px;
 }
@@ -1075,7 +1128,7 @@ html[data-theme="dark"] .tema-ponto {
 }
 .jovem-passo-ano {
   font-size: var(--text-mini);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-mono-md);
 }
 .jovem-gauge {
   display: block;
@@ -1131,7 +1184,7 @@ html[data-theme="dark"] .tema-ponto {
    independente da escala de rótulos do site */
 .talao-head {
   font-size: var(--text-talao-head);
-  letter-spacing: 0.3em;
+  letter-spacing: var(--tracking-documento);
   text-transform: uppercase;
 }
 .talao-sub {
@@ -1146,7 +1199,7 @@ html[data-theme="dark"] .tema-ponto {
 }
 .talao-total {
   font-size: var(--text-talao-total);
-  letter-spacing: 0.14em;
+  letter-spacing: var(--tracking-kicker);
   text-transform: uppercase;
 }
 .talao-meta {
@@ -1184,7 +1237,7 @@ html[data-theme="dark"] .tema-ponto {
   padding: 0.15rem 0.55rem;
   font-family: var(--font-mono);
   font-size: var(--text-talao-sub);
-  letter-spacing: 0.22em;
+  letter-spacing: var(--tracking-carimbo-xl);
   text-transform: uppercase;
   border-radius: var(--raio-pormenor);
   pointer-events: none;
@@ -1226,7 +1279,7 @@ html[data-theme="dark"] .tema-ponto {
   border-radius: var(--raio-pormenor);
   color: rgba(157, 42, 13, 0.85);
   font-size: var(--text-talao-micro);
-  letter-spacing: 0.18em;
+  letter-spacing: var(--tracking-carimbo);
   text-transform: uppercase;
   transform: rotate(-3deg);
 }
@@ -1240,7 +1293,7 @@ html[data-theme="dark"] .tema-ponto {
   border-radius: var(--raio-pormenor);
   color: var(--papel-fica-tinta);
   font-size: var(--text-talao-micro);
-  letter-spacing: 0.18em;
+  letter-spacing: var(--tracking-carimbo);
   text-transform: uppercase;
   transform: rotate(-3deg);
 }
@@ -1645,7 +1698,7 @@ html[data-theme="dark"] .tema-ponto {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   font-size: var(--text-kicker);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-mono-md);
   text-transform: uppercase;
   padding: 0.38rem 0.72rem;
   border: 1px solid var(--line2);
@@ -1901,7 +1954,7 @@ html[data-theme="dark"] .tema-ponto {
 .qcell-id {
   font-family: var(--font-mono);
   font-size: var(--text-mini);
-  letter-spacing: 0.02em;
+  letter-spacing: var(--tracking-micro);
   /* id de série a 10px — muted (4.46:1) fica a um fio do AA; ink2 passa */
   color: var(--ink2);
   overflow-wrap: anywhere;
@@ -1994,7 +2047,7 @@ html[data-theme="dark"] .tema-ponto {
   fill: var(--muted);
   font-family: var(--font-mono);
   font-size: var(--text-svg-micro);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-mono-sm);
 }
 .lc-evento-faixa {
   fill: var(--mark);
@@ -2087,7 +2140,7 @@ html[data-theme="dark"] .tema-ponto {
 .leitura-breadcrumb {
   font-family: var(--font-mono);
   font-size: var(--text-kicker-sm);
-  letter-spacing: 0.16em;
+  letter-spacing: var(--tracking-kicker-denso);
   text-transform: uppercase;
   color: var(--l-muted);
 }
@@ -2098,7 +2151,7 @@ html[data-theme="dark"] .tema-ponto {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   font-size: var(--text-kicker-sm);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-mono-md);
   text-transform: uppercase;
   color: var(--l-muted);
 }
@@ -2128,7 +2181,7 @@ html[data-theme="dark"] .tema-ponto {
   font-weight: 650;
   font-size: var(--text-valor);
   line-height: 1.05;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--tracking-display-forte);
 }
 .leitura-amplo .leitura-valor {
   font-size: var(--text-valor-amplo);
@@ -2207,7 +2260,7 @@ html[data-theme="dark"] .tema-ponto {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   font-size: var(--text-kicker);
-  letter-spacing: 0.02em;
+  letter-spacing: var(--tracking-micro);
   color: var(--l-muted);
 }
 @container (max-width: 460px) {
@@ -2311,7 +2364,7 @@ html[data-theme="dark"] .tema-ponto {
   font-variation-settings: "wdth" 125;
   font-weight: 700;
   font-size: var(--text-display-sm);
-  letter-spacing: 0.025em;
+  letter-spacing: var(--tracking-manchete-xl);
   text-transform: uppercase;
   color: var(--ink);
 }
@@ -2320,7 +2373,7 @@ html[data-theme="dark"] .tema-ponto {
   font-variant-numeric: tabular-nums;
   font-size: var(--text-kicker);
   font-weight: 400;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--tracking-kicker);
   color: var(--muted);
 }
 .pg-instrumento {
@@ -2353,7 +2406,7 @@ html[data-theme="dark"] .tema-ponto {
   list-style: none;
   font-family: var(--font-mono);
   font-size: var(--text-rotulo);
-  letter-spacing: 0.1em;
+  letter-spacing: var(--tracking-mono-lg);
   text-transform: uppercase;
   color: var(--ink2);
 }
@@ -2390,7 +2443,7 @@ html[data-theme="dark"] .tema-ponto {
   font-variation-settings: "wdth" 125;
   font-weight: 700;
   font-size: var(--text-display-sm);
-  letter-spacing: 0.02em;
+  letter-spacing: var(--tracking-micro);
   text-transform: uppercase;
   color: var(--ink);
   text-decoration: underline;
@@ -2452,7 +2505,7 @@ html[data-theme="dark"] .tema-ponto {
 .iso-rot-r {
   fill: var(--l-ink);
   font-size: var(--text-svg-rotulo);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-mono-sm);
 }
 /* tom semântico da camada (S1-02): --accent é SÓ para o dinheiro que
    sai (cortes); --keep para o que fica (líquido, «fica»); totais —
@@ -2475,7 +2528,7 @@ html[data-theme="dark"] .tema-ponto {
 .iso-kicker {
   fill: var(--l-muted);
   font-size: var(--text-svg-rotulo);
-  letter-spacing: 0.18em;
+  letter-spacing: var(--tracking-carimbo);
   text-transform: uppercase;
 }
 .iso-num {
@@ -2545,7 +2598,7 @@ html[data-theme="dark"] .tema-ponto {
 .iso-li-rot {
   font-family: var(--font-mono);
   font-size: var(--text-rotulo);
-  letter-spacing: 0.12em;
+  letter-spacing: var(--tracking-controlo);
   text-transform: uppercase;
   color: var(--l-ink2);
 }
@@ -2634,7 +2687,7 @@ html[data-theme="dark"] .tema-ponto {
   margin: 0;
   font-family: var(--font-mono);
   font-size: var(--text-mini);
-  letter-spacing: 0.1em;
+  letter-spacing: var(--tracking-mono-lg);
   text-transform: uppercase;
   color: var(--muted);
   white-space: nowrap;
@@ -2729,12 +2782,12 @@ html[data-theme="dark"] .tema-ponto {
 .hal-leg {
   fill: var(--muted);
   font-size: var(--text-svg-micro);
-  letter-spacing: 0.06em;
+  letter-spacing: var(--tracking-mono);
 }
 .hal-rot {
   fill: var(--ink);
   font-size: var(--text-svg-rotulo);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-mono-sm);
 }
 .hal-rot-c {
   display: none;
@@ -2879,7 +2932,7 @@ html[data-theme="dark"] .tema-ponto {
 .ap-rot {
   fill: var(--muted);
   font-size: var(--text-svg-micro);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-mono-sm);
 }
 .ap-rot-atual {
   fill: var(--ink);
@@ -2913,7 +2966,7 @@ html[data-theme="dark"] .tema-ponto {
   margin-top: 0.2rem;
   font-family: var(--font-mono);
   font-size: var(--text-mini);
-  letter-spacing: 0.12em;
+  letter-spacing: var(--tracking-controlo);
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -3059,7 +3112,7 @@ html[data-theme="dark"] .tema-ponto {
 .cc-rot-n {
   font-family: var(--font-mono);
   font-size: var(--text-mini);
-  letter-spacing: 0.14em;
+  letter-spacing: var(--tracking-kicker);
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -3099,7 +3152,7 @@ html[data-theme="dark"] .tema-ponto {
   }
   .cc-rot-v { font-size: var(--text-grande); }
   .cc-rot[data-tom="fica"] .cc-rot-v { font-size: var(--text-display-md); }
-  .cc-rot-n { letter-spacing: 0.1em; }
+  .cc-rot-n { letter-spacing: var(--tracking-mono-lg); }
 }
 
 /* a frase do palco — a pausa «um euro são 100 cêntimos» e o fecho */

@@ -94,7 +94,7 @@ export default function IrsPage() {
           </table>
         </div>
         <p className="footnote mt-3">
-          Com 3+ dependentes a taxa marginal desce 1 p.p. Casado único
+          Com 3+ dependentes a taxa marginal desce 1 p.p. Casado único
           titular e não casado com dependentes usam as tabelas III e II —
           completas no <a href="/salario" className="underline decoration-line2 underline-offset-2">simulador de salário</a>.
         </p>
@@ -119,7 +119,7 @@ export default function IrsPage() {
         <p>
           Até aos {irsJovem.idadeMax} anos, nos primeiros{" "}
           {irsJovem.anosMax} anos de rendimentos: {fmtPct(1, 0)} de isenção no
-          1.º ano, depois 75 %, 50 % e 25 % — com teto de 55×IAS (
+          1.º ano, depois 75 %, 50 % e 25 % — com teto de 55×IAS (
           {fmtEUR0(irsJovem.limiteIsencaoIas * irs.ias)}/ano em {ANO}). O
           simulador trata um titular solteiro; casados, dependentes e
           rendimentos da categoria B mudam a conta.

@@ -16,7 +16,7 @@ import {
   variacao,
   type Serie,
 } from "@/lib/data";
-import { fmtData, fmtNum, fmtPct, fmtPeriodo } from "@/lib/format";
+import { comUnidade, fmtData, fmtNum, fmtPct, fmtPeriodo } from "@/lib/format";
 import {
   anotacaoDe,
   estadoDe,
@@ -118,7 +118,7 @@ export default function DadosPage() {
     if (!fonte || !ult || serie.length < 2) return null;
     const med = mediana(serie.map((p) => p.v));
     const fmtRot =
-      o.rotuloFmt ?? ((v: number) => `${fmtNum(v, o.casas)} ${o.unidade}`);
+      o.rotuloFmt ?? ((v: number) => comUnidade(fmtNum(v, o.casas), o.unidade));
     return {
       breadcrumb: rot.breadcrumb,
       titulo: rot.titulo,
@@ -160,7 +160,7 @@ export default function DadosPage() {
               abs: fmtNum(Math.abs(v - med) * 100, 1),
               direcao: v >= med ? m.painel.acima : m.painel.abaixo,
             })
-          : `${fmtNum(v, 4)} €/kWh`,
+          : `${comUnidade(fmtNum(v, 4), "€/kWh")}`,
     }),
     cartaoPais(loadFonte("eurostat", "lci-pt-homologo"), rotPais.custoTrabalho, {
       id: "lci-pt-homologo", href: "/trabalho", formato: "pct1", unidade: "%",
@@ -266,7 +266,7 @@ export default function DadosPage() {
             estado={estadoDe(fresh, "euribor-3m-mensal")}
             spark={euribor["3M"]?.series}
             valor={
-              ultimo(euribor["3M"]) ? `${fmtNum(ultimo(euribor["3M"])!.v, 2)} %` : "—"
+              ultimo(euribor["3M"]) ? `${comUnidade(fmtNum(ultimo(euribor["3M"])!.v, 2), "%")}` : "—"
             }
             meta={
               <>
@@ -285,7 +285,7 @@ export default function DadosPage() {
             estado={estadoDe(fresh, "euribor-12m-mensal")}
             spark={euribor["12M"]?.series}
             valor={
-              ultimo(euribor["12M"]) ? `${fmtNum(ultimo(euribor["12M"])!.v, 2)} %` : "—"
+              ultimo(euribor["12M"]) ? `${comUnidade(fmtNum(ultimo(euribor["12M"])!.v, 2), "%")}` : "—"
             }
             meta={
               <>
@@ -303,13 +303,13 @@ export default function DadosPage() {
             rotulo="TAEG pessoal · outros"
             estado={estadoDe(fresh, "taeg-pessoal-outros-mensal")}
             spark={taeg?.series}
-            valor={ultimo(taeg) ? `${fmtNum(ultimo(taeg)!.v, 1)} %` : "—"}
+            valor={ultimo(taeg) ? `${comUnidade(fmtNum(ultimo(taeg)!.v, 1), "%")}` : "—"}
             meta={
               ultimo(taeg)
-                ? `teto ${vigente.trimestre} ${fmtNum(
+                ? `teto ${vigente.trimestre} ${comUnidade(fmtNum(
                     (vigente.taegMaxima as Record<string, number>)["pessoal-outros"],
                     1
-                  )} % · ${fmtData(ultimo(taeg)!.t)}`
+                  ), "%")} · ${fmtData(ultimo(taeg)!.t)}`
                 : "—"
             }
           />
@@ -400,7 +400,7 @@ export default function DadosPage() {
                     className="bg-panel px-4 py-3"
                     rotulo={k}
                     estado={est}
-                    valor={p ? `${fmtNum(p.v, 2)} %` : "—"}
+                    valor={p ? `${comUnidade(fmtNum(p.v, 2), "%")}` : "—"}
                     meta={
                       <>
                         <Delta
@@ -444,13 +444,13 @@ export default function DadosPage() {
                 <p className="text-corpo-sm font-medium">{l.rotulo}</p>
                 <div className="mt-1.5 flex items-baseline justify-between gap-4">
                   <span className="num text-corpo-sm">
-                    {p ? `${fmtNum(p.v, 1)} %` : "—"}
+                    {p ? `${comUnidade(fmtNum(p.v, 1), "%")}` : "—"}
                     {p && (
                       <span className="block text-rotulo text-muted">{fmtData(p.t)}</span>
                     )}
                   </span>
                   <span className="num text-rotulo text-muted">
-                    teto {fmtNum(cap, 1)} %
+                    teto {comUnidade(fmtNum(cap, 1), "%")}
                   </span>
                 </div>
                 {p && cap ? (
@@ -500,12 +500,12 @@ export default function DadosPage() {
                   <tr key={l.capKey} className="border-b border-line">
                     <td className="py-2 pr-4 text-ink2">{l.rotulo}</td>
                     <td className="py-2 pr-4 text-right num">
-                      {p ? `${fmtNum(p.v, 1)} %` : "—"}
+                      {p ? `${comUnidade(fmtNum(p.v, 1), "%")}` : "—"}
                       {p && <span className="block text-rotulo text-muted">{fmtData(p.t)}</span>}
                     </td>
-                    <td className="py-2 pr-4 text-right num font-medium">{fmtNum(cap, 1)} %</td>
+                    <td className="py-2 pr-4 text-right num font-medium">{comUnidade(fmtNum(cap, 1), "%")}</td>
                     {proximo && (
-                      <td className="py-2 pr-4 text-right num text-ink2">{capProx !== null ? `${fmtNum(capProx, 1)} %` : "—"}</td>
+                      <td className="py-2 pr-4 text-right num text-ink2">{capProx !== null ? `${comUnidade(fmtNum(capProx, 1), "%")}` : "—"}</td>
                     )}
                     <td className="py-2">
                       {p && cap ? (
@@ -539,7 +539,7 @@ export default function DadosPage() {
           O teto é a TAEG média do trimestre anterior + 1/4 — por isso os dois
           números andam juntos. «Mercado» é a média dos novos contratos, não a
           melhor oferta. Ultrapassagens de crédito: TAN máxima{" "}
-          {fmtNum(vigente.tanMaximaUltrapassagem, 1)} %.
+          {comUnidade(fmtNum(vigente.tanMaximaUltrapassagem, 1), "%")}.
         </p>
       </Figure>
 
@@ -564,7 +564,7 @@ export default function DadosPage() {
               <p className="kicker">Oficial IGCP — {caBase.meta.vigenciaOficial}</p>
               <p className="num-read mt-1">{fmtPct(caBase.meta.oficialPct / 100, 3)}</p>
               <p className="footnote mt-2">
-                Média da Euribor 3M nos 10 dias úteis anteriores, limitada a 2,50 %.
+                Média da Euribor 3M nos 10 dias úteis anteriores, limitada a 2,50 %.
               </p>
             </div>
             <div className="bg-panel px-5 py-5">

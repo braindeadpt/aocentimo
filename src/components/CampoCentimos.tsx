@@ -7,7 +7,7 @@
  * pontos contáveis — de cada euro, 100 pontos; os que saem (vermelhão)
  * e os que ficam (verde). A máquina de estados:
  *
- *   "moeda"   a face comum do 1 € desenhada a sério (bicolor, «1»
+ *   "moeda"   a face comum do 1 € desenhada a sério (bicolor, «1»
  *             serifado, «EURO», seis linhas com as doze estrelas,
  *             aresta com espessura) — oscila devagar, nunca de perfil
  *   "montes"  um aglomerado rotulado por parte, na cor semântica
@@ -16,7 +16,7 @@
  * A transição moeda → montes/grelha é a coreografia aprovada em
  * referencias/V4/prototipo-moeda.html: a moeda pára de frente,
  * desfaz-se em pontos que herdam o metal da face, pausa «um euro são
- * 100 cêntimos», as cores das partes acendem e cada ponto voa para o
+ * 100 cêntimos», as cores das partes acendem e cada ponto voa para o
  * seu monte com atraso escalonado. Voltar à moeda fecha-a de novo.
  *
  * SSR/sem JS: o servidor renderiza um SVG do estado pedido (moeda
@@ -38,7 +38,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { fmtNum } from "@/lib/format";
+import { comUnidade, fmtNum } from "@/lib/format";
 import { repartir } from "@/lib/pontos/repartir";
 import {
   ANEL_DISCO,
@@ -61,14 +61,14 @@ export interface ParteCentimos {
   /** cor semântica: sai = vermelhão, fica = verde, neutro = cinzento.
    *  Convenção: a parte que fica é a última. */
   tom: TomParte;
-  /** linha secundária do rótulo — «356 €/mês» */
+  /** linha secundária do rótulo — «356 €/mês» */
   detalhe?: string;
 }
 
 export interface TextosCentimos {
-  /** frase da pausa, com a moeda desfeita — «Um euro são 100 cêntimos…» */
+  /** frase da pausa, com a moeda desfeita — «Um euro são 100 cêntimos…» */
   pausa?: ReactNode;
-  /** frase quando as cores acendem — «Destes 100 cêntimos, X saem…» */
+  /** frase quando as cores acendem — «Destes 100 cêntimos, X saem…» */
   saiem?: ReactNode;
   /** frase final, fica visível em «montes» */
   pronto?: ReactNode;
@@ -82,7 +82,7 @@ const W0 = 1200;
 const H0 = 460;
 
 function fmtC(v: number): string {
-  return `${fmtNum(v)} c`;
+  return comUnidade(fmtNum(v), "c");
 }
 
 /** estrela de cinco pontas — path SVG centrado em (0,0) */
@@ -96,7 +96,7 @@ function estrelaPath(r: number): string {
   return d + "Z";
 }
 
-/** a moeda de 1 € parada — face comum simplificada, bicolor */
+/** a moeda de 1 € parada — face comum simplificada, bicolor */
 function SvgMoeda() {
   const R = 165;
   const linhas = Array.from({ length: 6 }, (_, l) => {
@@ -329,8 +329,8 @@ export function CampoCentimos({
 
   const eq =
     equivalente ??
-    `${total === 100 ? "De cada euro" : `De cada ${total} cêntimos`}: ${partes
-      .map((p) => `${p.rotulo} — ${fmtNum(p.valor)} cêntimos`)
+    `${total === 100 ? "De cada euro" : `De cada ${total} cêntimos`}: ${partes
+      .map((p) => `${p.rotulo} — ${fmtNum(p.valor)} cêntimos`)
       .join("; ")}.`;
 
   const legendaConteudo =

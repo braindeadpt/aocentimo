@@ -4,7 +4,7 @@ import { REGRAS_IRS, impostoPorEscaloes } from "./irs";
 /**
  * Mais-valias (cat. G): taxa autónoma vs englobamento. Mobiliários com
  * exclusão por tempo de detenção; cripto isenta ≥365 dias; imóveis
- * englobam 50 % (com isenção proporcional por reinvestimento em HPP).
+ * englobam 50 % (com isenção proporcional por reinvestimento em HPP).
  */
 
 interface RegrasMV {

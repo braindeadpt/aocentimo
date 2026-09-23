@@ -33,15 +33,15 @@ const htmlBomSubir = renderToStaticMarkup(
 
 describe("Haltere — SSR, direcção e equivalente", () => {
   it("os valores finais estão no HTML — os dois momentos por categoria", () => {
-    expect(html).toContain("3,55 %");
-    expect(html).toContain("2,50 %");
-    expect(html).toContain("5,70 %");
-    expect(html).toContain("5,80 %");
+    expect(html).toContain("3,55 %");
+    expect(html).toContain("2,50 %");
+    expect(html).toContain("5,70 %");
+    expect(html).toContain("5,80 %");
   });
 
   it("a variação fica escrita — ▲/▼ com p.p., nunca só na cor", () => {
-    expect(html).toContain("▲ 1,05 p.p.");
-    expect(html).toContain("▼ 0,10 p.p.");
+    expect(html).toContain("▲ 1,05 p.p.");
+    expect(html).toContain("▼ 0,10 p.p.");
   });
 
   it("a direcção pinta o traço e o ponto «agora» — sem bomSubir, subir é mau", () => {
@@ -69,7 +69,7 @@ describe("Haltere — SSR, direcção e equivalente", () => {
   it("o svg é decorativo e o equivalente é uma lista única por categoria", () => {
     expect(html).toMatch(/<svg[^>]*aria-hidden="true"/);
     expect(html.match(/data-hal-equivalente/g)).toHaveLength(1);
-    expect(html).toContain("Inflação: 2,50 % (ago 2025) → 3,55 % (ago 2026)");
+    expect(html).toContain("Inflação: 2,50 % (ago 2025) → 3,55 % (ago 2026)");
   });
 
   it("o SSR serve o estado final — sem classe de entrada armada", () => {

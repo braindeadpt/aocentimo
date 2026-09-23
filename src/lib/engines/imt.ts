@@ -73,7 +73,7 @@ export interface ResultadoCompra {
 
 /**
  * Custo total de comprar casa: IMT (geral ou Jovem), IS de aquisição
- * (0,8 %), IS sobre o crédito (0,6 %) e registos. No IMT Jovem o IS de
+ * (0,8 %), IS sobre o crédito (0,6 %) e registos. No IMT Jovem o IS de
  * aquisição segue a mesma isenção proporcional.
  */
 export function custoCompra(

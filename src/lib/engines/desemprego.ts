@@ -38,7 +38,7 @@ export interface ResultadoDesemprego {
   remReferencia: number; // RR ilíquida
   remReferenciaLiquida: number;
   mensal: number;
-  apos180Dias: number; // −10 %
+  apos180Dias: number; // −10 %
   duracaoDias: number;
   elegivel: boolean;
   nota?: string;
@@ -60,8 +60,8 @@ export function duracaoSubsidio(idade: number, anosDescontos: number): number {
 
 /**
  * RR = bruto × 14/12 (salário estável, com subsídios de férias e Natal).
- * RR líquida = RR − SS 11 % − retenção de IRS. Montante = 65 % RR, entre
- * os limites do IAS; majoração de 10 % para casal desempregado com filhos
+ * RR líquida = RR − SS 11 % − retenção de IRS. Montante = 65 % RR, entre
+ * os limites do IAS; majoração de 10 % para casal desempregado com filhos
  * ou agregado monoparental.
  */
 export function simularDesemprego(

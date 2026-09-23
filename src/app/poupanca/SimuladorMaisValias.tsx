@@ -92,8 +92,8 @@ export function SimuladorMaisValias() {
           </div>
         </div>
         <p className="footnote">
-          Mobiliários em mercado regulamentado: exclusão de 10 % (&gt;2 anos),
-          20 % (≥5) ou 30 % (≥8). Imóveis englobam metade da mais-valia —
+          Mobiliários em mercado regulamentado: exclusão de 10 % (&gt;2 anos),
+          20 % (≥5) ou 30 % (≥8). Imóveis englobam metade da mais-valia —
           a correção monetária não é aplicada aqui, o imposto real é
           ligeiramente menor.
         </p>
@@ -115,7 +115,7 @@ export function SimuladorMaisValias() {
           </div>
           {r.impostoAutonomo !== null && (
             <div className="flex justify-between py-1.5 border-b border-line/60">
-              <dt className="text-ink2">Taxa autónoma (28 %)</dt>
+              <dt className="text-ink2">Taxa autónoma (28 %)</dt>
               <dd className="num">{fmtEUR(r.impostoAutonomo)}</dd>
             </div>
           )}
@@ -132,7 +132,7 @@ export function SimuladorMaisValias() {
               {r.melhor === "autonomo"
                 ? "a taxa autónoma é a que fica mais barata"
                 : r.melhor === "englobado"
-                  ? "englobar compensa — a tua taxa marginal é menor que 28 %"
+                  ? "englobar compensa — a tua taxa marginal é menor que 28 %"
                   : "englobamento obrigatório em imóveis"}
             </dd>
           </div>

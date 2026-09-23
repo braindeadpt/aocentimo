@@ -1,5 +1,5 @@
 import type { Freshness } from "@/lib/data";
-import { fmtNum, fmtPeriodo } from "@/lib/format";
+import { comUnidade, fmtNum, fmtPeriodo } from "@/lib/format";
 import { m, t } from "@/lib/messages";
 import type {
   EstadoLeitura,
@@ -63,7 +63,7 @@ export function anotacaoDe(
   };
 }
 
-/** insight «{abs} p.p. {acima|abaixo} da mediana de 10 anos» — cai
+/** insight «{abs} p.p. {acima|abaixo} da mediana de 10 anos» — cai
     para «{valor} {unidade}» quando não há referência calculada */
 export function insightMediana(
   valor: number,
@@ -75,7 +75,7 @@ export function insightMediana(
         abs: fmtNum(Math.abs(valor - referencia.valor)),
         direcao: valor >= referencia.valor ? m.painel.acima : m.painel.abaixo,
       })
-    : `${fmtNum(valor)} ${unidade}`;
+    : comUnidade(fmtNum(valor), unidade);
 }
 
 /** estado de frescura de uma fonte — «sem-sla» quando o watchdog

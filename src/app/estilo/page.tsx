@@ -15,6 +15,7 @@ import { CampoCentimos } from "@/components/CampoCentimos";
 import { Haltere } from "@/components/Haltere";
 import { BarraTracos } from "@/components/BarraTracos";
 import { AnelPontos } from "@/components/AnelPontos";
+import { Valor } from "@/components/Valor";
 import { IsometricoDemo } from "./IsometricoDemo";
 import { Cartao } from "@/components/Cartao";
 import { OrbeEstado } from "@/components/OrbeEstado";
@@ -62,7 +63,7 @@ const EURO_CENTIMOS = (() => {
   };
 })();
 const EURO_SAEM = 100 - EURO_CENTIMOS.partes[3].valor;
-const EURO_EQ = `De cada euro que a empresa gasta contigo (bruto de ${fmtEUR0(EURO_CENTIMOS.bruto)}): ${fmtNum(EURO_CENTIMOS.partes[3].valor)} cêntimos chegam à tua conta; ${fmtNum(EURO_CENTIMOS.partes[0].valor)} vão para a TSU da empresa, ${fmtNum(EURO_CENTIMOS.partes[1].valor)} para o IRS e ${fmtNum(EURO_CENTIMOS.partes[2].valor)} para a Segurança Social.`;
+const EURO_EQ = `De cada euro que a empresa gasta contigo (bruto de ${fmtEUR0(EURO_CENTIMOS.bruto)}): ${fmtNum(EURO_CENTIMOS.partes[3].valor)} cêntimos chegam à tua conta; ${fmtNum(EURO_CENTIMOS.partes[0].valor)} vão para a TSU da empresa, ${fmtNum(EURO_CENTIMOS.partes[1].valor)} para o IRS e ${fmtNum(EURO_CENTIMOS.partes[2].valor)} para a Segurança Social.`;
 
 // ————— catálogo V4 (S1-05): dados das demonstrações —————
 
@@ -716,7 +717,7 @@ export default function EstiloPage() {
             <p className="kicker mb-2">
               Display de secção — .font-display + escada text-display-*
             </p>
-            <p className="font-display text-display-sm tracking-wide text-ink md:text-display-md">
+            <p className="font-display text-display-sm tracking-manchete-xl text-ink md:text-display-md">
               Os capítulos e as secções
             </p>
             <p className="footnote mt-2">
@@ -767,7 +768,7 @@ export default function EstiloPage() {
                   </p>
                   <p className="talao-total mt-3 flex justify-between">
                     <span>Total</span>
-                    <span className="num text-talao-hero">38,40 €</span>
+                    <span className="num text-talao-hero">38,40 €</span>
                   </p>
                 </div>
               </div>
@@ -789,10 +790,10 @@ export default function EstiloPage() {
             <p className="kicker mb-2">
               Herói — .num-hero · Archivo expandido, dígitos tabulares
             </p>
-            <NumHero valor="1 234,56 €" sufixo="/mês" />
+            <NumHero valor="1 234,56 €" sufixo="/mês" />
             <div className="mt-3 flex flex-wrap gap-x-10 gap-y-3">
-              <NumHero valor="1 234,56 €" sinal="+" className="text-keep" compacto />
-              <NumHero valor="412 345,67 €" compacto className="text-muted" />
+              <NumHero valor="1 234,56 €" sinal="+" className="text-keep" compacto />
+              <NumHero valor="412 345,67 €" compacto className="text-muted" />
             </div>
             <p className="footnote mt-3">
               O sinal herda a cor semântica (keep/up) e sobe ao óptico; a
@@ -804,16 +805,16 @@ export default function EstiloPage() {
           <div className="py-5">
             <p className="kicker mb-2">Leitura — .num-read · Space Mono ~1.4rem</p>
             <div className="flex flex-wrap items-baseline gap-x-10 gap-y-2">
-              <p className="num-read">4 320,00 €</p>
-              <p className="num-read text-up">23,0 %</p>
-              <p className="num-read text-keep">+1 024,00 €</p>
+              <p className="num-read">4 320,00 €</p>
+              <p className="num-read text-up">23,0 %</p>
+              <p className="num-read text-keep">+1 024,00 €</p>
             </div>
           </div>
           <div className="py-5">
             <p className="kicker mb-2">Denso — .num-dense · tabelas e séries</p>
             <p className="num-dense">
-              2026-01 · 2,516 % &nbsp;&nbsp; 2026-02 · 2,489 % &nbsp;&nbsp;
-              2026-03 · 2,441 %
+              2026-01 · 2,516 % &nbsp;&nbsp; 2026-02 · 2,489 % &nbsp;&nbsp;
+              2026-03 · 2,441 %
             </p>
           </div>
         </div>
@@ -840,7 +841,7 @@ export default function EstiloPage() {
           <Link href="/estilo" className="btn">
             Acção secundária
           </Link>
-          <input className="field max-w-56" defaultValue="1 500" aria-label="exemplo de campo" />
+          <input className="field max-w-56" defaultValue="1 500" aria-label="exemplo de campo" />
         </div>
         <p className="footnote mt-3">
           <code className="num">.field</code> é o único campo de formulário —
@@ -1047,9 +1048,9 @@ export default function EstiloPage() {
         <h2 className="kicker mb-4">O campo de cêntimos — 1 ponto = 1 cêntimo</h2>
         <p className="footnote mb-4 max-w-xl">
           A unidade da V4: partes de um todo em dinheiro desenham-se em
-          pontos contáveis. Em repouso é a moeda de 1 € desenhada a sério;
-          ao revelar desfaz-se nos seus 100 cêntimos e cada ponto voa para
-          o monte de quem o leva. O texto diz o valor real («63,2 c»), o
+          pontos contáveis. Em repouso é a moeda de 1 € desenhada a sério;
+          ao revelar desfaz-se nos seus 100 cêntimos e cada ponto voa para
+          o monte de quem o leva. O texto diz o valor real («63,2 c»), o
           desenho conta pontos inteiros (maior resto — somam sempre 100).
           Sem JS o servidor serve o estado pedido em SVG com os mesmos
           números; o equivalente textual está sempre presente.
@@ -1060,12 +1061,12 @@ export default function EstiloPage() {
           textos={{
             pausa: (
               <>
-                Um euro são <b>100 cêntimos</b>. Cada ponto é um.
+                Um euro são <b>100 cêntimos</b>. Cada ponto é um.
               </>
             ),
             saiem: (
               <>
-                Destes 100 cêntimos, <b>{fmtNum(EURO_SAEM)}</b> saem antes de
+                Destes 100 cêntimos, <b>{fmtNum(EURO_SAEM)}</b> saem antes de
                 chegar à tua conta.
               </>
             ),
@@ -1151,7 +1152,12 @@ export default function EstiloPage() {
             <AnelPontos
               pontos={ANEL_ANO.pontos}
               centro={{
-                valor: fmtEUR0(CAN.liquidoAno12),
+                valor: (
+                  <Valor
+                    numero={fmtNum(CAN.liquidoAno12, 0)}
+                    unidade="€"
+                  />
+                ),
                 rotulo: "nos 12 meses",
               }}
               equivalente={`O ano em 12 pontos: cada um é um recibo de ${fmtEUR0(CAN.liquidoMes)} líquidos — ${fmtEUR0(CAN.liquidoAno12)} no ano. Junho e dezembro trazem os subsídios de férias e de Natal. Agora: ${MESES_PT[ANEL_ANO.mesAgora - 1] ?? "mês em leitura"}.`}
@@ -1225,10 +1231,10 @@ export default function EstiloPage() {
                     mínimo
                   </a>
                   <a href="/salario" className="lq-link num text-rotulo">
-                    1 500 €
+                    1 500 €
                   </a>
                   <a href="/salario" className="lq-link num text-rotulo">
-                    2 000 €
+                    2 000 €
                   </a>
                 </div>
               }
@@ -1279,7 +1285,7 @@ export default function EstiloPage() {
                       equivalente={EURO_EQ}
                     />
                   ),
-                  frase: `De cada euro que a empresa gasta contigo, ${fmtNum(EURO_CENTIMOS.partes[3].valor)} cêntimos chegam-te à conta.`,
+                  frase: `De cada euro que a empresa gasta contigo, ${fmtNum(EURO_CENTIMOS.partes[3].valor)} cêntimos chegam-te à conta.`,
                 }}
                 explora={
                   <div className="border border-line bg-panel px-5 py-4">
@@ -1443,7 +1449,7 @@ export default function EstiloPage() {
             </svg>
             <p className="footnote mt-3">
               A mesma semente dá o mesmo rasgo — o mesmo salário rasga igual
-              entre renders. A 400 %:
+              entre renders. A 400 %:
             </p>
             <svg viewBox="60 -2 60 18" className="mt-2 block w-full border border-line" aria-hidden>
               <path
@@ -1541,7 +1547,7 @@ export default function EstiloPage() {
           .
         </p>
         <div className="grid gap-6 md:grid-cols-4">
-          <Stat label="Exemplo" value="920 €" hint="salário mínimo 2026" />
+          <Stat label="Exemplo" value="920 €" hint="salário mínimo 2026" />
           <Stat label="Variação" value={<Delta value={0.023} />} hint="preço a subir" />
           <Stat label="Variação" value={<Delta value={-0.015} />} hint="preço a descer" />
           <Stat label="Poupança" value={<Delta value={0.018} goodWhenUp />} hint="taxa a subir é bom" />
@@ -1580,10 +1586,14 @@ export default function EstiloPage() {
           {[
             "O elemento visual leva aria-hidden — seja <svg>, cascata ou barra proporcional.",
             "O equivalente textual é um irmão <table>: .sr-only quando é só para leitores de ecrã (FitaTalao, Cascata, LineChart), visível quando já faz parte do desenho (EuroBar).",
-            "Nunca role=\"img\" com aria-label E equivalente ao mesmo tempo — o leitor de ecrã anuncia a mesma informação duas vezes.",
+            <>
+              Nunca <code className="num">role=&quot;img&quot;</code> com
+              aria-label E equivalente ao mesmo tempo — o leitor de ecrã
+              anuncia a mesma informação duas vezes.
+            </>,
             "O próximo gráfico nasce assim.",
-          ].map((r) => (
-            <li key={r} className="footnote">
+          ].map((r, i) => (
+            <li key={i} className="footnote">
               <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-mark align-middle" />
               {r}
             </li>
@@ -1604,7 +1614,7 @@ export default function EstiloPage() {
               style={{
                 background: "var(--talao-paper)",
                 clipPath:
-                  "polygon(0 0,100% 0,100% 100%,97% 92%,94% 100%,91% 92%,88% 100%,85% 92%,82% 100%,79% 92%,76% 100%,73% 92%,70% 100%,67% 92%,64% 100%,61% 92%,58% 100%,55% 92%,52% 100%,49% 92%,46% 100%,43% 92%,40% 100%,37% 92%,34% 100%,31% 92%,28% 100%,25% 92%,22% 100%,19% 92%,16% 100%,13% 92%,10% 100%,7% 92%,4% 100%,1% 92%,0 100%)",
+                  "polygon(0 0,100% 0,100% 100%,97% 92%,94% 100%,91% 92%,88% 100%,85% 92%,82% 100%,79% 92%,76% 100%,73% 92%,70% 100%,67% 92%,64% 100%,61% 92%,58% 100%,55% 92%,52% 100%,49% 92%,46% 100%,43% 92%,40% 100%,37% 92%,34% 100%,31% 92%,28% 100%,25% 92%,22% 100%,19% 92%,16% 100%,13% 92%,10% 100%,7% 92%,4% 100%,1% 92%,0 100%)",
               }}
             />
             <p className="footnote mt-2">
@@ -1634,7 +1644,7 @@ export default function EstiloPage() {
             <p className="kicker-xs mb-2">✓ tick com a cor da série, nome em tinta</p>
             <p aria-hidden className="num text-corpo-sm text-ink2 flex items-center gap-2">
               <span className="inline-block h-0.5 w-3" style={{ background: "var(--seq-2)" }} />
-              Euribor 12M — 2,95 %
+              Euribor 12M — 2,95 %
             </p>
             <p className="footnote mt-2">
               A legibilidade nunca depende da rampa — a cor é redundância,
@@ -1660,7 +1670,7 @@ export default function EstiloPage() {
         </div>
         <ul className="mt-4 space-y-1">
           {[
-            "Sem \"Fig. N\" onde nada remete para a figura — a legenda identifica, o número decorava.",
+            "Sem «Fig. N» onde nada remete para a figura — a legenda identifica, o número decorava.",
             "Sem aliases --color-seq-* em SVG inline: @theme inline só emite a var quando há utilidade — em fill/stroke usa-se --seq-* directo.",
             "Sem tinta de tema sobre papel fixo — o papel tem a sua tinta (--talao-ink, papel-sai-tinta, papel-fica-tinta).",
             "Sem número herói vazio à espera de JS — o SSR traz o valor final.",

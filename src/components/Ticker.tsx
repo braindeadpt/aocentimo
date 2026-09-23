@@ -1,6 +1,6 @@
 import { loadFonte, loadFreshness, loadSerie, variacao } from "@/lib/data";
 import { OrbeEstado } from "@/components/OrbeEstado";
-import { fmtData, fmtLitro, fmtNum, fmtPct } from "@/lib/format";
+import { comUnidade, fmtData, fmtLitro, fmtNum, fmtPct } from "@/lib/format";
 import { m } from "@/lib/messages";
 import smn from "@data/fiscal/smn.json";
 import ca from "@data/fiscal/ca.json";
@@ -33,7 +33,7 @@ export function Ticker() {
     const ultimo = eur3.series[eur3.series.length - 1];
     itens.push({
       label: m.ticker.euribor3m,
-      valor: `${fmtNum(ultimo.v, 2)} %`,
+      valor: `${comUnidade(fmtNum(ultimo.v, 2), "%")}`,
       detalhe: fmtData(ultimo.t),
       frescura: "euribor-3m-mensal",
     });
@@ -74,7 +74,7 @@ export function Ticker() {
 
   itens.push({
     label: m.ticker.smn,
-    valor: `${fmtNum(smn.serie[smn.serie.length - 1].valor)} €`,
+    valor: `${comUnidade(fmtNum(smn.serie[smn.serie.length - 1].valor), "€")}`,
     detalhe: m.ticker.smnNota,
     frescura: "fiscal-smn",
   });

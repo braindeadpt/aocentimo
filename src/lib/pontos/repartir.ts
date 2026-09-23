@@ -14,7 +14,7 @@
  *
  * Valores negativos ou não finitos contam como 0 — uma parte nunca tira
  * pontos a outra. Se TODAS as partes valem 0 não há dono para os
- * pontos: ficam em `livres` (o euro tem 100 cêntimos na mesma — o
+ * pontos: ficam em `livres` (o euro tem 100 cêntimos na mesma — o
  * campo desenha-os neutros) e Σpontos + livres = total.
  *
  * Convenção de ordem: as partes chegam na ordem dos montes

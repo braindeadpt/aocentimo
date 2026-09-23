@@ -1,10 +1,10 @@
 /**
  * tela — o motor de canvas do <CampoCentimos> (V4, S1-04).
  *
- * Desenha a moeda de 1 € a oscilar em repouso e a coreografia aprovada
+ * Desenha a moeda de 1 € a oscilar em repouso e a coreografia aprovada
  * da revelação (referencias/V4/prototipo-moeda.html): a moeda pára de
  * frente, desfaz-se nos seus cêntimos (cada ponto herda o metal que
- * tinha por baixo), pausa «um euro são 100 cêntimos», as fatias ganham
+ * tinha por baixo), pausa «um euro são 100 cêntimos», as fatias ganham
  * a cor semântica, a do que sai destaca-se e os pontos voam para os
  * montes — ou para a grelha — com atraso escalonado.
  *
@@ -81,7 +81,7 @@ export interface CampoTelaOpts {
   /** pontos por parte — saída de repartir() */
   pontos?: readonly number[];
   onRotulos?: (on: boolean) => void;
-  /** legenda do palco: pausa («100 cêntimos») → saiem → pronto (montes) */
+  /** legenda do palco: pausa («100 cêntimos») → saiem → pronto (montes) */
   onLegenda?: (q: "pausa" | "saiem" | "pronto" | null) => void;
   /** chamado depois do primeiro frame desenhado — o svg de SSR esconde-se */
   onPronto?: () => void;
@@ -440,7 +440,7 @@ export class CampoTela {
     };
   }
 
-  /* ————— desenho da moeda — a face comum do 1 € ————— */
+  /* ————— desenho da moeda — a face comum do 1 € ————— */
 
   private estrela(x: number, y: number, r: number): void {
     const ctx = this.ctx;

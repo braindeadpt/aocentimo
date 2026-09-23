@@ -67,7 +67,7 @@ export function limitePpr(idade: number): number {
 
 /**
  * Limite global das deduções (art. 78.º): sem limite no 1.º escalão;
- * 1 000 € acima do limiar do último; interpolação entre 2 500 e 1 000 €.
+ * 1 000 € acima do limiar do último; interpolação entre 2 500 e 1 000 €.
  */
 export function limiteGlobalDeducoes(rc: number, dependentes: number, ano = 2026): number {
   const regras = REGRAS_IRS[ano];

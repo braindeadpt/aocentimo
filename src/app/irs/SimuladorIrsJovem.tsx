@@ -92,7 +92,7 @@ export function SimuladorIrsJovem({ ano }: { ano: number }) {
 
         {/* os 10 anos como sequência — cada passo é um botão que escolhe
             o ano de gozo; o medidor mostra a isenção a escoar
-            (100 → 75 → 50 → 25 %). Reimprimem-se em cadeia quando o
+            (100 → 75 → 50 → 25 %). Reimprimem-se em cadeia quando o
             salário muda: a poupança percorre os dez anos outra vez */}
         <div>
           <p className="kicker-sm mb-3">Os 10 anos, um a um</p>

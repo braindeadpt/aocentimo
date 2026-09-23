@@ -37,7 +37,7 @@ export interface PontoAnel {
 }
 
 export interface CentroAnel {
-  /** o número do ciclo — «14 004 €», «12», «4» */
+  /** o número do ciclo — «14 004 €», «12», «4» */
   valor: ReactNode;
   /** linha pequena por baixo — «por ano», «meses» */
   rotulo?: ReactNode;

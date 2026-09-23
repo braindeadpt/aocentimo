@@ -59,10 +59,10 @@ export function SimuladorPpr() {
           </div>
         </div>
         <p className="footnote">
-          Dedução à coleta de 20 % das entregas, até {fmtEUR0(limitePpr(idade))}
+          Dedução à coleta de 20 % das entregas, até {fmtEUR0(limitePpr(idade))}
           /ano na tua idade — entra no limite global do art. 78.º. Na saída
-          dentro das condições legais, os rendimentos pagam 8 % efetivos.
-          Resgatar fora das condições devolve o benefício +10 %/ano — o PPR
+          dentro das condições legais, os rendimentos pagam 8 % efetivos.
+          Resgatar fora das condições devolve o benefício +10 %/ano — o PPR
           é dinheiro preso.
         </p>
       </div>
@@ -88,7 +88,7 @@ export function SimuladorPpr() {
           <div className="flex justify-between py-1.5 border-b border-line/60">
             <dt className="text-ink2">
               Imposto sobre {fmtEUR0(r.rendimentos)} de rendimentos
-              <span className="block text-rotulo text-muted">8 % efetivos vs {fmtPct(capitais.retencaoLiberatoria.taxa, 0)} normais</span>
+              <span className="block text-rotulo text-muted">8 % efetivos vs {fmtPct(capitais.retencaoLiberatoria.taxa, 0)} normais</span>
             </dt>
             <dd className="num">{fmtEUR(r.impostoSaida)} <span className="text-muted">({fmtEUR(r.impostoNormal)})</span></dd>
           </div>

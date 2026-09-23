@@ -3,10 +3,10 @@
  * Props de client components não podem ser funções — escolhe-se a
  * chave no servidor e a formatação resolve-se aqui, partilhada por
  * Haltere, BarraTracos e AnelPontos. Espelha o registo da Leitura:
- * «pct» significa que o valor JÁ vem em % (3,55 → «3,55 %»), não uma
+ * «pct» significa que o valor JÁ vem em % (3,55 → «3,55 %»), não uma
  * fracção.
  */
-import { fmtEUR, fmtEUR0, fmtLitro, fmtNum } from "@/lib/format";
+import { comUnidade, fmtEUR, fmtEUR0, fmtLitro, fmtNum } from "@/lib/format";
 
 export type FormatoViz =
   | "num"
@@ -26,15 +26,15 @@ export function fmtViz(formato: FormatoViz, v: number): string {
     case "eur0":
       return fmtEUR0(v);
     case "pct":
-      return `${fmtNum(v, 2)} %`;
+      return comUnidade(fmtNum(v, 2), "%");
     case "pct1":
-      return `${fmtNum(v, 1)} %`;
+      return comUnidade(fmtNum(v, 1), "%");
     case "litro":
       return fmtLitro(v);
     case "pp":
-      return `${fmtNum(v, 1)} p.p.`;
+      return comUnidade(fmtNum(v, 1), "p.p.");
     case "kwh":
-      return `${fmtNum(v, 4)} €/kWh`;
+      return comUnidade(fmtNum(v, 4), "€/kWh");
     case "num1":
       return fmtNum(v, 1);
     case "num":
@@ -66,20 +66,22 @@ export function casasViz(formato: FormatoViz): number {
 }
 
 /** unidade da VARIAÇÃO (agora − antes): em séries de % a diferença é
-    em pontos percentuais, não em % — «p.p.» é o default honesto. */
+    em pontos percentuais, não em % — «p.p.» é o default honesto.
+    Devolve a unidade SEM espaço — a ponte ao número é o FINO, posto
+    por quem compõe (comUnidade). */
 export function unidadeDeltaViz(formato: FormatoViz): string {
   switch (formato) {
     case "pct":
     case "pct1":
     case "pp":
-      return " p.p.";
+      return "p.p.";
     case "eur":
     case "eur0":
-      return " €";
+      return "€";
     case "litro":
-      return " €/L";
+      return "€/L";
     case "kwh":
-      return " €/kWh";
+      return "€/kWh";
     case "num":
     case "num1":
     default:

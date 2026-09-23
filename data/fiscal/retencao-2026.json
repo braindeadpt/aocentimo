@@ -5,11 +5,11 @@
   "fonteUrl": "https://files.diariodarepublica.pt/2s/2026/01/003000001/0000200010.pdf",
   "ambito": "Trabalho dependente (cat. A), titulares residentes no continente, sem deficiência. Açores/Madeira, deficiência e pensões: tabelas IV–XI do mesmo despacho — fora do âmbito deste ficheiro.",
   "formula": "retencao = max(0, R × taxaMarginal − parcelaAbater − parcelaAdicionalDependente × nDependentes)",
-  "parcelaFormulaNota": "Nas linhas de transição a parcela a abater é ela própria uma fórmula: taxa × fator × (limiar − R). A 'taxa' guardada é o coeficiente publicado (não muda com a redução de 1 p.p. para 3+ dependentes — n.º 5.h do despacho).",
+  "parcelaFormulaNota": "Nas linhas de transição a parcela a abater é ela própria uma fórmula: taxa × fator × (limiar − R). A 'taxa' guardada é o coeficiente publicado (não muda com a redução de 1 p.p. para 3+ dependentes — n.º 5.h do despacho).",
   "regras": {
-    "tresOuMaisDependentes": { "reducaoTaxaMarginal": 0.01, "nota": "Trabalho dependente com 3+ dependentes: −1 p.p. na taxa marginal; parcelas inalteradas (n.º 5.h)" },
-    "dependenteDeficiencia60": { "naoCasadoOuCasadoUnicoTitular": 84.82, "casadoDoisTitulares": 42.41, "nota": "Valor a acrescer à parcela a abater por dependente com incapacidade ≥60 % (n.º 5.a)" },
-    "trabalhoSuplementar": { "fator": 0.5, "nota": "50 % da taxa efetiva do mês sobre remuneração de trabalho suplementar (n.º 5.f)" }
+    "tresOuMaisDependentes": { "reducaoTaxaMarginal": 0.01, "nota": "Trabalho dependente com 3+ dependentes: −1 p.p. na taxa marginal; parcelas inalteradas (n.º 5.h)" },
+    "dependenteDeficiencia60": { "naoCasadoOuCasadoUnicoTitular": 84.82, "casadoDoisTitulares": 42.41, "nota": "Valor a acrescer à parcela a abater por dependente com incapacidade ≥60 % (n.º 5.a)" },
+    "trabalhoSuplementar": { "fator": 0.5, "nota": "50 % da taxa efetiva do mês sobre remuneração de trabalho suplementar (n.º 5.f)" }
   },
   "tabelas": {
     "I": {

@@ -2,7 +2,7 @@
   "vigencia": "2026-10-01",
   "fonte": "Banco de Portugal — taxas máximas do crédito aos consumidores (DL 133/2009, art. 28.º); Instrução trimestral + Portal do Cliente Bancário",
   "fonteUrl": "https://clientebancario.bportugal.pt/pt-pt/taxas-de-juro-credito-aos-consumidores",
-  "nota": "Teto legal = TAEG média praticada no mercado no trimestre anterior + 1/4; nenhuma taxa pode exceder a TAEG média global + 50 %. Não são «taxas legais» — são máximos.",
+  "nota": "Teto legal = TAEG média praticada no mercado no trimestre anterior + 1/4; nenhuma taxa pode exceder a TAEG média global + 50 %. Não são «taxas legais» — são máximos.",
   "trimestres": [
     {
       "trimestre": "2026-T3",

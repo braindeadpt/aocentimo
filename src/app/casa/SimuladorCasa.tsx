@@ -70,8 +70,8 @@ export function SimuladorCasa({ euriborAtual }: { euriborAtual: number | null })
   const camadas = [
     { nome: "Preço na placa", v: preco, cor: `${TINTA}0.75)`, txt: `${TINTA}0.9)` },
     { nome: "IMT", v: compra.imt, cor: `${TORRADO}0.85)`, txt: `${TORRADO}1)` },
-    { nome: "Imposto de Selo — compra (0,8 %)", v: compra.isAquisicao, cor: `${TORRADO}0.62)`, txt: `${TORRADO}0.9)` },
-    { nome: "Imposto de Selo — crédito (0,6 %)", v: compra.isCredito, cor: `${TORRADO}0.45)`, txt: `${TORRADO}0.8)` },
+    { nome: "Imposto de Selo — compra (0,8 %)", v: compra.isAquisicao, cor: `${TORRADO}0.62)`, txt: `${TORRADO}0.9)` },
+    { nome: "Imposto de Selo — crédito (0,6 %)", v: compra.isCredito, cor: `${TORRADO}0.45)`, txt: `${TORRADO}0.8)` },
     { nome: "Escritura e registos (Casa Pronta)", v: compra.registos, cor: `${TINTA}0.35)`, txt: `${TINTA}0.7)` },
   ];
   const realEscritura = preco + compra.totalCustos;

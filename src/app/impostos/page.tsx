@@ -31,8 +31,8 @@ export default function ImpostosPage() {
         O imposto dentro do preço
       </h1>
       <p className="lede mt-5">
-        Quase tudo o que compras já traz imposto incluído. No pão são 6 %, num
-        telemóvel 23 %, na gasolina mais de metade do litro é Estado.
+        Quase tudo o que compras já traz imposto incluído. No pão são 6 %, num
+        telemóvel 23 %, na gasolina mais de metade do litro é Estado.
       </p>
 
       <Figure
@@ -87,14 +87,14 @@ export default function ImpostosPage() {
       <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
         <h2 className="font-display text-display-sm text-ink">A cascata que ninguém vê</h2>
         <p>
-          No combustível acontece uma coisa peculiar: o IVA de 23 % incide sobre
+          No combustível acontece uma coisa peculiar: o IVA de 23 % incide sobre
           o preço <em>depois</em> de somar ISP e taxa de carbono. Ou seja,
-          pagas 23 % de IVA sobre… imposto. Quando o preço do crude sobe, a
+          pagas 23 % de IVA sobre… imposto. Quando o preço do crude sobe, a
           receita de IVA sobe com ele — é por isso que o Governo às vezes
           devolve essa fatia extra através de um desconto no ISP.
         </p>
         <p>
-          Na eletricidade há ainda a contribuição audiovisual (CAV, ~3 €/mês) e
+          Na eletricidade há ainda a contribuição audiovisual (CAV, ~3 €/mês) e
           taxas de acesso à rede dentro da mesma fatura — impostos e taxas que
           aparecem disfarçados de consumo.
         </p>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { loadFontes, loadFreshness } from "@/lib/data";
-import { fmtData } from "@/lib/format";
+import { comUnidade, fmtData } from "@/lib/format";
 import { OrbeEstado, type EstadoOrbe } from "@/components/OrbeEstado";
 
 export const metadata: Metadata = {
@@ -100,12 +100,12 @@ export default function MetodologiaPage() {
       const folgaTxt = !s
         ? "sem verificação"
         : s.estado === "atrasada"
-          ? `−${s.atrasoPeriodos} ${s.atrasoPeriodos === 1 ? unS : unP}`
+          ? `−${comUnidade(String(s.atrasoPeriodos), s.atrasoPeriodos === 1 ? unS : unP)}`
           : s.estado === "sem-sla"
             ? "sem SLA"
             : folga === 0
               ? "no limite"
-              : `+${folga} ${folga === 1 ? unS : unP}`;
+              : `+${comUnidade(String(folga), folga === 1 ? unS : unP)}`;
       const rank = { atrasada: 0, "no-limite": 1, "em-dia": 2, "sem-sla": 3 }[classe];
       return { id: f.id, fonte: f.fonte, serieAte: f.serieAte, classe, folgaTxt, rank };
     })

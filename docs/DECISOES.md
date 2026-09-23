@@ -448,3 +448,48 @@ são sinais tipográficos de variação escritos em texto, não ícones de
 controlo (pode reavaliar-se numa sessão de polimento). Folha completa
 em `/estilo` §Ícones; testes unit (conjunto, aria, falha) e e2e
 (folha, controlos nomeados, desenho micro, reduced-motion).
+
+## 2026-09-23 — Lettering: fino U+202F, menos U+2212, «», e o <Valor> único
+
+**Contexto.** Cada peça compunha número e unidade à sua maneira —
+`sufixo=" €"`, `` `${n} ${unidade}` ``, `"€"` colado, NBSP do Intl —
+e o sinal negativo saía como hífen ASCII. A referência 1B-02 pede os
+pormenores tipográficos finos: uma ponte só, um sinal só, uma peça de
+composição só. A varrida inicial também apanhou dados de geometria
+SVG (`viewBox`, `points`, `d`) e a fonte do canvas — reposto; o
+contracto passou a ser auditado no HTML exportado, não na fonte.
+
+**Alternativas.** (a) NBSP U+00A0 — quebrável em alguns motores de
+texto e largo demais entre número e símbolo; (b) espaço fino
+tipográfico U+2009 — não é inquebrável; (c) hífen U+002D — é
+pontuação, não sinal matemático; (d) cada componente compor a sua
+unidade — era exactamente o defeito a eliminar.
+
+**Escolha.** `FINO` (U+202F, NBSP estreita) entre número e qualquer
+unidade-símbolo (`€`, `%`, `c`, `p.p.`, `€/L`, `€/kWh`, `/mês`) e no
+agrupamento de milhares; `MENOS` (U+2212) em todo o valor negativo ou
+delta — ambos exportados de `src/lib/format.ts`, que normaliza a saída
+do Intl (o ICU emite NBSP largo). A composição visual é uma peça:
+`<Valor>` (`.num-sign` semântico + número + `.num-unit` a ~45 % na
+mesma linha de base), usada pelo `NumHero`, `Leitura`, hero de
+`/salario`, `Adivinha` e demos da `/estilo`. Apresentadores animados
+(`TweenNum`, `Odometer`) recebem a unidade sem espaço e põem o FINO
+eles próprios — o `texto` sr-only leva o número e a unidade visível
+completa o anúncio, sem duplicar. Aspas PT-PT são «…»; reticências são
+«…» (U+2026); `hyphens: auto` só no corpo (`text-wrap: pretty`), nunca
+em títulos (`text-wrap: balance`). Tracking passou a tokens por papel
+(`--tracking-*` em `@theme`) — zero literais `letter-spacing` em CSS.
+O eixo `wdth` do Archivo mantém-se como expressão estática (125
+manchete / 75 monumento): o peso cinético no herói interactivo de
+`/salario` foi medido mentalmente e rejeitado — `wght`/`wdth` animado
+por input lutaria contra `tabular-nums` e daria shift de layout a cada
+tick da régua. Auditoria: `scripts/_lettering.mjs` corre no
+`npm run audit` sobre o `out/` — texto visível apenas (atributos,
+`<script>`, `<code>` e geometria SVG ficam de fora), falha em hífen
+numérico, espaço largo junto a unidade, aspas erradas e `...`.
+
+**Consequência.** Existe uma ponte número→unidade, um sinal de menos e
+uma peça de composição — quem compõe à mão falha a auditoria do build.
+Strings de copy em `data/fiscal/*.json` seguem a mesma regra porque são
+renderizadas verbatim. O FINO nunca entra em dados de máquina (paths,
+viewBox, fontes de canvas, fórmulas).

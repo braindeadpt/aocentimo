@@ -24,7 +24,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { r1 } from "@/lib/materia";
-import { fmtNum } from "@/lib/format";
+import { comUnidade, fmtNum } from "@/lib/format";
 import { escalaValor } from "@/lib/viz/escalas";
 import {
   casasViz,
@@ -47,10 +47,10 @@ export interface CategoriaHaltere {
 export interface HaltereProps {
   categorias: CategoriaHaltere[];
   /** chave do formato partilhado (props de cliente não serializam
-      funções) — «pct1» → «3,6 %» */
+      funções) — «pct1» → «3,6 %» */
   formato?: FormatoViz;
-  /** unidade da variação — «p.p.» por omissão em formatos de %;
-      passar explicitamente quando a diferença não é em p.p. */
+  /** unidade da variação, SEM espaço — «p.p.» por omissão em formatos
+      de %; a ponte ao número é o FINO */
   unidadeDelta?: string;
   /** rótulo dos dois momentos — «ago 2025» / «ago 2026» — na legenda */
   rotuloAntes: string;
@@ -165,7 +165,7 @@ export function Haltere({
     }
 
     const seta = sentido === "sobe" ? "▲" : sentido === "desce" ? "▼" : "=";
-    const delta = `${seta} ${fmtNum(Math.abs(d), casas)}${unD}`;
+    const delta = `${seta} ${comUnidade(fmtNum(Math.abs(d), casas), unD)}`;
 
     return { c, cy, xa, xb, dir, sentido, txtA, txtB, rotA, rotB, delta };
   });

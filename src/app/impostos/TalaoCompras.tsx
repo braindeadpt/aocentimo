@@ -144,7 +144,7 @@ export function TalaoCompras() {
           preço já inclui imposto, que o recibo só declara no fim.
         </p>
         <p className="footnote mt-4">
-          Cabaz de exemplo com as taxas do continente (6 %, 13 %, 23 %).
+          Cabaz de exemplo com as taxas do continente (6 %, 13 %, 23 %).
           A Madeira e os Açores têm taxas próprias, mais baixas.
         </p>
       </div>

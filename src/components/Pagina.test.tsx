@@ -13,7 +13,7 @@ const base = {
   kicker: "Exemplo",
   resposta: {
     instrumento: <div data-testid="instrumento" />,
-    frase: "De cada euro, 63 cêntimos chegam-te à conta.",
+    frase: "De cada euro, 63 cêntimos chegam-te à conta.",
   },
   explora: <div>controlos</div>,
   confirma: (

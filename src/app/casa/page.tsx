@@ -5,7 +5,7 @@ import { Source } from "@/components/Source";
 import { Leitura } from "@/components/Leitura";
 import { SimuladorCasa } from "./SimuladorCasa";
 import { loadFonte, loadDerivado, loadFreshness } from "@/lib/data";
-import { fmtEUR0, fmtNum, fmtPeriodo } from "@/lib/format";
+import { comUnidade, fmtEUR0, fmtNum, fmtPeriodo } from "@/lib/format";
 import {
   anotacaoDe,
   estadoDe,
@@ -70,7 +70,7 @@ export default function CasaPage() {
           unidade: "%",
           formato: "pct1",
           serie: serieHpi,
-          anotacao: anotacaoDe(serieHpi, "max", (v) => `${fmtNum(v, 1)} %`),
+          anotacao: anotacaoDe(serieHpi, "max", (v) => `${comUnidade(fmtNum(v, 1), "%")}`),
           leitura: fmtPeriodo(ultHpi.t),
           estado: estadoDe(fresh, "hpi-pt"),
           fonteNome: hpi.meta.fonte,
@@ -113,7 +113,7 @@ export default function CasaPage() {
           {razao && ultRazao && (
             <p className="footnote mt-3">
               Face ao custo do trabalho, a casa está{" "}
-              {fmtNum(Math.abs(ultRazao.v - 100), 0)} %{" "}
+              {comUnidade(fmtNum(Math.abs(ultRazao.v - 100), 0), "%")}{" "}
               {ultRazao.v >= 100 ? "acima" : "abaixo"} do nível de 2015
               ({fmtPeriodo(ultRazao.t)} — razão de índices Eurostat, não
               salários reais).
@@ -142,8 +142,8 @@ export default function CasaPage() {
           escalões — isento até {fmtEUR0(imt.hpp[0].ate ?? 0)} em habitação própria e
           permanente. Com o <strong>IMT Jovem</strong> (≤35 anos, primeira
           casa) a isenção sobe a {fmtEUR0(imt.jovem.isentoAte)}, e entre isso e{" "}
-          {fmtEUR0(imt.jovem.limiteBeneficio)} só o excedente tributa a 8 %.{" "}
-          <strong>Imposto de Selo</strong>: 0,8 % sobre a compra e 0,6 % sobre
+          {fmtEUR0(imt.jovem.limiteBeneficio)} só o excedente tributa a 8 %.{" "}
+          <strong>Imposto de Selo</strong>: 0,8 % sobre a compra e 0,6 % sobre
           o crédito. Os registos usam o valor típico do Casa Pronta — nas
           conservatórias avulsas pode diferir.
         </p>

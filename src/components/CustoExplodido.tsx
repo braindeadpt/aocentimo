@@ -71,7 +71,7 @@ export interface RotulosCusto {
     tsu: { rotulo: string; detalhe: string };
     /** detalhe com {taxa} — a efetiva de retenção */
     irs: { rotulo: string; detalhe: string };
-    /** detalhe com {taxa} — os 11 % do trabalhador */
+    /** detalhe com {taxa} — os 11 % do trabalhador */
     ss: { rotulo: string; detalhe: string };
     conta: { rotulo: string; detalhe: string };
   };
@@ -89,7 +89,7 @@ function ValorSvg({ v, sinal = "" }: { v: number; sinal?: string }) {
   );
 }
 
-/** valor de um corte na lista-equivalente — «−356 €» com o menos da
+/** valor de um corte na lista-equivalente — «−356 €» com o menos da
     casa (U+2212), no texto acessível e no visual */
 function ValorCorte({ v }: { v: number }) {
   return (
@@ -98,7 +98,7 @@ function ValorCorte({ v }: { v: number }) {
       casas={0}
       texto={`−${fmtEUR0(v)}`}
       prefixo="−"
-      sufixo=" €"
+      sufixo="€"
     />
   );
 }
@@ -143,7 +143,7 @@ export function CustoExplodido({
       tom: "neutro", // o custo total não é um corte — é o ponto de partida
       texto: <ValorSvg v={custo} />,
       textoLista: (
-        <TweenNum valor={custo} casas={0} texto={fmtEUR0(custo)} sufixo=" €" />
+        <TweenNum valor={custo} casas={0} texto={fmtEUR0(custo)} sufixo="€" />
       ),
     },
     corte("tsu", t(R.tsu.rotulo, { taxa: fmtPct(taxaTsu, 2) }), R.tsu.detalhe, tsu),
@@ -166,7 +166,7 @@ export function CustoExplodido({
           valor={liquido}
           casas={0}
           texto={fmtEUR0(liquido)}
-          sufixo=" €"
+          sufixo="€"
         />
       ),
     },

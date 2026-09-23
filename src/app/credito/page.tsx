@@ -6,7 +6,7 @@ import { Leitura } from "@/components/Leitura";
 import { LineChart } from "@/components/LineChart";
 import { SimuladorPrestacao } from "./SimuladorPrestacao";
 import { loadFonte, loadFreshness, loadPainel } from "@/lib/data";
-import { fmtNum, fmtPeriodo } from "@/lib/format";
+import { comUnidade, fmtNum, fmtPeriodo } from "@/lib/format";
 import {
   anotacaoDe,
   estadoDe,
@@ -64,7 +64,7 @@ export default function CreditoPage() {
             medEur12 !== null
               ? { valor: medEur12, rotulo: m.leitura.mediana10 }
               : undefined,
-          anotacao: anotacaoDe(serieEur12, "max", (v) => `${fmtNum(v, 2)} %`),
+          anotacao: anotacaoDe(serieEur12, "max", (v) => `${comUnidade(fmtNum(v, 2), "%")}`),
           leitura: fmtPeriodo(ultimo12.t),
           estado: estadoDe(fresh, "euribor-12m-mensal"),
           fonteNome: eur12.meta.fonte,

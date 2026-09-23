@@ -9,7 +9,7 @@ import retencao2026 from "@data/fiscal/retencao-2026.json";
  *
  * Nas linhas de transição do mínimo de existência a parcela a abater é uma
  * fórmula: taxa × fator × (limiar − R) — garante continuidade no limite.
- * Com 3+ dependentes a taxa marginal desce 1 p.p. (parcelas inalteradas).
+ * Com 3+ dependentes a taxa marginal desce 1 p.p. (parcelas inalteradas).
  */
 
 export interface ParcelaFormula {
@@ -66,7 +66,7 @@ export function tabelaAplicavel(
 
 export interface ResultadoRetencao {
   tabela: TabelaId;
-  taxaMarginal: number; // já com a redução de 1 p.p. se 3+ dependentes
+  taxaMarginal: number; // já com a redução de 1 p.p. se 3+ dependentes
   parcelaAbater: number;
   retencao: number; // €/mês, ≥ 0
   taxaEfetiva: number;

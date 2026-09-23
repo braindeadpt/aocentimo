@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Odometer } from "@/components/Odometer";
+import { Valor } from "@/components/Valor";
+import { FINO } from "@/lib/format";
 import { m, t } from "@/lib/messages";
 
 /**
@@ -37,7 +39,7 @@ export function Adivinha({ real }: { real: number }) {
           <p className="kicker-xs text-accent">
             {m.guess.kicker}
           </p>
-          <p className="mt-1 font-display text-display-xs leading-snug tracking-wide text-ink md:text-display-sm">
+          <p className="mt-1 font-display text-display-xs leading-snug tracking-manchete-xl text-ink md:text-display-sm">
             {m.guess.pergunta}
           </p>
         </div>
@@ -73,14 +75,19 @@ export function Adivinha({ real }: { real: number }) {
             <span className="kicker">
               {m.guess.realidade}
             </span>
-            <Odometer
-              valor={real}
-              casas={1}
-              sufixo=" c"
+            <Valor
               className="num text-display-xl text-keep md:text-display-2xl"
+              numero={
+                <Odometer
+                  valor={real}
+                  casas={1}
+                  className="num text-display-xl text-keep md:text-display-2xl"
+                />
+              }
+              unidade="c"
             />
             <span className="text-corpo-sm leading-relaxed text-ink2">
-              {t(m.guess.estadoFica, { valor: `${Math.round(estado)} ${m.guess.centimos}` })}
+              {t(m.guess.estadoFica, { valor: `${Math.round(estado)}${FINO}${m.guess.centimos}` })}
             </span>
           </div>
         )}

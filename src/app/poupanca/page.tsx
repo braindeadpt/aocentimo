@@ -8,7 +8,7 @@ import { CadernetaAforro } from "./CadernetaAforro";
 import { SimuladorPpr } from "./SimuladorPpr";
 import { SimuladorMaisValias } from "./SimuladorMaisValias";
 import { loadDerivado } from "@/lib/data";
-import { fmtData, fmtNum, fmtPct, fmtPeriodo } from "@/lib/format";
+import { comUnidade, fmtData, fmtNum, fmtPct, fmtPeriodo } from "@/lib/format";
 import {
   anotacaoDe,
   insightMediana,
@@ -28,7 +28,7 @@ import { JsonLd, webApplication } from "@/lib/jsonld";
 export const metadata: Metadata = {
   title: "Poupança — Certificados de Aforro, depósitos e inflação",
   description:
-    "Como funcionam os Certificados de Aforro, a tributação de 28 % sobre juros, e porque a taxa que importa é a real, não a nominal.",
+    "Como funcionam os Certificados de Aforro, a tributação de 28 % sobre juros, e porque a taxa que importa é a real, não a nominal.",
   alternates: { canonical: "/poupanca", types: ALT_FEED },
 };
 
@@ -61,7 +61,7 @@ export default function PoupancaPage() {
           insight:
             cap !== undefined && ultCa.v >= cap
               ? t(m.leitura.certificados.cap, {
-                  valor: `${fmtNum(cap, 2)} %`,
+                  valor: `${comUnidade(fmtNum(cap, 2), "%")}`,
                 })
               : insightMediana(
                   ultCa.v,
@@ -76,7 +76,7 @@ export default function PoupancaPage() {
             medCa !== null
               ? { valor: medCa, rotulo: m.leitura.mediana10 }
               : undefined,
-          anotacao: anotacaoDe(serieCa, "max", (v) => `${fmtNum(v, 1)} %`),
+          anotacao: anotacaoDe(serieCa, "max", (v) => `${comUnidade(fmtNum(v, 1), "%")}`),
           leitura: fmtPeriodo(caBase.meta.serieAte),
           estado: "sem-sla",
           fonteNome: caBase.meta.fonte,
@@ -100,7 +100,7 @@ export default function PoupancaPage() {
         O que sobra do que poupas
       </h1>
       <p className="lede mt-5">
-        Um depósito a 1,5 % com inflação a 3 % faz-te perder dinheiro — devagar
+        Um depósito a 1,5 % com inflação a 3 % faz-te perder dinheiro — devagar
         e sem aviso. A taxa que interessa é a <strong>real</strong>: nominal
         menos imposto menos inflação.
       </p>
@@ -151,7 +151,7 @@ export default function PoupancaPage() {
           <strong>1.</strong> Os juros de depósitos e CA pagam{" "}
           {fmtPct(capitais.retencaoLiberatoria.taxa, 0)} de imposto
           logo à saída — a taxa anunciada pelo banco é sempre bruta.{" "}
-          <strong>2.</strong> O dinheiro parado na conta à ordem rende 0 % e
+          <strong>2.</strong> O dinheiro parado na conta à ordem rende 0 % e
           perde para a inflação todos os anos. <strong>3.</strong> Os CA têm
           capital garantido pelo Estado e seguem a Euribor 3M — quando as taxas
           descem, descem; o prémio de permanência compensa quem fica.

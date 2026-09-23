@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import type { CSSProperties } from "react";
+import { FINO, comUnidade } from "@/lib/format";
 
 /**
  * Regua — a régua física de input da Direcção V3 §5: substitui o
@@ -43,7 +44,8 @@ export interface ReguaProps {
       saltam ±10 pontos, presets e cliques caem no ponto mais próximo.
       Nunca se interpola um valor fora da grelha (V4, S1-09) */
   pontos?: readonly number[];
-  /** sufixo da unidade — « €», « %» (com o espaço) */
+  /** a unidade, SEM espaço — «€», «%»; a ponte ao número é o fino
+      inseparável (FINO, U+202F), posto pela régua */
   unidade?: string;
   /** número → texto sem unidade (ex.: `(v) => fmtNum(v, 0)`) */
   formato: (v: number) => string;
@@ -151,7 +153,7 @@ export function Regua({
       : null;
   const pctAgora = agora ? ((agora.valor - min) / alcance) * 100 : 0;
   const textoAgora = agora
-    ? `${agora.rotulo} ${formato(agora.valor)}${unidade}`
+    ? `${agora.rotulo} ${comUnidade(formato(agora.valor), unidade)}`
     : "";
 
   const { fino, forte } = useMemo(
@@ -178,8 +180,8 @@ export function Regua({
 
   // o rótulo «agora» afasta-se dos rótulos dos extremos (larguras
   // estimadas a 10 px mono — não vale a pena medir três nós)
-  const wMin = `${formato(min)}${unidade}`.length * CH10 + 4;
-  const wMax = `${formato(max)}${unidade}`.length * CH10 + 4;
+  const wMin = comUnidade(formato(min), unidade).length * CH10 + 4;
+  const wMax = comUnidade(formato(max), unidade).length * CH10 + 4;
   const wAgora = textoAgora.length * CH10;
   const esqAgora = Math.max(wAgora / 2, wMin + wAgora / 2 + 6);
   const dirAgora = Math.max(wAgora / 2, wMax + wAgora / 2 + 6);
@@ -193,7 +195,7 @@ export function Regua({
     const p = palcoRef.current;
     const v = valorRef.current;
     if (!p || !v) return;
-    const t = `${formato(valor)}${unidade}`;
+    const t = comUnidade(formato(valor), unidade);
     if (t === ultimoTexto.current) return;
     ultimoTexto.current = t;
     p.style.setProperty("--meia-v", `${v.offsetWidth / 2}px`);
@@ -221,7 +223,12 @@ export function Regua({
             }
           >
             {formato(valor)}
-            {unidade && <span className="regua-un">{unidade}</span>}
+            {unidade && (
+              <span className="regua-un">
+                {FINO}
+                {unidade}
+              </span>
+            )}
           </span>
         </div>
 
@@ -262,11 +269,11 @@ export function Regua({
             max={max}
             step={pontos ? "any" : passo}
             value={valor}
-            aria-valuetext={`${formato(valor)}${unidade}`}
+            aria-valuetext={comUnidade(formato(valor), unidade)}
             onChange={(e) => emit(Number(e.target.value))}
             // com pontos: setas andam ponto a ponto e PageUp/Down ±10
             // pontos; sem pontos: PageUp/Down saltam exactamente
-            // 10×passo (o nativo do Chrome move ~10 % do alcance)
+            // 10×passo (o nativo do Chrome move ~10 % do alcance)
             onKeyDown={(e) => {
               if (pontos) {
                 const salto =
@@ -312,8 +319,7 @@ export function Regua({
 
         <div className="regua-escala" aria-hidden="true">
           <span className="regua-min">
-            {formato(min)}
-            {unidade}
+            {comUnidade(formato(min), unidade)}
           </span>
           {agora && (
             <span
@@ -326,8 +332,7 @@ export function Regua({
             </span>
           )}
           <span className="regua-max">
-            {formato(max)}
-            {unidade}
+            {comUnidade(formato(max), unidade)}
           </span>
         </div>
       </div>

@@ -8,7 +8,7 @@ import { SimuladorIndependente } from "./SimuladorIndependente";
 import desemprego from "@data/fiscal/desemprego.json";
 import catb from "@data/fiscal/catb.json";
 import { loadFonte, loadFreshness } from "@/lib/data";
-import { fmtNum, fmtPeriodo } from "@/lib/format";
+import { comUnidade, fmtNum, fmtPeriodo } from "@/lib/format";
 import {
   anotacaoDe,
   estadoDe,
@@ -52,7 +52,7 @@ export default function TrabalhoPage() {
           formato: "pct1",
           serie: seriePt,
           referencia: { pontos: serieUe, rotulo: m.leitura.ue27 },
-          anotacao: anotacaoDe(seriePt, "max", (v) => `${fmtNum(v, 1)} %`),
+          anotacao: anotacaoDe(seriePt, "max", (v) => `${comUnidade(fmtNum(v, 1), "%")}`),
           leitura: fmtPeriodo(unePt.meta.serieAte),
           estado: estadoDe(fresh, "une-pt-total"),
           fonteNome: unePt.meta.fonte,
@@ -77,8 +77,8 @@ export default function TrabalhoPage() {
         Se ficares sem trabalho
       </h1>
       <p className="lede mt-5">
-        Os 11 % que descontas todos os meses pagam isto: se perderes o emprego
-        de forma involuntária, a Segurança Social devolve-te uma parte — 65 %
+        Os 11 % que descontas todos os meses pagam isto: se perderes o emprego
+        de forma involuntária, a Segurança Social devolve-te uma parte — 65 %
         da tua remuneração de referência, dentro de limites e por tempo
         contado.
       </p>
