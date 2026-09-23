@@ -126,20 +126,21 @@ test.describe("os estados no produto", () => {
     await expect(carimbo).toHaveCount(1);
     await expect(carimbo).toHaveClass(/talao-retido-neutro/);
     await expect(carimbo).toHaveText("Não retido");
-    // a cascata também diz porque o corte é zero — na linha do IRS
+    // o campo de cêntimos diz o mesmo: a parte do IRS está a «0 c»
+    // (3A-01 — a cascata e a explosão saíram; a repartição do custo
+    // é o CampoCentimos em montes)
+    const campo = page.locator(".cc").first();
     await expect(
-      page.locator(".chart-hit", { hasText: "IRS retido" })
-    ).toContainText("não te toca");
-    await expect(page.locator(".chart-hit").last()).not.toContainText(
-      "não te toca"
-    ); // o líquido — só o IRS a zero tem a nota
-    // e o ano inteiro — a estimativa de IRS ao mínimo também é zero
+      campo.locator(".cc-rot", { hasText: "IRS retido" })
+    ).toContainText("0 c");
+    // e o ano inteiro — a estimativa de IRS ao mínimo também é zero,
+    // dentro do detalhe fechado do nível 3
+    const ano = page.locator("details", { hasText: "O ano inteiro" });
+    await ano.locator("summary").click();
     await expect(
-      page.locator("div.flex.justify-between", {
+      ano.locator("div.flex.justify-between", {
         hasText: "IRS 2026 (estimativa)",
       })
     ).toContainText("não te toca");
-    // a explosão do custo: a placa do IRS a zero diz-se na lista
-    await expect(page.locator(".iso-card")).toContainText("não te toca");
   });
 });

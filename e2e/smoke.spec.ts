@@ -18,14 +18,26 @@ test("home renderiza com os números-chave", async ({ page }) => {
 
 test("calculadora de salário produz resultado", async ({ page }) => {
   await page.goto("/salario");
-  await page.getByLabel("Salário bruto mensal").fill("1500");
-  await expect(page.getByText("Líquido anual")).toBeVisible();
-  await expect(page.getByText("Taxa marginal")).toBeVisible();
+  // o bruto é régua (input range) — move-se por teclado, não por fill
+  await page.getByLabel("Salário bruto mensal").focus();
+  await page.keyboard.press("ArrowRight");
+  // o talão prova o recibo no nível 2…
+  await expect(page.getByText("Recibo de vencimento")).toBeVisible();
+  // …e o ano inteiro e as taxas vivem no nível 3 — abrem-se os detalhes
+  const ano = page.locator("details", { hasText: "O ano inteiro" });
+  await ano.locator("summary").click();
+  await expect(ano.getByText("Líquido anual")).toBeVisible();
+  const taxas = page.locator("details", {
+    hasText: "Taxa efetiva e taxa marginal",
+  });
+  await taxas.locator("summary").click();
+  await expect(taxas.getByText(/a taxa do próximo euro/)).toBeVisible();
 });
 
 test("o talão do salário carimba o domínio canónico", async ({ page }) => {
   await page.goto("/salario");
-  await page.getByLabel("Salário bruto mensal").fill("1500");
+  await page.getByLabel("Salário bruto mensal").focus();
+  await page.keyboard.press("ArrowRight");
   const texto = (await page.locator("body").innerText()).toLowerCase();
   expect(texto).toContain(HOST);
 });
@@ -56,7 +68,8 @@ test("simuladores novos produzem resultado", async ({ page }) => {
   await expect(page.getByText("Poupança por ano")).toBeVisible();
 
   await page.goto("/trabalho");
-  await page.getByLabel("A tua idade").fill("35");
+  // a idade é um contador físico (botões −/+), não um input de número
+  await page.getByRole("button", { name: "A tua idade — mais" }).click();
   await expect(page.getByText("Declaração de desemprego")).toBeVisible();
 });
 
@@ -218,7 +231,8 @@ test("com reduced-motion o número-herói mostra o valor final sem interpolaçã
   await page.goto("/salario");
   // o número-herói de /salario é o líquido impresso no talão
   const hero = page.locator(".talao-cut dd").first();
-  await page.locator("#bruto").fill("2000");
+  await page.locator("#bruto").focus();
+  await page.keyboard.press("ArrowRight");
   // imediatamente depois do input: o texto é já o valor final — e fica
   // estável; com interpolação, uma segunda leitura passados 700ms
   // (> --dur-media) mostraria outro número
@@ -342,41 +356,29 @@ test("a explosão do euro interroga-se por teclado e tem equivalente textual", a
   expect(ordem.euro).toBeLessThan(ordem.capitulos);
 });
 
-test("a explosão do custo em /salario interroga-se e reage à régua", async ({
+test("o custo em /salario é um campo de cêntimos e reage à régua", async ({
   page,
 }) => {
-  // R-05: o custo do trabalho é uma explosão isométrica (a gramática do
-  // euro), não papel — svg decorativo + equivalente visível na mesma
-  // carta, e peças interrogáveis por foco de teclado
+  // 3A-01: a explosão isométrica saiu (não era proporcional) — o custo
+  // total desenha-se no catálogo V4 como CampoCentimos «montes» (1
+  // ponto = 1 cêntimo de cada euro que a empresa gasta): rótulos HTML
+  // por parte + um equivalente textual único, sempre presente
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/salario");
-  const cartao = page.locator(".iso-card").first();
-  await expect(cartao).toBeVisible();
+  const campo = page.locator(".cc").first();
+  await expect(campo).toBeVisible();
+  await expect(campo.locator(".cc-rot-l")).toHaveCount(4);
+  await expect(campo).toContainText("TSU");
+  await expect(campo).toContainText("Chega à tua conta");
 
-  // o desenho é decorativo; o custo existe em texto — 5 passos
-  await expect(cartao.locator("svg").first()).toHaveAttribute(
-    "aria-hidden",
-    "true"
-  );
-  const lista = cartao.locator("[data-custo-lista]");
-  await expect(lista.locator("li")).toHaveCount(5);
-  await expect(lista).toContainText("A empresa paga");
-  await expect(lista).toContainText("TSU");
-  await expect(lista).toContainText("Chega à conta");
+  const eq = campo.locator("[data-cc-equivalente]");
+  await expect(eq).toContainText("De cada euro que a empresa gasta contigo");
 
-  // foco de teclado num passo acende a peça correspondente (e a sua
-  // chamada — .iso-rotg.iso-camada-on)
-  await lista.locator("li").nth(1).focus();
-  await expect(cartao.locator("g.iso-camada.iso-camada-on")).toHaveCount(1);
-  await page.keyboard.press("Escape");
-
-  // a régua do bruto muda a explosão — o líquido e o selo do Estado
-  // acompanham; reduced-motion → valor final imediato, sem interpolação
-  const conta = lista.locator("li").last();
-  const antes = await conta.innerText();
-  await page.locator("#bruto").fill("2000");
-  await expect(conta).not.toHaveText(antes);
-  await expect(cartao.locator(".leitura-meta")).toContainText("Estado leva");
+  // a régua do bruto muda a repartição — o equivalente acompanha
+  const antes = await eq.innerText();
+  await page.locator("#bruto").focus();
+  await page.keyboard.press("End"); // 6 000 € — repartição diferente
+  await expect(eq).not.toHaveText(antes);
 });
 
 test("cada gráfico tem exactamente um equivalente textual alcançável", async ({
@@ -487,9 +489,10 @@ test("o motor fiscal de /salario chega lazy — nunca no first-load", async ({
   expect(antes).toMatch(/\d/); // o canónico já lá está sem motor
   const nInicial = pedidos.length;
 
-  // sai do perfil canónico — o motor chega num chunk novo
-  await page.selectOption("#situacao", "casado2");
-  await page.fill("#dep", "3");
+  // sai do perfil canónico — o motor chega num chunk novo; os
+  // controlos são físicos (segmentado + contador), não select/input
+  await page.getByRole("radio", { name: "Casado(a) · 2" }).click();
+  await page.getByRole("button", { name: "Dependentes — mais" }).click();
   // enquanto carrega nunca fica em branco; depois recalcula de verdade
   await expect(hero).not.toHaveText(antes, { timeout: 10_000 });
   expect(pedidos.length).toBeGreaterThan(nInicial);
