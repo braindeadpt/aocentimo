@@ -1,38 +1,61 @@
 import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
-import { Figure } from "@/components/Figure";
+import { Pagina, PaginaDetalhe } from "@/components/Pagina";
+import { Cartao } from "@/components/Cartao";
 import { Delta } from "@/components/Delta";
-import { Leitura } from "@/components/Leitura";
 import { EstadoVazio } from "@/components/EstadoVazio";
+import { Haltere } from "@/components/Haltere";
+import { LineChart } from "@/components/LineChart";
 import { Source } from "@/components/Source";
 import { JsonLd, dataset } from "@/lib/jsonld";
 import { PoderDeCompra } from "./PoderDeCompra";
 import { SalarioReal } from "./SalarioReal";
-import { loadSerie, variacao, loadFontes, loadFreshness, type Serie } from "@/lib/data";
+import {
+  loadSerie,
+  variacao,
+  loadFontes,
+  loadFreshness,
+  type Serie,
+} from "@/lib/data";
 import { comUnidade, fmtNum, fmtPeriodo } from "@/lib/format";
 import {
-  anotacaoDe,
   estadoDe,
   homologa,
-  insightMediana,
   janela10,
-  mediana,
   rotulosLeitura,
-  type Cartao,
 } from "@/lib/leitura";
 import { m } from "@/lib/messages";
-import { TituloPagina } from "@/components/Voo";
+import eventos from "@data/fiscal/eventos.json";
 
 export const metadata: Metadata = {
-  title: "Inflação — quanto subiu o que compras",
+  title: "Inflação — quanto mais caro está o que compras",
   description:
-    "IHPC em Portugal por categoria COICOP: alimentação, energia, habitação, transportes. Variação mensal e homóloga com dados Eurostat.",
+    "IHPC em Portugal por categoria ECOICOP: alimentação, energia, habitação, transportes. Variação homóloga mensal com dados Eurostat.",
   alternates: { canonical: "/inflacao", types: ALT_FEED },
 };
 
+/** as 12 divisões ECOICOP 2018 que a ingestão traz (CP01–CP12) —
+    rótulo completo + curto para o haltere em coluna estreita */
+const DIVISOES: [string, string, string][] = [
+  ["CP01", "Alimentação e bebidas", "Alimentação"],
+  ["CP02", "Álcool e tabaco", "Álcool e tabaco"],
+  ["CP03", "Vestuário e calçado", "Vestuário"],
+  ["CP04", "Habitação, água e energia", "Habitação"],
+  ["CP05", "Mobiliário e artigos para o lar", "Mobiliário"],
+  ["CP06", "Saúde", "Saúde"],
+  ["CP07", "Transportes", "Transportes"],
+  ["CP08", "Informação e comunicação", "Comunicações"],
+  ["CP09", "Recreação, desporto e cultura", "Lazer e cultura"],
+  ["CP10", "Serviços de educação", "Educação"],
+  ["CP11", "Restaurantes e hotéis", "Restaurantes"],
+  ["CP12", "Seguros e serviços financeiros", "Seguros"],
+];
+
+/** categorias da tabela do nível 3 — as 12 divisões + as
+    subcategorias mais faladas e os agregados */
 const CATEGORIAS: [string, string][] = [
   ["CP00", "Índice geral"],
-  ["CP01", "Alimentação e bebidas"],
+  ...DIVISOES.map(([cod, nome]) => [cod, nome] as [string, string]),
   ["CP0111", "Pão e cereais"],
   ["CP0112", "Carne"],
   ["CP0113", "Peixe"],
@@ -40,12 +63,8 @@ const CATEGORIAS: [string, string][] = [
   ["CP0115", "Óleos e gorduras"],
   ["CP0116", "Fruta"],
   ["CP0117", "Legumes"],
-  ["CP02", "Álcool e tabaco"],
-  ["CP04", "Habitação, água e energia"],
   ["CP045", "Eletricidade e gás"],
-  ["CP07", "Transportes"],
   ["CP0722", "Combustíveis"],
-  ["CP11", "Restaurantes e hotéis"],
   ["NRG", "Energia (agregado)"],
 ];
 
@@ -55,8 +74,8 @@ function ultimoValor(s: Serie | null) {
 
 /** Ano-base do índice, derivado de meta.unidade ("Índice 2025=100" → "2025"). */
 function anoBase(s: Serie | null): string | null {
-  const m = s?.meta.unidade.match(/(\d{4})\s*=\s*100/);
-  return m ? m[1] : null;
+  const b = s?.meta.unidade.match(/(\d{4})\s*=\s*100/);
+  return b ? b[1] : null;
 }
 
 export default function InflacaoPage() {
@@ -73,90 +92,62 @@ export default function InflacaoPage() {
 
   const temDados = cp00 !== null;
   const base = anoBase(cp00);
-  const desde = cp00?.series[0]?.t.slice(0, 4) ?? "1996";
+  const estadoCp00 = estadoDe(fresh, "hicp-pt-cp00");
 
-  // ————— a leitura-herói: taxa homóloga do índice geral, 10 anos,
-  // com a mediana da própria série como referência constante —————
-  const homCp00 = cp00 ? janela10(homologa(cp00.series, 12)) : [];
-  const medCp00 = mediana(homCp00.map((p) => p.v));
+  // ————— nível 1 — a taxa homóloga numa frase; a máquina do tempo
+  // (o euro a encolher) é o instrumento, com régua de anos —————
+  const homCp00 = cp00 ? homologa(cp00.series, 12) : [];
   const ultCp00 = homCp00[homCp00.length - 1];
-  const hero: Cartao | null =
-    cp00 && ultCp00
-      ? {
-          breadcrumb: m.painel.cartoes.inflacao.breadcrumb,
-          titulo: m.painel.cartoes.inflacao.titulo,
-          insight: insightMediana(
-            ultCp00.v,
-            medCp00 !== null ? { valor: medCp00 } : null,
-            "%"
-          ),
-          valor: ultCp00.v,
-          unidade: "%",
-          formato: "pct",
-          serie: homCp00,
-          referencia:
-            medCp00 !== null
-              ? { valor: medCp00, rotulo: m.leitura.mediana10 }
-              : undefined,
-          anotacao: anotacaoDe(homCp00, "max", (v) => `${comUnidade(fmtNum(v, 1), "%")}`),
-          leitura: fmtPeriodo(cp00.meta.serieAte),
-          estado: estadoDe(fresh, "hicp-pt-cp00"),
-          fonteNome: cp00.meta.fonte,
-          fonteUrl: cp00.meta.url,
-          href: "/inflacao",
-          hrefJson: "/api/hicp-pt-cp00.json",
-          amplo: true,
-        }
-      : null;
-
-  // ————— as divisões mais faladas, homólogas, na mesma régua —————
-  const divisoes: [string, { breadcrumb: string; titulo: string }][] = [
-    ["CP01", m.leitura.cabaz.alimentacao],
-    ["CP045", m.leitura.cabaz.energiaCasa],
-    ["CP11", m.leitura.cabaz.restaurantes],
-  ];
-  // o slot nunca desaparece: fonte em falta = EstadoVazio no lugar
-  const cartoesDiv: (Cartao | { vazio: true; cod: string; s: Serie | null })[] =
-    divisoes.map(([cod, rot]) => {
-      const s = loadSerie(cod);
-      const hom = s ? janela10(homologa(s.series, 12)) : [];
-      const ult = hom[hom.length - 1];
-      if (!s || !ult) return { vazio: true, cod, s };
-      const med = mediana(hom.map((p) => p.v));
-      return {
-        breadcrumb: rot.breadcrumb,
-        titulo: rot.titulo,
-        insight: insightMediana(
-          ult.v,
-          med !== null ? { valor: med } : null,
+  const frase =
+    ultCp00 === undefined
+      ? "A taxa de inflação não chegou da fonte — vê a falha abaixo."
+      : `Em ${fmtPeriodo(ultCp00.t)}, os preços estavam ${comUnidade(
+          fmtNum(Math.abs(ultCp00.v), 1),
           "%"
+        )} ${ultCp00.v >= 0 ? "mais caros" : "mais baratos"} do que um ano antes.`;
+
+  // ————— nível 2 — o haltere das 12 divisões ECOICOP (há um ano ● ○
+  // agora, taxa homóloga), ordenado pela maior subida; e a linha
+  // anotada índice geral vs alimentação vs energia —————
+  const haltere = DIVISOES.map(([cod, rotulo, rotuloCurto]) => {
+    const s = loadSerie(cod);
+    if (!s) return null;
+    const hom = homologa(s.series, 12);
+    const agora = hom[hom.length - 1];
+    const antes = hom[hom.length - 13]; // a mesma taxa há um ano
+    if (!agora || !antes) return null;
+    return { id: cod, rotulo, rotuloCurto, antes: antes.v, agora: agora.v };
+  })
+    .filter((x) => x !== null)
+    .sort((a, b) => b.agora - a.agora);
+
+  const linhaSeries = (
+    [
+      ["CP00", "Índice geral"],
+      ["CP01", "Alimentação"],
+      ["NRG", "Energia"],
+    ] as const
+  )
+    .map(([cod, name]) => {
+      const s = loadSerie(cod);
+      if (!s) return null;
+      return {
+        name,
+        data: janela10(homologa(s.series, 12)).map(
+          (p) => [p.t, p.v] as [string, number]
         ),
-        valor: ult.v,
-        unidade: "%",
-        formato: "pct1" as const,
-        serie: hom,
-        referencia:
-          med !== null
-            ? { valor: med, rotulo: m.leitura.mediana10 }
-            : undefined,
-        anotacao: anotacaoDe(hom, "max", (v) => `${comUnidade(fmtNum(v, 1), "%")}`),
-        leitura: fmtPeriodo(s.meta.serieAte),
-        estado: estadoDe(fresh, `hicp-pt-${cod.toLowerCase()}`),
-        fonteNome: s.meta.fonte,
-        fonteUrl: s.meta.url,
-        href: "/inflacao",
-        hrefJson: `/api/hicp-pt-${cod.toLowerCase()}.json`,
       };
-    });
+    })
+    .filter((x) => x !== null);
 
   return (
-    <div className="mx-auto max-w-5xl px-5 pt-14">
+    <>
       {cp00 && (
         <JsonLd
           data={dataset({
-            nome: "IHPC — Portugal, por categoria COICOP 2018",
+            nome: "IHPC — Portugal, por categoria ECOICOP 2018",
             descricao:
-              "Índice harmonizado de preços no consumidor para Portugal, por categoria COICOP 2018 — série mensal Eurostat (prc_hicp_minr).",
+              "Índice harmonizado de preços no consumidor para Portugal, por categoria ECOICOP 2018 — série mensal Eurostat (prc_hicp_minr).",
             fontes: [{ nome: "Eurostat", url: fonte?.url }],
             atualizadoEm: cp00.meta.serieAte,
             licenca:
@@ -165,192 +156,273 @@ export default function InflacaoPage() {
           })}
         />
       )}
-      <p className="kicker">Preços no consumidor</p>
-      <TituloPagina rota="/inflacao">Quanto subiu o que compras</TituloPagina>
-      <p className="lede mt-5">
-        O índice de preços no consumidor é a medida oficial da inflação. Não é
-        o preço de um produto numa loja — é a média ponderada de um cabaz
-        representativo. Mostramos o IHPC (Eurostat, comparável com a Zona
-        Euro), por categoria, desde {desde}.
-      </p>
-
-      {/* a taxa homóloga como instrumento — herói amplo + divisões;
-          a base do índice e a tabela por categoria ficam mais abaixo */}
-      {hero ? (
-        <div className="stack-fig">
-          <Leitura {...hero} rotulos={rotulos} />
-          <div className="mt-5 grid gap-5 md:grid-cols-3">
-            {cartoesDiv.map((slot, i) =>
-              "vazio" in slot ? (
-                <EstadoVazio
-                  key={slot.cod}
-                  titulo={divisoes[i][1].titulo}
-                  falha={m.estados.serieFalhou}
-                  desde={
-                    slot.s?.meta.serieAte
-                      ? fmtPeriodo(slot.s.meta.serieAte)
-                      : undefined
+      <Pagina
+        pergunta="Quanto mais caro está o que compras?"
+        rota="/inflacao"
+        kicker="Inflação — preços no consumidor"
+        resposta={{
+          instrumento: temDados ? (
+            <PoderDeCompra
+              serie={cp00!.series}
+              estado={estadoCp00}
+              estadoRotulo={rotulos.estados[estadoCp00]}
+              rotuloFonte={m.common.fonte}
+              fonteNome={cp00!.meta.fonte}
+              fonteUrl={cp00!.meta.url}
+              leituraAte={fmtPeriodo(cp00!.meta.serieAte)}
+            />
+          ) : (
+            <EstadoVazio
+              titulo="o índice de preços (IHPC, Portugal)"
+              falha={m.estados.serieFalhou}
+              fonte={{
+                nome: "Eurostat",
+                url: fonte?.url ?? "https://ec.europa.eu/eurostat",
+              }}
+            />
+          ),
+          frase,
+        }}
+        explora={
+          <div className="stack-fig space-y-10">
+            {/* a figura principal — as 12 divisões ECOICOP, taxa homóloga
+                de há um ano ● ○ de agora, ordenadas pela maior subida */}
+            {haltere.length > 0 ? (
+              <Cartao
+                amplo
+                breadcrumb="INFLAÇÃO / AS 12 DIVISÕES ECOICOP · EUROSTAT"
+                icone="inflacao"
+                meta={["taxa homóloga, %"]}
+                estado={estadoCp00}
+                estadoRotulo={rotulos.estados[estadoCp00]}
+                fonte={{
+                  rotulo: m.common.fonte,
+                  itens: [{ nome: "Eurostat — IHPC mensal", url: fonte?.url }],
+                }}
+              >
+                <Haltere
+                  categorias={haltere}
+                  formato="pct1"
+                  rotuloAntes={
+                    ultCp00
+                      ? fmtPeriodo(
+                          homCp00[homCp00.length - 13]?.t ?? ultCp00.t
+                        )
+                      : "há um ano"
                   }
-                  fonte={{
-                    nome: slot.s?.meta.fonte ?? "Eurostat",
-                    url:
-                      slot.s?.meta.url ?? "https://ec.europa.eu/eurostat",
-                  }}
+                  rotuloAgora={
+                    ultCp00 ? fmtPeriodo(ultCp00.t) : "agora"
+                  }
+                  bomSubir={false}
                 />
-              ) : (
-                <Leitura
-                  key={slot.titulo}
-                  {...slot}
-                  rotulos={rotulos}
-                  entrada={i}
+                <p className="footnote mt-3">
+                  Cada linha compara a taxa de inflação homóloga da divisão:
+                  ● há um ano, ○ agora. Ordenadas da maior subida para a
+                  menor — quem lidera o cabaz está em cima.
+                </p>
+              </Cartao>
+            ) : (
+              <EstadoVazio
+                titulo="as divisões do cabaz"
+                falha={m.estados.serieFalhou}
+                fonte={{ nome: "Eurostat", url: fonte?.url }}
+              />
+            )}
+
+            {/* a linha anotada — índice geral vs alimentação vs energia,
+                taxa homóloga na janela de 10 anos; a faixa do IVA zero
+                tem fonte e data em data/fiscal/eventos.json */}
+            {linhaSeries.length > 0 ? (
+              <Cartao
+                amplo
+                breadcrumb="INFLAÇÃO / GERAL · ALIMENTAÇÃO · ENERGIA · EUROSTAT"
+                icone="inflacao"
+                meta={["taxa homóloga, %"]}
+                estado={estadoCp00}
+                estadoRotulo={rotulos.estados[estadoCp00]}
+                fonte={{
+                  rotulo: m.common.fonte,
+                  itens: [{ nome: "Eurostat — IHPC mensal", url: fonte?.url }],
+                }}
+                acoes={[
+                  {
+                    copiar: "/api/hicp-pt-cp00.json",
+                    rotulo: rotulos.json,
+                    ariaLabel: rotulos.jsonAria,
+                  },
+                ]}
+              >
+                <LineChart
+                  series={linhaSeries}
+                  unidade="%"
+                  eventos={eventos.eventos.filter((e) => e.alvo === "ihpc")}
+                  estado={estadoCp00}
                 />
-              )
+              </Cartao>
+            ) : (
+              <EstadoVazio
+                compacto
+                titulo="a série da inflação"
+                falha={m.estados.serieFalhou}
+                fonte={{ nome: "Eurostat", url: fonte?.url }}
+              />
             )}
           </div>
-        </div>
-      ) : (
-        // a falha mostra-se no lugar do instrumento — nunca um buraco
-        <div className="stack-fig">
-          <EstadoVazio
-            titulo="o índice de preços (IHPC, Portugal)"
-            falha={m.estados.serieFalhou}
-            desde={
-              cp00?.meta.serieAte ? fmtPeriodo(cp00.meta.serieAte) : undefined
-            }
-            fonte={{
-              nome: cp00?.meta.fonte ?? "Eurostat",
-              url: fonte?.url ?? "https://ec.europa.eu/eurostat",
-            }}
-          />
-          <div className="mt-5 grid gap-5 md:grid-cols-3">
-            {cartoesDiv.map((slot, i) =>
-              "vazio" in slot ? (
+        }
+        confirma={
+          <>
+            <PaginaDetalhe rotulo="A tabela completa, por categoria">
+              <div className="overflow-x-auto">
+                <table className="w-full text-corpo-sm">
+                  <thead>
+                    <tr className="text-left border-b-2 border-ink">
+                      <th scope="col" className="py-2 pr-4 font-medium">
+                        Categoria
+                      </th>
+                      <th scope="col" className="py-2 pr-4 font-medium text-right">
+                        Índice
+                      </th>
+                      <th scope="col" className="py-2 pr-4 font-medium text-right">
+                        Mês anterior
+                      </th>
+                      <th scope="col" className="py-2 font-medium text-right">
+                        Homóloga (12 m)
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {linhas.map(({ cod, nome, serie }) => (
+                      <tr key={cod} className="border-b border-line">
+                        <td className="py-2 pr-4 text-ink2">
+                          {nome}
+                          <span className="num text-rotulo text-muted ml-2">
+                            {cod}
+                          </span>
+                        </td>
+                        <td className="py-2 pr-4 text-right num">
+                          {serie ? fmtNum(ultimoValor(serie)!, 2) : "—"}
+                        </td>
+                        <td className="py-2 pr-4 text-right">
+                          <Delta
+                            value={serie ? variacao(serie, 1) : null}
+                            casas={1}
+                          />
+                        </td>
+                        <td className="py-2 text-right">
+                          <Delta
+                            value={serie ? variacao(serie, 12) : null}
+                            casas={1}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="footnote mt-3">
+                ▲ a subir é mau para a carteira em preços; ▼ é bom.
+              </p>
+              <Source
+                nome="Eurostat, IHPC mensal"
+                url={fonte?.url}
+                serieAte={cp00?.meta.serieAte}
+                recolhidoEm={fonte?.recolhidoEm}
+              />
+            </PaginaDetalhe>
+
+            <PaginaDetalhe rotulo={`A base do índice — ${base ?? "…"}=100`}>
+              <div className="body-copy space-y-4">
+                <p>
+                  O índice não é um preço — é uma posição relativa. O
+                  Eurostat fixa a média de {base ?? "o ano-base"} em 100: um
+                  índice de 130 significa que esse cabaz está{" "}
+                  <strong>30 % mais caro</strong> do que em {base ?? "o ano-base"}.
+                  A base vem do campo <code>unidade</code> da própria série (
+                  {cp00?.meta.unidade ?? "—"}) — quando o Eurostat refizer a
+                  base, o texto actualiza-se sozinho.
+                </p>
+              </div>
+              <Source nome={cp00?.meta.fonte ?? "Eurostat"} url={fonte?.url} />
+            </PaginaDetalhe>
+
+            <PaginaDetalhe rotulo="IHPC ou IPC — qual é qual">
+              <div className="body-copy space-y-4">
+                <p>
+                  Portugal tem dois índices oficiais. O <strong>IPC</strong> é
+                  o índice nacional, calculado pelo INE — é o que entra nas
+                  actualizações de rendas e em muitos contratos. O{" "}
+                  <strong>IHPC</strong> é a versão harmonizada calculada para
+                  todos os países da UE pelo mesmo método — é o que permite
+                  comparar Portugal com a Zona Euro e o que alimenta as
+                  decisões do BCE.
+                </p>
+                <p>
+                  Cobrem cabaz ligeiramente diferentes (o IHPC não inclui o
+                  custo de habitação própria, por exemplo) e por isso dão
+                  números parecidos mas não iguais. Esta página usa o IHPC:
+                  a série mensal Eurostat por categoria, comparável com a
+                  Europa.
+                </p>
+              </div>
+              <Source
+                nome="Eurostat — prc_hicp_minr"
+                url={fonte?.url}
+                nota="O IPC nacional é publicado pelo INE."
+              />
+            </PaginaDetalhe>
+
+            <PaginaDetalhe rotulo="O teu salário em termos reais">
+              {temDados ? (
+                <SalarioReal serie={cp00!.series} />
+              ) : (
                 <EstadoVazio
-                  key={slot.cod}
-                  titulo={divisoes[i][1].titulo}
+                  compacto
+                  titulo="a série do IHPC"
                   falha={m.estados.serieFalhou}
-                  fonte={{
-                    nome: "Eurostat",
-                    url: "https://ec.europa.eu/eurostat",
-                  }}
+                  fonte={{ nome: "Eurostat", url: fonte?.url }}
                 />
-              ) : (
-                <Leitura
-                  key={slot.titulo}
-                  {...slot}
-                  rotulos={rotulos}
-                  entrada={i}
-                />
-              )
-            )}
-          </div>
-        </div>
-      )}
+              )}
+            </PaginaDetalhe>
 
-      <Figure
-        title="Variação por categoria"
-        source={
-          <Source
-            nome="Eurostat, IHPC mensal"
-            url={fonte?.url}
-            serieAte={cp00?.meta.serieAte}
-            recolhidoEm={fonte?.recolhidoEm}
-          />
+            <PaginaDetalhe rotulo="Metodologia — e o que o índice não mede">
+              <div className="body-copy space-y-4">
+                <p>
+                  A série é o IHPC mensal do Eurostat (
+                  <code>prc_hicp_minr</code>, ECOICOP 2018, índice{" "}
+                  {base ?? "2025"}=100) para Portugal, por divisão do cabaz.
+                  A taxa homóloga compara cada mês com o mesmo mês do ano
+                  anterior — é por isso que um mês muito caro há um ano pode
+                  mostrar inflação baixa hoje mesmo sem preços a descer (o
+                  «efeito de base»).
+                </p>
+                <p>
+                  O IHPC mede um cabaz <em>médio</em>. O teu cabaz pessoal pode
+                  ter subido mais ou menos — depende do que compras. E índice
+                  não é preço: diz <em>quanto variou</em>, não quanto custa.
+                  Para preços em euros ao litro, vê{" "}
+                  <a
+                    href="/precos"
+                    className="underline decoration-line2 underline-offset-2"
+                  >
+                    combustíveis
+                  </a>{" "}
+                  — a única família com dados diários oficiais em Portugal.
+                </p>
+              </div>
+              <Source
+                nome="Eurostat, IHPC mensal"
+                url={fonte?.url}
+                serieAte={cp00?.meta.serieAte}
+                recolhidoEm={fonte?.recolhidoEm}
+              />
+            </PaginaDetalhe>
+          </>
         }
-      >
-        <div className="overflow-x-auto">
-          <table className="w-full text-corpo-sm">
-            <thead>
-              <tr className="text-left border-b-2 border-ink">
-                <th scope="col" className="py-2 pr-4 font-medium">Categoria</th>
-                <th scope="col" className="py-2 pr-4 font-medium text-right">Índice</th>
-                <th scope="col" className="py-2 pr-4 font-medium text-right">Mês anterior</th>
-                <th scope="col" className="py-2 font-medium text-right">Homóloga (12 m)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {linhas.map(({ cod, nome, serie }) => (
-                <tr key={cod} className="border-b border-line">
-                  <td className="py-2 pr-4 text-ink2">
-                    {nome}
-                    <span className="num text-rotulo text-muted ml-2">{cod}</span>
-                  </td>
-                  <td className="py-2 pr-4 text-right num">
-                    {serie ? fmtNum(ultimoValor(serie)!, 2) : "—"}
-                  </td>
-                  <td className="py-2 pr-4 text-right">
-                    <Delta value={serie ? variacao(serie, 1) : null} casas={1} />
-                  </td>
-                  <td className="py-2 text-right">
-                    <Delta value={serie ? variacao(serie, 12) : null} casas={1} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p className="footnote mt-3">
-          ▲ a subir é mau para a carteira em preços; ▼ é bom.{" "}
-          {base
-            ? `Índice ${base}=100: um valor de 130 significa +30 % face a ${base}.`
-            : `Índice ${cp00?.meta.unidade ?? "—"}: um valor de 130 significa +30 % face ao ano-base.`}
-        </p>
-      </Figure>
-
-      <Figure
-        title="A máquina do tempo do euro"
-        source={
-          <Source
-            nome="IHPC total, Eurostat"
-            url={fonte?.url}
-            serieAte={cp00?.meta.serieAte}
-          />
-        }
-      >
-        {temDados ? (
-          <PoderDeCompra serie={cp00!.series} />
-        ) : (
-          <EstadoVazio
-            compacto
-            titulo="a série do IHPC"
-            falha={m.estados.serieFalhou}
-            fonte={{ nome: "Eurostat", url: fonte?.url }}
-          />
-        )}
-      </Figure>
-
-      <Figure
-        title="O teu salário em termos reais"
-        source={
-          <Source
-            nome="IHPC total, Eurostat"
-            url={fonte?.url}
-            serieAte={cp00?.meta.serieAte}
-          />
-        }
-      >
-        {temDados ? (
-          <SalarioReal serie={cp00!.series} />
-        ) : (
-          <EstadoVazio
-            compacto
-            titulo="a série do IHPC"
-            falha={m.estados.serieFalhou}
-            fonte={{ nome: "Eurostat", url: fonte?.url }}
-          />
-        )}
-      </Figure>
-
-      <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
-        <h2 className="font-display text-display-sm text-ink">Ler com honestidade</h2>
-        <p>
-          O IHPC mede um cabaz <em>médio</em>. O teu cabaz pessoal pode ter
-          subido mais ou menos — depende do que compras. E índice não é preço:
-          diz <em>quanto variou</em>, não quanto custa. Para preços em euros ao
-          litro, vê <a href="/precos" className="underline decoration-line2 underline-offset-2">combustíveis</a> —
-          a única família com dados diários oficiais em Portugal.
-        </p>
-      </section>
-    </div>
+        seguinte={{
+          href: "/credito",
+          rotulo: "E o dinheiro emprestado, quanto custa?",
+        }}
+      />
+    </>
   );
 }
