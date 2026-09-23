@@ -89,99 +89,136 @@
     "caNota": "bruta"
   },
   "home": {
-    "h1a": "PARA ONDE",
-    "h1b": "VAI O TEU",
-    "h1c": "DINHEIRO",
-    "lede": "Do salário bruto ao litro de gasóleo, seguimos cada euro: o que o Estado leva, o que a inflação come, o que o banco cobra — e o que sobra para ti. Com dados oficiais e a fonte à vista.",
-    "cta": "Vê quanto fica do teu bruto",
-    "hoje": "Hoje em Portugal",
-    "inflacaoHomologa": "Inflação, homóloga",
-    "alimentacao": "Alimentação",
-    "ihpcCP01": "IHPC CP01",
-    "salarioMinimo": "Salário mínimo",
-    "smnNota": "2026 · continente",
-    "ca": "Certificados de Aforro",
-    "caNota": "Série F · bruta",
-    "barraTitulo": "UM SALÁRIO DE 1 500 €, DESMONTADO",
-    "barraNota": "por ano · solteiro · regras 2026",
-    "segLiquido": "Fica contigo (líquido)",
-    "segIrs": "IRS",
-    "segSs": "A tua Seg. Social (11 %)",
-    "segTsu": "TSU da empresa (23,75 %)",
-    "barraFoot": "A empresa paga {custo} por ano para te pagar {bruto} brutos por mês — {peso} desse custo vai para o Estado antes de chegar ao teu bolso.",
-    "euroTitulo": "DE CADA 1,00 € QUE A EMPRESA GASTA CONTIGO",
-    "euroNota": "salário de 1 500 € · solteiro · regras 2026",
-    "euroFoot": "{keep} chegam ao teu bolso. O resto é IRS, Segurança Social e a TSU que a empresa paga e nunca aparece no recibo.",
-    "capitulosTitulo": "O PERCURSO DE UM EURO",
-    "capitulosNota": "seis capítulos",
-    "capitulos": [
-      {
-        "n": "01",
-        "href": "/salario",
-        "titulo": "O DESCONTO",
-        "tema": "Salário",
-        "descricao": "O euro nasce no teu recibo: 11 % para a Segurança Social, uma fatia de IRS, e uma TSU de 23,75 % que a empresa paga e tu nunca vês."
+    "hero": {
+      "h1a": "A tua empresa gasta",
+      "h1b": "por mês contigo.",
+      "h1q": "De cada euro, quantos cêntimos te chegam?",
+      "migalhaTitulo": "O teu euro",
+      "migalhaCusto": "1 € de custo do trabalho",
+      "migalhaBruto": "bruto {bruto}",
+      "estadoRotulo": "Regras {ano} · em dia",
+      "palpiteRotulo": "O teu palpite",
+      "semAdivinhar": "Mostrar sem adivinhar",
+      "voltar": "Voltar à moeda",
+      "brutoRotulo": "O teu bruto",
+      "presetMinimo": "salário mínimo",
+      "notaPonto": "1 ponto = 1 cêntimo",
+      "pausa": "Um euro são {cem}. Cada ponto é um.",
+      "saiem": "Destes 100 cêntimos, {valor} saem antes de chegar à tua conta.",
+      "zero": "não te toca",
+      "juizo": {
+        "certeiro": "Certeiro.",
+        "perto": "Perto.",
+        "longe": "Longe."
       },
-      {
-        "n": "02",
-        "href": "/impostos",
-        "titulo": "O PREÇO",
-        "tema": "Impostos",
-        "descricao": "O euro gasta-se com imposto já dentro: 6 % no pão, 23 % no telemóvel, e na gasolina mais de metade do litro é Estado."
+      "veredictoCom": "{juizo} Disseste {palpite}; são {real} — {diff} {direcao}.",
+      "direcaoMais": "a mais",
+      "direcaoMenos": "a menos",
+      "veredictoSem": "De cada euro, {real} chegam-te à conta. Os outros {saem} saem antes.",
+      "partes": {
+        "tsu": "TSU da empresa",
+        "irs": "IRS retido",
+        "ss": "Segurança Social",
+        "fica": "Chegam à tua conta"
       },
-      {
-        "n": "03",
-        "href": "/inflacao",
-        "titulo": "A EROSÃO",
-        "tema": "Inflação",
-        "descricao": "O euro parado encolhe: o índice oficial por categoria — pão, energia, restaurantes — e o que os teus 1 000 € de 2015 valem hoje."
+      "partesCurtas": {
+        "tsu": "TSU",
+        "irs": "IRS",
+        "ss": "SS",
+        "fica": "Ficam-te"
       },
-      {
-        "n": "04",
-        "href": "/credito",
-        "titulo": "O JURO",
-        "tema": "Crédito",
-        "descricao": "O euro que pediste: Euribor mais spread faz a TAN, a TAEG junta o resto, e o MTIC revela quanto a casa custa de verdade."
+      "equivalente": "De cada euro que a empresa gasta contigo (bruto de {bruto}), {fica} cêntimos chegam à tua conta; {tsu} vão para a TSU da empresa, {irs} para o IRS retido e {ss} para a Segurança Social.",
+      "respostaSummary": "A resposta, sem adivinhar",
+      "fonteMotores": "Motores AO CÊNTIMO",
+      "fonteEscaloes": "escalões do art. 68.º CIRS"
+    },
+    "portas": {
+      "titulo": "Escolhe a tua pergunta",
+      "nota": "cada pergunta abre um instrumento",
+      "ver": "ver",
+      "ganhas": {
+        "frase": "De {bruto} brutos chegam-te {liquido} por mês — o recibo diz quem leva o resto.",
+        "recibo": {
+          "titulo": "Recibo de vencimento",
+          "sub": "* * * o cenário-base * * *",
+          "bruto": "SALÁRIO BRUTO",
+          "ss": "SEG. SOCIAL 11 %",
+          "irs": "IRS RETIDO",
+          "liquido": "Líquido no fim do mês",
+          "meta": "TABELA {tabela} · {ano}",
+          "metaSemTabela": "{ano}"
+        }
       },
-      {
-        "n": "05",
-        "href": "/poupanca",
-        "titulo": "O RESTO",
-        "tema": "Poupança",
-        "descricao": "O euro que sobra: Certificados de Aforro, depósitos, 28 % de imposto sobre juros — e a taxa real, a única que interessa."
+      "pagas": {
+        "frase": "Num litro de gasóleo a {preco}, {iva} são IVA — o talão separa o imposto do preço.",
+        "talao": {
+          "titulo": "Talão de combustível",
+          "sub": "* * * preço médio do dia * * *",
+          "gasoleo": "GASÓLEO 1 L",
+          "gasolina": "GASOLINA 95 1 L",
+          "total": "Total",
+          "resumo": "Deste total é IVA",
+          "meta": "{fonte} · {quando}",
+          "falhou": "As séries da DGEG não chegaram da fonte — o IVA do litro fica por medir."
+        },
+        "fraseSemSerie": "O preço médio do dia não chegou da DGEG — quando a série voltar, o talão separa aqui o IVA do preço."
       },
-      {
-        "n": "06",
-        "href": "/precos",
-        "titulo": "O LITRO",
-        "tema": "Combustíveis",
-        "descricao": "O euro na bomba, ao dia: a única família de bens essenciais com preço oficial quase diário em Portugal."
+      "banco": {
+        "frase": "Na primeira prestação, {pesoJuro} é juro — na última é quase tudo capital.",
+        "fraseSemSerie": "Na primeira prestação quase tudo é juro — na última é quase tudo capital.",
+        "prestacao": "PRESTAÇÃO MENSAL",
+        "mesA": "mês 1",
+        "mesB": "mês {meses}",
+        "legJuro": "juro — vai para o banco",
+        "legCap": "capital — abate à dívida",
+        "juros": "juro do mês 1: {a} · do mês {n}: {b}",
+        "nota": "{capital} · {meses} meses · TAN {tan}",
+        "falhou": "A série da Euribor não chegou da fonte — a troca de peso fica por medir."
+      },
+      "pais": {
+        "frase": "{n} séries oficiais com fonte e data — e o estado de cada uma à vista.",
+        "estados": {
+          "em-dia": "em dia",
+          "a-recolher": "a recolher",
+          "no-limite": "no limite",
+          "atrasada": "atrasada",
+          "sem-sla": "sem prazo"
+        },
+        "orbes": [
+          {
+            "id": "inflacao-homologa",
+            "rotulo": "Inflação"
+          },
+          {
+            "id": "euribor-12m-mensal",
+            "rotulo": "Euribor 12M"
+          },
+          {
+            "id": "pmd-gasoleo-diario",
+            "rotulo": "Gasóleo"
+          },
+          {
+            "id": "une-pt-total",
+            "rotulo": "Desemprego"
+          },
+          {
+            "id": "hpi-pt",
+            "rotulo": "Habitação"
+          },
+          {
+            "id": "pib-pt-homologo",
+            "rotulo": "PIB"
+          }
+        ]
       }
-    ],
-    "ferramentasTitulo": "AS FERRAMENTAS",
-    "ferramentas": [
-      {
-        "href": "/casa",
-        "titulo": "Comprar casa",
-        "descricao": "IMT, Imposto de Selo, registos e a prestação com a Euribor real."
-      },
-      {
-        "href": "/irs",
-        "titulo": "IRS e IRS Jovem",
-        "descricao": "Escalões, retenção mensal e quanto poupas em cada um dos 10 anos."
-      },
-      {
-        "href": "/trabalho",
-        "titulo": "Subsídio de desemprego",
-        "descricao": "65 % da remuneração de referência — quanto e por quanto tempo."
-      }
-    ],
+    },
     "manifesto1": "NEM CONSELHOS.",
     "manifesto2": "NEM PUBLICIDADE.",
     "manifesto3": "SÓ A MECÂNICA.",
     "manifestoLede": "Este site não te diz onde investir nem compara bancos. Mostra como o dinheiro funciona em Portugal — escalões, taxas, spreads, prémios — para perceberes as regras do jogo.",
     "manifestoFoot": "Quem percebe as regras, decide melhor. Simuladores indicativos ·",
-    "metodologia": "metodologia e fontes"
+    "metodologia": "metodologia e fontes",
+    "api": "API aberta"
   },
   "painel": {
     "titulo": "PAINEL — LEITURAS OFICIAIS",
@@ -198,6 +235,7 @@
     "insightElec": "{abs} cêntimos por kWh {direcao} da mediana de 10 anos",
     "insightCasaTrabalho": "face ao custo do trabalho, a casa está {v} % {direcao} do nível de 2015",
     "insightLitro": "{abs} cêntimos por litro {direcao} da mediana de 10 anos",
+    "delta30dias": "€/L em 30 dias",
     "janela": {
       "rotulo": "Janela temporal",
       "opcoes": {
@@ -217,28 +255,11 @@
       "portugal": "Portugal",
       "ue": "UE 27"
     },
-    "isoGasoleo": {
-      "kicker": "gasóleo simples · PMD",
-      "litro": {
-        "rotulo": "o litro",
-        "detalhe": "preço médio de venda"
-      },
-      "iva": {
-        "rotulo": "IVA",
-        "detalhe": "23 % sobre o preço com ISP"
-      },
-      "isp": {
-        "rotulo": "ISP",
-        "detalhe": "imposto sobre produtos petrolíferos"
-      },
-      "carbono": {
-        "rotulo": "taxa de carbono",
-        "detalhe": "adicional ao ISP"
-      },
-      "produto": {
-        "rotulo": "o gasóleo",
-        "detalhe": "combustível e margem, sem impostos"
-      }
+    "desemprego100": {
+      "rotulo": "de cada 100 pessoas ativas",
+      "unidadeTraco": "1 pessoa em 100 ativas",
+      "procuram": "procuram trabalho",
+      "empregadas": "empregadas"
     },
     "cartoes": {
       "inflacao": {
@@ -338,41 +359,6 @@
       "casaTrabalho": {
         "breadcrumb": "PAÍS / HABITAÇÃO · EUROSTAT",
         "titulo": "Casa vs custo do trabalho"
-      }
-    }
-  },
-  "euroV3": {
-    "titulo": "O TEU EURO",
-    "nota": "de um salário de 1 500 € brutos, por mês · solteiro, sem dependentes · regras 2026",
-    "breadcrumb": "O TEU DINHEIRO / DECOMPOSIÇÃO · MOTORES 2026",
-    "meta": "o Estado e os impostos levam {valor}/mês",
-    "brutoRotulo": "1 500 € brutos",
-    "brutoDetalhe": "por mês, antes de qualquer corte",
-    "ficamTe": "ficam-te",
-    "porMes": "por mês",
-    "fontes": "Fontes",
-    "simulador": "simulador",
-    "motor": "AO CÊNTIMO · motores do recibo e do litro",
-    "passos": {
-      "ss": {
-        "rotulo": "Segurança Social",
-        "detalhe": "{taxa} do bruto — sai do recibo"
-      },
-      "irs": {
-        "rotulo": "IRS retido",
-        "detalhe": "retenção mensal, tabelas 2026"
-      },
-      "liquido": {
-        "rotulo": "Chega à conta",
-        "detalhe": "o líquido depois de SS e IRS"
-      },
-      "gasoleo": {
-        "rotulo": "Gasóleo · 50 L",
-        "detalhe": "ISP, carbono e IVA ({quando})"
-      },
-      "fica": {
-        "rotulo": "Fica-te",
-        "detalhe": "o resto do mês, já sem estes impostos"
       }
     }
   },

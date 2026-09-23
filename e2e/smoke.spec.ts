@@ -9,7 +9,10 @@ const HOST = readFileSync("public/CNAME", "utf8").trim().toLowerCase();
 
 test("home renderiza com os números-chave", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText(/para onde vai o teu dinheiro/i);
+  // o h1 novo é a pergunta do herói — o custo canónico e os cêntimos
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(
+    /quantos cêntimos te chegam/i
+  );
   await expect(
     page.getByRole("heading", { name: /leituras oficiais/i })
   ).toBeVisible();
@@ -246,7 +249,9 @@ test("com reduced-motion o número-herói mostra o valor final sem interpolaçã
 test("nada acima da dobra entra com animação ao carregar", async ({
   page,
 }) => {
-  test.setTimeout(120_000);
+  // ~38 rotas × 2 amostras × (goto + scan completo do DOM): debaixo de
+  // carga os 120 s não chegam — o mesmo tecto do sweep de contraste
+  test.setTimeout(240_000);
   // contrato M-09: animações de ENTRADA (iterações finitas) não podem
   // correr em elementos visíveis no primeiro viewport ao carregar.
   // Loops contínuos (ticker) têm iterações infinitas e não são entrada.
@@ -291,69 +296,35 @@ test("o primeiro Tab foca o skip-link", async ({ page }) => {
   await expect(focado).toHaveAttribute("href", "#conteudo");
 });
 
-test("a explosão do euro interroga-se por teclado e tem equivalente textual", async ({
+test("a home V4 tem a ordem herói → painel → portas → faixa", async ({
   page,
 }) => {
-  // R-06: a fita de papel saiu da home — a decomposição do euro é a
-  // explosão isométrica. O svg é decorativo; o equivalente sempre
-  // visível é a lista, que interroga as peças por foco de teclado.
-  await page.emulateMedia({ reducedMotion: "reduce" });
+  // S2-04: a explosão do euro, a adivinha antiga, os capítulos e as
+  // ferramentas saíram da home — o EuroExplodido continua testado em
+  // Isometrico.test.tsx (componente vivo no /estilo). Aqui fica o
+  // contrato de ordem da página nova e a hierarquia de headings.
   await page.goto("/");
-  const cartao = page.locator(".iso-card").first();
-  await expect(cartao).toBeVisible();
 
-  // o desenho é decorativo; a viagem do euro existe em texto
-  await expect(cartao.locator("svg").first()).toHaveAttribute(
-    "aria-hidden",
-    "true"
-  );
-  const lista = cartao.locator("[data-euro-lista]");
-  const passos = lista.locator("li");
-  expect(await passos.count()).toBeGreaterThanOrEqual(4);
-  await expect(lista).toContainText("Segurança Social");
-  await expect(lista).toContainText("Fica-te");
+  // um só h1 — a pergunta do herói
+  await expect(page.locator("h1")).toHaveCount(1);
 
-  // R-07: os valores são euros reais do mês (salário de 1 500 €), já
-  // não cêntimos por euro — cada passo mostra «N €» e nenhum «c»
-  const textoLista = await lista.innerText();
-  expect(textoLista).not.toMatch(/\d+,\d\s*c\b/);
-  for (const li of await passos.all()) {
-    await expect(li).toContainText(/\d[\d\s]*€/);
-  }
-  // plausíveis do cenário 1 500 €/mês (motores 2026): SS = 11 % ≈ 165 €,
-  // líquido ≈ 1 167 € — intervalos, não números escritos à mão
-  await expect(passos.nth(0)).toContainText(/1[5-7]\d\s*€/);
-  await expect(lista).toContainText(/1\s?1[0-9]{2}\s*€/);
-
-  // foco de teclado num passo realça a peça correspondente (e a sua
-  // chamada — g.iso-camada.iso-camada-on / .iso-rotg.iso-camada-on); Tab anda
-  // passo a passo
-  await passos.nth(1).focus();
-  await expect(passos.nth(1)).toHaveClass(/iso-li-on/);
-  await expect(cartao.locator("g.iso-camada.iso-camada-on")).toHaveCount(1);
-  await expect(cartao.locator("g.iso-rotg.iso-camada-on")).toHaveCount(1);
-  await page.keyboard.press("Tab");
-  await expect(passos.nth(2)).toHaveClass(/iso-li-on/);
-  await expect(cartao.locator("g.iso-camada.iso-camada-on")).toHaveCount(1);
-
-  // a ordem narrativa é pergunta → resposta: painel → adivinha →
-  // explosão → capítulos — medido na posição real do documento
   const ordem = await page.evaluate(() => {
     const pos = (el: Element | null | undefined) =>
       el ? el.getBoundingClientRect().top + window.scrollY : Infinity;
-    const capitulos = [...document.querySelectorAll("h2")].find((h) =>
-      h.textContent?.includes("PERCURSO")
-    );
     return {
+      hero: pos(document.querySelector(".hm-hero")),
       painel: pos(document.getElementById("painel-leituras")),
-      adivinha: pos(document.getElementById("instrumento")),
-      euro: pos(document.getElementById("euro-titulo")),
-      capitulos: pos(capitulos),
+      portas: pos(document.getElementById("pq-titulo")),
+      manifesto: pos(
+        [...document.querySelectorAll("p")].find((p) =>
+          p.textContent?.includes("SÓ A MECÂNICA")
+        )
+      ),
     };
   });
-  expect(ordem.painel).toBeLessThan(ordem.adivinha);
-  expect(ordem.adivinha).toBeLessThan(ordem.euro);
-  expect(ordem.euro).toBeLessThan(ordem.capitulos);
+  expect(ordem.hero).toBeLessThan(ordem.painel);
+  expect(ordem.painel).toBeLessThan(ordem.portas);
+  expect(ordem.portas).toBeLessThan(ordem.manifesto);
 });
 
 test("o custo em /salario é um campo de cêntimos e reage à régua", async ({

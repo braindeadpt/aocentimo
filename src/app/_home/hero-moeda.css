@@ -1,0 +1,208 @@
+/* ————— herói da home — a moeda de 100 cêntimos (S2-01) —————
+   Prefixo hm-; tokens da casa (--accent/--keep/--ink/--ink2/--muted/
+   --line/--line2/--panel/--mark, --raio-instrumento, --font-mono,
+   --text-*, --tracking-*, --dur-*, --ease-*).
+
+   NÃO IMPORTAR — o orquestrador funde este bloco em globals.css na
+   integração (regra de isolamento da sessão paralela).
+
+   Notas:
+   · O h1 é o LCP — nasce final, sem animação de entrada. O tamanho é
+     limitado aqui (não em .titulo-hero) para o ecrã inteiro caber a
+     1440×900 e a 375×800.
+   · O palco do CampoCentimos fica um nada mais baixo que o default
+     (430 px máx.) pelo mesmo motivo — os montes continuam folgados.
+   · Nenhuma animação/transição própria entra em jogo sem ser a dos
+     componentes partilhados — o bloco global de reduced-motion cobre
+     qualquer transição que aqui exista. */
+
+.hm-hero {
+  padding-block: clamp(1.25rem, 4vh, 2.75rem) 0;
+}
+
+.hm-titulo {
+  /* .titulo-hero fica nos 4.5rem — no herói da moeda a frase é mais
+     comprida e o instrumento tem de caber no mesmo ecrã */
+  font-size: clamp(1.75rem, 1rem + 3.2vw, 3.25rem);
+  line-height: 1.02;
+  max-width: 30ch;
+  margin-top: 0.55rem;
+}
+.hm-num {
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  white-space: nowrap;
+  text-decoration: underline;
+  text-decoration-color: var(--line2);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 7px;
+}
+.hm-q {
+  color: var(--ink2);
+  font-weight: 600;
+}
+
+/* o instrumento — a anatomia do protótipo aprovado: cabeçalho com
+   migalha + selo de estado, palco, controlos em grelha de hairlines,
+   detalhe da resposta, rodapé com fonte */
+.hm-inst {
+  margin-top: clamp(1rem, 2.5vh, 1.75rem);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--raio-instrumento);
+  box-shadow: var(--elev-raised);
+  overflow: hidden;
+}
+
+.hm-inst-cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 1.15rem;
+  border-bottom: 1px solid var(--line);
+}
+.hm-migalha {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-kicker-sm);
+  letter-spacing: var(--tracking-kicker-denso);
+  text-transform: uppercase;
+  color: var(--ink2);
+}
+.hm-migalha b {
+  color: var(--ink);
+  font-weight: 700;
+}
+.hm-sep {
+  color: var(--muted);
+}
+.hm-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-kicker-sm);
+  letter-spacing: var(--tracking-kicker-denso);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* o palco um nada mais baixo que o default do componente — o herói
+   tem de caber inteiro no primeiro ecrã */
+.hm-inst .cc-palco {
+  height: clamp(300px, 42vw, 430px);
+}
+
+/* acima da dobra (M-09): a entrega SSR→canvas é instantânea — o
+   primeiro frame da tela desenha a moeda na mesma pose do SVG
+   (theta=0), a dissolução não mascara nada e lê-se como saída com
+   animação ao carregar */
+.hm-inst .cc-svg {
+  transition: none;
+}
+
+.hm-ctrl {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border-top: 1px solid var(--line);
+}
+@media (max-width: 760px) {
+  .hm-ctrl {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.hm-bloco {
+  background: var(--panel);
+  padding: 0.95rem 1.15rem 1.1rem;
+  min-width: 0;
+}
+.hm-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+  align-items: center;
+}
+
+/* o <details> da resposta — o caminho sem JS e o «confirma» rápido */
+.hm-resposta {
+  border-top: 1px dashed var(--line2);
+  padding: 0.55rem 1.15rem 0.7rem;
+}
+.hm-resposta summary {
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: var(--text-kicker);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.hm-resposta summary:hover {
+  color: var(--ink);
+}
+.hm-resposta-corpo {
+  padding-top: 0.6rem;
+  font-size: var(--text-nota);
+  line-height: 1.6;
+  color: var(--ink2);
+  max-width: 68ch;
+}
+.hm-resposta-corpo p {
+  margin: 0 0 0.4rem;
+}
+.hm-resposta-corpo ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.hm-rodape {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem 1rem;
+  flex-wrap: wrap;
+  padding: 0.55rem 1.15rem 0.75rem;
+  border-top: 1px solid var(--line);
+}
+.hm-fonte {
+  display: flex;
+  gap: 0.55rem;
+  margin: 0;
+  max-width: 74ch;
+  font-size: var(--text-nota);
+  line-height: 1.55;
+  color: var(--muted);
+}
+/* o quadrado torrado — «isto tem fonte» (o único decorativo do mark) */
+.hm-marca {
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  margin-top: 5px;
+  background: var(--mark);
+}
+.hm-fonte a {
+  color: var(--ink2);
+  text-decoration: underline;
+  text-decoration-color: var(--line2);
+  text-underline-offset: 2px;
+}
+.hm-fonte a:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}
+.hm-nota {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  letter-spacing: var(--tracking-mono-lg);
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
