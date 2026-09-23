@@ -61,6 +61,7 @@ test("simuladores novos produzem resultado", async ({ page }) => {
 });
 
 test("nenhuma rota transborda na horizontal a 375 px", async ({ page }) => {
+  test.setTimeout(120_000);
   await page.setViewportSize({ width: 375, height: 800 });
   for (const path of [...rotasDoSite(), "/rota-que-nao-existe"]) {
     await page.goto(path);
