@@ -441,3 +441,110 @@ pontos}[], livres, total}`; layouts e mola exportados por
   troca-se `texto`/`textoLista` por valores do motor.
 
 
+
+## S1-06 · Anatomia do cartão e do template de página (2026-09-23)
+
+**O que foi feito**
+
+- `src/components/Cartao.tsx` — a anatomia Ledger fixa, partilhada:
+  cabeçalho (breadcrumb mono · meta · selo de estado), corpo (UMA
+  ideia), controlos opcionais (hairline tracejada — a zona de medição)
+  e rodapé (fonte + acções «ver →»/«JSON»). Componente sem estado nem
+  hooks — serve em servidor e em cliente; recebe `ref` (React 19) para
+  o `useArmado` do desenho de entrada. Container queries: `.leitura` já
+  é `container-type: inline-size`. Inversão para papel: CSS `--l-*`
+  existente, intacta. **O ponto de montagem do OrbeEstado (S1-08) está
+  marcado dentro de `.leitura-estado`** — a prop `estado` já é a API
+  estável; `estadoRotulo` mantém o estado em texto (a forma nunca é o
+  único canal), e `estado` sem `estadoRotulo` avisa em dev.
+- `Leitura` refactorizado para nascer sobre `<Cartao>` — DOM/aria
+  idênticos (mesmas classes `.leitura-*`, mesma ordem de filhos); os
+  testes e2e existentes ficam verdes.
+- `src/components/Pagina.tsx` — o template de três níveis (só servidor;
+  lê `m.pagina`): `pergunta` (h1) + `resposta={{instrumento, frase}}` +
+  `explora` + `confirma` + `seguinte={{href, rotulo}}`. Cada nível é
+  `<section aria-labelledby>` — o nível 1 é etiquetado pelo h1, os
+  níveis 2 e 3 por h2 («2 Explora», «3 Confirma», ordinais mono
+  aria-hidden). `PaginaDetalhe` = `<details>` fechado por omissão com
+  rótulo claro (summary mono + marcador «+»/«−»). Avisos de dev
+  (`console.warn`, nunca falham build): >1 instrumento no nível 1
+  (`Children.toArray` achata fragments) ou frase com >25 palavras
+  (extrai texto do ReactNode).
+- `messages/pt.json`: bloco `pagina` (explora/confirma/aSeguir).
+- `globals.css`: `.leitura-controlos`, família `.pg-*` (níveis, h2 de
+  nível, frase serifada, detalhes, pergunta seguinte em display).
+- `/estilo`: secção «O cartão e a página — a anatomia fixa» com um
+  `Cartao` vivo (todas as zonas ocupadas) e uma `Pagina` completa sobre
+  a história canónica (`cenarioCanonico(1 500 €)` no servidor) — nos
+  dois temas via toggle.
+- Testes: `Cartao.test.tsx` (8) e `Pagina.test.tsx` (7) — anatomia,
+  ordem das zonas, fonte interna/externa, acções, avisos dev, landmarks.
+- `PRODUTO.md` §4 regista a implementação; §10 ganha linhas na tabela
+  de instrumentos.
+
+**APIs finais (congeladas — as sessões paralelas usam-nas sem as mudar)**
+
+```ts
+<Cartao
+  breadcrumb={ReactNode}               // "PREÇOS / CABAZ · EUROSTAT"
+  meta?: ReactNode[]                   // spans à direita, antes do selo
+  estado?: "em-dia"|"atrasada"|"sem-sla"|"no-limite"   // orbe S1-08 aqui
+  estadoRotulo?: string                // o estado em texto — sempre
+  controlos?: ReactNode                // entre corpo e rodapé
+  fonte?: { rotulo: string; itens: {nome: ReactNode; url?: string}[] }
+  acoes?: { href; rotulo; ariaLabel?; externo? }[]   // «ver →» · «JSON»
+  amplo?: boolean                      // variante de largura total
+  className?: string
+  ref?: Ref<HTMLElement>               // ex.: useArmado
+>
+  {children}                           // corpo — UMA ideia
+</Cartao>
+
+<Pagina
+  pergunta="…"                         // h1 da rota
+  kicker?: ReactNode                   // eyebrow do tema
+  resposta={{ instrumento, frase }}    // UM instrumento + UMA frase
+  explora={…}                          // nível 2
+  confirma={<> <PaginaDetalhe rotulo>…</PaginaDetalhe> …</>}
+  seguinte={{ href, rotulo }}          // pergunta seguinte
+  idBase?: string                      // ids dos landmarks (def.: slug)
+  perguntaAs?: "h1"|"h2"               // "h2" só para demos embutidas
+/>
+<PaginaDetalhe rotulo={ReactNode} aberto?: boolean>{children}</PaginaDetalhe>
+```
+
+**Decisões (conservadoras, a confirmar)**
+
+- A gramática de classes continua `.leitura-*` — o DOM dos cartões é
+  contrato e2e; `Cartao` é o nome do componente, não das classes.
+- O nível 1 é etiquetado pelo h1 (a pergunta é o nome da secção) — não
+  há h2 fantasma; é a leitura coerente de «section aria-labelledby».
+- `Pagina` é server-only (usa `m` para os rótulos fixos — o padrão de
+  `Figure`/`Source`); os avisos de dev saem na consola do servidor em
+  `next dev`, não no browser.
+- `perguntaAs="h2"` existe só para a demonstração embutida em /estilo
+  (a auditoria exige um h1 por ficheiro); em produção é sempre h1.
+- `.pg-detalhe` usa marcador «+»/«−» tipográfico — formulário de papel,
+  não ícone; `summary` fica sem marker nativo.
+- `EuroExplodido`/`CustoExplodido`/`IsometricoDemo` continuam a montar
+  a casca à mão (rodapés não canónicos); a migração para `Cartao` é
+  natural nas sessões 3A–3D, sem pressa — a API cobre o caso deles
+  (meta livre, fontes múltiplas com separador «·», acções internas).
+
+**Copy novo a rever pelo dono**
+
+- `m.pagina`: «Explora», «Confirma», «A pergunta seguinte».
+- `/estilo`: secção «O cartão e a página — a anatomia fixa» — textos da
+  anatomia, demo `Cartao` («O ano português paga-se em 14 vezes…»,
+  presets, «Fonte: metodologia», «ver →»/«JSON»), demo `Pagina`
+  («Para onde vai cada euro?», frase «De cada euro que a empresa gasta
+  contigo, N cêntimos chegam-te à conta.», detalhes «A conta do euro,
+  linha a linha»/«Fonte e dados», seguinte «Quanto fica do teu
+  salário?»).
+
+**Perguntas ao dono**
+
+- O nível 2/3 mostram o ordinal («2 · Explora») — queres também um
+  marcador visível «1 · a resposta» no nível 1 (hoje só kicker+h1)?
+- Os controlos do `Cartao` ficam separados por hairline tracejada —
+  ou preferes a zona sem separador (só espaço)?

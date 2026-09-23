@@ -5,6 +5,11 @@ import { test, expect } from "@playwright/test";
 //  · reduced-motion = estado final imediato, sem rotação nem voo
 //  · exactamente um equivalente textual por figura; palco aria-hidden
 //  · a interacção moeda→montes assenta e mostra os rótulos
+//
+// Os testes miram a secção dedicada (#campo-centimos): a /estilo pode
+// ter outros campos embutidos noutras demos (ex.: o exemplo da Pagina).
+
+const CC = "#campo-centimos .cc";
 
 test("sem JS o campo serve SVG com os números e o equivalente", async ({
   browser,
@@ -13,7 +18,7 @@ test("sem JS o campo serve SVG com os números e o equivalente", async ({
   const page = await ctx.newPage();
   await page.goto("/estilo");
 
-  const campos = page.locator(".cc");
+  const campos = page.locator(CC);
   await expect(campos).toHaveCount(2);
 
   // a instância interactiva nasce em «moeda» — svg da moeda presente
@@ -37,7 +42,7 @@ test("cada campo tem exactamente um equivalente e o palco é decorativo", async 
   page,
 }) => {
   await page.goto("/estilo");
-  const campos = page.locator(".cc");
+  const campos = page.locator(CC);
   await expect(campos).toHaveCount(2);
   for (let i = 0; i < 2; i++) {
     const c = campos.nth(i);
@@ -59,12 +64,12 @@ test("com reduced-motion a moeda não roda — dois frames idênticos", async ({
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/estilo");
-  const palco = page.locator(".cc").first().locator(".cc-palco");
+  const palco = page.locator(CC).first().locator(".cc-palco");
   await palco.scrollIntoViewIfNeeded();
   // nenhuma animação/transição CSS dentro do campo
   const violadores = await page.evaluate(() => {
     const v: string[] = [];
-    document.querySelectorAll(".cc *").forEach((el) => {
+    document.querySelectorAll("#campo-centimos .cc *").forEach((el) => {
       const cs = getComputedStyle(el);
       if (
         cs.animationName !== "none" ||
@@ -89,7 +94,7 @@ test("a revelação moeda → montes assenta e acende os rótulos", async ({
   page,
 }) => {
   await page.goto("/estilo");
-  const campo = page.locator(".cc").first();
+  const campo = page.locator(CC).first();
   await campo.scrollIntoViewIfNeeded();
   await page.waitForTimeout(300); // o sim hidrata e esconde o svg
 
@@ -116,7 +121,7 @@ test("os montes estáticos mostram rótulos e os 100 pontos do SSR", async ({
   page,
 }) => {
   await page.goto("/estilo");
-  const estatico = page.locator(".cc").nth(1);
+  const estatico = page.locator(CC).nth(1);
   await estatico.scrollIntoViewIfNeeded();
   // estado final servido: rótulos já ligados no SSR
   await expect(estatico.locator(".cc-rot.on")).toHaveCount(4);

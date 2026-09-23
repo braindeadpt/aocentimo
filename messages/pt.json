@@ -38,6 +38,11 @@
     "fonte": "Fonte",
     "calculaOTeu": "Calcula o teu"
   },
+  "pagina": {
+    "explora": "Explora",
+    "confirma": "Confirma",
+    "aSeguir": "A pergunta seguinte"
+  },
   "chart": {
     "scrubAria": "Régua de interrogação — as setas percorrem, Home e End vão aos extremos, Escape limpa",
     "ultimo": "último",

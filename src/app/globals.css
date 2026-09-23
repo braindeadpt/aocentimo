@@ -2093,6 +2093,10 @@ html[data-theme="dark"] .tema-ponto {
   display: flex;
   gap: 1rem;
 }
+/* cartão sem fonte no rodapé — as acções encostam à direita na mesma */
+.leitura-acoes:only-child {
+  margin-left: auto;
+}
 .lq-link {
   color: var(--l-ink2);
   text-decoration: underline;
@@ -2208,6 +2212,126 @@ html[data-theme="dark"] .tema-ponto {
   to {
     clip-path: circle(480px at var(--ax, 50%) var(--ay, 50%));
   }
+}
+
+/* ————— controlos do cartão (S1-06) — slot entre o corpo e o rodapé;
+   a hairline tracejada é a zona de medição — mexer não é ler ————— */
+.leitura-controlos {
+  padding: 0.7rem 1.15rem 0.9rem;
+  border-top: 1px dashed var(--l-line);
+  transition: border-color var(--dur-curta) var(--ease-entra);
+}
+
+/* ————— pagina — o template de três níveis da V4 (PRODUTO §4; S1-06) —————
+   Cada nível é uma <section aria-labelledby>: 1 · a resposta (h1 +
+   UM instrumento + UMA frase), 2 · Explora, 3 · Confirma. Os números
+   são mono — o nível é um passo de formulário, não um capítulo. */
+.pg-nivel + .pg-nivel,
+.pg-nivel + .pg-seguinte {
+  margin-top: var(--gap-sec);
+}
+.pg-h {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  padding-bottom: 0.5rem;
+  margin-bottom: var(--gap-fig);
+  border-bottom: 2px solid var(--ink);
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 125;
+  font-weight: 700;
+  font-size: var(--text-display-sm);
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.pg-h-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-kicker);
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+.pg-instrumento {
+  margin-top: var(--gap-fig);
+}
+/* a frase da resposta — registo de insight (serifada), a mesma voz
+   que o cartão; lê-se sem saber nada */
+.pg-frase {
+  margin-top: 1rem;
+  font-family: var(--font-editorial);
+  font-size: var(--text-grande);
+  line-height: 1.6;
+  color: var(--ink2);
+  max-width: 42rem;
+}
+/* nível 3 — os detalhes nascem fechados; o rótulo diz o que está
+   dentro e o marcador é o "+" / "−" de formulário, não um ícone */
+.pg-detalhe {
+  border-top: 1px solid var(--line);
+}
+.pg-detalhe:last-of-type {
+  border-bottom: 1px solid var(--line);
+}
+.pg-detalhe > summary {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.75rem 0;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-rotulo);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink2);
+}
+.pg-detalhe > summary::-webkit-details-marker {
+  display: none;
+}
+.pg-detalhe > summary::marker {
+  content: "";
+}
+.pg-detalhe > summary::before {
+  content: "+";
+  color: var(--mark);
+  font-weight: 700;
+}
+.pg-detalhe[open] > summary::before {
+  content: "−";
+}
+.pg-detalhe > summary:hover {
+  color: var(--ink);
+}
+.pg-detalhe-corpo {
+  padding: 0.2rem 0 1.4rem;
+}
+/* a pergunta seguinte — nenhuma página é um beco: kicker + a próxima
+   pergunta em display, linkada à rota seguinte */
+.pg-seguinte {
+  border-top: 2px solid var(--ink);
+  padding-top: 0.7rem;
+}
+.pg-seguinte-lnk {
+  display: inline-block;
+  margin-top: 0.45rem;
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 125;
+  font-weight: 700;
+  font-size: var(--text-display-sm);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--line2);
+  text-underline-offset: 4px;
+  transition: color var(--dur-micro) var(--ease-entra),
+    text-decoration-color var(--dur-micro) var(--ease-entra);
+}
+.pg-seguinte-lnk:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
 }
 
 /* ————— isométrico de traço — a explosão do catálogo V4 (§5; núcleo

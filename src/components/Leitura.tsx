@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
+import { Cartao } from "@/components/Cartao";
 import { Odometer } from "@/components/Odometer";
 import { fmtLitro, fmtNum, fmtPeriodo } from "@/lib/format";
 import { useArmado } from "@/lib/useArmado";
@@ -28,6 +28,10 @@ import { regioesEntre } from "@/lib/viz/entre";
  * no viewport (useArmado → .leitura-on) a linha desenha-se esq→dir,
  * a hachura e os extremos assentam, a anotação desenha-se por último.
  * Reduced-motion = estado final, inversão instantânea (bloco global).
+ *
+ * S1-06: a casca (cabeçalho · corpo · rodapé, inversão e container
+ * query) é o <Cartao> partilhado — a anatomia Ledger fixa. O Leitura
+ * fica com o que é seu: a linha anotada e o valor herói.
  */
 
 export interface PontoLeitura {
@@ -380,268 +384,240 @@ export function Leitura({
     : insight;
 
   return (
-    <article
+    <Cartao
       ref={ref}
-      className={`leitura ${amplo ? "leitura-amplo" : ""} ${arm("leitura-on")}`}
+      amplo={amplo}
+      className={arm("leitura-on")}
+      breadcrumb={breadcrumb}
+      meta={[`${rotulos.leitura} ${leitura}`]}
+      estado={estado}
+      estadoRotulo={rotulos.estados[estado]}
+      fonte={{
+        rotulo: rotulos.fonte,
+        itens: [{ nome: fonteNome, url: fonteUrl }],
+      }}
+      acoes={[
+        { href, rotulo: `${rotulos.pagina} →`, ariaLabel: titulo },
+        { href: hrefJson, rotulo: rotulos.json, externo: true },
+      ]}
     >
-      <header className="leitura-head">
-        <p className="leitura-breadcrumb">{breadcrumb}</p>
-        <p className="leitura-meta num">
-          <span>
-            {rotulos.leitura} {leitura}
-          </span>
-          <span className="leitura-estado">
-            <span aria-hidden className={`serie-estado ${estado}`} />
-            {rotulos.estados[estado]}
-          </span>
-        </p>
-      </header>
+      <p className="leitura-insight">{insight}</p>
+      <p className="leitura-valor num">
+        <Odometer valor={valor} casas={F.casas} sufixo={F.sufixo} />
+      </p>
 
-      <div className="leitura-corpo">
-        <p className="leitura-insight">{insight}</p>
-        <p className="leitura-valor num">
-          <Odometer valor={valor} casas={F.casas} sufixo={F.sufixo} />
-        </p>
-
-        {temGrafico && (
-          <div ref={caixaRef} className="lq-graf">
-            <svg
-              viewBox={`0 0 ${W} ${H}`}
-              role="img"
-              aria-label={ariaLabel}
-              className="block h-full w-full"
-            >
-              <defs>
-                <pattern
-                  id={`${idHach}a`}
-                  width="6"
-                  height="6"
-                  patternUnits="userSpaceOnUse"
-                  patternTransform="rotate(45)"
-                >
-                  <line
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="6"
-                    stroke="var(--l-accent)"
-                    strokeWidth="2.2"
-                    opacity="0.18"
-                  />
-                </pattern>
-                <pattern
-                  id={`${idHach}k`}
-                  width="6"
-                  height="6"
-                  patternUnits="userSpaceOnUse"
-                  patternTransform="rotate(45)"
-                >
-                  <line
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="6"
-                    stroke="var(--l-keep)"
-                    strokeWidth="2.2"
-                    opacity="0.18"
-                  />
-                </pattern>
-              </defs>
-
-              {/* a área entre as duas — a distância à referência é o dado */}
-              {regioes.map((r, i) => (
-                <path
-                  key={i}
-                  className="lq-hatch"
-                  d={r.d}
-                  fill={`url(#${idHach}${r.acima ? "a" : "k"})`}
-                  stroke="none"
-                />
-              ))}
-
-              {/* referência constante — a mediana tracejada a torrado */}
-              {refLinha && (
+      {temGrafico && (
+        <div ref={caixaRef} className="lq-graf">
+          <svg
+            viewBox={`0 0 ${W} ${H}`}
+            role="img"
+            aria-label={ariaLabel}
+            className="block h-full w-full"
+          >
+            <defs>
+              <pattern
+                id={`${idHach}a`}
+                width="6"
+                height="6"
+                patternUnits="userSpaceOnUse"
+                patternTransform="rotate(45)"
+              >
                 <line
-                  className="lq-refmark"
-                  x1={pad.l}
-                  x2={W - pad.r}
-                  y1={yLinhaRef}
-                  y2={yLinhaRef}
-                  stroke="var(--l-mark)"
-                  strokeWidth={1.5}
-                  strokeDasharray="5 4"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="6"
+                  stroke="var(--l-accent)"
+                  strokeWidth="2.2"
+                  opacity="0.18"
                 />
-              )}
-              {refLinha && yRotRefLinha !== 0 && (
-                <text
-                  className="lq-txt lq-ref-rotulo"
-                  x={xRotRefLinha}
-                  y={yRotRefLinha}
-                  textAnchor="start"
-                >
-                  {rotRefLinha}
-                </text>
-              )}
+              </pattern>
+              <pattern
+                id={`${idHach}k`}
+                width="6"
+                height="6"
+                patternUnits="userSpaceOnUse"
+                patternTransform="rotate(45)"
+              >
+                <line
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="6"
+                  stroke="var(--l-keep)"
+                  strokeWidth="2.2"
+                  opacity="0.18"
+                />
+              </pattern>
+            </defs>
 
-              {/* eixo do tempo — 3 ticks, sem grelha */}
+            {/* a área entre as duas — a distância à referência é o dado */}
+            {regioes.map((r, i) => (
+              <path
+                key={i}
+                className="lq-hatch"
+                d={r.d}
+                fill={`url(#${idHach}${r.acima ? "a" : "k"})`}
+                stroke="none"
+              />
+            ))}
+
+            {/* referência constante — a mediana tracejada a torrado */}
+            {refLinha && (
               <line
+                className="lq-refmark"
                 x1={pad.l}
                 x2={W - pad.r}
-                y1={H - pad.b}
-                y2={H - pad.b}
-                stroke="var(--l-line)"
-                strokeWidth={1}
+                y1={yLinhaRef}
+                y2={yLinhaRef}
+                stroke="var(--l-mark)"
+                strokeWidth={1.5}
+                strokeDasharray="5 4"
               />
-              {ticks.map((tk) => (
-                <g key={tk.rotulo}>
-                  <line
-                    x1={tk.x}
-                    x2={tk.x}
-                    y1={H - pad.b}
-                    y2={H - pad.b + 4}
-                    stroke="var(--l-line2)"
-                    strokeWidth={1}
-                  />
-                  <text
-                    className="lq-txt"
-                    x={tk.x}
-                    y={H - 7}
-                    textAnchor="middle"
-                  >
-                    {tk.rotulo}
-                  </text>
-                </g>
-              ))}
+            )}
+            {refLinha && yRotRefLinha !== 0 && (
+              <text
+                className="lq-txt lq-ref-rotulo"
+                x={xRotRefLinha}
+                y={yRotRefLinha}
+                textAnchor="start"
+              >
+                {rotRefLinha}
+              </text>
+            )}
 
-              {/* série de referência — cinzenta por baixo */}
-              {dRef && (
-                <path
-                  className="lq-ref"
-                  d={dRef}
-                  fill="none"
-                  stroke="var(--l-ink2)"
-                  strokeWidth={1.5}
-                  strokeLinejoin="round"
-                  pathLength={1}
+            {/* eixo do tempo — 3 ticks, sem grelha */}
+            <line
+              x1={pad.l}
+              x2={W - pad.r}
+              y1={H - pad.b}
+              y2={H - pad.b}
+              stroke="var(--l-line)"
+              strokeWidth={1}
+            />
+            {ticks.map((tk) => (
+              <g key={tk.rotulo}>
+                <line
+                  x1={tk.x}
+                  x2={tk.x}
+                  y1={H - pad.b}
+                  y2={H - pad.b + 4}
+                  stroke="var(--l-line2)"
+                  strokeWidth={1}
                 />
-              )}
+                <text
+                  className="lq-txt"
+                  x={tk.x}
+                  y={H - 7}
+                  textAnchor="middle"
+                >
+                  {tk.rotulo}
+                </text>
+              </g>
+            ))}
 
-              {/* a linha principal — a cor de sinal do cartão */}
+            {/* série de referência — cinzenta por baixo */}
+            {dRef && (
               <path
-                className="lq-line"
-                d={dLinha}
+                className="lq-ref"
+                d={dRef}
                 fill="none"
-                stroke="var(--l-accent)"
-                strokeWidth={2}
+                stroke="var(--l-ink2)"
+                strokeWidth={1.5}
                 strokeLinejoin="round"
                 pathLength={1}
               />
+            )}
 
-              {/* valores nos extremos das linhas */}
-              <text
-                className="lq-txt lq-ext lq-ext-main lq-ext-ini"
-                x={pts[0][0] + 1}
-                y={pts[0][1] - 9}
-                textAnchor="start"
-              >
-                {FMT(primeiro.v)}
-              </text>
-              <text
-                className="lq-txt lq-ext lq-ext-main"
-                x={W - pad.r + 10}
-                y={yFimMain + 4}
-                textAnchor="start"
-              >
-                {rotFim}
-              </text>
-              {refSerie && (
-                <text
-                  className="lq-txt lq-ext"
-                  x={W - pad.r + 10}
-                  y={yRotRefFim}
-                  textAnchor="start"
-                >
-                  {rotRefFim}
-                </text>
-              )}
+            {/* a linha principal — a cor de sinal do cartão */}
+            <path
+              className="lq-line"
+              d={dLinha}
+              fill="none"
+              stroke="var(--l-accent)"
+              strokeWidth={2}
+              strokeLinejoin="round"
+              pathLength={1}
+            />
 
-              {/* UMA anotação — o extremo real, chamada tracejada */}
-              {anotacao && pontoAnot && (
-                <g
-                  className="lq-anot"
-                  style={
-                    { "--ax": `${ax}px`, "--ay": `${ay}px` } as React.CSSProperties
-                  }
-                >
-                  <rect
-                    x={ax - 3}
-                    y={ay - 3}
-                    width={6}
-                    height={6}
-                    fill="var(--l-accent)"
-                  />
-                  <line
-                    x1={ax}
-                    y1={ay + (rotAcima ? -6 : 6)}
-                    x2={lx}
-                    y2={ly + (rotAcima ? 4 : -6)}
-                    stroke="var(--l-ink2)"
-                    strokeWidth={1}
-                    strokeDasharray="2 3"
-                  />
-                  <text
-                    className="lq-anot-rot"
-                    x={lx}
-                    y={ly}
-                    textAnchor={ancor}
-                  >
-                    {anotacao.rotulo}
-                  </text>
-                </g>
-              )}
-            </svg>
-          </div>
-        )}
-
-        {/* em cartão estreito os rótulos posicionados do gráfico
-            tornam-se texto — só a anotação-insight fica no svg
-            (@container .leitura no globals); a linha resume os
-            extremos e a referência, sem copy nova */}
-        {temGrafico && (
-          <p className="lq-legenda">
-            {FMT(primeiro.v)} {fmtPeriodo(primeiro.t)} → {rotFim}{" "}
-            {fmtPeriodo(ultimo.t)}
-            {refLinha && <> · {rotRefLinha}</>}
-            {refSerie && <> · {rotRefFim}</>}
-          </p>
-        )}
-      </div>
-
-      <footer className="leitura-foot">
-        <p className="leitura-fonte">
-          {rotulos.fonte}:{" "}
-          {fonteUrl ? (
-            <a
-              href={fonteUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="lq-link"
+            {/* valores nos extremos das linhas */}
+            <text
+              className="lq-txt lq-ext lq-ext-main lq-ext-ini"
+              x={pts[0][0] + 1}
+              y={pts[0][1] - 9}
+              textAnchor="start"
             >
-              {fonteNome}
-            </a>
-          ) : (
-            fonteNome
-          )}
+              {FMT(primeiro.v)}
+            </text>
+            <text
+              className="lq-txt lq-ext lq-ext-main"
+              x={W - pad.r + 10}
+              y={yFimMain + 4}
+              textAnchor="start"
+            >
+              {rotFim}
+            </text>
+            {refSerie && (
+              <text
+                className="lq-txt lq-ext"
+                x={W - pad.r + 10}
+                y={yRotRefFim}
+                textAnchor="start"
+              >
+                {rotRefFim}
+              </text>
+            )}
+
+            {/* UMA anotação — o extremo real, chamada tracejada */}
+            {anotacao && pontoAnot && (
+              <g
+                className="lq-anot"
+                style={
+                  { "--ax": `${ax}px`, "--ay": `${ay}px` } as React.CSSProperties
+                }
+              >
+                <rect
+                  x={ax - 3}
+                  y={ay - 3}
+                  width={6}
+                  height={6}
+                  fill="var(--l-accent)"
+                />
+                <line
+                  x1={ax}
+                  y1={ay + (rotAcima ? -6 : 6)}
+                  x2={lx}
+                  y2={ly + (rotAcima ? 4 : -6)}
+                  stroke="var(--l-ink2)"
+                  strokeWidth={1}
+                  strokeDasharray="2 3"
+                />
+                <text
+                  className="lq-anot-rot"
+                  x={lx}
+                  y={ly}
+                  textAnchor={ancor}
+                >
+                  {anotacao.rotulo}
+                </text>
+              </g>
+            )}
+          </svg>
+        </div>
+      )}
+
+      {/* em cartão estreito os rótulos posicionados do gráfico
+          tornam-se texto — só a anotação-insight fica no svg
+          (@container .leitura no globals); a linha resume os
+          extremos e a referência, sem copy nova */}
+      {temGrafico && (
+        <p className="lq-legenda">
+          {FMT(primeiro.v)} {fmtPeriodo(primeiro.t)} → {rotFim}{" "}
+          {fmtPeriodo(ultimo.t)}
+          {refLinha && <> · {rotRefLinha}</>}
+          {refSerie && <> · {rotRefFim}</>}
         </p>
-        <p className="leitura-acoes">
-          <Link href={href} className="lq-link" aria-label={titulo}>
-            {rotulos.pagina} →
-          </Link>
-          <a href={hrefJson} className="lq-link">
-            {rotulos.json}
-          </a>
-        </p>
-      </footer>
-    </article>
+      )}
+    </Cartao>
   );
 }

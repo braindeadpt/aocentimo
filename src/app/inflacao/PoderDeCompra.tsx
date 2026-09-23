@@ -55,7 +55,7 @@ export function PoderDeCompra({ serie }: Props) {
         </div>
       </div>
       {resultado !== null ? (
-        <div className="mt-5 flex items-center gap-6">
+        <div className="mt-5 flex flex-wrap items-center gap-6">
           {/* o euro a encolher — a moeda cheia era o poder de compra de
               janeiro do ano escolhido; o disco encolhe para a fração que
               resta hoje. O contorno tracejado fica: é o que foi comido.

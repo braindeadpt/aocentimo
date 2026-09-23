@@ -15,6 +15,8 @@ import { Haltere } from "@/components/Haltere";
 import { BarraTracos } from "@/components/BarraTracos";
 import { AnelPontos } from "@/components/AnelPontos";
 import { IsometricoDemo } from "./IsometricoDemo";
+import { Cartao } from "@/components/Cartao";
+import { Pagina, PaginaDetalhe } from "@/components/Pagina";
 import { PapelDefs } from "@/components/Papel";
 import { PecaPapel } from "@/components/PecaPapel";
 import { arestaRasgada } from "@/lib/materia";
@@ -824,7 +826,7 @@ export default function EstiloPage() {
         </p>
       </section>
 
-      <section className="stack-sec">
+      <section id="campo-centimos" className="stack-sec">
         <h2 className="kicker mb-4">O campo de cêntimos — 1 ponto = 1 cêntimo</h2>
         <p className="footnote mb-4 max-w-xl">
           A unidade da V4: partes de um todo em dinheiro desenham-se em
@@ -971,6 +973,174 @@ export default function EstiloPage() {
               </Link>
               . <strong>percurso</strong> — caminho com marcos: entra com
               o motor da poupança.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="stack-sec">
+        <h2 className="kicker mb-4">O cartão e a página — a anatomia fixa</h2>
+        <p className="footnote mb-4 max-w-xl">
+          Duas peças de arquitectura, não de desenho.{" "}
+          <code className="num">Cartao</code> é a casca Ledger que todo o
+          cartão-instrumento partilha — o <code className="num">Leitura</code>{" "}
+          já nasce sobre ela (mesmo DOM, mesma inversão para papel).{" "}
+          <code className="num">Pagina</code> é o template de três níveis
+          obrigatório nas rotas de conteúdo: 1 · a resposta, 2 · Explora,
+          3 · Confirma — e a pergunta seguinte, para nenhuma página ser um
+          beco. O orbe de estado chega em S1-08; o ponto de montagem já
+          existe (a prop <code className="num">estado</code> + o selo
+          textual, que fica sempre — a forma nunca é o único canal).
+        </p>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <div className="border border-line bg-panel px-5 py-4 lg:col-span-2">
+            <p className="kicker-xs mb-3">Cartao — quatro partes, uma ideia</p>
+            <Cartao
+              breadcrumb="ESTILO / ANATOMIA · AO CÊNTIMO"
+              meta={["exercício 2026"]}
+              estado="em-dia"
+              estadoRotulo="em dia"
+              controlos={
+                <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1">
+                  <span className="num text-rotulo">presets:</span>
+                  <a href="/salario" className="lq-link num text-rotulo">
+                    mínimo
+                  </a>
+                  <a href="/salario" className="lq-link num text-rotulo">
+                    1 500 €
+                  </a>
+                  <a href="/salario" className="lq-link num text-rotulo">
+                    2 000 €
+                  </a>
+                </div>
+              }
+              fonte={{
+                rotulo: "Fonte",
+                itens: [{ nome: "metodologia", url: "/metodologia" }],
+              }}
+              acoes={[
+                { href: "/salario", rotulo: "ver →", ariaLabel: "Salário" },
+                { href: "/api/index.json", rotulo: "JSON", externo: true },
+              ]}
+            >
+              <p className="leitura-insight">
+                O ano português paga-se em 14 vezes — junho e dezembro trazem
+                os subsídios.
+              </p>
+              <p className="leitura-valor num">14</p>
+              <p className="leitura-breadcrumb mt-2">
+                12 salários + 2 subsídios
+              </p>
+            </Cartao>
+            <p className="footnote mt-3">
+              <strong>cabeçalho</strong> — breadcrumb mono + meta + selo de
+              estado · <strong>corpo</strong> — UMA ideia ·{" "}
+              <strong>controlos</strong> — hairline tracejada, a zona de
+              medição · <strong>rodapé</strong> — fonte + «ver →» + «JSON».
+              Passa o rato ou o foco: inverte para papel. O conteúdo do
+              corpo fala em <code className="num">--l-*</code> para
+              inverter com o cartão (ou herda a tinta — nunca usa tokens
+              globais de cor).
+            </p>
+          </div>
+          <div className="border border-line bg-panel px-5 py-4 lg:col-span-2">
+            <p className="kicker-xs mb-3">
+              Pagina — o exemplo completo, nos dois temas (troca o tema no topo)
+            </p>
+            <div className="border border-line">
+              <Pagina
+                pergunta="Para onde vai cada euro?"
+                perguntaAs="h2"
+                idBase="estilo-pagina"
+                kicker="Exemplo — a história canónica"
+                resposta={{
+                  instrumento: (
+                    <CampoCentimos
+                      partes={EURO_CENTIMOS.partes}
+                      layout="montes"
+                      equivalente={EURO_EQ}
+                    />
+                  ),
+                  frase: `De cada euro que a empresa gasta contigo, ${fmtNum(EURO_CENTIMOS.partes[3].valor)} cêntimos chegam-te à conta.`,
+                }}
+                explora={
+                  <div className="border border-line bg-panel px-5 py-4">
+                    <BarraTracos
+                      grupos={TRACOS_ANO}
+                      unidadeTraco="1 pagamento"
+                      rotulo="O ano em pagamentos"
+                      valor="14"
+                      nota={`${fmtNum(TRACOS_ANO[0].n)} salários + ${fmtNum(TRACOS_ANO[1].n)} subsídios`}
+                    />
+                  </div>
+                }
+                confirma={
+                  <>
+                    <PaginaDetalhe rotulo="A conta do euro, linha a linha">
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-corpo-sm">
+                          <thead>
+                            <tr className="border-b-2 border-ink text-left">
+                              <th scope="col" className="py-2 pr-4 font-medium">
+                                Linha
+                              </th>
+                              <th scope="col" className="py-2 font-medium text-right">
+                                Por mês
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {[
+                              ["A empresa paga (custo total)", CAN.custoEmpresaMes],
+                              ["− TSU da empresa", CAN.tsuEntidadeMes],
+                              ["− IRS retido", CAN.irsRetidoMes],
+                              ["− Segurança Social", CAN.ssMes],
+                              ["Chega à tua conta", CAN.liquidoMes],
+                            ].map(([rotulo, v]) => (
+                              <tr key={rotulo as string} className="border-b border-line">
+                                <td className="py-2 pr-4 text-ink2">{rotulo}</td>
+                                <td className="py-2 num text-right">{fmtEUR0(v as number)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </PaginaDetalhe>
+                    <PaginaDetalhe rotulo="Fonte e dados">
+                      <Source
+                        nome="AO CÊNTIMO — cenário canónico"
+                        url="/metodologia"
+                        nota={`solteiro, sem dependentes, bruto de ${fmtEUR0(BRUTO_CANONICO)}/mês`}
+                      />
+                      <p className="footnote mt-2">
+                        <a
+                          href="/api/index.json"
+                          className="underline decoration-line2 underline-offset-2 hover:text-accent"
+                        >
+                          JSON
+                        </a>{" "}
+                        — o índice das séries públicas.
+                      </p>
+                    </PaginaDetalhe>
+                  </>
+                }
+                seguinte={{
+                  href: "/salario",
+                  rotulo: "Quanto fica do teu salário?",
+                }}
+              />
+            </div>
+            <p className="footnote mt-3">
+              <strong>1 · a resposta</strong> — a pergunta (h1) + UM
+              instrumento + UMA frase ≤ ~25 palavras;{" "}
+              <strong>2 · Explora</strong> — controlos e a visualização da
+              página; <strong>3 · Confirma</strong> —{" "}
+              <code className="num">PaginaDetalhe</code> fechados por
+              omissão. Cada nível é{" "}
+              <code className="num">section aria-labelledby</code>. Em dev,
+              mais de um instrumento ou uma frase longa demais avisam na
+              consola — nunca falham o build. Aqui a pergunta renderiza em
+              h2 só porque esta página já tem o seu h1.
             </p>
           </div>
         </div>

@@ -121,7 +121,21 @@ peças por valor.
 | **3 · Confirma** | profissionais, jornalistas | tabelas, legislação, fórmulas, fontes, JSON — em `<details>` fechado por omissão |
 
 Cada página termina com **a pergunta seguinte**, para ninguém chegar a um
-beco. Os níveis têm marcação semântica coerente (landmarks/headings).
+beco. Os níveis têm marcação semântica coerente (landmarks/headings):
+cada nível é uma `<section aria-labelledby>` — o nível 1 é etiquetado
+pelo h1 da página (a pergunta é o nome da secção), os níveis 2 e 3 têm
+h2 próprio («Explora», «Confirma»).
+
+**Implementação partilhada (S1-06, congelada):** `Pagina` +
+`PaginaDetalhe` (o `<details>` fechado por omissão do nível 3) e
+`Cartao` — a anatomia Ledger fixa que todo o cartão-instrumento
+partilha: cabeçalho (breadcrumb mono · meta · selo de estado), corpo
+com UMA ideia, controlos opcionais, rodapé (fonte + «ver →» + «JSON»).
+O `Leitura` nasce sobre `Cartao`; o orbe de estado (S1-08) monta-se no
+selo sem mudar a API (`estado` + `estadoRotulo` — o estado existe
+sempre em texto). Em dev, `Pagina` avisa na consola se o nível 1 tiver
+mais de um instrumento ou a frase mais de ~25 palavras — nunca falha
+o build.
 
 ### A história canónica do euro
 
@@ -421,6 +435,8 @@ build && test:e2e`.
 | Componente | Uso | Contrato |
 |---|---|---|
 | `LineChart`/`Spark`/`Kinetic` | séries temporais | svg `aria-hidden` + equivalente (tabela sr-only); animam só abaixo da dobra ou em interacção |
+| `Cartao` | anatomia Ledger de qualquer cartão | cabeçalho/corpo/controlos/rodapé; selo de estado sempre com texto; inversão para papel |
+| `Pagina`/`PaginaDetalhe` | template de três níveis das rotas de conteúdo | níveis = `section aria-labelledby`; confirma em `<details>` fechado |
 | `Leitura` | cartão Ledger de leitura | insight escrito, anotação com chamada, fonte+estado no rodapé |
 | `EuroBar`/`Cascata`/`JuroCapital`/`EuroExplodido`/`CustoExplodido` | comparações e decomposições | equivalente textual único; SSR no estado final |
 | `PecaPapel`/`Papel` | documentos | paleta fixa de papel; rasgo determinista |

@@ -21,6 +21,7 @@ serve.log
 .screenshots/
 .shots/
 .videos/
+scripts/tmp/
 
 # material de referência (terceiros, capturas, PDFs) — nunca commitar
 referencias/
