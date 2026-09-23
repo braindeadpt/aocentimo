@@ -4,6 +4,7 @@ import Link from "next/link";
 import { GLOSSARIO } from "@/content/glossario";
 import { MicroDemo } from "@/components/MicroDemo";
 import { JsonLd, faqPage } from "@/lib/jsonld";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "Aprender — glossário de dinheiro",
@@ -26,9 +27,7 @@ export default function AprenderPage() {
     <div className="mx-auto max-w-5xl px-5 pt-14">
       <JsonLd data={ld} />
       <p className="kicker">Glossário</p>
-      <h1 className="titulo-pagina">
-        Os termos, explicados
-      </h1>
+      <TituloPagina rota="/aprender">Os termos, explicados</TituloPagina>
       <p className="lede mt-5">
         Cada termo em trinta segundos de leitura, com um exemplo numérico.
         Sem jargão — se não cabe numa frase simples, é porque está mal

@@ -400,3 +400,145 @@ ou em quadrado o símbolo; área de proteção x = capitular; proibido haste
 noutra cor, haste sem recorte, esticar/redesenhar letras. Os paths não
 se editam à mão — regeneram-se com `scratchpad/logo/gerar-ficheiros.mjs`.
 Registado em PRODUTO.md §6 «Marca»; demonstrado em `/estilo`.
+
+## 2026-09-23 — Sistema de ícones: traço próprio, conjunto fechado
+
+**Contexto.** Até aqui não havia sistema de símbolos — só o ¢ do
+logótipo e os glifos ▲▼ do `Delta`. As referências da V4 (cartões com
+ícone de traço num quadrado de contorno tracejado, controlos com
+ícones) pedem um sistema partilhado antes das sessões paralelas
+(1B-01). Existia ainda o `<Glifo>` 12×12 do trabalho B-03, revertido em
+86a9830 — a tarefa mandava avaliá-lo antes de desenhar do zero.
+
+**Avaliação do Glifo revertido (commit 2da28c6).** Reutiliza-se a
+técnica, não o componente: `pathLength=1` + `stroke-dashoffset` em
+`currentColor`, terminações redondas, `aria-hidden`. Não serve de base
+directa porque: (a) grelha 12×12 — a referência pede 20×20 e as
+metáforas de página precisam do espaço; (b) cinco tipos soltos
+(sobe/desce/euro/pct/fluxo), não um conjunto fechado por função;
+(c) é `"use client"` com `useLayoutEffect` para redesenhar numa
+mudança de `tipo` — o novo gatilho é o hover/focus do controlo, que em
+CSS puro não precisa de JS nenhum e serve em server components
+(o `Cartao` é um). O `Glifo` era um mecanismo para o `Delta`; o
+`Icone` é um sistema para o produto.
+
+**Alternativas.** (a) Biblioteca de ícones (Lucide/Feather) — proibida
+pelo brief e pela lista negra (iconografia stock); (b) glifos de texto
+(▲▼, emoji) — dependem da fonte e não são desenho próprio; (c) recuperar
+o `Glifo` tal qual — os três motivos acima.
+
+**Escolha.** `Icone`/`IconeEmblema`: 25 desenhos à mão na grelha 20×20,
+traço 1,5 px, terminações redondas, sem preenchimento, conjunto fechado
+(nome fora da lista falha). Três famílias: páginas (11), acções (9),
+estado (5 — a família do `OrbeEstado` em pontos de traço).
+`aria-hidden` por omissão; acções sempre dentro de controlo nomeado;
+`rotulo` só para o ícone sozinho com significado próprio. O traço
+desenha-se uma vez ao hover/focus do controlo (`--dur-micro` + passo
+por traço, CSS puro); estático em reduced-motion. `IconeEmblema` =
+quadrado de contorno tracejado no cabeçalho do `Cartao` (prop `icone`
+nova, opcional — API alargada antes do congelamento das paralelas). O ¢
+fica fora do conjunto: as suas posições permitidas fora do logótipo
+(azulejo/`LogoMark` e o selo «1 ponto = 1 cêntimo») e proibidas (nunca
+ícone, nunca unidade junto de número, nunca decoração) estão escritas
+em PRODUTO.md §6.
+
+**Consequência.** Existe uma voz de símbolos própria e fechada; um
+nome novo exige tarefa de fundação. Os ▲▼ do `Delta`/`Haltere` ficam —
+são sinais tipográficos de variação escritos em texto, não ícones de
+controlo (pode reavaliar-se numa sessão de polimento). Folha completa
+em `/estilo` §Ícones; testes unit (conjunto, aria, falha) e e2e
+(folha, controlos nomeados, desenho micro, reduced-motion).
+
+## 2026-09-23 — Lettering: fino U+202F, menos U+2212, «», e o <Valor> único
+
+**Contexto.** Cada peça compunha número e unidade à sua maneira —
+`sufixo=" €"`, `` `${n} ${unidade}` ``, `"€"` colado, NBSP do Intl —
+e o sinal negativo saía como hífen ASCII. A referência 1B-02 pede os
+pormenores tipográficos finos: uma ponte só, um sinal só, uma peça de
+composição só. A varrida inicial também apanhou dados de geometria
+SVG (`viewBox`, `points`, `d`) e a fonte do canvas — reposto; o
+contracto passou a ser auditado no HTML exportado, não na fonte.
+
+**Alternativas.** (a) NBSP U+00A0 — quebrável em alguns motores de
+texto e largo demais entre número e símbolo; (b) espaço fino
+tipográfico U+2009 — não é inquebrável; (c) hífen U+002D — é
+pontuação, não sinal matemático; (d) cada componente compor a sua
+unidade — era exactamente o defeito a eliminar.
+
+**Escolha.** `FINO` (U+202F, NBSP estreita) entre número e qualquer
+unidade-símbolo (`€`, `%`, `c`, `p.p.`, `€/L`, `€/kWh`, `/mês`) e no
+agrupamento de milhares; `MENOS` (U+2212) em todo o valor negativo ou
+delta — ambos exportados de `src/lib/format.ts`, que normaliza a saída
+do Intl (o ICU emite NBSP largo). A composição visual é uma peça:
+`<Valor>` (`.num-sign` semântico + número + `.num-unit` a ~45 % na
+mesma linha de base), usada pelo `NumHero`, `Leitura`, hero de
+`/salario`, `Adivinha` e demos da `/estilo`. Apresentadores animados
+(`TweenNum`, `Odometer`) recebem a unidade sem espaço e põem o FINO
+eles próprios — o `texto` sr-only leva o número e a unidade visível
+completa o anúncio, sem duplicar. Aspas PT-PT são «…»; reticências são
+«…» (U+2026); `hyphens: auto` só no corpo (`text-wrap: pretty`), nunca
+em títulos (`text-wrap: balance`). Tracking passou a tokens por papel
+(`--tracking-*` em `@theme`) — zero literais `letter-spacing` em CSS.
+O eixo `wdth` do Archivo mantém-se como expressão estática (125
+manchete / 75 monumento): o peso cinético no herói interactivo de
+`/salario` foi medido mentalmente e rejeitado — `wght`/`wdth` animado
+por input lutaria contra `tabular-nums` e daria shift de layout a cada
+tick da régua. Auditoria: `scripts/_lettering.mjs` corre no
+`npm run audit` sobre o `out/` — texto visível apenas (atributos,
+`<script>`, `<code>` e geometria SVG ficam de fora), falha em hífen
+numérico, espaço largo junto a unidade, aspas erradas e `...`.
+
+**Consequência.** Existe uma ponte número→unidade, um sinal de menos e
+uma peça de composição — quem compõe à mão falha a auditoria do build.
+Strings de copy em `data/fiscal/*.json` seguem a mesma regra porque são
+renderizadas verbatim. O FINO nunca entra em dados de máquina (paths,
+viewBox, fontes de canvas, fórmulas).
+
+## 2026-09-23 — Botões e controlos: um sistema, todos os estados (1B-03)
+
+**Contexto.** A casa tinha `.btn`/`.btn-primary` mais peças avulsas:
+checkboxes nativas nos simuladores, pills da régua próprias, botões de
+ícone à mão, e nenhum padrão de «a carregar», «desactivado com razão»
+ou «copiado». A referência 1B-03 pede o que distingue o premium do
+correcto: um sistema único de controlos com todos os estados.
+
+**Alternativas.** (a) `disabled` nativo — esconde o controlo da ordem
+de tabulação e da árvore de acessibilidade: a razão morreria com ele;
+(b) `aria-description` para a razão — o lint
+(`role-supports-aria-props`) não o suporta em `button`/`link`/
+`switch`/`radio`, e o suporte de AT ainda é irregular; (c) `button` +
+`aria-pressed` também para o segmentado — mistura papéis: é uma escolha
+exclusiva, `radiogroup` é a semântica certa; (d) tooltip novo em todos
+os lados — recusado: dicas só onde já existiam (o quadro de frescura).
+
+**Escolha.** Seis peças, uma física (pílula `--raio-controlo`, alvo
+≥44 px, pressão `scale(.97)` em `--dur-micro`, foco no anel torrado
+global): `Botao` (primário·secundário·terciário·ícone — `href` desenha
+ligação, não botão-fingido), `Interruptor` (`role="switch"`),
+`Chip` (`aria-pressed`, três canais de selecção), `Segmentado`
+(`radiogroup` com tabindex itinerante — setas movem foco+selecção e
+saltam desactivados), `BotaoCopiar` («Copiado»/«Não copiado» num
+`role="status"` residente; relativo → URL absoluta na clipboard),
+`Regua` (range nativo único; presets = `Chip`; polegar com ressalto de
+encaixe — `key` por nonce rearma a keyframe `--dur-micro` +
+`--ease-rasgo` a cada snap no arrasto e à aterragem via
+`transitionend`). Desactivado = `aria-disabled` focável + `razao`
+obrigatória em `title` e **dentro do nome acessível** (texto sr-only
+no rótulo ou a nota visível do interruptor) — nunca um controlo morto
+sem explicação. A carregar = mini-orbe `OrbeEstado` no lugar do ícone
++ rótulo que diz o que se passa + `aria-busy`. A `.dica` usa CSS
+anchor positioning com `flip-block` e fallback absoluto — e é **irmã**
+da âncora (`.dica-alvo` agrupa as duas) porque um posicionado não se
+pode ancorar a um elemento da sua cadeia de containing block.
+`.btn`/`.regua-pill` removidos; quatro simuladores migraram as
+checkboxes para `Interruptor`.
+
+**Consequência.** Um só contrato para acção, escolha e confirmação:
+todos os estados existem na mesma peça e demonstram-se em `/estilo`
+(`#controlos`). `Botao`/`Chip`/`Interruptor`/`Segmentado` são client
+components (onClick não serializa) sem estado próprio — server
+components renderizam-nos com props serializáveis. Reduced-motion
+corta pressão, deslize e ressalto; o valor final está sempre no lugar.
+Cobertura: `Controlos.test.tsx` (11 unitários) + `e2e/controlos.spec.ts`
+(16 casos — nomes acessíveis, switch, radios, régua por teclado,
+«Copiado», dica por âncora, foco, reduced-motion).

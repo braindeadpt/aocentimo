@@ -9,7 +9,7 @@ interface Props {
   serie: { t: string; v: number }[];
 }
 
-/** "1000 € em 2015 valem quanto hoje?" — deflaciona pelo IHPC total. */
+/** "1000 € em 2015 valem quanto hoje?" — deflaciona pelo IHPC total. */
 export function PoderDeCompra({ serie }: Props) {
   const anos = useMemo(
     () => [...new Set(serie.map((p) => p.t.slice(0, 4)))],

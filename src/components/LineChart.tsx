@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { fmtData, fmtNum } from "@/lib/format";
+import { comUnidade, fmtData, fmtNum } from "@/lib/format";
 import { EmptyState } from "@/components/EmptyState";
 import { OrbeEstado } from "@/components/OrbeEstado";
 import { chaveSeries, interpDom, interpPts, type Dominio, type PontoTV } from "@/lib/grafico";
@@ -128,7 +128,7 @@ export function LineChart({
   eventos,
   estado,
 }: Props) {
-  const yFormat = (v: number) => (unidade ? `${fmtNum(v)} ${unidade}` : fmtNum(v));
+  const yFormat = (v: number) => comUnidade(fmtNum(v), unidade);
   const wrap = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [w, setW] = useState(720);

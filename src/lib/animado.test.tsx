@@ -70,8 +70,8 @@ describe("motor de valores animados — máquina pura", () => {
 
 describe("TweenNum — contrato SSR e aria-live", () => {
   it("o DOM traz o valor final no primeiro paint", () => {
-    const h = html(<TweenNum valor={1234.5} casas={2} texto="1 234,50" />);
-    expect(h).toContain("1 234,50");
+    const h = html(<TweenNum valor={1234.5} casas={2} texto="1 234,50" />);
+    expect(h).toContain("1 234,50");
   });
 
   it("sr-only com aria-live anuncia o final; o visual é aria-hidden", () => {
@@ -89,9 +89,11 @@ describe("TweenNum — contrato SSR e aria-live", () => {
 
 describe("Odometer — o apresentador de revelação", () => {
   it("o DOM traz o valor final formatado (nunca zeros no SSR)", () => {
-    const h = html(<Odometer valor={920} sufixo=" €" />);
+    const h = html(<Odometer valor={920} sufixo="€" />);
     expect(h).toContain("920");
-    expect(h).toContain(" €");
+    // a unidade vai no fino inseparável (U+202F) — nunca espaço normal
+    expect(h).toContain(" €");
+    expect(h).not.toContain(" €");
   });
 
   it("sr-only com aria-live; rodas aria-hidden", () => {

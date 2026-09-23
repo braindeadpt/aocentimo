@@ -10,7 +10,7 @@ legislativa/oficial (DR, AT, OE, IGCP, Código do IVA).
 |---|---|---|
 | `irs-YYYY.json` | Escalões, deduções, mínimo de existência, sobretaxa — um ficheiro por ano fiscal | OE / CIRS |
 | `retencao-YYYY.json` | Tabelas de retenção na fonte mensais (continente, trabalho dependente) | Despacho AT anual (DR) |
-| `ss.json` | TSU trabalhador (11 %) e entidade (23,75 %) | Código dos Regimes Contributivos |
+| `ss.json` | TSU trabalhador (11 %) e entidade (23,75 %) | Código dos Regimes Contributivos |
 | `iva.json` | Taxas reduzida/intermédia/normal + exemplos | CIVA |
 | `isp.json` | ISP e taxa de carbono por litro | Portarias semanais |
 | `ca.json` | CA Série F: taxa base, prémios de permanência (`de`/`ate`/`pp`) | IGCP |
@@ -21,9 +21,9 @@ legislativa/oficial (DR, AT, OE, IGCP, Código do IVA).
 | `desemprego.json` | % RR, limites IAS, tabela de duração, majoração/redução | DL 220/2006 + Guia Seg. Social |
 | `subsidio-alimentacao.json` | Limites isentos por dia (dinheiro/cartão) | Portaria anual AP + CIRS art. 2.º |
 | `deducoes-YYYY.json` | Deduções à coleta por categoria + limite global do art. 78.º | CIRS arts. 78.º-84.º / AT |
-| `ppr.json` | Dedução à coleta por idade (20 %, tetos) + tributação no resgate | EBF art. 21.º |
-| `catb.json` | Recibos verdes: coeficiente 0,75, SS 21,4 % sobre rendimento relevante, retenção | CIRS + Código Contributivo |
-| `mais-valias.json` | Taxa autónoma, exclusões por detenção, cripto ≥365 dias, imóveis 50 % | CIRS arts. 10.º, 43.º, 72.º |
+| `ppr.json` | Dedução à coleta por idade (20 %, tetos) + tributação no resgate | EBF art. 21.º |
+| `catb.json` | Recibos verdes: coeficiente 0,75, SS 21,4 % sobre rendimento relevante, retenção | CIRS + Código Contributivo |
+| `mais-valias.json` | Taxa autónoma, exclusões por detenção, cripto ≥365 dias, imóveis 50 % | CIRS arts. 10.º, 43.º, 72.º |
 | `usura-YYYY.json` | Tetos de TAEG/TAN por tipo de crédito ao consumo, por trimestre | BdP — Instrução trimestral (DL 133/2009) |
 | `calendario-YYYY.json` | Prazos fiscais do ano (IRS, IMI, IUC, e-Fatura) | AT / códigos tributários |
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { fmtNum } from "@/lib/format";
+import { FINO, fmtNum } from "@/lib/format";
 
 /**
  * Odometer — cada dígito é uma roda de 0–9 que roda até ao valor.
@@ -10,7 +10,9 @@ import { fmtNum } from "@/lib/format";
  * rodas a 0, sai, e a transição desce-as até ao dígito. Sem JS e com
  * reduced-motion o valor final está sempre correcto no DOM — nunca zeros.
  * Quando `valor` muda, as rodas rodam do dígito anterior para o novo.
- * Separadores (espaços, vírgula, €) são estáticos; só dígitos rodam.
+ * Separadores (espaços, vírgula) são estáticos; só dígitos rodam.
+ * O `sufixo` é a unidade SEM espaço («€», «c») — a ponte é o fino
+ * inseparável (FINO, U+202F), posto por aqui, nunca um espaço normal.
  */
 export function Odometer({
   valor,
@@ -23,13 +25,15 @@ export function Odometer({
   valor: number;
   casas?: number;
   prefixo?: string;
+  /** a unidade sem espaço — «€», «c»; a ponte é o FINO (U+202F) */
   sufixo?: string;
   dur?: number;
   className?: string;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
 
-  const texto = `${prefixo}${fmtNum(valor, casas)}${sufixo}`;
+  const corpo = `${prefixo}${fmtNum(valor, casas)}`;
+  const texto = sufixo ? `${corpo}${FINO}${sufixo}` : corpo;
 
   // roll de entrada — só uma vez, só com motion, e só quando nasce
   // abaixo da primeira dobra (M-09: acima da dobra nada entra a animar
@@ -65,7 +69,7 @@ export function Odometer({
         {texto}
       </span>
       <span ref={ref} className={`odometer ${className ?? ""}`} aria-hidden="true">
-      {texto.split("").map((ch, i) => {
+      {corpo.split("").map((ch, i) => {
         if (/\d/.test(ch)) {
           const d = Number(ch);
           const atraso = `calc(${rodas++} * var(--stagger))`; // as rodas da direita chegam por último
@@ -96,6 +100,13 @@ export function Odometer({
           </span>
         );
       })}
+      {/* a unidade não roda — segue as rodas no fino inseparável */}
+      {sufixo && (
+        <span aria-hidden>
+          {FINO}
+          {sufixo}
+        </span>
+      )}
       </span>
     </>
   );

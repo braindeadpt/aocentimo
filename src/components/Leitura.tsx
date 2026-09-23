@@ -3,7 +3,8 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { Cartao } from "@/components/Cartao";
 import { Odometer } from "@/components/Odometer";
-import { fmtLitro, fmtNum, fmtPeriodo } from "@/lib/format";
+import { Valor } from "@/components/Valor";
+import { comUnidade, fmtLitro, fmtNum, fmtPeriodo } from "@/lib/format";
 import { useArmado } from "@/lib/useArmado";
 import { dataDePeriodo, escalaTempo, escalaValor } from "@/lib/viz/escalas";
 import { ticksTempo } from "@/lib/viz/eixos";
@@ -52,6 +53,8 @@ export interface RotulosLeitura {
   fonte: string;
   pagina: string;
   json: string;
+  /** nome acessível da acção «JSON» — «copiar o endereço do JSON» */
+  jsonAria: string;
   estados: Record<EstadoLeitura, string>;
   /** template do aria-label do gráfico — «{insight} — série de {de}
       a {ate}, último {valor}» (o único equivalente textual) */
@@ -86,18 +89,28 @@ export interface LeituraProps {
   rotulos: RotulosLeitura;
   /** variante em largura total — o Leitura-herói do painel */
   amplo?: boolean;
+  /** índice do cartão no grupo (0, 1, 2…) — a coreografia de entrada
+      desliza `entrada × --stagger`: cartões que entram juntos na dobra
+      desenham-se em sequência, nunca um bloco de uma vez (1B-04) */
+  entrada?: number;
 }
 
 const FORMATOS: Record<
   FormatoLeitura,
-  { fmt: (v: number) => string; casas: number; sufixo: string }
+  { fmt: (v: number) => string; casas: number; unidade: string }
 > = {
-  pct: { fmt: (v) => `${fmtNum(v, 2)} %`, casas: 2, sufixo: " %" },
-  pct1: { fmt: (v) => `${fmtNum(v, 1)} %`, casas: 1, sufixo: " %" },
-  litro: { fmt: fmtLitro, casas: 3, sufixo: " €/L" },
-  num: { fmt: (v) => fmtNum(v), casas: 2, sufixo: "" },
-  pp: { fmt: (v) => `${fmtNum(v, 1)} p.p.`, casas: 1, sufixo: " p.p." },
-  kwh: { fmt: (v) => `${fmtNum(v, 4)} €/kWh`, casas: 4, sufixo: " €/kWh" },
+  // a ponte número→unidade é sempre o fino inseparável (comUnidade,
+  // U+202F); `unidade` vai sem espaço — quem a compõe põe o FINO
+  pct: { fmt: (v) => comUnidade(fmtNum(v, 2), "%"), casas: 2, unidade: "%" },
+  pct1: { fmt: (v) => comUnidade(fmtNum(v, 1), "%"), casas: 1, unidade: "%" },
+  litro: { fmt: fmtLitro, casas: 3, unidade: "€/L" },
+  num: { fmt: (v) => fmtNum(v), casas: 2, unidade: "" },
+  pp: { fmt: (v) => comUnidade(fmtNum(v, 1), "p.p."), casas: 1, unidade: "p.p." },
+  kwh: {
+    fmt: (v) => comUnidade(fmtNum(v, 4), "€/kWh"),
+    casas: 4,
+    unidade: "€/kWh",
+  },
 };
 
 const r1 = (n: number) => Math.round(n * 10) / 10;
@@ -122,6 +135,7 @@ export function Leitura({
   hrefJson,
   rotulos,
   amplo = false,
+  entrada,
 }: LeituraProps) {
   const F = FORMATOS[formato];
   const idHach = useId();
@@ -380,7 +394,7 @@ export function Leitura({
         .replace("{insight}", insight)
         .replace("{de}", fmtPeriodo(primeiro.t))
         .replace("{ate}", fmtPeriodo(ultimo.t))
-        .replace("{valor}", `${fmtNum(valor, F.casas)} ${unidade}`)
+        .replace("{valor}", comUnidade(fmtNum(valor, F.casas), unidade))
     : insight;
 
   return (
@@ -388,6 +402,11 @@ export function Leitura({
       ref={ref}
       amplo={amplo}
       className={arm("leitura-on")}
+      style={
+        entrada === undefined
+          ? undefined
+          : ({ "--ei": entrada } as React.CSSProperties)
+      }
       breadcrumb={breadcrumb}
       meta={[`${rotulos.leitura} ${leitura}`]}
       estado={estado}
@@ -398,12 +417,17 @@ export function Leitura({
       }}
       acoes={[
         { href, rotulo: `${rotulos.pagina} →`, ariaLabel: titulo },
-        { href: hrefJson, rotulo: rotulos.json, externo: true },
+        // «JSON» copia o URL do endpoint — é o activo para quem
+        // trabalha com os dados; «Copiado» confirma junto ao botão
+        { copiar: hrefJson, rotulo: rotulos.json, ariaLabel: rotulos.jsonAria },
       ]}
     >
       <p className="leitura-insight">{insight}</p>
       <p className="leitura-valor num">
-        <Odometer valor={valor} casas={F.casas} sufixo={F.sufixo} />
+        <Valor
+          numero={<Odometer valor={valor} casas={F.casas} />}
+          unidade={F.unidade || undefined}
+        />
       </p>
 
       {temGrafico && (

@@ -40,50 +40,50 @@ export interface Demo {
 }
 
 const PILHA_TAN: Seg[] = [
-  { rotulo: "Euribor 6M · 2,0 %", pct: 67 },
-  { rotulo: "spread · 1,0 %", pct: 33, cor: "acento" },
+  { rotulo: "Euribor 6M · 2,0 %", pct: 67 },
+  { rotulo: "spread · 1,0 %", pct: 33, cor: "acento" },
 ];
 
 export const DEMOS: Record<string, Demo> = {
   euribor: {
     tipo: "pilha",
     pilha: PILHA_TAN,
-    total: "TAN 3,0 %",
-    alt: "A Euribor de 2 % soma-se ao spread de 1 % e forma a TAN de 3 %",
+    total: "TAN 3,0 %",
+    alt: "A Euribor de 2 % soma-se ao spread de 1 % e forma a TAN de 3 %",
   },
   spread: {
     tipo: "pilha",
     pilha: [
-      { rotulo: "Euribor 6M · 2,0 %", pct: 67 },
-      { rotulo: "spread — a parte negociável · 1,0 %", pct: 33, cor: "acento" },
+      { rotulo: "Euribor 6M · 2,0 %", pct: 67 },
+      { rotulo: "spread — a parte negociável · 1,0 %", pct: 33, cor: "acento" },
     ],
-    total: "TAN 3,0 %",
-    alt: "Sobre a Euribor de 2 % assenta o spread negociável de 1 %",
+    total: "TAN 3,0 %",
+    alt: "Sobre a Euribor de 2 % assenta o spread negociável de 1 %",
   },
   tan: {
     tipo: "pilha",
     pilha: PILHA_TAN,
-    total: "TAN 3,0 %",
+    total: "TAN 3,0 %",
     alt: "A TAN é a soma: Euribor mais spread",
   },
   taeg: {
     tipo: "pilha",
     pilha: [
-      { rotulo: "TAN · 3,0 %", pct: 71 },
+      { rotulo: "TAN · 3,0 %", pct: 71 },
       { rotulo: "seguros", pct: 18 },
       { rotulo: "comissões", pct: 11 },
     ],
-    total: "TAEG ≈ 4,2 %",
+    total: "TAEG ≈ 4,2 %",
     alt: "A TAEG engorda: à TAN somam-se seguros e comissões",
   },
   mtic: {
     tipo: "pilha",
     pilha: [
-      { rotulo: "capital · 200 000 €", pct: 67 },
+      { rotulo: "capital · 200 000 €", pct: 67 },
       { rotulo: "juros", pct: 28 },
       { rotulo: "seguros + comissões", pct: 5 },
     ],
-    total: "MTIC ≈ 300 000 €",
+    total: "MTIC ≈ 300 000 €",
     alt: "O MTIC é tudo o que se paga: o capital mais os juros, seguros e comissões",
   },
   "ipc-ihpc": {
@@ -97,12 +97,12 @@ export const DEMOS: Record<string, Demo> = {
   "escalao-irs": {
     tipo: "vasos",
     vasos: [
-      { rotulo: "12,5 %", cheio: 1 },
-      { rotulo: "16 %", cheio: 1 },
-      { rotulo: "23,5 %", cheio: 0.45 },
+      { rotulo: "12,5 %", cheio: 1 },
+      { rotulo: "16 %", cheio: 1 },
+      { rotulo: "23,5 %", cheio: 0.45 },
       { rotulo: "…", cheio: 0 },
     ],
-    alt: "O rendimento enche os escalões por ordem: 12,5 % cheio, 16 % cheio, e só uma parte no escalão de 23,5 %",
+    alt: "O rendimento enche os escalões por ordem: 12,5 % cheio, 16 % cheio, e só uma parte no escalão de 23,5 %",
   },
   "taxa-efetiva-marginal": {
     tipo: "barras",
@@ -110,7 +110,7 @@ export const DEMOS: Record<string, Demo> = {
       { rotulo: "marginal (último escalão)", pct: 70 },
       { rotulo: "efetiva (média real)", pct: 34, cor: "acento" },
     ],
-    alt: "A taxa marginal de 35 % assusta, mas a efetiva — o imposto total sobre o rendimento — fica perto de metade",
+    alt: "A taxa marginal de 35 % assusta, mas a efetiva — o imposto total sobre o rendimento — fica perto de metade",
   },
   "deducao-especifica": {
     tipo: "pilha",
@@ -123,10 +123,10 @@ export const DEMOS: Record<string, Demo> = {
   "minimo-existencia": {
     tipo: "pilha",
     pilha: [
-      { rotulo: "protegido — até 12 880 €", pct: 45, cor: "oco" },
+      { rotulo: "protegido — até 12 880 €", pct: 45, cor: "oco" },
       { rotulo: "tributável", pct: 55 },
     ],
-    alt: "O mínimo de existência protege o rendimento essencial: até 12 880 euros não paga IRS",
+    alt: "O mínimo de existência protege o rendimento essencial: até 12 880 euros não paga IRS",
   },
   "retencao-fonte": {
     tipo: "barras",
@@ -139,10 +139,10 @@ export const DEMOS: Record<string, Demo> = {
   tsu: {
     tipo: "pilha",
     pilha: [
-      { rotulo: "tu · 11 %", pct: 32 },
-      { rotulo: "empresa · 23,75 % — invisível no recibo", pct: 68, cor: "oco" },
+      { rotulo: "tu · 11 %", pct: 32 },
+      { rotulo: "empresa · 23,75 % — invisível no recibo", pct: 68, cor: "oco" },
     ],
-    alt: "A TSU é 11 % teu, à vista, mais 23,75 % da empresa, invisível no recibo",
+    alt: "A TSU é 11 % teu, à vista, mais 23,75 % da empresa, invisível no recibo",
   },
   isp: {
     tipo: "pilha",
@@ -156,11 +156,11 @@ export const DEMOS: Record<string, Demo> = {
   iva: {
     tipo: "barras",
     barras: [
-      { rotulo: "6 % — essenciais", pct: 26 },
-      { rotulo: "13 % — restauração", pct: 57 },
-      { rotulo: "23 % — taxa normal", pct: 100 },
+      { rotulo: "6 % — essenciais", pct: 26 },
+      { rotulo: "13 % — restauração", pct: 57 },
+      { rotulo: "23 % — taxa normal", pct: 100 },
     ],
-    alt: "O IVA tem três taxas no continente: 6, 13 e 23 %",
+    alt: "O IVA tem três taxas no continente: 6, 13 e 23 %",
   },
   "certificados-aforro": {
     tipo: "passos",
@@ -175,19 +175,19 @@ export const DEMOS: Record<string, Demo> = {
   "taxa-real": {
     tipo: "barras",
     barras: [
-      { rotulo: "nominal · +1,5 %", pct: 50 },
-      { rotulo: "real · −1,5 %", pct: 24, cor: "aviso" },
+      { rotulo: "nominal · +1,5 %", pct: 50 },
+      { rotulo: "real · −1,5 %", pct: 24, cor: "aviso" },
     ],
-    alt: "A taxa nominal de 1,5 % vira real negativa quando a inflação é de 3 %",
+    alt: "A taxa nominal de 1,5 % vira real negativa quando a inflação é de 3 %",
   },
   "retencao-capitais": {
     tipo: "pilha",
     pilha: [
-      { rotulo: "chega à conta · 1,8 %", pct: 72 },
-      { rotulo: "fisco · 28 %", pct: 28, cor: "aviso" },
+      { rotulo: "chega à conta · 1,8 %", pct: 72 },
+      { rotulo: "fisco · 28 %", pct: 28, cor: "aviso" },
     ],
-    total: "2,5 % bruto",
-    alt: "Dos 2,5 % anunciados, o fisco retém 28 %: chegam 1,8 % à conta",
+    total: "2,5 % bruto",
+    alt: "Dos 2,5 % anunciados, o fisco retém 28 %: chegam 1,8 % à conta",
   },
   "deducao-coleta": {
     tipo: "barras",
@@ -209,33 +209,33 @@ export const DEMOS: Record<string, Demo> = {
     tipo: "barras",
     barras: [
       { rotulo: "entregas no ano", pct: 100 },
-      { rotulo: "voltam no IRS · 20 %", pct: 20, cor: "acento" },
+      { rotulo: "voltam no IRS · 20 %", pct: 20, cor: "acento" },
     ],
     alt: "Vinte por cento das entregas ao PPR volta como dedução no IRS",
   },
   "rendimento-relevante": {
     tipo: "pilha",
     pilha: [
-      { rotulo: "relevante · 70 %", pct: 70 },
+      { rotulo: "relevante · 70 %", pct: 70 },
       { rotulo: "fora da base", pct: 30, cor: "oco" },
     ],
-    total: "× 21,4 % SS",
-    alt: "A Segurança Social conta 70 % da faturação e cobra 21,4 % sobre essa parte",
+    total: "× 21,4 % SS",
+    alt: "A Segurança Social conta 70 % da faturação e cobra 21,4 % sobre essa parte",
   },
   englobamento: {
     tipo: "barras",
     barras: [
-      { rotulo: "taxa autónoma · 28 %", pct: 56 },
-      { rotulo: "englobar à marginal · 21 %", pct: 42, cor: "acento" },
+      { rotulo: "taxa autónoma · 28 %", pct: 56 },
+      { rotulo: "englobar à marginal · 21 %", pct: 42, cor: "acento" },
     ],
-    alt: "Englobar compensa quando a taxa marginal é menor que a autónoma de 28 %",
+    alt: "Englobar compensa quando a taxa marginal é menor que a autónoma de 28 %",
   },
   "salario-real": {
     tipo: "barras",
     barras: [
-      { rotulo: "nominal · +5 %", pct: 70 },
-      { rotulo: "real · −3 %", pct: 42, cor: "aviso" },
+      { rotulo: "nominal · +5 %", pct: 70 },
+      { rotulo: "real · −3 %", pct: 42, cor: "aviso" },
     ],
-    alt: "O salário nominal sobe 5 %, mas com inflação de 8 % o real desce 3 %",
+    alt: "O salário nominal sobe 5 %, mas com inflação de 8 % o real desce 3 %",
   },
 };

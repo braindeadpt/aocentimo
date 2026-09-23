@@ -80,7 +80,7 @@ export function CadernetaAforro() {
         <p className="footnote">
           CA Série F: {fmtPct(taxaCA, 2)} brutos em novas subscrições
           ({ca.serieF.base.toLowerCase()}). Prémios de permanência somam-se
-          à base: {premios.map((p) => `+${p.pp.toFixed(2).replace(".", ",")} p.p. ${p.anos} ano`).join(" · ")}.
+          à base: {premios.map((p) => `+${p.pp.toFixed(2).replace(".", ",")} p.p. ${p.anos} ano`).join(" · ")}.
           Juros capitalizam trimestralmente; imposto {fmtPct(taxaImposto, 0)} retido
           em cada vencimento. {ca.serieF.garantia}.
         </p>

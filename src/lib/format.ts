@@ -1,8 +1,32 @@
 /* Regra de dinheiro do site (V4, S1-02): os milhares agrupam-se SEMPRE a
-   partir de 1 000 — o CLDR pt-PT só agrupa a partir de 5 dígitos, o que
-   punha «1 500 €» (copy) e «1167 €» (formatador) no mesmo cartão.
-   useGrouping:"always" em TODOS os formatadores numéricos. */
+   partir de 1 000 — o CLDR pt-PT só agrupa a partir de 5 dígitos, o que
+   punha «1 500 €» (copy) e «1167 €» (formatador) no mesmo cartão.
+   useGrouping:"always" em TODOS os formatadores numéricos.
+
+   Lettering (1B-02): entre número e unidade vai sempre o espaço fino
+   inseparável (FINO, U+202F) — nunca espaço normal nem NBSP largo —
+   e o sinal de menos é o verdadeiro (MENOS, U+2212), nunca hífen.
+   `tipo()` aplica os dois à saída do Intl; `comUnidade` é a única
+   maneira de colar unidade a um número («1 856 €», «63,2 c», «3,6 %»). */
 const GRUPO = { useGrouping: "always" } as const;
+
+/** espaço fino inseparável — U+202F; serve de separador de milhares e
+    de ponte número↔unidade, para nunca se cortar uma linha a meio */
+export const FINO = "\u202F";
+/** sinal de menos verdadeiro — U+2212; o hífen (-) é para hifenizar
+    palavras, nunca para valores negativos ou deltas */
+export const MENOS = "\u2212";
+
+/** «1 856» + «€» → «1 856 €» — a ponte é sempre o FINO;
+    sem unidade devolve o número tal qual (nunca um fino órfão) */
+export const comUnidade = (numero: string, unidade: string) =>
+  unidade ? `${numero}${FINO}${unidade}` : numero;
+
+/** saída do Intl com a tipografia da casa: o hífen de sinal torna-se
+    menos verdadeiro e os espaços do agrupamento/unidade tornam-se
+    finos inseparáveis (o Intl emite NBSP U+00A0 — largo, não fino) */
+const tipo = (s: string) =>
+  s.replace(/[  ]/g, FINO).replace(/-/g, MENOS);
 
 const eur = new Intl.NumberFormat("pt-PT", {
   style: "currency",
@@ -44,22 +68,28 @@ const MESES = [
 const FALHOU = "—";
 const finito = (v: number) => Number.isFinite(v);
 
-export const fmtEUR = (v: number) => (finito(v) ? eur.format(v) : FALHOU);
-export const fmtEUR0 = (v: number) => (finito(v) ? eur0.format(v) : FALHOU);
+export const fmtEUR = (v: number) => (finito(v) ? tipo(eur.format(v)) : FALHOU);
+export const fmtEUR0 = (v: number) => (finito(v) ? tipo(eur0.format(v)) : FALHOU);
 /**
  * Número em pt-PT. Sem `casas`, corta no máximo em 2 decimais;
  * com `casas`, fixa as decimais — usa-a em colunas/tabelas para o
  * tabular-nums alinhar (ex.: "0,90" ao lado de "2,16").
  */
 export const fmtNum = (v: number, casas?: number) =>
-  finito(v) ? (casas === undefined ? num : numFixo(casas)).format(v) : FALHOU;
+  finito(v)
+    ? tipo((casas === undefined ? num : numFixo(casas)).format(v))
+    : FALHOU;
 
 /** €/litro — a DGEG publica os PMD com 3 casas decimais. */
 export const fmtLitro = (v: number) =>
-  finito(v) ? `${v.toFixed(3).replace(".", ",")} €/L` : FALHOU;
+  finito(v)
+    ? comUnidade(v.toFixed(3).replace(".", ",").replace(/-/g, MENOS), "€/L")
+    : FALHOU;
 
 export const fmtPct = (v: number, casas = 1) =>
-  finito(v) ? `${(v * 100).toFixed(casas).replace(".", ",")} %` : FALHOU;
+  finito(v)
+    ? comUnidade((v * 100).toFixed(casas).replace(".", ",").replace(/-/g, MENOS), "%")
+    : FALHOU;
 
 /** "2026-09-20T19:43:30Z" → "20 set 2026 · 21:43" (hora de Lisboa);
  *  aceita também datas simples → devolve só a data. */

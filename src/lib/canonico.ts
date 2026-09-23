@@ -30,7 +30,7 @@ export interface CenarioCanonico {
   custoEmpresaMes: number;
   /** TSU da entidade patronal — o corte que não aparece no recibo */
   tsuEntidadeMes: number;
-  /** Seg. Social do trabalhador (11 %) */
+  /** Seg. Social do trabalhador (11 %) */
   ssMes: number;
   /** retenção na fonte de IRS — a tabela real do mês */
   irsRetidoMes: number;

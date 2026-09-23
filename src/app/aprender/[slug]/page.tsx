@@ -12,6 +12,7 @@ import {
 import { JsonLd, definedTerm } from "@/lib/jsonld";
 import { TermoRef } from "@/components/TermoRef";
 import { MicroDemo } from "@/components/MicroDemo";
+import { TituloPagina } from "@/components/Voo";
 
 export const dynamicParams = false;
 
@@ -76,9 +77,7 @@ export default async function TermoPage({
           Glossário
         </Link>
       </p>
-      <h1 className="titulo-pagina">
-        {t.termo}
-      </h1>
+      <TituloPagina rota={`/aprender/${t.slug}`}>{t.termo}</TituloPagina>
 
       <div className="body-copy mt-6 max-w-2xl">
         <p>

@@ -94,7 +94,7 @@ describe("layouts", () => {
     const face = faceMoeda(100);
     expect(face).toHaveLength(100);
     const ouro = face.filter((p) => p.metal === "ouro").length;
-    // o anel exterior é ~26 % do raio mas ~45 % da área
+    // o anel exterior é ~26 % do raio mas ~45 % da área
     expect(ouro).toBeGreaterThan(30);
     expect(ouro).toBeLessThan(60);
     // tudo dentro da face

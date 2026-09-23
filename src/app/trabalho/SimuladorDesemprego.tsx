@@ -3,8 +3,9 @@
 import { Fragment, useMemo, useState } from "react";
 import { simularDesemprego } from "@/lib/engines/desemprego";
 import { REGRAS_IRS } from "@/lib/engines/irs";
+import { Interruptor } from "@/components/Interruptor";
 import { NumHero } from "@/components/NumHero";
-import { fmtEUR } from "@/lib/format";
+import { FINO, fmtEUR } from "@/lib/format";
 import { useArmado } from "@/lib/useArmado";
 import { mascaraFaixaRasgo, sementeDe } from "@/lib/materia";
 
@@ -52,11 +53,17 @@ export function SimuladorDesemprego() {
               onChange={(e) => setAnosDescontos(Number(e.target.value) || 0)} className="field" />
           </div>
         </div>
-        <label className="flex items-center gap-2 text-corpo-sm text-ink2">
+        <Interruptor
+          ligado={majoracao}
+          onChange={setMajoracao}
+          rotulo={`Casal desempregado com filhos / monoparental (+10${FINO}%)`}
+          className="text-corpo-sm"
+        />
+        <label className="hidden flex items-center gap-2 text-corpo-sm text-ink2">
           <input type="checkbox" checked={majoracao}
             onChange={(e) => setMajoracao(e.target.checked)}
             className="h-4 w-4 accent-[var(--color-accent)]" />
-          Casal desempregado com filhos / monoparental (+10 %)
+          Casal desempregado com filhos / monoparental (+10 %)
         </label>
         <p className="footnote">
           A remuneração de referência é a média dos primeiros 12 dos últimos 14
@@ -105,7 +112,7 @@ export function SimuladorDesemprego() {
                         className={declArm("talao-linha") + " talao-cut mt-1 py-2.5"}
                         style={{ "--linha": prox() } as React.CSSProperties}
                       >
-                        <dt className="talao-total">Mensalidade · 65 %</dt>
+                        <dt className="talao-total">Mensalidade · 65 %</dt>
                         <dd className="mt-1">
                           <NumHero valor={fmtEUR(r.mensal)} sufixo="/mês" compacto animar={r.mensal} />
                         </dd>
@@ -119,7 +126,7 @@ export function SimuladorDesemprego() {
                           <dd>
                             {fmtEUR(r.apos180Dias)}
                             <span className={"talao-retido " + declArm("talao-carimbo-anim")} aria-hidden>
-                              −10 %
+                              −10 %
                             </span>
                           </dd>
                         </div>
@@ -160,9 +167,9 @@ export function SimuladorDesemprego() {
                         />
                       ))}
                     </div>
-                    <div className="mt-1.5 flex justify-between text-talao-sub uppercase tracking-wider talao-dim">
+                    <div className="mt-1.5 flex justify-between text-talao-sub uppercase tracking-mono talao-dim">
                       <span>1.º mês</span>
-                      {temCorte && <span>7.º −10 %</span>}
+                      {temCorte && <span>7.º −10 %</span>}
                       <span>{meses}.º</span>
                     </div>
                   </div>
@@ -185,7 +192,7 @@ export function SimuladorDesemprego() {
           <p className="footnote mt-4 px-1">
             Limites: entre {fmtEUR(REGRAS_IRS[2026].ias)} e{" "}
             {fmtEUR(REGRAS_IRS[2026].ias * 2.5)} (1–2,5×IAS), e
-            nunca acima de 75 % da remuneração líquida de referência. Pedido
+            nunca acima de 75 % da remuneração líquida de referência. Pedido
             no IEFP até 90 dias após o fim do contrato.
           </p>
         )}

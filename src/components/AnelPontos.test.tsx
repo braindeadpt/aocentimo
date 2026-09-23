@@ -19,7 +19,7 @@ const html = renderToStaticMarkup(
       tom: i === 5 ? "fica" : "neutro",
       atual: i === 7,
     }))}
-    centro={{ valor: "14 004 €", rotulo: "no ano" }}
+    centro={{ valor: "14 004 €", rotulo: "no ano" }}
   />
 );
 
@@ -30,7 +30,7 @@ describe("AnelPontos — SSR e equivalente", () => {
 
   it("o número do ciclo é HTML ao centro — nítido a qualquer escala", () => {
     expect(html).toContain('class="ap-num"');
-    expect(html).toContain("14 004 €");
+    expect(html).toContain("14 004 €");
     expect(html).toContain("no ano");
   });
 

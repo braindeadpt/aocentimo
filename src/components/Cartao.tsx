@@ -1,6 +1,8 @@
 import Link from "next/link";
-import type { ReactNode, Ref } from "react";
+import type { CSSProperties, ReactNode, Ref } from "react";
 import { OrbeEstado } from "@/components/OrbeEstado";
+import { IconeEmblema, type NomeIcone } from "@/components/Icone";
+import { BotaoCopiar } from "@/components/BotaoCopiar";
 
 /**
  * Cartao — a anatomia Ledger fixa (V3 regra 1, S1-06): cabeçalho
@@ -25,9 +27,15 @@ import { OrbeEstado } from "@/components/OrbeEstado";
 export type EstadoCartao = "em-dia" | "atrasada" | "sem-sla" | "no-limite";
 
 export interface AcaoCartao {
-  href: string;
+  /** destino da acção — omitir quando a acção é `copiar` */
+  href?: string;
   /** texto da acção — «ver →», «JSON»… (já com a seta, se a tiver) */
   rotulo: ReactNode;
+  /** presente → a acção é um botão de copiar (1B-03): põe este texto
+      na área de transferência e mostra «Copiado» junto ao botão,
+      anunciado a leitores de ecrã — ex.: «JSON» copia o URL do
+      endpoint */
+  copiar?: string;
   /** nome acessível quando o rótulo não chega («página» → o título) */
   ariaLabel?: string;
   /** true → <a> simples (ficheiro JSON, ligação que sai do app);
@@ -46,6 +54,9 @@ export interface FonteCartao {
 export interface CartaoProps {
   /** breadcrumb mono do cabeçalho — "PREÇOS / CABAZ · EUROSTAT" */
   breadcrumb: ReactNode;
+  /** ícone do cartão (1B-01) — o nome do conjunto fechado; desenha o
+      <IconeEmblema> (quadrado tracejado) à esquerda do breadcrumb */
+  icone?: NomeIcone;
   /** spans do lado direito do cabeçalho, antes do selo de estado
       (ex.: "leitura set 2026") */
   meta?: ReactNode[];
@@ -63,6 +74,9 @@ export interface CartaoProps {
   /** variante em largura total — o cartão-herói do painel */
   amplo?: boolean;
   className?: string;
+  /** estilos inline do <article> — uso de casa: custom props como o
+      --ei do escalonamento de grupo (1B-04) */
+  style?: CSSProperties;
   /** ref do <article> — ex.: o useArmado que liga o desenho de entrada */
   ref?: Ref<HTMLElement>;
   /** o corpo — UMA ideia (insight + instrumento) */
@@ -92,6 +106,7 @@ function ItemFonte({ nome, url }: { nome: ReactNode; url?: string }) {
 
 export function Cartao({
   breadcrumb,
+  icone,
   meta,
   estado,
   estadoRotulo,
@@ -100,6 +115,7 @@ export function Cartao({
   acoes,
   amplo = false,
   className,
+  style,
   ref,
   children,
 }: CartaoProps) {
@@ -111,6 +127,15 @@ export function Cartao({
     // o estado nunca é só a forma — S1-08: o orbe vem acompanhado de texto
     console.warn("[Cartao] `estado` sem `estadoRotulo` — o selo fica mudo.");
   }
+  if (process.env.NODE_ENV !== "production") {
+    for (const a of acoes ?? []) {
+      if (!a.href && a.copiar === undefined) {
+        console.warn(
+          "[Cartao] acção sem `href` nem `copiar` — um controlo que não faz nada não é honesto."
+        );
+      }
+    }
+  }
 
   const temMeta = (meta && meta.length > 0) || estado !== undefined;
   const temPe = (fonte && fonte.itens.length > 0) || (acoes && acoes.length > 0);
@@ -118,9 +143,11 @@ export function Cartao({
   return (
     <article
       ref={ref}
+      style={style}
       className={`leitura ${amplo ? "leitura-amplo" : ""} ${className ?? ""}`}
     >
       <header className="leitura-head">
+        {icone && <IconeEmblema nome={icone} />}
         <p className="leitura-breadcrumb">{breadcrumb}</p>
         {temMeta && (
           <p className="leitura-meta num">
@@ -158,15 +185,23 @@ export function Cartao({
           )}
           {acoes && acoes.length > 0 && (
             <p className="leitura-acoes">
-              {acoes.map((a) =>
-                a.externo ? (
+              {acoes.map((a, i) =>
+                a.copiar !== undefined ? (
+                  <BotaoCopiar
+                    key={i}
+                    texto={a.copiar}
+                    rotulo={a.rotulo}
+                    variante="ligacao"
+                    ariaLabel={a.ariaLabel}
+                  />
+                ) : a.externo ? (
                   <a key={a.href} href={a.href} className="lq-link">
                     {a.rotulo}
                   </a>
                 ) : (
                   <Link
                     key={a.href}
-                    href={a.href}
+                    href={a.href!}
                     className="lq-link"
                     aria-label={a.ariaLabel}
                   >

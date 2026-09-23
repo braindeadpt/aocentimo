@@ -8,8 +8,8 @@
  * interpola um valor que o motor não calculou.
  *
  * A grelha: o salário mínimo nacional em vigor e depois MÚLTIPLOS
- * EXACTOS de 50 € até 6 000 € — inclui sempre pontos redondos como
- * 1 500 € (o cenário de abertura do site). N pontos, não uma fórmula.
+ * EXACTOS de 50 € até 6 000 € — inclui sempre pontos redondos como
+ * 1 500 € (o cenário de abertura do site). N pontos, não uma fórmula.
  *
  * Gerada por `scripts/derive/cenarios.ts` → `data/derived/
  * cenarios-salario.json`; os server components passam-na por props
@@ -88,7 +88,7 @@ export interface CenariosSalario {
   linhas: LinhaCenario[];
 }
 
-/** os pontos exactos da régua: SMN e depois múltiplos de 50 € ≤ fim */
+/** os pontos exactos da régua: SMN e depois múltiplos de 50 € ≤ fim */
 export function grelhaSalarial(fim = FIM_GRELHA): number[] {
   const base = smn.regioes.continente;
   const pontos = [base];

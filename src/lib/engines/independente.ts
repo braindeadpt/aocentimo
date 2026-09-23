@@ -3,8 +3,8 @@ import { REGRAS_IRS, impostoPorEscaloes } from "./irs";
 
 /**
  * Trabalhador independente (recibos verdes, cat. B): regime simplificado
- * com coeficiente 0,75 + Segurança Social de 21,4 % sobre o rendimento
- * relevante (70 % do bruto). Aproximação anual — o apuramento real da SS
+ * com coeficiente 0,75 + Segurança Social de 21,4 % sobre o rendimento
+ * relevante (70 % do bruto). Aproximação anual — o apuramento real da SS
  * é trimestral.
  */
 
@@ -26,11 +26,11 @@ export const REGRAS_CATB = catb as RegrasCatB;
 
 export interface ResultadoIndependente {
   faturacaoAnual: number;
-  coletavel: number; // 75 % do bruto
+  coletavel: number; // 75 % do bruto
   ss: number; // anual (0 no 1.º ano)
   ssMensal: number;
   irs: number;
-  retido: number; // 23 % retido pelos clientes
+  retido: number; // 23 % retido pelos clientes
   reembolsoEstimado: number;
   liquidoAnual: number;
   liquidoMensal12: number;

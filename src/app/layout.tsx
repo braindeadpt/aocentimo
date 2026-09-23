@@ -5,6 +5,8 @@ import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Ticker } from "@/components/Ticker";
+import { PausaAmbiente } from "@/components/PausaAmbiente";
+import { VooLimpeza } from "@/components/Voo";
 import { ALT_FEED } from "@/lib/meta";
 import { SITE_URL } from "@/lib/site";
 
@@ -87,7 +89,14 @@ export default function RootLayout({
           Saltar para o conteúdo
         </a>
         <SiteHeader />
-        <Ticker />
+        {/* limpa o selo do voo da pergunta depois de cada navegação
+            (1B-04 — corre no commit seguinte, já a transição capturada) */}
+        <VooLimpeza />
+        {/* o marquee só corre onde se vê — fora do ecrã ou com o
+            separador escondido, o PausaAmbiente congela-o (1B-04) */}
+        <PausaAmbiente>
+          <Ticker />
+        </PausaAmbiente>
         <main id="conteudo" tabIndex={-1} className="flex-1">
           {/* cross-fade de página nas navegações — nav é lateral,
               sem deslizes direcionais falsos */}

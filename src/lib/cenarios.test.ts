@@ -17,7 +17,7 @@ describe("grelha salarial canónica", () => {
     expect(grelha[grelha.length - 1]).toBe(FIM_GRELHA);
   });
 
-  it("depois do mínimo são múltiplos exactos de 50 €", () => {
+  it("depois do mínimo são múltiplos exactos de 50 €", () => {
     for (const v of grelha.slice(1)) {
       expect(v % PASSO_GRELHA).toBe(0);
     }
@@ -75,7 +75,7 @@ describe("cenários pré-calculados", () => {
     }
   });
 
-  it("o ponto canónico 1 500 € reproduz a história da home", () => {
+  it("o ponto canónico 1 500 € reproduz a história da home", () => {
     const l = cen.linhas.find((x) => x.bruto === 1500)!;
     expect(l.ss).toBeCloseTo(165, 2);
     expect(l.irs).toBeCloseTo(168.17, 2);

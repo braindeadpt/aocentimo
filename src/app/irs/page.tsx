@@ -11,6 +11,7 @@ import irs from "@data/fiscal/irs-2026.json";
 import retencao from "@data/fiscal/retencao-2026.json";
 import irsJovem from "@data/fiscal/irs-jovem.json";
 import { JsonLd, webApplication } from "@/lib/jsonld";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "IRS — escalões, retenção e IRS Jovem",
@@ -37,9 +38,7 @@ export default function IrsPage() {
         )}
       />
       <p className="kicker">Imposto sobre o rendimento</p>
-      <h1 className="titulo-pagina">
-        Subir de escalão faz-te perder dinheiro?
-      </h1>
+      <TituloPagina rota="/irs">Subir de escalão faz-te perder dinheiro?</TituloPagina>
       <p className="lede mt-5">
         <strong>Não.</strong> Cada escalão tributa só a fatia de rendimento
         que lá cabe — os euros anteriores continuam na taxa deles. E pagas
@@ -94,7 +93,7 @@ export default function IrsPage() {
           </table>
         </div>
         <p className="footnote mt-3">
-          Com 3+ dependentes a taxa marginal desce 1 p.p. Casado único
+          Com 3+ dependentes a taxa marginal desce 1 p.p. Casado único
           titular e não casado com dependentes usam as tabelas III e II —
           completas no <a href="/salario" className="underline decoration-line2 underline-offset-2">simulador de salário</a>.
         </p>
@@ -119,7 +118,7 @@ export default function IrsPage() {
         <p>
           Até aos {irsJovem.idadeMax} anos, nos primeiros{" "}
           {irsJovem.anosMax} anos de rendimentos: {fmtPct(1, 0)} de isenção no
-          1.º ano, depois 75 %, 50 % e 25 % — com teto de 55×IAS (
+          1.º ano, depois 75 %, 50 % e 25 % — com teto de 55×IAS (
           {fmtEUR0(irsJovem.limiteIsencaoIas * irs.ias)}/ano em {ANO}). O
           simulador trata um titular solteiro; casados, dependentes e
           rendimentos da categoria B mudam a conta.

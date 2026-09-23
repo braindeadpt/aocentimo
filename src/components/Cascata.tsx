@@ -93,6 +93,14 @@ export function Cascata({ passos }: { passos: Passo[] }) {
             >
               <span className={`text-rotulo md:text-corpo-sm ${l.tipo === "total" ? "font-medium" : "text-ink2"}`}>
                 {l.label}
+                {/* zero como informação (1B-05): a nota junto do
+                    rótulo diz porque é que o corte é zero — ex.:
+                    «não te toca» no IRS ao salário mínimo */}
+                {l.tipo === "corte" && l.valor === 0 && l.nota && (
+                  <span className="block text-micro font-normal text-ink2">
+                    — {l.nota}
+                  </span>
+                )}
               </span>
               <div className="flex h-6 md:h-7">
                 {l.tipo === "corte" ? (
@@ -102,7 +110,7 @@ export function Cascata({ passos }: { passos: Passo[] }) {
                       style={{
                         width: `${fica}%`,
                         backgroundColor: "var(--color-keep)",
-                        animationDelay: `calc(${i} * var(--stagger))`,
+                        animationDelay: `calc((${i} + var(--ei, 0)) * var(--stagger))`,
                       }}
                     />
                     {/* o corte CAI — é dinheiro que sai, não barra que cresce */}
@@ -111,7 +119,7 @@ export function Cascata({ passos }: { passos: Passo[] }) {
                       style={{
                         width: `${sai}%`,
                         backgroundColor: "var(--color-accent)",
-                        animationDelay: `calc(${i} * var(--stagger))`,
+                        animationDelay: `calc((${i} + var(--ei, 0)) * var(--stagger))`,
                       }}
                     />
                   </>
@@ -121,13 +129,14 @@ export function Cascata({ passos }: { passos: Passo[] }) {
                     style={{
                       width: `${fica}%`,
                       backgroundColor: l.tipo === "total" ? "var(--color-keep)" : "var(--color-ink2)",
-                      animationDelay: `calc(${i} * var(--stagger))`,
+                      animationDelay: `calc((${i} + var(--ei, 0)) * var(--stagger))`,
                     }}
                   />
                 )}
               </div>
               <span className={`num text-right text-rotulo md:text-corpo-sm ${l.tipo === "corte" ? "text-up" : l.tipo === "total" ? "font-medium" : "text-ink2"}`}>
-                {l.tipo === "corte" ? "−" : ""}
+                {/* o menos é do corte — zero não é corte, não o leva */}
+                {l.tipo === "corte" && l.valor !== 0 ? "−" : ""}
                 {fmtEUR(Math.abs(l.valor))}
               </span>
             </div>

@@ -690,3 +690,510 @@ não se editam nas sessões paralelas.
 - Níveis de página: mostrar ou não o rótulo «1 · A resposta».
 - Separador tracejado acima dos controlos do cartão: manter?
 - Rótulos da navegação por quatro perguntas (S1-07).
+
+---
+
+## 1B-01 · Símbolos — um sistema de ícones próprio (2026-09-23)
+
+**O que foi feito**
+
+- `src/components/Icone.tsx` — `Icone` + `IconeEmblema` + `ICONES`: o
+  conjunto FECHADO de 25 desenhos à mão na grelha **20×20**, traço
+  **1,5 px**, terminações/juntas redondas, sem preenchimento, em
+  `currentColor`. Três famílias: páginas (`salario`…`aprender` — um por
+  pergunta), acções (`ver` `json` `copiar-ligacao` `repor` `abrir`
+  `menu` `pesquisa` `sol` `lua`), estado (`em-dia` `a-recolher`
+  `atrasado` — a família do `OrbeEstado` em pontos de traço — `aviso`
+  `informacao`). Nome fora da lista = `throw` (conjunto fechado).
+  `aria-hidden` por omissão; `rotulo` → `role="img"` só para ícone
+  sozinho com significado.
+- `IconeEmblema` — o quadrado de contorno tracejado da referência
+  (raio `--raio-pormenor`, 2,25 rem), montado no cabeçalho do `Cartao`
+  pela prop nova `icone?: NomeIcone` (opcional — o cabeçalho alinha ao
+  centro e o breadcrumb encosta ao emblema via `:has`).
+- Movimento: `:hover`/`:focus-visible` do controlo (`a`, `button`,
+  `summary`, `[role=button]`, `[data-icone-gatilho]`) e do cartão
+  `.leitura` (emblema) desenha o traço uma vez — `stroke-dashoffset`
+  sobre `pathLength=1`, `--dur-micro` (120 ms) + passo de 22 ms por
+  traço (`--i`). CSS puro, sem JS; o bloco global de reduced-motion
+  deixa-o desenhado. Verificado: probe mede o `dashoffset` 1→0; frames
+  gravados com a duração abrandada mostram o traço a meio (380→106 px
+  de diferença até assentar); vídeo + folha em `.videos/icones-sheet.png`
+  (`scripts/_video-icones.mjs`).
+- `/estilo` §Ícones: folha completa — os 25 nomes em três grupos, cada
+  célula é gatilho do desenho; emblemas; quatro controlos de acção com
+  `aria-label`; a nota das regras do ¢. A demo do `Cartao` na anatomia
+  ganhou `icone="aprender"`.
+- `docs/PRODUTO.md` §6: subsecções «O ¢ como símbolo da casa» e
+  «Ícones — conjunto fechado»; §7 (intocável) e §10 (tabela de
+  instrumentos) actualizados. `docs/DECISOES.md`: ADR datado.
+- Testes: `Icone.test.tsx` (9 — conjunto exacto, falha em nome inválido,
+  20×20/traço, sem fills, pathLength=1, aria-hidden, rotulo, emblema);
+  `e2e/icones.spec.ts` (6 — folha lista o conjunto, nomes, aria-hidden,
+  acções nomeadas, emblema no Cartao, desenho micro no hover, estático
+  em reduced-motion).
+
+**Avaliação do `<Glifo>` revertido (commit 2da28c6) — o que ficou e porquê**
+
+Reutilizada a **técnica**, não o componente: `pathLength=1` +
+`stroke-dashoffset`, círculos escritos em arcos (o `pathLength` funciona
+em todo o lado), `currentColor`, caps redondas, `aria-hidden`. Não serviu
+de base porque: (1) grelha 12×12 — a referência pede 20×20 e as
+metáforas de página precisam do espaço; (2) cinco tipos soltos, não um
+conjunto fechado por função; (3) `"use client"` + `useLayoutEffect`
+para redesenhar em mudança de `tipo` — o novo gatilho é o hover/focus
+do controlo, que em CSS puro não precisa de JS e serve em server
+components (`Cartao` é um). Registado também no ADR.
+
+**APIs finais (congeladas — as sessões paralelas usam-nas sem as mudar)**
+
+```ts
+<Icone nome={NomeIcone} className?: string rotulo?: string />
+<IconeEmblema nome={NomeIcone} className?: string />
+type NomeIcone =
+  | "salario"|"irs"|"trabalho"|"impostos"|"precos"|"inflacao"
+  | "credito"|"casa"|"poupanca"|"dados"|"aprender"          // páginas
+  | "ver"|"json"|"copiar-ligacao"|"repor"|"abrir"|"menu"
+  | "pesquisa"|"sol"|"lua"                                  // acções
+  | "em-dia"|"a-recolher"|"atrasado"|"aviso"|"informacao";  // estado
+// Cartao ganha a prop opcional: icone?: NomeIcone
+// Gatilho extra p/ demonstrações: data-icone-gatilho no elemento pai
+```
+
+**Decisões (conservadoras, a confirmar)**
+
+- `abrir` é um chevron único (roda 180° no estado aberto, via CSS do
+  controlo) — o par `+`/`-` tipográfico do `PaginaDetalhe` mantém-se:
+  é marcador de formulário de papel, não ícone.
+- `tema` entrou como dois nomes (`sol`/`lua`) — o toggle mostra o destino,
+  não o estado; desenhos próprios para cada um.
+- Estado em traço usa pontos stroked (círculos em arco), não fills —
+  respeita «sem preenchimentos» e mantém a família do `OrbeEstado`.
+- O passo do desenho por traço é 22 ms — nos ícones de 9 traços o
+  desenho completo fica ≈ 300 ms, abaixo de `--dur-curta`.
+- Os ▲▼ do `Delta`/`Haltere` ficam — sinais tipográficos escritos em
+  texto, não ícones; não entraram no conjunto (podem reavaliar-se).
+- `copiar-ligacao` desenha o elo (a ligação), não o rectângulo duplo de
+  «copiar» — mais literal ao nome e à função (copiar o URL da página).
+
+**Copy novo a rever pelo dono**
+
+- `/estilo` §Ícones: título «Ícones — traço próprio, conjunto fechado»,
+  a prosa das regras e dos três grupos, a nota do ¢.
+- Legendas dos ícones na folha = os próprios nomes do conjunto
+  (sem copy nova).
+
+**Perguntas ao dono**
+
+- O conjunto cobre as 25 posições do brief — falta algum nome que as
+  sessões 2/3 já saibam precisar (ex.: `imprimir`, `partilhar`, `audio`)?
+- `repor` usa seta circular própria; se preferires o glifo «↺» na mesma
+  gramática, troca-se o desenho sem mudar a API.
+
+## 1B-02 · Lettering — os pormenores tipográficos finos (2026-09-23)
+
+**O que foi feito**
+
+- `src/lib/format.ts` — `FINO` (U+202F) e `MENOS` (U+2212) exportados;
+  `comUnidade(numero, unidade)` é a ponte única número→unidade
+  (unidade vazia devolve o número só). O `Intl` é normalizado: o ICU
+  pt-PT emite NBSP largo (U+00A0) — vira FINO — e `-` vira `−`. Os
+  formatadores (`fmtEUR*`, `fmtPct`, `fmtNum`, `fmtLitro`…) saem já
+  certos; testes em `format.test.ts` (23 — FINO exacto, milhares a
+  partir de 1 000, menos verdadeiro, unidade vazia, não-finitos).
+- `src/components/Valor.tsx` — a peça única de composição:
+  `.num-sign` (sinal semântico, herda a cor) + número (string ou
+  apresentador) + `.num-unit` (~45 %, mesma linha de base, tinta
+  atenuada — elemento próprio, não nota de rodapé). A ponte no markup
+  é o FINO literal. Usado por `NumHero` (refactor — delega nele), o
+  hero de `/salario`, `Leitura`, `Adivinha`, `AnelPontos` (demo da
+  `/estilo` passa `valor: <Valor/>`).
+- Apresentadores — `TweenNum`/`Odometer`: `sufixo` passa a ser a
+  unidade SEM espaço («€», «c»); o FINO é posto pelo componente.
+  SSR continua a emitir o valor final; `texto` (sr-only, aria-live)
+  leva só o número — a unidade visível completa o anúncio sem
+  duplicar. `tabular-nums` intacto.
+- Varrição de composições manuais: `Regua`, `Leitura`, `Haltere`,
+  `Ticker`, `CampoCentimos` (`fmtC`), `LineChart` (`yFormat` — o
+  achado da auditoria: `` `${fmtNum(v)} ${unidade}` `` com espaço
+  normal), `metodologia` (folgas «−N períodos»), `viz/formatos`,
+  `leitura.ts`, páginas e `messages/pt.json`. Copy visível em
+  `data/fiscal/*.json` também FINO-ificada (é renderizada verbatim);
+  o template do derive (`paineis.ts`) idem.
+- Corrupção reposta: a primeira varrição automática meteu FINO em
+  `viewBox`/`points`/path de SVG (`estilo`, `DecomposicaoFuel`,
+  `CampoCentimos`, `Logo`) e na fonte do canvas (`tela.ts` —
+  `«600 100px»`). Tudo revertido; o contrato passou a ser verificado
+  no HTML exportado, nunca por regex na fonte.
+- Tracking — literais `letter-spacing` migraram para tokens por papel
+  em `@theme` (`--tracking-display*`, `-manchete*`, `-micro`,
+  `-mono*`, `-controlo`, `-kicker*`, `-carimbo*`, `-documento`):
+  0 literais fora dos tokens.
+- PT-PT — `&ldquo;`/`&rdquo;` → «» na copy; `hyphens: auto` só em
+  `.body-copy`/`.lede`/`.pg-detalhe-corpo` (`text-wrap: pretty`);
+  títulos com `text-wrap: balance`, sem hifenização.
+- Auditoria — `scripts/_lettering.mjs` entrou no `npm run audit`:
+  varre o texto visível do `out/` (atributos, `<script>`, `<style>`,
+  `<code>`, `<pre>` e comentários ficam de fora — geometria SVG não é
+  copy) e falha em: hífen antes de dígito, espaço normal/NBSP entre
+  dígito e unidade (`€` `%` `c` `p.p.`), aspas retas/curvas em texto,
+  `...` em vez de «…». A primeira corrida apanhou 170 falhas reais
+  (a tabela sr-only do `LineChart`) → 0.
+- Docs — PRODUTO.md §6 (subsecção «Lettering»), DECISOES.md (ADR
+  datado), AGENTS.md (comando de audit).
+
+**APIs finais (congeladas)**
+
+```ts
+import { FINO, MENOS, comUnidade } from "@/lib/format";
+comUnidade("1 856", "€")          // «1 856 €» — ponte sempre FINO
+comUnidade("123", "")             // «123» — sem cauda
+<Valor numero="1 234,56" unidade="€" sinal?="+"|"−" />
+<Valor numero={<TweenNum … />} unidade="€" />
+// TweenNum/Odometer: sufixo = unidade SEM espaço; o FINO é deles.
+```
+
+**Decisões (conservadoras, a confirmar)**
+
+- FINO também em unidades-palavra («cêntimos», «meses») quando coladas
+  a número em leitura — consistência com o símbolo, sem quebra de linha.
+- Peso cinético (wght/wdth animado por input) rejeitado no herói de
+  `/salario`: lutaria contra `tabular-nums` e daria shift a cada tick
+  da régua. O `wdth` fica a expressão estática dos títulos (125/75).
+- Strings de `data/fiscal/*.json` são copy — seguem a regra do FINO;
+  campos numéricos e fórmulas ficam intactos.
+
+**Perguntas ao dono**
+
+- «cêntimos» por extenso colado a número também com FINO — manter?
+- A unidade do herói a 45 % lê bem nas duas intensidades (valor e
+  valor-amplo) ou queres revê-la no /estilo antes de congelar?
+
+## 1B-03 · Botões e controlos — um sistema, todos os estados (2026-09-23)
+
+**O que foi feito**
+
+- `src/components/Botao.tsx` — a acção da casa em quatro variantes
+  (`primario` tinta cheia · `secundario` contorno · `terciario` texto ·
+  `icone` quadrado ≥44×44 com `ariaLabel` obrigatório). `href` desenha
+  uma ligação (`Link`/`<a>`), não um botão-fingido; desactivada vira
+  âncora sem `href` que fica focável. `aCarregar` troca o ícone pelo
+  mini-orbe `OrbeEstado` + `aria-busy`; `desativado`+`razao` =
+  `aria-disabled` focável com a razão em `title` e dentro do nome
+  acessível. `"use client"` (a `guarda` de inércia é handler), sem
+  estado próprio — server components usam-na com props serializáveis.
+- `src/components/Interruptor.tsx` — `<button role="switch">`: trilho
+  com nó que desliza; estado lê-se na posição + trilho cheio + nota.
+  Desactivado mostra a razão como nota visível (entra no nome).
+- `src/components/Chip.tsx` — o preset: `aria-pressed` + pílula cheia +
+  quadrado-marca. Substituiu `.regua-pill` nos presets da `Regua`.
+- `src/components/Segmentado.tsx` — `radiogroup` de rádios-botão,
+  tabindex itinerante (só o seleccionado está no Tab), setas movem
+  foco+selecção e saltam desactivados, Home/End aos extremos. É o
+  controlo das janelas temporais («1A · 5A · Máx») — a demo liga-o à
+  cauda real da Euribor 12M («5A» desactivado com a razão honesta:
+  a série carregada tem só 24 meses).
+- `src/components/BotaoCopiar.tsx` — Clipboard API → fallback
+  `execCommand`; nota «Copiado»/«Não copiado» junto ao botão num
+  `role="status"` residente (vazio/escondido em repouso); caminho
+  relativo → URL absoluta. Variante extra `ligacao` (cara de lq-link)
+  para as acções do `Cartao` — `AcaoCartao` ganhou `copiar`; a acção
+  «JSON» do `Leitura` já a usa.
+- `Regua` — ganhou o ressalto de encaixe: `key` por nonce
+  (`encaixe`) rearma a keyframe `.regua-encaixa` (squash contido,
+  `--dur-micro` + `--ease-rasgo`) a cada snap da grelha durante o
+  arrasto (`emit` com `movido`) e à aterragem fora dele
+  (`transitionend` no `left`). O `setState` ficou fora de efeitos —
+  o lint de renders em cascata agradece.
+- `.dica` — tooltip só onde já existia (quadro de frescura da
+  `/metodologia` + demo em `/estilo`): CSS anchor positioning
+  (`anchor-name` por célula via `--qa` herdada, `position-anchor`,
+  `position-try-fallbacks: flip-block`) com fallback absoluto por cima.
+  Aprendizagem: a dica é **irmã** da âncora dentro de `.dica-alvo` —
+  um posicionado não se ancora a um elemento da sua cadeia de
+  containing block (verificado: filho-da-âncora cai na posição
+  estática).
+- `globals.css` — família `.botao-*`, `.chip`, `.interruptor`,
+  `.segmentado`, `.copiado-nota`, `.dica*`, `.regua-encaixa`;
+  `.btn`/`.regua-pill` removidos (zero ocorrências em `src/`).
+- Migrados: `Adivinha`, CTA da home, `not-found`, checkboxes dos
+  quatro simuladores → `Interruptor` (IMT Jovem desactiva fora da HPP
+  com a razão à vista), `MotionDemo`, `CampoCentimosDemo` (o selector
+  moeda/montes é agora `Segmentado` — spec actualizado para `radio`),
+  acções de ícone da `/estilo`.
+- `/estilo` — `#controlos` demonstra tudo: variantes, desactivado com
+  razão, a-carregar vivo (1600 ms), interruptor, chips, segmentado
+  ligado a dados reais, «Copiado», régua com ressalto, dica por
+  âncora, `.field`.
+- Verificação — `Controlos.test.tsx` (11 unitários), `e2e/controlos.
+  spec.ts` (16 casos), `scripts/_video-controlos.mjs` (vídeo 16,8 s +
+  folha + shots 1440/375/foco). Todos os gates verdes.
+
+```tsx
+<Botao variante="primario|secundario|terciario|icone"
+     href? icone? aCarregar?="A calcular…" desativado? razao? ariaLabel?>
+<Interruptor ligado onChange rotulo nota? desativado? razao? />
+<Chip ativo? onClick desativado? razao?>3M</Chip>
+<Segmentado rotulo="Janela temporal" valor onChange
+    opcoes={[{id, rotulo, desativado?, razao?}]} />
+<BotaoCopiar texto="/api/x.json" variante="ligacao|icone|…"
+    rotulo? ariaLabel? rotuloCopiado? rotuloFalha? />
+// Cartao: acao { copiar: "/api/…", rotulo, ariaLabel }
+```
+
+**Decisões (conservadoras, a confirmar)**
+
+- `aria-disabled` em vez de `disabled` — o controlo morto esconderia a
+  razão; a razão vai no nome acessível (texto escondido/nota), não em
+  `aria-description` (sem suporte no role — o lint barra).
+- Os quatro controlos são `"use client"` — `onClick` não serializa;
+  continuam renderizáveis por server components com props de dados.
+- O segmentado move foco E selecção às setas (padrão rádio ARIA); o
+  clique no desactivado é engolido pela guarda.
+- «Copiado» fica 2 s e desaparece — confirmação transitória, não
+  estado; o `role="status"` vive sempre no DOM.
+- Tooltip por âncora só na frescura — os gráficos mantêm o readout
+  fixo, nunca tooltips flutuantes.
+
+**Perguntas ao dono**
+
+- O ressalto do polegar (squash 1,16/0,84 em 120 ms) está contido —
+  queres vê-lo em vídeo (`controlos-sheet.png`) antes de congelar?
+- «Copiado» a 2 s chega, ou preferes o padrão de ficar até ao próximo
+  gesto?
+
+---
+
+## 1B-04 · Coreografia — inventário, transição-assinatura e ritmo
+
+**O que ficou**
+
+- `src/components/Voo.tsx` — a transição-assinatura: o cartão «a
+  pergunta seguinte» do `<Pagina>` morfa no `h1` do destino
+  (`view-transition-name: pg-voo` partilhado — um nome por fotograma:
+  o link no velho, o `h1` no novo).
+- `TituloPagina` é agora o `h1` de todas as páginas de conteúdo —
+  lê o selo do voo na montagem e nomeia-se só quando é a aterragem.
+- Convenção de entrada `--ei × --stagger`: `Cartao`/`Leitura` ganham
+  `entrada`/`--ei`; ligada nas grelhas da home, `/precos`, `/dados`,
+  `/inflacao`, nas células-instrumento de `/dados` e nos delays de
+  `EuroBar`/`Cascata`. Entram primitivas (linha, barra, pontos,
+  número), não fades de bloco.
+- Pausa ambiente: `PausaAmbiente` (Ticker) + `visibilitychange` no
+  `OrbeEstado` + corte de rAF no `CampoTela` — nada corre fora do
+  ecrã nem com o separador escondido. `.amb-off` no CSS.
+- `e2e/coreografia.spec.ts` — 5 testes: morph assinatura, negativo
+  (nav para a mesma rota sem voo), ticker offscreen/hidden, orbe
+  offscreen/hidden, canvas offscreen/hidden (amostra de pixels).
+- `scripts/_video-voo.mjs` — grava o voo e o escalonamento de grupo;
+  folha de contacto revista (fotograma do morph a meio confirmado).
+- Inventário completo das ~29 linhas de motion no PRODUTO.md §6.
+
+**Decisão relevante — porquê não `transitionTypes` + `share` por tipo**
+
+A primeira via era a idiomática: `<Link transitionTypes={["pg-voo"]}>`
++ `share={{ "pg-voo": "pg-voo", default: "none" }}` em `<ViewTransition>`.
+Falhou deterministicamente: `addTransitionType` corre fora de qualquer
+transition (o click dispatch põe `T=null`) → a `startTransition`
+descartável só regista o tipo no root se já houver lanes de transition
+pendentes — com a página idle os tipos são largados e `share` resolve
+`default:"none"`. Na primeira corrida do probe funcionou uma vez
+(provável prefetch a deixar lanes pendentes) — flaky por desenho nesta
+combinação Next 16.3.5 / React 19.3.
+
+O mecanismo final é determinístico: marcador de módulo
+(`vooAlvo = rota` no clique) + `view-transition-name` inline nos dois
+lados; o `VooLimpeza` apaga o selo após o commit (useEffect corre
+depois da captura). O nome é único por fotograma — por isso inline e
+não CSS (o `h1` da página velha não pode colidir com o link, nem o
+link seguinte da página nova com o `h1`).
+
+**Assunções**
+
+- Uma página tem UM «a pergunta seguinte» e UM `h1.titulo-pagina` —
+  o nome `pg-voo` fica único em cada fotograma.
+- O morph acontece dentro da `<ViewTransition>` global do layout —
+  coexistem sem conflito (verificado: root + `_t_0_` + `pg-voo` na
+  mesma transição).
+- `data-voo`/marcador nunca chega ao SSR — sem hidratação nem
+  mismatch; sem JS a navegação é normal.
+
+**Perguntas ao dono**
+
+- O voo dura `--dur-media` (600 ms) com `ease-entra` — queres mais
+  lento/solenne (`--dur-longa`) ou está certo assim? Vídeo em
+  `.videos/voo-sheet.png` para rever.
+- O cartão «a pergunta seguinte» desaparece rápido e o h1 assenta —
+  preferes que o cartão viaje visível até ao título (old snapshot
+  mais longo)?
+
+**Motor lazy do dono** — intacto: nada tocou `carregarGsap`/`tela.ts`
+nem os motores fiscais; a pausa do canvas usa os gatilhos que já
+existiam (`visivel` + `document.hidden`).
+
+## 1B-05 · Estados partilhados — vazio, carregar, zero e limites (2026-09-29)
+
+**Feito.** A regra nº 1 passa a ter peças: `EstadoVazio` (peça em falta
+isométrica a tracejado + orbe `atrasada` + frase honesta com
+título/falha/último-dado/fonte oficial em separador novo), `ACarregar`
+(mini-orbe `a-recolher` + rótulo em `role="status"`; o `aCarregar` do
+`Botao` consome-o), `ZeroInformativo` (ponto oco + valor formatado +
+nota «não te toca»), e a nota de limite da `Regua` (no lugar do rótulo
+do extremo, junto ao polegar encostado, + live region sr-only com
+nonce; setas/PageUp/Home/End/presets/arrasto todos tapados; nunca
+vermelho). `EmptyState` delega no `EstadoVazio`.
+
+Buracos de fonte tapados em todas as rotas — o slot nunca desaparece,
+nunca aparece «—» cru nem número inventado: grelhas de `Leitura`
+(home, /precos, /inflacao, /dados) renderizam `EstadoVazio` no lugar do
+cartão; /trabalho (SMN), /casa (IPHab) e /credito (Euribor +
+prestação-ref) ganham `EstadoVazio`/`role="status"` onde antes
+saltavam a peça ou punham um parágrafo solto. Zero informativo ligado
+no IRS ao salário mínimo: talão (sem carimbo «Retido»), ano a 14
+meses, `Cascata` (`nota` do `Passo` junto ao rótulo; menos não se
+aplica a zero) e `CustoExplodido` (`RotulosCusto.zero` na
+`textoLista`). Secção «Estados» nova em /estilo com demo controlada
+(`data-demo`). Testes: `src/components/Estados.test.tsx` (11) +
+`e2e/estados.spec.ts` (5 — inclui «série a falhar → orbe+frase, nunca
+número»).
+
+**Decisões tomadas:**
+
+- **`EstadoVazio` é ilustração fixa, não `Isometrico`.** A referência
+  «Nothing on the schedule yet» é um desenho estático: três placas
+  sólidas + a peça em falta só a tracejado com linha de chamada. O
+  `Isometrico` mede estrutura por camadas — usar o componente com
+  props falsas seria inventar dados.
+- **A nota de limite substitui o rótulo do extremo** (não empilha um
+  tooltip novo): é o lugar onde já se lê o valor da borda, fica
+  sempre adjacente ao polegar encostado, e some na próxima paragem
+  interior. `role="status"` global (não por lado) — um live region já
+  cobre os dois extremos.
+- **«não te toca»** como nota por omissão do zero (o zero explica-se,
+  não se esconde); `nota={null}` omite. Na `Cascata` a `nota` do
+  `Passo` passou a aceitar texto por degrau.
+- **`Botao` aCarregar** passa a renderizar `ACarregar` (mesma marca,
+  mesma semântica — `aria-busy`/`aria-disabled` intactos); o rótulo
+  do que se passa vem de `messages`/`textos` como antes.
+- **`Compacto`** do `EstadoVazio` sem borda nem cabeçalho — para
+  dentro de figuras/células (a célula do quadro de frescura em /dados
+  ganha orbe + rótulo em vez do traço «—»).
+
+**Copy novo a rever pelo dono:**
+
+- «a fonte oficial está a falhar — mostramos a falha, nunca um número
+  inventado» (corpo do `EstadoVazio`); «último dado conhecido: {desde}».
+- «limite — {valor} · {razão}» (nota de borda da `Regua`).
+- «{0,00 €} — não te toca» (zero informativo; U+202F entre valor e €,
+  travessão antes da nota).
+
+**Perguntas ao dono:**
+
+- A ilustração do vazio é fixa (sempre três placas + peça tracejada) —
+  queres variação por contexto (ex.: série vs. instrumento) ou a
+  uniformidade é a marca certa?
+- No talão, o IRS zero mostra a linha «0,00 € — não te toca» sem
+  carimbo «Retido»; preferes carimbo neutro («Não retido») ou assim?
+
+**Motor lazy do dono** — intacto: nada tocou `carregarGsap`/`tela.ts`,
+os motores fiscais nem os orbes (`OrbeEstado` só se consome).
+
+## 1B-06 · Painel — composição com três tamanhos e regras de vizinhança (2026-09-30)
+
+**Feito.** `<Painel>` é a grelha de composição dos dashboards — e o
+«Hoje em Portugal» da home e «O país, em leituras» de /dados migraram
+para ele, com o conteúdo real preservado (séries, codificações,
+insights, fontes, frescura). Três peças:
+
+- `src/lib/painel.ts` — módulo PURO: tipos (`CodificacaoPainel`,
+  `TamanhoPainel`, `JanelaId`), `comporPainel` (DP sobre os tamanhos
+  permitidos por cartão; minimiza desvios ao preferido, determinista),
+  `linhasPainel`/`linhaFecha`, `validarVizinhanca`, `cortarJanela`.
+  Grelha de 6 colunas: S=2 (⅓), M=4 (⅔), L=6. Linhas só fecham em
+  `{L} | {M+S} | {S+M} | {S+S+S}` — o órfão é impossível por
+  construção; se nenhuma atribuição fecha, devolve `null`.
+- `src/components/Painel.tsx` — client: grelha `grid-cols-6`, UM
+  `<Segmentado>` partilhado («1A · 5A · Máx») que fatia os cartões
+  com `janela: true`, renderers por codificação (linha→`Leitura`,
+  pontos→`Haltere`, tracos→`BarraTracos`, anel→`AnelPontos`,
+  isometrico→`Isometrico`; fonte em falta→`EstadoVazio`), `--ei` na
+  célula, `data-cod` para o e2e, aviso de vizinhança em dev.
+- `src/lib/paineis.ts` — builders SERVIDOR `cartoesHome()` /
+  `cartoesDados()` + `opcoesJanela()`/`ROTULO_JANELA()`: montam a
+  configuração declarativa sobre `loadFonte`/`loadDerivado`/
+  `loadPainel`/`loadFreshness`, `janela10`, `insightMediana`,
+  `anotacaoDe` (uma anotação POR janela, calculada no servidor sobre
+  a série já fatiada) e `decomporCombustivel` — nada inventado.
+
+**Composição final (tamanhos atribuídos pelo packing):**
+
+- Home — 6 cartões, linhas `[L] [M+S] [S+S+S]` → 1×L, 1×M, 4×S:
+  inflação (**L**, linha anotada + mediana 10 anos) · Euribor
+  (**M**, pontos — haltere dos 4 prazos 1M/3M/6M/12M) · desemprego
+  (**S**, linha PT vs UE27) · habitação (**S**, traços — risca de
+  trimestres homólogos) · gasóleo (**S**, isométrico — estrutura do
+  litro IVA/ISP/carbono/produto real) · PIB (**S**, linha homóloga).
+  Codificações: linha·pontos·linha·traços·isométrico·linha — zero
+  repetições adjacentes.
+- /dados — 7 cartões, linhas `[M+S] [M+S] [S+S+S]` → 2×M, 5×S:
+  PIB (**M**, linha) · confiança (**S**, anel — os 12 meses em ciclo
+  com o «agora» ao centro) · electricidade (**M**, linha €/kWh) ·
+  custo do trabalho (**S**, traços — risca de trimestres a crescer) ·
+  desemprego jovem (**S**, linha) · gap PT−UE (**S**, pontos —
+  haltere Portugal/UE27) · casa-vs-trabalho (**S**, linha índice
+  2015=100). Codificações: linha·anel·linha·traços·linha·pontos·
+  linha — zero repetições adjacentes.
+
+**Decisões tomadas:**
+
+- **A grelha proíbe o órfão, não o testa depois.** Em vez de medir e
+  remendar, as linhas só existem em padrões completos e o packing
+  escolhe os tamanhos — a regra «nunca um cartão órfão» vira
+  invariante de construção (e o e2e confirma em px com
+  `getBoundingClientRect` a 1440/1024/768/375: cada linha encosta à
+  borda direita). Abaixo de lg todos os cartões são linha inteira.
+- **O vazio conta como `isometrico`** na vizinhança — a ilustração do
+  `EstadoVazio` é isométrica de traço; a regra de alternância mede o
+  que o olho vê.
+- **Mediana de 10 anos por omissão**, declarada no insight do nível
+  1 — cartões com referência declarada diferente mantêm-na:
+  desemprego/gap comparam à média europeia, casa-vs-trabalho ao nível
+  de 2015.
+- **Uma anotação por janela**, calculada no servidor sobre a série já
+  fatiada — a anotação é sempre um dado (extremo real do recorte),
+  nunca uma posição reaproveitada noutra janela.
+- **`Isometrico` sem props de geometria** — o cartão do gasóleo passa
+  camadas com `forma`/`rotulo`/`detalhe`/`texto` (o componente mede a
+  estrutura; nenhum número dimensiona camadas).
+- **`Segmentado` por painel, não por cartão** — uma fatia temporal
+  única para todas as séries que a suportam; a referência da mediana
+  fica sempre desenhada.
+
+**Copy novo a rever pelo dono:**
+
+- «Janela temporal» + opções «1A · 5A · Máx» (`painel.janela`).
+- «{abs} cêntimos por litro {direcao} da mediana de 10 anos»
+  (`insightLitro`), «trimestres seguidos a subir/descer/crescer»,
+  «1 trimestre», «saldo», «Portugal»/«UE 27» (gap), rótulos e
+  detalhes das camadas do gasóleo (`isoGasoleo`).
+
+**Componentes partilhados congelados** (lista actualizada — as
+sessões paralelas usam-nos sem os mudar): Logo, LogoMark, Icone,
+IconeEmblema, Valor, Botao/Interruptor/Chip/Segmentado/BotaoCopiar,
+ACarregar, EstadoVazio, ZeroInformativo, **Painel**,
+Voo/LinkVoo/TituloPagina (coreografia). Pedidos de alteração a APIs
+congeladas: `PEDIDOS-PARTILHADOS.md` — confirmado, existe e está sem
+pedidos registados.
+
+**Testes:** `src/lib/painel.test.ts` (19 — packing sem órfãos,
+vizinhança, cortarJanela e as duas configurações reais: grelha fecha,
+zero repetições, casca de frescura, mediana no insight) +
+`e2e/painel.spec.ts` (12 — linhas fecham a grelha em px a
+1440/1024/768/375 nas duas rotas, `data-cod` adjacentes nunca
+repetidos, orbe + «leitura …» em todos os cartões).
+
+**Motor lazy do dono** — intacto: nada tocou `carregarGsap`/`tela.ts`
+nem os motores; a animação é a já existente dos corpos
+(`--ei`/`--stagger` + `entrada` do `Leitura`) — sem peça animada nova,
+não houve vídeo novo a rever (o e2e de coreografia/motion segue verde:
+reduced-motion, acima da dobra, pausa fora do ecrã).

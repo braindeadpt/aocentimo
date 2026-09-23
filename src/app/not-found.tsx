@@ -1,5 +1,5 @@
-import Link from "next/link";
 import type { Metadata } from "next";
+import { Botao } from "@/components/Botao";
 
 export const metadata: Metadata = {
   title: "Página não encontrada",
@@ -19,12 +19,12 @@ export default function NotFound() {
         sítio. O índice tem tudo o que publicámos.
       </p>
       <div className="mt-8 flex flex-wrap gap-3">
-        <Link href="/" className="btn btn-primary">
+        <Botao href="/" variante="primario">
           Voltar ao início
-        </Link>
-        <Link href="/dados" className="btn">
+        </Botao>
+        <Botao href="/dados" variante="secundario">
           Ver os dados
-        </Link>
+        </Botao>
       </div>
     </div>
   );

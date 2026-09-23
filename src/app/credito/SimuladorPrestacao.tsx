@@ -2,11 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { simularPrestacao } from "@/lib/engines/prestacao";
+import { Interruptor } from "@/components/Interruptor";
 import { JuroCapital } from "@/components/JuroCapital";
 import { NumHero } from "@/components/NumHero";
 import { Regua } from "@/components/Regua";
 import { TweenNum } from "@/components/TweenNum";
-import { fmtData, fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
+import { FINO, fmtData, fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
 
 /**
  * Crédito — o mapa de amortização e o choque.
@@ -16,7 +17,7 @@ import { fmtData, fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
  * essa troca de peso ao longo dos anos — é a leitura que o banco
  * nunca desenha.
  *
- * O choque +1 p.p. é um interruptor, não uma linha de texto: ao ligar,
+ * O choque +1 p.p. é um interruptor, não uma linha de texto: ao ligar,
  * TODA a resposta muda de estado — o NumHero desliza para a prestação
  * chocada, os juros totais interpolam a inchar (TweenNum) e o mapa
  * re-desenha a divisória. Tudo sobre o mesmo token de duração (M-09).
@@ -53,7 +54,7 @@ export function SimuladorPrestacao({
   );
   const [spread, setSpread] = useState(1.0);
 
-  // a taxa em vigor no painel — com o choque ligado, +1 p.p.
+  // a taxa em vigor no painel — com o choque ligado, +1 p.p.
   const eurEf = euribor === null ? null : euribor + (choqueOn ? 1 : 0);
 
   const r = useMemo(
@@ -68,7 +69,7 @@ export function SimuladorPrestacao({
   const runMapa = `${capital}-${anos}-${eurEf}-${spread}`;
 
   // presets da taxa — âncora é o valor oficial de hoje (12M): a mediana
-  // de 10 anos do painel e ±0,5 p.p. em redor do «agora»
+  // de 10 anos do painel e ±0,5 p.p. em redor do «agora»
   const presetsTaxa = [
     ...(mediana12m !== null
       ? [{ rotulo: rotulos.mediana10, valor: mediana12m }]
@@ -94,7 +95,7 @@ export function SimuladorPrestacao({
           min={10000}
           max={1000000}
           passo={5000}
-          unidade=" €"
+          unidade="€"
           formato={(v) => fmtNum(v, 0)}
         />
         <div>
@@ -122,7 +123,7 @@ export function SimuladorPrestacao({
             min={-0.5}
             max={7}
             passo={0.01}
-            unidade=" %"
+            unidade="%"
             formato={(v) => fmtNum(v, 2)}
             marcadorAgora={
               euribor12m !== null
@@ -140,18 +141,18 @@ export function SimuladorPrestacao({
           min={0}
           max={3}
           passo={0.05}
-          unidade=" %"
+          unidade="%"
           formato={(v) => fmtNum(v, 2)}
         />
         {/* o choque é um acto — não uma nota de rodapé */}
-        <label className="flex items-center gap-2 text-corpo-sm text-ink">
-          <input
-            type="checkbox"
-            checked={choqueOn}
-            onChange={(e) => setChoqueOn(e.target.checked)}
-            className="h-4 w-4 accent-[var(--color-up)]"
-          />
-          Simular choque: Euribor sobe +1 p.p.
+        <Interruptor
+          ligado={choqueOn}
+          onChange={setChoqueOn}
+          rotulo={`Simular choque: Euribor sobe +1${FINO}p.p.`}
+          className="text-corpo-sm"
+        />
+        <label className="hidden flex items-center gap-2 text-corpo-sm text-ink">
+          Simular choque: Euribor sobe +1 p.p.
         </label>
         <p className="footnote">
           TAN = Euribor + spread = {r ? fmtPct(r.tan) : "—"}. A TAEG junta seguros e
@@ -175,7 +176,7 @@ export function SimuladorPrestacao({
         <div className="border-b border-line px-5 py-3 flex items-baseline justify-between gap-3">
           <span className="kicker">A tua prestação</span>
           {choqueOn && (
-            <span className="kicker-sm text-up">choque +1 p.p.</span>
+            <span className="kicker-sm text-up">choque +1 p.p.</span>
           )}
         </div>
         <div className="px-5 py-5">
@@ -185,7 +186,7 @@ export function SimuladorPrestacao({
               <dt className="text-ink2">Juros totais em {anos} anos</dt>
               <dd className="num">
                 {r ? (
-                  <TweenNum valor={r.jurosTotais} casas={0} texto={fmtEUR0(r.jurosTotais)} sufixo=" €" />
+                  <TweenNum valor={r.jurosTotais} casas={0} texto={fmtEUR0(r.jurosTotais)} sufixo="€" />
                 ) : "—"}
               </dd>
             </div>
@@ -193,7 +194,7 @@ export function SimuladorPrestacao({
               <dt className="text-ink2">Custo total (aprox. MTIC)</dt>
               <dd className="num font-medium">
                 {r ? (
-                  <TweenNum valor={r.custoTotal} casas={0} texto={fmtEUR0(r.custoTotal)} sufixo=" €" />
+                  <TweenNum valor={r.custoTotal} casas={0} texto={fmtEUR0(r.custoTotal)} sufixo="€" />
                 ) : "—"}
               </dd>
             </div>

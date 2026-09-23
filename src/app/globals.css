@@ -323,6 +323,32 @@
   --text-talao-numero: 1.25rem;   /* número de leitura no papel */
   --text-talao-hero: 1.875rem;    /* total do documento */
   --text-talao-hero-lg: 2.25rem;  /* o líquido no recibo */
+
+  /* ————— tracking por papel (1B-02) — escala fechada de
+     letter-spacing; nenhum literal fora dela, medida na fonte real.
+     Números: 0 — o tnum já alinha, dígitos não se espaçam.
+     Display grande: ligeiro aperto — a manchete e o herói cerram-se.
+     Mono caixa-alta: ar proporcional ao corpo (+0,14 a +0,18 em nos
+     kickers) — quanto mais pequeno, mais ar. O talão fala a língua da
+     impressora térmica — os carimbos respiram ainda mais. ————— */
+  --tracking-*: initial;
+
+  --tracking-normal: 0;              /* prosa — repõe o tracking herdado */
+  --tracking-display: -0.015em;      /* .num-hero — o herói aperta */
+  --tracking-display-forte: -0.02em; /* .leitura-valor — leitura grande */
+  --tracking-manchete: 0.01em;       /* .titulo-hero — condensado wdth 75 */
+  --tracking-manchete-xl: 0.025em;   /* .titulo-pagina — expandido caixa-alta */
+  --tracking-micro: 0.02em;          /* legendas mono micro · .num-unit */
+  --tracking-mono-sm: 0.04em;        /* rótulo mono pequeno (svg, notas) */
+  --tracking-mono: 0.06em;           /* meta mono · ticker */
+  --tracking-mono-md: 0.08em;        /* rótulo mono · pills de régua */
+  --tracking-mono-lg: 0.1em;         /* sumário · controlo mono denso */
+  --tracking-controlo: 0.12em;       /* btn · voltar · lista · selo */
+  --tracking-kicker: 0.14em;         /* eyebrow mono caixa-alta */
+  --tracking-kicker-denso: 0.16em;   /* eyebrow compacto · breadcrumb */
+  --tracking-carimbo: 0.18em;        /* carimbos do talão · iso-kicker */
+  --tracking-carimbo-xl: 0.22em;     /* carimbo SIMULAÇÃO */
+  --tracking-documento: 0.3em;       /* cabeçalho do talão */
 }
 
 /* display = Archivo expandido */
@@ -345,16 +371,17 @@
   font-variation-settings: "wdth" 125;
   font-size: var(--text-display-md);
   line-height: 1.1;
-  letter-spacing: 0.025em;
+  letter-spacing: var(--tracking-manchete-xl);
   text-transform: uppercase;
-  hyphens: auto;
+  text-wrap: balance;
   margin-top: 0.5rem;
 }
 .titulo-hero {
   font-variation-settings: "wdth" 75;
   font-size: var(--text-display-lg);
   line-height: 0.95;
-  letter-spacing: 0.01em;
+  letter-spacing: var(--tracking-manchete);
+  text-wrap: balance;
 }
 @media (min-width: 640px) {
   .titulo-pagina {
@@ -475,7 +502,7 @@ body::before {
   border-radius: var(--raio-controlo);
   font-family: var(--font-mono);
   font-size: var(--text-kicker);
-  letter-spacing: 0.12em;
+  letter-spacing: var(--tracking-controlo);
   text-transform: uppercase;
   text-decoration: none;
   transition: transform var(--dur-micro) var(--ease-entra);
@@ -533,7 +560,7 @@ html[data-theme="dark"] .tema-ponto {
   font-weight: 650;
   font-size: var(--text-hero);
   line-height: 0.95;
-  letter-spacing: -0.015em;
+  letter-spacing: var(--tracking-display);
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum" 1;
   white-space: nowrap;
@@ -543,12 +570,14 @@ html[data-theme="dark"] .tema-ponto {
 .num-hero-compact {
   font-size: var(--text-hero-sm);
 }
+/* a unidade — elemento próprio do <Valor> (1B-02): ~45 % do número,
+   na mesma linha de base, em tinta atenuada; a ponte é o FINO
+   (U+202F) no markup — sem margem, nunca nota de rodapé */
 .num-unit {
-  font-size: 0.28em;
+  font-size: 0.45em;
   font-weight: 500;
-  letter-spacing: 0.02em;
+  letter-spacing: var(--tracking-micro);
   color: var(--ink2);
-  margin-left: 0.14em;
 }
 /* o sinal é semântico — herda a cor do número (keep/up), sobe ao óptico */
 .num-sign {
@@ -601,52 +630,394 @@ html[data-theme="dark"] .tema-ponto {
   }
   .kicker {
     font-size: var(--text-kicker);
-    letter-spacing: 0.14em;
+    letter-spacing: var(--tracking-kicker);
   }
   .kicker-sm {
     font-size: var(--text-kicker-sm);
-    letter-spacing: 0.16em;
+    letter-spacing: var(--tracking-kicker-denso);
   }
   .kicker-xs {
     font-size: var(--text-micro);
-    letter-spacing: 0.14em;
+    letter-spacing: var(--tracking-kicker);
   }
 }
 
-/* botões — mono maiúsculo; são controlos, logo pílula (raio V4) */
-.btn {
+/* ————— botões e controlos — um sistema, não peças avulsas (1B-03) —————
+   A mesma geometria física em todas as variantes: pílula de
+   raio-controlo, ≥44 px de alvo, pressão scale(.97) em --dur-micro,
+   foco = anel torrado global (3 px + offset 2). Desativado é
+   aria-disabled — o controlo fica focável para a razão se ler.
+   A-carregar troca o ícone pelo mini-orbe de pontos e o rótulo diz
+   o que se passa («A calcular…»). */
+.botao {
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
+  justify-content: center;
   gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.55rem 1.2rem;
   font-family: var(--font-mono);
   font-size: var(--text-rotulo);
-  letter-spacing: 0.12em;
+  letter-spacing: var(--tracking-controlo);
   text-transform: uppercase;
-  padding: 0.7rem 1.1rem;
-  border: 1px solid var(--ink);
+  text-decoration: none;
+  border: 1px solid transparent;
   border-radius: var(--raio-controlo);
-  color: var(--ink);
   background: transparent;
+  color: var(--ink);
   cursor: pointer;
+  user-select: none;
+  transition: transform var(--dur-micro) var(--ease-entra),
+    background-color var(--dur-micro) var(--ease-entra),
+    color var(--dur-micro) var(--ease-entra),
+    border-color var(--dur-micro) var(--ease-entra);
+}
+.botao:active {
+  transform: scale(0.97);
+}
+.botao .icone {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+/* primário — a pílula de tinta cheia: a acção principal da vista */
+.botao-primario {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--floor);
+}
+.botao-primario:hover:not([aria-disabled="true"]) {
+  background: color-mix(in srgb, var(--ink) 88%, var(--floor));
+}
+/* secundário — a pílula com contorno */
+.botao-secundario {
+  border-color: var(--line2);
+  color: var(--ink2);
+}
+.botao-secundario:hover:not([aria-disabled="true"]) {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+/* terciário — texto discreto; sublinha no hover */
+.botao-terciario {
+  color: var(--ink2);
+  padding-inline: 0.6rem;
+}
+.botao-terciario:hover:not([aria-disabled="true"]) {
+  color: var(--ink);
+}
+.botao-terciario:hover:not([aria-disabled="true"]) > span {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+/* icone — o quadrado de acção ≥44×44 com um Icone da casa */
+.botao-icone {
+  width: 44px;
+  min-width: 44px;
+  padding-inline: 0;
+  border-color: var(--line2);
+  color: var(--ink2);
+}
+.botao-icone:hover:not([aria-disabled="true"]) {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+/* desativado — a razão viaja em title e dentro do nome acessível;
+   o controlo continua focável para ela se anunciar */
+.botao[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.botao[aria-disabled="true"]:active {
+  transform: none;
+}
+/* a carregar — o mini-orbe no lugar do ícone + rótulo do que se passa */
+.botao-carga {
+  cursor: progress;
+}
+.botao-carga:active {
+  transform: none;
+}
+.botao-orbe {
+  flex: none;
+}
+
+/* interruptor — a pílula com nó (role=switch): o estado lê-se na
+   posição do nó e no trilho cheio, nunca só na cor */
+.interruptor {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 44px;
+  padding: 0.35rem 0.6rem 0.35rem 0.35rem;
+  border: 0;
+  border-radius: var(--raio-controlo);
+  background: transparent;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: var(--text-corpo);
+  text-align: left;
+  cursor: pointer;
+  transition: transform var(--dur-micro) var(--ease-entra);
+}
+.interruptor:active {
+  transform: scale(0.97);
+}
+.interruptor-trilho {
+  flex: none;
+  position: relative;
+  width: 46px;
+  height: 26px;
+  border: 1px solid var(--line2);
+  border-radius: var(--raio-controlo);
+  background: var(--panel);
+  box-shadow: var(--recess);
   transition: background-color var(--dur-micro) var(--ease-entra),
+    border-color var(--dur-micro) var(--ease-entra);
+}
+.interruptor-no {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--raised);
+  border: 1px solid var(--line2);
+  box-shadow: var(--elev-raised);
+  transition: transform var(--dur-curta) var(--ease-rasgo),
+    background-color var(--dur-micro) var(--ease-entra),
+    border-color var(--dur-micro) var(--ease-entra);
+}
+.interruptor[aria-checked="true"] .interruptor-trilho {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.interruptor[aria-checked="true"] .interruptor-no {
+  transform: translateX(20px);
+  background: var(--floor);
+  border-color: var(--floor);
+}
+.interruptor-rotulo {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.interruptor-nota {
+  font-family: var(--font-mono);
+  font-size: var(--text-mini);
+  color: var(--ink2);
+}
+.interruptor[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.interruptor[aria-disabled="true"]:active {
+  transform: none;
+}
+
+/* chip — a pill de preset/escolha rápida: seleccionado tem três
+   canais (aria-pressed + pílula cheia + quadrado-marca cheio) */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-kicker);
+  letter-spacing: var(--tracking-mono-md);
+  text-transform: uppercase;
+  padding: 0.38rem 0.72rem;
+  border: 1px solid var(--line2);
+  border-radius: var(--raio-controlo);
+  background: transparent;
+  color: var(--ink2);
+  cursor: pointer;
+  transition: transform var(--dur-micro) var(--ease-entra),
+    background-color var(--dur-micro) var(--ease-entra),
+    color var(--dur-micro) var(--ease-entra),
+    border-color var(--dur-micro) var(--ease-entra);
+}
+.chip::before {
+  content: "";
+  flex: none;
+  width: 0.5em;
+  height: 0.5em;
+  border: 1px solid var(--line2);
+  border-radius: 1px;
+  background: transparent;
+  transition: background-color var(--dur-micro) var(--ease-entra),
+    border-color var(--dur-micro) var(--ease-entra);
+}
+.chip:hover:not([aria-disabled="true"]) {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.chip:active:not([aria-disabled="true"]) {
+  transform: scale(0.97);
+}
+.chip[aria-pressed="true"],
+.chip[aria-pressed="true"]:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--floor);
+}
+.chip[aria-pressed="true"]::before {
+  background: var(--floor);
+  border-color: var(--floor);
+}
+.chip[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* segmentado — uma pílula dividida em segmentos (radiogroup):
+   o seleccionado é a pílula cheia de tinta dentro do trilho */
+.segmentado {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--line2);
+  border-radius: var(--raio-controlo);
+  background: var(--panel);
+  box-shadow: var(--recess);
+}
+.segmentado-op {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0.3rem 0.85rem;
+  border: 0;
+  border-radius: var(--raio-controlo);
+  background: transparent;
+  color: var(--ink2);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-kicker);
+  letter-spacing: var(--tracking-mono-md);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform var(--dur-micro) var(--ease-entra),
+    background-color var(--dur-micro) var(--ease-entra),
     color var(--dur-micro) var(--ease-entra);
 }
-
-.btn:hover {
+.segmentado-op:hover:not([aria-disabled="true"]):not([aria-checked="true"]) {
+  color: var(--ink);
+}
+.segmentado-op:active:not([aria-disabled="true"]) {
+  transform: scale(0.97);
+}
+.segmentado-op[aria-checked="true"],
+.segmentado-op[aria-checked="true"]:hover {
   background: var(--ink);
   color: var(--floor);
+  box-shadow: var(--elev-raised);
+}
+.segmentado-op[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
-.btn-primary {
-  background: var(--accent);
-  border-color: var(--accent);
+/* «Copiado» — a nota discreta junto ao botão de copiar: vive numa
+   região viva (role=status), em repouso está vazia e escondida */
+.copiar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.copiar-lig {
+  border: 0;
+  padding: 0;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+}
+.copiado-nota {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translate(-50%, 0);
+  z-index: 30;
+  padding: 0.22rem 0.55rem;
+  border-radius: var(--raio-pormenor);
+  background: var(--ink);
+  color: var(--floor);
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity var(--dur-micro) var(--ease-entra),
+    transform var(--dur-micro) var(--ease-entra);
+}
+.copiado-nota:empty {
+  opacity: 0;
+  transform: translate(-50%, 5px);
+}
+.copiado-falha {
+  background: var(--warn);
   color: var(--floor);
 }
 
-.btn-primary:hover {
-  background: var(--accent-ink);
-  border-color: var(--accent-ink);
+/* dica — o tooltip por âncora (1B-03): existe onde já havia tooltip
+   (a célula «id — fonte» da metodologia). .dica-alvo é a casca que
+   agrupa âncora + dica (a dica é irmã da âncora — um posicionado não
+   pode ancorar-se a um elemento da sua cadeia de containing block).
+   Fallback clássico em todo o lado; com CSS anchor positioning a
+   dica resolve-se contra a âncora e vira de lado quando encosta à
+   borda do viewport. */
+.dica-alvo {
+  position: relative;
+}
+.dica-mae {
+  position: relative;
+}
+.dica {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translate(-50%, 4px);
+  z-index: 30;
+  padding: 0.4rem 0.6rem;
+  max-width: 16rem;
+  border-radius: var(--raio-pormenor);
+  background: var(--ink);
   color: var(--floor);
+  font-family: var(--font-mono);
+  font-size: var(--text-mini);
+  line-height: 1.35;
+  text-align: left;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur-micro) var(--ease-entra),
+    transform var(--dur-micro) var(--ease-entra);
+}
+.dica-alvo:hover .dica,
+.dica-alvo:focus-within .dica {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+@supports (top: anchor(bottom)) {
+  .dica-mae {
+    anchor-name: var(--qa);
+  }
+  .dica {
+    inset: auto;
+    bottom: anchor(top);
+    justify-self: anchor-center;
+    position-anchor: var(--qa);
+    margin-bottom: 6px;
+    position-try-fallbacks: flip-block;
+    transform: none;
+  }
+  .dica-alvo:hover .dica,
+  .dica-alvo:focus-within .dica {
+    transform: none;
+  }
 }
 
 /* campo de formulário — uma só classe, usada por todos os simuladores.
@@ -674,6 +1045,30 @@ html[data-theme="dark"] .tema-ponto {
   color: var(--ink2);
 }
 
+/* ————— prosa PT-PT (1B-02) — a hifenização automática vive SÓ no
+   corpo de texto (o <html> já traz lang="pt"); títulos e números
+   nunca hifenizam. `pretty` evita viúvas na última linha;
+   `balance` mede os títulos ————— */
+.body-copy,
+.lede,
+.pg-frase,
+.pg-detalhe-corpo,
+.leitura-insight,
+.iso-li-det,
+.footnote {
+  text-wrap: pretty;
+}
+.body-copy,
+.lede,
+.pg-detalhe-corpo {
+  hyphens: auto;
+}
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
 /* ————— o ticker — fio de dados vivos, assinatura do observatório ————— */
 .ticker {
   overflow: hidden;
@@ -683,7 +1078,7 @@ html[data-theme="dark"] .tema-ponto {
 
 .ticker-item {
   font-size: var(--text-kicker);
-  letter-spacing: 0.06em;
+  letter-spacing: var(--tracking-mono);
 }
 .ticker-track {
   display: flex;
@@ -693,6 +1088,12 @@ html[data-theme="dark"] .tema-ponto {
 
 .ticker:hover .ticker-track,
 .ticker:focus-within .ticker-track {
+  animation-play-state: paused;
+}
+/* pausa ambiente (1B-04) — o <PausaAmbiente> marca o embrulho quando
+   a faixa sai do ecrã ou o separador fica escondido: qualquer
+   animação dentro congela — nem um fotograma fora da vista */
+.amb-off * {
   animation-play-state: paused;
 }
 
@@ -753,8 +1154,10 @@ html[data-theme="dark"] .tema-ponto {
   display: flex;
   flex-direction: column;
   transform: translateY(calc(var(--d) * -1em));
+  /* --delay = escalonamento entre rodas; --ei = índice do cartão no
+     grupo (1B-04) — a contagem entra na coreografia do cartão */
   transition: transform var(--dur, var(--dur-longa)) var(--ease-entra)
-    var(--delay, 0ms);
+    calc(var(--delay, 0ms) + var(--ei, 0) * var(--stagger));
 }
 .od-zero .od-strip {
   transform: translateY(0);
@@ -844,7 +1247,9 @@ html[data-theme="dark"] .tema-ponto {
 }
 .decl-mes-anim {
   animation: decl-mes-sobe var(--dur-curta) var(--ease-entra) both;
-  animation-delay: calc(var(--linha) * 26ms);
+  animation-delay: calc(
+    var(--linha) * 26ms + var(--ei, 0) * var(--stagger)
+  );
 }
 @keyframes decl-mes-sobe {
   from {
@@ -892,7 +1297,7 @@ html[data-theme="dark"] .tema-ponto {
   font-family: var(--font-mono);
   font-size: var(--text-mini);
   line-height: 1.4;
-  letter-spacing: 0.02em;
+  letter-spacing: var(--tracking-micro);
   color: var(--muted);
 }
 .md-barras {
@@ -903,7 +1308,7 @@ html[data-theme="dark"] .tema-ponto {
   display: block;
   font-family: var(--font-mono);
   font-size: var(--text-mini);
-  letter-spacing: 0.02em;
+  letter-spacing: var(--tracking-micro);
   color: var(--muted);
   margin-bottom: 2px;
 }
@@ -977,13 +1382,13 @@ html[data-theme="dark"] .tema-ponto {
 .md-draw {
   transform-origin: left;
   animation: md-desenha-x var(--dur-media) var(--ease-entra) both;
-  animation-delay: calc(var(--i, 0) * 70ms);
+  animation-delay: calc(var(--i, 0) * 70ms + var(--ei, 0) * var(--stagger));
 }
 .md-grow,
 .md-fill-v {
   transform-origin: bottom;
   animation: md-desenha-y var(--dur-media) var(--ease-entra) both;
-  animation-delay: calc(var(--i, 0) * 70ms);
+  animation-delay: calc(var(--i, 0) * 70ms + var(--ei, 0) * var(--stagger));
 }
 @keyframes md-desenha-x {
   from {
@@ -1075,7 +1480,7 @@ html[data-theme="dark"] .tema-ponto {
 }
 .jovem-passo-ano {
   font-size: var(--text-mini);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-mono-md);
 }
 .jovem-gauge {
   display: block;
@@ -1131,7 +1536,7 @@ html[data-theme="dark"] .tema-ponto {
    independente da escala de rótulos do site */
 .talao-head {
   font-size: var(--text-talao-head);
-  letter-spacing: 0.3em;
+  letter-spacing: var(--tracking-documento);
   text-transform: uppercase;
 }
 .talao-sub {
@@ -1146,7 +1551,7 @@ html[data-theme="dark"] .tema-ponto {
 }
 .talao-total {
   font-size: var(--text-talao-total);
-  letter-spacing: 0.14em;
+  letter-spacing: var(--tracking-kicker);
   text-transform: uppercase;
 }
 .talao-meta {
@@ -1184,7 +1589,7 @@ html[data-theme="dark"] .tema-ponto {
   padding: 0.15rem 0.55rem;
   font-family: var(--font-mono);
   font-size: var(--text-talao-sub);
-  letter-spacing: 0.22em;
+  letter-spacing: var(--tracking-carimbo-xl);
   text-transform: uppercase;
   border-radius: var(--raio-pormenor);
   pointer-events: none;
@@ -1204,7 +1609,9 @@ html[data-theme="dark"] .tema-ponto {
    sem JS/reduced-motion o recibo nasce impresso */
 .talao-linha {
   animation: talao-imprime var(--dur-curta) var(--ease-entra) both;
-  animation-delay: calc(var(--linha, 0) * var(--stagger));
+  animation-delay: calc(
+    (var(--linha, 0) + var(--ei, 0)) * var(--stagger)
+  );
 }
 @keyframes talao-imprime {
   from {
@@ -1226,7 +1633,7 @@ html[data-theme="dark"] .tema-ponto {
   border-radius: var(--raio-pormenor);
   color: rgba(157, 42, 13, 0.85);
   font-size: var(--text-talao-micro);
-  letter-spacing: 0.18em;
+  letter-spacing: var(--tracking-carimbo);
   text-transform: uppercase;
   transform: rotate(-3deg);
 }
@@ -1240,13 +1647,15 @@ html[data-theme="dark"] .tema-ponto {
   border-radius: var(--raio-pormenor);
   color: var(--papel-fica-tinta);
   font-size: var(--text-talao-micro);
-  letter-spacing: 0.18em;
+  letter-spacing: var(--tracking-carimbo);
   text-transform: uppercase;
   transform: rotate(-3deg);
 }
 .talao-carimbo-anim {
   animation: talao-carimbo var(--dur-micro) var(--ease-rasgo) both;
-  animation-delay: calc(var(--linha, 0) * var(--stagger) + 220ms);
+  animation-delay: calc(
+    (var(--linha, 0) + var(--ei, 0)) * var(--stagger) + 220ms
+  );
 }
 @keyframes talao-carimbo {
   from {
@@ -1325,7 +1734,9 @@ html[data-theme="dark"] .tema-ponto {
 }
 .iva-voa-anim {
   animation: iva-voa var(--dur-curta) var(--ease-sai) both;
-  animation-delay: calc(var(--linha, 0) * 35ms);
+  animation-delay: calc(
+    var(--linha, 0) * 35ms + var(--ei, 0) * var(--stagger)
+  );
 }
 @keyframes iva-voa {
   from {
@@ -1353,7 +1764,9 @@ html[data-theme="dark"] .tema-ponto {
 }
 .iva-barra-anim {
   animation: iva-chega var(--dur-curta) var(--ease-entra) both;
-  animation-delay: calc(240ms + var(--linha, 0) * 80ms);
+  animation-delay: calc(
+    240ms + var(--linha, 0) * 80ms + var(--ei, 0) * var(--stagger)
+  );
 }
 @keyframes iva-chega {
   from {
@@ -1372,7 +1785,9 @@ html[data-theme="dark"] .tema-ponto {
   transform-box: fill-box;
   transform-origin: center bottom;
   animation: casca-sobe var(--dur-curta) var(--ease-entra) both;
-  animation-delay: calc(var(--seg, 0) * 80ms);
+  animation-delay: calc(
+    var(--seg, 0) * 80ms + var(--ei, 0) * var(--stagger)
+  );
 }
 @keyframes casca-sobe {
   from {
@@ -1387,7 +1802,7 @@ html[data-theme="dark"] .tema-ponto {
 .casca-brace {
   stroke-dasharray: 1;
   animation: casca-mede var(--dur-media) var(--ease-lin) both;
-  animation-delay: 300ms;
+  animation-delay: calc(300ms + var(--ei, 0) * var(--stagger));
 }
 @keyframes casca-mede {
   from {
@@ -1400,7 +1815,7 @@ html[data-theme="dark"] .tema-ponto {
 .casca-iva {
   transform-box: fill-box;
   animation: casca-iva var(--dur-curta) var(--ease-rasgo) both;
-  animation-delay: 580ms;
+  animation-delay: calc(580ms + var(--ei, 0) * var(--stagger));
 }
 @keyframes casca-iva {
   from {
@@ -1434,7 +1849,9 @@ html[data-theme="dark"] .tema-ponto {
 }
 .acre-anim {
   animation: acre-cresce var(--dur-curta) var(--ease-entra) both;
-  animation-delay: calc(var(--cam, 0) * var(--stagger) + 80ms);
+  animation-delay: calc(
+    (var(--cam, 0) + var(--ei, 0)) * var(--stagger) + 80ms
+  );
 }
 @keyframes acre-cresce {
   from {
@@ -1449,6 +1866,7 @@ html[data-theme="dark"] .tema-ponto {
    o clip só existe dentro da animação */
 .tempo-revela {
   animation: tempo-passar var(--dur-longa) var(--ease-lin) both;
+  animation-delay: calc(var(--ei, 0) * var(--stagger));
 }
 @keyframes tempo-passar {
   from {
@@ -1554,18 +1972,41 @@ html[data-theme="dark"] .tema-ponto {
   height: 3px;
   background: var(--accent);
 }
+/* o polegar é só posição (left transita em mudanças discretas); o
+   corpo visível — a peça que encaixa — vive dentro e leva o ressalto:
+   a cada paragem o JS rearma a keyframe e a peça esmaga-se um instante
+   (física contida, --dur-micro + --ease-rasgo), como o detent de um
+   instrumento real. Reduced-motion corta-o no bloco global. */
 .regua-polegar {
   position: absolute;
   top: 30px;
   width: 14px;
   height: 26px;
   transform: translate(-50%, -50%);
+}
+.regua-polegar-corpo {
+  position: absolute;
+  inset: 0;
   background: var(--accent);
   border: 1px solid var(--ink);
   border-radius: var(--raio-pormenor);
 }
+.regua-encaixa {
+  animation: regua-encaixa var(--dur-micro) var(--ease-rasgo);
+}
+@keyframes regua-encaixa {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.16, 0.84);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 /* as duas ranhuras do grip — tinta a meia força sobre o acento */
-.regua-polegar::after {
+.regua-polegar-corpo::after {
   content: "";
   position: absolute;
   inset: 5px 3px;
@@ -1633,43 +2074,153 @@ html[data-theme="dark"] .tema-ponto {
   transform: translateX(-50%);
   color: var(--ink);
 }
-/* presets — chips físicos: borda hairline, hover com 10 % de acento,
-   seleccionado = acento cheio com tinta invertida (AA nos dois temas) */
+/* presets — os chips partilhados do sistema (ver .chip acima):
+   seleccionado = pílula cheia + quadrado-marca + aria-pressed */
 .regua-pills {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 0.55rem;
 }
-.regua-pill {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-  font-size: var(--text-kicker);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 0.38rem 0.72rem;
-  border: 1px solid var(--line2);
-  border-radius: var(--raio-controlo);
-  background: transparent;
-  color: var(--ink2);
-  cursor: pointer;
-  transition: background-color var(--dur-micro) var(--ease-entra),
-    color var(--dur-micro) var(--ease-entra),
-    border-color var(--dur-micro) var(--ease-entra);
-}
-.regua-pill:hover {
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
-  border-color: var(--accent);
-  color: var(--ink);
-}
-.regua-pill[aria-pressed="true"],
-.regua-pill[aria-pressed="true"]:hover {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--floor);
-}
 .regua-desc {
   margin-top: 0.45rem;
+}
+/* a nota do limite (1B-05): quando a tentativa é para lá do fim, o
+   rótulo do extremo cede o lugar à explicação — «limite — 920 € · o
+   salário mínimo». Discreta (tinta, nunca vermelho — não é erro, é a
+   régua a fazer o dela), com o traço que a liga ao polegar */
+.regua-nota {
+  left: 0;
+  color: var(--ink);
+}
+.regua-nota-max {
+  left: auto;
+  right: 0;
+}
+.regua-nota::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 1px;
+  height: 3px;
+  background: var(--ink2);
+}
+.regua-nota-max::before {
+  left: auto;
+  right: 0;
+}
+
+/* ————— estados partilhados (1B-05) —————
+   Cada estado tem desenho e texto, e é partilhado: o vazio/falha de
+   fonte (ilustração isométrica fantasma + orbe atrasada + frase), o
+   a-carregar (mini-orbe de pontos + rótulo) e o zero informativo
+   (ponto oco + «não te toca»). */
+
+/* a carregar — o estado transitório onde há espera real */
+.acarregar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.acarregar-orbe {
+  flex: none;
+}
+
+/* zero informativo — «0 € — não te toca»: o ponto oco é o cêntimo
+   que não existe (a mesma leitura do repartir: uma parte a 0 não
+   tem pontos, e isso é informação, não erro) */
+.zero-info {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+.zero-info-ponto {
+  width: 0.5em;
+  height: 0.5em;
+  flex: none;
+  align-self: center;
+  border: 1.2px solid currentColor;
+  border-radius: 50%;
+}
+.zero-info-un {
+  font-size: 0.75em;
+  color: var(--ink2);
+}
+.zero-info-nota {
+  color: var(--ink2);
+}
+
+/* vazio / fonte indisponível — o lugar do instrumento fica marcado:
+   moldura a tracejado (o buraco desenhado, não escondido), a peça em
+   falta só em contorno tracejado no isométrico fantasma, orbe
+   «atrasada» e a frase honesta — o que falhou, desde quando e onde
+   ver a fonte oficial. Nunca um número inventado. */
+.estado-vazio {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  margin: 0;
+  padding: 1.4rem 1.6rem;
+  border: 1px dashed var(--line2);
+  border-radius: var(--raio-instrumento);
+  background: var(--panel);
+}
+.ev-iso {
+  width: 148px;
+  flex: none;
+}
+.estado-vazio-c {
+  gap: 1rem;
+  padding: 0.9rem 1.1rem;
+}
+.estado-vazio-c .ev-iso {
+  width: 96px;
+}
+.ev-txt {
+  min-width: 0;
+}
+.ev-selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+.ev-frase {
+  margin: 0.55rem 0 0;
+  font-size: var(--text-corpo);
+  line-height: 1.45;
+  color: var(--ink);
+}
+.ev-desde {
+  margin: 0.3rem 0 0;
+  font-size: var(--text-rotulo);
+  color: var(--ink2);
+}
+.ev-fonte {
+  margin: 0.35rem 0 0;
+  font-size: var(--text-corpo-sm);
+}
+.ev-link {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--line2);
+  text-underline-offset: 2px;
+}
+.ev-link:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}
+.ev-regra {
+  margin-top: 0.35rem;
+}
+@media (max-width: 480px) {
+  .estado-vazio {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+  }
 }
 
 /* ————— view transitions — cross-fade de página, rápido e quieto ————— */
@@ -1686,6 +2237,38 @@ html[data-theme="dark"] .tema-ponto {
 ::view-transition-old(nav-ind),
 ::view-transition-new(nav-ind) {
   animation: none;
+}
+/* a transição-assinatura (1B-04): a «pergunta seguinte» morfa no h1 do
+   destino — voa e assenta. O nome pg-voo só existe na janela da
+   navegação-assinatura (o LinkVoo sela a rota e dá o nome ao link; o
+   TituloPagina da página de destino dá o mesmo nome ao h1 quando o
+   selo bate — ver src/components/Voo.tsx): links de rodapé ou da nav
+   para a mesma rota não a disparam. --dur-media porque é uma
+   transformação explicada, não um toque — o texto viaja e assenta. */
+::view-transition-group(pg-voo) {
+  animation-duration: var(--dur-media);
+  animation-timing-function: var(--ease-entra);
+}
+/* o link origem rende-se depressa — o que fica a viajar é a forma;
+   o h1 novo assenta com a curva de entrada */
+::view-transition-old(pg-voo) {
+  animation-name: pg-voo-sai;
+}
+::view-transition-new(pg-voo) {
+  animation-name: pg-voo-chega;
+}
+@keyframes pg-voo-sai {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes pg-voo-chega {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* a folha inferior da nav mobile (S1-07) sobe de baixo ao abrir —
@@ -1809,6 +2392,72 @@ html[data-theme="dark"] .tema-ponto {
   animation-play-state: paused;
 }
 
+/* ————— ícones (1B-01) — traço próprio na grelha 20×20, 1,5 px,
+   terminações redondas, sem preenchimento. O traço desenha-se uma vez
+   ao passar/focar o controlo que o envolve: stroke-dashoffset sobre
+   pathLength=1 em --dur-micro, com um passo por traço (--i) — CSS puro,
+   sem JS; o bloco global de reduced-motion corta-o (nasce desenhado) ————— */
+.icone {
+  display: inline-block;
+  /* 1,25 em ≈ o desenho de 20 px na caixa de 16 — escala com a voz
+     do rótulo que acompanha (o emblema fixa 20 px exactos) */
+  width: 1.25em;
+  height: 1.25em;
+  flex: none;
+  vertical-align: -0.22em;
+}
+.icone path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+:where(a, button, summary, [role="button"], [data-icone-gatilho]):is(
+    :hover,
+    :focus-visible
+  )
+  .icone
+  path,
+.leitura:is(:hover, :focus-within) .icone-emblema .icone path {
+  animation: icone-desenha var(--dur-micro) var(--ease-entra) both;
+  animation-delay: calc(var(--i, 0) * 22ms);
+}
+@keyframes icone-desenha {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* o emblema — o quadrado de contorno tracejado da referência, no
+   cabeçalho dos cartões: moldura de instrumento (raio pormenor),
+   segue as cores --l-* do cartão, que invertem para papel no foco */
+.icone-emblema {
+  display: inline-grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin-right: 0.65rem;
+  flex: none;
+  align-self: center;
+  border: 1px dashed var(--l-line2, var(--line2));
+  border-radius: var(--raio-pormenor);
+  color: var(--l-ink2, var(--ink2));
+}
+.icone-emblema .icone {
+  width: 1.25rem;
+  height: 1.25rem;
+  vertical-align: 0;
+}
+/* com emblema o cabeçalho alinha ao centro e o breadcrumb encosta a
+   ele — o margin-right:auto empurra o meta para a direita */
+.leitura-head:has(.icone-emblema) {
+  align-items: center;
+}
+.leitura-head:has(.icone-emblema) .leitura-breadcrumb {
+  margin-right: auto;
+}
+
 /* quadro vivo (/metodologia) — mural de azulejos: cada série uma célula,
    ordenadas por urgência; o cinzento uniforme sai, a margem entra */
 .quadro-vivo {
@@ -1835,7 +2484,7 @@ html[data-theme="dark"] .tema-ponto {
 .qcell-id {
   font-family: var(--font-mono);
   font-size: var(--text-mini);
-  letter-spacing: 0.02em;
+  letter-spacing: var(--tracking-micro);
   /* id de série a 10px — muted (4.46:1) fica a um fio do AA; ink2 passa */
   color: var(--ink2);
   overflow-wrap: anywhere;
@@ -1868,7 +2517,7 @@ html[data-theme="dark"] .tema-ponto {
 .spark-on .spark-line {
   stroke-dasharray: var(--spark-len);
   animation: spark-draw var(--dur-media) var(--ease-entra)
-    calc(var(--spark-delay, 0) * var(--stagger)) forwards;
+    calc((var(--spark-delay, 0) + var(--ei, 0)) * var(--stagger)) forwards;
 }
 @keyframes spark-draw {
   to {
@@ -1886,7 +2535,10 @@ html[data-theme="dark"] .tema-ponto {
 .spark-on .spark-area {
   opacity: 0.09;
   transition: opacity var(--dur-curta) var(--ease-entra)
-    calc(var(--spark-delay, 0) * var(--stagger) + var(--dur-media));
+    calc(
+      (var(--spark-delay, 0) + var(--ei, 0)) * var(--stagger) +
+      var(--dur-media)
+    );
 }
 
 /* linechart — a série desenha-se UMA vez ao entrar no viewport,
@@ -1899,7 +2551,7 @@ html[data-theme="dark"] .tema-ponto {
 }
 .lc-on .lc-line {
   animation: spark-draw var(--dur-longa) var(--ease-entra)
-    calc(var(--lc-delay, 0) * var(--stagger)) forwards;
+    calc((var(--lc-delay, 0) + var(--ei, 0)) * var(--stagger)) forwards;
 }
 /* depois de desenhada a linha é um traço normal — sem restos de dash */
 .lc-done .lc-line {
@@ -1911,7 +2563,10 @@ html[data-theme="dark"] .tema-ponto {
 }
 .lc-on .lc-banda {
   transition: opacity var(--dur-curta) var(--ease-entra)
-    calc(var(--lc-delay, 0) * var(--stagger) + var(--dur-media));
+    calc(
+      (var(--lc-delay, 0) + var(--ei, 0)) * var(--stagger) +
+      var(--dur-media)
+    );
 }
 /* eventos — o carimbo do observatório: tracejado fino, quadrado
    torrado no topo (o mesmo marcador de evidência do Spark) */
@@ -1928,7 +2583,7 @@ html[data-theme="dark"] .tema-ponto {
   fill: var(--muted);
   font-family: var(--font-mono);
   font-size: var(--text-svg-micro);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-mono-sm);
 }
 .lc-evento-faixa {
   fill: var(--mark);
@@ -2021,7 +2676,7 @@ html[data-theme="dark"] .tema-ponto {
 .leitura-breadcrumb {
   font-family: var(--font-mono);
   font-size: var(--text-kicker-sm);
-  letter-spacing: 0.16em;
+  letter-spacing: var(--tracking-kicker-denso);
   text-transform: uppercase;
   color: var(--l-muted);
 }
@@ -2032,7 +2687,7 @@ html[data-theme="dark"] .tema-ponto {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   font-size: var(--text-kicker-sm);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-mono-md);
   text-transform: uppercase;
   color: var(--l-muted);
 }
@@ -2062,7 +2717,7 @@ html[data-theme="dark"] .tema-ponto {
   font-weight: 650;
   font-size: var(--text-valor);
   line-height: 1.05;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--tracking-display-forte);
 }
 .leitura-amplo .leitura-valor {
   font-size: var(--text-valor-amplo);
@@ -2141,7 +2796,7 @@ html[data-theme="dark"] .tema-ponto {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   font-size: var(--text-kicker);
-  letter-spacing: 0.02em;
+  letter-spacing: var(--tracking-micro);
   color: var(--l-muted);
 }
 @container (max-width: 460px) {
@@ -2157,33 +2812,39 @@ html[data-theme="dark"] .tema-ponto {
 /* ————— desenho de entrada — só com .leitura-on (useArmado ao entrar
    no viewport). O estado base é sempre o final: sem JS, acima da
    dobra ou com reduced-motion nasce tudo impresso. ————— */
+/* --ei (1B-04) é o índice do cartão no grupo — toda a coreografia de
+   entrada desliza var(--ei) × --stagger: cartão 2 desenha-se depois do
+   cartão 1, nunca um bloco a esbater-se de uma vez */
 .leitura-on .lq-line,
 .leitura-on .lq-ref {
   stroke-dasharray: 1;
   stroke-dashoffset: 0;
   animation: lq-draw var(--dur-longa) var(--ease-entra) both;
+  animation-delay: calc(var(--ei, 0) * var(--stagger));
 }
 .leitura-on .lq-ref {
-  animation-delay: var(--stagger);
+  animation-delay: calc((1 + var(--ei, 0)) * var(--stagger));
 }
 /* a mediana constante revela-se por varrimento — o dash "5 4" dela é
    semântico, não pode servir de truque de desenho */
 .leitura-on .lq-refmark {
-  animation: lq-clip var(--dur-longa) var(--ease-entra) var(--stagger) both;
+  animation: lq-clip var(--dur-longa) var(--ease-entra)
+    calc((1 + var(--ei, 0)) * var(--stagger)) both;
 }
 /* a hachura assenta a meio do traço; os extremos quando a linha chega */
 .leitura-on .lq-hatch {
   animation: lq-fade var(--dur-media) var(--ease-entra)
-    calc(var(--dur-longa) * 0.5) both;
+    calc(var(--dur-longa) * 0.5 + var(--ei, 0) * var(--stagger)) both;
 }
 .leitura-on .lq-ext,
 .leitura-on .lq-ref-rotulo {
   animation: lq-fade var(--dur-curta) var(--ease-entra)
-    calc(var(--dur-longa) * 0.8) both;
+    calc(var(--dur-longa) * 0.8 + var(--ei, 0) * var(--stagger)) both;
 }
 /* a anotação desenha-se por último — floresce do ponto anotado */
 .leitura-on .lq-anot {
-  animation: lq-anot var(--dur-media) var(--ease-entra) var(--dur-longa) both;
+  animation: lq-anot var(--dur-media) var(--ease-entra)
+    calc(var(--dur-longa) + var(--ei, 0) * var(--stagger)) both;
 }
 @keyframes lq-draw {
   from {
@@ -2245,7 +2906,7 @@ html[data-theme="dark"] .tema-ponto {
   font-variation-settings: "wdth" 125;
   font-weight: 700;
   font-size: var(--text-display-sm);
-  letter-spacing: 0.025em;
+  letter-spacing: var(--tracking-manchete-xl);
   text-transform: uppercase;
   color: var(--ink);
 }
@@ -2254,7 +2915,7 @@ html[data-theme="dark"] .tema-ponto {
   font-variant-numeric: tabular-nums;
   font-size: var(--text-kicker);
   font-weight: 400;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--tracking-kicker);
   color: var(--muted);
 }
 .pg-instrumento {
@@ -2287,7 +2948,7 @@ html[data-theme="dark"] .tema-ponto {
   list-style: none;
   font-family: var(--font-mono);
   font-size: var(--text-rotulo);
-  letter-spacing: 0.1em;
+  letter-spacing: var(--tracking-mono-lg);
   text-transform: uppercase;
   color: var(--ink2);
 }
@@ -2324,7 +2985,7 @@ html[data-theme="dark"] .tema-ponto {
   font-variation-settings: "wdth" 125;
   font-weight: 700;
   font-size: var(--text-display-sm);
-  letter-spacing: 0.02em;
+  letter-spacing: var(--tracking-micro);
   text-transform: uppercase;
   color: var(--ink);
   text-decoration: underline;
@@ -2386,7 +3047,7 @@ html[data-theme="dark"] .tema-ponto {
 .iso-rot-r {
   fill: var(--l-ink);
   font-size: var(--text-svg-rotulo);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-mono-sm);
 }
 /* tom semântico da camada (S1-02): --accent é SÓ para o dinheiro que
    sai (cortes); --keep para o que fica (líquido, «fica»); totais —
@@ -2409,7 +3070,7 @@ html[data-theme="dark"] .tema-ponto {
 .iso-kicker {
   fill: var(--l-muted);
   font-size: var(--text-svg-rotulo);
-  letter-spacing: 0.18em;
+  letter-spacing: var(--tracking-carimbo);
   text-transform: uppercase;
 }
 .iso-num {
@@ -2479,7 +3140,7 @@ html[data-theme="dark"] .tema-ponto {
 .iso-li-rot {
   font-family: var(--font-mono);
   font-size: var(--text-rotulo);
-  letter-spacing: 0.12em;
+  letter-spacing: var(--tracking-controlo);
   text-transform: uppercase;
   color: var(--l-ink2);
 }
@@ -2509,16 +3170,20 @@ html[data-theme="dark"] .tema-ponto {
    clip-path (o dash "2 3" é semântico); os rótulos assentam por
    último e o número grande fecha a sequência (~1,2 s). */
 .iso-on .iso-camada {
-  animation: iso-desce var(--dur-media) var(--ease-entra) var(--iso-pd, 0ms) both;
+  animation: iso-desce var(--dur-media) var(--ease-entra)
+    calc(var(--iso-pd, 0ms) + var(--ei, 0) * var(--stagger)) both;
 }
 .iso-on .iso-chamada {
-  animation: iso-traca var(--dur-curta) var(--ease-entra) var(--iso-ld, 0ms) both;
+  animation: iso-traca var(--dur-curta) var(--ease-entra)
+    calc(var(--iso-ld, 0ms) + var(--ei, 0) * var(--stagger)) both;
 }
 .iso-on .iso-rot {
-  animation: iso-surge var(--dur-curta) var(--ease-entra) var(--iso-rd, 0ms) both;
+  animation: iso-surge var(--dur-curta) var(--ease-entra)
+    calc(var(--iso-rd, 0ms) + var(--ei, 0) * var(--stagger)) both;
 }
 .iso-on .iso-num-grupo {
-  animation: iso-surge var(--dur-curta) var(--ease-entra) 1020ms both;
+  animation: iso-surge var(--dur-curta) var(--ease-entra)
+    calc(1020ms + var(--ei, 0) * var(--stagger)) both;
 }
 @keyframes iso-desce {
   from {
@@ -2568,7 +3233,7 @@ html[data-theme="dark"] .tema-ponto {
   margin: 0;
   font-family: var(--font-mono);
   font-size: var(--text-mini);
-  letter-spacing: 0.1em;
+  letter-spacing: var(--tracking-mono-lg);
   text-transform: uppercase;
   color: var(--muted);
   white-space: nowrap;
@@ -2627,6 +3292,7 @@ html[data-theme="dark"] .tema-ponto {
 /* a montagem conta como se mede — a pista revela-se esq→dir, linear */
 .bt-on .bt-pista {
   animation: bt-varre var(--dur-media) var(--ease-lin) both;
+  animation-delay: calc(var(--ei, 0) * var(--stagger));
 }
 @keyframes bt-varre {
   from {
@@ -2663,12 +3329,12 @@ html[data-theme="dark"] .tema-ponto {
 .hal-leg {
   fill: var(--muted);
   font-size: var(--text-svg-micro);
-  letter-spacing: 0.06em;
+  letter-spacing: var(--tracking-mono);
 }
 .hal-rot {
   fill: var(--ink);
   font-size: var(--text-svg-rotulo);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-mono-sm);
 }
 .hal-rot-c {
   display: none;
@@ -2744,15 +3410,16 @@ html[data-theme="dark"] .tema-ponto {
 /* a entrada: o traço desenha-se de «antes» para «agora» e os pontos
    assentam a seguir — escalonado por linha (--hd). Estado base = final. */
 .hal-on .hal-link {
-  animation: hal-traca var(--dur-media) var(--ease-entra) var(--hd, 0ms) both;
+  animation: hal-traca var(--dur-media) var(--ease-entra)
+    calc(var(--hd, 0ms) + var(--ei, 0) * var(--stagger)) both;
 }
 .hal-on .hal-dot {
   animation: hal-surge var(--dur-curta) var(--ease-entra)
-    calc(var(--hd, 0ms) + 240ms) both;
+    calc(var(--hd, 0ms) + 240ms + var(--ei, 0) * var(--stagger)) both;
 }
 .hal-on .hal-txt {
   animation: hal-surge var(--dur-curta) var(--ease-entra)
-    calc(var(--hd, 0ms) + 120ms) both;
+    calc(var(--hd, 0ms) + 120ms + var(--ei, 0) * var(--stagger)) both;
 }
 @keyframes hal-traca {
   from {
@@ -2813,7 +3480,7 @@ html[data-theme="dark"] .tema-ponto {
 .ap-rot {
   fill: var(--muted);
   font-size: var(--text-svg-micro);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-mono-sm);
 }
 .ap-rot-atual {
   fill: var(--ink);
@@ -2847,7 +3514,7 @@ html[data-theme="dark"] .tema-ponto {
   margin-top: 0.2rem;
   font-family: var(--font-mono);
   font-size: var(--text-mini);
-  letter-spacing: 0.12em;
+  letter-spacing: var(--tracking-controlo);
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -2858,14 +3525,16 @@ html[data-theme="dark"] .tema-ponto {
   transform-origin: center;
 }
 .ap-on .ap-ponto {
-  animation: ap-surge var(--dur-curta) var(--ease-entra) var(--ad, 0ms) both;
+  animation: ap-surge var(--dur-curta) var(--ease-entra)
+    calc(var(--ad, 0ms) + var(--ei, 0) * var(--stagger)) both;
 }
 .ap-on .ap-anel-agora {
   animation: ap-surge var(--dur-curta) var(--ease-entra)
-    calc(var(--ad, 0ms) + 300ms) both;
+    calc(var(--ad, 0ms) + 300ms + var(--ei, 0) * var(--stagger)) both;
 }
 .ap-on .ap-centro {
-  animation: ap-surge var(--dur-curta) var(--ease-entra) 700ms both;
+  animation: ap-surge var(--dur-curta) var(--ease-entra)
+    calc(700ms + var(--ei, 0) * var(--stagger)) both;
 }
 @keyframes ap-surge {
   from {
@@ -2890,7 +3559,7 @@ html[data-theme="dark"] .tema-ponto {
    dobra) — acima da dobra nada entra com fade ao carregar (M-09) */
 .kin-on .kin-word {
   animation: kin-up var(--dur-media) var(--ease-entra) both;
-  animation-delay: calc(var(--i) * var(--stagger));
+  animation-delay: calc((var(--i) + var(--ei, 0)) * var(--stagger));
 }
 @keyframes kin-up {
   from {
@@ -2993,7 +3662,7 @@ html[data-theme="dark"] .tema-ponto {
 .cc-rot-n {
   font-family: var(--font-mono);
   font-size: var(--text-mini);
-  letter-spacing: 0.14em;
+  letter-spacing: var(--tracking-kicker);
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -3033,7 +3702,7 @@ html[data-theme="dark"] .tema-ponto {
   }
   .cc-rot-v { font-size: var(--text-grande); }
   .cc-rot[data-tom="fica"] .cc-rot-v { font-size: var(--text-display-md); }
-  .cc-rot-n { letter-spacing: 0.1em; }
+  .cc-rot-n { letter-spacing: var(--tracking-mono-lg); }
 }
 
 /* a frase do palco — a pausa «um euro são 100 cêntimos» e o fecho */
@@ -3162,7 +3831,7 @@ html[data-theme="dark"] .tema-ponto {
   select,
   button,
   .ticker,
-  .btn-primary {
+  .botao {
     display: none !important;
   }
   body::before {

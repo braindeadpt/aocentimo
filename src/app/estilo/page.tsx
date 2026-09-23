@@ -15,20 +15,31 @@ import { CampoCentimos } from "@/components/CampoCentimos";
 import { Haltere } from "@/components/Haltere";
 import { BarraTracos } from "@/components/BarraTracos";
 import { AnelPontos } from "@/components/AnelPontos";
+import { Valor } from "@/components/Valor";
 import { IsometricoDemo } from "./IsometricoDemo";
 import { Cartao } from "@/components/Cartao";
 import { OrbeEstado } from "@/components/OrbeEstado";
+import { Botao } from "@/components/Botao";
+import { BotaoCopiar } from "@/components/BotaoCopiar";
+import { Chip } from "@/components/Chip";
+import { ControlosDemo } from "./ControlosDemo";
+import { EstadosDemo } from "./EstadosDemo";
+import { EstadoVazio } from "@/components/EstadoVazio";
+import { ACarregar } from "@/components/ACarregar";
+import { ZeroInformativo } from "@/components/ZeroInformativo";
+import { Icone, IconeEmblema, type NomeIcone } from "@/components/Icone";
 import { Pagina, PaginaDetalhe } from "@/components/Pagina";
 import { PapelDefs } from "@/components/Papel";
 import { PecaPapel } from "@/components/PecaPapel";
 import { arestaRasgada } from "@/lib/materia";
 import { cenarioCanonico, BRUTO_CANONICO } from "@/lib/canonico";
 import { loadPainel } from "@/lib/data";
-import { fmtEUR0, fmtNum, fmtPeriodo } from "@/lib/format";
+import { FINO, fmtEUR0, fmtNum, fmtPeriodo } from "@/lib/format";
 import eur1m from "@data/sources/bpstat/euribor-1m-mensal.json";
 import eur3m from "@data/sources/bpstat/euribor-3m-mensal.json";
 import eur6m from "@data/sources/bpstat/euribor-6m-mensal.json";
 import eur12m from "@data/sources/bpstat/euribor-12m-mensal.json";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "Sistema de design",
@@ -61,7 +72,7 @@ const EURO_CENTIMOS = (() => {
   };
 })();
 const EURO_SAEM = 100 - EURO_CENTIMOS.partes[3].valor;
-const EURO_EQ = `De cada euro que a empresa gasta contigo (bruto de ${fmtEUR0(EURO_CENTIMOS.bruto)}): ${fmtNum(EURO_CENTIMOS.partes[3].valor)} cêntimos chegam à tua conta; ${fmtNum(EURO_CENTIMOS.partes[0].valor)} vão para a TSU da empresa, ${fmtNum(EURO_CENTIMOS.partes[1].valor)} para o IRS e ${fmtNum(EURO_CENTIMOS.partes[2].valor)} para a Segurança Social.`;
+const EURO_EQ = `De cada euro que a empresa gasta contigo (bruto de ${fmtEUR0(EURO_CENTIMOS.bruto)}): ${fmtNum(EURO_CENTIMOS.partes[3].valor)} cêntimos chegam à tua conta; ${fmtNum(EURO_CENTIMOS.partes[0].valor)} vão para a TSU da empresa, ${fmtNum(EURO_CENTIMOS.partes[1].valor)} para o IRS e ${fmtNum(EURO_CENTIMOS.partes[2].valor)} para a Segurança Social.`;
 
 // ————— catálogo V4 (S1-05): dados das demonstrações —————
 
@@ -156,6 +167,19 @@ const REGRAS = [
   "Escuro por omissão — o instrumento é a cara; o claro é o documento.",
 ];
 
+// 1B-01 — o conjunto fechado de ícones, por família
+const ICONES_PAGINAS: readonly NomeIcone[] = [
+  "salario", "irs", "trabalho", "impostos", "precos", "inflacao",
+  "credito", "casa", "poupanca", "dados", "aprender",
+];
+const ICONES_ACCOES: readonly NomeIcone[] = [
+  "ver", "json", "copiar-ligacao", "repor", "abrir", "menu",
+  "pesquisa", "sol", "lua",
+];
+const ICONES_ESTADO: readonly NomeIcone[] = [
+  "em-dia", "a-recolher", "atrasado", "aviso", "informacao",
+];
+
 const REGRAS_SUPERFICIE = [
   "Textura só no nível 0: papel milimetrado no claro; no escuro a mesma malha em fósforo esbatido — ecrã de registo, não papel.",
   "panel, raised e overlay nunca têm textura — a leitura manda.",
@@ -169,9 +193,7 @@ export default function EstiloPage() {
   return (
     <div className="mx-auto max-w-6xl px-5 pt-14 pb-10">
       <p className="kicker">Referência viva</p>
-      <h1 className="titulo-pagina">
-        Sistema de design
-      </h1>
+      <TituloPagina rota="/estilo">Sistema de design</TituloPagina>
       <p className="lede mt-5">
         Direcção «Observatório»: um painel de instrumentos sobre o dinheiro.
         Archivo expandido para manchetes, Space Grotesk para a interface,
@@ -278,6 +300,118 @@ export default function EstiloPage() {
             </ul>
           </div>
         </div>
+      </section>
+
+      <section id="icones" className="stack-sec">
+        <h2 className="kicker mb-4">Ícones — traço próprio, conjunto fechado</h2>
+        <p className="footnote mb-4 max-w-xl">
+          Um sistema de símbolos, não uma biblioteca: <strong>25 desenhos
+          à mão</strong> numa grelha de <code className="num">20×20</code>,
+          traço de <code className="num">1,5 px</code>, terminações
+          redondas, sem preenchimentos — em{" "}
+          <code className="num">currentColor</code> para seguirem a tinta
+          do sítio onde vivem. Iconografia stock é proibida; o conjunto é
+          fechado — um nome fora da lista falha. Passa o rato por cima de
+          cada célula: o traço desenha-se uma vez (
+          <code className="num">--dur-micro</code>), como faz dentro dos
+          controlos.
+        </p>
+
+        {/* os três grupos — cada célula é gatilho do desenho ao passar */}
+        {(
+          [
+            ["páginas — um sinal por pergunta", ICONES_PAGINAS],
+            ["acções — dentro de <button>/<a> com nome acessível", ICONES_ACCOES],
+            ["estado — a família do OrbeEstado, em pontos de traço", ICONES_ESTADO],
+          ] as const
+        ).map(([grupo, nomes]) => (
+          <div key={grupo} className="mb-5">
+            <p className="kicker-xs mb-2">{grupo}</p>
+            <div className="flex flex-wrap gap-2">
+              {nomes.map((n) => (
+                <span
+                  key={n}
+                  data-icone={n}
+                  data-icone-gatilho
+                  className="flex flex-col items-center gap-2 border border-line bg-panel px-3 py-3 text-ink"
+                >
+                  <Icone nome={n} className="h-6 w-6" />
+                  <span className="kicker-xs">{n}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        {/* o emblema + as acções com nome acessível */}
+        <div className="mt-3 grid gap-3 md:grid-cols-2">
+          <div className="border border-line bg-panel p-6">
+            <p className="kicker-xs mb-4">
+              IconeEmblema — o quadrado de contorno tracejado
+            </p>
+            <div className="flex items-center gap-4">
+              <IconeEmblema nome="salario" />
+              <IconeEmblema nome="poupanca" />
+              <IconeEmblema nome="inflacao" />
+            </div>
+            <p className="footnote mt-4">
+              A moldura da referência — contorno tracejado, raio pormenor —
+              para o cabeçalho dos cartões <code className="num">Cartao</code>{" "}
+              (prop <code className="num">icone</code>). Dentro de um cartão
+              o traço desenha-se ao foco/à passagem, com a inversão para
+              papel.
+            </p>
+          </div>
+          <div className="border border-line bg-panel p-6">
+            <p className="kicker-xs mb-4">
+              acções — o nome acessível é o do controlo, nunca o do ícone
+            </p>
+            <div className="flex items-center gap-3">
+              <Botao
+                variante="icone"
+                icone="repor"
+                ariaLabel="Repor valores"
+              />
+              <BotaoCopiar
+                variante="icone"
+                icone="copiar-ligacao"
+                texto="/estilo"
+                ariaLabel="Copiar ligação"
+              />
+              <Botao
+                variante="icone"
+                icone="abrir"
+                ariaLabel="Abrir detalhe"
+              />
+              <Botao
+                variante="icone"
+                icone="ver"
+                href="/dados"
+                ariaLabel="Ver dados"
+              />
+            </div>
+            <p className="footnote mt-4">
+              O svg é <code className="num">aria-hidden</code> por omissão —
+              quem ouve o ecrã escuta o <code className="num">aria-label</code>{" "}
+              do botão, não o desenho. Ícone solto com significado próprio
+              (o caso raro) leva <code className="num">rotulo</code> e fica{" "}
+              <code className="num">role=&quot;img&quot;</code>. Os botões
+              de ícone são a variante <code className="num">icone</code> do{" "}
+              <code className="num">&lt;Botao&gt;</code> (≥44×44); o de
+              copiar é <code className="num">&lt;BotaoCopiar&gt;</code> —
+              carrega e vê o «Copiado».
+            </p>
+          </div>
+        </div>
+
+        <p className="footnote mt-4 max-w-xl">
+          O <strong>¢</strong> não é um ícone — é a marca. Fora do logótipo
+          só pode aparecer como símbolo da casa (o azulejo{" "}
+          <code className="num">LogoMark</code>: favicons, OG, partilha) e
+          como marcador do selo «1 ponto = 1 cêntimo» nos campos de pontos —
+          nunca como glifo de menu, nem junto de um número (aí escreve-se
+          «cêntimos» ou «c»). Regras completas em PRODUTO.md §6.
+        </p>
       </section>
 
       <section className="stack-sec">
@@ -587,7 +721,7 @@ export default function EstiloPage() {
             <p className="kicker mb-2">
               Display de secção — .font-display + escada text-display-*
             </p>
-            <p className="font-display text-display-sm tracking-wide text-ink md:text-display-md">
+            <p className="font-display text-display-sm tracking-manchete-xl text-ink md:text-display-md">
               Os capítulos e as secções
             </p>
             <p className="footnote mt-2">
@@ -638,7 +772,7 @@ export default function EstiloPage() {
                   </p>
                   <p className="talao-total mt-3 flex justify-between">
                     <span>Total</span>
-                    <span className="num text-talao-hero">38,40 €</span>
+                    <span className="num text-talao-hero">38,40 €</span>
                   </p>
                 </div>
               </div>
@@ -660,10 +794,10 @@ export default function EstiloPage() {
             <p className="kicker mb-2">
               Herói — .num-hero · Archivo expandido, dígitos tabulares
             </p>
-            <NumHero valor="1 234,56 €" sufixo="/mês" />
+            <NumHero valor="1 234,56 €" sufixo="/mês" />
             <div className="mt-3 flex flex-wrap gap-x-10 gap-y-3">
-              <NumHero valor="1 234,56 €" sinal="+" className="text-keep" compacto />
-              <NumHero valor="412 345,67 €" compacto className="text-muted" />
+              <NumHero valor="1 234,56 €" sinal="+" className="text-keep" compacto />
+              <NumHero valor="412 345,67 €" compacto className="text-muted" />
             </div>
             <p className="footnote mt-3">
               O sinal herda a cor semântica (keep/up) e sobe ao óptico; a
@@ -675,16 +809,16 @@ export default function EstiloPage() {
           <div className="py-5">
             <p className="kicker mb-2">Leitura — .num-read · Space Mono ~1.4rem</p>
             <div className="flex flex-wrap items-baseline gap-x-10 gap-y-2">
-              <p className="num-read">4 320,00 €</p>
-              <p className="num-read text-up">23,0 %</p>
-              <p className="num-read text-keep">+1 024,00 €</p>
+              <p className="num-read">4 320,00 €</p>
+              <p className="num-read text-up">23,0 %</p>
+              <p className="num-read text-keep">+1 024,00 €</p>
             </div>
           </div>
           <div className="py-5">
             <p className="kicker mb-2">Denso — .num-dense · tabelas e séries</p>
             <p className="num-dense">
-              2026-01 · 2,516 % &nbsp;&nbsp; 2026-02 · 2,489 % &nbsp;&nbsp;
-              2026-03 · 2,441 %
+              2026-01 · 2,516 % &nbsp;&nbsp; 2026-02 · 2,489 % &nbsp;&nbsp;
+              2026-03 · 2,441 %
             </p>
           </div>
         </div>
@@ -702,22 +836,214 @@ export default function EstiloPage() {
         </ul>
       </section>
 
-      <section className="stack-sec">
-        <h2 className="kicker mb-4">Botões e campos</h2>
-        <div className="flex flex-wrap items-center gap-4">
-          <Link href="/estilo" className="btn btn-primary">
-            Acção principal
-          </Link>
-          <Link href="/estilo" className="btn">
-            Acção secundária
-          </Link>
-          <input className="field max-w-56" defaultValue="1 500" aria-label="exemplo de campo" />
+      <section id="controlos" className="stack-sec">
+        <h2 className="kicker mb-4">Botões e controlos — um sistema, todos os estados</h2>
+        <p className="footnote mb-4 max-w-xl">
+          Um sistema, não peças avulsas: <code className="num">Botao</code>{" "}
+          (primário · secundário · terciário · ícone ≥44×44),{" "}
+          <code className="num">Interruptor</code>, <code className="num">Chip</code>,{" "}
+          <code className="num">Segmentado</code>, <code className="num">Regua</code> e{" "}
+          <code className="num">BotaoCopiar</code> partilham a mesma
+          geometria — pílula de raio-controlo, pressão{" "}
+          <code className="num">scale(.97)</code> em{" "}
+          <code className="num">--dur-micro</code>, foco no anel torrado
+          global. Desactivado é <code className="num">aria-disabled</code>{" "}
+          com a razão acessível; a-carregar troca o ícone pelo mini-orbe
+          e o rótulo diz o que se passa.
+        </p>
+
+        {/* as quatro variantes — repouso; hover/pressão/foco sentem-se */}
+        <div className="border border-line bg-panel p-6">
+          <p className="kicker-xs mb-4">as quatro variantes do Botao</p>
+          <div className="flex flex-wrap items-center gap-3">
+            <Botao variante="primario">Acção principal</Botao>
+            <Botao variante="secundario">Acção secundária</Botao>
+            <Botao variante="terciario">Acção de texto</Botao>
+            <Botao variante="icone" icone="repor" ariaLabel="Repor valores" />
+          </div>
+          <p className="footnote mt-4">
+            Primário = a pílula de tinta cheia; secundário = a pílula com
+            contorno; terciário = texto; ícone = o quadrado de acção
+            (≥44×44, nome em <code className="num">aria-label</code>). Ao
+            passar escurece, ao carregar esmaga{" "}
+            <code className="num">scale(.97)</code>, ao focar aparece o
+            anel <code className="num">--mark</code> de 3 px.
+          </p>
+        </div>
+
+        {/* desativado — a razão acessível na mesma peça */}
+        <div className="mt-3 border border-line bg-panel p-6">
+          <p className="kicker-xs mb-4">desativado — com a razão acessível</p>
+          <div className="flex flex-wrap items-center gap-3">
+            <Botao
+              variante="primario"
+              desativado
+              razao="a série do BPstat está atrasada — sem dados não se calcula"
+            >
+              Calcular
+            </Botao>
+            <Botao
+              variante="icone"
+              icone="repor"
+              ariaLabel="Repor valores"
+              desativado
+              razao="os valores já estão na predefinição"
+            />
+            <Chip desativado razao="o BPstat não publica a Euribor 1 semana nesta série">
+              1S
+            </Chip>
+          </div>
+          <p className="footnote mt-4">
+            Nunca um controlo morto sem explicação: a razão vai em{" "}
+            <code className="num">title</code> e dentro do nome acessível
+            (texto escondido no rótulo) e o controlo fica focável (
+            <code className="num">aria-disabled</code>, não{" "}
+            <code className="num">disabled</code>) para ela se anunciar.
+          </p>
+        </div>
+
+        {/* as peças vivas — interruptor, chips, segmentado, régua,
+            a-carregar e «Copiado» */}
+        <div className="mt-3">
+          <ControlosDemo
+            eur={EURIBOR[3]}
+            agora={eur12m.series.at(-1)?.v ?? null}
+            dicaRegua="arrasta, clica na régua ou usa ← → · PageUp/PageDown saltam 10× · Home/End vão aos extremos"
+          />
+        </div>
+
+        {/* a dica — o tooltip por âncora, onde já existia */}
+        <div className="mt-3 border border-line bg-panel p-6">
+          <p className="kicker-xs mb-4">A dica — tooltip por âncora</p>
+          <span
+            className="dica-alvo inline-block"
+            style={{ "--qa": "--q-estilo" } as CSSProperties}
+          >
+            <span className="dica-mae inline-block border border-line bg-raised px-3 py-2">
+              <span className="num text-rotulo text-ink2">euribor-12m-mensal</span>
+            </span>
+            <span className="dica">
+              euribor-12m-mensal — Banco de Portugal, BPstat
+            </span>
+          </span>
+          <p className="footnote mt-4">
+            Passa o rato: a dica resolve-se contra a célula por CSS anchor
+            positioning (<code className="num">position-anchor</code> por
+            célula via <code className="num">--qa</code>;{" "}
+            <code className="num">flip-block</code> vira-a quando encosta
+            à borda). Sem suporte fica a posição clássica por cima — o
+            mesmo conteúdo. Aplica-se só onde já havia tooltip: as
+            células do quadro de frescura em{" "}
+            <Link href="/metodologia" className="underline decoration-line2 underline-offset-2">
+              /metodologia
+            </Link>
+            ; os gráficos mantêm o readout fixo, nunca tooltips
+            flutuantes.
+          </p>
+        </div>
+
+        <div className="mt-3 border border-line bg-panel p-6">
+          <p className="kicker-xs mb-4">O campo de formulário</p>
+          <input className="field max-w-56" defaultValue="1 500" aria-label="exemplo de campo" />
         </div>
         <p className="footnote mt-3">
           <code className="num">.field</code> é o único campo de formulário —
           chapa de nível 1 com recess (cavidade), borda line2, foco pelo anel
           torrado global. Todos os simuladores usam esta classe.
         </p>
+      </section>
+
+      <section id="estados" className="stack-sec">
+        <h2 className="kicker mb-4">Estados — cada estado tem desenho e texto</h2>
+        <p className="footnote mb-4 max-w-xl">
+          A regra nº 1 com desenho: fonte falha → a falha mostra-se, nunca um
+          número inventado. <code className="num">EstadoVazio</code> marca o
+          lugar do instrumento (peça em falta a tracejado no isométrico
+          fantasma, orbe «atrasada», o que falhou, desde quando e a fonte
+          oficial); <code className="num">ACarregar</code> só onde há espera
+          real; <code className="num">ZeroInformativo</code> diz o zero que é
+          informação; e a <code className="num">Regua</code> explica o limite
+          junto ao polegar — discreta, anunciada ao leitor de ecrã, nunca
+          vermelho de erro.
+        </p>
+
+        {/* vazio / fonte indisponível — o lugar fica marcado */}
+        <div className="grid gap-4 md:grid-cols-2">
+          <div>
+            <p className="kicker-xs mb-3">vazio — a fonte falhou</p>
+            <EstadoVazio
+              titulo="a série da Euribor 12M"
+              falha="a série não chegou da fonte"
+              desde={fmtPeriodo(eur12m.meta.serieAte)}
+              fonte={{
+                nome: eur12m.meta.fonte,
+                url: eur12m.meta.url,
+              }}
+            />
+          </div>
+          <div>
+            <p className="kicker-xs mb-3">vazio compacto — dentro de figuras</p>
+            <EstadoVazio
+              compacto
+              titulo="a série do IHPC"
+              falha="falhou a atualização"
+              fonte={{ nome: "Eurostat" }}
+            />
+          </div>
+        </div>
+        <p className="footnote mt-3 max-w-xl">
+          A ilustração é a mecânica isométrica de traço fino da casa: as placas
+          que chegaram sólidas e a peça em falta só a tracejado, com a sua
+          linha de chamada. A frase diz o que falhou, o último dado conhecido
+          e onde ver a fonte oficial — e a ligação abre em separador novo.
+        </p>
+
+        {/* a carregar + o zero informativo */}
+        <div className="mt-3 grid gap-4 md:grid-cols-2">
+          <div className="border border-line bg-panel p-6">
+            <p className="kicker-xs mb-3">a carregar — espera real</p>
+            <ACarregar rotulo="A calcular…" />
+            <p className="footnote mt-4">
+              O mini-orbe de pontos a rodar (o «a-recolher» do OrbeEstado) +
+              o rótulo do que se passa, num{" "}
+              <code className="num">role=&quot;status&quot;</code>. Num site
+              estático quase nada carrega — usa-se onde há espera real (o{" "}
+              <code className="num">aCarregar</code> do Botao consome-o).
+            </p>
+          </div>
+          <div className="border border-line bg-panel p-6">
+            <p className="kicker-xs mb-3">
+              zero informativo — «0{FINO}c — não te toca»
+            </p>
+            <p className="num text-corpo">
+              <ZeroInformativo valor="0" unidade="c" />
+            </p>
+            <p className="num text-corpo mt-2">
+              <ZeroInformativo valor="0,00" unidade="€" nota="não te toca" />
+            </p>
+            <p className="footnote mt-4">
+              O ponto oco é o cêntimo que não existe — a mesma leitura do
+              campo de cêntimos: uma parte a 0 não tem pontos, e isso é
+              informação, não erro. No recibo ao salário mínimo é a linha do
+              IRS: <em>0,00{FINO}€ — não te toca</em>.
+            </p>
+          </div>
+        </div>
+
+        {/* o limite da régua — explicado junto ao polegar */}
+        <div className="mt-3 border border-line bg-panel p-6">
+          <p className="kicker-xs mb-3">
+            o limite da régua — a régua não deixa sair e explica
+          </p>
+          <EstadosDemo />
+          <p className="footnote mt-4">
+            Seta no extremo, PageUp a transbordar, o preset «para lá do fim»
+            ou o dedo para lá da pista: o valor nunca sai e a nota aparece no
+            lugar do rótulo do extremo — tinta discreta, sem vermelho de erro
+            (não é erro, é a régua a fazer o dela). O mesmo texto anuncia-se
+            num live region sr-only — cada insistência de teclado re-anuncia.
+          </p>
+        </div>
       </section>
 
       <section className="stack-sec">
@@ -783,7 +1109,7 @@ export default function EstiloPage() {
           <div className="border border-line bg-panel px-4 py-5">
             <p className="kicker-xs">controlo · 999px</p>
             <div className="mt-3 flex flex-wrap items-center gap-2">
-              <Link href="/estilo" className="btn">preset</Link>
+              <Chip ativo>preset</Chip>
               <span className="tema-ponto" aria-hidden />
             </div>
             <p className="footnote mt-3">
@@ -918,9 +1244,9 @@ export default function EstiloPage() {
         <h2 className="kicker mb-4">O campo de cêntimos — 1 ponto = 1 cêntimo</h2>
         <p className="footnote mb-4 max-w-xl">
           A unidade da V4: partes de um todo em dinheiro desenham-se em
-          pontos contáveis. Em repouso é a moeda de 1 € desenhada a sério;
-          ao revelar desfaz-se nos seus 100 cêntimos e cada ponto voa para
-          o monte de quem o leva. O texto diz o valor real («63,2 c»), o
+          pontos contáveis. Em repouso é a moeda de 1 € desenhada a sério;
+          ao revelar desfaz-se nos seus 100 cêntimos e cada ponto voa para
+          o monte de quem o leva. O texto diz o valor real («63,2 c»), o
           desenho conta pontos inteiros (maior resto — somam sempre 100).
           Sem JS o servidor serve o estado pedido em SVG com os mesmos
           números; o equivalente textual está sempre presente.
@@ -931,12 +1257,12 @@ export default function EstiloPage() {
           textos={{
             pausa: (
               <>
-                Um euro são <b>100 cêntimos</b>. Cada ponto é um.
+                Um euro são <b>100 cêntimos</b>. Cada ponto é um.
               </>
             ),
             saiem: (
               <>
-                Destes 100 cêntimos, <b>{fmtNum(EURO_SAEM)}</b> saem antes de
+                Destes 100 cêntimos, <b>{fmtNum(EURO_SAEM)}</b> saem antes de
                 chegar à tua conta.
               </>
             ),
@@ -1022,7 +1348,12 @@ export default function EstiloPage() {
             <AnelPontos
               pontos={ANEL_ANO.pontos}
               centro={{
-                valor: fmtEUR0(CAN.liquidoAno12),
+                valor: (
+                  <Valor
+                    numero={fmtNum(CAN.liquidoAno12, 0)}
+                    unidade="€"
+                  />
+                ),
                 rotulo: "nos 12 meses",
               }}
               equivalente={`O ano em 12 pontos: cada um é um recibo de ${fmtEUR0(CAN.liquidoMes)} líquidos — ${fmtEUR0(CAN.liquidoAno12)} no ano. Junho e dezembro trazem os subsídios de férias e de Natal. Agora: ${MESES_PT[ANEL_ANO.mesAgora - 1] ?? "mês em leitura"}.`}
@@ -1085,6 +1416,7 @@ export default function EstiloPage() {
             <p className="kicker-xs mb-3">Cartao — quatro partes, uma ideia</p>
             <Cartao
               breadcrumb="ESTILO / ANATOMIA · AO CÊNTIMO"
+              icone="aprender"
               meta={["exercício 2026"]}
               estado="em-dia"
               estadoRotulo="em dia"
@@ -1095,10 +1427,10 @@ export default function EstiloPage() {
                     mínimo
                   </a>
                   <a href="/salario" className="lq-link num text-rotulo">
-                    1 500 €
+                    1 500 €
                   </a>
                   <a href="/salario" className="lq-link num text-rotulo">
-                    2 000 €
+                    2 000 €
                   </a>
                 </div>
               }
@@ -1121,8 +1453,8 @@ export default function EstiloPage() {
               </p>
             </Cartao>
             <p className="footnote mt-3">
-              <strong>cabeçalho</strong> — breadcrumb mono + meta + selo de
-              estado · <strong>corpo</strong> — UMA ideia ·{" "}
+              <strong>cabeçalho</strong> — emblema opcional (<code className="num">icone</code>) +
+              breadcrumb mono + meta + selo de estado · <strong>corpo</strong> — UMA ideia ·{" "}
               <strong>controlos</strong> — hairline tracejada, a zona de
               medição · <strong>rodapé</strong> — fonte + «ver →» + «JSON».
               Passa o rato ou o foco: inverte para papel. O conteúdo do
@@ -1149,7 +1481,7 @@ export default function EstiloPage() {
                       equivalente={EURO_EQ}
                     />
                   ),
-                  frase: `De cada euro que a empresa gasta contigo, ${fmtNum(EURO_CENTIMOS.partes[3].valor)} cêntimos chegam-te à conta.`,
+                  frase: `De cada euro que a empresa gasta contigo, ${fmtNum(EURO_CENTIMOS.partes[3].valor)} cêntimos chegam-te à conta.`,
                 }}
                 explora={
                   <div className="border border-line bg-panel px-5 py-4">
@@ -1313,7 +1645,7 @@ export default function EstiloPage() {
             </svg>
             <p className="footnote mt-3">
               A mesma semente dá o mesmo rasgo — o mesmo salário rasga igual
-              entre renders. A 400 %:
+              entre renders. A 400 %:
             </p>
             <svg viewBox="60 -2 60 18" className="mt-2 block w-full border border-line" aria-hidden>
               <path
@@ -1411,7 +1743,7 @@ export default function EstiloPage() {
           .
         </p>
         <div className="grid gap-6 md:grid-cols-4">
-          <Stat label="Exemplo" value="920 €" hint="salário mínimo 2026" />
+          <Stat label="Exemplo" value="920 €" hint="salário mínimo 2026" />
           <Stat label="Variação" value={<Delta value={0.023} />} hint="preço a subir" />
           <Stat label="Variação" value={<Delta value={-0.015} />} hint="preço a descer" />
           <Stat label="Poupança" value={<Delta value={0.018} goodWhenUp />} hint="taxa a subir é bom" />
@@ -1450,10 +1782,14 @@ export default function EstiloPage() {
           {[
             "O elemento visual leva aria-hidden — seja <svg>, cascata ou barra proporcional.",
             "O equivalente textual é um irmão <table>: .sr-only quando é só para leitores de ecrã (FitaTalao, Cascata, LineChart), visível quando já faz parte do desenho (EuroBar).",
-            "Nunca role=\"img\" com aria-label E equivalente ao mesmo tempo — o leitor de ecrã anuncia a mesma informação duas vezes.",
+            <>
+              Nunca <code className="num">role=&quot;img&quot;</code> com
+              aria-label E equivalente ao mesmo tempo — o leitor de ecrã
+              anuncia a mesma informação duas vezes.
+            </>,
             "O próximo gráfico nasce assim.",
-          ].map((r) => (
-            <li key={r} className="footnote">
+          ].map((r, i) => (
+            <li key={i} className="footnote">
               <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-mark align-middle" />
               {r}
             </li>
@@ -1474,7 +1810,7 @@ export default function EstiloPage() {
               style={{
                 background: "var(--talao-paper)",
                 clipPath:
-                  "polygon(0 0,100% 0,100% 100%,97% 92%,94% 100%,91% 92%,88% 100%,85% 92%,82% 100%,79% 92%,76% 100%,73% 92%,70% 100%,67% 92%,64% 100%,61% 92%,58% 100%,55% 92%,52% 100%,49% 92%,46% 100%,43% 92%,40% 100%,37% 92%,34% 100%,31% 92%,28% 100%,25% 92%,22% 100%,19% 92%,16% 100%,13% 92%,10% 100%,7% 92%,4% 100%,1% 92%,0 100%)",
+                  "polygon(0 0,100% 0,100% 100%,97% 92%,94% 100%,91% 92%,88% 100%,85% 92%,82% 100%,79% 92%,76% 100%,73% 92%,70% 100%,67% 92%,64% 100%,61% 92%,58% 100%,55% 92%,52% 100%,49% 92%,46% 100%,43% 92%,40% 100%,37% 92%,34% 100%,31% 92%,28% 100%,25% 92%,22% 100%,19% 92%,16% 100%,13% 92%,10% 100%,7% 92%,4% 100%,1% 92%,0 100%)",
               }}
             />
             <p className="footnote mt-2">
@@ -1504,7 +1840,7 @@ export default function EstiloPage() {
             <p className="kicker-xs mb-2">✓ tick com a cor da série, nome em tinta</p>
             <p aria-hidden className="num text-corpo-sm text-ink2 flex items-center gap-2">
               <span className="inline-block h-0.5 w-3" style={{ background: "var(--seq-2)" }} />
-              Euribor 12M — 2,95 %
+              Euribor 12M — 2,95 %
             </p>
             <p className="footnote mt-2">
               A legibilidade nunca depende da rampa — a cor é redundância,
@@ -1530,7 +1866,7 @@ export default function EstiloPage() {
         </div>
         <ul className="mt-4 space-y-1">
           {[
-            "Sem \"Fig. N\" onde nada remete para a figura — a legenda identifica, o número decorava.",
+            "Sem «Fig. N» onde nada remete para a figura — a legenda identifica, o número decorava.",
             "Sem aliases --color-seq-* em SVG inline: @theme inline só emite a var quando há utilidade — em fill/stroke usa-se --seq-* directo.",
             "Sem tinta de tema sobre papel fixo — o papel tem a sua tinta (--talao-ink, papel-sai-tinta, papel-fica-tinta).",
             "Sem número herói vazio à espera de JS — o SSR traz o valor final.",

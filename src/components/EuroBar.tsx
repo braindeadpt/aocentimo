@@ -91,7 +91,7 @@ export function EuroBar({
               style={{
                 width: `${w}%`,
                 backgroundColor: s.cor,
-                animationDelay: `calc(${i} * var(--stagger))`,
+                animationDelay: `calc((${i} + var(--ei, 0)) * var(--stagger))`,
               }}
               onPointerEnter={() => setAtivo(i)}
               onPointerLeave={() => setAtivo(null)}

@@ -218,7 +218,7 @@ export function simularCA(
 /**
  * Certificados do Tesouro Poupança Crescimento (7 anos, juros anuais):
  * taxa fixa crescente por ano de vida; do 2.º ano soma-se o prémio de
- * remuneração ligado ao PIB (40 % do crescimento real, máx. 1,2 %).
+ * remuneração ligado ao PIB (40 % do crescimento real, máx. 1,2 %).
  * Ver data/fiscal/ca.json → ctpc.
  */
 export function simularCTPC(

@@ -3,10 +3,11 @@ import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { Leitura } from "@/components/Leitura";
+import { EstadoVazio } from "@/components/EstadoVazio";
 import { LineChart } from "@/components/LineChart";
 import { SimuladorPrestacao } from "./SimuladorPrestacao";
 import { loadFonte, loadFreshness, loadPainel } from "@/lib/data";
-import { fmtNum, fmtPeriodo } from "@/lib/format";
+import { comUnidade, fmtNum, fmtPeriodo } from "@/lib/format";
 import {
   anotacaoDe,
   estadoDe,
@@ -19,6 +20,7 @@ import {
 import { m } from "@/lib/messages";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 import eventos from "@data/fiscal/eventos.json";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "Crédito — Euribor, spread e prestação",
@@ -64,7 +66,7 @@ export default function CreditoPage() {
             medEur12 !== null
               ? { valor: medEur12, rotulo: m.leitura.mediana10 }
               : undefined,
-          anotacao: anotacaoDe(serieEur12, "max", (v) => `${fmtNum(v, 2)} %`),
+          anotacao: anotacaoDe(serieEur12, "max", (v) => `${comUnidade(fmtNum(v, 2), "%")}`),
           leitura: fmtPeriodo(ultimo12.t),
           estado: estadoDe(fresh, "euribor-12m-mensal"),
           fonteNome: eur12.meta.fonte,
@@ -84,9 +86,7 @@ export default function CreditoPage() {
           "Simulador de prestação de crédito habitação em Portugal: Euribor, spread, TAN e custo total do empréstimo."
         )}
       />
-      <h1 className="titulo-pagina">
-        O que a tua prestação esconde
-      </h1>
+      <TituloPagina rota="/credito">O que a tua prestação esconde</TituloPagina>
       <p className="lede mt-5">
         A Euribor é a taxa a que os bancos europeus se emprestam dinheiro entre
         si — e é o chão sobre o qual o teu banco constrói a tua prestação. A
@@ -97,9 +97,22 @@ export default function CreditoPage() {
 
       {/* a Euribor 12M como instrumento — a taxa do contrato, 10 anos
           contra a mediana da própria janela */}
-      {cartao && (
+      {cartao ? (
         <div className="mt-8">
           <Leitura {...cartao} rotulos={rotulos} />
+        </div>
+      ) : (
+        // a falha mostra-se no lugar do instrumento — nunca um buraco
+        <div className="mt-8">
+          <EstadoVazio
+            titulo="a série da Euribor 12M"
+            falha={m.estados.serieFalhou}
+            desde={ultimo12 ? fmtPeriodo(ultimo12.t) : undefined}
+            fonte={{
+              nome: eur12?.meta.fonte ?? "Banco de Portugal — BPstat",
+              url: eur12?.meta.url ?? "https://bpstat.bportugal.pt",
+            }}
+          />
         </div>
       )}
 
@@ -152,10 +165,15 @@ export default function CreditoPage() {
             estado={estado}
           />
         ) : (
-          <p className="footnote">
-            Série da Euribor indisponível — a recolha do BPstat falhou; sem
-            dados oficiais não há gráfico.
-          </p>
+          <EstadoVazio
+            compacto
+            titulo="a série da Euribor 3M"
+            falha="a recolha do BPstat falhou — sem dados oficiais não há gráfico"
+            fonte={{
+              nome: "Banco de Portugal — BPstat",
+              url: "https://bpstat.bportugal.pt",
+            }}
+          />
         )}
       </Figure>
 

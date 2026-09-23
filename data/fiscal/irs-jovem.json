@@ -5,9 +5,9 @@
   "idadeMax": 35,
   "anosMax": 10,
   "limiteIsencaoIas": 55,
-  "limiteNota": "55 × IAS por ano = 29 542,15 € em 2026 (IAS 537,13 €). O isento não pode exceder este valor; o excedente tributa normalmente.",
+  "limiteNota": "55 × IAS por ano = 29 542,15 € em 2026 (IAS 537,13 €). O isento não pode exceder este valor; o excedente tributa normalmente.",
   "isencaoPorAno": [1, 0.75, 0.75, 0.75, 0.5, 0.5, 0.5, 0.25, 0.25, 0.25],
-  "isencaoNota": "100 % no 1.º ano de obtenção de rendimentos; 75 % do 2.º ao 4.º; 50 % do 5.º ao 7.º; 25 % do 8.º ao 10.º",
+  "isencaoNota": "100 % no 1.º ano de obtenção de rendimentos; 75 % do 2.º ao 4.º; 50 % do 5.º ao 7.º; 25 % do 8.º ao 10.º",
   "regras": [
     "Conta a partir do 1.º ano em que entregas IRS sozinho (não dependente); anos sem rendimentos cat. A/B não contam",
     "O rendimento isento engloba para determinar a taxa aplicável à parte não isenta (art. 22.º n.º 4)",

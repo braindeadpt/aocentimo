@@ -4,7 +4,8 @@ import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { JsonLd, dataset } from "@/lib/jsonld";
-import { Leitura } from "@/components/Leitura";
+import { EstadoVazio } from "@/components/EstadoVazio";
+import { Painel } from "@/components/Painel";
 import { LineChart } from "@/components/LineChart";
 import { Delta } from "@/components/Delta";
 import { Instrumento } from "@/components/Instrumento";
@@ -16,21 +17,14 @@ import {
   variacao,
   type Serie,
 } from "@/lib/data";
-import { fmtData, fmtNum, fmtPct, fmtPeriodo } from "@/lib/format";
-import {
-  anotacaoDe,
-  estadoDe,
-  insightMediana,
-  janela10,
-  mediana,
-  rotulosLeitura,
-  type Cartao,
-  type Ponto,
-} from "@/lib/leitura";
-import { m, t } from "@/lib/messages";
+import { comUnidade, fmtData, fmtNum, fmtPct } from "@/lib/format";
+import { estadoDe } from "@/lib/leitura";
+import { cartoesDados, opcoesJanela, ROTULO_JANELA } from "@/lib/paineis";
+import { m } from "@/lib/messages";
 import usura from "@data/fiscal/usura-2026.json";
 import calendario from "@data/fiscal/calendario-2026.json";
 import eventos from "@data/fiscal/eventos.json";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "Dados — painéis vivos de fontes oficiais",
@@ -41,13 +35,6 @@ export const metadata: Metadata = {
 
 interface CaBase {
   meta: { oficialPct: number; vigenciaOficial: string; serieAte: string; url?: string };
-  series: { t: string; v: number }[];
-}
-
-/** derivados com meta de fonte (desemprego-gap, casa-em-salarios) —
-    a mesma forma mínima de uma Serie de data/sources */
-interface Derivado {
-  meta: { fonte: string; url: string; serieAte: string };
   series: { t: string; v: number }[];
 }
 
@@ -72,6 +59,8 @@ function Celula(props: {
   meta: ReactNode;
   estado?: "em-dia" | "atrasada" | "sem-sla";
   spark?: { t: string; v: number }[];
+  /** índice de escalonamento da célula no quadro (× --stagger) */
+  atraso?: number;
 }) {
   return <Instrumento {...props} className="bg-panel px-4 py-4" />;
 }
@@ -91,106 +80,9 @@ export default function DadosPage() {
   const fresh = loadFreshness();
 
   // ————— o índice visual: as séries-chave do país que ainda não têm
-  //   página temática — um Leitura por ideia, mediana de 10 anos ou
-  //   o nível da UE como referência —————
-  const rotulos = rotulosLeitura();
-  const rotPais = m.leitura.pais;
-  const cartaoPais = (
-    fonte: { meta: { fonte: string; url: string }; series: Ponto[] } | null,
-    rot: { breadcrumb: string; titulo: string },
-    o: {
-      id: string;
-      href: string;
-      formato: Cartao["formato"];
-      unidade: string;
-      casas: number;
-      /** o extremo real anotado no gráfico */
-      anot: "max" | "min";
-      /** derivados não têm watchdog de frescura */
-      semSla?: boolean;
-      insight?: (ult: number, med: number | null) => string;
-      referencia?: Cartao["referencia"];
-      rotuloFmt?: (v: number) => string;
-    }
-  ): Cartao | null => {
-    const serie = fonte ? janela10(fonte.series) : [];
-    const ult = serie[serie.length - 1];
-    if (!fonte || !ult || serie.length < 2) return null;
-    const med = mediana(serie.map((p) => p.v));
-    const fmtRot =
-      o.rotuloFmt ?? ((v: number) => `${fmtNum(v, o.casas)} ${o.unidade}`);
-    return {
-      breadcrumb: rot.breadcrumb,
-      titulo: rot.titulo,
-      insight: o.insight
-        ? o.insight(ult.v, med)
-        : insightMediana(ult.v, med !== null ? { valor: med } : null, o.unidade),
-      valor: ult.v,
-      unidade: o.unidade,
-      formato: o.formato,
-      serie,
-      referencia:
-        o.referencia ??
-        (med !== null ? { valor: med, rotulo: m.leitura.mediana10 } : undefined),
-      anotacao: anotacaoDe(serie, o.anot, fmtRot),
-      leitura: fmtPeriodo(ult.t),
-      estado: o.semSla ? "sem-sla" : estadoDe(fresh, o.id),
-      fonteNome: fonte.meta.fonte,
-      fonteUrl: fonte.meta.url,
-      href: o.href,
-      hrefJson: `/api/${o.id}.json`,
-    };
-  };
-
-  const leituras = [
-    cartaoPais(loadFonte("eurostat", "pib-pt-homologo"), m.painel.cartoes.pib, {
-      id: "pib-pt-homologo", href: "/dados", formato: "pct1", unidade: "%",
-      casas: 1, anot: "min", // o fundo é a história — a recessão de 2020
-    }),
-    cartaoPais(loadFonte("eurostat", "confianca-pt"), rotPais.confianca, {
-      id: "confianca-pt", href: "/dados", formato: "pp", unidade: "p.p.",
-      casas: 1, anot: "min", // o pessimismo extremo é o dado
-    }),
-    cartaoPais(loadFonte("eurostat", "elec-pt-domestico"), rotPais.eletricidade, {
-      id: "elec-pt-domestico", href: "/precos", formato: "kwh",
-      unidade: "€/kWh", casas: 4, anot: "max",
-      insight: (v, med) =>
-        med !== null
-          ? t(m.painel.insightElec, {
-              abs: fmtNum(Math.abs(v - med) * 100, 1),
-              direcao: v >= med ? m.painel.acima : m.painel.abaixo,
-            })
-          : `${fmtNum(v, 4)} €/kWh`,
-    }),
-    cartaoPais(loadFonte("eurostat", "lci-pt-homologo"), rotPais.custoTrabalho, {
-      id: "lci-pt-homologo", href: "/trabalho", formato: "pct1", unidade: "%",
-      casas: 1, anot: "max",
-    }),
-    cartaoPais(loadFonte("eurostat", "une-pt-jovem"), rotPais.jovem, {
-      id: "une-pt-jovem", href: "/trabalho", formato: "pct1", unidade: "%",
-      casas: 1, anot: "max",
-    }),
-    cartaoPais(loadDerivado<Derivado>("desemprego-gap"), rotPais.gap, {
-      id: "desemprego-gap", href: "/trabalho", formato: "pp", unidade: "p.p.",
-      casas: 1, anot: "max", semSla: true,
-      referencia: { valor: 0, rotulo: m.leitura.ue27 },
-      insight: (v) =>
-        t(m.painel.insightUe, {
-          abs: fmtNum(Math.abs(v), 1),
-          direcao: v >= 0 ? m.painel.acima : m.painel.abaixo,
-        }),
-    }),
-    cartaoPais(loadDerivado<Derivado>("casa-em-salarios"), rotPais.casaTrabalho, {
-      id: "casa-em-salarios", href: "/casa", formato: "num",
-      unidade: "índice 2015=100", casas: 1, anot: "max", semSla: true,
-      rotuloFmt: (v) => fmtNum(v, 1),
-      insight: (v) =>
-        t(m.painel.insightCasaTrabalho, {
-          v: fmtNum(Math.abs(v - 100), 0),
-          direcao: v >= 100 ? m.painel.acima : m.painel.abaixo,
-        }),
-    }),
-  ].filter((cartao): cartao is Cartao => cartao !== null);
+  //   página temática — a composição <Painel> (1B-06): três tamanhos,
+  //   codificações alternadas, mediana de 10 anos por omissão —————
+  const leituras = cartoesDados();
 
   const [qAtual, qProx] = usura.trimestres;
   const hoje = new Date().toISOString().slice(0, 10);
@@ -232,9 +124,7 @@ export default function DadosPage() {
         />
       )}
       <p className="kicker">Painéis</p>
-      <h1 className="titulo-pagina">
-        Os números, direto da fonte
-      </h1>
+      <TituloPagina rota="/dados">Os números, direto da fonte</TituloPagina>
       <p className="lede mt-5">
         Tudo o que muda por decreto ou por mercado, num só sítio: as leituras
         do país, taxas de juro, tetos legais e prazos fiscais — com a data e a
@@ -263,58 +153,62 @@ export default function DadosPage() {
         <div className="mt-3 grid grid-cols-2 gap-px border border-line bg-line md:grid-cols-3">
           <Celula
             rotulo="Euribor 3M"
+            atraso={0}
             estado={estadoDe(fresh, "euribor-3m-mensal")}
             spark={euribor["3M"]?.series}
             valor={
-              ultimo(euribor["3M"]) ? `${fmtNum(ultimo(euribor["3M"])!.v, 2)} %` : "—"
+              ultimo(euribor["3M"]) ? `${comUnidade(fmtNum(ultimo(euribor["3M"])!.v, 2), "%")}` : "—"
             }
             meta={
-              <>
-                {ultimo(euribor["3M"]) ? fmtData(ultimo(euribor["3M"])!.t) : ""}
-                {euribor["3M"] && (
-                  <>
-                    {" · "}
-                    <Delta value={variacao(euribor["3M"], 1)} casas={2} /> no mês
-                  </>
-                )}
-              </>
+              ultimo(euribor["3M"]) ? (
+                <>
+                  {fmtData(ultimo(euribor["3M"])!.t)}
+                  {" · "}
+                  <Delta value={variacao(euribor["3M"]!, 1)} casas={2} /> no mês
+                </>
+              ) : (
+                "série não recolhida"
+              )
             }
           />
           <Celula
             rotulo="Euribor 12M"
+            atraso={1}
             estado={estadoDe(fresh, "euribor-12m-mensal")}
             spark={euribor["12M"]?.series}
             valor={
-              ultimo(euribor["12M"]) ? `${fmtNum(ultimo(euribor["12M"])!.v, 2)} %` : "—"
+              ultimo(euribor["12M"]) ? `${comUnidade(fmtNum(ultimo(euribor["12M"])!.v, 2), "%")}` : "—"
             }
             meta={
-              <>
-                {ultimo(euribor["12M"]) ? fmtData(ultimo(euribor["12M"])!.t) : ""}
-                {euribor["12M"] && (
-                  <>
-                    {" · "}
-                    <Delta value={variacao(euribor["12M"], 1)} casas={2} /> no mês
-                  </>
-                )}
-              </>
+              ultimo(euribor["12M"]) ? (
+                <>
+                  {fmtData(ultimo(euribor["12M"])!.t)}
+                  {" · "}
+                  <Delta value={variacao(euribor["12M"]!, 1)} casas={2} /> no mês
+                </>
+              ) : (
+                "série não recolhida"
+              )
             }
           />
           <Celula
             rotulo="TAEG pessoal · outros"
+            atraso={2}
             estado={estadoDe(fresh, "taeg-pessoal-outros-mensal")}
             spark={taeg?.series}
-            valor={ultimo(taeg) ? `${fmtNum(ultimo(taeg)!.v, 1)} %` : "—"}
+            valor={ultimo(taeg) ? `${comUnidade(fmtNum(ultimo(taeg)!.v, 1), "%")}` : "—"}
             meta={
               ultimo(taeg)
-                ? `teto ${vigente.trimestre} ${fmtNum(
+                ? `teto ${vigente.trimestre} ${comUnidade(fmtNum(
                     (vigente.taegMaxima as Record<string, number>)["pessoal-outros"],
                     1
-                  )} % · ${fmtData(ultimo(taeg)!.t)}`
-                : "—"
+                  ), "%")} · ${fmtData(ultimo(taeg)!.t)}`
+                : "série não recolhida"
             }
           />
           <Celula
             rotulo="Certificados Aforro F"
+            atraso={3}
             estado={estadoDe(fresh, "fiscal-ca")}
             spark={caBase?.series}
             valor={
@@ -328,6 +222,7 @@ export default function DadosPage() {
           />
           <Celula
             rotulo="Inflação homóloga"
+            atraso={4}
             estado={estadoDe(fresh, "hicp-pt-cp00")}
             spark={ipc?.series}
             valor={
@@ -337,6 +232,7 @@ export default function DadosPage() {
           />
           <Celula
             rotulo="Próximo prazo fiscal"
+            atraso={5}
             valor={
               prazos.find((p) => p.mes >= hoje.slice(0, 7))
                 ? fmtData(prazos.find((p) => p.mes >= hoje.slice(0, 7))!.mes)
@@ -348,15 +244,16 @@ export default function DadosPage() {
       </section>
 
       {/* o índice visual do observatório — as séries do país sem página
-          própria, um Leitura por ideia (R-04b) */}
+          própria, compostas pelo <Painel> (1B-06) */}
       {leituras.length > 0 && (
         <section className="stack-sec" aria-label="Leituras do país">
           <p className="kicker">O país, em leituras</p>
-          <div className="mt-3 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {leituras.map((cartao) => (
-              <Leitura key={cartao.titulo} {...cartao} rotulos={rotulos} />
-            ))}
-          </div>
+          <Painel
+            className="mt-3"
+            cartoes={leituras}
+            rotuloJanela={ROTULO_JANELA()}
+            opcoesJanela={opcoesJanela()}
+          />
         </section>
       )}
 
@@ -400,7 +297,7 @@ export default function DadosPage() {
                     className="bg-panel px-4 py-3"
                     rotulo={k}
                     estado={est}
-                    valor={p ? `${fmtNum(p.v, 2)} %` : "—"}
+                    valor={p ? `${comUnidade(fmtNum(p.v, 2), "%")}` : "—"}
                     meta={
                       <>
                         <Delta
@@ -416,9 +313,15 @@ export default function DadosPage() {
             </div>
           </>
         ) : (
-          <p className="footnote border border-line bg-panel px-5 py-10 text-center">
-            — indisponível: corre <code className="num">npm run ingest:daily</code>
-          </p>
+          <EstadoVazio
+            compacto
+            titulo="as séries da Euribor"
+            falha={m.estados.serieFalhou}
+            fonte={{
+              nome: "Banco de Portugal — BPstat",
+              url: "https://bpstat.bportugal.pt",
+            }}
+          />
         )}
       </Figure>
 
@@ -444,13 +347,13 @@ export default function DadosPage() {
                 <p className="text-corpo-sm font-medium">{l.rotulo}</p>
                 <div className="mt-1.5 flex items-baseline justify-between gap-4">
                   <span className="num text-corpo-sm">
-                    {p ? `${fmtNum(p.v, 1)} %` : "—"}
+                    {p ? `${comUnidade(fmtNum(p.v, 1), "%")}` : "—"}
                     {p && (
                       <span className="block text-rotulo text-muted">{fmtData(p.t)}</span>
                     )}
                   </span>
                   <span className="num text-rotulo text-muted">
-                    teto {fmtNum(cap, 1)} %
+                    teto {comUnidade(fmtNum(cap, 1), "%")}
                   </span>
                 </div>
                 {p && cap ? (
@@ -500,12 +403,12 @@ export default function DadosPage() {
                   <tr key={l.capKey} className="border-b border-line">
                     <td className="py-2 pr-4 text-ink2">{l.rotulo}</td>
                     <td className="py-2 pr-4 text-right num">
-                      {p ? `${fmtNum(p.v, 1)} %` : "—"}
+                      {p ? `${comUnidade(fmtNum(p.v, 1), "%")}` : "—"}
                       {p && <span className="block text-rotulo text-muted">{fmtData(p.t)}</span>}
                     </td>
-                    <td className="py-2 pr-4 text-right num font-medium">{fmtNum(cap, 1)} %</td>
+                    <td className="py-2 pr-4 text-right num font-medium">{comUnidade(fmtNum(cap, 1), "%")}</td>
                     {proximo && (
-                      <td className="py-2 pr-4 text-right num text-ink2">{capProx !== null ? `${fmtNum(capProx, 1)} %` : "—"}</td>
+                      <td className="py-2 pr-4 text-right num text-ink2">{capProx !== null ? `${comUnidade(fmtNum(capProx, 1), "%")}` : "—"}</td>
                     )}
                     <td className="py-2">
                       {p && cap ? (
@@ -539,7 +442,7 @@ export default function DadosPage() {
           O teto é a TAEG média do trimestre anterior + 1/4 — por isso os dois
           números andam juntos. «Mercado» é a média dos novos contratos, não a
           melhor oferta. Ultrapassagens de crédito: TAN máxima{" "}
-          {fmtNum(vigente.tanMaximaUltrapassagem, 1)} %.
+          {comUnidade(fmtNum(vigente.tanMaximaUltrapassagem, 1), "%")}.
         </p>
       </Figure>
 
@@ -564,7 +467,7 @@ export default function DadosPage() {
               <p className="kicker">Oficial IGCP — {caBase.meta.vigenciaOficial}</p>
               <p className="num-read mt-1">{fmtPct(caBase.meta.oficialPct / 100, 3)}</p>
               <p className="footnote mt-2">
-                Média da Euribor 3M nos 10 dias úteis anteriores, limitada a 2,50 %.
+                Média da Euribor 3M nos 10 dias úteis anteriores, limitada a 2,50 %.
               </p>
             </div>
             <div className="bg-panel px-5 py-5">
@@ -578,9 +481,12 @@ export default function DadosPage() {
             </div>
           </div>
         ) : (
-          <p className="footnote border border-line bg-panel px-5 py-10 text-center">
-            — indisponível: corre <code className="num">npm run derive</code>
-          </p>
+          <EstadoVazio
+            compacto
+            titulo="a taxa base dos Certificados de Aforro"
+            falha={m.estados.serieFalhou}
+            fonte={{ nome: "IGCP", url: "https://www.igcp.pt" }}
+          />
         )}
       </Figure>
 

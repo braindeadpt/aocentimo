@@ -1,7 +1,7 @@
 "use client";
 
 import { useValorAnimado } from "@/lib/useValorAnimado";
-import { fmtNum } from "@/lib/format";
+import { FINO, fmtNum } from "@/lib/format";
 
 /**
  * Contagem simples — o apresentador dos números que mudam (M-03).
@@ -29,11 +29,12 @@ export function TweenNum({
   /** casas decimais — tem de bater com a formatação de `texto` */
   casas?: number;
   /** o dígito já formatado no SSR — é o que o sr-only lê e anuncia
-      (inclui a unidade, ex.: "1 234,56 €") */
+      (inclui a unidade, ex.: "1 234,56 €") */
   texto: string;
   /** sinal/unidade antes do número, estático — «−» nos cortes */
   prefixo?: string;
-  /** unidade estática dentro do span visual — nunca interpola */
+  /** unidade estática SEM espaço («€», «c») — a ponte é o fino
+      inseparável (FINO, U+202F); nunca interpola */
   sufixo?: string;
   /** ms — da gramática (--dur-curta 320 por defeito: a resposta a um
       input é "muda de estado", orquestrada com as barras/segmentos que
@@ -49,7 +50,12 @@ export function TweenNum({
       <span className="tabular-nums" aria-hidden="true">
         {prefixo}
         {fmtNum(animado, casas)}
-        {sufixo}
+        {sufixo && (
+          <>
+            {FINO}
+            {sufixo}
+          </>
+        )}
       </span>
     </>
   );

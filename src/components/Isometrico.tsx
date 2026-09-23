@@ -82,7 +82,7 @@ export interface NumeroIsometrico {
 const VW = 520;
 const VH = 440;
 const CX = 264; // eixo do stack — a coluna de rótulos fica à direita
-const RX = 88; // discos cheios («1 € bruto», «chega à conta»)
+const RX = 88; // discos cheios («1 € bruto», «chega à conta»)
 const RY = 24;
 const RXC = 74; // fatias — mais pequenas e finas
 const RYC = 20;

@@ -12,6 +12,7 @@ import {
   type ParteCentimos,
   type TextosCentimos,
 } from "@/components/CampoCentimos";
+import { Segmentado } from "@/components/Segmentado";
 import type { NomeLayout } from "@/lib/pontos/layouts";
 
 const PASSOS: { nome: NomeLayout; rotulo: string }[] = [
@@ -38,19 +39,15 @@ export function CampoCentimosDemo({
         textos={textos}
         equivalente={equivalente}
       />
-      <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Layout do campo">
-        {PASSOS.map((p) => (
-          <button
-            key={p.nome}
-            type="button"
-            className={`btn${layout === p.nome ? " btn-primary" : ""}`}
-            aria-pressed={layout === p.nome}
-            onClick={() => setLayout(p.nome)}
-          >
-            {p.rotulo}
-          </button>
-        ))}
-      </div>
+      {/* os três layouts são uma escolha mutuamente exclusiva — o
+          controlo segmentado do sistema (1B-03) */}
+      <Segmentado
+        className="mt-4"
+        rotulo="Layout do campo"
+        valor={layout}
+        onChange={(id) => setLayout(id as NomeLayout)}
+        opcoes={PASSOS.map((p) => ({ id: p.nome, rotulo: p.rotulo }))}
+      />
     </div>
   );
 }

@@ -283,6 +283,58 @@ rasterizados dos desenhos próprios de cada grelha; `apple-icon.png` e
 `favicon.ico` (16+32) saem do azulejo e das grelhas de favicon. A imagem
 OG usa a palavra em contornos — nunca texto com a fonte.
 
+### O ¢ como símbolo da casa — onde pode e não pode aparecer
+
+O ¢ desenhado (o C com haste) é **marca**, não ícone nem carácter de
+texto. Regra fixa (1B-01):
+
+- **PODE** aparecer como `LogoMark`/azulejo onde a casa assina:
+  favicons e `icon.svg`, `apple-icon`, manifest, imagem OG e cartões de
+  partilha, o cabeçalho/rodapé onde já vive o logótipo, a página
+  `/estilo` e o `/sobre` (contextos de marca).
+- **PODE** aparecer como **marcador do selo «1 ponto = 1 cêntimo»** —
+  o azulejo pequeno ao lado da legenda dos campos de pontos
+  (`CampoCentimos` e famílias de pontos), porque ali a unidade *é* o
+  cêntimo. É a única posição funcional permitida fora da marca.
+- **NUNCA** como ícone de menu/acção — esses são os traços do conjunto
+  fechado (`Icone`), e o ¢ não entra nele.
+- **NUNCA** junto de um número nem como unidade — escreve-se
+  «cêntimos» ou «c» («63,2 c»), nunca «63,2 ¢».
+- **NUNCA** como marcador de lista, ornamento de fundo, marca de água,
+  nem recolorido — a haste é sempre `--keep` (ver §6 «Marca») e o
+  azulejo tem a sua paleta fixa.
+
+### Ícones — conjunto fechado de traço próprio (1B-01)
+
+Um sistema de símbolos, não uma biblioteca: **25 desenhos à mão** na
+grelha **20×20**, traço **1,5 px**, terminações e juntas redondas, sem
+preenchimentos, em `currentColor`. Iconografia stock é proibida e o
+conjunto é fechado — `<Icone nome>` falha num nome fora da lista.
+
+| Família | Nomes |
+|---|---|
+| páginas (um por pergunta) | `salario` `irs` `trabalho` `impostos` `precos` `inflacao` `credito` `casa` `poupanca` `dados` `aprender` |
+| acções | `ver` `json` `copiar-ligacao` `repor` `abrir` (chevron, roda 180° no estado aberto) `menu` `pesquisa` `sol` `lua` |
+| estado (a família do `OrbeEstado`, em pontos de traço) | `em-dia` `a-recolher` `atrasado` `aviso` `informacao` |
+
+Regras:
+
+- **Acessibilidade.** `aria-hidden` por omissão — o significado mora no
+  texto ao lado. Ícones de acção vivem **sempre** dentro de
+  `<button>`/`<a>` com nome acessível próprio (`aria-label` ou texto
+  visível); a prop `rotulo` existe só para o caso raro de um ícone
+  sozinho com significado próprio (`role="img"`).
+- **Movimento (tipo 2).** Ao passar/focar o controlo que o envolve, o
+  traço desenha-se **uma vez** (`stroke-dashoffset` sobre
+  `pathLength=1`, `--dur-micro`, passo de ~22 ms por traço) — CSS puro,
+  sem JS; em `prefers-reduced-motion` nasce já desenhado.
+- **`<IconeEmblema>`** é o ícone dentro do **quadrado de contorno
+  tracejado** da referência (raio pormenor), para o cabeçalho dos
+  cartões `Cartao` — monta-se com a prop `icone` e desenha-se com a
+  inversão para papel no foco/à passagem.
+- Um nome novo entra só por tarefa de fundação — nunca ad hoc numa
+  página; a folha completa com as regras vive em `/estilo` §Ícones.
+
 ### Raio com significado (V4 — substitui o «radius 0 em todo o lado»)
 
 | Token | Valor | Significado |
@@ -290,7 +342,7 @@ OG usa a palavra em contornos — nunca texto com a fonte.
 | `--raio-papel` | 0 | papel — é cortado, não arredondado (talões, recibos, `.field`) |
 | `--raio-pormenor` | 2 px (= instrumento ÷ 7) | aresta mínima de peça maquinada — carimbo, trilho, gauge |
 | `--raio-instrumento` | 14 px | o objecto completo — cartão Leitura, resultado, overlay |
-| `--raio-controlo` | 999 px (pílula) | o que se carrega — presets, toggles, `.btn`, marcadores |
+| `--raio-controlo` | 999 px (pílula) | o que se carrega — `.botao`, `.chip`, `.interruptor`, `.segmentado`, marcadores |
 
 O raio diz a matéria da peça. Geometria de desenho (`rx`/`ry` de svg,
 círculos) não é raio de objecto — fica fora da escala por natureza. Os
@@ -336,6 +388,183 @@ Sub-escalas fora do cromado mas dentro do sistema: `--text-svg-*`
 typesetting próprio). Impressão usa `--text-impressao` (pt de papel,
 não rem). As imagens OG são raster — a sua escala (`OG_TIPO` em
 `src/lib/og.tsx`) é tipografia de imagem 1200×630, não da página.
+
+### Lettering — número, sinal e unidade (1B-02)
+
+Três contratos, uma peça:
+
+- **A ponte é o FINO** — U+202F (NBSP estreita) entre número e
+  unidade-símbolo (`€`, `%`, `c`, `p.p.`, `€/L`, `€/kWh`, `/mês`) e no
+  agrupamento de milhares: «1 856 €», «3,6 %», «63,2 c». Nunca espaço
+  normal nem NBSP largo — o `Intl` é normalizado em `src/lib/format.ts`
+  (`FINO`, `MENOS`, `comUnidade(numero, unidade)` — unidade vazia
+  devolve o número só). O FINO não entra em dados de máquina: paths e
+  `viewBox` de SVG, fontes de canvas e fórmulas guardam espaços
+  normais.
+- **O menos é verdadeiro** — U+2212 em valores negativos e deltas
+  («−1 856,00 €», «−5,2 %»), nunca hífen ASCII. `−`/`+` são membros
+  semânticos da linha (`.num-sign`), herdam a cor — nunca decoração.
+- **A composição é o `<Valor>`** — `src/components/Valor.tsx`: sinal +
+  número (string ou apresentador `TweenNum`/`Odometer`) + unidade em
+  `.num-unit` (~45 % do tamanho, mesma linha de base, tinta atenuada —
+  elemento próprio, não nota de rodapé). `NumHero`, `Leitura`, o hero
+  de `/salario`, `Adivinha` e as demos da `/estilo` compõem por ele;
+  ninguém concatena `" €"`/`" %"` à mão. No sr-only, o `texto` do
+  apresentador leva o número e a unidade visível completa o anúncio.
+
+Lettering PT-PT: aspas «…» (não `"…"` nem `&ldquo;`), reticências «…»
+(U+2026, não `...`), `hyphens: auto` só no corpo (`text-wrap: pretty`),
+nunca em títulos (`text-wrap: balance`). O tracking é por papel —
+tokens `--tracking-*` em `@theme`, sem literais em CSS. O `wdth` do
+Archivo é a expressão dos títulos (125/75, estática): peso cinético no
+herói interactivo foi rejeitado — animar `wght`/`wdth` por input
+quebraria a estabilidade dos `tabular-nums`. Auditoria:
+`scripts/_lettering.mjs` corre no `npm run audit` sobre o `out/`
+exportado — falha em hífen numérico, espaço largo junto a unidade,
+aspas erradas e `...` (atributos, `<code>` e geometria SVG de fora).
+
+### Botões e controlos — um sistema, todos os estados (1B-03)
+
+Não há «um botão primário» e avulsos à volta — há **um** sistema com a
+mesma física: pílula de `--raio-controlo`, alvo ≥44 px, pressão
+`scale(.97)` em `--dur-micro` com `--ease-entra`, foco pelo anel
+torrado global (3 px `--mark` + offset). Seis peças, uma gramática:
+
+- **`Botao`** — a acção: `primario` (pílula de tinta cheia), `secundario`
+  (contorno), `terciario` (texto), `icone` (quadrado ≥44×44 do conjunto
+  fechado, `ariaLabel` obrigatório). Com `href` é uma ligação com a cara
+  do sistema — a semântica fica certa (CTA navega, acção é `<button>`).
+- **`Interruptor`** — o toggle: `<button role="switch">`, nó que desliza
+  num trilho; o estado lê-se na posição do nó + trilho cheio + nota —
+  nunca só cor.
+- **`Chip`** — a escolha rápida/preset: `aria-pressed` + pílula cheia +
+  quadrado-marca (três canais). É a peça dos presets da `Regua`.
+- **`Segmentado`** — uma pílula dividida, um seleccionado:
+  `radiogroup` de rádios-botão com tabindex itinerante — setas movem
+  foco e selecção, Home/End aos extremos, opções desactivadas salta-se.
+  É o controlo das janelas temporais («1A · 5A · Máx»).
+- **`BotaoCopiar`** — copiar ligação/JSON: nota «Copiado»/«Não copiado»
+  junto ao botão num `role="status"` permanente; caminhos relativos vão
+  para a clipboard como URL absoluta; falhar diz falhado, nunca finge.
+- **`Regua`** — o input numérico físico: range nativo transparente
+  sobre o desenho (teclado/AT nativos, um só slider), presets em
+  `Chip`, e **ressalto de encaixe** — o corpo do polegar dá um pulso
+  contido (`--dur-micro` + `--ease-rasgo`) a cada snap da grelha no
+  arrasto e ao aterrar no fim da transição.
+
+Regras duras dos estados:
+
+- **Desactivado nunca é morto.** `aria-disabled` (o controlo fica
+  focável — `disabled` esconderia a razão) + `razao` obrigatória que
+  viaja em `title` e **dentro do nome acessível** (texto escondido no
+  rótulo/nota visível; `aria-description` não é suportado nestes
+  roles). Desactivado sem razão é aviso em dev em todas as peças.
+- **A carregar diz-se.** `aCarregar` troca o ícone pelo mini-orbe
+  `OrbeEstado` (a família dos selos — não se inventa spinner) e o
+  rótulo diz o que se passa («A calcular…»); `aria-busy` +
+  `aria-disabled` cortam a repetição do gesto.
+- **A dica é por âncora.** Onde já existia tooltip (as células do
+  quadro de frescura) a `.dica` resolve-se por CSS anchor positioning
+  (`anchor-name` por célula via `--qa`, `position-try-fallbacks:
+  flip-block` vira-a à borda). A dica é **irmã** da âncora dentro de
+  `.dica-alvo` — um posicionado não se ancora a um elemento da sua
+  cadeia de containing block. Sem suporte cai no absoluto clássico.
+- Os estilos vivem em `globals.css` (`.botao-*`, `.chip`,
+  `.interruptor`, `.segmentado`, `.copiado-nota`, `.dica`,
+  `.regua-encaixa`); o sistema `.btn`/`.regua-pill` antigo saiu.
+  Reduced-motion corta pressão, deslize e ressalto — o estado final já
+  está no lugar.
+
+### Estados partilhados — cada estado tem desenho e texto (1B-05)
+
+A regra nº 1 tem cara: **fonte falha → a falha mostra-se, nunca um
+número inventado** — e nunca um buraco na grelha nem um «—» sem
+explicação. Quatro peças partilhadas, cada uma com desenho + texto:
+
+- **`EstadoVazio`** — VAZIO / FONTE INDISPONÍVEL. A mecânica
+  isométrica de traço fino da referência «Nothing on the schedule
+  yet» na gramática do `Isometrico`: as placas que chegaram sólidas e
+  a peça em falta só a tracejado, com a sua linha de chamada — o
+  contorno do que devia lá estar (ilustração fixa, decorativa; não é
+  o `Isometrico` porque este mede camadas por estrutura). Selo =
+  orbe `atrasada` + «fonte indisponível». A frase é honesta e
+  completa: `titulo` (o que falhou) + `falha` (o que aconteceu) +
+  `desde` (último dado conhecido, já formatado) + `fonte` (nome + url
+  oficial, abre em separador novo). `compacto` para dentro de
+  figuras. Regra dura: **o slot nunca desaparece** — nas grelhas de
+  `Leitura` (home, /precos, /inflacao, /dados) e nos instrumentos de
+  página (/trabalho, /casa, /credito) a fonte em falta renderiza o
+  `EstadoVazio` no lugar, com `role="status"`. O `EmptyState` dos
+  gráficos delega nele.
+- **`ACarregar`** — a espera real: o mini-orbe `a-recolher` do
+  `OrbeEstado` (não se inventa spinner) + o rótulo do que se passa,
+  num `role="status"`. Num site estático quase nada carrega — usa-se
+  só onde há espera real; o `aCarregar` do `Botao` consome-o.
+- **`ZeroInformativo`** — o zero como informação: quando uma parte
+  vale zero de verdade diz-se e vê-se — «0 € — não te toca». Desenho:
+  o **ponto oco** (o cêntimo que não existe — a mesma leitura do
+  campo: uma parte a 0 não tem pontos) + valor já formatado + nota
+  (`"não te toca"` por omissão, `null` omite). Ligado no IRS ao
+  salário mínimo: talão (sem carimbo «Retido» — não há corte), ano a
+  14 meses, `Cascata` (a `nota` do `Passo` aparece junto do rótulo; o
+  menos não se aplica a zero) e `CustoExplodido` (`RotulosCusto.zero`
+  na `textoLista`; no svg o «−» não se aplica a zero).
+- **O limite da `Regua`** — o erro de interacção que não é erro:
+  quando a tentativa é para lá do fim (seta no extremo, PageUp que
+  transborda, preset/pedido fora da gama, dedo para lá da pista) o
+  valor nunca sai — e a nota aparece **no lugar do rótulo do
+  extremo**, junto ao polegar que aí está encostado: «limite — 920 €
+  · {razão}». Tinta discreta, **nunca vermelho** — não é erro, é a
+  régua a fazer o dela. O mesmo texto anuncia-se num live region
+  sr-only (`role="status"`, nonce rearma a cada insistência de
+  teclado); a razão por lado chega por `limites={{min,max}}`. Sai na
+  próxima paragem interior.
+
+### Painel — composição de dashboards (1B-06)
+
+O `Painel` é a grelha onde vivem os conjuntos de leituras — o «Hoje
+em Portugal» da home e «O país, em leituras» de /dados. As regras são
+de composição, não de cartão:
+
+- **Três tamanhos, seis colunas.** S ocupa ⅓ (2 col), M ocupa ⅔
+  (4 col), L a linha inteira. As linhas só existem em padrões que
+  fecham exactamente — `{L}`, `{M+S}`, `{S+M}`, `{S+S+S}` — e o
+  packing (`comporPainel`, DP sobre os tamanhos permitidos por
+  cartão) escolhe a atribuição com menos desvios ao tamanho
+  preferido. **Nenhum cartão fica órfão**: a grelha nunca devolve uma
+  composição com a última linha por fechar — se nenhuma atribuição
+  permitida fecha, devolve `null` e em dev o painel avisa. Abaixo de
+  lg todos os cartões são linha inteira. Verificado em e2e com
+  `getBoundingClientRect` a 1440/1024/768/375.
+- **Vizinhança de codificações.** Cada cartão declara a sua
+  `codificacao` — `linha · pontos · tracos · anel · isometrico` (o
+  `EstadoVazio` conta como isométrico, que é a sua ilustração) — e
+  **dois cartões seguidos nunca repetem** a mesma. A linha cansa; a
+  alternância ensina. `validarVizinhanca` reprova no teste unitário
+  sobre a configuração real e avisa em dev.
+- **Comparação por omissão.** Todos os cartões com série comparam à
+  **mediana de 10 anos**, dita em texto no insight do nível 1 —
+  cartões com referência declarada diferente (UE27 no desemprego, o
+  nível de 2015 na casa-vs-trabalho) mantêm a sua.
+- **Janela temporal partilhada.** UM `Segmentado` por painel («1A ·
+  5A · Máx») fatia todas as séries que a suportam (`janela: true`);
+  «Máx» é a janela completa servida (~10 anos). A referência da
+  mediana fica sempre; o que muda é o recorte desenhado — e as
+  anotações são calculadas no servidor por janela, sobre a série já
+  fatiada.
+- **Frescura sempre à vista.** Todos os cartões nascem sobre o
+  `Cartao` (ou o `EstadoVazio`): orbe + «leitura {período}» + fonte +
+  acções — a mesma casca Ledger do `Leitura`, montada à mão para as
+  outras codificações.
+- **Sem dados inventados.** A configuração vem de builders servidor
+  (`src/lib/paineis.ts`: `cartoesHome()`, `cartoesDados()`) que leem
+  `data/`, derivados e motores — e quando a fonte falta o slot
+  renderiza `EstadoVazio` com a fonte e o último dado conhecido.
+
+O componente (`src/components/Painel.tsx`) é client e recebe só specs
+serializáveis por props; a lógica pura (`src/lib/painel.ts`) é
+determinista — SSR e hidratação compõem o mesmo. `--ei` vai na célula
+e alimenta o escalonamento de entrada já existente dos corpos.
 
 ### Motion — gramática (M-02)
 
@@ -396,6 +625,104 @@ primeiro paint, e nunca fica ilegível durante a transição.
 animada grava vídeo com `scripts/_video.mjs` e revêem-se os fotogramas
 antes do commit (regra V3, permanente).
 
+### Coreografia — inventário, assinatura e ritmo (1B-04)
+
+**A transição-assinatura — «a pergunta voa».** O cartão «a pergunta
+seguinte» do `<Pagina>` morfa no `h1` da página de destino: o texto
+sai do cartão e assenta como título — a pergunta é literalmente a
+mesma peça a atravessar a navegação. Implementado em
+`src/components/Voo.tsx` (`LinkVoo` + `TituloPagina` + `VooLimpeza`):
+
+- O clique simples no `LinkVoo` sela a rota alvo num marcador de
+  módulo e dá `view-transition-name: pg-voo` ao próprio link —
+  capturado no fotograma **velho**. Cliques modificados (novo
+  separador, ctrl…) não selam.
+- O `TituloPagina` (o `h1` de todas as páginas de conteúdo) lê o
+  marcador na montagem — dentro da transição do layout: se a rota
+  bate, o `h1` leva o mesmo nome — capturado no fotograma **novo**.
+  O browser emparelha velho↔novo e morfa.
+- O `VooLimpeza` (layout) apaga o marcador depois do commit — as
+  navegações seguintes ficam limpas; uma salvaguarda de 4 s cobre
+  navegações falhadas.
+- **Nome único por fotograma** — por isso os nomes são inline e não
+  regras CSS: a página velha só tem um `pg-voo` (o link) e a nova só
+  tem um (o `h1`). `--dur-media` + `--ease-entra`: é uma
+  transformação explicada, não um toque.
+- **Fallback:** sem View Transitions a navegação é normal; em
+  reduced-motion o corte global anula as animações dos pseudo-
+  elementos — o conteúdo chega na mesma.
+- Decisão registada: `<Link transitionTypes>` + `share` por tipo foi
+  a primeira via — nesta versão (Next 16.3.5 / React 19.3) o tipo só
+  se regista se já houver lanes de transition pendentes no root; com
+  a página idle é descartado e o morph fica dependente de prefetch
+  em voo. O marcador é determinístico — existe exactamente entre o
+  clique e o commit. Coberto por `e2e/coreografia.spec.ts` (positivo
+  e negativo: a nav para a mesma rota não dispara o voo).
+
+**A entrada de grupo — um escalonamento, primitivas e não blocos.**
+Abaixo da dobra, os grupos de cartões entram em sequência com a
+convenção `--ei × --stagger`: cada cartão/filho recebe `--ei` (o seu
+índice na grelha) e os seus atrasos derivam-se de
+`calc(var(--ei) * var(--stagger))`. O que entra é a **primitiva
+visual**, nunca um fade do bloco inteiro — a linha desenha-se, a
+barra cresce, os pontos assentam, o número conta, a etiqueta entra
+por último quando serve. Aplicado em `Cartao` (prop `entrada`),
+`Leitura` (prop `entrada` → `--ei`), nas grelhas da home, `/precos`,
+`/dados` e `/inflacao`, nas células-instrumento de `/dados` e nos
+delays de `EuroBar`/`Cascata`. Acima da dobra continua a regra M-02:
+o valor final está no HTML, nada entra animado ao carregar.
+
+**A pausa ambiente — nenhum fotograma fora da vista.** Animação
+contínua só corre onde se vê e com o separador activo:
+
+- `PausaAmbiente` (wrapper no `Ticker`): IntersectionObserver +
+  `visibilitychange` → `.amb-off` congela `animation-play-state` de
+  tudo o que vive dentro;
+- `OrbeEstado`: o mesmo par de gatilhos → `.orbe-pausado`;
+- `CampoCentimos` (canvas): o `CampoTela` corta o rAF fora do ecrã e
+  com `document.hidden` — o motor pede frame a frame, sem frames não
+  há desenho.
+- Em `prefers-reduced-motion` nada disto corre — o estado final é
+  imediato.
+
+**Inventário** — cada peça animada, o que faz, quando corre:
+
+| Peça · contexto | Acção | Gatilho | Tempo · curva | Pausa / RM | Dobra |
+|---|---|---|---|---|---|
+| Cross-fade de página (root) — todas | transição de vista | navegação SPA | `--dur-curta` · `entra` | RM corta | — |
+| Indicador da nav (`nav-ind`) — header | morph partilhado | mudança de item activo | `--dur-curta` · `entra` | RM corta | acima |
+| `Ticker` — faixa de dados, todas | marquee contínuo | ambiente | loop · `lin` | `amb-off` (IO+hidden), hover/focus; RM corta | acima |
+| Voo da pergunta (`pg-voo`) — `Pagina`→`h1` | morph assinatura | clique no `LinkVoo` | `--dur-media` · `entra`/`sai` | RM corta | abaixo→acima |
+| `nav-sheet` — nav mobile | sobe ao abrir | abrir folha | `--dur-curta` · `entra` | RM corta | acima |
+| `Kinetic` — h1 da home | lettering | — | estático ao carregar | RM — | acima |
+| `Leitura` herói — home | spark desenha + número conta | armada (`useArmado`) | `--dur-media` + `--ei×--stagger` | RM estado final | abaixo |
+| `Adivinha` — home | revelação do palpite | interacção | `--dur-media` | RM estado final | abaixo |
+| `EuroExplodido` — home | partes convergem ao 1 € | armada | `--dur-media` + stagger | RM estado final | abaixo |
+| `NumHero` — `/salario` `/irs` `/impostos` `/poupanca` `/credito` `/casa` `/trabalho` | número interpola | input/estado | `--dur-curta` | RM valor final | acima |
+| `CustoExplodido` — `/salario` | stack empresa↔trabalhador | armada + input | `--dur-curta`/media | RM estado final | abaixo |
+| `Cascata` — `/salario` `/trabalho` | degraus SS→IRS crescem | armada | `--ei×--stagger` | RM estado final | abaixo |
+| `TweenNum` — `/salario` `/credito` | leituras interpolam | estado | `--dur-curta` | RM valor final | ambas |
+| Talão `/salario`, `TalaoCompras` `/impostos`, `CadernetaAforro` `/poupanca` | papel assenta/entra | armada | `--dur-media` | RM estado final | abaixo |
+| `DecomposicaoFuel` — `/impostos` | fatias do litro | armada + input | `--dur-media` | RM estado final | abaixo |
+| `SimuladorIrsJovem` `/irs`, `ComparadorPoupanca` `/poupanca`, `SimuladorDesemprego` `/trabalho` | instrumentos de estado | armada + input | `--dur-curta` | RM estado final | abaixo |
+| `JuroCapital` — `/credito` `/casa` | juro↔capital cresce | armada + input | `--dur-media` | RM estado final | abaixo |
+| `LineChart` — `/credito` `/dados` | série desenha-se | armada (IO) | `--dur-media` | RM estado final | abaixo |
+| `EuroBar` — `/casa` `/precos` `/estilo` | segmentos crescem | armada | `--ei×--stagger` | RM estado final | abaixo |
+| `Leitura` ×N — home `/precos` `/dados` `/inflacao` `/casa` `/credito` `/poupanca` `/trabalho` | spark+odómetro por cartão, em sequência | armada | `--ei×--stagger` | RM estado final | abaixo |
+| Células-instrumento — `/dados` | valores/mini-gráficos | armada | `--ei×--stagger` | RM estado final | abaixo |
+| `Delta` — `/dados` `/inflacao` `/estilo` | ▲/▼ + cor | estado | `--dur-micro` | — | ambas |
+| `OrbeEstado` — selo de estado | anel roda (a-recolher) | ambiente | loop · `lin` | `orbe-pausado` (IO+hidden); RM parado | ambas |
+| `CampoCentimos` — `/estilo` (canvas) | moeda oscila; revelação moeda→pontos→montes | ambiente + interacção | rAF · coreografia `COREO` | rAF corta (IO+hidden); RM 1 frame | abaixo |
+| `AnelPontos` `BarraTracos` `Haltere` `Isometrico` — `/estilo` | demos de gramática | armada | `--dur-media` | RM estado final | abaixo |
+| `MicroDemo` — `/aprender` `…/[slug]` | mini-instrumento do termo | interacção | `--dur-curta` | RM estado final | abaixo |
+| `MotionDemo` — `/estilo` | showcase de curvas | interacção | todos | RM estado final | abaixo |
+| `Icone` — acções/estado | traço desenha-se | foco/passo | `--dur-micro` | RM corta | ambas |
+| `useValorAnimado`→`Odometer`/`TweenNum` — transversal | dígitos rodam / número desliza | mudança de valor | `--dur-curta` | RM valor final | ambas |
+
+O motor lazy de motion (GSAP via `carregarGsap()`) continua
+intocável — a coreografia vive em CSS, rAF próprio e React; nenhuma
+peça nova pede o chunk.
+
 ### Matéria — papel determinista (M-01)
 
 As peças de papel nascem de `src/lib/materia.ts`: rasgo determinista
@@ -421,7 +748,9 @@ A rampa candidata `seqb` (âmbar escurecido) está desenhada em `/estilo`
 ## 7. Intocável
 
 - **O ¢** — o C do wordmark é o sinal de cêntimo desenhado (arco à
-  cap-height + haste verde-keep); `LogoMark` é o ¢ sozinho.
+  cap-height + haste verde-keep); `LogoMark` é o ¢ sozinho. Fora do
+  logótipo só onde a casa assina e no selo «1 ponto = 1 cêntimo» —
+  regras completas em §6 «O ¢ como símbolo da casa».
 - **O papel** — os documentos fiscais são peças físicas (recibo, talão,
   escritura, declaração, caderneta, nota de liquidação); o talão de
   `/salario` tem escala tipográfica própria (`talao-*`) porque é um
@@ -485,11 +814,17 @@ build && test:e2e`.
 | `LineChart`/`Spark`/`Kinetic` | séries temporais | svg `aria-hidden` + equivalente (tabela sr-only); animam só abaixo da dobra ou em interacção |
 | `Cartao` | anatomia Ledger de qualquer cartão | cabeçalho/corpo/controlos/rodapé; selo de estado sempre com texto; inversão para papel |
 | `OrbeEstado` | selo de frescura — a forma diz o estado | disco cheio/anel oco/esburacado/anel em rotação; SVG aria-hidden + texto ao lado; rotação pára fora do ecrã |
+| `Icone`/`IconeEmblema` | símbolos — páginas, acções, estado | conjunto fechado 20×20, traço 1,5; `aria-hidden` por omissão; acções sempre em controlo nomeado; desenham-se uma vez ao foco/passo |
 | `Pagina`/`PaginaDetalhe` | template de três níveis das rotas de conteúdo | níveis = `section aria-labelledby`; confirma em `<details>` fechado |
 | `Leitura` | cartão Ledger de leitura | insight escrito, anotação com chamada, fonte+estado no rodapé |
 | `EuroBar`/`Cascata`/`JuroCapital`/`EuroExplodido`/`CustoExplodido` | comparações e decomposições | equivalente textual único; SSR no estado final |
 | `PecaPapel`/`Papel` | documentos | paleta fixa de papel; rasgo determinista |
-| `Regua` | input numérico | traços de unidade + marcador + presets; valor sempre legível |
+| `Regua` | input numérico | range nativo único (teclado/AT); traços + marcador «agora» + presets `Chip`; snap à grelha com ressalto contido |
+| `Botao` | acção/ligação | 4 variantes (primário·secundário·terciário·ícone); `aria-disabled`+razão no nome; `aCarregar` = mini-orbe + `aria-busy` |
+| `Interruptor` | on/off | `role="switch"` + `aria-checked`; estado na posição do nó, trilho e nota — nunca só cor |
+| `Chip` | preset/escolha | `aria-pressed` + pílula cheia + marca (três canais) |
+| `Segmentado` | escolha exclusiva | `radiogroup`; tabindex itinerante; setas seleccionam; desactivado salta-se com razão |
+| `BotaoCopiar` | copiar URL/JSON | `role="status"` anuncia «Copiado»/«Não copiado»; relativo → URL absoluta |
 | `Odometer`/`TweenNum`/`NumHero` | números | valor final no SSR; `aria-live` num só readout |
 | `Delta` | variações | ▲/▼ + cor semântica; estado neutro existe |
 
@@ -521,11 +856,13 @@ rotas e intercepta os pedidos.
 
 ### Orçamento de performance (medido, `_js-por-rota` + `_sweep`)
 
-- JS inicial: piso ~460 KB — o chunk partilhado (459 KB na rota mais
+- JS inicial: piso ~480 KB — o chunk partilhado (~479 KB na rota mais
   leve) é ~100 % framework (react-dom 196 KB + flight/router/
-  segment-cache); código nosso no shared ≈ 4 KB (SiteNav). Rotas:
-  **459–569 KB**. O alvo 450 KB é impossível neste stack — o que
-  controlámos (`pt.json`, `data/*.json`, instrumentos) já saiu.
+  segment-cache); código nosso no shared é residual (SiteNav + os
+  clientes do layout: `PausaAmbiente`, `VooLimpeza` — 1B-04). Rotas:
+  **479–583 KB inicial, 546–620 KB total** (medido 1B-04). O alvo
+  450 KB é impossível neste stack — o que controlámos (`pt.json`,
+  `data/*.json`, instrumentos) já saiu.
   O `CampoCentimos` e o motor de pontos têm tecto próprio de ~15 KB
   gzip por rota (orçamento V4, medido com `_js-por-rota`).
 - LCP medido no sweep local: ~0,5–1,6 s; CLS ≤ 0,09; AA 0 falhas nos

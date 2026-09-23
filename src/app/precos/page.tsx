@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Leitura } from "@/components/Leitura";
+import { EstadoVazio } from "@/components/EstadoVazio";
 import { DecomposicaoFuel } from "../impostos/DecomposicaoFuel";
 import { Source } from "@/components/Source";
 import { loadFonte, loadFreshness, type Serie } from "@/lib/data";
@@ -16,6 +17,7 @@ import { m, t } from "@/lib/messages";
 import isp from "@data/fiscal/isp.json";
 import iva from "@data/fiscal/iva.json";
 import { JsonLd, webApplication } from "@/lib/jsonld";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "Preços — combustíveis dia a dia",
@@ -49,15 +51,16 @@ export default function PrecosPage() {
   const rotulos = rotulosLeitura();
 
   // cada combustível é uma leitura: ~6 meses de PMD diário, o insight
-  // é a variação do último mês em cêntimos — a unidade que se sente
-  const cartoes: Cartao[] = COMBUSTIVEIS.flatMap(([id, rot]) => {
-    const s = loadFonte("dgeg", id);
-    const serie = s ? s.series.slice(-180) : [];
-    const ult = serie[serie.length - 1];
-    if (!s || !ult) return [];
-    const centimos = (deltaDias(s, 30) ?? 0) * 100;
-    return [
-      {
+  // é a variação do último mês em cêntimos — a unidade que se sente.
+  // O slot nunca desaparece: fonte em falta = EstadoVazio no lugar.
+  const cartoes: (Cartao | { vazio: true; id: string; s: Serie | null })[] =
+    COMBUSTIVEIS.map(([id, rot]) => {
+      const s = loadFonte("dgeg", id);
+      const serie = s ? s.series.slice(-180) : [];
+      const ult = serie[serie.length - 1];
+      if (!s || !ult) return { vazio: true, id, s };
+      const centimos = (deltaDias(s, 30) ?? 0) * 100;
+      return {
         breadcrumb: rot.breadcrumb,
         titulo: rot.titulo,
         insight:
@@ -78,9 +81,8 @@ export default function PrecosPage() {
         fonteUrl: s.meta.url,
         href: "/precos",
         hrefJson: `/api/${id}.json`,
-      },
-    ];
-  });
+      };
+    });
 
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
@@ -92,9 +94,7 @@ export default function PrecosPage() {
         )}
       />
       <p className="kicker">Preços oficiais, quase diários</p>
-      <h1 className="titulo-pagina">
-        Quanto custa o litro hoje?
-      </h1>
+      <TituloPagina rota="/precos">Quanto custa o litro hoje?</TituloPagina>
       <p className="lede mt-5">
         A gasolina e o gasóleo são os únicos bens essenciais em Portugal com
         preços oficiais publicados quase diariamente — pela DGEG. É aqui que a
@@ -103,28 +103,35 @@ export default function PrecosPage() {
       </p>
 
       {/* um instrumento por combustível — o litro em €, meio ano de
-          PMD e a variação do mês em cêntimos como insight */}
-      {cartoes.length > 0 ? (
-        <div className="mt-8 grid gap-5 md:grid-cols-3">
-          {cartoes.map((cartao) => (
-            <Leitura key={cartao.titulo} {...cartao} rotulos={rotulos} />
-          ))}
-        </div>
-      ) : (
-        <Figure
-          title="Preço médio nacional, por litro"
-          source="DGEG — preços médios diários"
-        >
-          <div className="border border-line bg-panel px-5 py-10 text-center">
-            <p className="num-read text-muted">—</p>
-            <p className="footnote mt-3 max-w-md mx-auto">
-              Dados DGEG indisponíveis — corre{" "}
-              <code className="num">npm run ingest:daily</code>. Nenhum número
-              inventado: a honestidade é a regra nº 1 deste site.
-            </p>
-          </div>
-        </Figure>
-      )}
+          PMD e a variação do mês em cêntimos como insight; a fonte em
+          falta marca o lugar com o EstadoVazio, nunca um buraco */}
+      <div className="mt-8 grid gap-5 md:grid-cols-3">
+        {cartoes.map((slot, i) =>
+          "vazio" in slot ? (
+            <EstadoVazio
+              key={slot.id}
+              titulo={COMBUSTIVEIS[i][1].titulo}
+              falha={m.estados.serieFalhou}
+              desde={
+                slot.s?.meta.serieAte
+                  ? fmtPeriodo(slot.s.meta.serieAte)
+                  : undefined
+              }
+              fonte={{
+                nome: slot.s?.meta.fonte ?? "DGEG",
+                url: slot.s?.meta.url ?? "https://www.dgeg.gov.pt",
+              }}
+            />
+          ) : (
+            <Leitura
+              key={slot.titulo}
+              {...slot}
+              rotulos={rotulos}
+              entrada={i}
+            />
+          )
+        )}
+      </div>
 
       <Figure
         title="Enquanto isso: quanto do litro é imposto?"

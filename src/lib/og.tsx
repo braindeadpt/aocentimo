@@ -17,7 +17,7 @@ export const OG_TIPO = {
 } as const;
 
 /* a palavra AO CÊNTIMO em contornos no cartão OG — altura do SVG tal que
-   a capitular (63,95 %) ≈ a do texto «marca» que substitui (52 × 0,6875) */
+   a capitular (63,95 %) ≈ a do texto «marca» que substitui (52 × 0,6875) */
 const OG_MARCA = { h: 56, w: Math.round((56 * 8479.3) / 1075.15) } as const;
 
 /**

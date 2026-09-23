@@ -152,9 +152,9 @@ export function ComparadorPoupanca() {
         </div>
         <p className="footnote">
           Juros tributados a {fmtPct(taxaImposto, 0)} (retenção liberatória).
-          CA Série F: taxa base = média da Euribor 3M, limitada a 2,50 %,
+          CA Série F: taxa base = média da Euribor 3M, limitada a 2,50 %,
           capitalização trimestral e prémios de permanência incluídos. CTPC:
-          taxa crescente de 0,75 % a 2,25 % + prémio PIB atual de{" "}
+          taxa crescente de 0,75 % a 2,25 % + prémio PIB atual de{" "}
           {fmtPct(ca.ctpc.premio.atual, 2)}, prazo máximo de 7 anos — simulado
           a taxas constantes, sem prever o PIB futuro.
         </p>
@@ -288,7 +288,7 @@ export function ComparadorPoupanca() {
           </tbody>
         </table>
         <p className="footnote mt-3">
-          &ldquo;Vale hoje&rdquo; = o capital futuro deflacionado pela inflação
+          «Vale hoje» = o capital futuro deflacionado pela inflação
           indicada — o poder de compra real, não o número na conta.
         </p>
       </div>

@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Figure } from "@/components/Figure";
 import { Leitura } from "@/components/Leitura";
+import { EstadoVazio } from "@/components/EstadoVazio";
 import { Source } from "@/components/Source";
 import { SimuladorDesemprego } from "./SimuladorDesemprego";
 import { SimuladorIndependente } from "./SimuladorIndependente";
 import desemprego from "@data/fiscal/desemprego.json";
 import catb from "@data/fiscal/catb.json";
 import { loadFonte, loadFreshness } from "@/lib/data";
-import { fmtNum, fmtPeriodo } from "@/lib/format";
+import { comUnidade, fmtNum, fmtPeriodo } from "@/lib/format";
 import {
   anotacaoDe,
   estadoDe,
@@ -18,6 +19,7 @@ import {
 } from "@/lib/leitura";
 import { m, t } from "@/lib/messages";
 import { JsonLd, webApplication } from "@/lib/jsonld";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "Subsídio de desemprego — quanto e por quanto tempo",
@@ -52,7 +54,7 @@ export default function TrabalhoPage() {
           formato: "pct1",
           serie: seriePt,
           referencia: { pontos: serieUe, rotulo: m.leitura.ue27 },
-          anotacao: anotacaoDe(seriePt, "max", (v) => `${fmtNum(v, 1)} %`),
+          anotacao: anotacaoDe(seriePt, "max", (v) => `${comUnidade(fmtNum(v, 1), "%")}`),
           leitura: fmtPeriodo(unePt.meta.serieAte),
           estado: estadoDe(fresh, "une-pt-total"),
           fonteNome: unePt.meta.fonte,
@@ -73,19 +75,38 @@ export default function TrabalhoPage() {
         )}
       />
       <p className="kicker">Proteção no desemprego</p>
-      <h1 className="titulo-pagina">
-        Se ficares sem trabalho
-      </h1>
+      <TituloPagina rota="/trabalho">Se ficares sem trabalho</TituloPagina>
       <p className="lede mt-5">
-        Os 11 % que descontas todos os meses pagam isto: se perderes o emprego
-        de forma involuntária, a Segurança Social devolve-te uma parte — 65 %
+        Os 11 % que descontas todos os meses pagam isto: se perderes o emprego
+        de forma involuntária, a Segurança Social devolve-te uma parte — 65 %
         da tua remuneração de referência, dentro de limites e por tempo
         contado.
       </p>
 
-      {cartao && (
+      {cartao ? (
         <div className="mt-8">
           <Leitura {...cartao} rotulos={rotulos} />
+        </div>
+      ) : (
+        // a falha mostra-se no lugar do instrumento — nunca um buraco
+        <div className="mt-8">
+          <EstadoVazio
+            titulo="a série do desemprego em Portugal"
+            falha={
+              !ultUe && unePt
+                ? "a referência UE 27 não chegou — sem ela não há comparação"
+                : m.estados.serieFalhou
+            }
+            desde={
+              unePt?.meta.serieAte
+                ? fmtPeriodo(unePt.meta.serieAte)
+                : undefined
+            }
+            fonte={{
+              nome: unePt?.meta.fonte ?? "Eurostat",
+              url: unePt?.meta.url ?? "https://ec.europa.eu/eurostat",
+            }}
+          />
         </div>
       )}
 

@@ -1,7 +1,7 @@
 /**
  * layouts — a geometria pura do campo de cêntimos (V4, S1-04).
  *
- * Três layouts sobre os mesmos pontos: "moeda" (a face de 1 €,
+ * Três layouts sobre os mesmos pontos: "moeda" (a face de 1 €,
  * desenhada a partir da moeda real — coroa de latão-níquel dourada,
  * disco de cuproníquel prateado com raio ≈ 0,74), "grelha" (10×10) e
  * "montes" (um aglomerado rotulado por parte).
@@ -22,7 +22,7 @@ export interface PartePontos extends ParteEntrada {
   tom: TomParte;
 }
 
-/* ————— a moeda de 1 € (face comum, Luc Luycx — medidas da moeda real) ————— */
+/* ————— a moeda de 1 € (face comum, Luc Luycx — medidas da moeda real) ————— */
 
 /** raio do disco de cuproníquel / raio total — 0,74 na moeda real */
 export const ANEL_DISCO = 0.74;
@@ -322,10 +322,10 @@ export function reatribuir(
 export const COREO = {
   /** 0–450: a moeda pára de frente */
   frente: 450,
-  /** 450–800: desfaz-se nos seus 100 cêntimos — cada ponto herda o metal */
+  /** 450–800: desfaz-se nos seus 100 cêntimos — cada ponto herda o metal */
   desfazIni: 450,
   desfazFim: 800,
-  /** 800–1200: a pausa — «um euro são 100 cêntimos» */
+  /** 800–1200: a pausa — «um euro são 100 cêntimos» */
   pausaIni: 800,
   coresIni: 1200,
   /** 1200–1550: as fatias ganham a cor semântica */

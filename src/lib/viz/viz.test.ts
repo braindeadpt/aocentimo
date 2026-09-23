@@ -135,7 +135,7 @@ describe("ticksValor — rótulos PT-PT por unidade", () => {
 
   it("índice sem unidade → número limpo", () => {
     expect(rotuloValor(104.07, "Índice 2025=100")).toBe("104,07");
-    expect(rotuloValor(-0.4, "p.p.")).toBe("-0,4\u202Fp.p.");
+    expect(rotuloValor(-0.4, "p.p.")).toBe("−0,4\u202Fp.p.");
   });
 });
 

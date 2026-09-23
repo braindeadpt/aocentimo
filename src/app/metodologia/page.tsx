@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import { ALT_FEED } from "@/lib/meta";
 import { loadFontes, loadFreshness } from "@/lib/data";
-import { fmtData } from "@/lib/format";
+import { comUnidade, fmtData } from "@/lib/format";
 import { OrbeEstado, type EstadoOrbe } from "@/components/OrbeEstado";
+import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = {
   title: "Metodologia e fontes",
@@ -100,12 +102,12 @@ export default function MetodologiaPage() {
       const folgaTxt = !s
         ? "sem verificação"
         : s.estado === "atrasada"
-          ? `−${s.atrasoPeriodos} ${s.atrasoPeriodos === 1 ? unS : unP}`
+          ? `−${comUnidade(String(s.atrasoPeriodos), s.atrasoPeriodos === 1 ? unS : unP)}`
           : s.estado === "sem-sla"
             ? "sem SLA"
             : folga === 0
               ? "no limite"
-              : `+${folga} ${folga === 1 ? unS : unP}`;
+              : `+${comUnidade(String(folga), folga === 1 ? unS : unP)}`;
       const rank = { atrasada: 0, "no-limite": 1, "em-dia": 2, "sem-sla": 3 }[classe];
       return { id: f.id, fonte: f.fonte, serieAte: f.serieAte, classe, folgaTxt, rank };
     })
@@ -119,9 +121,7 @@ export default function MetodologiaPage() {
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
       <p className="kicker">Transparência</p>
-      <h1 className="titulo-pagina">
-        Metodologia e fontes
-      </h1>
+      <TituloPagina rota="/metodologia">Metodologia e fontes</TituloPagina>
       <p className="lede mt-5">
         Nenhum número neste site é inventado. Cada dado tem fonte oficial,
         data da série e data de recolha — e quando uma fonte falha, mostramos
@@ -168,24 +168,35 @@ export default function MetodologiaPage() {
               {resumo}
             </p>
             <ul className="quadro-vivo">
-              {celulas.map((c) => (
+              {celulas.map((c, i) => (
                 <li
                   key={c.id}
-                  className={`qcell ${
-                    c.classe === "atrasada"
-                      ? "qcell-atrasada"
-                      : c.classe === "no-limite"
-                        ? "qcell-limite"
-                        : ""
-                  }`}
-                  title={`${c.id} — ${c.fonte}`}
+                  className="dica-alvo"
+                  // a âncora da dica — nome único por célula via
+                  // custom property herdada pela célula e pela dica
+                  // (a dica é IRMÃ da âncora: um posicionado não pode
+                  // ancorar-se a um elemento da sua cadeia de CB)
+                  style={{ "--qa": `--q-${i}` } as CSSProperties}
                 >
-                  <p className="qcell-id">{c.id}</p>
-                  <p className="qcell-meta">
-                    <OrbeEstado estado={c.classe} tamanho={14} />
-                    {fmtData(c.serieAte)}
-                    <span className="qcell-folga"> · {c.folgaTxt}</span>
-                  </p>
+                  <div
+                    className={`qcell dica-mae ${
+                      c.classe === "atrasada"
+                        ? "qcell-atrasada"
+                        : c.classe === "no-limite"
+                          ? "qcell-limite"
+                          : ""
+                    }`}
+                  >
+                    <p className="qcell-id">{c.id}</p>
+                    <p className="qcell-meta">
+                      <OrbeEstado estado={c.classe} tamanho={14} />
+                      {fmtData(c.serieAte)}
+                      <span className="qcell-folga"> · {c.folgaTxt}</span>
+                    </p>
+                  </div>
+                  <span className="dica">
+                    {c.id} — {c.fonte}
+                  </span>
                 </li>
               ))}
             </ul>

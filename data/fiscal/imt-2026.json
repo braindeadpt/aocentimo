@@ -14,7 +14,7 @@
     { "ate": null, "taxa": 0.075, "taxaUnica": true, "parcelaAbater": 0 }
   ],
   "jovem": {
-    "nota": "IMT Jovem — ≤35 anos, 1.ª habitação própria e permanente (Tabela II): isento até 330 539 €; entre 330 539 € e 660 982 € paga-se 8 % só sobre o excedente; acima disso aplica-se a tabela geral.",
+    "nota": "IMT Jovem — ≤35 anos, 1.ª habitação própria e permanente (Tabela II): isento até 330 539 €; entre 330 539 € e 660 982 € paga-se 8 % só sobre o excedente; acima disso aplica-se a tabela geral.",
     "idadeMax": 35,
     "isentoAte": 330539,
     "taxaExcedente": 0.08,
@@ -31,8 +31,8 @@
     { "ate": null, "taxa": 0.075, "taxaUnica": true, "parcelaAbater": 0 }
   ],
   "impostoSelo": {
-    "aquisicao": { "taxa": 0.008, "nota": "IS sobre a compra — 0,8 % do valor, art. 17.º CIS. No IMT Jovem: isento na mesma medida do IMT (8 % sobre o excedente aplica-se também ao IS)." },
-    "credito": { "taxa": 0.006, "nota": "IS sobre o crédito — 0,6 % do montante emprestado (prazo >5 anos, verba 17.1 TGIS)" }
+    "aquisicao": { "taxa": 0.008, "nota": "IS sobre a compra — 0,8 % do valor, art. 17.º CIS. No IMT Jovem: isento na mesma medida do IMT (8 % sobre o excedente aplica-se também ao IS)." },
+    "credito": { "taxa": 0.006, "nota": "IS sobre o crédito — 0,6 % do montante emprestado (prazo >5 anos, verba 17.1 TGIS)" }
   },
   "registos": {
     "semCredito": 375,

@@ -10,8 +10,8 @@
  * O desenho é o Isometrico (partilhado com o CustoExplodido de
  * /salario desde R-05; renomeado em S1-05): desde R-07 as peças são
  * EUROS REAIS DO MÊS —
- * os mesmos números que /salario mostra no recibo (165 € de SS,
- * 168 € de IRS, 1 167 € na conta…), já não cêntimos por euro. Os
+ * os mesmos números que /salario mostra no recibo (165 € de SS,
+ * 168 € de IRS, 1 167 € na conta…), já não cêntimos por euro. Os
  * valores são estáticos — os passos chegam do servidor.
  *
  * O cartão reusa a gramática .leitura: breadcrumb + corpo + rodapé,
@@ -104,7 +104,7 @@ export function EuroExplodido({
           valor={p.euros}
           casas={0}
           prefixo={p.corte ? "−" : ""}
-          sufixo=" €"
+          sufixo="€"
           dur={700}
         />
       ),

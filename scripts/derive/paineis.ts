@@ -8,7 +8,7 @@ interface SerieGuardada {
 
 /**
  * Deriva a taxa base indicativa dos CA Série F a partir da Euribor 3M
- * mensal (BPstat): min(média mensal, 2,50 %). A taxa oficial é a do IGCP
+ * mensal (BPstat): min(média mensal, 2,50 %). A taxa oficial é a do IGCP
  * em data/fiscal/ca.json — mostramos as duas lado a lado.
  */
 export function runCaBase(dataDir: string) {
@@ -30,7 +30,7 @@ export function runCaBase(dataDir: string) {
       id: "ca-serie-f-taxa-base",
       fonte: "IGCP (oficial) + BPstat Euribor 3M (indicativa)",
       url: ca.fonteUrl,
-      nota: "Oficial = média da Euribor 3M nos 10 dias úteis, cap 2,50 %. Indicativa usa a média mensal — pode diferir dias dentro do mês.",
+      nota: "Oficial = média da Euribor 3M nos 10 dias úteis, cap 2,50 %. Indicativa usa a média mensal — pode diferir dias dentro do mês.",
       oficialPct: ca.serieF.taxaBrutaNovasSubscricoes * 100,
       vigenciaOficial: ca.vigencia,
       serieAte: e3m.meta.serieAte,

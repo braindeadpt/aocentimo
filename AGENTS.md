@@ -51,6 +51,7 @@ npm run build          # export estático → out/
 npm run serve:out      # serve o out/ em http://localhost:3100
 npm run test:e2e       # playwright (faz build e serve sozinho)
 npm run audit          # _mega-audit + _overflow-sweep + _sweep (precisa de :3100)
+                       # + _lettering (fino U+202F, menos U+2212, «», «…» no out/)
 npm run ingest:daily   # scripts/ingest --daily (local mirror do Actions)
 npm run ingest:monthly # Eurostat mensal (prc_hicp_minr, ECOICOP 2018)
 npm run derive         # data/derived + watchdog de frescura
