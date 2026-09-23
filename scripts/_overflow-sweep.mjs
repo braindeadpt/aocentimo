@@ -20,7 +20,7 @@ for (const w of [768, 1440]) {
   const p = await b.newPage({ viewport: { width: w, height: 900 } });
   for (const r of rotas) {
     try {
-      await p.goto("http://localhost:3100" + r, { waitUntil: "domcontentloaded", timeout: 15000 });
+      await p.goto(`http://localhost:${process.env.PORTA ?? 3100}` + r, { waitUntil: "domcontentloaded", timeout: 15000 });
       /* o ticker e outras animações contínuas podem ser apanhadas a
          meio do ciclo e dar falsos positivos de overflow — mede-se a
          página parada */

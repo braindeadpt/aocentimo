@@ -9,7 +9,7 @@
 import { chromium } from "@playwright/test";
 import { mkdirSync } from "node:fs";
 
-const BASE = process.argv[2] ?? "http://localhost:3100";
+const BASE = process.argv[2] ?? `http://localhost:${process.env.PORTA ?? 3100}`;
 const OUT = ".shots";
 mkdirSync(OUT, { recursive: true });
 

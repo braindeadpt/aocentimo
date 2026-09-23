@@ -90,7 +90,9 @@ const aaFalhas = {};
 for (const rota of rotas) {
   const p = await b.newPage({ viewport: { width: 1280, height: 800 } });
   await p.emulateMedia({ reducedMotion: "reduce" });
-  await p.goto(`http://localhost:3100${rota}`, { waitUntil: "networkidle" });
+  await p.goto(`http://localhost:${process.env.PORTA ?? 3100}${rota}`, {
+    waitUntil: "networkidle",
+  });
   await p.waitForTimeout(400);
   const perf = await p.evaluate(PERF_EVAL);
   // gráficos: svg aria-hidden + exactamente um equivalente alcançável

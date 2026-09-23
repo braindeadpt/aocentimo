@@ -10,7 +10,7 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, readdirSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 
-const BASE = process.argv[2] ?? "http://localhost:3100";
+const BASE = process.argv[2] ?? `http://localhost:${process.env.PORTA ?? 3100}`;
 const ROTA = process.argv[3] ?? "/dados";
 const OUT_V = ".videos";
 const OUT_S = ".shots";

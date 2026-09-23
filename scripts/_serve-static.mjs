@@ -50,4 +50,6 @@ createServer(async (req, res) => {
   } catch (e) {
     res.writeHead(500).end(String(e));
   }
-}).listen(3100, () => console.log("static :3100"));
+}).listen(Number(process.env.PORTA ?? 3100), () =>
+  console.log(`static :${process.env.PORTA ?? 3100}`),
+);

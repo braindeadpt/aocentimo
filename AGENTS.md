@@ -59,6 +59,11 @@ node scripts/_js-por-rota.mjs        # JS inicial/total por rota (precisa de :31
 node scripts/_bundle-top.mjs [chunks] # top de módulos por chunk (build com productionBrowserSourceMaps)
 ```
 
+Em sessões paralelas, cada worktree define `PORTA` (3102–3106) e corre o
+dev com `-p 30xx` — o servidor estático, o Playwright e os scripts de
+auditoria seguem-na (sem `PORTA`, tudo assume 3100 e o e2e reutiliza o
+servidor existente; com `PORTA`, porta ocupada falha alto).
+
 ## Regras de viz/motion (vigente)
 
 - **GSAP só via `carregarGsap()`** — nunca `import gsap` estático; só
