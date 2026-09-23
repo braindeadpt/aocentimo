@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
-import { Figure } from "@/components/Figure";
+import { Pagina, PaginaDetalhe } from "@/components/Pagina";
 import { Leitura } from "@/components/Leitura";
 import { EstadoVazio } from "@/components/EstadoVazio";
 import { Source } from "@/components/Source";
-import { SimuladorDesemprego } from "./SimuladorDesemprego";
-import { SimuladorIndependente } from "./SimuladorIndependente";
 import desemprego from "@data/fiscal/desemprego.json";
 import catb from "@data/fiscal/catb.json";
+import irs from "@data/fiscal/irs-2026.json";
+import smn from "@data/fiscal/smn.json";
+import cenariosJson from "@data/derived/cenarios-salario.json";
+import type { CenariosSalario } from "@/lib/cenarios";
 import { loadFonte, loadFreshness } from "@/lib/data";
-import { comUnidade, fmtNum, fmtPeriodo } from "@/lib/format";
+import { comUnidade, fmtEUR0, fmtNum, fmtPct, fmtPeriodo } from "@/lib/format";
 import {
   anotacaoDe,
   estadoDe,
@@ -19,7 +21,9 @@ import {
 } from "@/lib/leitura";
 import { m, t } from "@/lib/messages";
 import { JsonLd, webApplication } from "@/lib/jsonld";
-import { TituloPagina } from "@/components/Voo";
+import { ProvedorTrabalho } from "./contexto";
+import { RespostaTrabalho, FraseTrabalho } from "./RespostaTrabalho";
+import { ExploraTrabalho } from "./ExploraTrabalho";
 
 export const metadata: Metadata = {
   title: "Subsídio de desemprego — quanto e por quanto tempo",
@@ -28,9 +32,29 @@ export const metadata: Metadata = {
   alternates: { canonical: "/trabalho", types: ALT_FEED },
 };
 
+const ANO = irs.ano;
+
+/**
+ * /trabalho no template de três níveis (sessão 3A-03):
+ *
+ * 1 · A resposta — UM instrumento (cartão Ledger: régua do salário na
+ *    zona de medição + a mensalidade como número herói, com a duração
+ *    por baixo) e a frase simples com valor e tempo.
+ * 2 · Explora — os controlos do caso (idade, descontos, majoração), a
+ *    declaração da Segurança Social, os meses de subsídio em barra de
+ *    traços com o degrau de −10 %, e os recibos verdes em campo de
+ *    cêntimos.
+ * 3 · Confirma — as regras do DL 220/2006, os limites em IAS, o que a
+ *    simulação simplifica, o dado do país e as fontes.
+ *
+ * A régua abre no cenário canónico — o mesmo bruto de 1 500 € que
+ * abre /salario e /irs.
+ */
 export default function TrabalhoPage() {
   const rotulos = rotulosLeitura();
   const fresh = loadFreshness();
+  const cenarios = cenariosJson as unknown as CenariosSalario;
+  const ias = irs.ias;
 
   // ————— o dado do país na página do trabalho: desemprego PT com a
   // média europeia como série de referência por baixo —————
@@ -66,7 +90,19 @@ export default function TrabalhoPage() {
       : null;
 
   return (
-    <div className="mx-auto max-w-5xl px-5 pt-14">
+    <ProvedorTrabalho
+      regua={{
+        rotulo: "Salário bruto mensal (antes do desemprego)",
+        min: cenarios.meta.inicio,
+        max: cenarios.meta.fim,
+        passo: cenarios.meta.passo,
+        pontos: cenarios.linhas.map((l) => l.bruto),
+        inicial: cenarios.meta.brutoRef,
+        marcador: { valor: smn.regioes.continente, rotulo: m.regua.minimo },
+        descricao:
+          "Os 11 % que descontas todos os meses pagam isto: 65 % da tua remuneração de referência, dentro de limites e por tempo contado.",
+      }}
+    >
       <JsonLd
         data={webApplication(
           "Simuladores de trabalho — desemprego e recibos verdes",
@@ -74,66 +110,166 @@ export default function TrabalhoPage() {
           "Simulador do subsídio de desemprego e do trabalho independente em Portugal: quanto recebes e por quanto tempo."
         )}
       />
-      <p className="kicker">Proteção no desemprego</p>
-      <TituloPagina rota="/trabalho">Se ficares sem trabalho</TituloPagina>
-      <p className="lede mt-5">
-        Os 11 % que descontas todos os meses pagam isto: se perderes o emprego
-        de forma involuntária, a Segurança Social devolve-te uma parte — 65 %
-        da tua remuneração de referência, dentro de limites e por tempo
-        contado.
-      </p>
+      <Pagina
+        pergunta="Se ficares sem trabalho, quanto recebes e por quanto tempo?"
+        rota="/trabalho"
+        kicker="Proteção no desemprego"
+        resposta={{
+          instrumento: <RespostaTrabalho />,
+          frase: <FraseTrabalho />,
+        }}
+        explora={<ExploraTrabalho ias={ias} />}
+        confirma={
+          <>
+            <PaginaDetalhe rotulo="As regras — DL 220/2006">
+              <div className="body-copy max-w-2xl space-y-4">
+                <p>
+                  <strong>Quem tem direito:</strong> desemprego
+                  involuntário com {desemprego.prazoGarantia.dias} dias de
+                  descontos nos últimos {desemprego.prazoGarantia.meses}{" "}
+                  meses (o «prazo de garantia»). O pedido faz-se no IEFP
+                  até 90 dias depois do fim do contrato.
+                </p>
+                <p>
+                  <strong>Quanto:</strong>{" "}
+                  {fmtPct(desemprego.montante.percentagemRR, 0)} da
+                  remuneração de referência — a média dos primeiros 12
+                  dos últimos 14 meses, com subsídios incluídos. Com
+                  limites: nunca menos que 1×IAS (
+                  {fmtEUR0(desemprego.limites.minimoIas * ias)};{" "}
+                  {fmtEUR0(
+                    desemprego.limites.minimoSeSalarioMinimoIas * ias
+                  )}{" "}
+                  se o salário era pelo menos o mínimo), nunca mais que
+                  2,5×IAS ({fmtEUR0(desemprego.limites.maximoIas * ias)})
+                  nem que {fmtPct(desemprego.limites.maximoRRliquida, 0)}{" "}
+                  da remuneração líquida de referência.
+                </p>
+                <p>
+                  <strong>O degrau:</strong> a partir do 181.º dia o valor
+                  desce {fmtPct(desemprego.reducaoApos180Dias, 0)}.{" "}
+                  <strong>A majoração:</strong> +
+                  {fmtPct(desemprego.majoracao.taxa, 0)} se o casal está
+                  ambos desempregado com dependentes, ou em agregado
+                  monoparental.
+                </p>
+              </div>
+              <div className="mt-4 overflow-x-auto">
+                <table className="w-full text-corpo-sm">
+                  <thead>
+                    <tr className="border-b-2 border-ink text-left">
+                      <th scope="col" className="py-2 pr-4 font-medium">
+                        Idade
+                      </th>
+                      <th scope="col" className="py-2 pr-4 font-medium text-right">
+                        &lt;15 meses de descontos
+                      </th>
+                      <th scope="col" className="py-2 pr-4 font-medium text-right">
+                        15–24 meses
+                      </th>
+                      <th scope="col" className="py-2 pr-4 font-medium text-right">
+                        ≥24 meses
+                      </th>
+                      <th scope="col" className="py-2 font-medium text-right">
+                        + por cada 5 anos
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="num">
+                    {desemprego.duracao.linhas.map((l, i) => (
+                      <tr key={i} className="border-b border-line">
+                        <td className="py-2 pr-4 text-ink2">
+                          {l.idadeAte === null
+                            ? "50 ou mais"
+                            : `até ${l.idadeAte}`}
+                        </td>
+                        <td className="py-2 pr-4 text-right tabular-nums">
+                          {l.duracao[0]} dias
+                        </td>
+                        <td className="py-2 pr-4 text-right tabular-nums">
+                          {l.duracao[1]} dias
+                        </td>
+                        <td className="py-2 pr-4 text-right tabular-nums">
+                          {l.duracao[2]} dias
+                        </td>
+                        <td className="py-2 text-right tabular-nums">
+                          +{l.acrescimoPorCincoAnos} dias
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="footnote mt-3">
+                {desemprego.duracao.nota}. IAS {ANO} = {fmtEUR0(ias)}.
+              </p>
+            </PaginaDetalhe>
 
-      {cartao ? (
-        <div className="mt-8">
-          <Leitura {...cartao} rotulos={rotulos} />
-        </div>
-      ) : (
-        // a falha mostra-se no lugar do instrumento — nunca um buraco
-        <div className="mt-8">
-          <EstadoVazio
-            titulo="a série do desemprego em Portugal"
-            falha={
-              !ultUe && unePt
-                ? "a referência UE 27 não chegou — sem ela não há comparação"
-                : m.estados.serieFalhou
-            }
-            desde={
-              unePt?.meta.serieAte
-                ? fmtPeriodo(unePt.meta.serieAte)
-                : undefined
-            }
-            fonte={{
-              nome: unePt?.meta.fonte ?? "Eurostat",
-              url: unePt?.meta.url ?? "https://ec.europa.eu/eurostat",
-            }}
-          />
-        </div>
-      )}
+            <PaginaDetalhe rotulo="O que a simulação simplifica">
+              <div className="body-copy max-w-2xl space-y-4">
+                <p>
+                  Assume salário estável nos últimos 14 meses e descontos
+                  contínuos — na realidade a remuneração de referência
+                  soma o que efetivamente entrou para a Segurança Social.
+                  Não cobre subsídio social de desemprego, trabalhadores
+                  independentes, nem as regras transitórias de carreiras
+                  antigas. A decisão certa é a da Segurança Social.
+                </p>
+              </div>
+            </PaginaDetalhe>
 
-      <Figure
-        title="Simulador de subsídio de desemprego"
-        source={<Source nome={desemprego.fonte} vigencia={desemprego.vigencia} />}
-      >
-        <SimuladorDesemprego />
-      </Figure>
+            <PaginaDetalhe rotulo="O desemprego em Portugal — o dado do país">
+              {cartao ? (
+                <Leitura {...cartao} rotulos={rotulos} />
+              ) : (
+                // a falha mostra-se no lugar do instrumento — nunca um
+                // buraco
+                <EstadoVazio
+                  titulo="a série do desemprego em Portugal"
+                  falha={
+                    !ultUe && unePt
+                      ? "a referência UE 27 não chegou — sem ela não há comparação"
+                      : m.estados.serieFalhou
+                  }
+                  desde={
+                    unePt?.meta.serieAte
+                      ? fmtPeriodo(unePt.meta.serieAte)
+                      : undefined
+                  }
+                  fonte={{
+                    nome: unePt?.meta.fonte ?? "Eurostat",
+                    url: unePt?.meta.url ?? "https://ec.europa.eu/eurostat",
+                  }}
+                />
+              )}
+            </PaginaDetalhe>
 
-      <Figure
-        title="Recibos verdes — da faturação ao bolso"
-        source={<Source nome={catb.fonte} vigencia={catb.vigencia} />}
-      >
-        <SimuladorIndependente />
-      </Figure>
-
-      <section className="body-copy max-w-2xl stack-sec pb-8 space-y-4">
-        <h2 className="font-display text-display-sm text-ink">O que a simulação simplifica</h2>
-        <p>
-          Assume salário estável nos últimos 14 meses e descontos contínuos —
-          na realidade a remuneração de referência soma o que efetivamente
-          entrou para a Segurança Social. Não cobre subsídio social de
-          desemprego, trabalhadores independentes, nem as regras transitórias
-          de carreiras antigas. A decisão certa é a da Segurança Social.
-        </p>
-      </section>
-    </div>
+            <PaginaDetalhe rotulo="Legislação e fontes">
+              <div className="space-y-2">
+                <Source
+                  nome={desemprego.fonte}
+                  vigencia={desemprego.vigencia}
+                  url={desemprego.fonteUrl}
+                />
+                <Source
+                  nome={catb.fonte}
+                  vigencia={catb.vigencia}
+                  url={catb.fonteUrl}
+                />
+                <Source
+                  nome={smn.fonte}
+                  vigencia={smn.vigencia}
+                  url={smn.fonteUrl}
+                />
+              </div>
+            </PaginaDetalhe>
+          </>
+        }
+        seguinte={{
+          href: "/impostos",
+          rotulo: "E do que ganhas, quanto volta ao Estado quando gastas?",
+        }}
+      />
+    </ProvedorTrabalho>
   );
 }
