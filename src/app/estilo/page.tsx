@@ -150,8 +150,8 @@ const TOKENS: [string, string, string][] = [
   ["accent", "bg-accent", "#b93a17 / #ff6133 — vermilhão-sinal, o que sai"],
   ["accent-ink", "bg-accent-ink", "#8f2a10 / #a03012 — corte mais fundo"],
   ["keep", "bg-keep", "#1f6b4d / #63d6a4 — o que é teu"],
-  ["mark", "bg-mark", "#a07c17 / #f0c468 — torrado, fonte e foco"],
-  ["warn", "bg-warn", "#a3720a / #f0c468 — aviso"],
+  ["mark", "bg-mark", "#a07c17 / #f0c468 — torrado: fonte, foco, chrome activo"],
+  ["warn", "bg-warn", "#8a5f08 / #f0c468 — aviso"],
   ["up", "bg-up", "#b03016 / #ff6133 — sobe (mau em preços)"],
   ["down", "bg-down", "#1f6b4d / #63d6a4 — desce (bom em preços)"],
   ["papel-sai", "bg-papel-sai", "#f0d5c6 — papel avermelhado, o troço arrancado (fixo nos dois temas)"],
@@ -163,7 +163,7 @@ const TOKENS: [string, string, string][] = [
 const REGRAS = [
   "Verde só para «o teu dinheiro» — nunca decoração nem fundo genérico.",
   "Torrado só como marcador funcional: fonte, citação, anel de foco.",
-  "Vermilhão-sinal para tudo o que sai do bolso — legível nos dois temas.",
+  "Vermilhão-sinal só no dinheiro que sai do bolso — nunca no chrome (nav, links, régua são torrado/tinta).",
   "Escuro por omissão — o instrumento é a cara; o claro é o documento.",
 ];
 
@@ -283,17 +283,17 @@ export default function EstiloPage() {
             <p className="kicker-xs mb-4">proibições — o que protege o desenho</p>
             <ul className="space-y-2">
               <li className="footnote">
-                <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-accent align-middle" />
+                <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-mark align-middle" />
                 A haste nunca noutra cor — é sempre o verde de «fica contigo»
                 (--keep); nunca --accent, nunca a cor da tinta.
               </li>
               <li className="footnote">
-                <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-accent align-middle" />
+                <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-mark align-middle" />
                 A haste nunca sem recorte — a letra abre-se à volta dela; uma
                 barra pousada por cima do C não é a marca.
               </li>
               <li className="footnote">
-                <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-accent align-middle" />
+                <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-mark align-middle" />
                 Nunca esticar nem redesenhar as letras — os contornos vêm da
                 Archivo e não se editam à mão.
               </li>
@@ -417,8 +417,9 @@ export default function EstiloPage() {
       <section className="stack-sec">
         <h2 className="kicker mb-4">Cor — semântica primeiro, dados depois</h2>
         <p className="footnote mb-4 max-w-xl">
-          Três cores com significado fixo — vermelhão é o que sai, verde é o
-          que fica contigo, torrado marca a fonte. Os dados vivem fora delas:
+          Três cores com significado fixo — vermelhão é o que sai (e só aí;
+          o chrome é torrado e tinta), verde é o que fica contigo, torrado
+          marca a fonte. Os dados vivem fora delas:
           uma rampa azul-aço para famílias ordinais e uma rampa neutra de
           «data ink» para contexto. Os swatches são ao vivo — mudam com o
           tema (botão no topo).
@@ -1536,7 +1537,7 @@ export default function EstiloPage() {
                       <p className="footnote mt-2">
                         <a
                           href="/api/index.json"
-                          className="underline decoration-line2 underline-offset-2 hover:text-accent"
+                          className="underline decoration-line2 underline-offset-2 hover:text-ink hover:decoration-mark"
                         >
                           JSON
                         </a>{" "}

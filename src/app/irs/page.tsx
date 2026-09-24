@@ -27,8 +27,8 @@ const ANO = irs.ano;
 /**
  * /irs no template de três níveis (sessão 3A-02):
  *
- * 1 · A resposta — UM instrumento (cartão Ledger: régua do rendimento
- *    coletável + o IRS certo como herói + os nove recipientes que
+ * 1 · A resposta — UM instrumento (cartão Ledger: régua do salário
+ *    bruto anual + o IRS certo como herói + os nove recipientes que
  *    enchem) e a frase que desfaz o mito com números.
  * 2 · Explora — a nota de liquidação (reembolso ou a pagar) e o IRS
  *    Jovem em barra de traços de dez anos.
@@ -36,19 +36,18 @@ const ANO = irs.ano;
  *    ligam para aqui), a amostra da retenção, as deduções à coleta e
  *    as fontes.
  *
- * A régua abre no coletável do cenário canónico — o mesmo bruto de
- * 1 500 € que abre /salario.
+ * A régua abre no bruto anual do cenário canónico — o mesmo salário
+ * que abre /salario (4B-02: o nível 1 fala em bruto, o número da
+ * pessoa; «rendimento coletável» desceu ao nível 2).
  */
 export default function IrsPage() {
   const cenarios = cenariosJson as unknown as CenariosSalario;
 
-  // o coletável canónico sai do motor no servidor — a mesma conta que
-  // /salario faz, sem duplicar regras no componente
-  const rcCanonico = simularSalario(
-    [cenarios.meta.brutoRef],
-    0,
-    ANO
-  ).coletavelTributado;
+  // o cenário canónico sai do motor no servidor — a mesma conta que
+  // /salario faz, sem duplicar regras no componente. O nível 2 mostra
+  // a conversão bruto → coletável com estes números reais.
+  const canonico = simularSalario([cenarios.meta.brutoRef], 0, ANO);
+  const brutoCanonico = Math.round(canonico.titulares[0].brutoAnual);
 
   // amostra da tabela I para mostrar a mecânica da retenção
   const amostra = retencao.tabelas.I.linhas
@@ -60,18 +59,18 @@ export default function IrsPage() {
   return (
     <ProvedorIrs
       ano={ANO}
-      rcInicial={Math.round(rcCanonico)}
+      brutoInicial={brutoCanonico}
       regua={{
-        rotulo: "Rendimento coletável anual",
+        rotulo: "Salário bruto anual",
         min: 0,
-        max: 90000,
-        passo: 250,
+        max: 95000,
+        passo: 500,
         marcador: {
-          valor: Math.round(rcCanonico),
+          valor: brutoCanonico,
           rotulo: "o cenário canónico",
         },
         descricao:
-          "O bruto menos a dedução específica e o mínimo de existência — o número sobre o qual os escalões trabalham (em casados, metade do casal).",
+          "O bruto de todos os meses somado — o número do contrato. Antes dos escalões, o motor tira a dedução específica e o mínimo de existência.",
         limites: {
           max: "a régua cobre os nove escalões; acima daí só muda a taxa de solidariedade",
         },
@@ -92,7 +91,7 @@ export default function IrsPage() {
           instrumento: <RespostaIrs />,
           frase: <FraseIrs />,
         }}
-        explora={<ExploraIrs ano={ANO} ias={irs.ias} reguaJovem={{
+        explora={<ExploraIrs ano={ANO} ias={irs.ias} exemploColetavel={canonico.titulares[0]} reguaJovem={{
           min: cenarios.meta.inicio,
           max: cenarios.meta.fim,
           passo: cenarios.meta.passo,

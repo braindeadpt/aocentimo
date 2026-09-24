@@ -85,7 +85,7 @@ export default function AprenderPage() {
                   </span>
                   <span
                     aria-hidden
-                    className="mt-2 block text-rotulo text-muted transition-colors group-hover:text-accent"
+                    className="mt-2 block text-rotulo text-muted transition-colors group-hover:text-ink group-hover:underline group-hover:decoration-mark group-hover:underline-offset-2"
                   >
                     ↓
                   </span>

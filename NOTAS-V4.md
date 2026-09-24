@@ -1278,23 +1278,62 @@ Worktrees de teste removidos.
 - AA: 0 falhas nos dois temas; overflow: 0 a 768/1440 (39 rotas);
   mega-audit: 0 falhas, 0 avisos.
 
-### Questões para o dono
+### Questões para o dono — respondidas na Sessão 4B (24.09.2026)
 
-1. **`--accent` fora do dinheiro que sai** — a leitura estrita de
-   «vermelhão só no que sai» colide com três usos herdados do V3:
-   (a) linha principal do `Leitura` («cor de sinal», regra V3-2);
-   (b) estado activo/hover da nav e `hover:text-accent` dos links;
-   (c) selo «próximo» em `/dados` e a banda da `Regua`. Proposta:
-   chrome (nav/links/selo) passa a `--mark`; a linha principal fica
-   `--ink` nas séries que não são dinheiro, `accent` só quando a série
-   é dinheiro que sai. Aprovar ou manter?
-2. **`/casa` CLS 0,115** — acima do limiar 0,1; a escritura desloca um
-   bloco ao hidratar. Vale uma iteração de estabilização?
-3. **`/dados` «a Euribor de um ano»** — a frase do nível 1 assume o
-   termo; alternativa mais literal: «a taxa a que os bancos emprestam
-   entre si a 12 meses». (PROPOSTA — o copy final é do dono.)
-4. **`/irs` «coletáveis»** — «com X coletáveis» é jargão fiscal no
-   nível 1. Alternativa: «com um rendimento de X por ano». (PROPOSTA.)
+1. **`--accent` fora do dinheiro que sai** — APROVADO como proposto:
+   chrome → `mark`/`ink`; linha do `Leitura` em tinta, `accent` só se
+   a série for dinheiro que sai (prop `sai`). **Classificação completa
+   dos usos de `accent` (o que ficou / o que mudou):**
+   - Ficou (dinheiro que sai): pontos e rótulos `sai` do
+     `CampoCentimos` (`.cc-d-sai`, `.cc-rot[data-tom=sai]`, `tela.ts`),
+     camada `corte` do `Isometrico`, `--pq-accent` das portas (juro),
+     `.bt-tom-sai`/`.ap-tom-sai`/`.md-seg-acento` (demos semânticas),
+     hachura «acima da referência» do `Leitura` (gap = direcção
+     sai/fica), swatches e «proibidos» do `/estilo` (demonstram o
+     token), papel `--papel-sai` e `accent-ink` (família do sai).
+   - Mudou para `mark`/`ink`: `::selection` (fundo `mark` + tinta do
+     talão), indicador `bg-accent`→`bg-mark` e estado activo da nav
+     (`text-ink` + barra/sublinhado ocre), `hover:text-accent` dos
+     links (`text-ink` + `decoration-mark`), `.ev-link`,
+     `.pg-seguinte-lnk`, `.hm-fonte a`, `.lq-link`, footer, `Source`,
+     `/aprender`, `/metodologia`, selo «próximo» e barras de teto em
+     `/dados`, `.regua-fill`/`.regua-polegar-corpo`, foco do
+     `.jovem-passo`, ênfase do manifesto na home (`text-mark`, texto
+     grande — 3:1 chega). O ocre falha AA em texto pequeno → tinta +
+     sublinhado `mark` é a regra.
+   - Limpo: `.chapter-*` morto (capítulos saíram na S2-04).
+   - Guarda: `nav.spec.ts` falha se a nav computar `--accent`.
+2. **`/casa` CLS 0,115** — APROVADO: reservar a altura da escritura no
+   SSR (4B-03a). **Diagnóstico corrigido na medição:** o shift não é
+   da escritura nem da hidratação — com os `woff2` bloqueados o CLS é
+   0; a causa é a troca de fonte (`font-display: swap`) que
+   reembrulha a frase serifada (`.pg-frase`, Source Serif + Space
+   Mono nos números) ~500 ms depois do paint. Reservar altura não
+   impede o reflow interno do texto. Correcção aplicada:
+   `display: "optional"` nas quatro fontes do `layout.tsx` — a fonte
+   pré-carregada chega na janela curta ou fica o fallback métrico
+   (next/font gera-o com `size-adjust`); nunca há troca tardia → sem
+   reflow. Medido: 0,115 → 0 nas corridas que antes falhavam.
+3. **`/dados` «a Euribor de um ano»** — APROVADO: «a Euribor a 12
+   meses — a taxa a que os bancos emprestam dinheiro entre si»
+   (4B-03b, PROPOSTA de copy). **Implementado:** «A inflação está em
+   {x} e a Euribor a 12 meses em {y} — a taxa a que os bancos
+   emprestam dinheiro entre si. Cada número com fonte e data.»
+4. **`/irs` «coletáveis»** — APROVADO com correcção do dono: nível 1
+   parte do **bruto anual** («Com {bruto} brutos por ano, pagas {IRS}
+   de IRS»); «rendimento coletável» desce ao nível 2 com explicação e
+   exemplo (4B-02, PROPOSTA). **Copy implementada (PROPOSTA — revisão
+   do dono):**
+   - régua: «Salário bruto anual» · descrição «O bruto de todos os
+     meses somado — o número do contrato. Antes dos escalões, o motor
+     tira a dedução específica e o mínimo de existência.»
+   - frase: «…com {bruto} brutos por ano pagas {coleta} de IRS, não
+     {mito}.»
+   - caixa do desmentido: «Contam para o IRS, depois das deduções» =
+     {coletável} — o termo não é nomeado no nível 1.
+   - nível 2: cartão novo «RENDIMENTO COLETÁVEL» com a conversão do
+     canónico em números: bruto − dedução específica − mínimo de
+     existência = rendimento coletável.
 
 ### Trabalho por fazer
 

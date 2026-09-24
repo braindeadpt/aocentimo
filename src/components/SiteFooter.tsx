@@ -17,9 +17,9 @@ export function SiteFooter() {
               {m.footer.indexTitle}
             </p>
             <ul className="space-y-1.5">
-              <li><Link href="/metodologia" className="hover:text-accent">{m.footer.metodologia}</Link></li>
-              <li><Link href="/sobre" className="hover:text-accent">{m.footer.sobre}</Link></li>
-              <li><Link href="/estilo" className="hover:text-accent">{m.footer.estilo}</Link></li>
+              <li><Link href="/metodologia" className="hover:text-ink hover:underline">{m.footer.metodologia}</Link></li>
+              <li><Link href="/sobre" className="hover:text-ink hover:underline">{m.footer.sobre}</Link></li>
+              <li><Link href="/estilo" className="hover:text-ink hover:underline">{m.footer.estilo}</Link></li>
             </ul>
           </div>
           <div>

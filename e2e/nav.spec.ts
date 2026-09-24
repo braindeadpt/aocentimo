@@ -69,8 +69,44 @@ test.describe("desktop @1440", () => {
         .getByRole("navigation", { name: "Principal" })
         .getByRole("link", { name: "Salário", exact: true })
     ).toHaveAttribute("aria-current", "page");
-    // o grupo da página activa está assinalado (acento) no botão
-    await expect(btn).toHaveClass(/text-accent/);
+    // o grupo da página activa está assinalado (tinta + barra ocre)
+    await expect(btn).toHaveClass(/text-ink/);
+    await expect(btn.locator("span")).toHaveClass(/bg-mark/);
+  });
+
+  test("nenhum elemento da nav usa o vermilhão — chrome é mark/ink", async ({
+    page,
+  }) => {
+    // 4B-01: --accent é só o dinheiro que sai; a navegação nunca o veste.
+    // Compara a cor computada (qualquer propriedade de cor) com o token.
+    await page.goto("/salario");
+    const falhas = await page.evaluate(() => {
+      const sonda = document.createElement("div");
+      sonda.style.color = "var(--accent)";
+      document.body.appendChild(sonda);
+      const accentRgb = getComputedStyle(sonda).color;
+      sonda.remove();
+      const props = [
+        "color",
+        "backgroundColor",
+        "textDecorationColor",
+        "outlineColor",
+        "borderTopColor",
+        "fill",
+        "stroke",
+      ] as const;
+      const mau: string[] = [];
+      document
+        .querySelectorAll('nav[aria-label="Principal"], nav[aria-label="Principal"] *')
+        .forEach((el) => {
+          const cs = getComputedStyle(el);
+          for (const p of props)
+            if (cs[p] === accentRgb)
+              mau.push(`${el.tagName}.${String(el.className)} ${p}`);
+        });
+      return mau;
+    });
+    expect(falhas).toEqual([]);
   });
 
   test("sem JS os menus abrem na mesma (hover/focus-within em CSS)", async ({

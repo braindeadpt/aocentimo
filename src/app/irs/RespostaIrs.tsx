@@ -8,7 +8,7 @@ import { useIrs } from "./contexto";
 
 /**
  * Nível 1 de /irs (3A-02): UM instrumento — o cartão com a régua do
- * rendimento coletável na zona de medição, o IRS certo como número
+ * salário bruto anual na zona de medição, o IRS certo como número
  * herói e os nove recipientes que enchem por ordem (M-16 — a peça
  * existente, agora dentro do Cartao e com régua em vez de input).
  *
@@ -27,10 +27,10 @@ export function RespostaIrs() {
       breadcrumb={`O QUE GANHAS / IRS · ESCALÕES ${s.ano}`}
       controlos={
         <Regua
-          id="rc"
+          id="bruto"
           rotulo={s.regua.rotulo}
-          valor={s.rc}
-          onChange={s.setRc}
+          valor={s.bruto}
+          onChange={s.setBruto}
           min={s.regua.min}
           max={s.regua.max}
           passo={s.regua.passo}
@@ -49,7 +49,7 @@ export function RespostaIrs() {
       <p className="leitura-insight">O IRS certo, fatia a fatia</p>
       <NumHero valor={fmtEUR0(s.coleta)} animar={s.coleta} casas={0} />
       <p className="leitura-breadcrumb mt-1">
-        com {fmtEUR0(s.rc)} de rendimento coletável — se o mito fosse
+        com {fmtEUR0(s.bruto)} brutos por ano — se o mito fosse
         verdade seriam {fmtEUR0(s.mito)}
       </p>
 
@@ -103,6 +103,12 @@ export function RespostaIrs() {
             aria-live="polite"
           >
             <p className="flex justify-between">
+              <span className="text-ink2">
+                Contam para o IRS, depois das deduções
+              </span>
+              <span className="num">{fmtEUR0(s.rc)}</span>
+            </p>
+            <p className="flex justify-between">
               <span className="text-ink2">Taxa do último escalão tocado</span>
               <span className="num">{fmtPct(s.marginal.taxa)}</span>
             </p>
@@ -148,8 +154,9 @@ export function FraseIrs() {
   return (
     <>
       Não — só a parte acima do limite paga a taxa nova: com{" "}
-      <strong className="num">{fmtEUR0(s.rc)}</strong> coletáveis pagas{" "}
-      <strong className="num">{fmtEUR0(s.coleta)}</strong>, não{" "}
+      <strong className="num">{fmtEUR0(s.bruto)}</strong> brutos por
+      ano pagas{" "}
+      <strong className="num">{fmtEUR0(s.coleta)}</strong> de IRS, não{" "}
       {fmtEUR0(s.mito)}.
     </>
   );

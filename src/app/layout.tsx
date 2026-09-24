@@ -10,24 +10,33 @@ import { VooLimpeza } from "@/components/Voo";
 import { ALT_FEED } from "@/lib/meta";
 import { SITE_URL } from "@/lib/site";
 
+// font-display: optional (4B-03) — com swap, a troca tardia de fonte
+// reembrulhava o texto (a frase serifada de /casa media CLS 0,115).
+// As fontes são pré-carregadas: chegam dentro da janela pequena do
+// optional quase sempre; quando não chegam, fica o fallback métrico —
+// nunca há reflow de texto a meio do paint.
 const archivo = Archivo({
   subsets: ["latin"],
   axes: ["wdth"],
   variable: "--font-archivo",
+  display: "optional",
 });
 const grotesk = Space_Grotesk({
   subsets: ["latin"],
   variable: "--font-grotesk",
+  display: "optional",
 });
 const serif = Source_Serif_4({
   subsets: ["latin"],
   weight: "400", // .lede é sempre regular — o variável trazia 200–900 por um parágrafo
   variable: "--font-serif",
+  display: "optional",
 });
 const spaceMono = Space_Mono({
   subsets: ["latin"],
   weight: ["400", "700"],
   variable: "--font-space",
+  display: "optional",
 });
 
 export const metadata: Metadata = {

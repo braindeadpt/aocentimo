@@ -38,7 +38,7 @@ export function Source({ nome, url, vigencia, serieAte, recolhidoEm, nota }: Sou
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="underline decoration-line2 underline-offset-2 hover:text-accent"
+          className="underline decoration-line2 underline-offset-2 hover:text-ink hover:decoration-mark"
         >
           {nome}
         </a>

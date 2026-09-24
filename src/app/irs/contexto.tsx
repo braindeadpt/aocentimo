@@ -10,24 +10,28 @@ import {
 import {
   repartePorEscaloes,
   escalaoMarginal,
+  simularSalario,
   REGRAS_IRS,
   type FatiaEscalao,
 } from "@/lib/engines/irs";
 
 /**
  * O estado do nível 1 de /irs num contexto (sessão 3A): a régua do
- * rendimento coletável, os recipientes que enchem e a frase simples
+ * salário bruto anual, os recipientes que enchem e a frase simples
  * vivem em sítios diferentes do <Pagina> — o provedor partilha o
- * `rc` e as contas derivadas entre eles. Os níveis 2 e 3 têm estado
- * próprio (o acerto e o IRS Jovem são simuladores independentes).
+ * `bruto` e as contas derivadas entre eles. Os níveis 2 e 3 têm
+ * estado próprio (o acerto e o IRS Jovem são simuladores
+ * independentes).
  *
- * O ponto de partida é o coletável do cenário canónico — o mesmo
- * bruto de 1 500 € que abre /salario chega aqui já líquido de
- * dedução específica e mínimo de existência: a faixa conta a mesma
- * história nas três páginas.
+ * 4B-02: a régua mede o BRUTO anual — o número que a pessoa conhece
+ * do contrato. O motor converte-o em coletável (dedução específica +
+ * mínimo de existência, perfil canónico: um titular, 14 meses) antes
+ * dos escalões — nunca se pergunta o coletável, que é o número do
+ * fisco, não o da pessoa. O termo «rendimento coletável» vive no
+ * nível 2, com o exemplo numérico.
  */
 
-export interface ReguaColetavel {
+export interface ReguaBruto {
   min: number;
   max: number;
   passo: number;
@@ -39,11 +43,14 @@ export interface ReguaColetavel {
 
 export interface IrsEstado {
   ano: number;
-  regua: ReguaColetavel;
-  /** rendimento coletável anual — o número sobre o qual os
+  regua: ReguaBruto;
+  /** salário bruto anual — o número da régua, o do contrato */
+  bruto: number;
+  setBruto: (v: number) => void;
+  /** rendimento coletável anual — derivado do bruto pelo motor
+      (dedução específica + mínimo de existência); é sobre ele que os
       escalões trabalham */
   rc: number;
-  setRc: (v: number) => void;
   fatias: FatiaEscalao[];
   marginal: ReturnType<typeof escalaoMarginal>;
   /** a coleta real, fatia a fatia */
@@ -60,18 +67,25 @@ const Ctx = createContext<IrsEstado | null>(null);
 export function ProvedorIrs({
   ano,
   regua,
-  rcInicial,
+  brutoInicial,
   children,
 }: {
   ano: number;
-  regua: ReguaColetavel;
-  /** o coletável do cenário canónico, calculado no servidor pelo
-      motor — a régua abre no mesmo salário que abre /salario */
-  rcInicial: number;
+  regua: ReguaBruto;
+  /** o bruto anual do cenário canónico — a régua abre no mesmo
+      salário que abre /salario (1 500 € × 14 meses) */
+  brutoInicial: number;
   children: ReactNode;
 }) {
   const regras = REGRAS_IRS[ano];
-  const [rc, setRc] = useState(rcInicial);
+  const [bruto, setBruto] = useState(brutoInicial);
+
+  // bruto anual → coletável tributado: a mesma conta de /salario,
+  // pelo motor (14 meses, um titular, sem dependentes)
+  const rc = useMemo(
+    () => simularSalario([bruto / 14], 0, ano).coletavelTributado,
+    [bruto, ano]
+  );
 
   const fatias = useMemo(() => repartePorEscaloes(rc, regras), [rc, regras]);
   const marginal = escalaoMarginal(rc, regras);
@@ -82,8 +96,9 @@ export function ProvedorIrs({
   const valor: IrsEstado = {
     ano,
     regua,
+    bruto,
+    setBruto,
     rc,
-    setRc,
     fatias,
     marginal,
     coleta,

@@ -599,3 +599,66 @@ Cobertura: `Controlos.test.tsx` (11 unitários) + `e2e/controlos.spec.ts`
   `/dados`. A leitura estrita de «vermelhão só no que sai» (§Cor)
   pediria `--mark` ou tinta nesses sítios — proposta em NOTAS-V4.md,
   o dono decide.
+
+## 2026-09-24 — Sessão 4B: vermelhão só no dinheiro que sai (4B-01)
+
+**Decidido pelo dono:** `--accent` sai de todo o chrome — a regra
+«vermelhão-sinal = dinheiro que sai do bolso» passa a ser absoluta.
+
+- **Chrome → `mark`/`ink`:** indicador e estado activo da nav (tinta +
+  barra/sublinhado ocre), hovers de links (tinta + sublinhado
+  `decoration-mark`), `::selection` (fundo `mark` + tinta do talão),
+  banda e polegar da `Regua`, selo «próximo» e barras de teto em
+  `/dados`, foco do `.jovem-passo`. O ocre falha AA em texto pequeno
+  (3,5:1) → a regra nesses sítios é **tinta + sublinhado `mark`**.
+- **`Leitura`:** a linha principal passa a `--l-ink` (var nova
+  `--l-serie`); só veste `--l-accent` quando a série É dinheiro que
+  sai — prop `sai` → classe `.leitura-sai`. Nenhum cartão actual é
+  «sai» (taxas/preços/índices, não fluxos que saem do bolso); o
+  mecanismo fica pronto. `.lq-link:hover` → tinta + `l-mark`.
+- **Fica:** `--accent` nos pontos/camadas «sai» (CampoCentimos,
+  Isometrico, portas, talões), na hachura «acima da referência» do
+  Leitura (direcção do gap = sai/fica) e nas demos do `/estilo`.
+- **Limpo:** `.chapter-*` (capítulos saíram da home na S2-04).
+- **Guarda:** `e2e/nav.spec.ts` falha se algum elemento da nav
+  computar a cor do `--accent`.
+
+## 2026-09-24 — Sessão 4B: /irs nível 1 em bruto anual (4B-02)
+
+**Decidido pelo dono:** a régua do nível 1 mede o salário bruto
+anual — o número do contrato — e nunca o rendimento coletável.
+
+- `ProvedorIrs` guarda `bruto`; o motor converte-o em coletável
+  (`simularSalario`, 14 meses, um titular) antes dos escalões — as
+  regras fiscais continuam todas no motor e nos JSON.
+- Nível 1: régua «Salário bruto anual», frase «com {bruto} brutos
+  por ano pagas {coleta} de IRS», caixa do desmentido com «Contam
+  para o IRS, depois das deduções» = coletável — sem nomear o termo.
+- Nível 2: cartão novo «RENDIMENTO COLETÁVEL» com a conversão do
+  canónico em números (bruto − dedução específica − mínimo de
+  existência = coletável). Nível 3 e glossário mantêm o termo.
+- Copy nova assinalada como PROPOSTA em NOTAS-V4.md.
+
+
+## 2026-09-24 — Sessão 4B: CLS de /casa e frase da Euribor (4B-03)
+
+**Decidido pelo dono:** CLS de /casa abaixo de 0,1; frase da Euribor
+do /dados passa a «a Euribor a 12 meses — a taxa a que os bancos
+emprestam dinheiro entre si».
+
+- **Diagnóstico medido (corrige o previsto):** o CLS 0,115 não vinha
+  da escritura nem da hidratação — com os woff2 bloqueados o CLS é 0.
+  A causa é o `font-display: swap`: a troca tardia de fonte
+  reembrulhava a frase serifada (Source Serif + números em Space
+  Mono) ~500 ms após o paint — os nós de texto moviam-se dentro da
+  mesma caixa, o que o CLS conta na mesma. Reservar altura não
+  impedia esse reflow interno.
+- **Correcção:** `display: "optional"` nas quatro fontes do
+  `layout.tsx`. As fontes são pré-carregadas e chegam dentro da
+  janela curta do optional; quando não chegam fica o fallback
+  métrico — nunca há troca tardia nem reflow. Medido: /casa 0,115 →
+  0; /salario 0,023 → 0; /irs 0,049 → 0; /dados 0,064 → 0.
+- **Copy (PROPOSTA):** «A inflação está em {x} e a Euribor a 12
+  meses em {y} — a taxa a que os bancos emprestam dinheiro entre
+  si. Cada número com fonte e data.»
+

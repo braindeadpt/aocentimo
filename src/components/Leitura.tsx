@@ -16,7 +16,8 @@ import { regioesEntre } from "@/lib/viz/entre";
  * (breadcrumb + «leitura {período}» + selo no cabeçalho; insight serifado,
  * valor mono a contar e gráfico no corpo; fonte/página/JSON no rodapé).
  *
- * O gráfico é uma frase, não um eixo: linha principal em --accent,
+ * O gráfico é uma frase, não um eixo: linha principal em tinta —
+ * --accent só quando a série É dinheiro que sai do bolso (prop sai),
  * referência a cinzento (série real ou linha de mediana tracejada),
  * a área entre as duas hachurada — acento por cima, keep por baixo —
  * valores nos extremos, UMA anotação com chamada tracejada, três
@@ -89,6 +90,9 @@ export interface LeituraProps {
   rotulos: RotulosLeitura;
   /** variante em largura total — o Leitura-herói do painel */
   amplo?: boolean;
+  /** a série É dinheiro que sai do bolso (imposto, prestação) — só
+      então a linha principal veste --accent (4B-01) */
+  sai?: boolean;
   /** índice do cartão no grupo (0, 1, 2…) — a coreografia de entrada
       desliza `entrada × --stagger`: cartões que entram juntos na dobra
       desenham-se em sequência, nunca um bloco de uma vez (1B-04) */
@@ -135,6 +139,7 @@ export function Leitura({
   hrefJson,
   rotulos,
   amplo = false,
+  sai = false,
   entrada,
 }: LeituraProps) {
   const F = FORMATOS[formato];
@@ -401,7 +406,7 @@ export function Leitura({
     <Cartao
       ref={ref}
       amplo={amplo}
-      className={arm("leitura-on")}
+      className={arm("leitura-on") + (sai ? " leitura-sai" : "")}
       style={
         entrada === undefined
           ? undefined
@@ -553,12 +558,13 @@ export function Leitura({
               />
             )}
 
-            {/* a linha principal — a cor de sinal do cartão */}
+            {/* a linha principal — tinta; vermilhão só se a série
+                for dinheiro que sai (prop sai → .leitura-sai) */}
             <path
               className="lq-line"
               d={dLinha}
               fill="none"
-              stroke="var(--l-accent)"
+              stroke="var(--l-serie)"
               strokeWidth={2}
               strokeLinejoin="round"
               pathLength={1}
@@ -605,7 +611,7 @@ export function Leitura({
                   y={ay - 3}
                   width={6}
                   height={6}
-                  fill="var(--l-accent)"
+                  fill="var(--l-serie)"
                 />
                 <line
                   x1={ax}

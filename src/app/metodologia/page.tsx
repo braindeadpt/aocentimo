@@ -134,7 +134,7 @@ export default function MetodologiaPage() {
           {FONTES_FIXAS.map((f) => (
             <div key={f.nome} className="py-4 grid md:grid-cols-[260px_1fr] gap-2">
               <p className="font-medium text-ink text-corpo-sm">
-                <a href={f.url} className="hover:text-accent underline decoration-line2 underline-offset-2">
+                <a href={f.url} className="hover:text-ink hover:decoration-mark underline decoration-line2 underline-offset-2">
                   {f.nome}
                 </a>
               </p>

@@ -33,7 +33,7 @@
 
   --up: #b03016;
   --down: #1f6b4d;
-  --warn: #a3720a;
+  --warn: #8a5f08;
 
   /* rampa sequencial — um só matiz (azul-aço ~215°), longe do vermilhão
      (~15°) e do verde (~160°): famílias ordinais (Euribor por prazo,
@@ -479,8 +479,8 @@ body::before {
    referência  = /estilo e molduras de sistema (max-w-6xl) */
 
 ::selection {
-  background: var(--accent);
-  color: var(--floor);
+  background: var(--mark);
+  color: var(--talao-ink);
 }
 
 /* foco visível em torrado — o amarelo tem função, não é decoração */
@@ -1435,7 +1435,7 @@ h3 {
   border-color: var(--line2);
 }
 .jovem-passo:focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-mark);
   outline-offset: 2px;
 }
 .jovem-passo-ativo {
@@ -1943,7 +1943,7 @@ h3 {
   left: 0;
   top: 28.5px;
   height: 3px;
-  background: var(--accent);
+  background: var(--mark);
 }
 /* o polegar é só posição (left transita em mudanças discretas); o
    corpo visível — a peça que encaixa — vive dentro e leva o ressalto:
@@ -1960,7 +1960,7 @@ h3 {
 .regua-polegar-corpo {
   position: absolute;
   inset: 0;
-  background: var(--accent);
+  background: var(--mark);
   border: 1px solid var(--ink);
   border-radius: var(--raio-pormenor);
 }
@@ -2182,8 +2182,8 @@ h3 {
   text-underline-offset: 2px;
 }
 .ev-link:hover {
-  color: var(--accent);
-  text-decoration-color: var(--accent);
+  color: var(--ink);
+  text-decoration-color: var(--mark);
 }
 .ev-regra {
   margin-top: 0.35rem;
@@ -2596,6 +2596,10 @@ h3 {
   --l-accent: var(--accent);
   --l-keep: var(--keep);
   --l-mark: var(--mark);
+  /* a linha principal é tinta — «dinheiro que sai» é a excepção, não
+     a regra: o cartão declara .leitura-sai e a série pinta-se de
+     vermilhão. Segue --l-ink/--l-accent, que já invertem no papel. */
+  --l-serie: var(--l-ink);
   background: var(--l-bg);
   color: var(--l-ink);
   border: 1px solid var(--l-line);
@@ -2648,6 +2652,9 @@ h3 {
     --l-keep: var(--papel-fica-tinta);
     --l-mark: #7a5c10;
   }
+}
+.leitura-sai {
+  --l-serie: var(--l-accent);
 }
 
 .leitura-head {
@@ -2749,8 +2756,8 @@ h3 {
   text-underline-offset: 2px;
 }
 .lq-link:hover {
-  color: var(--l-accent);
-  text-decoration-color: var(--l-accent);
+  color: var(--l-ink);
+  text-decoration-color: var(--l-mark);
 }
 
 /* texto dentro do svg — mono, a mesma voz dos rótulos do sistema */
@@ -2981,8 +2988,8 @@ h3 {
     text-decoration-color var(--dur-micro) var(--ease-entra);
 }
 .pg-seguinte-lnk:hover {
-  color: var(--accent);
-  text-decoration-color: var(--accent);
+  color: var(--ink);
+  text-decoration-color: var(--mark);
 }
 
 /* ————— isométrico de traço — a explosão do catálogo V4 (§5; núcleo
@@ -3532,43 +3539,6 @@ h3 {
     transform: none;
   }
 }
-/* capítulos — hover inverte a linha inteira, como um instrumento
-   que acende ao toque */
-.chapter-row {
-  position: relative;
-  isolation: isolate;
-}
-.chapter-row::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: var(--ink);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--dur-curta) var(--ease-entra);
-}
-@media (hover: hover) and (pointer: fine) {
-  .chapter-row:hover::after {
-    transform: scaleX(1);
-  }
-  .chapter-row:hover {
-    color: var(--floor);
-  }
-  .chapter-row:hover .chapter-dim {
-    color: var(--floor);
-    opacity: 0.7;
-  }
-  .chapter-row:hover .chapter-arrow {
-    transform: translateX(0.35rem);
-    color: var(--accent);
-  }
-}
-.chapter-arrow {
-  transition: transform var(--dur-curta) var(--ease-entra),
-    color var(--dur-micro) var(--ease-entra);
-}
-
 /* ————— campo de cêntimos — <CampoCentimos> (V4, S1-04) —————
    O palco é uma zona de medição (pontos de fundo, família .blueprint);
    o svg de SSR cobre tudo até ao primeiro frame do canvas — sem salto

@@ -195,8 +195,8 @@
   text-underline-offset: 2px;
 }
 .hm-fonte a:hover {
-  color: var(--accent);
-  text-decoration-color: var(--accent);
+  color: var(--ink);
+  text-decoration-color: var(--mark);
 }
 .hm-nota {
   font-family: var(--font-mono);
