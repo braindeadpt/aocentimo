@@ -125,7 +125,7 @@ export function EscolhePergunta({
         })();
 
   // «O país» — os estados reais do painel sobre as seis leituras
-  // escolhidas; série desconhecida cai honestamente em «sem SLA»
+  // escolhidas; série desconhecida cai honestamente em «sem prazo»
   const orbes = s.pais.orbes.map((o) => {
     const estado = estados[o.id] ?? "sem-sla";
     return { ...o, estado, estadoRotulo: s.pais.estados[estado] };

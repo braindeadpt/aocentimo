@@ -8,7 +8,7 @@ import { m } from "@/lib/messages";
  * valor herói + sparkline + timestamp. Substitui as três variantes
  * soltas (home, /dados, mini-células). O selo de frescura aparece duas
  * vezes por construção — no rótulo e no marcador final da spark — e a
- * palavra "atrasada"/"sem SLA" sai no rodapé quando o estado não é limpo.
+ * palavra "atrasada"/"sem prazo" sai no rodapé quando o estado não é limpo.
  */
 export function descricaoSpark(
   rotulo: string,

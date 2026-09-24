@@ -275,7 +275,7 @@ function TalaoRecibo() {
                   className={talaoArm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
                   style={{ "--linha": prox() } as React.CSSProperties}
                 >
-                  <dt className="talao-dim">SEG. SOCIAL 11%</dt>
+                  <dt className="talao-dim">SEG. SOCIAL 11 %</dt>
                   <dd>
                     {fmtEUR(recibo.ss)} −
                     <span className={"talao-retido " + talaoArm("talao-carimbo-anim")} aria-hidden>Retido</span>

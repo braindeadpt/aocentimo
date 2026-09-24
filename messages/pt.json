@@ -53,7 +53,7 @@
     "ultimo": "último",
     "doCusto": "do custo",
     "atrasada": "atrasada",
-    "semSla": "sem SLA definido",
+    "semSla": "sem prazo definido",
     "sparkDesc": "{rotulo}: últimos {n} pontos entre {min} e {max}; último {ult}",
     "eventosAria": "Eventos marcados no gráfico — cada um abre a fonte oficial"
   },
@@ -94,7 +94,7 @@
       "h1b": "por mês contigo.",
       "h1q": "De cada euro, quantos cêntimos te chegam?",
       "migalhaTitulo": "O teu euro",
-      "migalhaCusto": "1 € de custo do trabalho",
+      "migalhaCusto": "1 € de custo do trabalho",
       "migalhaBruto": "bruto {bruto}",
       "estadoRotulo": "Regras {ano} · em dia",
       "palpiteRotulo": "O teu palpite",
@@ -296,7 +296,7 @@
     "jsonAria": "copiar o endereço do JSON",
     "emDia": "em dia",
     "atrasada": "atrasada",
-    "semSla": "sem SLA",
+    "semSla": "sem prazo",
     "pico": "pico {periodo} · {valor}",
     "minimo": "mínimo {periodo} · {valor}",
     "aria": "{insight} — série de {de} a {ate}, último {valor}",
@@ -364,16 +364,8 @@
   },
   "guess": {
     "kicker": "adivinha primeiro",
-    "pergunta": "De cada 1,00 € que a empresa paga por ti, quantos cêntimos achas que te chegam?",
-    "inputLabel": "a tua aposta, em cêntimos",
     "botao": "revelar",
-    "disseste": "disseste {aposta}",
-    "realidade": "a realidade",
-    "estadoFica": "o Estado fica com os outros {valor} — cada degrau abaixo é um corte",
-    "certeiro": "quase certeiro — raro",
-    "perto": "perto",
-    "longe": "longe — a maioria erra para cima",
-    "centimos": "cêntimos"
+    "realidade": "a realidade"
   },
   "salario": {
     "naoRetido": "Não retido",

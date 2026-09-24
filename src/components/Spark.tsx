@@ -104,7 +104,7 @@ export function Spark({
             .join(" ")}
         />
         {/* último ponto — marcador de evidência; a cor é o selo de
-            frescura (torrado em dia, warn atrasada, oco sem SLA) */}
+            frescura (torrado em dia, warn atrasada, oco sem prazo) */}
         <rect
           x={x(cauda.length - 1) - 2}
           y={y(ultimo.v) - 2}

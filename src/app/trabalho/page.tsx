@@ -28,7 +28,7 @@ import { ExploraTrabalho } from "./ExploraTrabalho";
 export const metadata: Metadata = {
   title: "Subsídio de desemprego — quanto e por quanto tempo",
   description:
-    "Simulador do subsídio de desemprego em Portugal: 65% da remuneração de referência, limites do IAS, duração por idade e descontos.",
+    "Simulador do subsídio de desemprego em Portugal: 65 % da remuneração de referência, limites do IAS, duração por idade e descontos.",
   alternates: { canonical: "/trabalho", types: ALT_FEED },
 };
 

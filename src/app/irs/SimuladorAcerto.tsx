@@ -126,7 +126,7 @@ export function SimuladorAcerto({ ano }: { ano: number }) {
                       className={notaArm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
                       style={{ "--linha": prox() } as React.CSSProperties}
                     >
-                      <dt className="talao-dim">PPR · 20% DAS ENTREGAS</dt>
+                      <dt className="talao-dim">PPR · 20 % DAS ENTREGAS</dt>
                       <dd>−{fmtEUR(r.deducaoPpr)}</dd>
                     </div>
                   )}

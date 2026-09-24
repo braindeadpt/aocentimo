@@ -84,7 +84,7 @@ export default function MetodologiaPage() {
   const frescura = loadFreshness();
   const porId = new Map(frescura?.series.map((s) => [s.id, s]) ?? []);
 
-  // mural por urgência: atrasada → no limite → em dia → sem SLA → sem dados
+  // mural por urgência: atrasada → no limite → em dia → sem prazo → sem dados
   const celulas = fontes
     .map((f) => {
       const s = porId.get(f.id);
@@ -104,7 +104,7 @@ export default function MetodologiaPage() {
         : s.estado === "atrasada"
           ? `−${comUnidade(String(s.atrasoPeriodos), s.atrasoPeriodos === 1 ? unS : unP)}`
           : s.estado === "sem-sla"
-            ? "sem SLA"
+            ? "sem prazo"
             : folga === 0
               ? "no limite"
               : `+${comUnidade(String(folga), folga === 1 ? unS : unP)}`;
@@ -116,7 +116,7 @@ export default function MetodologiaPage() {
   const nLimite = celulas.filter((c) => c.classe === "no-limite").length;
   const nAtrasadas = celulas.filter((c) => c.classe === "atrasada").length;
   const nSemSla = celulas.filter((c) => c.classe === "sem-sla").length;
-  const resumo = `${celulas.length} séries · ${celulas.length - nLimite - nAtrasadas - nSemSla} com folga · ${nLimite} no limite · ${nAtrasadas} atrasadas${nSemSla ? ` · ${nSemSla} sem SLA` : ""}`;
+  const resumo = `${celulas.length} séries · ${celulas.length - nLimite - nAtrasadas - nSemSla} com folga · ${nLimite} no limite · ${nAtrasadas} atrasadas${nSemSla ? ` · ${nSemSla} sem prazo` : ""}`;
 
   return (
     <div className="mx-auto max-w-5xl px-5 pt-14">
@@ -162,7 +162,7 @@ export default function MetodologiaPage() {
               <OrbeEstado estado="no-limite" tamanho={14} /> em dia,
               no limite ·{" "}
               <OrbeEstado estado="atrasada" tamanho={14} /> atrasada
-              · <OrbeEstado estado="sem-sla" tamanho={14} /> sem SLA
+              · <OrbeEstado estado="sem-sla" tamanho={14} /> sem prazo
             </p>
             <p className="num text-corpo-sm text-ink2 mb-2">
               {resumo}
