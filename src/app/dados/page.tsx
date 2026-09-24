@@ -111,7 +111,7 @@ export default function DadosPage() {
   const eur12 = ultimo(euribor["12M"]);
   const fraseResposta =
     inflVar !== null && eur12
-      ? `A inflação está em ${fmtPct(inflVar, 1)} e a Euribor de um ano em ${comUnidade(fmtNum(eur12.v, 2), "%")} — cada número com fonte e data.`
+      ? `A inflação está em ${fmtPct(inflVar, 1)} e a Euribor a 12 meses em ${comUnidade(fmtNum(eur12.v, 2), "%")} — a taxa a que os bancos emprestam dinheiro entre si. Cada número com fonte e data.`
       : "Os números do país, direto das fontes oficiais — cada um com a sua data e o selo de frescura.";
 
   // ————— o ano fiscal em anel (catálogo: ciclos = pontos) —————

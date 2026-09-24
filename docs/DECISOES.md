@@ -639,3 +639,26 @@ anual — o número do contrato — e nunca o rendimento coletável.
   existência = coletável). Nível 3 e glossário mantêm o termo.
 - Copy nova assinalada como PROPOSTA em NOTAS-V4.md.
 
+
+## 2026-09-24 — Sessão 4B: CLS de /casa e frase da Euribor (4B-03)
+
+**Decidido pelo dono:** CLS de /casa abaixo de 0,1; frase da Euribor
+do /dados passa a «a Euribor a 12 meses — a taxa a que os bancos
+emprestam dinheiro entre si».
+
+- **Diagnóstico medido (corrige o previsto):** o CLS 0,115 não vinha
+  da escritura nem da hidratação — com os woff2 bloqueados o CLS é 0.
+  A causa é o `font-display: swap`: a troca tardia de fonte
+  reembrulhava a frase serifada (Source Serif + números em Space
+  Mono) ~500 ms após o paint — os nós de texto moviam-se dentro da
+  mesma caixa, o que o CLS conta na mesma. Reservar altura não
+  impedia esse reflow interno.
+- **Correcção:** `display: "optional"` nas quatro fontes do
+  `layout.tsx`. As fontes são pré-carregadas e chegam dentro da
+  janela curta do optional; quando não chegam fica o fallback
+  métrico — nunca há troca tardia nem reflow. Medido: /casa 0,115 →
+  0; /salario 0,023 → 0; /irs 0,049 → 0; /dados 0,064 → 0.
+- **Copy (PROPOSTA):** «A inflação está em {x} e a Euribor a 12
+  meses em {y} — a taxa a que os bancos emprestam dinheiro entre
+  si. Cada número com fonte e data.»
+

@@ -1304,10 +1304,21 @@ Worktrees de teste removidos.
    - Limpo: `.chapter-*` morto (capítulos saíram na S2-04).
    - Guarda: `nav.spec.ts` falha se a nav computar `--accent`.
 2. **`/casa` CLS 0,115** — APROVADO: reservar a altura da escritura no
-   SSR (4B-03a).
+   SSR (4B-03a). **Diagnóstico corrigido na medição:** o shift não é
+   da escritura nem da hidratação — com os `woff2` bloqueados o CLS é
+   0; a causa é a troca de fonte (`font-display: swap`) que
+   reembrulha a frase serifada (`.pg-frase`, Source Serif + Space
+   Mono nos números) ~500 ms depois do paint. Reservar altura não
+   impede o reflow interno do texto. Correcção aplicada:
+   `display: "optional"` nas quatro fontes do `layout.tsx` — a fonte
+   pré-carregada chega na janela curta ou fica o fallback métrico
+   (next/font gera-o com `size-adjust`); nunca há troca tardia → sem
+   reflow. Medido: 0,115 → 0 nas corridas que antes falhavam.
 3. **`/dados` «a Euribor de um ano»** — APROVADO: «a Euribor a 12
    meses — a taxa a que os bancos emprestam dinheiro entre si»
-   (4B-03b, PROPOSTA de copy).
+   (4B-03b, PROPOSTA de copy). **Implementado:** «A inflação está em
+   {x} e a Euribor a 12 meses em {y} — a taxa a que os bancos
+   emprestam dinheiro entre si. Cada número com fonte e data.»
 4. **`/irs` «coletáveis»** — APROVADO com correcção do dono: nível 1
    parte do **bruto anual** («Com {bruto} brutos por ano, pagas {IRS}
    de IRS»); «rendimento coletável» desce ao nível 2 com explicação e
