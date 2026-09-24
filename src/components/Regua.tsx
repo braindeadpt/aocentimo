@@ -212,7 +212,9 @@ export function Regua({
     const out: { p: number; f: boolean }[] = [];
     const eps = Math.abs(fino) * 1e-4;
     const ini = Math.ceil((min - eps) / fino) * fino;
-    const n = Math.min(400, Math.round((max - ini) / fino));
+    // floor, não round: nenhum traço pode cair para lá do máximo (um
+    // alcance que não é múltiplo do passo punha um traço fora da pista)
+    const n = Math.min(400, Math.floor((max - ini) / fino + 1e-6));
     for (let i = 0; i <= n; i++) {
       const v = ini + i * fino;
       out.push({

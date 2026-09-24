@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+/* Uma .grid sem colunas definidas (p. ex. «grid md:grid-cols-2» no
+   telemóvel) criava uma coluna implícita `auto`, que cresce até ao
+   conteúdo mais largo em vez de encolher até ao ecrã — transbordava a
+   375 px. A coluna base passa a minmax(0, 1fr); qualquer grid-cols-*
+   (camada utilities) sobrepõe-se a esta regra (camada base). */
+@layer base {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* ————— Direcção «Observatório» — painel de instrumentos, dois temas —————
    As cores vivem em variáveis CSS que trocam com [data-theme]; os tokens
    Tailwind apontam para elas via @theme inline. Acento vermilhão-sinal;
@@ -877,6 +888,8 @@ html[data-theme="dark"] .tema-ponto {
    o seleccionado é a pílula cheia de tinta dentro do trilho */
 .segmentado {
   display: inline-flex;
+  flex-wrap: wrap; /* rede de segurança: nunca transborda o ecrã */
+  max-width: 100%;
   align-items: stretch;
   gap: 2px;
   padding: 2px;
@@ -889,11 +902,14 @@ html[data-theme="dark"] .tema-ponto {
   display: inline-flex;
   align-items: center;
   min-height: 34px;
-  padding: 0.3rem 0.85rem;
+  /* o espaço lateral encolhe com o ecrã — três opções cabem numa linha
+     a 375 px mesmo com a fonte de reserva (display: optional) */
+  padding: 0.3rem clamp(0.45rem, 2.3vw, 0.85rem);
   border: 0;
   border-radius: var(--raio-controlo);
   background: transparent;
   color: var(--ink2);
+  white-space: nowrap;
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   font-size: var(--text-kicker);
@@ -1925,6 +1941,7 @@ h3 {
   bottom: 16px;
   width: 1px;
   height: 9px;
+  margin-left: -0.5px; /* centrado na posição — o traço dos 100 % não sai da pista */
   background: var(--line2);
 }
 .regua-tq-f {
