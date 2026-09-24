@@ -1230,3 +1230,73 @@ Worktrees de teste removidos.
 
 **Uso.** Cada sessão paralela define `PORTA` (o brief sugere 3102–3106)
 -se como antes (3100, reutiliza servidor existente).
+
+---
+
+## S4 — Fecho (2026-09-23, main)
+
+### Consistência verificada (S4-03)
+
+- **Três níveis em todas as rotas de conteúdo** — `Pagina` com
+  `resposta`/`explora`/`confirma` em `/salario` `/irs` `/trabalho`
+  `/impostos` `/precos` `/inflacao` `/credito` `/casa` `/poupanca`
+  `/dados` `/aprender` `/aprender/[slug]` (`/metodologia` e `/sobre`
+  são meta-páginas, por desenho).
+- **Percurso contínuo sem becos nem ciclos**: salário → IRS → trabalho
+  → impostos → preços → inflação → crédito → casa → poupança → dados →
+  aprender → metodologia (o `[slug]` encadeia no termo seguinte ou na
+  metodologia).
+- **Bruto canónico único**: home e `/salario` leem o mesmo
+  `data/derived/cenarios-salario.json` — 1 500 € dá os mesmos números
+  nos dois sítios por construção.
+- **Zero** «Módulo NN», «Fig. N», brasileirismos (`usuário`, `você`,
+  `portfólio`) — grep limpo.
+- **Gráficos adjacentes**: a regra de vizinhança está codificada
+  (`validarVizinhanca`, teste unitário sobre a config real).
+
+### Aplicado
+
+- «sem SLA» → «sem prazo» em todo o site (`chart.semSla`,
+  `leitura.semSla`, `/metodologia`, `/estilo`); id `sem-sla` interno
+  mantido.
+- Espaço fino U+202F nos `%` e `€` que faltavam (`/salario`,
+  `SimuladorAcerto`, meta de `/trabalho`, `/estilo`, migalha do herói).
+- `data-assentou` público no `CampoCentimos`; o herói deixou de
+  depender de `.cc-rot.on`.
+- `Adivinha`, `Kinetic`, `EuroExplodido` removidos (teste de tons
+  migrado para `Isometrico`); `.kin-*` e chaves `guess` órfãs limpas.
+- Armadilha de foco da `nav-sheet` endurecida (Tab com foco fora da
+  folha volta ao primeiro elemento).
+- Teste do canvas determinista (hash denso + frames de rAF contados
+  em vez de 450 ms de relógio).
+
+### Medições (S4, `_sweep` + `_js-por-rota` — contra a 1B-04)
+
+- JS inicial **480–611 KB** · total **593–690 KB** (antes: 479–583 /
+  546–620). A home traz agora o motor de pontos no inicial (593 KB).
+- LCP **196–856 ms** (antes ~0,5–1,6 s); CLS ≤ **0,115**.
+- AA: 0 falhas nos dois temas; overflow: 0 a 768/1440 (39 rotas);
+  mega-audit: 0 falhas, 0 avisos.
+
+### Questões para o dono
+
+1. **`--accent` fora do dinheiro que sai** — a leitura estrita de
+   «vermelhão só no que sai» colide com três usos herdados do V3:
+   (a) linha principal do `Leitura` («cor de sinal», regra V3-2);
+   (b) estado activo/hover da nav e `hover:text-accent` dos links;
+   (c) selo «próximo» em `/dados` e a banda da `Regua`. Proposta:
+   chrome (nav/links/selo) passa a `--mark`; a linha principal fica
+   `--ink` nas séries que não são dinheiro, `accent` só quando a série
+   é dinheiro que sai. Aprovar ou manter?
+2. **`/casa` CLS 0,115** — acima do limiar 0,1; a escritura desloca um
+   bloco ao hidratar. Vale uma iteração de estabilização?
+3. **`/dados` «a Euribor de um ano»** — a frase do nível 1 assume o
+   termo; alternativa mais literal: «a taxa a que os bancos emprestam
+   entre si a 12 meses». (PROPOSTA — o copy final é do dono.)
+4. **`/irs` «coletáveis»** — «com X coletáveis» é jargão fiscal no
+   nível 1. Alternativa: «com um rendimento de X por ano». (PROPOSTA.)
+
+### Trabalho por fazer
+
+- Nenhum funcional. Os pontos pendentes são decisões editoriais do
+  dono (acima) e a revisão de copy assinalada nas notas das sessões.

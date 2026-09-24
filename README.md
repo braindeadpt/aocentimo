@@ -2,25 +2,37 @@
 
 **Seguimos o teu dinheiro ao cêntimo.**
 
-Site gratuito e open source de literacia financeira para Portugal: seguimos 1 €
-do salário bruto até ao fim do mês e mostramos quem fica com o quê — Estado,
-banco, seguradora, supermercado. Cada número mostra a fonte e a data; quando
-uma fonte falha, mostramos a falha — nunca um número inventado.
+Site gratuito e open source de literacia financeira para Portugal. A unidade
+do site é física: **1 ponto = 1 cêntimo** — partes de um todo em dinheiro
+desenham-se em pontos contáveis que voam para o monte de quem os leva;
+estruturas (o que compõe algo) desenham-se em isométrico de traço fino;
+séries temporais são linhas anotadas com um facto. A forma é sempre do dado,
+nunca decorativa.
+
+Cada página de conteúdo responde a uma pergunta em **três níveis**: 1 · a
+resposta (um instrumento e uma frase que um leitor de 12 anos entende),
+2 · Explora (os controlos para mexer nos números reais), 3 · Confirma
+(tabelas, legislação e fontes em `<details>`). A navegação organiza-se por
+quatro perguntas — O que ganhas · O que pagas · O banco · O país — mais
+`/aprender`, o glossário com mini-instrumentos por termo.
+
+Cada número mostra a fonte e a data; quando uma fonte falha, mostramos a
+falha — nunca um número inventado. Read-only, sem contas, sem tracking, e
+não é aconselhamento financeiro.
 
 🔗 **https://aocentimo.pt** (via GitHub Pages)
 
 ## O que tem
 
-- **Painel vivo na home** — grelha de leituras oficiais (inflação, Euribor,
-  combustíveis, desemprego, habitação, PIB…), cada uma expansível para a
-  série completa; mais o storytelling «o teu euro» (1 € bruto cortado à
-  fatia, com números do motor fiscal)
-- **Páginas temáticas de dados** — `/inflacao` (12 divisões ECOICOP),
-  `/precos` (calendário diário de combustíveis), `/emprego`, `/habitacao`,
-  `/economia`, e `/dados` (catálogo de 52 séries com filtros e export JSON)
+- **Home V4** — a moeda de 1 € que se desfaz nos seus 100 cêntimos (o teu
+  palpite contra a realidade do motor fiscal), o painel «Hoje em Portugal»
+  com leituras oficiais e as quatro portas com prévias vivas
+- **Páginas de conteúdo** — `/salario` `/irs` `/trabalho` `/impostos`
+  `/precos` `/inflacao` `/credito` `/casa` `/poupanca` `/dados`, cada uma
+  nos três níveis e ligada à pergunta seguinte
 - **Simuladores** — salário líquido (recibo físico), IRS anual e IRS Jovem,
-  retenção na fonte, crédito habitação (TAN/TAEG/MTIC), compra de casa
-  (IMT+IS), subsídio de desemprego, poupança e juros compostos
+  crédito habitação (TAN/TAEG/MTIC), compra de casa (IMT+IS), subsídio de
+  desemprego, poupança e juros compostos
 - **Dados oficiais ao dia** — Eurostat (IHPC, desemprego, HPI, LCI, PIB,
   confiança, electricidade), BPstat (Euribor, TAEG), DGEG (combustíveis),
   tabelas fiscais versionadas (AT, IGCP), tetos de usura, calendário fiscal
@@ -49,12 +61,15 @@ npm run test:unit      # vitest
 npm run build          # export estático → out/
 npm run test:e2e       # playwright serve o out/ (como o Pages)
 npm run serve:out      # serve o out/ em http://localhost:3100
-npm run audit          # mega-audit + overflow + AA (precisa de :3100)
+npm run audit          # mega-audit + overflow + AA + lettering (precisa de :3100)
 npm run ingest:daily   # recolha diária (BPstat, DGEG)
 npm run ingest:monthly # Eurostat IHPC mensal
 npm run derive         # data/derived + public/api + feed.xml
 npm run validate:data  # gate de frescura das fontes
 ```
+
+Em sessões paralelas cada worktree define `PORTA` (3102+) — o servidor
+estático, o Playwright e os scripts de auditoria seguem-na.
 
 ## Aviso
 

@@ -204,7 +204,7 @@ de construídos.
 | **Barra de traços** | contagem, limite, duração — «1 traço = x» com a unidade escrita no cartão | dinheiro contínuo; proporções de um todo | `BarraTracos` (S1-05 — congelado) |
 | **Recipientes** | escalões e bandas que enchem por ordem | série temporal; parte-todo fora de escalões | `EscaloesEnchem` (`/irs`) |
 | **Papel** | documentos oficiais: recibo, talão, escritura, caderneta, nota de liquidação | chrome do instrumento; decoração; qualquer peça que troque de cor com o tema | `PecaPapel`, `Papel` |
-| **Isométrico de traço** | **estrutura** — o que compõe algo, em camadas com linha de chamada | **nunca quantidade** — nenhuma prop de valor dimensiona camadas | `Isometrico` + `EuroExplodido` (S1-05 — congelado) |
+| **Isométrico de traço** | **estrutura** — o que compõe algo, em camadas com linha de chamada | **nunca quantidade** — nenhuma prop de valor dimensiona camadas | `Isometrico` (S1-05 — congelado; o molde `EuroExplodido` saiu na S4, sem uso) |
 | **Anel de pontos** | ciclos (ex.: os 12 meses), número ao centro | progressão linear; parte-todo | `AnelPontos` (S1-05 — congelado) |
 | **Régua** | todo o input numérico (traços de unidade, marcador «agora», presets) | como saída/leitura — é controlo, não visualização | `Regua` |
 
@@ -408,7 +408,7 @@ Três contratos, uma peça:
   número (string ou apresentador `TweenNum`/`Odometer`) + unidade em
   `.num-unit` (~45 % do tamanho, mesma linha de base, tinta atenuada —
   elemento próprio, não nota de rodapé). `NumHero`, `Leitura`, o hero
-  de `/salario`, `Adivinha` e as demos da `/estilo` compõem por ele;
+  de `/salario` e as demos da `/estilo` compõem por ele;
   ninguém concatena `" €"`/`" %"` à mão. No sr-only, o `texto` do
   apresentador leva o número e a unidade visível completa o anúncio.
 
@@ -607,7 +607,7 @@ resposta ao input.
 carregar; o valor final está no HTML do servidor. Animação ambiente só
 no herói da home: pausa fora do ecrã e com o separador escondido, e
 desliga-se em `prefers-reduced-motion`. Abaixo da dobra, a entrada é
-armada por JS (`useArmado`/`Kinetic`/`Spark`/`LineChart` seguem esta
+armada por JS (`useArmado`/`Spark`/`LineChart` seguem esta
 regra). Nenhum estado de carregamento decorativo — não existem spinners
 nem esqueletos; o SSR traz sempre o valor final.
 
@@ -693,10 +693,9 @@ contínua só corre onde se vê e com o separador activo:
 | `Ticker` — faixa de dados, todas | marquee contínuo | ambiente | loop · `lin` | `amb-off` (IO+hidden), hover/focus; RM corta | acima |
 | Voo da pergunta (`pg-voo`) — `Pagina`→`h1` | morph assinatura | clique no `LinkVoo` | `--dur-media` · `entra`/`sai` | RM corta | abaixo→acima |
 | `nav-sheet` — nav mobile | sobe ao abrir | abrir folha | `--dur-curta` · `entra` | RM corta | acima |
-| `Kinetic` — h1 da home | lettering | — | estático ao carregar | RM — | acima |
-| `Leitura` herói — home | spark desenha + número conta | armada (`useArmado`) | `--dur-media` + `--ei×--stagger` | RM estado final | abaixo |
-| `Adivinha` — home | revelação do palpite | interacção | `--dur-media` | RM estado final | abaixo |
-| `EuroExplodido` — home | partes convergem ao 1 € | armada | `--dur-media` + stagger | RM estado final | abaixo |
+| `CampoCentimos` — herói da home | moeda oscila em repouso; revelação palpite→montes | ambiente + interacção | rAF · coreografia `COREO` | rAF corta (IO+hidden); RM 1 frame; `data-pronto`/`data-assentou` públicos | **acima** — a única ambiente acima da dobra |
+| `EscolhePergunta` — portas da home | inversão para papel + prévia viva | hover/focus | CSS puro | RM instantâneo | abaixo |
+| `Leitura` ×N — painel «Hoje em Portugal» | spark+odómetro por cartão, em sequência | armada | `--ei×--stagger` | RM estado final | abaixo |
 | `NumHero` — `/salario` `/irs` `/impostos` `/poupanca` `/credito` `/casa` `/trabalho` | número interpola | input/estado | `--dur-curta` | RM valor final | acima |
 | `CampoCentimos` — `/salario` `/trabalho` `/impostos` `/poupanca` | pontos nascem em montes | armada + input | `--dur-media` | rAF pausa fora do ecrã; RM estado final | abaixo |
 | `TweenNum` — `/salario` `/credito` | leituras interpolam | estado | `--dur-curta` | RM valor final | ambas |
@@ -809,13 +808,13 @@ build && test:e2e`.
 
 | Componente | Uso | Contrato |
 |---|---|---|
-| `LineChart`/`Spark`/`Kinetic` | séries temporais | svg `aria-hidden` + equivalente (tabela sr-only); animam só abaixo da dobra ou em interacção |
+| `LineChart`/`Spark` | séries temporais | svg `aria-hidden` + equivalente (tabela sr-only); animam só abaixo da dobra ou em interacção |
 | `Cartao` | anatomia Ledger de qualquer cartão | cabeçalho/corpo/controlos/rodapé; selo de estado sempre com texto; inversão para papel |
 | `OrbeEstado` | selo de frescura — a forma diz o estado | disco cheio/anel oco/esburacado/anel em rotação; SVG aria-hidden + texto ao lado; rotação pára fora do ecrã |
 | `Icone`/`IconeEmblema` | símbolos — páginas, acções, estado | conjunto fechado 20×20, traço 1,5; `aria-hidden` por omissão; acções sempre em controlo nomeado; desenham-se uma vez ao foco/passo |
 | `Pagina`/`PaginaDetalhe` | template de três níveis das rotas de conteúdo | níveis = `section aria-labelledby`; confirma em `<details>` fechado |
 | `Leitura` | cartão Ledger de leitura | insight escrito, anotação com chamada, fonte+estado no rodapé |
-| `EuroBar`/`JuroCapital`/`EuroExplodido`/`CampoCentimos`/`Isometrico` | comparações e decomposições | equivalente textual único; SSR no estado final |
+| `EuroBar`/`JuroCapital`/`CampoCentimos`/`Isometrico` | comparações e decomposições | equivalente textual único; SSR no estado final; `CampoCentimos` expõe `data-pronto` (entrega SSR→canvas) e `data-assentou` (montes assentados) |
 | `PecaPapel`/`Papel` | documentos | paleta fixa de papel; rasgo determinista |
 | `Regua` | input numérico | range nativo único (teclado/AT); traços + marcador «agora» + presets `Chip`; snap à grelha com ressalto contido |
 | `Botao` | acção/ligação | 4 variantes (primário·secundário·terciário·ícone); `aria-disabled`+razão no nome; `aCarregar` = mini-orbe + `aria-busy` |
@@ -858,13 +857,16 @@ rotas e intercepta os pedidos.
   leve) é ~100 % framework (react-dom 196 KB + flight/router/
   segment-cache); código nosso no shared é residual (SiteNav + os
   clientes do layout: `PausaAmbiente`, `VooLimpeza` — 1B-04). Rotas:
-  **479–583 KB inicial, 546–620 KB total** (medido 1B-04). O alvo
-  450 KB é impossível neste stack — o que controlámos (`pt.json`,
-  `data/*.json`, instrumentos) já saiu.
+  **480–611 KB inicial, 593–690 KB total** (medido S4, 2026-09-23 —
+  sob face à 1B-04: o herói da home traz o `CampoCentimos`/motor de
+  pontos no inicial, 593 KB, e o `sim` de `/salario` continua lazy).
+  O alvo 450 KB é impossível neste stack — o que controlámos
+  (`pt.json`, `data/*.json`, instrumentos) já saiu.
   O `CampoCentimos` e o motor de pontos têm tecto próprio de ~15 KB
   gzip por rota (orçamento V4, medido com `_js-por-rota`).
-- LCP medido no sweep local: ~0,5–1,6 s; CLS ≤ 0,09; AA 0 falhas nos
-  dois temas.
+- LCP medido no sweep local: 196–856 ms; CLS ≤ 0,115 (a `/casa` é o
+  pior caso — a escritura desloca um bloco ao hidratar; registado em
+  NOTAS-V4 para revisão); AA 0 falhas nos dois temas.
 - OG images ≤ 53 KB; fontes latin+swap, só as 4 famílias usadas.
 
 ## 11. Referência viva

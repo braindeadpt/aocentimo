@@ -564,3 +564,38 @@ Cobertura: `Controlos.test.tsx` (11 unitários) + `e2e/controlos.spec.ts`
    (autor único) — nada se reescreve.
 6. **`public/brand/logo.svg` e `public/brand/mark.svg` apagados** —
    confirmado que nada os referencia; ficam no histórico do git.
+
+## 2026-09-23 — Sessão 4: fecho — decisões de consolidação
+
+**Aplicado (decisões do dono da revisão de copy, generalizadas ao site):**
+
+1. **«sem SLA» → «sem prazo» em todo o site** — `chart.semSla`,
+   `leitura.semSla`, o mural da `/metodologia` (legenda, folga e
+   resumo) e a legenda do orbe em `/estilo`. O id de estado
+   `sem-sla` e a chave `semSla` ficam — são vocabulário interno,
+   não copy.
+2. **Percentagens com espaço fino (U+202F) onde faltava** — talão de
+   `/salario` («SEG. SOCIAL 11 %»), `SimuladorAcerto` («PPR · 20 %»),
+   meta descrição de `/trabalho`, nota de zoom em `/estilo` e a migalha
+   do herói («1 € de custo…»).
+3. **Componentes sem uso removidos** — `Adivinha`, `Kinetic`,
+   `EuroExplodido` (S2) saíram; `Cascata`/`CustoExplodido` (3A) já
+   tinham saído na integração. O teste de tons do isométrico aponta
+   agora ao `Isometrico` directo; `.kin-*` saiu do `globals.css`;
+   `m.guess` ficou só com as chaves que o herói usa.
+4. **`CampoCentimos` ganha `data-assentou`** — sinal público no
+   `.cc-palco` (pedido da sessão 2): liga quando os rótulos acendem
+   (fim da coreografia; imediato em reduced-motion). O herói deixou
+   de espreitar `.cc-rot.on`.
+5. **Armadilha de foco da `nav-sheet` endurecida** — Tab com o foco
+   fora da folha (p.ex. a meio da hidratação) volta ao primeiro
+   elemento; antes só o sumário e o último item eram interceptados.
+
+**Registado como questão aberta (não aplicado — identidade visual):**
+
+- `--accent` fora do dinheiro que sai: linha principal do `Leitura`
+  («a cor de sinal do cartão», convenção V3-2), estado activo/hover da
+  nav e dos links, a banda preenchida da `Regua`, o selo «próximo» em
+  `/dados`. A leitura estrita de «vermelhão só no que sai» (§Cor)
+  pediria `--mark` ou tinta nesses sítios — proposta em NOTAS-V4.md,
+  o dono decide.

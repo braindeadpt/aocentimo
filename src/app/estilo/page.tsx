@@ -1279,6 +1279,7 @@ export default function EstiloPage() {
             "Usa-se para partes de um todo em dinheiro — salário, impostos, o preço de um litro. Nunca para estrutura (isso é o isométrico) nem séries temporais.",
             "A parte que fica contigo é a última da lista — fica à direita e em verde; o que sai é vermelhão; neutro é cinzento.",
             "Sem JS ou com reduced-motion o estado final está servido — abaixo, os mesmos montes como o SSR os entrega.",
+            "Sinais públicos no palco: data-pronto marca a entrega SSR→canvas («imed» acima da dobra, «suave» abaixo); data-assentou marca o fim da coreografia — é nele que os pais se penduram, nunca nas classes internas.",
           ].map((r) => (
             <li key={r} className="footnote">
               <span aria-hidden className="mr-1.5 inline-block h-1.5 w-1.5 bg-mark align-middle" />
@@ -1597,7 +1598,7 @@ export default function EstiloPage() {
                 ["no-limite", "em dia, no limite"],
                 ["a-recolher", "a recolher"],
                 ["atrasada", "atrasada"],
-                ["sem-sla", "sem SLA"],
+                ["sem-sla", "sem prazo"],
               ] as const
             ).map(([est, rotulo]) => (
               <li key={est} className="flex items-center gap-2">
@@ -1823,7 +1824,7 @@ export default function EstiloPage() {
             <div className="h-10 w-full talao-face" aria-hidden />
             <p className="footnote mt-2">
               A peça de papel tem face, fibra, espessura e sombra que a
-              acompanha — vê a fita em /salario a 400%.
+              acompanha — vê a fita em /salario a 400 %.
             </p>
           </div>
           <div className="border border-line px-4 py-3">
