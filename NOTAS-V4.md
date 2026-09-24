@@ -1311,7 +1311,18 @@ Worktrees de teste removidos.
 4. **`/irs` «coletáveis»** — APROVADO com correcção do dono: nível 1
    parte do **bruto anual** («Com {bruto} brutos por ano, pagas {IRS}
    de IRS»); «rendimento coletável» desce ao nível 2 com explicação e
-   exemplo (4B-02, PROPOSTA).
+   exemplo (4B-02, PROPOSTA). **Copy implementada (PROPOSTA — revisão
+   do dono):**
+   - régua: «Salário bruto anual» · descrição «O bruto de todos os
+     meses somado — o número do contrato. Antes dos escalões, o motor
+     tira a dedução específica e o mínimo de existência.»
+   - frase: «…com {bruto} brutos por ano pagas {coleta} de IRS, não
+     {mito}.»
+   - caixa do desmentido: «Contam para o IRS, depois das deduções» =
+     {coletável} — o termo não é nomeado no nível 1.
+   - nível 2: cartão novo «RENDIMENTO COLETÁVEL» com a conversão do
+     canónico em números: bruto − dedução específica − mínimo de
+     existência = rendimento coletável.
 
 ### Trabalho por fazer
 

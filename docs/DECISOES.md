@@ -622,3 +622,20 @@ Cobertura: `Controlos.test.tsx` (11 unitários) + `e2e/controlos.spec.ts`
 - **Limpo:** `.chapter-*` (capítulos saíram da home na S2-04).
 - **Guarda:** `e2e/nav.spec.ts` falha se algum elemento da nav
   computar a cor do `--accent`.
+
+## 2026-09-24 — Sessão 4B: /irs nível 1 em bruto anual (4B-02)
+
+**Decidido pelo dono:** a régua do nível 1 mede o salário bruto
+anual — o número do contrato — e nunca o rendimento coletável.
+
+- `ProvedorIrs` guarda `bruto`; o motor converte-o em coletável
+  (`simularSalario`, 14 meses, um titular) antes dos escalões — as
+  regras fiscais continuam todas no motor e nos JSON.
+- Nível 1: régua «Salário bruto anual», frase «com {bruto} brutos
+  por ano pagas {coleta} de IRS», caixa do desmentido com «Contam
+  para o IRS, depois das deduções» = coletável — sem nomear o termo.
+- Nível 2: cartão novo «RENDIMENTO COLETÁVEL» com a conversão do
+  canónico em números (bruto − dedução específica − mínimo de
+  existência = coletável). Nível 3 e glossário mantêm o termo.
+- Copy nova assinalada como PROPOSTA em NOTAS-V4.md.
+

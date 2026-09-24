@@ -88,6 +88,25 @@ test.describe("3A — os três níveis e a resposta", () => {
   }
 });
 
+test("4B-02 — /irs nível 1 fala em bruto; «rendimento coletável» vive no nível 2", async ({
+  page,
+}) => {
+  await page.goto("/irs");
+  const niveis = page.locator(".pg-nivel");
+  const nivel1 = niveis.first();
+
+  // a régua mede o número da pessoa, não o do fisco
+  await expect(nivel1.getByLabel("Salário bruto anual")).toBeAttached();
+  await expect(nivel1).toContainText(/brutos por ano/i);
+  // nenhum «coletável» no nível 1 — nem como substantivo solto
+  await expect(nivel1).not.toContainText(/coletáv/i);
+
+  // o termo fica no nível 2, com o exemplo numérico do canónico
+  const nivel2 = niveis.nth(1);
+  await expect(nivel2).toContainText(/rendimento coletável/i);
+  await expect(nivel2).toContainText(/\d{2}\s?\d{3}\s*€/);
+});
+
 test.describe("3A — a resposta sem JS", () => {
   test.use({ javaScriptEnabled: false });
 
