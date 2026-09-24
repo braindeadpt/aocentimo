@@ -599,3 +599,26 @@ Cobertura: `Controlos.test.tsx` (11 unitários) + `e2e/controlos.spec.ts`
   `/dados`. A leitura estrita de «vermelhão só no que sai» (§Cor)
   pediria `--mark` ou tinta nesses sítios — proposta em NOTAS-V4.md,
   o dono decide.
+
+## 2026-09-24 — Sessão 4B: vermelhão só no dinheiro que sai (4B-01)
+
+**Decidido pelo dono:** `--accent` sai de todo o chrome — a regra
+«vermelhão-sinal = dinheiro que sai do bolso» passa a ser absoluta.
+
+- **Chrome → `mark`/`ink`:** indicador e estado activo da nav (tinta +
+  barra/sublinhado ocre), hovers de links (tinta + sublinhado
+  `decoration-mark`), `::selection` (fundo `mark` + tinta do talão),
+  banda e polegar da `Regua`, selo «próximo» e barras de teto em
+  `/dados`, foco do `.jovem-passo`. O ocre falha AA em texto pequeno
+  (3,5:1) → a regra nesses sítios é **tinta + sublinhado `mark`**.
+- **`Leitura`:** a linha principal passa a `--l-ink` (var nova
+  `--l-serie`); só veste `--l-accent` quando a série É dinheiro que
+  sai — prop `sai` → classe `.leitura-sai`. Nenhum cartão actual é
+  «sai» (taxas/preços/índices, não fluxos que saem do bolso); o
+  mecanismo fica pronto. `.lq-link:hover` → tinta + `l-mark`.
+- **Fica:** `--accent` nos pontos/camadas «sai» (CampoCentimos,
+  Isometrico, portas, talões), na hachura «acima da referência» do
+  Leitura (direcção do gap = sai/fica) e nas demos do `/estilo`.
+- **Limpo:** `.chapter-*` (capítulos saíram da home na S2-04).
+- **Guarda:** `e2e/nav.spec.ts` falha se algum elemento da nav
+  computar a cor do `--accent`.

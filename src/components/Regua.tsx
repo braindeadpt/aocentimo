@@ -14,7 +14,7 @@ import { Chip } from "@/components/Chip";
 /**
  * Regua — a régua física de input da Direcção V3 §5: substitui o
  * `<input type=range>` com cara de instrumento. Traços de unidade
- * (fino/forte agregados ao passo), faixa preenchida em --accent do
+ * (fino/forte agregados ao passo), faixa preenchida em --mark do
  * mínimo ao polegar, polegar = rectângulo cheio 14×26 com grip, valor
  * grande em mono tabular colado acima do polegar e a segui-lo,
  * marcador «agora» fixo e presets em pills.

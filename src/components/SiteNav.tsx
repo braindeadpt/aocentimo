@@ -141,7 +141,7 @@ export function SiteNav() {
     <ViewTransition name="nav-ind" share="auto" default="none">
       <span
         aria-hidden
-        className="absolute inset-x-0 -bottom-1 h-[2px] bg-accent"
+        className="absolute inset-x-0 -bottom-1 h-[2px] bg-mark"
       />
     </ViewTransition>
   );
@@ -179,8 +179,8 @@ export function SiteNav() {
               aria-expanded={aberto === g.id}
               className={`kicker relative cursor-pointer whitespace-nowrap transition-colors ${
                 grupoAtivo(g.itens)
-                  ? "text-accent"
-                  : "text-ink2 hover:text-accent"
+                  ? "text-ink"
+                  : "text-ink2 hover:text-ink"
               }`}
             >
               {g.rotulo}
@@ -194,7 +194,9 @@ export function SiteNav() {
                     href={href}
                     aria-current={ativo(href) ? "page" : undefined}
                     className={`border-b border-line px-4 py-2.5 text-corpo-sm last:border-0 hover:bg-floor ${
-                      ativo(href) ? "text-accent" : "text-ink2"
+                      ativo(href)
+                        ? "text-ink underline decoration-mark underline-offset-4"
+                        : "text-ink2"
                     }`}
                   >
                     {m.nav[key]}
@@ -208,7 +210,7 @@ export function SiteNav() {
           href="/aprender"
           aria-current={ativo("/aprender") ? "page" : undefined}
           className={`kicker relative whitespace-nowrap transition-colors ${
-            ativo("/aprender") ? "text-accent" : "text-ink2 hover:text-accent"
+            ativo("/aprender") ? "text-ink" : "text-ink2 hover:text-ink"
           }`}
         >
           {m.nav.aprender}
@@ -234,7 +236,7 @@ export function SiteNav() {
               <p className="kicker">{m.nav.index}</p>
               <button
                 type="button"
-                className="kicker-xs cursor-pointer text-ink2 underline decoration-line2 underline-offset-4 hover:text-accent"
+                className="kicker-xs cursor-pointer text-ink2 underline decoration-line2 underline-offset-4 hover:text-ink hover:decoration-mark"
                 onClick={() => detalhes.current?.removeAttribute("open")}
               >
                 {m.nav.fechar}
@@ -250,7 +252,9 @@ export function SiteNav() {
                       href={href}
                       aria-current={ativo(href) ? "page" : undefined}
                       className={`py-2 text-corpo-sm ${
-                        ativo(href) ? "text-accent" : "text-ink2"
+                        ativo(href)
+                          ? "text-ink underline decoration-mark underline-offset-4"
+                          : "text-ink2"
                       }`}
                     >
                       {m.nav[key]}
@@ -264,7 +268,9 @@ export function SiteNav() {
                 href="/aprender"
                 aria-current={ativo("/aprender") ? "page" : undefined}
                 className={`block py-2 text-corpo ${
-                  ativo("/aprender") ? "text-accent" : "text-ink"
+                  ativo("/aprender")
+                    ? "text-ink underline decoration-mark underline-offset-4"
+                    : "text-ink"
                 }`}
               >
                 {m.nav.aprender}

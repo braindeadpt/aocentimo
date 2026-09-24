@@ -447,7 +447,7 @@ export default function DadosPage() {
                             aria-label={`Mercado a ${fmtPct(p.v / cap, 0)} do teto legal`}
                           >
                             <span
-                              className="absolute inset-y-0 left-0 bg-accent"
+                              className="absolute inset-y-0 left-0 bg-mark"
                               style={{ width: `${Math.min(100, (p.v / cap) * 100)}%` }}
                             />
                             <span className="absolute inset-y-0 right-0 w-px bg-ink" />
@@ -502,7 +502,7 @@ export default function DadosPage() {
                                   aria-label={`Mercado a ${fmtPct(p.v / cap, 0)} do teto legal`}
                                 >
                                   <span
-                                    className="absolute inset-y-0 left-0 bg-accent"
+                                    className="absolute inset-y-0 left-0 bg-mark"
                                     style={{ width: `${Math.min(100, (p.v / cap) * 100)}%` }}
                                   />
                                   <span className="absolute inset-y-0 right-0 w-px bg-ink" />
@@ -596,7 +596,7 @@ export default function DadosPage() {
                           passou
                             ? "border border-line2"
                             : proximo
-                              ? "bg-accent"
+                              ? "bg-mark"
                               : "bg-ink"
                         }`}
                       />
@@ -607,7 +607,7 @@ export default function DadosPage() {
                         <p className="font-medium text-corpo-sm">
                           {p.titulo}
                           {proximo && (
-                            <span className="kicker-xs ml-2 text-accent">próximo</span>
+                            <span className="kicker-xs ml-2 text-ink underline decoration-mark underline-offset-4">próximo</span>
                           )}
                         </p>
                         <p className="text-corpo-sm text-ink2 mt-0.5">{p.descricao}</p>

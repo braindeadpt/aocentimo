@@ -251,6 +251,14 @@ Regra V4: **bruto e custo total são neutros** — nem `accent` nem `keep`.
 Nunca três cores semânticas no mesmo cartão (regra V3-2). Nos montes de
 pontos: sai = `accent`, fica = `keep`, neutro = cinzento.
 
+Regra 4B-01 (decisão do dono, 24.09.2026): **o vermelhão só existe no
+dinheiro que sai** — nada de `accent` no chrome. Nav (activo, hover),
+hovers de links, `::selection`, banda e polegar da `Regua`, selo
+«próximo» e barras de referência são `mark`/`ink`. O ocre falha AA em
+texto pequeno (3,5:1): aí a regra é **tinta + sublinhado `mark`**.
+No `Leitura` a linha principal é `--l-ink`; só veste `--l-accent`
+quando a série É dinheiro que sai (`sai` → `.leitura-sai`).
+
 ### Marca — o logótipo em contornos (decisão do dono, 22.09.2026)
 
 O logótipo são os **contornos reais da Archivo** (instância wdth 125 ·

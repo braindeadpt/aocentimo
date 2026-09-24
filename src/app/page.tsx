@@ -133,7 +133,7 @@ export default function Home() {
       <section className="stack-cap grid gap-6 border-t-2 border-ink pt-8 pb-8 md:grid-cols-12">
         <p className="font-display text-display-md leading-tight tracking-manchete-xl text-ink md:col-span-5">
           {h.manifesto1} {h.manifesto2}{" "}
-          <span className="text-accent">{h.manifesto3}</span>
+          <span className="text-mark">{h.manifesto3}</span>
         </p>
         <div className="md:col-span-7 md:border-l md:border-line md:pl-8">
           <p className="lede">{h.manifestoLede}</p>
