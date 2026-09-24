@@ -165,7 +165,9 @@ test("o canvas do CampoCentimos pára fora do ecrã e com o separador escondido"
   await page.waitForTimeout(700);
 
   // amostra de pixels por getImageData — locator.screenshot() faria
-  // scroll para o elemento e estragava o teste «fora do ecrã»
+  // scroll para o elemento e estragava o teste «fora do ecrã».
+  // Hash denso: cada 4.º pixel, os 4 canais — a moeda cobre centenas
+  // de amostras, qualquer oscilação muda o hash.
   const amostra = () =>
     page.evaluate(() => {
       const c = document.querySelector<HTMLCanvasElement>(
@@ -176,12 +178,25 @@ test("o canvas do CampoCentimos pára fora do ecrã e com o separador escondido"
         .getContext("2d")!
         .getImageData(0, 0, c.width, c.height).data;
       let h = 0;
-      for (let i = 0; i < d.length; i += 4096) h = (h * 31 + d[i]) >>> 0;
+      for (let i = 0; i < d.length; i += 16)
+        h = (h * 31 + d[i] + (d[i + 1] << 8) + (d[i + 2] << 16)) >>> 0;
       return h;
     });
-  const mudou = async (espera = 450) => {
+  // espera N frames de rAF contados, não milissegundos — o rAF da
+  // página continua a disparar mesmo com o canvas em pausa ou com o
+  // document.hidden forjado, por isso a espera resolve sempre
+  const mudou = async (frames = 45) => {
     const a = await amostra();
-    await page.waitForTimeout(espera);
+    await page.evaluate(
+      (n) =>
+        new Promise<void>((res) => {
+          let i = 0;
+          const tick = () =>
+            ++i >= n ? res() : requestAnimationFrame(tick);
+          requestAnimationFrame(tick);
+        }),
+      frames
+    );
     return (await amostra()) !== a;
   };
 

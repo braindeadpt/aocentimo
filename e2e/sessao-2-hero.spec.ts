@@ -123,9 +123,10 @@ test("o veredicto só aparece depois de os montes assentarem", async ({
   const hero = page.locator(HERO);
   const legenda = hero.locator(".cc-legenda");
 
-  // a entrega SSR→canvas acontece — data-pronto marca o primeiro frame
-  // da tela (não os montes: é por isso que o veredicto não se lhe liga)
-  await expect(hero.locator(".cc-palco")).toHaveAttribute("data-pronto", "");
+  // a entrega SSR→canvas acontece — acima da dobra é imediata (M-02):
+  // data-pronto="imed" marca o primeiro frame da tela (não os montes:
+  // é por isso que o veredicto não se lhe liga)
+  await expect(hero.locator(".cc-palco")).toHaveAttribute("data-pronto", "imed");
 
   await page.getByRole("button", { name: /^revelar$/i }).click();
 

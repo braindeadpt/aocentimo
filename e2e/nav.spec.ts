@@ -112,6 +112,19 @@ test.describe("mobile @375", () => {
   test("o foco fica preso na folha enquanto aberta", async ({ page }) => {
     await page.goto("/");
     await page.locator("summary", { hasText: "Índice" }).click();
+    // a armadilha de foco é JS — ao abrir, o primeiro elemento da folha
+    // recebe foco; esperar por isso garante que a hidratação já ligou
+    // os listeners antes de começar a teclar
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () =>
+            document
+              .querySelector(".nav-sheet")
+              ?.contains(document.activeElement) ?? false
+        )
+      )
+      .toBe(true);
     // Tab a partir do fim volta ao princípio — nunca sai da folha
     for (let i = 0; i < 30; i++) await page.keyboard.press("Tab");
     const dentro = await page.evaluate(

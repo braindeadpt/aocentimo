@@ -31,11 +31,11 @@ await p.waitForTimeout(2600);
 
 // moeda → montes: a coreografia completa (pára, desfaz-se, pausa,
 // acende cores, voos escalonados, rótulos)
-await p.getByRole("button", { name: "Montes" }).click();
+await p.getByRole("radio", { name: "Montes" }).click();
 await p.waitForTimeout(7000);
 
 // montes → moeda: fechar de novo
-await p.getByRole("button", { name: "Moeda" }).click();
+await p.getByRole("radio", { name: "Moeda" }).click();
 await p.waitForTimeout(3200);
 
 await p.close();

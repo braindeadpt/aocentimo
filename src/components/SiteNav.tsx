@@ -105,7 +105,8 @@ export function SiteNav() {
       const primeiro = foc[0];
       const ultimo = foc[foc.length - 1];
       const activo = document.activeElement;
-      if (!e.shiftKey && activo === sumario) {
+      if (!e.shiftKey && (activo === sumario || !nav.contains(activo))) {
+        // foco no sumário ou perdido fora da folha → volta ao primeiro
         primeiro.focus();
         e.preventDefault();
       } else if (e.shiftKey && (activo === primeiro || !nav.contains(activo))) {
