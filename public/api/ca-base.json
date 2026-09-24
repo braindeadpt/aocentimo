@@ -3,11 +3,11 @@
     "id": "ca-serie-f-taxa-base",
     "fonte": "IGCP (oficial) + BPstat Euribor 3M (indicativa)",
     "url": "https://www.igcp.pt/pt/aforristas/produtos-de-aforro/certificados-de-aforro",
-    "nota": "Oficial = média da Euribor 3M nos 10 dias úteis, cap 2,50 %. Indicativa usa a média mensal — pode diferir dias dentro do mês.",
+    "nota": "Oficial = média da Euribor 3M nos 10 dias úteis, cap 2,50 %. Indicativa usa a média mensal — pode diferir dias dentro do mês.",
     "oficialPct": 2.5,
     "vigenciaOficial": "2026-09-01",
     "serieAte": "2026-08",
-    "recolhidoEm": "2026-09-23T00:45:13.905Z"
+    "recolhidoEm": "2026-09-24T00:22:59.723Z"
   },
   "series": [
     {

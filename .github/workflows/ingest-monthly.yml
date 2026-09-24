@@ -29,7 +29,7 @@ jobs:
         run: |
           git config user.name "bruto-bot"
           git config user.email "bot@bruto.local"
-          git add data/
+          git add data/ public/api/
           git diff --staged --quiet || git commit -m "data: ingest mensal $(date +%Y-%m)"
           git pull --rebase origin main
           git push
