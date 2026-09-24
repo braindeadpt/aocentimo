@@ -1,7 +1,7 @@
 {
   "nome": "AO CÊNTIMO — dados abertos",
   "descricao": "Séries estáticas geradas a partir de fontes oficiais (Eurostat, BPstat, DGEG, IGCP, AT). Atualizadas a cada build.",
-  "geradoEm": "2026-09-24T01:32:38.164Z",
+  "geradoEm": "2026-09-24T11:23:22.413Z",
   "endpoints": [
     {
       "path": "/api/euribor-12m-mensal.json",

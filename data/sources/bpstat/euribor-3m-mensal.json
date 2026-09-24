@@ -5,7 +5,7 @@
     "dataset": "serie 13168436 (Mercado monetário)",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168436&lang=PT",
     "unidade": "percentagem_media_mensal",
-    "recolhidoEm": "2026-09-24T01:32:33.713Z",
+    "recolhidoEm": "2026-09-24T11:23:18.214Z",
     "serieAte": "2026-08"
   },
   "series": [
