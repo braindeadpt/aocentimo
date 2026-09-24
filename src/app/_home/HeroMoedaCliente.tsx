@@ -12,11 +12,11 @@
  *               lado do valor real e o veredicto entra na legenda do
  *               palco QUANDO os montes assentam (nunca antes)
  *
- * «Montes assentaram» detecta-se por MutationObserver: o CampoCentimos
- * liga `.cc-rot.on` quando a coreografia termina (em reduced-motion é
- * imediato — `saltarPara`). O `data-pronto` do palco NÃO serve para
- * isto: marca a entrega SSR→canvas no primeiro frame, não os montes
- * (pedido registado para um `onAssentou` público).
+ * «Montes assentaram» lê-se no `data-assentou` do `.cc-palco` — sinal
+ * público do CampoCentimos desde a S4 (pedido da sessão 2 resolvido):
+ * liga quando a coreografia termina (em reduced-motion é imediato —
+ * `saltarPara`). O `data-pronto` NÃO serve para isto: marca a entrega
+ * SSR→canvas no primeiro frame, não os montes.
  *
  * A régua do bruto anda na grelha canónica (103 pontos exactos, S1-09)
  * — `setDados` do campo reorganiza os pontos ao vivo; ao salário
@@ -239,22 +239,17 @@ export function HeroMoedaCliente({
   const partes = useMemo(() => partesDaLinha(linha, s), [linha, s]);
   const real = linha.centimos.fica;
 
-  // «os montes assentaram» = os rótulos do campo acenderam
-  // (.cc-rot.on — a fase final da coreografia; em reduced-motion o
-  // componente salta directo e acende-os no mesmo gesto). O observador
-  // também escuta data-pronto — é o sinal da entrega SSR→canvas —
-  // mas a porta do veredicto são os rótulos, não o primeiro frame.
+  // «os montes assentaram» = o palco ganha data-assentou — sinal
+  // público do CampoCentimos (S4, pedido da sessão 2): liga quando
+  // a coreografia termina, em reduced-motion no mesmo gesto do salto
+  // directo. O data-pronto NÃO serve — marca a entrega SSR→canvas
+  // no primeiro frame, não os montes.
   useEffect(() => {
-    const raiz = raizRef.current;
-    if (!raiz) return;
-    const sync = () =>
-      setAssentou(raiz.querySelector(".cc-rot.on") !== null);
+    const palco = raizRef.current?.querySelector(".cc-palco");
+    if (!palco) return;
+    const sync = () => setAssentou(palco.hasAttribute("data-assentou"));
     const mo = new MutationObserver(sync);
-    mo.observe(raiz, {
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["class", "data-pronto"],
-    });
+    mo.observe(palco, { attributes: true, attributeFilter: ["data-assentou"] });
     sync();
     return () => mo.disconnect();
   }, []);

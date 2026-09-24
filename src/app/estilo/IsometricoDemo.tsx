@@ -4,7 +4,7 @@
  * IsometricoDemo — o exemplo vivo do isométrico em /estilo. O corpo do
  * componente é o Isometrico partilhado; este invólucro dá-lhe a peça
  * de papel (.leitura-amplo → --l-*) e arma a entrada abaixo da dobra —
- * o mesmo molde de EuroExplodido/CustoExplodido.
+ * o molde do extinto EuroExplodido (removido na S4 — sem uso).
  *
  * A mensalidade do crédito à habitação decompõe-se nas suas peças —
  * estrutura, sem medida: nenhuma camada codifica quantidade (a API nem

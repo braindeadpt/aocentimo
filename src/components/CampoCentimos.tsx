@@ -356,6 +356,7 @@ export function CampoCentimos({
         className="cc-palco"
         aria-hidden="true"
         data-pronto={pronto || undefined}
+        data-assentou={rotulosOn || undefined}
       >
         <svg className="cc-svg" aria-hidden="true" focusable="false">
           {layout === "moeda" && <SvgMoeda />}

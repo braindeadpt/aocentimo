@@ -446,7 +446,7 @@ export function cartoesHome(): CartaoPainel[] {
   //   haltere (pontos, S): «antes ● — ○ agora» é exactamente o que
   //   uma variação a 30 dias é (dois pontos no tempo, uma categoria).
   //   O preço herói fica no Odometer do corpo; a estrutura do litro
-  //   (IVA/ISP/carbono) já é contada pelo EuroExplodido na mesma
+  //   (IVA/ISP/carbono) já era contada pelo EuroExplodido na mesma
   //   página — repeti-la aqui era redundância —————
   const gas = pSerie("pmd-gasoleo-diario");
   const gasFonte = loadFonte("dgeg", "pmd-gasoleo-diario");

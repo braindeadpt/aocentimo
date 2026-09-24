@@ -300,7 +300,7 @@ test("a home V4 tem a ordem herói → painel → portas → faixa", async ({
   page,
 }) => {
   // S2-04: a explosão do euro, a adivinha antiga, os capítulos e as
-  // ferramentas saíram da home — o EuroExplodido continua testado em
+  // ferramentas saíram da home — o Isometrico continua testado em
   // Isometrico.test.tsx (componente vivo no /estilo). Aqui fica o
   // contrato de ordem da página nova e a hierarquia de headings.
   await page.goto("/");

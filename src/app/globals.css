@@ -3532,30 +3532,6 @@ h3 {
     transform: none;
   }
 }
-/* kinetic type — palavras sobem de trás de uma máscara de linha */
-.kin-line {
-  display: inline-block;
-  overflow: hidden;
-  vertical-align: bottom;
-}
-.kin-word {
-  display: inline-block;
-}
-/* a animação só existe quando o JS a arma (elemento nascido abaixo da
-   dobra) — acima da dobra nada entra com fade ao carregar (M-09) */
-.kin-on .kin-word {
-  animation: kin-up var(--dur-media) var(--ease-entra) both;
-  animation-delay: calc((var(--i) + var(--ei, 0)) * var(--stagger));
-}
-@keyframes kin-up {
-  from {
-    transform: translateY(110%);
-  }
-  to {
-    transform: none;
-  }
-}
-
 /* capítulos — hover inverte a linha inteira, como um instrumento
    que acende ao toque */
 .chapter-row {

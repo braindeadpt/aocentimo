@@ -33,3 +33,13 @@ pedidos para a Sessão 4 (integração), sem urgência.
   número — o ficheiro de sessão só pedia «controlos físicos» para os
   inputs de /salario. Se o dono quiser o mesmo verniz no acerto (réguas/
   contadores), é trabalho novo — registo, não implementei.
+
+---
+
+## Decisão da Sessão 4 (2026-09-23)
+
+- **`Cascata.tsx` e `CustoExplodido.tsx`** — já tinham saído na limpeza
+  de órfãos da integração 3A–3D (`114895e`); confirmado sem imports e
+  sem CSS residual (`.casc-*`, `.decl-*` ausentes de `globals.css`).
+- **`SimuladorAcerto` com inputs `.field`** — fica como está; verniz de
+  controlos físicos no acerto é trabalho novo, não fecho.

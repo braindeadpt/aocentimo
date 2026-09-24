@@ -47,3 +47,19 @@ destino (apagar, mover para `/estilo`, manter):
 - `painel.isoGasoleo` — a decomposição isométrica do litro saiu do
   cartão de combustíveis da home (S2-02); o cartão é agora odómetro
   do dia + comparação a 30 dias.
+
+---
+
+## Decisão da Sessão 4 (2026-09-23)
+
+- **`CampoCentimos` — sinal público resolvido:** o `.cc-palco` expõe
+  agora `data-assentou` (liga quando `rotulosOn` — fim da coreografia;
+  imediato em reduced-motion e em `saltarPara`). O herói deixou de
+  observar `.cc-rot.on` e observa o atributo público.
+- **`Adivinha.tsx`, `Kinetic.tsx`, `EuroExplodido.tsx` — removidos**:
+  zero imports de produto. O teste de tons passou a apontar ao
+  `Isometrico` directo (`Isometrico.test.tsx`); as chaves `m.guess`
+  ficaram só com as que o herói usa (`kicker`, `botao`, `realidade`)
+  e o CSS `.kin-*` saiu do `globals.css`. `EuroExplodido` fica no
+  histórico do git se o molde «O TEU EURO» voltar.
+- **Tokens CSS:** nenhum pedido — confirmado, ficou tudo nos existentes.

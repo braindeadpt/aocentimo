@@ -1,61 +1,62 @@
 import { describe, it, expect } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
-import { EuroExplodido, type PassoEuro, type RotulosEuro } from "./EuroExplodido";
+import { Isometrico, type CamadaIsometrica } from "./Isometrico";
 
 // S1-02 defeito 3 — cor por tipo de peça: --accent é SÓ para o dinheiro
 // que sai do bolso (cortes); o que fica (líquido, «fica») é --keep;
 // o bruto e o custo da empresa são neutros. Regressão: o valor do
 // bruto e o «chega à conta» renderizavam em vermelho.
+// S4: o teste aponta ao Isometrico directo — o molde EuroExplodido
+// ficou sem uso de produto e saiu (git guarda-o).
 
-const rotulos: RotulosEuro = {
-  titulo: "O TEU EURO",
-  nota: "cenário",
-  breadcrumb: "O TEU DINHEIRO",
-  meta: "",
-  brutoRotulo: "Bruto",
-  brutoDetalhe: "o ponto de partida",
-  ficamTe: "ficam-te",
-  porMes: "por mês",
-  fontes: "Fontes",
-  simulador: "Simulador",
-};
-
-const passos: PassoEuro[] = [
+const camadas: CamadaIsometrica[] = [
+  {
+    id: "bruto",
+    forma: "moeda",
+    rotulo: "Bruto",
+    detalhe: "o ponto de partida",
+    tom: "neutro",
+    texto: "1 500 €",
+  },
   {
     id: "ss",
+    forma: "placa",
     rotulo: "Seg. Social",
-    detalhe: "11 %",
-    euros: 165,
-    corte: true,
-    fonteNome: "ss",
+    detalhe: "11 %",
+    tom: "corte",
+    texto: "−165 €",
+    textoLista: "−165 €",
   },
   {
     id: "irs",
+    forma: "placa",
     rotulo: "IRS",
     detalhe: "retenção",
-    euros: 168,
-    corte: true,
-    fonteNome: "irs",
+    tom: "corte",
+    texto: "−168 €",
+    textoLista: "−168 €",
   },
   {
     id: "liquido",
+    forma: "disco",
     rotulo: "Chega à conta",
     detalhe: "o líquido",
-    euros: 1167,
-    fonteNome: "motor",
+    tom: "fica",
+    texto: "1 167 €",
+    textoLista: "1 167 €",
   },
   {
     id: "fica",
+    forma: "base",
     rotulo: "Fica",
     detalhe: "depois de tudo",
-    euros: 1123,
-    fonteNome: "motor",
+    tom: "fica",
+    texto: "1 123 €",
+    textoLista: "1 123 €",
   },
 ];
 
-const html = renderToStaticMarkup(
-  <EuroExplodido passos={passos} rotulos={rotulos} bruto={1500} />
-);
+const html = renderToStaticMarkup(<Isometrico nome="euro" camadas={camadas} />);
 
 // cada rótulo de valor no svg tem o seu tom — emparelha-se pela ordem:
 // bruto, ss, irs, liquido, fica
@@ -66,7 +67,7 @@ const tonsLista = [
   ...html.matchAll(/iso-li-val iso-tom-(neutro|corte|fica)/g),
 ].map((m) => m[1]);
 
-describe("EuroExplodido — cor por tipo de peça", () => {
+describe("Isometrico — cor por tipo de peça", () => {
   it("o bruto é neutro — não sai nem fica", () => {
     expect(tonsSvg[0]).toBe("neutro");
   });
