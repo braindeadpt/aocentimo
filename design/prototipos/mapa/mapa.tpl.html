@@ -1,0 +1,403 @@
+<title>Bairro do Cêntimo · mapa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Caveat:wght@600;700&display=swap">
+<style>
+  :root {
+    --papel: #ffffff; --tinta: #16130f; --tinta-2: #4a4540; --suave: #6e675e; --linha: #e4e1da;
+    --amarelo: #ffc62b; --amarelo-2: #fff1c2; --azul: #2445d6; --azul-2: #dfe5ff; --verde: #0c8f5c; --verde-2: #d3f2e3; --vermelho: #e2412a; --vermelho-2: #ffe1d9;
+    --vidro: #9fd0ff; --fundo-mapa: #bfe3f7;
+    --display: "Archivo", "Arial Black", system-ui, sans-serif; --mao: "Caveat", "Comic Sans MS", cursive;
+    color-scheme: light;
+  }
+  .fim-tarde { --vidro: #ffd98a; --fundo-mapa: #ffd9b0; }
+  .noite { --vidro: #ffe066; --fundo-mapa: #1b2656; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--papel); color: var(--tinta); font-family: var(--display); font-size: 17px; line-height: 1.5; padding-inline: 20px; padding-block: 0; overflow-x: hidden; }
+  .largura { max-width: 1240px; margin-inline: auto; }
+  button { font-family: inherit; }
+  :focus-visible { outline: 3px solid var(--azul); outline-offset: 3px; border-radius: 8px; }
+  .aviso { font-size: 13px; font-weight: 600; color: var(--tinta-2); text-align: center; padding-block: 8px; margin-inline: -20px; background: var(--amarelo-2); border-bottom: 1px solid var(--linha); }
+  .cab { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; flex-wrap: wrap; }
+  .cab svg.logo { height: 28px; width: auto; display: block; }
+  .independente { font-size: 14px; font-weight: 700; border: 2.5px solid var(--tinta); border-radius: 999px; padding: 6px 14px; background: var(--verde-2); }
+  .independente b { color: var(--verde); }
+  .intro { display: flex; align-items: end; justify-content: space-between; gap: 8px 30px; flex-wrap: wrap; padding-block: 4px 16px; }
+  .intro h1 { margin: 0; font-weight: 880; font-stretch: 116%; font-size: clamp(30px, 4.4vw, 60px); line-height: .95; letter-spacing: -.015em; }
+  .intro h1 span { background: var(--amarelo); padding: 0 .12em; border-radius: 4px; }
+  .intro p { margin: 0; font-size: 18px; color: var(--tinta-2); max-width: 44ch; }
+
+  /* ——— o mapa ——— */
+  .palco { position: relative; margin-inline: -20px; border-block: 4px solid var(--tinta); background: var(--fundo-mapa); transition: background 1.2s; overflow: hidden; }
+  .janela-mapa { height: clamp(460px, 74vh, 760px); touch-action: none; cursor: grab; }
+  .janela-mapa.arrasto { cursor: grabbing; }
+  .janela-mapa svg { width: 100%; height: 100%; display: block; }
+  .vidro { fill: var(--vidro); transition: fill 1.2s; }
+  #noite { mix-blend-mode: multiply; transition: opacity 1.2s, fill 1.2s; opacity: 0; pointer-events: none; }
+  .noite #noite { opacity: .62; fill: #0e1a52; } .fim-tarde #noite { opacity: .22; fill: #ff8a3d; }
+  .luz { transition: opacity 1.2s; } .noite .luz { opacity: 1 !important; }
+  .ed { cursor: pointer; outline: none; }
+  .ed > * { transition: transform .25s cubic-bezier(.3,1.6,.5,1); }
+  .ed:hover > *, .ed:focus-visible > *, .ed.ativo > * { transform: translateY(-7px); }
+  .pin .pin-corpo { transition: transform .25s cubic-bezier(.3,1.6,.5,1); transform-box: fill-box; transform-origin: 50% 100%; }
+  .pin.on .pin-corpo { transform: scale(1.25); }
+  .roupa .peca { animation: vento 2.6s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 0%; } .roupa .p2 { animation-delay: -.8s; } .roupa .p3 { animation-delay: -1.6s; }
+  @keyframes vento { 0%, 100% { transform: rotate(-9deg); } 50% { transform: rotate(10deg); } }
+  .bandeira { animation: vento 2.2s ease-in-out infinite; } .bandeira:nth-child(odd) { animation-delay: -1.1s; }
+  .gato .cauda { animation: cauda 3s ease-in-out infinite; transform-box: fill-box; transform-origin: 0% 100%; }
+  @keyframes cauda { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-26deg); } }
+  .copa { transform-box: fill-box; transform-origin: 50% 50%; animation: copa 5s ease-in-out infinite; } .copa:nth-child(even) { animation-delay: -2.5s; }
+  @keyframes copa { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+
+  .controlos { position: absolute; right: 16px; top: 14px; display: flex; gap: 8px; z-index: 3; flex-wrap: wrap; justify-content: end; max-width: calc(100% - 32px); }
+  .ctl { border: 3px solid var(--tinta); background: var(--papel); border-radius: 999px; padding: 7px 13px; font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: 3px 4px 0 var(--tinta); min-height: 40px; }
+  .ctl[aria-pressed="true"] { background: var(--tinta); color: #fff; }
+  .zoom { position: absolute; right: 16px; bottom: 16px; display: grid; gap: 8px; z-index: 3; }
+  .zoom .ctl { width: 48px; height: 48px; padding: 0; font-size: 22px; }
+  .dica-mapa { position: absolute; left: 16px; bottom: 16px; z-index: 3; background: var(--papel); border: 3px solid var(--tinta); border-radius: 16px; padding: 8px 14px; font-weight: 700; font-size: 14px; box-shadow: 3px 4px 0 var(--tinta); }
+  .dica-mapa em { font-style: normal; font-family: var(--mao); font-size: 20px; color: var(--azul); }
+  @media (max-width: 700px) { .ctl { padding: 5px 9px; font-size: 12px; min-height: 34px; } .dica-mapa { display: none; } }
+
+  .cartao-ed { position: absolute; z-index: 4; pointer-events: none; background: var(--papel); border: 3px solid var(--tinta); border-radius: 18px; padding: 10px 14px; box-shadow: 4px 5px 0 var(--tinta); max-width: 260px; transform: translate(-50%, calc(-100% - 16px)); opacity: 0; transition: opacity .15s; }
+  .cartao-ed.on { opacity: 1; }
+  .cartao-ed b { display: block; font-size: 17px; font-weight: 850; }
+  .cartao-ed span { font-size: 14px; color: var(--tinta-2); line-height: 1.3; display: block; }
+  .cartao-ed em { font-style: normal; font-family: var(--mao); font-size: 20px; font-weight: 700; color: var(--azul); }
+
+  .painel { position: absolute; z-index: 5; left: 16px; top: 14px; width: min(560px, calc(100% - 32px)); background: var(--papel); border: 3.5px solid var(--tinta); border-radius: 24px; box-shadow: 6px 7px 0 var(--tinta); padding: 18px 20px 16px; display: grid; gap: 10px; }
+  .painel[hidden] { display: none; }
+  .painel .quem { font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--azul); padding-right: 30px; }
+  .painel .fala { font-weight: 700; font-size: clamp(18px, 1.9vw, 22px); line-height: 1.28; margin: 0; }
+  .painel .fala b { background: var(--amarelo); padding: 0 .12em; border-radius: 4px; }
+  .painel .fala .r { background: var(--vermelho-2); color: var(--vermelho); } .painel .fala .g { background: var(--verde-2); color: var(--verde); } .painel .fala .a { background: var(--azul-2); color: var(--azul); }
+  .painel .acoes { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .painel .fechar { position: absolute; top: 8px; right: 12px; border: 0; background: none; font-size: 24px; cursor: pointer; font-weight: 900; }
+  .painel .fonte { font-size: 12.5px; color: var(--suave); }
+  .btn { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; font-size: 16px; border: 3px solid var(--tinta); border-radius: 999px; padding: 10px 18px; min-height: 46px; cursor: pointer; background: var(--azul); color: #fff; box-shadow: 3px 4px 0 var(--tinta); text-decoration: none; transition: transform .15s cubic-bezier(.3,1.6,.5,1), box-shadow .15s; }
+  .btn:hover { transform: translate(-2px, -2px); box-shadow: 5px 6px 0 var(--tinta); }
+  .btn:active { transform: translate(2px, 3px); box-shadow: 1px 1px 0 var(--tinta); }
+  .btn.claro { background: var(--papel); color: var(--tinta); }
+  .palpite-linha { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: center; }
+  .palpite-linha output { font-weight: 900; font-size: 34px; font-variant-numeric: tabular-nums; min-width: 4.4ch; }
+  input[type=range] { width: 100%; accent-color: var(--azul); height: 32px; }
+  .contador { display: flex; gap: 8px; flex-wrap: wrap; }
+  .contador span { border: 2.5px solid var(--tinta); border-radius: 12px; padding: 4px 10px; font-weight: 800; font-size: 15px; font-variant-numeric: tabular-nums; }
+  @media (max-width: 700px) { .painel { padding: 12px 14px; gap: 6px; } .painel .fala { font-size: 17px; } .painel .fonte { display: none; } }
+
+  /* ——— personagens ——— */
+  .elenco { padding-block: 44px 20px; }
+  .etiqueta { display: inline-flex; font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; background: var(--tinta); color: var(--papel); border-radius: 999px; padding: 6px 12px; }
+  .elenco h2 { font-weight: 850; font-stretch: 115%; font-size: clamp(28px, 3.6vw, 46px); line-height: 1; margin: 14px 0 6px; max-width: 22ch; }
+  .elenco .lead { font-size: 18px; color: var(--tinta-2); margin: 0 0 22px; max-width: 60ch; }
+  .cartas { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; }
+  @media (max-width: 520px) { .cartas { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .carta { padding: 8px 10px 10px; } .carta svg { height: 96px; } .carta b { font-size: 16px; } .carta span.aprende { font-size: 13px; } }
+  .carta { border: 3px solid var(--tinta); border-radius: 22px; background: var(--papel); box-shadow: 4px 5px 0 var(--tinta); padding: 12px 14px 14px; cursor: pointer; text-align: left; display: grid; gap: 4px; align-content: start; transition: transform .18s cubic-bezier(.3,1.6,.5,1), box-shadow .18s; }
+  .carta:hover, .carta:focus-visible { transform: translate(-3px, -4px) rotate(-.8deg); box-shadow: 8px 10px 0 var(--tinta); }
+  .carta svg { width: 100%; height: 130px; display: block; overflow: visible; }
+  .carta .fundo-carta { border-radius: 14px; padding-top: 6px; }
+  .carta b { font-size: 19px; font-weight: 850; line-height: 1.1; margin-top: 6px; }
+  .carta .papel { font-size: 13px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+  .carta span.aprende { font-size: 14px; color: var(--tinta-2); line-height: 1.35; }
+  .notas { font-size: 13.5px; color: var(--suave); padding-block: 18px 40px; max-width: 90ch; }
+  .notas b { color: var(--tinta-2); }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+
+<div class="aviso">Protótipo V5 · O Bairro visto de cima · números reais de hoje · ainda não é o site publicado</div>
+<header class="cab largura">
+  __LOGO__
+  <span class="independente"><b>Independente e gratuito.</b> Aqui ninguém te quer vender nada.</span>
+</header>
+<div class="intro largura">
+  <h1>O dinheiro explicado <span>ao cêntimo.</span></h1>
+  <p>Este é o bairro. Cada edifício responde a uma pergunta sobre dinheiro — com os números de hoje. Toca num para entrar.</p>
+</div>
+
+<section class="palco" aria-label="Mapa do bairro">
+  <div class="janela-mapa" id="janela">
+    <svg id="mapa" role="img" aria-labelledby="descMapa"></svg>
+  </div>
+  <p class="sr" id="descMapa">Mapa ilustrado de um bairro português visto de cima: fábrica, Segurança Social, Finanças, banco, correios e bomba de gasolina na avenida do elétrico; mercearia, pastelaria, a casa da Inês, a praça com o quiosque e a escola na rua de baixo. Cada edifício tem por cima um número real de hoje.</p>
+  <div class="controlos" role="group" aria-label="Hora do dia">
+    <button class="ctl" type="button" data-hora="dia">Dia</button>
+    <button class="ctl" type="button" data-hora="tarde">Fim de tarde</button>
+    <button class="ctl" type="button" data-hora="noite">Noite</button>
+  </div>
+  <div class="zoom" role="group" aria-label="Zoom">
+    <button class="ctl" type="button" id="zMais" aria-label="Aproximar">+</button>
+    <button class="ctl" type="button" id="zMenos" aria-label="Afastar">−</button>
+    <button class="ctl" type="button" id="zTudo" aria-label="Ver o bairro todo">⤢</button>
+  </div>
+  <div class="dica-mapa">Arrasta para passear · roda para aproximar · <em>toca na Fábrica!</em></div>
+  <div class="cartao-ed" id="cartaoEd" aria-hidden="true"></div>
+  <div class="painel" id="painel" hidden role="dialog" aria-labelledby="painelQuem">
+    <button class="fechar" type="button" id="fecharPainel" aria-label="Fechar">×</button>
+    <span class="quem" id="painelQuem"></span>
+    <p class="fala" id="painelFala" aria-live="polite"></p>
+    <div id="painelExtra"></div>
+    <div class="acoes" id="painelAcoes"></div>
+    <span class="fonte" id="painelFonte"></span>
+  </div>
+</section>
+
+<main class="largura">
+  <section class="elenco" aria-labelledby="tElenco">
+    <span class="etiqueta">Quem vive no bairro</span>
+    <h2 id="tElenco">Escolhe a tua personagem.</h2>
+    <p class="lead">O mesmo trabalho, pago de maneiras diferentes: por conta de outrem, na função pública, a recibos verdes ou com empresa própria. Cada pessoa do bairro mostra um caminho diferente do dinheiro. Toca numa para a encontrares no mapa.</p>
+    <div class="cartas" id="cartas"></div>
+  </section>
+  <p class="notas" id="notas"></p>
+</main>
+<a id="linkSalario" href="https://aocentimo.pt/salario" target="_blank" rel="noopener" hidden>salário</a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>__ISO__</script>
+<script>__MAPA__</script>
+<script>__PERSONAGENS__</script>
+<script>
+const DADOS = __DADOS__;
+const reduz = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const temG = !!window.gsap && !reduz;
+const $ = (id) => document.getElementById(id);
+const NS = "http://www.w3.org/2000/svg";
+const eur = (v, d = 2) => { const [i, dec] = Math.abs(v).toFixed(d).split("."); return (v < 0 ? "−" : "") + i.replace(/\B(?=(\d{3})+(?!\d))/g, " ") + (dec ? "," + dec : ""); };
+const EURO = (v, d = 0) => eur(v, d) + " €";
+
+/* ——— montar ——— */
+const D = {
+  salario: EURO(DADOS.sal.bruto), tsu: "23,75 %", irs: EURO(DADOS.sal.irs), liquido: EURO(DADOS.sal.liq),
+  cabaz: "+" + DADOS.cabazPct + " %", cafes: "+" + DADOS.cafesPct + " %", euribor: eur(DADOS.euribor12, 2) + " %", ca: eur(DADOS.ca, 2) + " %",
+  gasoleo: eur(DADOS.gasoleo, 3), gasolina: eur(DADOS.gasolina, 3), inflacao: "+" + eur(DADOS.inflacao, 1) + " %", desemprego: eur(DADOS.desemprego, 1) + " %",
+};
+const M = montarMapa(D);
+const mapa = $("mapa");
+mapa.innerHTML = `<defs>${padroes()}</defs><g id="gChao">${M.chao}</g><g id="gTras">${M.tras}</g><g id="movA"></g><g id="gFrente">${M.frente}</g><g id="movB"></g>
+  <rect id="noite" x="-3000" y="-3000" width="8000" height="8000"/><g id="gLuzes"></g><g id="gPinos"></g><g id="gEtiq"></g>`;
+const movA = $("movA"), movB = $("movB");
+// luzes dos candeeiros por cima do véu da noite
+mapa.querySelectorAll(".candeeiro").forEach((c) => { const t = c.getAttribute("transform"); $("gLuzes").insertAdjacentHTML("beforeend", `<g transform="${t}"><circle class="luz" cx="0" cy="-60" r="46" fill="url(#brilho)" opacity="0"/></g>`); });
+// pinos de dados
+M.pinos.forEach(([id, p, alt, rot, val]) => $("gPinos").insertAdjacentHTML("beforeend", pin(p[0], p[1] - alt, rot, val).replace('class="pin"', `class="pin" data-id="${id.replace(/\d$/, "")}"`)));
+if (temG) mapa.querySelectorAll(".pin-corpo").forEach((p, k) => gsap.to(p, { y: -5, duration: 1.4 + (k % 3) * .3, yoyo: true, repeat: -1, ease: "sine.inOut", delay: k * .2 }));
+
+/* ——— câmara: viewBox com arrastar, roda e pinça ——— */
+const janela = $("janela"), painel = $("painel");
+const LIM = { x: -60, y: -20, w: 1840, h: 1150 };
+const vb = { x: 0, y: 0, w: 1000, h: 600 };
+const razao = () => janela.clientHeight / janela.clientWidth;
+function aplicar() { vb.h = vb.w * razao(); mapa.setAttribute("viewBox", `${vb.x.toFixed(1)} ${vb.y.toFixed(1)} ${vb.w.toFixed(1)} ${vb.h.toFixed(1)}`); if (cartaoAlvo) posCartao(cartaoAlvo); }
+function larguraTudo() { return Math.max(LIM.w, LIM.h / razao()); }
+function tudo(suave = true) { const w = larguraTudo(), h = w * razao(); ir(LIM.x + LIM.w / 2, LIM.y + LIM.h / 2, w, suave); }
+function ir(cx, cy, w, suave = true, dur = 1, desvio = !painel.hidden && janela.clientWidth > 700) {
+  const h = w * razao(), alvo = { x: cx - w / 2 - (desvio ? w * .2 : 0), y: cy - h / 2, w };
+  if (suave && temG) gsap.to(vb, { ...alvo, duration: dur, ease: "power2.inOut", onUpdate: aplicar }); else { Object.assign(vb, alvo); aplicar(); }
+}
+function zoom(f, px = .5, py = .5) {
+  const w = Math.min(larguraTudo() * 1.15, Math.max(300, vb.w / f)), h = w * razao();
+  const cx = vb.x + vb.w * px, cy = vb.y + vb.h * py;
+  vb.x = cx - w * px; vb.y = cy - h * py; vb.w = w; aplicar();
+}
+janela.addEventListener("wheel", (e) => { e.preventDefault(); const r = janela.getBoundingClientRect(); zoom(e.deltaY < 0 ? 1.15 : 1 / 1.15, (e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height); }, { passive: false });
+const toques = new Map(); let arr = null, pinca = null;
+janela.addEventListener("pointerdown", (e) => { toques.set(e.pointerId, e); if (toques.size === 1) arr = { x: e.clientX, y: e.clientY, vx: vb.x, vy: vb.y, mov: false }; else if (toques.size === 2) { const [a, b] = [...toques.values()]; pinca = { d: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY), w: vb.w }; arr = null; } });
+addEventListener("pointermove", (e) => {
+  if (!toques.has(e.pointerId)) return; toques.set(e.pointerId, e);
+  if (pinca && toques.size === 2) { const [a, b] = [...toques.values()]; const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY); const r = janela.getBoundingClientRect(); const mx = ((a.clientX + b.clientX) / 2 - r.left) / r.width, my = ((a.clientY + b.clientY) / 2 - r.top) / r.height; zoom(vb.w / (pinca.w * pinca.d / d), mx, my); return; }
+  if (!arr) return; const k = vb.w / janela.clientWidth, dx = e.clientX - arr.x, dy = e.clientY - arr.y;
+  if (Math.hypot(dx, dy) > 5) { arr.mov = true; janela.classList.add("arrasto"); }
+  if (arr.mov) { vb.x = arr.vx - dx * k; vb.y = arr.vy - dy * k; aplicar(); }
+});
+addEventListener("pointerup", (e) => { toques.delete(e.pointerId); if (toques.size < 2) pinca = null; janela.classList.remove("arrasto"); setTimeout(() => { if (!toques.size) arr = null; }, 0); });
+$("zMais").onclick = () => zoom(1.4); $("zMenos").onclick = () => zoom(1 / 1.4); $("zTudo").onclick = () => tudo();
+addEventListener("resize", aplicar);
+
+/* ——— hora do dia ——— */
+function hora(h) {
+  document.documentElement.classList.remove("noite", "fim-tarde");
+  if (h !== "dia") document.documentElement.classList.add(h === "noite" ? "noite" : "fim-tarde");
+  document.querySelectorAll("[data-hora]").forEach((b) => b.setAttribute("aria-pressed", b.dataset.hora === h));
+}
+const hA = new Date().getHours(); hora(hA >= 20 || hA < 7 ? "noite" : hA >= 18 ? "tarde" : "dia");
+document.querySelectorAll("[data-hora]").forEach((b) => b.onclick = () => hora(b.dataset.hora));
+
+/* ——— quem anda no bairro ——— */
+const ESC = .36;
+function colocar(chave, i, j, dir = 1) {
+  const g = document.createElementNS(NS, "g"); g.innerHTML = pessoa(typeof chave === "string" ? ELENCO[chave] : chave);
+  const p = { g, i, j, dir, parte: (s) => g.querySelector(s) };
+  p.pos = () => { const [x, y] = P(p.i, p.j); g.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${(ESC * p.dir).toFixed(2)} ${ESC})`); const alvo = p.j > 8.7 ? movB : movA; if (g.parentNode !== alvo) alvo.appendChild(g); };
+  p.pos();
+  if (temG) { const olhos = p.parte(".olhos"); const pisca = () => { gsap.to(olhos, { scaleY: .1, transformOrigin: "50% 50%", duration: .07, yoyo: true, repeat: 1 }); setTimeout(pisca, 2200 + Math.random() * 3000); }; setTimeout(pisca, Math.random() * 2500); gsap.to(p.parte(".tronco"), { y: -1.6, duration: 1.2 + Math.random(), yoyo: true, repeat: -1, ease: "sine.inOut" }); }
+  return p;
+}
+function passos(p) {
+  if (!temG) return () => {};
+  const pe = p.parte(".perna-e"), pd = p.parte(".perna-d"), be = p.parte(".braco-e"), bd = p.parte(".braco-d");
+  const t1 = gsap.to(pe, { rotation: 24, transformOrigin: "50% 0%", duration: .28, yoyo: true, repeat: -1, ease: "sine.inOut" });
+  const t2 = gsap.fromTo(pd, { rotation: 24 }, { rotation: -24, transformOrigin: "50% 0%", duration: .28, yoyo: true, repeat: -1, ease: "sine.inOut" });
+  const t3 = gsap.to([be, bd], { rotation: (k) => k ? 18 : -18, transformOrigin: "50% 0%", duration: .28, yoyo: true, repeat: -1, ease: "sine.inOut" });
+  return () => { t1.kill(); t2.kill(); t3.kill(); gsap.to([pe, pd, be, bd], { rotation: 0, duration: .2 }); };
+}
+// anda por uma rota [[i,j],…] à velocidade v (ladrilhos por segundo)
+function andar(p, rota, v = .9, fim) {
+  if (!temG) { const [i, j] = rota.at(-1); p.i = i; p.j = j; p.pos(); fim && fim(); return null; }
+  const para = passos(p), tl = gsap.timeline({ onComplete: () => { para(); fim && fim(); } });
+  let [ci, cj] = [p.i, p.j];
+  for (const [ni, nj] of rota) {
+    const d = Math.hypot(ni - ci, nj - cj); if (d < .001) continue;
+    const vx = (ni - ci) - (nj - cj); // direção no ecrã
+    tl.add(() => { p.dir = vx >= 0 ? 1 : -1; });
+    tl.to(p, { i: ni, j: nj, duration: d / v, ease: "none", onUpdate: p.pos });
+    [ci, cj] = [ni, nj];
+  }
+  return tl;
+}
+function acenar(p) { if (!temG) return; const b = p.parte(".braco-d"); gsap.timeline().to(b, { rotation: -150, transformOrigin: "50% 0%", duration: .25 }).to(b, { rotation: -120, duration: .15, yoyo: true, repeat: 3 }).to(b, { rotation: 0, duration: .3 }); }
+function contente(p) { if (!temG) return; const bo = p.parte(".boca"); bo.setAttribute("d", "M-7 -102 q7 9 14 0 z"); bo.setAttribute("fill", "#16130f"); gsap.fromTo(p.parte(".escala"), { y: 0 }, { y: -20, duration: .2, yoyo: true, repeat: 1, ease: "power2.out" }); setTimeout(() => { bo.setAttribute("d", "M-5 -101 q5 5 10 0"); bo.setAttribute("fill", "none"); }, 1400); }
+function surpreso(p) { const bo = p.parte(".boca"); bo.setAttribute("d", "M-4 -101 a4 5 0 1 0 8 0 a4 5 0 1 0 -8 0"); bo.setAttribute("fill", "#16130f"); setTimeout(() => { bo.setAttribute("d", "M-5 -101 q5 5 10 0"); bo.setAttribute("fill", "none"); }, 1500); }
+
+const PT = {
+  fabrica: [2.14, 3.75], segsocial: [4.58, 3.75], financas: [5.78, 3.75], banco: [9.4, 3.75], correios: [11.7, 3.75], bomba: [13.6, 3.75],
+  mercearia: [1.5, 8.75], pastelaria: [3.3, 8.75], casa: [4.48, 8.75], quiosque: [6.2, 8.2], escola: [10.5, 8.75],
+};
+const PS = {
+  ines: colocar("ines", PT.fabrica[0] - .35, 3.78), manuel: colocar("manuel", PT.mercearia[0], 8.78, -1), rosa: colocar("rosa", 3.9, 8.8),
+  leonor: colocar("leonor", PT.escola[0] - .5, 8.8), joana: colocar("joana", PT.escola[0] + .1, 8.78, -1), rui: colocar("rui", PT.banco[0] - .25, 3.8), marta: colocar("marta", PT.banco[0] + .1, 3.82, -1),
+  tiago: colocar("tiago", 5, 3.85),
+};
+const eletrico = document.createElementNS(NS, "g"); eletrico.innerHTML = eletricoIso(); movA.appendChild(eletrico);
+if (temG) {
+  // o elétrico 28 sobe e desce a avenida
+  const el = { i: -5 }; const poeEl = () => eletrico.setAttribute("transform", `translate(${(el.i * 64).toFixed(1)} ${(el.i * 32).toFixed(1)})`);
+  gsap.timeline({ repeat: -1, repeatDelay: 2 }).fromTo(el, { i: -3.4 }, { i: 13.4, duration: 24, ease: "none", onUpdate: () => { poeEl(); eletrico.style.opacity = Math.max(0, Math.min(1, (el.i + 3.4) / 1.4, (13.4 - el.i) / 1.4)); } });
+  // o Tiago vai e vem na avenida; a Dona Rosa vai aos correios; a Joana entra e sai da escola
+  const tiagoVai = () => andar(PS.tiago, [[PS.tiago.i > 8 ? 1 : 14, 3.85]], .7, () => setTimeout(tiagoVai, 1800)); setTimeout(tiagoVai, 1200);
+  const rosaVai = () => andar(PS.rosa, [[7.5, 8.8], [7.5, 3.8], [PT.correios[0], 3.8]], .55, () => setTimeout(() => andar(PS.rosa, [[7.5, 3.8], [7.5, 8.8], [3.9, 8.8]], .55, () => setTimeout(rosaVai, 3000)), 2500)); setTimeout(rosaVai, 2500);
+  setInterval(() => contente(PS.leonor), 4700); setInterval(() => acenar(PS.manuel), 6100); setInterval(() => acenar(PS.marta), 7300);
+  // fumo da fábrica
+  mapa.querySelectorAll(".baforada").forEach((b, k) => { const cy = +b.getAttribute("cy"), cx = +b.getAttribute("cx"); const tl = gsap.timeline({ repeat: -1, delay: k * .9 }); tl.fromTo(b, { attr: { cy, cx }, scale: .5, transformOrigin: "50% 50%" }, { attr: { cy: cy - 110, cx: cx + 40 }, scale: 1.7, duration: 3.6, ease: "sine.out" }, 0).fromTo(b, { opacity: 0 }, { opacity: .95, duration: .8 }, 0).to(b, { opacity: 0, duration: 1.3 }, 2.3); });
+}
+
+/* ——— cartão ao passar por um edifício ——— */
+const INFO = {
+  fabrica: { t: "Fábrica", p: "Para onde vai o teu salário?", viva: true }, segsocial: { t: "Segurança Social", p: "O que são os descontos e para que servem?" },
+  financas: { t: "Finanças", p: "Como funcionam os escalões do IRS?" }, banco: { t: "Banco", p: "Quanto custa pedir dinheiro emprestado?" },
+  correios: { t: "Correios", p: "Onde rende a poupança da Dona Rosa?" }, bomba: { t: "Bomba de gasolina", p: "Quanto do litro é imposto?" },
+  mercearia: { t: "Mercearia do Manuel", p: "Porque está tudo mais caro?", viva: true }, pastelaria: { t: "Pastelaria", p: "Quanto subiu o café?" },
+  casa: { t: "Casa da Inês", p: "Quanto chega mesmo ao fim do mês?" }, quiosque: { t: "Quiosque da praça", p: "Os números do país, hoje" }, escola: { t: "Escola", p: "As palavras do dinheiro, explicadas" },
+};
+const cartao = $("cartaoEd"), palco = document.querySelector(".palco"); let cartaoAlvo = null;
+function posCartao(g) { const r = g.getBoundingClientRect(), rp = palco.getBoundingClientRect(); cartao.style.left = (r.left + r.width / 2 - rp.left) + "px"; cartao.style.top = Math.max(110, r.top - rp.top) + "px"; }
+const pinDe = (id) => mapa.querySelectorAll(`.pin[data-id="${id}"]`);
+mapa.querySelectorAll(".ed").forEach((g) => {
+  const id = g.dataset.id, i = INFO[id];
+  const mostra = () => { cartao.innerHTML = `<b>${i.t}</b><span>${i.p}</span><em>${i.viva ? "toca para entrar →" : "em breve"}</em>`; cartaoAlvo = g; posCartao(g); cartao.classList.add("on"); pinDe(id).forEach((p) => p.classList.add("on")); };
+  const esconde = () => { cartao.classList.remove("on"); cartaoAlvo = null; pinDe(id).forEach((p) => p.classList.remove("on")); };
+  g.addEventListener("pointerenter", mostra); g.addEventListener("focus", mostra); g.addEventListener("pointerleave", esconde); g.addEventListener("blur", esconde);
+  g.addEventListener("click", () => { if (arr && arr.mov) return; entrar(id); });
+  g.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); entrar(id); } });
+});
+
+/* ——— painel ——— */
+function botoes(lista) { const a = $("painelAcoes"); a.innerHTML = ""; lista.forEach(([t, fn, claro]) => { const b = document.createElement("button"); b.type = "button"; b.className = "btn" + (claro ? " claro" : ""); b.textContent = t; b.onclick = fn; a.appendChild(b); }); }
+function abrirPainel(quem, fala, acoes = [], extra = "", fonte = "") { painel.hidden = false; $("painelQuem").textContent = quem; $("painelFala").innerHTML = fala; $("painelExtra").innerHTML = extra; $("painelFonte").textContent = fonte; botoes(acoes); if (temG) gsap.fromTo(painel, { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: .35, ease: "back.out(2)" }); }
+$("fecharPainel").onclick = () => { painel.hidden = true; mapa.querySelectorAll(".ed.ativo").forEach((g) => g.classList.remove("ativo")); };
+const pontoEcra = (id) => P(...PT[id]);
+function entrar(id) {
+  cartao.classList.remove("on");
+  mapa.querySelectorAll(".ed").forEach((g) => g.classList.toggle("ativo", g.dataset.id === id));
+  if (id === "fabrica") return cenaSalario();
+  if (id === "mercearia") return cenaMercearia();
+  const [x, y] = pontoEcra(id); ir(x + 60, y - 60, 640);
+  const extra = { bomba: `Hoje: gasóleo <b>${EURO(DADOS.gasoleo, 3)}</b> e gasolina 95 <b>${EURO(DADOS.gasolina, 3)}</b> por litro, em média.`, banco: `A Euribor a 12 meses está em <b>${eur(DADOS.euribor12, 2)} %</b>.`, correios: `Os Certificados de Aforro rendem <b>${eur(DADOS.ca, 2)} %</b> (taxa base).`, quiosque: `Inflação: <b>${D.inflacao}</b> num ano. Desemprego: <b>${D.desemprego}</b>.` }[id];
+  abrirPainel(INFO[id].t, `${INFO[id].p} <span class="a">Em breve</span> — este edifício ainda está em obras.`, [["Fechar", () => $("fecharPainel").click(), true]], extra ? `<p style="margin:0">${extra}</p>` : "", DADOS.fontes[id] || "");
+}
+
+/* ——— CENA · o salário corre pelas ruas do bairro ——— */
+let cenaViva = null;
+function moeda() { const g = document.createElementNS(NS, "g"); g.innerHTML = `<ellipse cx="0" cy="2" rx="9" ry="4" fill="rgba(22,19,15,.2)"/><circle cy="-8" r="9" fill="#f0a468" stroke="#16130f" stroke-width="2.6"/><text y="-4.5" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="10" fill="#16130f">€</text>`; return g; }
+function etiqueta(x, y, txt, cor) { const w = txt.length * 10.5 + 24; const g = document.createElementNS(NS, "g"); g.setAttribute("transform", `translate(${x} ${y})`); g.innerHTML = `<rect x="${-w / 2}" y="-18" width="${w}" height="32" rx="10" fill="${cor}" stroke="#16130f" stroke-width="2.6"/><text y="4" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="17" fill="#fff">${txt}</text>`; $("gEtiq").appendChild(g); if (temG) gsap.from(g, { scale: .2, opacity: 0, duration: .45, ease: "back.out(3)", transformOrigin: "50% 50%" }); }
+function cenaSalario() {
+  if (cenaViva) cenaViva.kill(); $("gEtiq").innerHTML = ""; mapa.querySelectorAll(".moeda").forEach((m) => m.remove());
+  const S = DADOS.sal, n = S.moedas;
+  const fala = [
+    `A empresa da Inês gasta <b>${EURO(S.custo)}</b> por mês com ela. Cada moeda é uma fatia. Segue-as pelo bairro!`,
+    `Primeiro, <span class="a">${EURO(S.tsu + S.ss)}</span> entram na Segurança Social: ${EURO(S.tsu)} pagos pela empresa (a TSU) e ${EURO(S.ss)} descontados à Inês.`,
+    `Depois, <span class="r">${EURO(S.irs)}</span> ficam nas Finanças — o IRS retido todos os meses.`,
+    `O resto desce a rua com a Inês até casa…`,
+    `Chegam a casa da Inês <span class="g">${EURO(S.liq)}</span>. De cada euro que a empresa gasta, <b>${S.fica} cêntimos</b> chegam à conta dela.`,
+  ];
+  const estado = { ss: 0, irs: 0, casa: 0 };
+  const cont = () => { const c = $("contSal"); if (c) c.innerHTML = `<span style="background:var(--azul-2)">Seg. Social: ${EURO(estado.ss)}</span><span style="background:var(--vermelho-2)">IRS: ${EURO(estado.irs)}</span><span style="background:var(--verde-2)">Chega a casa: ${EURO(estado.casa)}</span>`; };
+  abrirPainel("A fábrica · o salário da Inês", fala[0], [["Saltar para o fim", () => cenaViva && cenaViva.progress(1), true]], `<div class="contador" id="contSal"></div>`, DADOS.fontes.fabrica);
+  cont();
+  const fimBotoes = () => botoes([["Ver outra vez", cenaSalario], ["Fazer com o meu salário →", () => $("linkSalario").click(), true]]);
+  const R = { ss: [[2.14, 3.62], [2.14, 4.2], [PT.segsocial[0], 4.2], [PT.segsocial[0], 3.62]], irs: [[2.14, 3.62], [2.14, 4.2], [PT.financas[0], 4.2], [PT.financas[0], 3.62]], casa: [[2.14, 3.62], [2.14, 4.2], [7.4, 4.2], [7.4, 9.35], [PT.casa[0], 9.35], [PT.casa[0], 8.62]] };
+  const lista = [...Array(n.ss).fill("ss"), ...Array(n.irs).fill("irs"), ...Array(n.casa).fill("casa")];
+  const [fx, fy] = P(2.14, 3.62);
+  if (!temG) { estado.ss = S.tsu + S.ss; estado.irs = S.irs; estado.casa = S.liq; cont(); $("painelFala").innerHTML = fala[4]; fimBotoes(); return; }
+  ir(fx + 180, fy + 40, 820, true, 1.1);
+  const tl = gsap.timeline(); cenaViva = tl;
+  tl.add(() => acenar(PS.ines), .4);
+  lista.forEach((dest, k) => {
+    const m = moeda(); m.classList.add("moeda"); movA.appendChild(m);
+    const o = { i: 2.14, j: 3.62 }; const poe = () => { const [x, y] = P(o.i, o.j); m.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)})`); const alvo = o.j > 8.7 ? movB : movA; if (m.parentNode !== alvo) alvo.appendChild(m); };
+    poe(); m.style.opacity = 0;
+    const t0 = 1 + k * .16, rota = R[dest];
+    tl.set(m, { opacity: 1 }, t0);
+    let [ci, cj] = rota[0], t = t0;
+    rota.slice(1).forEach(([ni, nj]) => { const d = Math.hypot(ni - ci, nj - cj); tl.to(o, { i: ni, j: nj, duration: d / 1.6, ease: "none", onUpdate: poe }, t); t += d / 1.6; [ci, cj] = [ni, nj]; });
+    tl.to(m, { opacity: dest === "casa" ? 1 : 0, duration: .25, onComplete: () => { estado[dest] += dest === "ss" ? (S.tsu + S.ss) / n.ss : dest === "irs" ? S.irs / n.irs : S.liq / n.casa; cont(); } }, t);
+    if (dest === "casa") { const k2 = k - n.ss - n.irs; tl.to(o, { i: PT.casa[0] - .28 + (k2 % 4) * .15, j: 8.66 + Math.floor(k2 / 4) * .08, duration: .3, onUpdate: poe }, t); }
+  });
+  const [sx, sy] = P(PT.segsocial[0], 3.6), [ix, iy] = P(PT.financas[0], 3.6), [cx, cy] = P(PT.casa[0], 8.6);
+  tl.add(() => { $("painelFala").innerHTML = fala[1]; }, 1.6).add(() => etiqueta(sx, sy - 172, "+" + EURO(S.tsu + S.ss), "#2445d6"), 3.4)
+    .add(() => { $("painelFala").innerHTML = fala[2]; ir(ix + 120, iy + 60, 820, true, 1.2); }, 4.2).add(() => etiqueta(ix, iy - 186, "+" + EURO(S.irs), "#e2412a"), 5)
+    .add(() => { $("painelFala").innerHTML = fala[3]; ir(P(5.6, 8.9)[0], P(5.6, 8.9)[1] - 60, 900, true, 2.2); andar(PS.ines, [[2.14, 4.2], [7.4, 4.2], [7.4, 9.35], [PT.casa[0] + .35, 9.35], [PT.casa[0] + .35, 8.75]], 1.25, () => contente(PS.ines)); }, 5.6)
+    .add(() => { etiqueta(cx, cy - 214, EURO(S.liq), "#0c8f5c"); $("painelFala").innerHTML = fala[4]; estado.ss = S.tsu + S.ss; estado.irs = S.irs; estado.casa = S.liq; cont(); fimBotoes(); }, 1 + lista.length * .16 + 10.6);
+}
+
+/* ——— CENA · a mercearia do Sr. Manuel ——— */
+function cenaMercearia() {
+  const [x, y] = pontoEcra("mercearia"); ir(x + 80, y - 70, 620);
+  acenar(PS.manuel);
+  abrirPainel("A mercearia · o Sr. Manuel", `Em agosto de 2020, este saco de compras custava <b>10 €</b>. Quanto custa hoje o mesmo saco? Arrasta e adivinha!`, [["Mostrar a resposta", revelar]],
+    `<div class="palpite-linha"><output id="outPalpite">12,00 €</output><input type="range" id="palpite" min="8" max="18" step="0.1" value="12" aria-label="O teu palpite em euros"></div>`, DADOS.fontes.mercearia);
+  const pal = $("palpite"); pal.oninput = () => $("outPalpite").textContent = EURO(+pal.value, 2);
+  function revelar() {
+    const real = DADOS.cabaz10, g = +pal.value, dif = Math.abs(real - g);
+    const juizo = dif <= .3 ? "Acertaste em cheio!" : dif <= 1 ? "Quase!" : g < real ? "Mais caro do que pensavas!" : "Um pouco menos!";
+    surpreso(PS.manuel); const o = { v: 10 }, out = $("outPalpite");
+    if (temG) gsap.to(o, { v: real, duration: 1.3, ease: "power2.out", onUpdate: () => out.textContent = EURO(o.v, 2) }); else out.textContent = EURO(real, 2);
+    $("painelFala").innerHTML = `${juizo} Hoje custa <span class="r">${EURO(real, 2)}</span>. O pão e os legumes subiram mais de um terço. <b>Isto chama-se inflação.</b>`;
+    botoes([["Tentar outra vez", cenaMercearia, true]]);
+  }
+}
+
+/* ——— as personagens: cartas ——— */
+const CARTAS = [
+  ["ines", "Inês", "Operária da fábrica", "Conta de outrem · setor privado", "Porque é que 1 500 € brutos viram 1 167 €.", "#dfe5ff"],
+  ["joana", "Joana", "Professora", "Função pública", "Descontos diferentes para o mesmo salário.", "#fff1c2"],
+  ["tiago", "Tiago", "Designer", "Independente · recibos verdes", "Segurança Social trimestral e IRS da categoria B.", "#ffe1d9"],
+  ["manuel", "Sr. Manuel", "Dono da mercearia", "Pequeno empresário", "O IVA que cobra, a TSU que paga, o lucro da empresa.", "#d3f2e3"],
+  ["rosa", "Dona Rosa", "Reformada", "Pensão e poupança", "Quanto rende a poupança e o IRS sobre a pensão.", "#efe6ff"],
+  ["leonor", "Leonor", "Estudante, 16 anos", "Mesada e primeiro trabalho", "O primeiro recibo, o IRS Jovem, a primeira conta.", "#fff1c2"],
+  ["rui", "Rui e Marta", "Casal com crédito", "Crédito à habitação", "A prestação, a Euribor e quanto do salário ela come.", "#dfe5ff"],
+];
+$("cartas").innerHTML = CARTAS.map(([k, nome, papel, perfil, aprende, cor]) => {
+  const fig = k === "rui" ? `<g transform="translate(-18 0)">${pessoa(ELENCO.rui)}</g><g transform="translate(20 0)">${pessoa(ELENCO.marta)}</g>` : pessoa(ELENCO[k]);
+  return `<button class="carta" type="button" data-k="${k}"><div class="fundo-carta" style="background:${cor}"><svg viewBox="${k === "rui" ? "-60" : "-42"} -142 ${k === "rui" ? 120 : 84} 150" aria-hidden="true">${fig}</svg></div><b>${nome}</b><span class="papel">${papel}</span><span class="aprende"><i style="font-style:normal;font-weight:700;color:var(--tinta)">${perfil}.</i> ${aprende}</span></button>`;
+}).join("");
+$("cartas").querySelectorAll(".carta").forEach((b) => b.onclick = () => {
+  const k = b.dataset.k, p = PS[k], c = CARTAS.find((x) => x[0] === k);
+  palco.scrollIntoView({ behavior: reduz ? "auto" : "smooth", block: "start" });
+  const [x, y] = P(p.i, p.j); ir(x, y - 60, 560, true, 1.1);
+  setTimeout(() => { acenar(p); if (k === "rui") acenar(PS.marta); }, 900);
+  abrirPainel(`${c[1]} · ${c[2]}`, `Olá! Sou ${k === "rui" ? "o Rui, e esta é a Marta" : c[1] === "Sr. Manuel" ? "o Sr. Manuel" : k === "rosa" ? "a Dona Rosa" : (["ines", "joana", "leonor"].includes(k) ? "a " : "o ") + c[1]}. ${c[4]} <span class="a">Em breve</span> vais poder seguir o meu dinheiro pelo bairro.`, [["Fechar", () => $("fecharPainel").click(), true]], `<p style="margin:0;font-weight:700">${c[3]}</p>`);
+});
+$("notas").innerHTML = "<b>De onde vêm os números do bairro:</b> " + DADOS.notas;
+// no telemóvel começa perto da fábrica e da avenida; no computador vê-se o bairro todo
+if (janela.clientWidth < 700) { const [x, y] = P(4, 4.5); ir(x, y - 40, 760, false); } else tudo(false);
+</script>
