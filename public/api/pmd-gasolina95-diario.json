@@ -3,10 +3,10 @@
     "id": "pmd-gasolina95-diario",
     "fonte": "DGEG — Preços dos Combustíveis",
     "dataset": "PMD Gasolina simples 95 (3201)",
-    "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=3201&dataIni=2017-01-01&dataFim=2026-09-27",
+    "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=3201&dataIni=2017-01-01&dataFim=2026-09-28",
     "unidade": "eur_litro_media_nacional",
-    "recolhidoEm": "2026-09-27T11:43:00.634Z",
-    "serieAte": "2026-09-26"
+    "recolhidoEm": "2026-09-28T13:20:15.513Z",
+    "serieAte": "2026-09-27"
   },
   "series": [
     {
@@ -14232,6 +14232,10 @@
     {
       "t": "2026-09-26",
       "v": 2.1134
+    },
+    {
+      "t": "2026-09-27",
+      "v": 2.1131
     }
   ]
 }
