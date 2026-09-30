@@ -81,10 +81,14 @@ Isto foi o que custou mais tempo nas sessões feitas. Reutilizar.
    existe é o Comparador de Comissões, banco a banco, que o pack proíbe.
 
 2. **A prestação mínima do cartão não é legal.** É condição do contrato. A
-   Diretiva (UE) 2023/2225 passa a prever reembolso mínimo, mas **Portugal
-   ainda não a transpôs** — o prazo termina a **20 de novembro de 2026**.
-   Até lá, escrever uma percentagem mínima «legal» é escrever uma regra que
-   não existe.
+   Diretiva (UE) 2023/2225 **não** fixa um reembolso mínimo: só exige
+   informar o consumidor do montante mínimo, quando exista. O prazo para
+   adotar e publicar as medidas foi **20 de novembro de 2025**; aplicam-se
+   a partir de **20 de novembro de 2026**. À data da recolha não foi
+   encontrada transposição para Portugal. Escrever uma percentagem mínima
+   «legal» é escrever uma regra que não existe. *(Corrigido em 2026-09-30
+   após auditoria: a nota original dava 20 de novembro de 2026 como prazo
+   de transposição e atribuía à diretiva um reembolso mínimo.)*
 
 3. **O Observatório de Preços Agroalimentar tem o que a D-06 procurava** —
    preços médios ao consumidor em €/kg e €/l, 20 produtos, de 4 em 4 semanas,

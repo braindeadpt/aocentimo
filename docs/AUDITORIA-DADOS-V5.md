@@ -94,8 +94,13 @@ plano dizia, e cada uma deve ser conferida contra a fonte:
 2. O tecto dos serviços mínimos é **1 % do indexante dos apoios sociais**
    (5,37 € em 2026), não «índice average salário» como dizia o plano.
 3. A prestação mínima do cartão **não é legal**, é contratual. A
-   Diretiva (UE) 2023/2225 só transpõe até 20-11-2026 e Portugal ainda
-   não o fez.
+   Diretiva (UE) 2023/2225 manda adotar e publicar as medidas até
+   20-11-2025 e aplicá-las a partir de 20-11-2026 (art. 48.º, n.º 1), e
+   **não** fixa um reembolso mínimo: só exige informar o consumidor do
+   montante mínimo, quando exista. À data da recolha não foi encontrada
+   transposição para Portugal. (Corrigido em 2026-09-30: o brief e o
+   `cartoes.json` diziam que o prazo de transposição terminava em
+   20-11-2026 e que a diretiva previa reembolso mínimo.)
 
 ---
 

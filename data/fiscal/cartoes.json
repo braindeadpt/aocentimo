@@ -36,8 +36,8 @@
     "fonteUrl": "https://clientebancario.bportugal.pt/pt-pt/cartoes/como-reembolsar",
 
     "aMudar": {
-      "oQue": "A Diretiva (UE) 2023/2225, de 18 de outubro de 2023, revê o regime do crédito ao consumo e passa a prever regras de reembolso mínimo. A transposição para Portugal ainda não foi feita.",
-      "quando": "O prazo máximo de transposição termina a **20 de novembro de 2026**. Depois dessa data, o regime deixa de estar resolvido pela prática e passa a estar na letra da diretiva.",
+      "oQue": "A Diretiva (UE) 2023/2225, de 18 de outubro de 2023, revê o regime do crédito ao consumo. Não fixa um reembolso mínimo para cartões: exige, onde exista, que o consumidor seja informado do montante mínimo a pagar (extratos e informação periódica). À data da recolha (2026-09-30) não foi encontrada a transposição para Portugal.",
+      "quando": "Os Estados-Membros tinham de adotar e publicar as medidas até 20 de novembro de 2025 (art. 48.º, n.º 1) e têm de as aplicar a partir de 20 de novembro de 2026. Para o site, a data que conta é a de aplicação: o regime português de crédito ao consumo muda nessa data e este ficheiro tem de ser revisto então.",
       "cuidado": "Enquanto a transposição não existir, escrever no site uma prestação mínima «legal» é escrever uma regra que não existe. Se o balcão mostrar um número, tem de dizer de onde vem — do contrato, não da lei."
     }
   },
