@@ -5,7 +5,18 @@ const eslintConfig = [
   ...coreWebVitals,
   ...typescript,
   {
-    ignores: ["node_modules/**", ".next/**", "playwright-report/**", "test-results/**"],
+    // design/prototipos/** são as maquetes V5, não código de produção — o
+    // próprio README dos protótipos diz que não são código de produção. São
+    // JS simples com require(), lido no browser sem compilar, e não devem
+    // pagar as regras de TypeScript do site. Sem esta excepção, `npm run lint`
+    // falha em montar.cjs e `personagens.js` com avisos que não são de ninguém.
+    ignores: [
+      "node_modules/**",
+      ".next/**",
+      "playwright-report/**",
+      "test-results/**",
+      "design/**",
+    ],
   },
 ];
 

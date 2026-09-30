@@ -420,5 +420,98 @@
     "comoFeito": "Como está feito este glossário",
     "faltaTermo": "Falta um termo?",
     "voltarGlossario": "← Todos os termos"
+  },
+  "bairro": {
+    "selo": {
+      "independente1": "Independente e gratuito.",
+      "independente2": "Aqui ninguém te quer vender nada."
+    },
+    "h1a": "O dinheiro explicado",
+    "h1b": "ao cêntimo.",
+    "intro": "Este é o bairro. Cada edifício responde a uma pergunta sobre dinheiro — com os números de hoje. Toca num para entrar.",
+    "dica": {
+      "arrasta": "Arrasta para passear · roda para aproximar ·",
+      "fabrica": "toca na Fábrica!"
+    },
+    "mapa": {
+      "descricao": "Mapa ilustrado de um bairro português visto de cima: fábrica, Segurança Social, Finanças, banco, correios e bomba de gasolina na avenida do elétrico; mercearia, pastelaria, a casa da Inês, a praça com o quiosque e a escola cá em baixo, no Cais da Ribeira, ligados à avenida por umas escadinhas; a Torre dos Clérigos lá atrás; à frente o Douro, os barcos rabelos e a Ponte D. Luís I à frente. Cada edifício tem por cima um número real de hoje.",
+      "rotuloHora": "Hora do dia"
+    },
+    "hora": {
+      "dia": "Dia",
+      "tarde": "Fim de tarde",
+      "noite": "Noite"
+    },
+    "zoom": {
+      "mais": "Aproximar",
+      "menos": "Afastar",
+      "tudo": "Ver o bairro todo"
+    },
+    "cartao": {
+      "entrar": "toca para entrar →",
+      "breve": "em breve"
+    },
+    "breve": {
+      "titulo": "Em breve — este edifício ainda está em obras.",
+      "fechar": "Fechar"
+    },
+    "elenco": {
+      "etiqueta": "Quem vive no bairro",
+      "h2": "Escolhe a tua personagem.",
+      "lead": "O mesmo trabalho, pago de maneiras diferentes: por conta de outrem, na função pública, a recibos verdes ou com empresa própria. Cada pessoa do bairro mostra um caminho diferente do dinheiro. Toca numa para a encontrares no mapa.",
+      "notas": "De onde vêm os números do bairro:"
+    },
+    "edificios": {
+      "fabrica": {
+        "titulo": "Fábrica",
+        "pergunta": "Para onde vai o teu salário?"
+      },
+      "segsocial": {
+        "titulo": "Segurança Social",
+        "pergunta": "O que são os descontos e para que servem?"
+      },
+      "financas": {
+        "titulo": "Finanças",
+        "pergunta": "Como funcionam os escalões do IRS?"
+      },
+      "banco": {
+        "titulo": "Banco",
+        "pergunta": "Quanto custa pedir dinheiro emprestado?"
+      },
+      "correios": {
+        "titulo": "Correios",
+        "pergunta": "Onde rende a poupança da Dona Arminda?"
+      },
+      "bomba": {
+        "titulo": "Bomba de gasolina",
+        "pergunta": "Quanto do litro é imposto?"
+      },
+      "mercearia": {
+        "titulo": "Mercearia do Manuel",
+        "pergunta": "Porque está tudo mais caro?"
+      },
+      "pastelaria": {
+        "titulo": "Pastelaria",
+        "pergunta": "Quanto subiu o café?"
+      },
+      "casa": {
+        "titulo": "Casa da Inês",
+        "pergunta": "Quantos meses de trabalho custa uma casa?"
+      },
+      "quiosque": {
+        "titulo": "Quiosque da praça",
+        "pergunta": "Os números do país, hoje"
+      },
+      "escola": {
+        "titulo": "Escola",
+        "pergunta": "Aprender a ler gráficos e as palavras do dinheiro"
+      }
+    },
+    "extra": {
+      "bomba": "Hoje: gasóleo {gasoleo} e gasolina 95 {gasolina} por litro, em média.",
+      "banco": "A Euribor a 12 meses está em {euribor}.",
+      "correios": "Os Certificados de Aforro rendem {ca} (taxa base).",
+      "quiosque": "Inflação: {inflacao} num ano. Desemprego: {desemprego}."
+    }
   }
 }

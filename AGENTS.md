@@ -82,6 +82,46 @@ servidor existente; com `PORTA`, porta ocupada falha alto).
   no herói da home: pausa fora do ecrã e com o separador escondido, e
   desliga-se em prefers-reduced-motion.
 
+### Regras de viz/motion da V5 — «O Bairro» (P0, vigente desde 2026-09-30)
+
+As de cima continuam válidas. Estas acrescentam-se e só valem dentro do
+bairro. O protótipo em `design/prototipos/` é o contrato visual; onde ele e
+estas regras divergirem, **ganha o protótipo**, excepto nas regras da casa
+(Regra nº1, acessibilidade, PT-PT), que ganham sempre.
+
+- **O kit de desenho é TypeScript puro que devolve SVG**
+  (`src/lib/bairro/`). Sem DOM, sem `import` de CSS, sem estado. O SVG é
+  gerado no servidor e entra com `dangerouslySetInnerHTML` — é seguro porque
+  não entra texto de utilizador: tudo vem do código e de `data/`.
+- **O terreno é sempre argumento.** `iso.ts` não tem global. Cada peça
+  recebe a função `Terreno`; um `definirTerreno()` à moda do protótipo
+  tornaria o mapa dependente da ordem de chamada.
+- **Os ids de padrões SVG levam `b-`.** O mapa entra na mesma página que o
+  resto do site; `azAzul` ou `granito` sem prefixo colidiriam.
+- **A câmara nunca mexe no `viewBox`.** O mundo desenha-se uma vez em
+  camadas SVG grandes e a câmara só as desloca e escala com `transform`
+  CSS. Regras de desempenho obrigatórias em `design/prototipos/README.md`:
+  nuvens, barcos e metro são SVG solto animado por CSS; reflexos são cópias
+  paradas; a câmara enquadra-se com `ResizeObserver`.
+- **Animações relativas:** em GSAP, deslocações de balanço usam `"+=n"`,
+  nunca valores absolutos sobre um `transform` que já posiciona.
+- **A animação ambiente é permitida no bairro** — é a home. Nas cenas
+  anima-se o que ensina (moedas, gavetas, camadas do litro). Tudo tem estado
+  final sem animação em `prefers-reduced-motion`, e o número certo está
+  sempre no HTML.
+- **As cenas abrem por âncora** (`/#financas`), não por rota. `next/dynamic`
+  só quando se entra no edifício: o bundle inicial da home não traz nenhuma
+  cena. `_js-por-rota.mjs` não pode passar de 350 KB na home.
+- **Os valores dos marcadores chegam prontos.** A planta recebe texto já
+  formatado por `src/lib/format.ts`; nunca escreve `€/L`, `+n %` ou um
+  separador de milhares à mão. Um formato escrito na página é um formato que
+  ninguém revê.
+- **Se um dado falta, o texto é `—`**, nunca `0`, `null` nem o valor de
+  outro dia. Ver `FALHOU` em `src/lib/bairro/dados.ts`.
+- **Toda a copy vinda do protótipo é PROPOSTA** e está listada em
+  `docs/NOTAS-V5.md` até o dono a rever. Nada de cenas publicam sem essa
+  revisão (P4).
+
 ## Rotas
 
 `/` (home) · `/salario` `/irs` `/impostos` `/poupanca` `/credito`

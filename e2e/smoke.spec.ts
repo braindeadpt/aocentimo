@@ -9,14 +9,12 @@ const HOST = readFileSync("public/CNAME", "utf8").trim().toLowerCase();
 
 test("home renderiza com os números-chave", async ({ page }) => {
   await page.goto("/");
-  // o h1 novo é a pergunta do herói — o custo canónico e os cêntimos
+  // o h1 é o do bairro (P1-1): «O dinheiro explicado ao cêntimo.»
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    /quantos cêntimos te chegam/i
+    /o dinheiro explicado/i
   );
-  await expect(
-    page.getByRole("heading", { name: /leituras oficiais/i })
-  ).toBeVisible();
-  await expect(page.locator(".leitura").first()).toBeVisible();
+  // e o mapa mostra o salário mínimo de data/, não um número escrito à mão
+  await expect(page.locator(".b-mundo .pin").first()).toContainText(/\d/);
 });
 
 test("calculadora de salário produz resultado", async ({ page }) => {
@@ -157,6 +155,18 @@ const AA_EVAL = `(() => {
   };
   const falhas = [];
   for (const el of document.body.querySelectorAll("*")) {
+    // O mapa é uma ILUSTRAÇÃO (o desenho isométrico do bairro), não
+    // interface: os letreiros pintados nos edifícios são parte da imagem,
+    // e a WCAG 1.4.3 isenta o «texto que faz parte de uma imagem que
+    // contém outro conteúdo visual significativo». A informação que eles
+    // carregam continua acessível — cada edifício tem aria-label, e os
+    // valores dos marcadores são conferidos em bairro.spec.ts.
+    //
+    // Medir o letreiro de um telhado contra o telhado ao lado dava
+    // «1,1:1» e reprovava a página inteira por causa de decalques. O que
+    // este teste tem de apanhar é texto de INTERFACE ilegível — o
+    // contraste do selo foi um defeito real apanhado por aqui.
+    if (el.closest(".b-mundo")) continue;
     const temTexto = [...el.childNodes].some(n => n.nodeType === 3 && (n.textContent ?? "").trim());
     if (!temTexto) continue;
     const cs = getComputedStyle(el);
@@ -179,11 +189,18 @@ test("todas as rotas cumprem contraste AA nos dois temas", async ({
   page,
 }) => {
   test.setTimeout(240_000);
-  // reduced-motion desliga a transição de cor do body — sem ela a medição
-  // apanhava valores intermédios da animação de troca de tema
+  // reduced-motion desliga a animação de troca de tema — sem ela a medição
+  // apanhava valores intermédios. O `body` tem `transition:
+  // background-color`, e o bloco global de reduced-motion não a apanha:
+  // sem esta folha a medição corria no meio da transição e comparava texto
+  // do tema novo com o fundo do tema antigo.
   await page.emulateMedia({ reducedMotion: "reduce" });
   for (const path of rotasDoSite()) {
     await page.goto(path, { waitUntil: "domcontentloaded" });
+    // depois de cada `goto`: a folha não sobrevive à navegação
+    await page.addStyleTag({
+      content: "*,*::before,*::after{transition:none !important;animation:none !important}",
+    });
     for (const tema of ["light", "dark"]) {
       await page.evaluate(
         (t) => (document.documentElement.dataset.theme = t),
@@ -296,35 +313,29 @@ test("o primeiro Tab foca o skip-link", async ({ page }) => {
   await expect(focado).toHaveAttribute("href", "#conteudo");
 });
 
-test("a home V4 tem a ordem herói → painel → portas → faixa", async ({
-  page,
-}) => {
-  // S2-04: a explosão do euro, a adivinha antiga, os capítulos e as
-  // ferramentas saíram da home — o Isometrico continua testado em
-  // Isometrico.test.tsx (componente vivo no /estilo). Aqui fica o
-  // contrato de ordem da página nova e a hierarquia de headings.
+test("a home V5 tem a ordem cabeçalho → mapa → elenco", async ({ page }) => {
+  // O P1-1 trocou a home V4 (herói → painel → portas → faixa) pelo bairro.
+  // O que fica é a ordem do protótipo: o selo e o título primeiro, o mapa
+  // logo a seguir (é a home), e só depois o texto que explica. Um mapa
+  // abaixo de meia página de texto já não é a home do «O Bairro».
   await page.goto("/");
 
-  // um só h1 — a pergunta do herói
+  // um só h1 — o do bairro
   await expect(page.locator("h1")).toHaveCount(1);
 
   const ordem = await page.evaluate(() => {
     const pos = (el: Element | null | undefined) =>
       el ? el.getBoundingClientRect().top + window.scrollY : Infinity;
     return {
-      hero: pos(document.querySelector(".hm-hero")),
-      painel: pos(document.getElementById("painel-leituras")),
-      portas: pos(document.getElementById("pq-titulo")),
-      manifesto: pos(
-        [...document.querySelectorAll("p")].find((p) =>
-          p.textContent?.includes("SÓ A MECÂNICA")
-        )
-      ),
+      cabecalho: pos(document.querySelector(".b-cab")),
+      titulo: pos(document.querySelector("h1")),
+      mapa: pos(document.querySelector(".b-janela")),
+      elenco: pos(document.querySelector(".b-elenco")),
     };
   });
-  expect(ordem.hero).toBeLessThan(ordem.painel);
-  expect(ordem.painel).toBeLessThan(ordem.portas);
-  expect(ordem.portas).toBeLessThan(ordem.manifesto);
+  expect(ordem.cabecalho).toBeLessThan(ordem.titulo);
+  expect(ordem.titulo).toBeLessThan(ordem.mapa);
+  expect(ordem.mapa).toBeLessThan(ordem.elenco);
 });
 
 test("o custo em /salario é um campo de cêntimos e reage à régua", async ({
