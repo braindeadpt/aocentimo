@@ -1,5 +1,5 @@
 {
-  "verificadoEm": "2026-09-30T16:53:04.531Z",
+  "verificadoEm": "2026-09-30T17:35:04.427Z",
   "estado": "ok",
   "series": [
     {
@@ -615,8 +615,8 @@
       "atrasoPeriodos": 0
     },
     {
-      "id": "fiscal-cartoes",
-      "fonte": "DL 133/2009 + Regulamento (UE) 2015/751 — curado",
+      "id": "fiscal-ct",
+      "fonte": "IGCP — Ficha Técnica Certificados do tesouro série 5 — curado",
       "serieAte": "2026",
       "esperadoAte": "2024",
       "frequencia": "anual",

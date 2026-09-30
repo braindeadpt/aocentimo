@@ -14,6 +14,7 @@ legislativa/oficial (DR, AT, OE, IGCP, Código do IVA).
 | `iva.json` | Taxas reduzida/intermédia/normal + exemplos | CIVA |
 | `isp.json` | ISP e taxa de carbono por litro | Portarias semanais |
 | `ca.json` | CA Série F: taxa base, prémios de permanência (`de`/`ate`/`pp`) | IGCP |
+| `ct.json` | Certificados do Tesouro: série 5 (taxas por ano, sem capitalização, resgate antecipado) e séries suspensas | IGCP — Ficha Técnica |
 | `capitais.json` | Retenção liberatória sobre rendimentos de capitais | CIRS art. 71.º-72.º |
 | `smn.json` | Salário mínimo nacional | DR |
 | `imt-YYYY.json` | IMT por escalões (HPP/secundária), IMT Jovem, IS de aquisição e crédito, registos | Ofício Circulado AT anual |

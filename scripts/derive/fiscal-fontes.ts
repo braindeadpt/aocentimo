@@ -37,6 +37,7 @@ const NOME_POR_FICHEIRO: Record<string, string> = {
   "irs-jovem": "Art. 12.º-B CIRS — curado",
   "servicos-minimos": "DL 27-C/2000 + DGAEP — curado",
   "cartoes": "DL 133/2009 + Regulamento (UE) 2015/751 — curado",
+  "ct": "IGCP — Ficha Técnica Certificados do tesouro série 5 — curado",
 };
 
 /** Normaliza "YYYY" | "YYYY-MM" | "YYYY-MM-DD" para data completa ISO. */
