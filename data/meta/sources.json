@@ -542,5 +542,13 @@
     "recolhidoEm": "2026-09-20T19:43:34.509Z",
     "serieAte": "2025-12-31",
     "frequencia": "semestral"
+  },
+  {
+    "id": "fiscal-imi-2026",
+    "fonte": "AT/DR — CIMI (DL 287/2003) — curado",
+    "url": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimi/Pages/cimi112.aspx",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
   }
 ]
