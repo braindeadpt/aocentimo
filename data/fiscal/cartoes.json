@@ -1,0 +1,63 @@
+{
+  "vigencia": "2026-01-01",
+  "fonte": "Decreto-Lei n.º 133/2009, de 2 de junho (contratos de crédito aos consumidores) — versão consolidada no Diário da República; Regulamento (UE) 2015/751 do Parlamento Europeu e do Conselho, de 29 de abril de 2015; Portal do Cliente Bancário do Banco de Portugal",
+  "fonteUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/2009-34518975",
+  "nota": "Só regras legais. O que é preço de mercado — a anuidade de um cartão — não entra aqui, e a razão está no fim deste ficheiro.",
+
+  "proibe": {
+    "titulo": "Comissões que o mutuante não pode cobrar num contrato de crédito ao consumidor",
+    "base": "Artigo 23.º-A do DL 133/2009, aditado pela Lei n.º 57/2020, de 28 de agosto",
+    "redacao": "«Sem prejuízo do disposto no artigo 24.º, o mutuante encontra-se proibido de cobrar quaisquer comissões no âmbito do contrato de crédito contraído com o consumidor que sejam associadas: a) Ao processamento de prestações de crédito ou cobradas com o mesmo propósito, quando aquele processamento for realizado pela própria instituição credora ou por entidade relacionada; b) À emissão do documento com vista à extinção da garantia real por parte do mutuante no termo do contrato de crédito, seja por reembolso antecipado total ou pelo seu termo natural, devendo aquele documento ser fornecido automática e gratuitamente ao consumidor no prazo máximo de catorze (14) dias; c) À emissão de declarações de dívida ou qualquer outra declaração emitida com o mesmo propósito, quando esta tenha por fim o cumprimento de obrigações para acesso a apoios ou prestações sociais e serviços públicos, até ao limite anual de seis declarações.»",
+    "pontos": [
+      "Comissões de processamento de prestações de crédito, quando o processamento é feito pela própria instituição ou por entidade relacionada",
+      "Emissão do documento de extinção da garantia real no termo do contrato: tem de ser automática e gratuita, em 14 dias",
+      "Declarações de dívida para acesso a apoios ou prestações sociais e serviços públicos: até 6 por ano"
+    ]
+  },
+
+  "taxaDeIntercambio": {
+    "regra": "Encargo pago pelo adquirente ao emitente do cartão por cada operação. Quando o titular é consumidor, o seu valor é limitado por lei.",
+    "cartaoDebito": 0.2,
+    "cartaoCredito": 0.3,
+    "unidade": "percentagem do valor da operação",
+    "base": "Regulamento (UE) 2015/751, de 29 de abril de 2015",
+    "fonteUrl": "https://clientebancario.bportugal.pt/pt-pt/perguntas-frequentes"
+  },
+
+  "prestacaoMinima": {
+    "haRegraLegal": false,
+    "oQueSePassa": "O plano de reembolso não está definido à partida, porque a dívida só surge depois de o cartão ser utilizado. O cliente e a instituição de crédito acordam previamente uma modalidade de reembolso. O Banco de Portugal descreve-a assim: «Pagamento parcial (com imposição de um montante ou percentagem mínima) na data-limite, que implica o pagamento de juros sobre o montante utilizado e não pago nesse mês.»",
+    "modalidades": [
+      "Pagamento integral (100 %) do crédito utilizado na data-limite — não paga juros",
+      "Pagamento parcial, com um montante ou percentagem mínima acordados — paga juros sobre o montante não pago nesse mês"
+    ],
+    "consequencia": "Quanto menos se pagar por mês, maior o montante de juros e mais tempo até saldar.",
+    "porIstoOMotorRecebeAPercentagem": "A percentagem mínima é um parâmetro do contrato, não uma constante legal. O motor cartao.ts recebe-a como argumento; o JSON não a fixa.",
+    "fonteUrl": "https://clientebancario.bportugal.pt/pt-pt/cartoes/como-reembolsar",
+
+    "aMudar": {
+      "oQue": "A Diretiva (UE) 2023/2225, de 18 de outubro de 2023, revê o regime do crédito ao consumo e passa a prever regras de reembolso mínimo. A transposição para Portugal ainda não foi feita.",
+      "quando": "O prazo máximo de transposição termina a **20 de novembro de 2026**. Depois dessa data, o regime deixa de estar resolvido pela prática e passa a estar na letra da diretiva.",
+      "cuidado": "Enquanto a transposição não existir, escrever no site uma prestação mínima «legal» é escrever uma regra que não existe. Se o balcão mostrar um número, tem de dizer de onde vem — do contrato, não da lei."
+    }
+  },
+
+  "freeFloat": {
+    "oQueE": "Período de crédito sem juros. Não é uma regra legal de favor: é uma característica do produto.",
+    "comFreeFloat": "Cartão que permite usar crédito sem juros durante o período entre a data de compra do bem ou serviço e a data de pagamento do saldo. Os juros são contabilizados a partir da data de emissão do extrato mensal, caso o cliente não reembolse a totalidade.",
+    "semFreeFloat": "Cartão que, em pelo menos uma modalidade de pagamento, não permite usar crédito sem juros. Os juros sobre os montantes não pagos na data acordada são contabilizados a partir do momento da utilização do cartão."
+  },
+
+  "usura": {
+    "nota": "O tecto legal de TAEG e TAN para crédito ao consumo está em data/fiscal/usura-2026.json, por trimestre. Não se repete aqui.",
+    "fonteUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/2009-34518975"
+  },
+
+  "anuidadeMedia": {
+    "existe": false,
+    "porque": "Não existe valor agregado de anuidade de cartões publicado pelo Banco de Portugal. Varredura feita em 2026-09-30 a todos os 76 domínios do BPstat: não há nenhuma série de preços, comissões ou anuidades de cartões. No domínio 20 (Informação sobre o sistema bancário), que é onde estariam, há apenas as contas do sistema — e a única série que toca em comissões é a 12504523, «Dem resultados - Rendimentos de serviços e comissões líquidos - M€», que é o produto de comissões do sistema bancário inteiro, não o preço de um cartão.",
+    "oQueExiste": "O Comparador de Comissões do Portal do Cliente Bancário, com as comissões de cada instituição, serviço a serviço. É banco a banco.",
+    "porqueNaoSeGrava": "Regra do pack: «Nada de comparar bancos ou produtos concretos: o site não é um comparador comercial.» E a regra nº1 do repo: sem fonte oficial, não se escreve o número.",
+    "fonteUrl": "https://clientebancario.bportugal.pt/pt-pt/aplicacao/comparador-de-comissoes"
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "verificadoEm": "2026-09-30T12:11:51.538Z",
+  "verificadoEm": "2026-09-30T16:53:04.531Z",
   "estado": "ok",
   "series": [
     {
@@ -611,6 +611,15 @@
       "serieAte": "2025-12-31",
       "esperadoAte": "2025-06-30",
       "frequencia": "semestral",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-cartoes",
+      "fonte": "DL 133/2009 + Regulamento (UE) 2015/751 — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
       "estado": "em-dia",
       "atrasoPeriodos": 0
     }
