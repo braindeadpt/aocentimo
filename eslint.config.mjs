@@ -16,6 +16,7 @@ const eslintConfig = [
       "playwright-report/**",
       "test-results/**",
       "design/**",
+      ".preview-scratch/**", // chunks minificados de builds de sessões vizinhas (ignorado pelo git)
     ],
   },
 ];
