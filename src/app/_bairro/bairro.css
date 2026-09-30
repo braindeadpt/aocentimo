@@ -1,0 +1,871 @@
+/* ————————————————————————————————————————————————————————————————
+   O BAIRRO — a pele V5 da home (P1 do PACK V5 PRODUÇÃO).
+
+   Tudo o que está aqui dentro é o contrato visual de
+   design/prototipos/mapa/mapa.tpl.html, trazido tal e qual: o mesmo
+   traço, as mesmas cores (pelos tokens de [data-pele="v5"]), a mesma
+   forma. Onde o protótipo escrevia um número à mão, aqui não há
+   números: os valores dos marcadores chegam prontos do servidor.
+
+   As classes levam todas o prefixo b- (bairro) para não colidir com as
+   do resto do site, que continuam na pele V4 até P3.
+
+   AS REGRAS DE DESEMPENHO DO README DO PROTÓTIPO SÃO OBRIGATÓRIAS E
+   ESTÃO AQUI, COMENTADAS:
+     · a câmara nunca mexe no viewBox — só em transform CSS;
+     · o que anda sempre (nuvens, barcos, metro) é SVG solto;
+     · a água é estática, os reflexos são cópias paradas;
+     · o enquadramento espera pelo ResizeObserver.
+   ———————————————————————————————————————————————————————————————— */
+
+[data-pele="v5"] .b-palco {
+  position: relative;
+  margin-inline: -20px;
+  border-block: 4px solid var(--tinta);
+  background: var(--fundo-mapa);
+  transition: background 1.2s;
+  overflow: hidden;
+}
+[data-pele="v5"] .b-palco.b-fim-tarde {
+  background: linear-gradient(#ff9464, #ffc98f 50%, #ffe6c4);
+}
+[data-pele="v5"] .b-palco.b-noite {
+  background: linear-gradient(#050a26, #16235c 80%);
+}
+
+[data-pele="v5"] .b-janela {
+  position: relative;
+  height: clamp(460px, 74vh, 760px);
+  touch-action: none;
+  cursor: grab;
+}
+[data-pele="v5"] .b-janela.b-arrasto {
+  cursor: grabbing;
+}
+
+/* O mundo: um contentor com `transform`. A câmara escreve aqui e em mais
+   lado nenhum — mexer no viewBox obrigaria o browser a repintar o mapa
+   inteiro a cada gesto. */
+/* O ENQUADRAMAMENTO POR OMISSÃO — o mapa sem JavaScript.
+
+   A câmara escreve um `transform` calculado ao vivo, mas só depois de a
+   página carregar. Sem isto, o mundo ficaria à escala 1:1 no canto do
+   ecrã e o bairro não se veria — e o pack é claro: «sem JavaScript
+   vê-se o bairro inteiro e os números».
+
+   Duas coisas neste transform são deliberadas:
+
+   · O `translate` está em `cqw`, não em `vw`. `vw` é 1% da largura da
+     JANELA DO BROWSER; o contentor do mapa é mais largo que isso (o
+     palco sangra 20 px para cada lado, e em ecrãs estreitos a barra de
+     deslocamento também). Com `vw` o mapa ficava descentrado — medido no
+     browser: 20 px de desvio para cada lado a 440 px de largura. Com
+     `container-type` no `.b-janela`, `cqw` é 1% do próprio contentor, que
+     é o que a câmara usa.
+
+   · A `scale` é um número fixo, porque `scale()` em CSS não aceita
+     comprimento (medido: `scale(calc(100cqw / 2219))` é inválido). Daí uma
+     consequência honesta: SEM JavaScript o bairro aparece com um
+     enquadramento fixo, apurado para um contentor de 1240 px. Num ecrã
+     muito mais largo fica com margem; num estreito é cortado. Com
+     JavaScript a câmara refaz isto em milissegundos e o mapa passa a
+     acompanhar o ecrã a cada gesto.
+
+   A câmara substitui esta transformação pela sua, sem salto visível:
+   parte do mesmo enquadramento. O teste em `mundo.test.ts` confirma que
+   os dois batem certo para a largura de referência. */
+[data-pele="v5"] .b-janela {
+  container-type: inline-size;
+}
+[data-pele="v5"] .b-mundo {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  transform: translate(-36.9cqw, -31.41cqw) scale(0.6491);
+}
+/* No telemóvel o protótipo começa perto da fábrica e da avenida, não no
+   bairro inteiro: muda o centro e a escala. */
+@media (max-width: 700px) {
+  [data-pele="v5"] .b-mundo {
+    transform: translate(-131.95cqw, -57.12cqw) scale(0.4573);
+  }
+}
+
+/* ——— o céu, o sol, a lua, as janelas acesas ——— */
+[data-pele="v5"] .b-sombra-d {
+  transition: opacity 1.2s;
+}
+[data-pele="v5"] .b-sombra-t {
+  opacity: 0;
+  transition: opacity 1.2s;
+}
+[data-pele="v5"] .b-fim-tarde .b-sombra-t {
+  opacity: 1;
+}
+[data-pele="v5"] .b-fim-tarde .b-sombra-d,
+[data-pele="v5"] .b-noite .b-sombra-d {
+  opacity: 0;
+}
+[data-pele="v5"] .sol,
+[data-pele="v5"] #b-gEstrelas {
+  opacity: 0;
+  transition: opacity 1.2s;
+}
+[data-pele="v5"] .b-fim-tarde .sol,
+[data-pele="v5"] .b-noite #b-gEstrelas {
+  opacity: 1;
+}
+[data-pele="v5"] .b-noite .nuvem {
+  opacity: 0.35;
+}
+[data-pele="v5"] .nuvem {
+  transition: opacity 1.2s;
+}
+[data-pele="v5"] .b-noite .estrela {
+  animation: b-brilha 3s ease-in-out infinite;
+}
+[data-pele="v5"] .estrela:nth-child(3n) {
+  animation-delay: -1s;
+}
+[data-pele="v5"] .estrela:nth-child(3n + 1) {
+  animation-delay: -2s;
+}
+@keyframes b-brilha {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+[data-pele="v5"] .b-noite .b-solto {
+  opacity: 0.9;
+}
+
+/* o véu da noite: uma camada de cor por cima de tudo, em multiply */
+[data-pele="v5"] #b-noite {
+  position: absolute;
+  left: 0;
+  top: 0;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  display: none;
+}
+[data-pele="v5"] .b-noite #b-noite {
+  display: block;
+  opacity: 0.62;
+  background: #0e1a52;
+}
+[data-pele="v5"] .b-fim-tarde #b-noite {
+  display: block;
+  opacity: 0.22;
+  background: #ff8a3d;
+}
+
+[data-pele="v5"] .b-luz {
+  transition: opacity 1.2s;
+}
+[data-pele="v5"] .b-noite .b-luz {
+  opacity: 1;
+}
+/* as janelas que se acendem à noite; as «cedo» acendem antes das outras */
+[data-pele="v5"] .b-acesa {
+  fill: #ffd86b;
+  opacity: 0;
+  transition: opacity 1.2s;
+}
+[data-pele="v5"] .b-noite .b-acesa {
+  opacity: 0.95;
+}
+[data-pele="v5"] .b-fim-tarde .b-acesa.b-cedo {
+  opacity: 0.7;
+}
+/* as luzes do Candeeiro sobem com o edifício quando ele é focável */
+[data-pele="v5"] .b-luzes-ed {
+  transition: transform 0.25s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+[data-pele="v5"] .b-luzes-ed.b-sobe {
+  transform: translateY(-7px);
+}
+
+/* ——— o movimento ambiente, em CSS (não custa JS) ——— */
+[data-pele="v5"] .b-jorro {
+  stroke-dasharray: 4 3;
+  animation: b-jorro 0.5s linear infinite;
+}
+@keyframes b-jorro {
+  to {
+    stroke-dashoffset: -7;
+  }
+}
+[data-pele="v5"] .roupa .b-peca {
+  animation: b-vento 2.6s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+}
+[data-pele="v5"] .roupa .b-p2 {
+  animation-delay: -0.8s;
+}
+[data-pele="v5"] .roupa .b-p3 {
+  animation-delay: -1.6s;
+}
+@keyframes b-vento {
+  0%,
+  100% {
+    transform: rotate(-9deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+}
+[data-pele="v5"] .b-bandeira {
+  animation: b-vento 2.2s ease-in-out infinite;
+}
+[data-pele="v5"] .b-bandeira:nth-child(odd) {
+  animation-delay: -1.1s;
+}
+[data-pele="v5"] .gato .b-cauda {
+  animation: b-cauda 3s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 0% 100%;
+}
+@keyframes b-cauda {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  50% {
+    transform: rotate(-26deg);
+  }
+}
+[data-pele="v5"] .b-bandeira-pt {
+  animation: b-ondula 2.4s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 0% 50%;
+}
+@keyframes b-ondula {
+  0%,
+  100% {
+    transform: skewY(0) scaleX(1);
+  }
+  50% {
+    transform: skewY(-7deg) scaleX(0.94);
+  }
+}
+[data-pele="v5"] .b-bandeira-fcp {
+  animation: b-ondula 2.8s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+}
+[data-pele="v5"] .b-balao-sj {
+  animation: b-balanca 3.2s ease-in-out infinite;
+}
+[data-pele="v5"] .b-balao-sj:nth-child(odd) {
+  animation-delay: -1.6s;
+}
+@keyframes b-balanca {
+  0%,
+  100% {
+    transform: rotate(-7deg);
+  }
+  50% {
+    transform: rotate(7deg);
+  }
+}
+[data-pele="v5"] .copa {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+[data-pele="v5"] .copa:hover {
+  animation: b-copa 1.6s ease-in-out infinite;
+}
+@keyframes b-copa {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+/* de noite não há miúdos na ponte nem nadadores: fecha-se às sete */
+[data-pele="v5"] .b-noite .b-miudo,
+[data-pele="v5"] .b-noite .b-nadador {
+  display: none;
+}
+
+/* ——— os edifícios e os marcadores ——— */
+[data-pele="v5"] .b-ed {
+  cursor: pointer;
+  outline: none;
+}
+[data-pele="v5"] .b-ed > * {
+  transition: transform 0.25s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+[data-pele="v5"] .b-ed:hover > *,
+[data-pele="v5"] .b-ed:focus-visible > *,
+[data-pele="v5"] .b-ed.b-ativo > * {
+  transform: translateY(-7px);
+}
+[data-pele="v5"] .b-pin .b-pin-corpo {
+  transition: transform 0.25s cubic-bezier(0.3, 1.6, 0.5, 1);
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+[data-pele="v5"] .b-pin.b-on .b-pin-corpo {
+  transform: scale(1.25);
+}
+
+/* ——— os controlos ——— */
+[data-pele="v5"] .b-controlos {
+  position: absolute;
+  right: 16px;
+  top: 14px;
+  display: flex;
+  gap: 8px;
+  z-index: 3;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  max-width: calc(100% - 32px);
+}
+[data-pele="v5"] .b-ctl {
+  border: 3px solid var(--tinta);
+  background: var(--papel);
+  border-radius: 999px;
+  padding: 7px 13px;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: var(--sombra-dura);
+  min-height: 40px;
+  color: var(--tinta);
+}
+[data-pele="v5"] .b-ctl[aria-pressed="true"] {
+  background: var(--tinta);
+  color: #fff;
+}
+[data-pele="v5"] .b-zoom {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  display: grid;
+  gap: 8px;
+  z-index: 3;
+}
+[data-pele="v5"] .b-zoom .b-ctl {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  font-size: 22px;
+}
+[data-pele="v5"] .b-dica {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  z-index: 3;
+  background: var(--papel);
+  border: 3px solid var(--tinta);
+  border-radius: 16px;
+  padding: 8px 14px;
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: var(--sombra-dura);
+  margin: 0;
+}
+[data-pele="v5"] .b-dica em {
+  font-style: normal;
+  font-family: var(--mao);
+  font-size: 20px;
+  color: var(--azul);
+}
+
+/* ——— o cartão de um edifício ——— */
+[data-pele="v5"] .b-cartao {
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  background: var(--papel);
+  border: 3px solid var(--tinta);
+  border-radius: 18px;
+  padding: 10px 14px;
+  box-shadow: 4px 5px 0 var(--tinta);
+  max-width: 260px;
+  transform: translate(-50%, calc(-100% - 16px));
+  opacity: 0;
+  transition: opacity 0.15s;
+  margin: 0;
+}
+[data-pele="v5"] .b-cartao.b-on {
+  opacity: 1;
+}
+[data-pele="v5"] .b-cartao b {
+  display: block;
+  font-size: 17px;
+  font-weight: 850;
+}
+[data-pele="v5"] .b-cartao span {
+  font-size: 14px;
+  color: var(--tinta-2);
+  line-height: 1.3;
+  display: block;
+}
+[data-pele="v5"] .b-cartao em {
+  font-style: normal;
+  font-family: var(--mao);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--azul);
+}
+
+/* ——— o painel: o que abre quando se toca num edifício ——— */
+[data-pele="v5"] .b-painel {
+  position: absolute;
+  z-index: 5;
+  left: 16px;
+  top: 14px;
+  width: min(560px, calc(100% - 32px));
+  background: var(--papel);
+  border: 3.5px solid var(--tinta);
+  border-radius: 24px;
+  box-shadow: 6px 7px 0 var(--tinta);
+  padding: 18px 20px 16px;
+  display: grid;
+  gap: 10px;
+}
+[data-pele="v5"] .b-painel[hidden] {
+  display: none;
+}
+[data-pele="v5"] .b-painel .b-quem {
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--azul);
+  padding-right: 30px;
+}
+[data-pele="v5"] .b-painel .b-fala {
+  font-weight: 700;
+  font-size: clamp(18px, 1.9vw, 22px);
+  line-height: 1.28;
+  margin: 0;
+}
+[data-pele="v5"] .b-fala b {
+  background: var(--amarelo);
+  padding: 0 0.12em;
+  border-radius: 4px;
+}
+[data-pele="v5"] .b-fala .b-r {
+  background: var(--vermelho-2);
+  color: var(--vermelho);
+}
+[data-pele="v5"] .b-fala .b-g {
+  background: var(--verde-2);
+  color: var(--verde);
+}
+[data-pele="v5"] .b-fala .b-a {
+  background: var(--azul-2);
+  color: var(--azul);
+}
+[data-pele="v5"] .b-painel .b-acoes {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+[data-pele="v5"] .b-fechar {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  border: 0;
+  background: none;
+  font-size: 24px;
+  cursor: pointer;
+  font-weight: 900;
+  color: var(--tinta);
+}
+[data-pele="v5"] .b-painel .b-fonte {
+  font-size: 12.5px;
+  color: var(--suave);
+}
+[data-pele="v5"] .b-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  font-size: 16px;
+  border: 3px solid var(--tinta);
+  border-radius: 999px;
+  padding: 10px 18px;
+  min-height: 46px;
+  cursor: pointer;
+  background: var(--azul);
+  color: #fff;
+  box-shadow: var(--sombra-dura);
+  text-decoration: none;
+  transition:
+    transform 0.15s cubic-bezier(0.3, 1.6, 0.5, 1),
+    box-shadow 0.15s;
+}
+[data-pele="v5"] .b-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 6px 0 var(--tinta);
+}
+[data-pele="v5"] .b-btn:active {
+  transform: translate(2px, 3px);
+  box-shadow: 1px 1px 0 var(--tinta);
+}
+[data-pele="v5"] .b-btn.b-claro {
+  background: var(--papel);
+  color: var(--tinta);
+}
+
+/* ——— as cenas de perto: a moldura comum ——— */
+[data-pele="v5"] .b-cena {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  background: var(--papel);
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  overflow: auto;
+}
+[data-pele="v5"] .b-cena[hidden] {
+  display: none;
+}
+[data-pele="v5"] .b-cena-arte {
+  background: #f1ebdf;
+  border-right: 4px solid var(--tinta);
+  display: grid;
+  place-items: center;
+  padding: 14px;
+  min-width: 0;
+  align-self: start;
+  position: sticky;
+  top: 0;
+  height: clamp(460px, 74vh, 760px);
+}
+[data-pele="v5"] .b-cena-arte svg {
+  width: 100%;
+  height: auto;
+  max-height: calc(clamp(460px, 74vh, 760px) - 28px);
+}
+[data-pele="v5"] .b-cena-texto {
+  position: relative;
+  padding: 18px 22px 22px;
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  min-width: 0;
+}
+[data-pele="v5"] .b-cena-texto .b-quem {
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--azul);
+  padding-right: 36px;
+}
+[data-pele="v5"] .b-cena-texto .b-fala {
+  font-weight: 750;
+  font-size: clamp(19px, 1.9vw, 23px);
+  line-height: 1.28;
+  margin: 0;
+}
+[data-pele="v5"] .b-cena-texto p {
+  margin: 0;
+  line-height: 1.45;
+}
+[data-pele="v5"] .b-cena-texto b {
+  background: var(--amarelo);
+  padding: 0 0.12em;
+  border-radius: 4px;
+}
+[data-pele="v5"] .b-cena-texto .b-r {
+  background: var(--vermelho-2);
+  color: var(--vermelho);
+  font-weight: 800;
+  padding: 0 0.12em;
+  border-radius: 4px;
+}
+[data-pele="v5"] .b-cena-texto .b-g {
+  background: var(--verde-2);
+  color: var(--verde);
+  font-weight: 800;
+  padding: 0 0.12em;
+  border-radius: 4px;
+}
+[data-pele="v5"] .b-cena-texto .b-a {
+  background: var(--azul-2);
+  color: var(--azul);
+  font-weight: 800;
+  padding: 0 0.12em;
+  border-radius: 4px;
+}
+[data-pele="v5"] .b-cena-texto .b-fechar {
+  border: 3px solid var(--tinta);
+  background: var(--papel);
+  border-radius: 999px;
+  width: 40px;
+  height: 40px;
+  font-size: 22px;
+  font-weight: 900;
+  cursor: pointer;
+}
+[data-pele="v5"] .b-cena-texto .b-acoes {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+[data-pele="v5"] .b-cena-texto .b-fonte {
+  font-size: 12.5px;
+  color: var(--suave);
+}
+[data-pele="v5"] .b-confirma summary {
+  cursor: pointer;
+  font-weight: 800;
+}
+[data-pele="v5"] .b-confirma table {
+  border-collapse: collapse;
+  font-size: 14px;
+  margin-top: 8px;
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+}
+[data-pele="v5"] .b-confirma th,
+[data-pele="v5"] .b-confirma td {
+  text-align: left;
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--linha);
+}
+
+/* ——— o elenco: as sete cartas ——— */
+[data-pele="v5"] .b-elenco {
+  padding-block: 44px 20px;
+}
+[data-pele="v5"] .b-etiqueta {
+  display: inline-flex;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--tinta);
+  color: var(--papel);
+  border-radius: 999px;
+  padding: 6px 12px;
+}
+[data-pele="v5"] .b-elenco h2 {
+  font-weight: 850;
+  font-stretch: 115%;
+  font-size: clamp(28px, 3.6vw, 46px);
+  line-height: 1;
+  margin: 14px 0 6px;
+  max-width: 22ch;
+}
+[data-pele="v5"] .b-elenco .b-lead {
+  font-size: 18px;
+  color: var(--tinta-2);
+  margin: 0 0 22px;
+  max-width: 60ch;
+}
+[data-pele="v5"] .b-cartas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 14px;
+}
+[data-pele="v5"] .b-carta {
+  border: 3px solid var(--tinta);
+  border-radius: 22px;
+  background: var(--papel);
+  box-shadow: 4px 5px 0 var(--tinta);
+  padding: 12px 14px 14px;
+  cursor: pointer;
+  text-align: left;
+  display: grid;
+  gap: 4px;
+  align-content: start;
+  transition:
+    transform 0.18s cubic-bezier(0.3, 1.6, 0.5, 1),
+    box-shadow 0.18s;
+}
+[data-pele="v5"] .b-carta:hover,
+[data-pele="v5"] .b-carta:focus-visible {
+  transform: translate(-3px, -4px) rotate(-0.8deg);
+  box-shadow: 8px 10px 0 var(--tinta);
+}
+[data-pele="v5"] .b-carta svg {
+  width: 100%;
+  height: 130px;
+  display: block;
+  overflow: visible;
+}
+[data-pele="v5"] .b-fundo-carta {
+  border-radius: 14px;
+  padding-top: 6px;
+}
+[data-pele="v5"] .b-carta b {
+  font-size: 19px;
+  font-weight: 850;
+  line-height: 1.1;
+  margin-top: 6px;
+}
+[data-pele="v5"] .b-carta .b-papel {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+[data-pele="v5"] .b-carta .b-aprende {
+  font-size: 14px;
+  color: var(--tinta-2);
+  line-height: 1.35;
+}
+[data-pele="v5"] .b-notas {
+  font-size: 13.5px;
+  color: var(--suave);
+  padding-block: 18px 40px;
+  max-width: 90ch;
+}
+[data-pele="v5"] .b-notas b {
+  color: var(--tinta-2);
+}
+
+/* ——— o cabeçalho da home ——— */
+[data-pele="v5"] .b-cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 14px;
+  flex-wrap: wrap;
+}
+[data-pele="v5"] .b-cab svg.b-logo {
+  height: 28px;
+  width: auto;
+  display: block;
+}
+[data-pele="v5"] .b-independente {
+  font-size: 14px;
+  font-weight: 700;
+  border: 2.5px solid var(--tinta);
+  border-radius: 999px;
+  padding: 6px 14px;
+  background: var(--verde-2);
+  color: var(--tinta-2);
+}
+[data-pele="v5"] .b-independente b {
+  color: var(--verde);
+}
+[data-pele="v5"] .b-intro {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px 30px;
+  flex-wrap: wrap;
+  padding-block: 4px 16px;
+}
+[data-pele="v5"] .b-intro h1 {
+  margin: 0;
+  font-weight: 880;
+  font-stretch: 116%;
+  font-size: clamp(30px, 4.4vw, 60px);
+  line-height: 0.95;
+  letter-spacing: -0.015em;
+}
+[data-pele="v5"] .b-intro h1 span {
+  background: var(--amarelo);
+  padding: 0 0.12em;
+  border-radius: 4px;
+}
+[data-pele="v5"] .b-intro p {
+  margin: 0;
+  font-size: 18px;
+  color: var(--tinta-2);
+  max-width: 44ch;
+}
+
+/* ——— o telemóvel ——— */
+@media (max-width: 820px) {
+  [data-pele="v5"] .b-cena {
+    grid-template-columns: 1fr;
+    align-content: start;
+  }
+  [data-pele="v5"] .b-cena-arte {
+    border-right: 0;
+    border-bottom: 4px solid var(--tinta);
+    position: static;
+    height: auto;
+  }
+  [data-pele="v5"] .b-cena-arte svg {
+    max-height: 300px;
+  }
+}
+@media (max-width: 700px) {
+  [data-pele="v5"] .b-ctl {
+    padding: 5px 9px;
+    font-size: 12px;
+    min-height: 34px;
+  }
+  [data-pele="v5"] .b-dica {
+    display: none;
+  }
+  [data-pele="v5"] .b-controlos {
+    top: auto;
+    right: auto;
+    left: 12px;
+    bottom: 14px;
+    justify-content: flex-start;
+    max-width: calc(100% - 90px);
+  }
+  [data-pele="v5"] .b-painel {
+    padding: 12px 14px;
+    gap: 6px;
+  }
+  [data-pele="v5"] .b-painel .b-fala {
+    font-size: 17px;
+  }
+  [data-pele="v5"] .b-painel .b-fonte {
+    display: none;
+  }
+}
+@media (max-width: 520px) {
+  [data-pele="v5"] .b-cartas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  [data-pele="v5"] .b-carta {
+    padding: 8px 10px 10px;
+  }
+  [data-pele="v5"] .b-carta svg {
+    height: 96px;
+  }
+  [data-pele="v5"] .b-carta b {
+    font-size: 16px;
+  }
+  [data-pele="v5"] .b-carta .b-aprende {
+    font-size: 13px;
+  }
+}
+
+/* O ESTADO FINAL SEM ANIMAÇÃO. `prefers-reduced-motion` não é um
+   enfeite: quem o pede recebe o desenho já parado, com o número certo no
+   HTML — nada de nuvens a correr nem de cortes. */
+@media (prefers-reduced-motion: reduce) {
+  [data-pele="v5"] *,
+  [data-pele="v5"] *::before,
+  [data-pele="v5"] *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* O PAUSA AMBIENTE: `PausaAmbiente` põe `.b-amb-off` no embrulho quando o
+   mapa sai do ecrã ou o separador fica escondido. O mapa pára de
+   anunciar fotogramas que ninguém vê. */
+[data-pele="v5"] .b-amb-off *,
+[data-pele="v5"] .b-amb-off *::before,
+[data-pele="v5"] .b-amb-off *::after {
+  animation-play-state: paused !important;
+}

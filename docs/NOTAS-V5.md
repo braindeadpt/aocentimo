@@ -153,7 +153,50 @@ A saudação ao tocar numa carta («Olá! Sou a Inês. …») e a frase de
 
 ## P1 · A home é o bairro
 
-_(por preencher)_
+### P1-1 — o mapa, sem uma linha de JavaScript
+
+O bairro e os treze marcadores chegam ao utilizador em HTML do servidor
+(`mundo.ts` embrulha a planta em oito camadas; `HomeBairro` entrega-a ao
+`<Bairro>` por prop). Confirmado no browser: os valores que aparecem são os
+de `data/` — `1 500,00 €`, `23,75 %`, `168,17 €`, `2,95 %`, `2,50 %`,
+`2,181 €/L`, `2,097 €/L`, `+35 %`, `+47 %`, `1 166,83 €`, `+3,6 %`, `5,7 %`.
+
+**A planta não vai para o bundle do cliente.** Importar `planta.ts` na
+câmara arrastaria o desenho inteiro (100+ KB) para o browser só por causa
+de dois números; os pontos de enquadramento chegam prontos do servidor, em
+coordenadas de ecrã, por prop (`Enquadramentos { perto, longe }`). Verificado
+por `grep` nos chunks: zero vestígios.
+
+### Três coisas que o CSS obriga a decidir (medidas no browser)
+
+1. **`scale()` não aceita comprimento.** `scale(calc(100cqw / 2219))` dá
+   `none`. A `scale` do enquadramento por omissão tem de ser um número
+   fixo, apurado para uma janela de referência. Sem JavaScript o mapa
+   aparece com um enquadramento apurado; com JavaScript a câmara refaz isto
+   em milissegundos e passa a acompanhar o ecrã a cada gesto.
+2. **`cqw`, não `vw`.** `vw` é 1% da janela do browser, e o contentor do
+   mapa não é a janela — com `vw` o mapa ficava descentrado 20 px para cada
+   lado. A solução é `container-type: inline-size` no `.b-janela`. Confirmado
+   no browser: `containerType` devolve `"inline-size"` e `100cqw` mede
+   exactamente a largura do contentor.
+3. **O ponto de enquadramento é um literal, não um ponto da planta.** No
+   protótipo o enquadramento do ecrã largo é `ir(760, 470, ...)` escrito à
+   mão. Derivá-lo da planta (`Pt(2.7, 4.4)` → `(611, 367)`) faz a câmara
+   saltar no primeiro quadro, sem o CSS dar conta. Os dois pontos vivem
+   agora em `ENQUADRAMENTOS`, em `planta.ts`, e o teste que amarra o
+   `transform` do CSS ao da câmara lê essa mesma constante — confirmado que
+   falha se alguém voltar a derivá-lo.
+
+### O que ficou em aberto
+
+- **O HTML da home tem 130,8 KB gzip**, acima dos 80 KB que o pack impõe
+  (§4). O mapa é a razão. **Para o dono decidir em P4**: reduzir o mapa
+  servido (marcadores só para o ecrã grande?) ou subir o limite, com
+  nota no `AGENTS.md`.
+- **JS inicial da home**: 185,7 KB gzip (9 ficheiros), dentro dos 350 KB do
+  pack. `/sobre` fica nos 182,7 KB — o bairro acrescenta ~3 KB.
+- Ressalva de ambiente: o build foi validado com `--webpack` (o
+  `node_modules` é um symlink e o Turbopack recusa-o). O CI usa Turbopack.
 
 ## P2a–P2c · As cenas
 

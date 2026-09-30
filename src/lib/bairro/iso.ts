@@ -39,6 +39,23 @@ export const LAD = Math.hypot(TW / 2, TH / 2);
 const OX = 720;
 const OY = 250;
 
+/**
+ * A origem da projeção: o ponto onde `P(0, 0)` cai no ecrã.
+ * Exportada porque o reflexo no Douro se calcula a partir dela — e
+ * escrevê-lo outra vez em `mundo.ts` seria um número duplicado, que é
+ * exactamente o que a Regra nº1 proíbe (duas cópias divergem).
+ */
+export const ORIGEM = { x: OX, y: OY } as const;
+
+/**
+ * A caixa do mundo desenhado: o rectângulo, em coordenadas de planta, que
+ * todas as camadas partilham. Vive aqui, e não em `mundo.ts`, porque a
+ * câmara (que corre no cliente) precisa dele e o cliente não pode
+ * arrastar a planta inteira — que pesa muito mais — só por quatro
+ * números. `mundo.ts` reexporta-o.
+ */
+export const MUNDO = { x: -900, y: -700, w: 3600, h: 2500 } as const;
+
 /** Arredonda a uma casa decimal — o número que sai no SVG tem de ser curto. */
 export const f1 = (n: number): number => +n.toFixed(1);
 

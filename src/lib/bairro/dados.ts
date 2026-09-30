@@ -79,12 +79,16 @@ function variacaoDesde(serie: Serie | null, desde: string): number | null {
  */
 const comoFracao = (pct: number | null): number | null => (pct === null ? null : pct / 100);
 
-/** Uma percentagem inteira já arredondada, com o sinal à frente. */
-function sinalPct(pct: number | null): string {
+/**
+ * Uma percentagem com o sinal à frente, com `casas` decimais.
+ *
+ * O `+` só entra quando o valor é positivo — é a convenção da casa para
+ * as variações (▲/▼ e o sinal), e é o que o protótipo fazia.
+ */
+function sinalPct(pct: number | null, casas = 0): string {
   if (pct === null || !Number.isFinite(pct)) return FALHOU;
-  const arredondado = Math.round(pct);
-  const texto = fmtPct(arredondado / 100, 0);
-  return arredondado > 0 ? `+${texto}` : texto;
+  const texto = fmtPct(pct / 100, casas);
+  return pct > 0 ? `+${texto}` : texto;
 }
 
 /** Uma linha dos cenários, tal como está no JSON. */
@@ -169,7 +173,9 @@ export function marcadores(): MarcadoresBairro & { gasoleoUn: string; gasolinaUn
     ca: fmtPct(comoFracao(ca?.oficialPct ?? null) ?? 0, 2),
     gasoleo: gasoleo ? fmtNum(gasoleo.v, 3) : FALHOU,
     gasolina: gasolina ? fmtNum(gasolina.v, 3) : FALHOU,
-    inflacao: inflacao === null ? FALHOU : sinalPct(inflacao * 100),
+    // uma casa decimal, como no protótipo e como no ticker do site:
+    // arredondar a «+4 %» era um número que não é o número da fonte
+    inflacao: sinalPct(inflacao === null ? null : inflacao * 100, 1),
     desemprego: fmtPct(comoFracao(desemprego?.v ?? null) ?? 0, 1),
     gasoleoUn: gasoleo ? `${fmtNum(gasoleo.v, 3)} €/L` : FALHOU,
     gasolinaUn: gasolina ? `${fmtNum(gasolina.v, 3)} €/L` : FALHOU,

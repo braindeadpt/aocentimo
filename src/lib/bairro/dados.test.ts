@@ -68,8 +68,11 @@ describe("marcadores()", () => {
   it("a inflação é homóloga de doze meses, não desde o início da série", () => {
     const cp00 = loadSerie("cp00")!;
     const s = cp00.series;
-    const esperado = Math.round(((s.at(-1)!.v / s.at(-13)!.v - 1) * 100));
-    expect(M.inflacao).toBe(`+${String(esperado)}${FINO}%`);
+    // uma casa decimal: o protótipo e o ticker do site mostram «+3,6 %».
+    // Arredondar a «+4 %» publicava um número que não é o da fonte.
+    const bruto = (s.at(-1)!.v / s.at(-13)!.v - 1) * 100;
+    const esperado = bruto.toFixed(1).replace(".", ",");
+    expect(M.inflacao).toBe(`+${esperado}${FINO}%`);
   });
 
   it("cada valor tem a fonte à vista nas notas", () => {

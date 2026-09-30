@@ -89,6 +89,24 @@ export const TERRENO: Terreno = (i, j) => {
 /** `P()` já com o terreno do bairro — o `P()` do protótipo. */
 const Pt = Pcom(TERRENO);
 
+/**
+ * Os dois pontos onde a câmara pode enquadrar, apurados no protótipo:
+ *
+ * · `perto` — a Avenida, em `P(3.6, 5.6)`, para ecrãs estreitos;
+ * · `longe` — o `(760, 470)` escrito à mão no `enquadrar()` do protótipo.
+ *   NÃO é um ponto da planta: é o enquadramento que o autor escolheu, e
+ *   o `transform` por omissão do CSS está apurado para ele.
+ *
+ * Vive aqui, e não no componente nem no CSS, porque é o mesmo número em
+ * três sítios — e quando o CSS foi fitted contra um par diferente do que
+ * o componente passava, a câmara saltava no primeiro quadro. Um só
+ * sítio, um só número.
+ */
+export const ENQUADRAMENTOS = {
+  perto: Pt(3.6, 5.6),
+  longe: { x: 760, y: 470 },
+} as const;
+
 /* Atalhos locais: o protótipo escrevia `caixa(...)` e o terreno vinha do
    global. Aqui cada atalho passa TERRENO, e a forma das chamadas no corpo
    da planta fica igual à do protótipo. */
@@ -141,6 +159,13 @@ export interface MapaBairro {
   agua: string;
   ponte: { tras: string; frente: string };
   gaia: string;
+  /**
+   * A fila da Ribeira, SEM o embrulho `<g id="gRibeira">`. O reflexo no
+   * Douro é esta mesma fila espelhada — no protótipo, o `cloneNode` do DOM
+   * tirava-lhe os `id` e as classes. No servidor não há DOM para clonar,
+   * por isso a fila vem aqui nua e `mundo.ts` espelha-a (P1-1).
+   */
+  ribeira: string;
   portas: Portas;
   pinos: Pino[];
 }
@@ -529,10 +554,12 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     .join("");
   const atracados = ([[8.6, 10.95]] as const).map(([ii, jj]) => { const a = Pt(ii + 1, 10.62); return `<g transform="translate(${f1((ii - jj) * 64)} ${f1((ii + jj) * 32 + 22)})">${rabelo(false)}</g><path d="M${f1(a[0])} ${f1(a[1] - 8)} q20 20 34 26" fill="none" stroke="#7a5a3a" stroke-width="1.6"/>`; }).join("");
 
+  const ribeira = rib.join("");
   return {
     chao: chaoSvg,
     tras: arvoresTras + candTras + ed.fabrica + ed.segsocial + ed.financas + torre + ed.banco + ed.correios + ed.bomba + miradouro,
-    frente: `<g id="gRibeira">${rib.join("")}</g>` + jardim + cais,
+    frente: `<g id="gRibeira">${ribeira}</g>` + jardim + cais,
+    ribeira,
     vida,
     agua: atracados,
     ponte: ponteLuisI({ iA: 14.3, iB: 14.78, jPorto: JM - 0.15, jGaia: 19, jA1: 10.8, jA2: 15.2, zCima: HP, pilares: [[8.75, 0], [10.55, 16], [15.45, 16], [17.3, 0]] }),
