@@ -117,8 +117,12 @@ export interface MarcadoresBairro {
   cafes: string;
   euribor: string;
   ca: string;
+  /** O preço por litro, só o número — é o que o totem escreve. */
   gasoleo: string;
   gasolina: string;
+  /** O mesmo preço já com a unidade, feita pelo formatador do servidor. */
+  gasoleoUn: string;
+  gasolinaUn: string;
   inflacao: string;
   desemprego: string;
 }
@@ -399,8 +403,9 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     });
     ed.bomba = edificioIso("bomba", "Bomba de gasolina — quanto do litro é imposto?", t);
     portas.bomba = Pt(i + 1.2, j + dj);
-    pinos.push(["bomba", Pt(i + 1.3, j + 1.2), alt + 70, "Gasóleo · hoje", `${D.gasoleo} €/L`]);
-    pinos.push(["bomba2", Pt(i + 2.2, j + 1.1), alt + 70, "Gasolina 95", `${D.gasolina} €/L`]);
+    // a unidade vem feita do servidor (fmtLitro): a planta nunca escreve «€/L»
+    pinos.push(["bomba", Pt(i + 1.3, j + 1.2), alt + 70, "Gasóleo · hoje", D.gasoleoUn]);
+    pinos.push(["bomba2", Pt(i + 2.2, j + 1.1), alt + 70, "Gasolina 95", D.gasolinaUn]);
   }
 
   /* ——— a Ribeira: casas estreitas, coladas, de cores diferentes ——— */

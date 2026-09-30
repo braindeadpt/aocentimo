@@ -14,6 +14,8 @@ const D: MarcadoresBairro = {
   ca: "3,00 %",
   gasoleo: "1,589",
   gasolina: "1,729",
+  gasoleoUn: "1,589\u202F€/L",
+  gasolinaUn: "1,729\u202F€/L",
   inflacao: "+2,1 %",
   desemprego: "6,4 %",
 };
@@ -137,10 +139,10 @@ describe("montarMapa", () => {
     expect(porId.quiosque2).toBe(D.desemprego);
   });
 
-  it("os dois marcadores da bomba levam o preço por litro", () => {
+  it("os dois marcadores da bomba levam o preço por litro, com a unidade feita pelo servidor", () => {
     const porId = Object.fromEntries(m.pinos.map(([id, , , , v]) => [id, v]));
-    expect(porId.bomba).toBe(`${D.gasoleo} €/L`);
-    expect(porId.bomba2).toBe(`${D.gasolina} €/L`);
+    expect(porId.bomba).toBe(D.gasoleoUn);
+    expect(porId.bomba2).toBe(D.gasolinaUn);
   });
 
   it("mudar um valor muda só o marcador desse edifício", () => {
