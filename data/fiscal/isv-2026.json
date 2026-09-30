@@ -1,0 +1,202 @@
+{
+  "ano": 2026,
+  "vigencia": "2026-01-01",
+  "fonte": "Código do Imposto sobre Veículos, aprovado pela Lei n.º 22-A/2007, de 29 de junho — versão consolidada do Diário da República: arts. 2.º, 4.º, 5.º, 6.º, 7.º (tabelas A, B e C), 8.º, 9.º e 11.º (tabela D)",
+  "fonteUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2007-34445975",
+  "nota": "O ISV é um imposto de taxa específica: a base tributável NÃO é o preço de venda ao público, mas a cilindrada, o nível de emissão de partículas (quando aplicável) e o nível de emissão de CO2 tal como constam do certificado de conformidade (art. 4.º n.º 1). Paga-se uma vez, na matrícula. Cada componente é calculada por «valor do escalão × taxa − parcela a abater»; se a componente ambiental der resultado negativo, esse valor é deduzido à componente cilindrada e o total não pode ser inferior a 100 € (art. 7.º n.º 4). NEDC e WLTP têm tabelas próprias e separadas — não se converte um valor no outro; usa-se a norma do certificado de conformidade do veículo.",
+  "ultimaAlteracaoTabelas": {
+    "diploma": "Lei n.º 82/2023, de 29 de dezembro (art. 256.º), em vigor desde 2024-01-01",
+    "nota": "As tabelas do artigo 7.º mantêm-se iguais em 2024, 2025 e 2026."
+  },
+  "alteracaoLoe2026": {
+    "diploma": "Lei n.º 73-A/2025, de 30 de dezembro (art. 82.º), em vigor desde 2026-01-01",
+    "efeito": "Alterou apenas o artigo 8.º (taxas intermédias) e apenas quanto aos híbridos plug-in: os veículos homologados segundo a norma de emissões Euro 6e-bis, nos termos do Regulamento (UE) 2023/443 da Comissão, mantêm os 25 % com emissões oficiais até 80 gCO2/km, em vez dos 50 gCO2/km exigidos às restantes viaturas."
+  },
+  "naoIncidentes": {
+    "nota": "Art. 2.º n.º 2 — exclusão de incidência, não isenção. O imposto é devido uma vez, na matrícula.",
+    "veiculos": [
+      "Veículos não motorizados",
+      "Veículos exclusivamente elétricos ou movidos a energias renováveis não combustíveis",
+      "Ambulâncias (automóveis para transporte de pessoas doentes ou feridas com equipamento especial, e veículos dedicados ao transporte de doentes)"
+    ]
+  },
+  "tabelaA": {
+    "aplicavelA": "Automóveis ligeiros de passageiros (art. 7.º n.º 1)",
+    "cilindrada": [
+      { "de": null, "ate": 1000, "taxa": 1.09, "parcelaAbater": 849.03 },
+      { "de": 1001, "ate": 1250, "taxa": 1.18, "parcelaAbater": 850.69 },
+      { "de": 1251, "ate": null, "taxa": 5.61, "parcelaAbater": 6194.88 }
+    ],
+    "ambiental": {
+      "nota": "Componente ambiental, aplicável consoante o sistema de testes a que o veículo foi sujeito. Desde 2021 o Código tem tabelas próprias para NEDC e para WLTP.",
+      "gasolina": {
+        "NEDC": [
+          { "de": null, "ate": 99, "taxa": 4.62, "parcelaAbater": 427.0 },
+          { "de": 100, "ate": 115, "taxa": 8.09, "parcelaAbater": 750.99 },
+          { "de": 116, "ate": 145, "taxa": 52.56, "parcelaAbater": 5903.94 },
+          { "de": 146, "ate": 175, "taxa": 61.24, "parcelaAbater": 7140.17 },
+          { "de": 176, "ate": 195, "taxa": 155.97, "parcelaAbater": 23627.27 },
+          { "de": 196, "ate": null, "taxa": 205.65, "parcelaAbater": 33390.12 }
+        ],
+        "WLTP": [
+          { "de": null, "ate": 110, "taxa": 0.44, "parcelaAbater": 43.02 },
+          { "de": 111, "ate": 115, "taxa": 1.1, "parcelaAbater": 115.8 },
+          { "de": 116, "ate": 120, "taxa": 1.38, "parcelaAbater": 147.79 },
+          { "de": 121, "ate": 130, "taxa": 5.27, "parcelaAbater": 619.17 },
+          { "de": 131, "ate": 145, "taxa": 6.38, "parcelaAbater": 762.73 },
+          { "de": 146, "ate": 175, "taxa": 41.54, "parcelaAbater": 5819.56 },
+          { "de": 176, "ate": 195, "taxa": 51.38, "parcelaAbater": 7247.39 },
+          { "de": 196, "ate": 235, "taxa": 193.01, "parcelaAbater": 34190.52 },
+          { "de": 236, "ate": null, "taxa": 233.81, "parcelaAbater": 41910.96 }
+        ]
+      },
+      "gasoleo": {
+        "NEDC": [
+          { "de": null, "ate": 79, "taxa": 5.78, "parcelaAbater": 439.04 },
+          { "de": 80, "ate": 95, "taxa": 23.45, "parcelaAbater": 1848.58 },
+          { "de": 96, "ate": 120, "taxa": 79.22, "parcelaAbater": 7195.63 },
+          { "de": 121, "ate": 140, "taxa": 175.73, "parcelaAbater": 18924.92 },
+          { "de": 141, "ate": 160, "taxa": 195.43, "parcelaAbater": 21720.92 },
+          { "de": 161, "ate": null, "taxa": 268.42, "parcelaAbater": 33447.9 }
+        ],
+        "WLTP": [
+          { "de": null, "ate": 110, "taxa": 1.72, "parcelaAbater": 11.5 },
+          { "de": 111, "ate": 120, "taxa": 18.96, "parcelaAbater": 1906.19 },
+          { "de": 121, "ate": 140, "taxa": 65.04, "parcelaAbater": 7360.85 },
+          { "de": 141, "ate": 150, "taxa": 127.4, "parcelaAbater": 16080.57 },
+          { "de": 151, "ate": 160, "taxa": 160.81, "parcelaAbater": 21176.06 },
+          { "de": 161, "ate": 170, "taxa": 221.69, "parcelaAbater": 29227.38 },
+          { "de": 171, "ate": 190, "taxa": 274.08, "parcelaAbater": 36987.98 },
+          { "de": 191, "ate": null, "taxa": 282.35, "parcelaAbater": 38271.32 }
+        ]
+      }
+    }
+  },
+  "tabelaB": {
+    "aplicavelA": "Art. 7.º n.º 2 — componente cilindrada apenas, sem componente ambiental",
+    "nota": "Aplica-se, na totalidade do imposto, aos automóveis ligeiros de mercadorias de caixa fechada com lotação máxima de três lugares (incluindo o condutor) e altura interior da caixa de carga inferior a 120 cm; aos de caixa fechada com as mesmas lotações e tracção às quatro rodas permanente ou adaptável; e, nas percentagens dos artigos 8.º e 9.º, a outros veículos. Aplica-se ainda, sem prejuízo do n.º 3 do artigo 9.º, às autocaravanas.",
+    "cilindrada": [
+      { "de": null, "ate": 1250, "taxa": 5.3, "parcelaAbater": 3331.68 },
+      { "de": 1251, "ate": null, "taxa": 12.58, "parcelaAbater": 12138.47 }
+    ]
+  },
+  "tabelaC": {
+    "aplicavelA": "Art. 10.º — motociclos, triciclos e quadriciclos, tributados só pela cilindrada",
+    "nota": "Lida do DR consolidado e registada por completude da fonte; não é usada pelo motor de ligeiros.",
+    "cilindrada": [
+      { "de": null, "ate": 120, "valorFixo": 73.78 },
+      { "de": 121, "ate": 250, "valorFixo": 91.63 },
+      { "de": 251, "ate": 350, "valorFixo": 122.57 },
+      { "de": 351, "ate": 500, "valorFixo": 184.45 },
+      { "de": 501, "ate": 750, "valorFixo": 245.14 },
+      { "de": 751, "ate": null, "valorFixo": 245.14 }
+    ]
+  },
+  "agravamentoGasoleo": {
+    "valor": 500,
+    "valorVeiculosMercadorias": 250,
+    "limiteParticulas": 0.001,
+    "unidadeParticulas": "g/km",
+    "base": "art. 7.º n.º 3",
+    "nota": "Agravamento de 500 € no total do imposto para os veículos ligeiros equipados com propulsão a gasóleo, reduzido para 250 € para os veículos ligeiros de mercadorias do n.º 2 do artigo 9.º. Não se aplica quando o certificado de conformidade — ou, na sua inexistência, a homologação técnica — declarar emissão de partículas inferior a 0,001 g/km. Sem essa informação, o agravamento aplica-se."
+  },
+  "minimo": 100,
+  "motorWankel": {
+    "nota": "Art. 7.º n.º 5 — para motores Wankel, a cilindrada corresponde ao dobro da cilindrada nominal, calculada nos termos do Regulamento das Homologações CE Relativo às Emissões Poluentes (DL 202/2000)."
+  },
+  "combustiveisAlternativos": {
+    "nota": "Art. 7.º n.os 8 a 10 — na componente ambiental, os motores preparados para o consumo exclusivo de GPL, gás natural ou bioetanol são tributados pelas taxas dos veículos a gasolina; os de biodiesel, pelas taxas dos veículos a gasóleo; e os que combinam dois destes combustíveis, pelas taxas e emissões do sistema de propulsão a gasolina ou a gasóleo, consoante o caso."
+  },
+  "taxasIntermedias": {
+    "base": "art. 8.º n.º 1 — aplicadas à totalidade do imposto resultante da tabela A",
+    "nota": "As taxas intermédias aplicam-se à totalidade do imposto, não apenas à componente ambiental.",
+    "regra": [
+      {
+        "percentagem": 60,
+        "designacao": "Híbrido (não plug-in)",
+        "condicao": "Autonomia em modo elétrico superior a 50 km e emissões oficiais inferiores a 50 gCO2/km"
+      },
+      {
+        "percentagem": 40,
+        "designacao": "Utilização mista, com traccionamento a quatro rodas",
+        "condicao": "Peso bruto superior a 2500 kg, lotação mínima de sete lugares (incluindo o condutor) e que não apresentem tracção às quatro rodas, permanente ou adaptável"
+      },
+      {
+        "percentagem": 40,
+        "designacao": "Gás natural exclusivo",
+        "condicao": "Automóveis ligeiros de passageiros que utilizem exclusivamente gás natural como combustível"
+      },
+      {
+        "percentagem": 25,
+        "designacao": "Híbrido plug-in (PHEV)",
+        "condicao": "Bateria carregável através de ligação à rede elétrica, autonomia mínima de 50 km em modo elétrico e emissões oficiais inferiores a 50 gCO2/km"
+      },
+      {
+        "percentagem": 25,
+        "designacao": "Híbrido plug-in (PHEV) homologado em Euro 6e-bis",
+        "condicao": "Como o anterior, mas com emissões oficiais até 80 gCO2/km quando homologados de acordo com a norma de emissões Euro 6e-bis, nos termos do Regulamento (UE) 2023/443 da Comissão, de 8 de fevereiro de 2023. Regra acrescentada pela LOE 2026 (art. 82.º da Lei n.º 73-A/2025), em vigor desde 2026-01-01."
+      },
+      {
+        "percentagem": 25,
+        "designacao": "Híbrido plug-in matriculado noutro Estado-Membro da UE entre 2015 e 2020",
+        "condicao": "Matrícula atribuída noutro Estado-Membro entre 1 de janeiro de 2015 e 31 de dezembro de 2020, bateria carregável através de ligação à rede elétrica e autonomia mínima de 25 km em modo elétrico"
+      }
+    ]
+  },
+  "taxasReduzidas": {
+    "nota": "Aplicadas ao imposto resultante da tabela B (art. 9.º). O regime das autocaravanas é transitório e escala por ano civil.",
+    "regras": [
+      {
+        "percentagem": 15,
+        "base": "art. 9.º n.º 1",
+        "veiculos": "Utilização mista com peso bruto superior a 2300 kg e caixa de carga com comprimento mínimo de 145 cm e altura interior mínima de 130 cm, sem tracção às quatro rodas; ou ligeiros de mercadorias de caixa aberta ou sem caixa, com lotação superior a três lugares e sem tracção às quatro rodas; ou ligeiros de mercadorias de caixa fechada sem cabina integrada, com peso bruto de 3500 kg, lotação superior a três lugares e sem tracção às quatro rodas"
+      },
+      {
+        "percentagem": 10,
+        "base": "art. 9.º n.º 2",
+        "veiculos": "Ligeiros de mercadorias de caixa aberta, fechada ou sem caixa, com lotação máxima de três lugares (incluindo o condutor), com excepção dos abrangidos pelo n.º 2 do artigo 7.º"
+      }
+    ],
+    "autocaravanas": [
+      { "percentagem": 40, "desde": "2024-01-01" },
+      { "percentagem": 60, "desde": "2025-01-01" },
+      { "percentagem": 80, "desde": "2026-01-01" },
+      { "percentagem": 100, "desde": "2027-01-01" }
+    ]
+  },
+  "veiculosUsadosImportadosUE": {
+    "base": "art. 11.º n.º 1 (tabela D)",
+    "nota": "Redução por tempo de uso, aplicada ao imposto resultante da tabela A ou da tabela B, incluindo o agravamento do gasóleo. Só se aplica a veículos usados com matrículas definitivas comunitárias atribuídas por outros Estados-Membros da União Europeia — não a usados nacionais. O tempo de uso é o período decorrido desde a atribuição da primeira matrícula e respectivos documentos até ao termo do prazo de apresentação da declaração aduaneira do veículo.",
+    "tabelaD": [
+      { "de": 0, "ate": 1, "ano": "até 1 ano", "reducao": 10 },
+      { "de": 1, "ate": 2, "ano": "mais de 1 a 2 anos", "reducao": 20 },
+      { "de": 2, "ate": 3, "ano": "mais de 2 a 3 anos", "reducao": 28 },
+      { "de": 3, "ate": 4, "ano": "mais de 3 a 4 anos", "reducao": 35 },
+      { "de": 4, "ate": 5, "ano": "mais de 4 a 5 anos", "reducao": 43 },
+      { "de": 5, "ate": 6, "ano": "mais de 5 a 6 anos", "reducao": 52 },
+      { "de": 6, "ate": 7, "ano": "mais de 6 a 7 anos", "reducao": 60 },
+      { "de": 7, "ate": 8, "ano": "mais de 7 a 8 anos", "reducao": 65 },
+      { "de": 8, "ate": 9, "ano": "mais de 8 a 9 anos", "reducao": 70 },
+      { "de": 9, "ate": 10, "ano": "mais de 9 a 10 anos", "reducao": 75 },
+      { "de": 10, "ate": null, "ano": "mais de 10 anos", "reducao": 80 }
+    ]
+  },
+  "isencoes": {
+    "nota": "Só as isenções com efeito em automóvel ligeiro de passageiros ficaram registadas. O restante capítulo de isenções (arts. 51.º a 63.º — bombeiros, instituições de utilidade pública, veículos de interesse histórico, peças de museu, etc.) não foi curado nesta sessão.",
+    "deficiente": {
+      "base": "art. 54.º",
+      "co2MaxNedc": 160,
+      "co2MaxWltp": 184,
+      "limiteIsencao": 7800,
+      "nota": "Veículos destinados ao uso próprio de pessoas com deficiência motora maiores de 18 anos, de pessoas com multideficiência profunda, de pessoas com deficiência que se movam exclusivamente apoiadas em cadeiras de rodas e de pessoas com deficiência visual, qualquer que seja a idade, e de pessoas com deficiência das Forças Armadas. A isenção não pode ultrapassar 7 800 €."
+    },
+    "taxi": {
+      "base": "art. 53.º",
+      "reducao": 70,
+      "ateAnosUso": 4,
+      "co2MaxNedc": 160,
+      "co2MaxWltp": 184,
+      "nota": "Táxis (letra 'A') e veículos de aluguer com condutor (letra 'T') com até quatro anos de uso e emissões dentro dos limites: isenção de 70 % do montante do imposto."
+    }
+  }
+}
