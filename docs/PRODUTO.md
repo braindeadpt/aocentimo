@@ -750,6 +750,114 @@ sempre como `var(--seq-N)` directo — os aliases `--color-*` de
 A rampa candidata `seqb` (âmbar escurecido) está desenhada em `/estilo`
 à espera da decisão do dono (ver DECISOES.md — pergunta em aberto).
 
+## 6b. A V5 — «O Bairro»
+
+> **Decisão do dono (2026-09-30):** o protótipo V5 «O Bairro» passa a
+> produção. Plano de execução em `docs/PACK-V5-PRODUCAO.md`; registo de
+> trabalho em `docs/NOTAS-V5.md`. A §4 (V4) e a §6 (sistema visual V4) ficam
+> como registo do que se planeou — o que a V5 substitui está escrito aqui e
+> apenas vale a partir de P3, quando a pele entrar nas restantes rotas.
+
+A V5 não troca o que o site ensina: troca **por onde se entra**. Em vez de
+uma página de perguntas, a home é o bairro do Porto visto de cima, e cada
+edifício é uma das perguntas de sempre. O conteúdo, os simuladores e as
+regras de dado não mudam — muda a sala.
+
+O protótipo em `design/prototipos/` é o contrato visual. Onde este produto
+e o protótipo divergirem, ganha o protótipo; as regras da casa (Regra nº1,
+acessibilidade, PT-PT) ganham sempre.
+
+### 6b.1 Onde mora cada tema
+
+Cada edifício tem um `data-id` que o liga à cena e ao e2e, e uma porta que
+a câmara foca ao abrir.
+
+| Edifício | `data-id` | Cena | Aprofunda em |
+|---|---|---|---|
+| Fábrica | `fabrica` | o salário da Inês, moedas pelas ruas | `/salario` |
+| Segurança Social | `segsocial` | o recibo, a TSU, o Pedro a recibos verdes | `/salario` |
+| Finanças | `financas` | o IRS em gavetas | `/irs` |
+| Banco | `banco` | a prestação e a Euribor | `/credito` |
+| Mercearia | `mercearia` | os essenciais e o IVA no talão | `/inflacao` |
+| Correios | `correios` | a poupança e o poder de compra | `/poupanca` |
+| Bomba | `bomba` | o litro por dentro | `/precos` |
+| Casa da Inês | `casa` | meses de trabalho por uma casa | `/casa` |
+| Pastelaria | `pastelaria` | comer fora e o IVA do café | `/inflacao` |
+| Quiosque | `quiosque` | o país hoje | `/trabalho`, `/dados` |
+| Escola | `escola` | ler gráficos e o glossário | `/aprender` |
+
+As cenas abrem **por âncora** (`/#financas`), nunca por rota nova. Em P3
+cada página ganha no topo a ligação de volta ao seu edifício.
+
+### 6b.2 O kit de desenho
+
+TypeScript puro que devolve SVG em texto, em `src/lib/bairro/`:
+`iso.ts` (motor isométrico e peças), `planta.ts` (a planta e o terreno),
+`personagens.ts` (o esqueleto, o elenco e os passantes), `dados.ts`
+(`dadosBairro()` — os números, lidos de `data/` no servidor).
+
+Três invariantes do kit, que os testes fixam:
+
+1. **Funções puras.** O terreno é um argumento, nunca um global. No
+   protótipo, `definirTerreno()` e `lencoAtual` eram variáveis de módulo
+   escritas e nunca limpas; em produção o mapa não pode depender da ordem
+   de chamada.
+2. **Os ids de padrões SVG levam `b-`**, para não colidirem com o resto do
+   site.
+3. **Nenhum desenho escreve `undefined` nem `NaN`.** O protótipo emitia
+   `fill="undefined"` numa parede sem cor — o browser pintava-a a preto, sem
+   erro na consola. Onde um valor falta, o que se escreve é a falha
+   declarada («—»), nunca um zero.
+
+### 6b.3 O contrato visual V5
+
+Direção: o bairro do Porto em cartoon, claro, traço preto grosso, cores
+chapadas, para dos 11 aos 50 anos. Mantêm-se da V4 a Regra nº1, a cor com
+significado (verde = o que fica contigo · vermelho = o que sai · azul =
+neutro) e ▲/▼ nas variações.
+
+Tokens (claro, por omissão), copiados do protótipo:
+
+| Token | Valor | Uso |
+|---|---|---|
+| `--papel` | `#ffffff` | fundo de cartões e cenas |
+| `--chao` | `#f6f2ea` | fundo das páginas |
+| `--tinta` | `#16130f` | texto e traço |
+| `--tinta-2` | `#4a4540` | texto secundário |
+| `--suave` | `#6e675e` | fontes, notas |
+| `--linha` | `#e4e1da` | divisões |
+| `--amarelo` / `--amarelo-2` | `#ffc62b` / `#fff1c2` | destaque, marcadores |
+| `--azul` / `--azul-2` | `#2445d6` / `#dfe5ff` | informação, botões |
+| `--verde` / `--verde-2` | `#0c8f5c` / `#d3f2e3` | o que fica |
+| `--vermelho` / `--vermelho-2` | `#e2412a` / `#ffe1d9` | o que sai |
+
+**Os tokens vivem em `[data-pele="v5"]`, não em `:root`.** Não é estilo: é
+uma correcção. `--linha` já existia no sistema V4 com outro significado — é o
+contador de escalonamento que `/salario`, `/impostos`, `/casa`, `/poupanca`
+e `/trabalho` escrevem no elemento e que o escalonamento consome em `calc()`
+com o fallback `var(--linha, 0)`. Declará-lo como cor em `:root`
+invalidaria esses quatro `calc()` e pararia a animação de entrada dessas
+rotas. Nenhuma rota V4 carrega o atributo, por isso **nenhuma muda de aspeto
+até P3**, quando `<html>` passa a levar `data-pele="v5"`.
+
+Tema escuro = a noite do bairro: fundo `#141a33`, papel `#1d2442`, tinta
+`#f4efe4`, azul `#8da2ff`, verde `#3fc48a`, vermelho `#ff7a5c`, amarelo igual.
+É proposta de partida — P3 verifica o AA com `_mega-audit` e ajusta.
+
+Tipografia: Archivo (com o eixo de largura) para tudo; Caveat só nas
+anotações à mão nos gráficos e no quadro da escola; talão e recibo em
+monoespaçada do sistema. Source Serif, Space Grotesk e Space Mono saem do
+`layout.tsx` em P3.
+
+Forma: traço de 2,5 a 3,5 px em `--tinta`; botões em pílula com sombra dura
+`3px 4px 0 var(--tinta)`; cartões com raio 18–24 px e a mesma sombra; nada
+de gradientes de fundo, vidro, roxo ou sombras difusas.
+
+Movimento: a animação ambiente é permitida no bairro (é a home). Nas cenas
+anima-se o que ensina — moedas, gavetas, camadas do litro, quadro da
+Euribor. Tudo tem estado final sem animação em `prefers-reduced-motion`, e o
+número certo está sempre no HTML.
+
 ## 7. Intocável
 
 - **O ¢** — o C do wordmark é o sinal de cêntimo desenhado (arco à
