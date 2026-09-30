@@ -28,6 +28,13 @@ const DADOS = {
   gasoleo: gas.v, gasolina: g95.v, dataComb: dia(gas.t),
   euribor12: eur12.v, ca: ca.oficialPct, desemprego: une.v, inflacao: +((at(cp00, T1) / at(cp00, Tano) - 1) * 100).toFixed(1),
   cabaz10: +(10 * at(cp01, T1) / at(cp01, T0)).toFixed(2), cabazPct: Math.round((at(cp01, T1) / at(cp01, T0) - 1) * 100), cafesPct: Math.round((at(cp11, T1) / at(cp11, T0) - 1) * 100),
+  comb: (() => {
+    const isp = L("data/fiscal/isp.json"), iva = L("data/fiscal/iva.json").taxas.find((t) => t.nome === "Normal").taxa;
+    const semanal = (f) => L("data/sources/dgeg/" + f + ".json").series.filter((p, k, arr) => k % 7 === 0 || k === arr.length - 1).map((p) => ({ t: p.t, v: p.v }));
+    return { iva, ispVigencia: isp.vigencia, ispNota: isp.nota, ispFonte: isp.fonte,
+      gasolina: { nome: "Gasolina 95", preco: g95.v, data: g95.t, isp: isp.gasolina95.ispELitro, carbono: isp.gasolina95.carbonoELitro, notaIsp: isp.gasolina95.nota, serie: semanal("pmd-gasolina95-diario") },
+      gasoleo: { nome: "Gasóleo", preco: gas.v, data: gas.t, isp: isp.gasoleo.ispELitro, carbono: isp.gasoleo.carbonoELitro, notaIsp: isp.gasoleo.nota, serie: semanal("pmd-gasoleo-diario") } };
+  })(),
   aforro: (() => { const c = L("data/fiscal/ca.json"), k = L("data/fiscal/capitais.json"); return { taxa: c.serieF.taxaBrutaNovasSubscricoes, vigencia: c.vigencia, taxaNota: c.serieF.taxaNota, premios: c.serieF.premiosPermanencia.map((p) => ({ de: p.de, ate: p.ate, pp: p.pp })), imposto: k.retencaoLiberatoria.taxa, garantia: c.serieF.garantia }; })(),
   merc: (() => {
     const ser = (c) => L("data/sources/eurostat/hicp-pt-cp" + c + ".json").series.filter((p) => p.t >= "2019-01").map((p) => ({ t: p.t, v: p.v }));
@@ -45,6 +52,7 @@ const DADOS = {
     mercCena: `Eurostat · índice harmonizado de preços no consumidor, Portugal, por produto (ECOICOP 01.1.1 a 01.1.8) · ${mes(T0)} → ${mes(T1)}`,
     ivaCena: `Código do IVA — Listas I e II anexas e art. 18.º · taxas do continente em vigor em 2026`,
     aforroCena: `IGCP · Certificados de Aforro série F, taxa em vigor desde ${ca.vigenciaOficial} e prémios de permanência · retenção de 28 % (art. 71.º do CIRS) · inflação: Eurostat, índice harmonizado de preços, Portugal`,
+    combCena: `DGEG · preço médio de venda ao público, média nacional diária (${dia(gas.t)}) · ISP e taxa de carbono: data/fiscal/isp.json (portaria em vigor desde ${L("data/fiscal/isp.json").vigencia}) · IVA: Código do IVA, taxa normal`,
     fabrica: `Motores AO CÊNTIMO · regras ${cen.meta.ano} · ${cen.meta.perfil}`,
     mercearia: `Eurostat · IHPC Portugal, alimentação e bebidas não alcoólicas · ${mes(T0)} → ${mes(T1)}`,
     bomba: `DGEG · preço médio de venda ao público · ${dia(gas.t)}`,
@@ -69,6 +77,7 @@ h = h.replace("__DADOS__", () => JSON.stringify(DADOS)).replace("__LOGO__", () =
   .replace("__BANCO__", () => fs.readFileSync(path.join(__dirname, "cena-banco.js"), "utf8"))
   .replace("__MERC__", () => fs.readFileSync(path.join(__dirname, "cena-mercearia.js"), "utf8"))
   .replace("__CORREIOS__", () => fs.readFileSync(path.join(__dirname, "cena-correios.js"), "utf8"))
+  .replace("__BOMBA__", () => fs.readFileSync(path.join(__dirname, "cena-bomba.js"), "utf8"))
   .replace("__PERSONAGENS__", () => fs.readFileSync(path.join(__dirname, "personagens.js"), "utf8"));
 const resto = h.match(/__[A-Z]+__/g); if (resto) throw new Error("por substituir: " + resto);
 fs.writeFileSync(path.join(__dirname, "mapa.html"), h);
