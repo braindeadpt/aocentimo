@@ -542,5 +542,13 @@
     "recolhidoEm": "2026-09-20T19:43:34.509Z",
     "serieAte": "2025-12-31",
     "frequencia": "semestral"
+  },
+  {
+    "id": "fiscal-cartoes",
+    "fonte": "DL 133/2009 + Regulamento (UE) 2015/751 — curado",
+    "url": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/2009-34518975",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
   }
 ]
