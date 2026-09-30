@@ -66,7 +66,7 @@ function pessoa(o) {
         <g class="olhos"><ellipse cx="-6.5" cy="-115" rx="2.4" ry="3" fill="${K2}"/><ellipse cx="6.5" cy="-115" rx="2.4" ry="3" fill="${K2}"/><circle cx="-5.8" cy="-116" r=".9" fill="#fff"/><circle cx="7.2" cy="-116" r=".9" fill="#fff"/></g>
         <path class="sobrancelhas" d="M-10 -121 q3.5 -2 7 0 M3 -121 q3.5 -2 7 0" stroke="${escurecer(o.corCabelo || "#3b2418", .7)}" stroke-width="2" fill="none" stroke-linecap="round"/>
         ${o.sardas ? [[-11, -110], [-9, -107.5], [-13, -107], [11, -110], [9, -107.5], [13, -107]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1" fill="#b8683a"/>`).join("") : ""}
-        ${o.barbaCurta ? `<path d="M-16 -112 q0 18 16 20 q16 -2 16 -20 q-4 8 -16 8 q-12 0 -16 -8z" fill="${escurecer(pele, .62)}" opacity=".45"/>` : ""}
+        ${o.barbaCurta ? [[-12,-109],[-10,-105],[-7,-101.5],[-3.5,-99.5],[0,-99],[3.5,-99.5],[7,-101.5],[10,-105],[12,-109],[-8,-104.5],[-4.5,-102.5],[4.5,-102.5],[8,-104.5],[-5,-107.8],[-2,-108.3],[2,-108.3],[5,-107.8]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r=".85" fill="${escurecer(o.corCabelo || "#3b2418", .8)}"/>`).join("") : ""}
         ${o.oculos === "quadrados" ? `<rect x="-12.5" y="-120" width="11" height="9" rx="2" fill="none" stroke="${K2}" stroke-width="2"/><rect x="1.5" y="-120" width="11" height="9" rx="2" fill="none" stroke="${K2}" stroke-width="2"/><path d="M-1.5 -116 h3" stroke="${K2}" stroke-width="2"/>` : ""}
         ${o.oculos && o.oculos !== "quadrados" ? `<circle cx="-6.5" cy="-115" r="5.8" fill="none" stroke="${K2}" stroke-width="1.8"/><circle cx="6.5" cy="-115" r="5.8" fill="none" stroke="${K2}" stroke-width="1.8"/><path d="M-.7 -115 h1.4" stroke="${K2}" stroke-width="1.8"/>` : ""}
         ${o.bone ? `<path d="M-18 -114 q0 -25 18 -25 q18 0 18 25 q-18 -5 -36 0z" fill="${o.bone}" stroke="${K2}" stroke-width="2.4"/><path d="M13 -117 q16 -4 22 3 q-10 4 -22 1z" fill="${escurecer(o.bone, .8)}" stroke="${K2}" stroke-width="2.2"/><circle cx="0" cy="-139" r="2.4" fill="${escurecer(o.bone, .8)}" stroke="${K2}" stroke-width="1.4"/>` : ""}
@@ -88,10 +88,10 @@ const ELENCO = {
   manuel: { nome: "Sr. Manuel", pele: "c", cabelo: "careca", corCabelo: "#8d8d8d", roupa: "#ffffff", calcas: "#3a3a3a", avental: "#0c8f5c", bigode: true },
   arminda: { nome: "Dona Arminda", pele: "a", cabelo: "carrapito", corCabelo: "#cfc9c1", roupa: "#9e2f45", saia: "#3d3a4f", oculos: true, mala: "#e2412a", sapato: "#3d3a4f" },
   goncalo: { nome: "Gonçalo", pele: "a", cabelo: "espetado", corCabelo: "#c26b2b", roupa: "#0c8f5c", calcas: "#3557b7", mochila: "#ffc62b", bone: "#e2412a", auscultadores: "#16130f", sardas: true, escala: .86, sapato: "#ffffff" },
-  rui: { nome: "Rui", pele: "a", cabelo: "curto", corCabelo: "#3b2418", roupa: "#26282b", calcas: "#3557b7", barbaCurta: true, cachecol: true, manjerico: true, sapato: "#ffffff" },
+  rui: { nome: "Rui", pele: "a", cabelo: "curto", corCabelo: "#3b2418", roupa: "#26282b", calcas: "#3557b7", cachecol: true, manjerico: true, sapato: "#ffffff" },
   marta: { nome: "Marta", pele: "e", cabelo: "afro", corCabelo: "#1d1410", lenco: "#ffc62b", roupa: "#e2412a", calcas: "#26282b", martelo: true, sapato: "#ffffff" },
   diana: { nome: "Diana", pele: "a", cabelo: "comprido", corCabelo: "#e8c068", roupa: "#ffffff", saia: "#2445d6", pasta: "#7a4a2a", sapato: "#16130f" },
-  pedro: { nome: "Pedro", pele: "c", cabelo: "surf", corCabelo: "#a8742c", roupa: "#1f8fb3", estampa: "ondas", calcas: "#f0b429", calcoes: true, barbaCurta: true, prancha: "#7fd1c7", sapato: "#e9e3d6" },
+  pedro: { nome: "Pedro", pele: "c", cabelo: "surf", corCabelo: "#a8742c", roupa: "#1f8fb3", estampa: "ondas", calcas: "#f0b429", calcoes: true, prancha: "#7fd1c7", sapato: "#e9e3d6" },
 };
 const PASSANTES = [
   { pele: "c", cabelo: "curto", corCabelo: "#2b1d14", roupa: "#ff8fb7", calcas: "#2b3a55" },

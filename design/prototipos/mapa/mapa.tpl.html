@@ -114,7 +114,7 @@
   /* ——— cenas de perto ——— */
   .cena-perto { position: absolute; inset: 0; z-index: 7; background: var(--papel); display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); overflow: auto; }
   .cena-perto[hidden] { display: none; }
-  .cena-arte { background: #f1ebdf; border-right: 4px solid var(--tinta); display: grid; place-items: center; padding: 14px; min-width: 0; }
+  .cena-arte { background: #f1ebdf; border-right: 4px solid var(--tinta); display: grid; place-items: center; padding: 14px; min-width: 0; align-self: start; position: sticky; top: 0; height: calc(clamp(460px, 74vh, 760px)); }
   .cena-arte svg { width: 100%; height: auto; max-height: calc(clamp(460px, 74vh, 760px) - 28px); }
   .cena-texto { position: relative; padding: 18px 22px 22px; display: grid; gap: 12px; align-content: start; min-width: 0; }
   .cena-texto .quem { font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--azul); padding-right: 36px; }
@@ -145,7 +145,12 @@
   .gaveta { transition: transform .3s cubic-bezier(.3,1.6,.5,1); }
   .gaveta.ativa { transform: translateX(-12px); }
   .gaveta.ativa > rect:first-child { stroke: var(--azul); stroke-width: 3.4; }
-  @media (max-width: 820px) { .cena-perto { grid-template-columns: 1fr; align-content: start; } .cena-arte { border-right: 0; border-bottom: 4px solid var(--tinta); } .cena-arte svg { max-height: 300px; } }
+  .barra-juros { display: flex; height: 24px; border: 2.5px solid var(--tinta); border-radius: 8px; overflow: hidden; font-size: 12px; font-weight: 800; }
+  .barra-juros span { display: flex; align-items: center; justify-content: center; white-space: nowrap; overflow: hidden; transition: width .2s; }
+  #banBj { background: var(--vermelho-2); color: var(--vermelho); } #banBc { background: var(--verde-2); color: var(--verde); }
+  .exemplo summary { cursor: pointer; font-size: 14px; font-weight: 700; }
+  .exemplo label { display: flex; justify-content: space-between; font-size: 14px; margin-top: 6px; } .exemplo output { font-weight: 900; }
+  @media (max-width: 820px) { .cena-perto { grid-template-columns: 1fr; align-content: start; } .cena-arte { border-right: 0; border-bottom: 4px solid var(--tinta); position: static; height: auto; } .cena-arte svg { max-height: 300px; } }
 
   /* ——— personagens ——— */
   .elenco { padding-block: 44px 20px; }
@@ -204,6 +209,17 @@
       <div class="acoes" id="finAcoes"></div>
       <details class="confirma"><summary>Ver a tabela dos escalões</summary><table id="finTabela"></table></details>
       <span class="fonte" id="finFonte"></span>
+    </div>
+  </div>
+  <div class="cena-perto" id="cenaBan" hidden role="dialog" aria-modal="false" aria-labelledby="banQuem">
+    <div class="cena-arte"><svg id="banArte" viewBox="0 0 640 470" role="img" aria-label="O balcão A do Banco: o quadro da Euribor com letras que viram, o gerente ao balcão com o papel da prestação, o Rui e a Marta, e o cofre ao fundo."></svg></div>
+    <div class="cena-texto">
+      <button class="fechar" id="banFechar" type="button" aria-label="Voltar ao bairro">×</button>
+      <span class="quem" id="banQuem">Banco · senha A · crédito à habitação</span>
+      <p class="fala" id="banFala" aria-live="polite"></p>
+      <div id="banCorpo" style="display:grid;gap:12px"></div>
+      <div class="acoes" id="banAcoes"></div>
+      <span class="fonte" id="banFonte"></span>
     </div>
   </div>
   <div class="painel" id="painel" hidden role="dialog" aria-labelledby="painelQuem">
@@ -511,7 +527,7 @@ if (temG) {
 /* ——— cartão ao passar por um edifício ——— */
 const INFO = {
   fabrica: { t: "Fábrica", p: "Para onde vai o teu salário?", viva: true }, segsocial: { t: "Segurança Social", p: "O que são os descontos e para que servem?" },
-  financas: { t: "Finanças", p: "Como funcionam os escalões do IRS?", viva: true }, banco: { t: "Banco", p: "Quanto custa pedir dinheiro emprestado?" },
+  financas: { t: "Finanças", p: "Como funcionam os escalões do IRS?", viva: true }, banco: { t: "Banco", p: "Quanto custa pedir dinheiro emprestado?", viva: true },
   correios: { t: "Correios", p: "Onde rende a poupança da Dona Arminda?" }, bomba: { t: "Bomba de gasolina", p: "Quanto do litro é imposto?" },
   mercearia: { t: "Mercearia do Manuel", p: "Porque está tudo mais caro?", viva: true }, pastelaria: { t: "Pastelaria", p: "Quanto subiu o café?" },
   casa: { t: "Casa da Inês", p: "Quanto chega mesmo ao fim do mês?" }, quiosque: { t: "Quiosque da praça", p: "Os números do país, hoje" }, escola: { t: "Escola", p: "As palavras do dinheiro, explicadas" },
@@ -539,6 +555,7 @@ function entrar(id) {
   if (id === "fabrica") return cenaSalario();
   if (id === "mercearia") return cenaMercearia();
   if (id === "financas") return cenaFinancas();
+  if (id === "banco") return cenaBanco();
   const [x, y] = pontoEcra(id); ir(x + 60, y - 60, 640);
   const extra = { bomba: `Hoje: gasóleo <b>${EURO(DADOS.gasoleo, 3)}</b> e gasolina 95 <b>${EURO(DADOS.gasolina, 3)}</b> por litro, em média.`, banco: `A Euribor a 12 meses está em <b>${eur(DADOS.euribor12, 2)} %</b>.`, correios: `Os Certificados de Aforro rendem <b>${eur(DADOS.ca, 2)} %</b> (taxa base).`, quiosque: `Inflação: <b>${D.inflacao}</b> num ano. Desemprego: <b>${D.desemprego}</b>.` }[id];
   abrirPainel(INFO[id].t, `${INFO[id].p} <span class="a">Em breve</span> — este edifício ainda está em obras.`, [["Fechar", () => $("fecharPainel").click(), true]], extra ? `<p style="margin:0">${extra}</p>` : "", DADOS.fontes[id] || "");
@@ -606,6 +623,7 @@ function cenaMercearia() {
 }
 
 __FINANCAS__
+__BANCO__
 /* ——— as personagens: cartas ——— */
 const CARTAS = [
   ["ines", "Inês", "Operária da fábrica", "Conta de outrem · setor privado", "Porque é que 1 500 € brutos viram 1 167 €.", "#dfe5ff"],
