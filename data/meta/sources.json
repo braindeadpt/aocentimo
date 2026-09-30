@@ -550,5 +550,45 @@
     "recolhidoEm": "2026-01-01T00:00:00Z",
     "serieAte": "2026",
     "frequencia": "anual"
+  },
+  {
+    "id": "fiscal-cartoes",
+    "fonte": "DL 133/2009 + Regulamento (UE) 2015/751 — curado",
+    "url": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/2009-34518975",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
+  },
+  {
+    "id": "fiscal-ct",
+    "fonte": "IGCP — Ficha Técnica Certificados do tesouro série 5 — curado",
+    "url": "https://www.igcp.pt/pt/ficha-tecnica-certificados-do-tesouro-serie-5-0",
+    "recolhidoEm": "2026-07-16T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
+  },
+  {
+    "id": "fiscal-isv-2026",
+    "fonte": "DR — Lei 22-A/2007 (CISV) — curado",
+    "url": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2007-34445975",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
+  },
+  {
+    "id": "fiscal-iuc-2026",
+    "fonte": "DR — Lei 22-A/2007 (CIUC) — curado",
+    "url": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2007-34445975-47488175",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
+  },
+  {
+    "id": "fiscal-servicos-minimos",
+    "fonte": "DL 27-C/2000 + DGAEP — curado",
+    "url": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/2000-106398173",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
   }
 ]
