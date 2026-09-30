@@ -7,7 +7,7 @@
   "nota": "O IUC é um imposto anual, cobrado pela propriedade do veículo (facto gerador, art. 6.º n.º 1). Ao contrário do ISV, incide sobre a idade, a cilindrada e as emissões — não sobre o preço. A categoria A abrange automóveis ligeiros de passageiros e de utilização mista com peso bruto não superior a 2500 kg que utilizem gasolina ou electricidade; a categoria B abrange os ligeiros a gasóleo e os de utilização mista com peso bruto superior a 2500 kg.",
   "ultimaAlteracaoTaxas": {
     "diploma": "Lei n.º 82/2023, de 29 de dezembro (art. 260.º), em vigor desde 2024-01-01",
-    "nota": "As taxas dos artigos 9.º e 10.º mantêm-se iguais em 2024, 2025 e 2026. A LOE 2026 (Lei n.º 73-A/2025) não alterou as taxas do IUC — alterou apenas o artigo 7.º (base tributável) do IUC, com efeitos a partir de 2027-01-01."
+    "nota": "As taxas dos artigos 9.º e 10.º mantêm-se iguais em 2024, 2025 e 2026. A LOE 2026 (Lei n.º 73-A/2025) não altera o Código do IUC em artigo nenhum — o único artigo que toca no IUC é o 94.º, que se limita a manter o adicional do gasóleo. Quem altera o código é o Decreto-Lei n.º 161/2026, de 4 de agosto (autorização legislativa da Lei n.º 27/2026): muda a base tributável e o regime de pagamento, mas produz efeitos apenas a partir de 2027-01-01."
   },
   "actualizacaoAnual": {
     "base": "art. 8.º n.º 3",
@@ -77,7 +77,8 @@
     "nota": "Regras gerais do código — os veículos das categorias A, C, D e E com mais de 30 anos, considerados de interesse histórico pelas entidades competentes e com deslocações limitadas, e os veículos não motorizados, exclusivamente elétricos ou movidos a energias renováveis não combustíveis. O restante regime das isenções não foi curado nesta sessão."
   },
   "cobrancas": {
-    "nota": "Em 2026 o IUC deixou de ser pago no mês da matrícula: ou se paga tudo em fevereiro, ou, acima de 100 €, se divide em duas prestções (fevereiro e outubro). Ver data/fiscal/calendario-2026.json."
+    "regimeVigorEm2026": "mês da matrícula",
+    "nota": "Em 2026 o IUC continua a pagar-se no mês da matrícula, como sempre esteve no art. 7.º do código. O novo regime — liquidação anual centralizada por contribuinte, a pagar em abril (uma prestação até 100 €; abril e outubro de 100 € a 500 €; abril, julho e outubro acima de 500 €) — foi criado pelo Decreto-Lei n.º 161/2026, de 4 de agosto, e produz efeitos apenas a partir de 2027-01-01; em 2027 há ainda um regime transitório (outubro, ou julho e outubro acima de 500 €). As datas de fevereiro que circularam para 2026 nunca estiveram em diploma algum."
   },
   "verAlteracoes": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2007-34445975-47488175"
 }

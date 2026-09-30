@@ -1,21 +1,15 @@
 {
   "vigencia": "2026-01-01",
   "ano": 2026,
-  "fonte": "Autoridade Tributária — obrigações declarativas (CIRS, CIMI, CIUC) e alterações OE2026",
+  "fonte": "Autoridade Tributária — obrigações declarativas (CIRS, CIMI, CIUC); regime do IUC 2026: Código do IUC, art. 7.º (mês da matrícula)",
   "fonteUrl": "https://info.portaldasfinancas.gov.pt",
-  "nota": "Datas para contribuintes singulares no continente. Quando o último dia calha a fim de semana ou feriado, o prazo corre normalmente para o dia útil seguinte.",
+  "nota": "Datas para contribuintes singulares no continente. Quando o último dia calha a fim de semana ou feriado, o prazo corre normalmente para o dia útil seguinte. O IUC não tem prazo fixo neste calendário: em 2026 paga-se no mês da matrícula do veículo (art. 7.º do Código do IUC); o regime de pagamento em abril, com prestações, só vale a partir de 2027 (Decreto-Lei n.º 161/2026, de 4 de agosto, efeitos a partir de 2027-01-01). Uma versão anterior deste ficheiro trazia datas de fevereiro e outubro para o IUC: não estavam em diploma nenhum e foram retiradas.",
   "prazos": [
     {
       "id": "efatura",
       "titulo": "e-Fatura — validar faturas do ano anterior",
       "mes": "2026-02",
       "descricao": "Até 25 de fevereiro: verifica e completa as faturas de 2025 — é daqui que saem as deduções à coleta do teu IRS."
-    },
-    {
-      "id": "iuc-1",
-      "titulo": "IUC — 1.ª prestação (ou total se ≤ 100 €)",
-      "mes": "2026-02",
-      "descricao": "Novo em 2026: o IUC deixa o mês da matrícula. Até 100 € paga-se tudo em fevereiro; acima disso podes dividir — fevereiro e outubro."
     },
     {
       "id": "irs",
@@ -34,12 +28,6 @@
       "titulo": "IMI — 2.ª prestação (se > 500 €)",
       "mes": "2026-08",
       "descricao": "Segunda prestação de três, para IMI acima de 500 €."
-    },
-    {
-      "id": "iuc-2",
-      "titulo": "IUC — 2.ª prestação (se > 100 €)",
-      "mes": "2026-10",
-      "descricao": "Quem dividiu o IUC paga a segunda metade até ao fim de outubro."
     },
     {
       "id": "imi-3",

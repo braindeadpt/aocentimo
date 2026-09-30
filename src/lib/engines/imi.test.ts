@@ -35,6 +35,13 @@ describe("IMI — o que o motor recusa", () => {
     expect(() => imi({ vpt: 120000, taxa: 0.002 })).toThrow(/fora do intervalo/);
   });
 
+  // (2.ª auditoria) toFixed(1) sobre 0,0045 escrevia «0.0 %» na mensagem —
+  // float artefact. A mensagem tem de dizer 0,45 %.
+  it("a mensagem de erro escreve o intervalo por inteiro: 0,45 %, não 0,4 %", () => {
+    expect(() => imi({ vpt: 120000, taxa: 0.005 })).toThrow(/0,45 %/);
+    expect(() => imi({ vpt: 120000, taxa: 0.005 })).toThrow(/0,30 %/);
+  });
+
   it("recusa VPT não positivo", () => {
     expect(() => imi({ vpt: 0, taxa: 0.003 })).toThrow(/positivo/);
   });
