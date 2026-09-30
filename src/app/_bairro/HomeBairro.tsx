@@ -1,6 +1,13 @@
 import { dadosBairro } from "@/lib/bairro/dados";
 import { mundoBairro, reflexos } from "@/lib/bairro/mundo";
-import { ENQUADRAMENTOS } from "@/lib/bairro/planta";
+import { Pcom } from "@/lib/bairro/iso";
+import {
+  ENQUADRAMENTOS,
+  GAIVOTAS,
+  PONTOS_ANIMACAO,
+  PontosDeEcran,
+  TERRENO,
+} from "@/lib/bairro/planta";
 import { m, t } from "@/lib/messages";
 import { SITE_URL } from "@/lib/site";
 import { Bairro, type Hora, type InfoEdificio } from "./Bairro";
@@ -20,12 +27,19 @@ import { Bairro, type Hora, type InfoEdificio } from "./Bairro";
 export default function HomeBairro() {
   const d = dadosBairro();
   const { html, css } = mundoBairro(d.mapa);
+  const Pt = Pcom(TERRENO);
 
   
   // os dois pontos de enquadramento vêm da planta, calculados aqui (o
   // cliente não pode importar a planta — arrastaria o desenho inteiro)
   const [px, py] = ENQUADRAMENTOS.perto;
   const { x: lx, y: ly } = ENQUADRAMENTOS.longe;
+
+  // as três gaivotas: centro, raio em x, raio em y e o período da volta.
+  // Vêm prontas como números pelo mesmo motivo do enquadramento — o
+  // cliente anima as órbitas mas não sabe onde fica o rio.
+  const gaivotas = GAIVOTAS.map(([i, j, rx, ry, dur]) => [Pt(i, j), rx, ry, dur] as const);
+  const pontos = PontosDeEcran();
 
   // a hora do dia com que o mapa nasce. No build é sempre a do servidor —
   // uma página estática não sabe a hora de quem a abre. Por isso o
@@ -100,6 +114,9 @@ export default function HomeBairro() {
         descricao={m.bairro.mapa.descricao}
         rotuloHora={m.bairro.mapa.rotuloHora}
         enquadramentos={{ perto: [px, py], longe: [lx, ly] }}
+        coordenadas={PONTOS_ANIMACAO}
+        pontos={pontos}
+        gaivotas={gaivotas}
         horaInicial={horaInicial}
       />
 

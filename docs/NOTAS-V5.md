@@ -187,6 +187,45 @@ por `grep` nos chunks: zero vestígios.
    `transform` do CSS ao da câmara lê essa mesma constante — confirmado que
    falha se alguém voltar a derivá-lo.
 
+### P1-2 — a animação ambiente
+
+O bairro mexe-se: o elétrico sobe e desce a Avenida, as gaivotas traçam três
+órbitas sobre o rio, o nadador dá braçadas debaixo da ponte, os pombos
+ajeitam-se na Ribeira, o fumo sobe da fábrica e o brilho desliza sobre o
+Douro. Tudo o que dá para escrever em `@keyframes` ficou no servidor
+(`viagensSoltas()`, em `mundo.ts`) e corre sem uma linha de JavaScript.
+
+O resto é o que precisa mesmo do browser:
+
+- **As janelas que se acendem à noite** (`calcularLuzes`). Uma janela só
+  acende se nenhuma caixa desenhada à frente a tapar — e «tapar» é um
+  teste de ponto-dentro-de-polígono contra a casca convexa da silhueta de
+  cada caixa (`data-sil`). É geometria a correr uma vez, no arranque, com
+  um sorteio de semente fixa para dar igual em qualquer máquina.
+- **As peças animadas** (elétrico, gaivotas, nadador, pombos, fumo, brilho
+  da água), que seguem trajetórias calculadas.
+
+**O GSAP continua fora do bundle inicial.** Entra por `carregarGsap()`
+(`src/lib/motion/gsap.ts`, regra B-01) e só quando há movimento legítimo
+por fazer; com `prefers-reduced-motion` o chunk nunca é descarregado.
+Verificado nos chunks: os 51 KB e 43 KB do GSAP e do ScrollTrigger estão
+em ficheiros à parte, e o JS inicial da home subiu só 2,2 KB
+(185,7 → 187,9 KB gzip).
+
+**Duas decisões que custaram uma iteração:**
+
+1. **Uma função de servidor não atravessa a fronteira.** A primeira versão
+   passava `coordenada={Pt}` (a função `P` da planta) como prop, e o
+   `tsc` passava limpo — só o `next build` é que recusou, com *"Functions
+   cannot be passed directly to Client Components"*. Agora os pontos viajam
+   como **dados**: uma tabela de `[i, j, z]` e a tabela de coordenadas de
+   ecrã correspondente (`PONTOS_ANIMACAO` / `PontosDeEcran()`).
+   *Vale a pena reter:* o typecheck não apanha isto. O build é o portão.
+2. **As classes de animação levam o prefixo `b-`, as estruturais não.**
+   `.ed`, `.caixa`, `.vidro`, `.pin` e `.guia` ficam como estavam — são
+   parte do desenho. `.b-fumo`, `.b-baforada`, `.b-corpo-pombo` e
+   `.b-gaivota` ganham-no, para o CSS da V4 não apanhar o fumo da fábrica.
+
 ### O que ficou em aberto
 
 - **O HTML da home tem 130,8 KB gzip**, acima dos 80 KB que o pack impõe

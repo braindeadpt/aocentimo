@@ -567,7 +567,7 @@ export function cabeco(x: number, y: number): string {
 }
 
 export function pombo(x: number, y: number, d = 1): string {
-  return `<g class="pombo" transform="translate(${f1(x)} ${f1(y)}) scale(${d} 1)"><g class="corpo-pombo"><ellipse cx="0" cy="-5" rx="6.5" ry="4.5" fill="#9aa3ad" stroke="${K}" stroke-width="1.3"/><path d="M-6 -6 l-5 -2 l2 4 z" fill="#6c757f" stroke="${K}" stroke-width="1"/><circle cx="5.5" cy="-9" r="3" fill="#8b949e" stroke="${K}" stroke-width="1.2"/><path d="M8.2 -9 l2.4 1 l-2.4 .8" fill="#e69b3a"/></g><path d="M-1 -1 v2 M2 -1 v2" stroke="#e69b3a" stroke-width="1.2"/></g>`;
+  return `<g class="pombo" transform="translate(${f1(x)} ${f1(y)}) scale(${d} 1)"><g class="b-corpo-pombo"><ellipse cx="0" cy="-5" rx="6.5" ry="4.5" fill="#9aa3ad" stroke="${K}" stroke-width="1.3"/><path d="M-6 -6 l-5 -2 l2 4 z" fill="#6c757f" stroke="${K}" stroke-width="1"/><circle cx="5.5" cy="-9" r="3" fill="#8b949e" stroke="${K}" stroke-width="1.2"/><path d="M8.2 -9 l2.4 1 l-2.4 .8" fill="#e69b3a"/></g><path d="M-1 -1 v2 M2 -1 v2" stroke="#e69b3a" stroke-width="1.2"/></g>`;
 }
 
 export function nuvem(x: number, y: number, e = 1): string {
@@ -890,7 +890,7 @@ export function bandeiraFCP(x: number, y: number, w = 30, h = 46): string {
 }
 
 export function gaivota(): string {
-  return `<path class="gaivota" d="M-9 0 q4 -6 9 0 q5 -6 9 0" fill="none" stroke="${K}" stroke-width="2.2" stroke-linecap="round"/>`;
+  return `<path class="b-gaivota" d="M-9 0 q4 -6 9 0 q5 -6 9 0" fill="none" stroke="${K}" stroke-width="2.2" stroke-linecap="round"/>`;
 }
 
 /** Um carro: caixa baixa com o habitáculo de vidro por cima. */

@@ -107,6 +107,53 @@ export const ENQUADRAMENTOS = {
   longe: { x: 760, y: 470 },
 } as const;
 
+/**
+ * As três gaivotas do protótipo: onde voam, quão longe e em que tempo.
+ *
+ * `[i, j, raioX, raioY, segundos]` — a órbita é uma elipse centrada no
+ * ponto da planta, e o browser só precisa dos números. Vem de `planta.ts`
+ * pelo mesmo motivo de `ENQUADRAMENTOS`: o componente é de servidor, e
+ * ao cliente chega-lhe tudo já em coordenadas de ecrã.
+ */
+export const GAIVOTAS: readonly (readonly [number, number, number, number, number])[] = [
+  [8, 12.4, 150, 22, 9],
+  [3, 12, 110, 18, 12],
+  [12.5, 11.4, 80, 14, 7],
+];
+
+/**
+ * Os pontos da planta de que a animação ambiente precisa, por ordem: as
+ * duas pontas da avenida (por onde o elétrico sobe e desce) e os oito
+ * sítios onde o brilho da água desliza sobre o Douro.
+ *
+ * Vêm como `[i, j, z]` e o servidor converte cada um em coordenadas de
+ * ecrã (`PontosDeEcran()`). Não pode ser uma função `P()` a atravessar
+ * para o cliente: uma função de servidor não passa a fronteira, e o
+ * cliente também não pode importar `planta.ts` — arrastaria o desenho
+ * inteiro para o browser por causa de duas dezenas de números.
+ */
+export const PONTOS_ANIMACAO: readonly (readonly [number, number, number])[] = [
+  // as duas pontas da avenida, para o elétrico
+  [-3.4, 4.25, 0],
+  [13.4, 4.25, 0],
+  // o brilho da água: oito traços espalhados pelo rio
+  [-0.5, 11.3, -22],
+  [-0.5, 11.55, -22],
+  [0.14, 12.6, -22],
+  [1.31, 11.95, -22],
+  [3.83, 12.79, -22],
+  [4.75, 11.35, -22],
+  [6.39, 12.94, -22],
+  [7.79, 11.87, -22],
+  [10.28, 12.51, -22],
+  [11.96, 11.62, -22],
+];
+
+/** `PONTOS_ANIMACAO` já em coordenadas de ecrã, na mesma ordem. */
+export function PontosDeEcran(): (readonly [number, number])[] {
+  return PONTOS_ANIMACAO.map(([i, j, z]) => Pt(i, j, z));
+}
+
 /* Atalhos locais: o protótipo escrevia `caixa(...)` e o terreno vinha do
    global. Aqui cada atalho passa TERRENO, e a forma das chamadas no corpo
    da planta fica igual à do protótipo. */
@@ -281,7 +328,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
         }
         const ch2: Ponto = [Dd[0] + 40, Dd[1] + 26];
         s2 += `<rect x="${f1(ch2[0] - 11)}" y="${f1(ch2[1] - 110)}" width="22" height="110" fill="url(#b-tijolo)" stroke="${K}" stroke-width="2.6"/><rect x="${f1(ch2[0] - 13)}" y="${f1(ch2[1] - 80)}" width="26" height="6" fill="#9c3e28" stroke="${K}" stroke-width="1.6"/><path d="M${f1(ch2[0] - 11)} ${f1(ch2[1] - 95)} h22" stroke="#fff" stroke-width="3" opacity=".8"/><ellipse cx="${f1(ch2[0])}" cy="${f1(ch2[1] - 110)}" rx="13" ry="5" fill="${C.pedraEsc}" stroke="${K}" stroke-width="2.4"/>
-          <g class="fumo">${[0, 1, 2, 3].map(() => `<circle class="baforada" cx="${f1(ch2[0])}" cy="${f1(ch2[1] - 120)}" r="12" fill="#ece8df" opacity="0"/>`).join("")}</g>`;
+          <g class="b-fumo">${[0, 1, 2, 3].map(() => `<circle class="b-baforada" cx="${f1(ch2[0])}" cy="${f1(ch2[1] - 120)}" r="12" fill="#ece8df" opacity="0"/>`).join("")}</g>`;
         return s2;
       },
     });

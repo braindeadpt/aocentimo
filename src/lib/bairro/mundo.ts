@@ -39,7 +39,14 @@ import {
   rabelo,
   type Ponto,
 } from "./iso";
-import { HP, JM, TERRENO, type MapaBairro, type Pino } from "./planta";
+import {
+  HP,
+  JM,
+  TERRENO,
+  eletricoIso,
+  type MapaBairro,
+  type Pino,
+} from "./planta";
 
 /** `P()` já com o terreno do bairro — o `P()` do protótipo. */
 const Pt = Pcom(TERRENO);
@@ -217,6 +224,24 @@ function semAcoes(svg: string): string {
  * (i = 14,54). Vêm da geometria da própria projeção, com `ORIGEM` — não
  * são números escritos à mão: se a projeção mudar, o reflexo muda com ela.
  */
+/**
+ * O miúdo a nadar debaixo da ponte — só a cabeça e o braço de fora.
+ *
+ * Nasce no céu, e não no rio: é uma peça de animação, e a camada do rio
+ * tem de ficar quieta para o Douro não repintar a cada braçada.
+ */
+function nadador(): string {
+  const [x, y] = Pcom(TERRENO)(15.05, 12.95, -22);
+  return (
+    `<g class="b-nadador" transform="translate(${f1(x)} ${f1(y)})">` +
+    `<ellipse rx="12" ry="4" fill="#dff2ff" opacity=".7"/>` +
+    `<circle cy="-5" r="5.5" fill="#d49a72" stroke="#16130f" stroke-width="1.4"/>` +
+    `<path d="M-5.5 -7 q5.5 -6 11 0" fill="#1d1410"/>` +
+    `<path class="b-braço-n" d="M5 -2 q7 -6 12 -2" fill="none" stroke="#d49a72" stroke-width="3" stroke-linecap="round"/>` +
+    `</g>`
+  );
+}
+
 export function reflexos(m: MapaBairro): string {
   const F1 = 2 * (ORIGEM.y + 64 * 8.6 - ORIGEM.x / 2) + 44;
   const F2 = 2 * (ORIGEM.y + 64 * 14.54 + ORIGEM.x / 2) + 44;
@@ -293,13 +318,18 @@ export function mundoBairro(m: MapaBairro): { html: string; css: string } {
         `<g id="b-gChao">${m.chao}</g>` +
         `<g id="b-gTras">${m.tras}</g>`
     ) +
-    camada("b-cA", `<g id="b-movA"></g>`) +
+    camada(
+      "b-cA",
+      // o elétrico nasce aqui e a animação ambiente move-o: sem JS
+      // fica parado na Avenida, que já é melhor do que não estar
+      `<g id="b-movA"><g id="b-eletrico">${eletricoIso()}</g></g>`
+    ) +
     camada("b-cFrente", `<g id="b-gFrente">${m.frente}</g>`) +
     camada("b-cB", `<g id="b-movB"></g><g id="b-gVida">${m.vida}</g><g id="b-gAgua">${m.agua}</g>`) +
     soltas +
     camada("b-cRio", `<g id="b-gGaia">${m.gaia}</g><g id="b-gRio">${m.ponte.tras}</g>`) +
     camada("b-cPonte", m.ponte.frente) +
-    camada("b-cCeu", `<g id="b-gCeu"></g>`) +
+    camada("b-cCeu", `<g id="b-gCeu">${nadador()}</g>`) +
     `<div id="b-noite" style="width:${MUNDO.w}px;height:${MUNDO.h}px"></div>` +
     camada("b-cTopo", topo(m));
   return { html, css };

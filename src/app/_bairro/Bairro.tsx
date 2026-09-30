@@ -28,6 +28,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PausaAmbiente } from "@/components/PausaAmbiente";
 import { Camera, arrumarPinos, type Enquadramentos, type MarcadorVivo } from "./camara";
+import { ligarAmbiente } from "./ambiente";
 import "./bairro.css";
 
 /** As três horas do dia. */
@@ -68,6 +69,21 @@ export interface PropsBairro {
   /** Onde a câmara enquadra ao arrancar: perto da fábrica, ou o bairro todo. */
   enquadramentos: Enquadramentos;
   /**
+   * `P(i, j, z)` da planta em coordenadas de ecrã, por TABELA e não por
+   * função: uma função de servidor não pode atravessar a fronteira para
+   * um componente de cliente (o Next recusa o build), e o cliente também
+   * não pode importar `planta.ts` — arrastaria o desenho inteiro para o
+   * browser por causa de duas coordenadas.
+   *
+   * É uma lista de triplos `[i, j, z]`; o ponto correspondente está na
+   * mesma posição da prop `pontos`.
+   */
+  coordenadas: readonly (readonly [number, number, number])[];
+  /** Os pontos de ecrã correspondentes, na mesma ordem de `coordenadas`. */
+  pontos: readonly (readonly [number, number])[];
+  /** As três gaivotas: centro, raio em x, raio em y e período. */
+  gaivotas: readonly (readonly [readonly [number, number], number, number, number])[];
+  /**
    * A hora do dia com que o mapa nasce, já escolhida pelo servidor.
    * Derivá-la num `useEffect` seria tarde: o HTML chegaria com o céu do
    * dia e só depois mudaria para o da noite — um salto visível, e uma
@@ -99,6 +115,9 @@ export function Bairro({
   rotuloHora,
   enquadramentos,
   horaInicial,
+  coordenadas,
+  pontos,
+  gaivotas,
   children,
   aoEntrar,
 }: PropsBairro) {
@@ -150,6 +169,29 @@ export function Bairro({
       camaraRef.current = null;
     };
   }, [reflexo, enquadramentos]);
+
+  /* ————— a animação ambiente (P1-2) ————— */
+  useEffect(() => {
+    const mundo = mundoRef.current;
+    if (!mundo) return;
+
+    // `ligarAmbiente` é assíncrono (pede o GSAP por dynamic import) e pode
+    // desistir a meio — o separador pode ter fechado, o componente pode
+    // ter desmontado. A-bandeira garante que a limpeza não corre sobre um
+    // mundo que já não é este.
+    let vivo = true;
+    let limpar: (() => void) | undefined;
+
+    ligarAmbiente(mundo, { coordenadas, pontos, gaivotas }).then((f) => {
+      if (vivo) limpar = f;
+      else f();
+    });
+
+    return () => {
+      vivo = false;
+      limpar?.();
+    };
+  }, [coordenadas, pontos, gaivotas]);
 
   /* ————— o cartão segue o edifício ————— */
   const posCartao = useCallback((alvo: Element | null) => {
