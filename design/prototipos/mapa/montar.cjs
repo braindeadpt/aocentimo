@@ -28,6 +28,18 @@ const DADOS = {
   gasoleo: gas.v, gasolina: g95.v, dataComb: dia(gas.t),
   euribor12: eur12.v, ca: ca.oficialPct, desemprego: une.v, inflacao: +((at(cp00, T1) / at(cp00, Tano) - 1) * 100).toFixed(1),
   cabaz10: +(10 * at(cp01, T1) / at(cp01, T0)).toFixed(2), cabazPct: Math.round((at(cp01, T1) / at(cp01, T0) - 1) * 100), cafesPct: Math.round((at(cp11, T1) / at(cp11, T0) - 1) * 100),
+  mais: (() => {
+    const ss = L("data/fiscal/ss.json"), cb = L("data/fiscal/catb.json"), irs = L("data/fiscal/irs-2026.json"), smn = L("data/fiscal/smn.json"), iva = L("data/fiscal/iva.json");
+    const eu = (f, desde = "2019-01") => L("data/sources/eurostat/" + f + ".json").series.filter((p) => p.t >= desde).map((p) => ({ t: p.t, v: p.v }));
+    const ult = (f) => { const j = L("data/sources/eurostat/" + f + ".json"); return j.series.at(-1); };
+    const cs = L("data/derived/casa-em-salarios.json"), hpi = L("data/sources/eurostat/hpi-pt.json");
+    return {
+      ss: { trab: ss.trabalhador.taxa, emp: ss.entidadePatronal.taxa, fonte: ss.fonte, catb: { taxa: cb.segurancaSocial.taxa, rr: cb.segurancaSocial.rendimentoRelevante, baseMinIas: cb.segurancaSocial.baseMinimaIas, isencao: cb.segurancaSocial.isencaoPrimeirosMeses, fonte: cb.fonte }, ias: irs.ias },
+      casa: { razao: cs.series.filter((p) => p.t >= "2015-Q1"), hpi: hpi.series.filter((p) => p.t >= "2015-Q1").map((p) => ({ t: p.t, v: p.v })), nota: cs.meta.formula, ate: cs.meta.rotuloAte },
+      past: { cp11: eu("hicp-pt-cp11"), ivaRest: iva.taxas.find((t) => t.exemplos.includes("restauração")).taxa },
+      quiosque: { une: eu("une-pt-total"), jov: eu("une-pt-jovem"), ue: eu("une-ue27-total"), pib: ult("pib-pt-homologo"), conf: ult("confianca-pt"), smn: smn.regioes.continente, smnSerie: smn.serie },
+    };
+  })(),
   comb: (() => {
     const isp = L("data/fiscal/isp.json"), iva = L("data/fiscal/iva.json").taxas.find((t) => t.nome === "Normal").taxa;
     const semanal = (f) => L("data/sources/dgeg/" + f + ".json").series.filter((p, k, arr) => k % 7 === 0 || k === arr.length - 1).map((p) => ({ t: p.t, v: p.v }));
@@ -53,6 +65,11 @@ const DADOS = {
     ivaCena: `Código do IVA — Listas I e II anexas e art. 18.º · taxas do continente em vigor em 2026`,
     aforroCena: `IGCP · Certificados de Aforro série F, taxa em vigor desde ${ca.vigenciaOficial} e prémios de permanência · retenção de 28 % (art. 71.º do CIRS) · inflação: Eurostat, índice harmonizado de preços, Portugal`,
     combCena: `DGEG · preço médio de venda ao público, média nacional diária (${dia(gas.t)}) · ISP e taxa de carbono: data/fiscal/isp.json (portaria em vigor desde ${L("data/fiscal/isp.json").vigencia}) · IVA: Código do IVA, taxa normal`,
+    ssCena: `Código dos Regimes Contributivos (11 % e 23,75 %); recibos verdes: art. 168.º do Código Contributivo (21,4 % sobre 70 % do faturado) · salário da Inês: motores AO CÊNTIMO, regras de ${cen.meta.ano}`,
+    casaCena: `Eurostat · índice de preços da habitação ÷ índice de custo do trabalho, Portugal, 2015 = 100 · até ${L("data/derived/casa-em-salarios.json").meta.rotuloAte}`,
+    pastCena: `Eurostat · índice harmonizado de preços, Portugal: restaurantes e alojamento (ECOICOP 11) e alimentação (01) · ${mes(T0)} → ${mes(T1)} · IVA: Código do IVA`,
+    quiosqueCena: `Eurostat · desemprego (une_rt_m, dessazonalizado), PIB (variação homóloga), confiança dos consumidores · salário mínimo: DL 139/2025`,
+    escolaCena: `Eurostat · índice harmonizado de preços, Portugal (total e alimentação)`,
     fabrica: `Motores AO CÊNTIMO · regras ${cen.meta.ano} · ${cen.meta.perfil}`,
     mercearia: `Eurostat · IHPC Portugal, alimentação e bebidas não alcoólicas · ${mes(T0)} → ${mes(T1)}`,
     bomba: `DGEG · preço médio de venda ao público · ${dia(gas.t)}`,
@@ -78,6 +95,8 @@ h = h.replace("__DADOS__", () => JSON.stringify(DADOS)).replace("__LOGO__", () =
   .replace("__MERC__", () => fs.readFileSync(path.join(__dirname, "cena-mercearia.js"), "utf8"))
   .replace("__CORREIOS__", () => fs.readFileSync(path.join(__dirname, "cena-correios.js"), "utf8"))
   .replace("__BOMBA__", () => fs.readFileSync(path.join(__dirname, "cena-bomba.js"), "utf8"))
+  .replace("__BASE__", () => fs.readFileSync(path.join(__dirname, "cena-base.js"), "utf8"))
+  .replace("__BAIRRO__", () => fs.readFileSync(path.join(__dirname, "cenas-bairro.js"), "utf8"))
   .replace("__PERSONAGENS__", () => fs.readFileSync(path.join(__dirname, "personagens.js"), "utf8"));
 const resto = h.match(/__[A-Z]+__/g); if (resto) throw new Error("por substituir: " + resto);
 fs.writeFileSync(path.join(__dirname, "mapa.html"), h);

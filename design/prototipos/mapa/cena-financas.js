@@ -3,7 +3,7 @@
    a taxa só se aplica ao que está lá dentro. Números: escalões de 2026 do repositório (data/fiscal/irs-2026.json). */
 const IRS = DADOS.irs;
 const SEP = EURO(1).slice(-2, -1); // o mesmo espaço fino que o resto do site usa antes de «€»
-const pctT = (t) => eur(t * 100, Math.round(t * 1000) % 10 ? 1 : 0) + SEP + "%";
+const pctT = (t) => { const v = Math.round(t * 10000) / 100, casas = Number.isInteger(v) ? 0 : Number.isInteger(Math.round(v * 100) / 10) ? 1 : 2; return eur(v, casas) + SEP + "%"; };
 const ordinal = (n) => n + ".º";
 function irsGavetas(c) {
   let de = 0;
