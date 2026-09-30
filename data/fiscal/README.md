@@ -31,6 +31,7 @@ legislativa/oficial (DR, AT, OE, IGCP, Código do IVA).
 | `calendario-YYYY.json` | Prazos fiscais do ano (IRS, IMI, IUC, e-Fatura) | AT / códigos tributários |
 | `isv-YYYY.json` | Tabelas A/B/C, agravamento do gasóleo, taxas intermédias e reduzidas, redução de usados importados da UE | CISV (Lei 22-A/2007) — DR consolidado |
 | `iuc-YYYY.json` | Tabelas das categorias A e B, adicional de CO2 e coeficientes por ano de matrícula | CIUC (Lei 22-A/2007, Anexo II) — DR consolidado + AT |
+| `imi-YYYY.json` | Intervalo legal da taxa, taxa por município, IMI familiar (30/70/140 €) e regras de prestação | CIMI (DL 287/2003) — DR + AT |
 
 ## Regras
 

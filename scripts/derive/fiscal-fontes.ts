@@ -40,6 +40,7 @@ const NOME_POR_FICHEIRO: Record<string, string> = {
   "ct": "IGCP — Ficha Técnica Certificados do tesouro série 5 — curado",
   "isv-2026": "DR — Lei 22-A/2007 (CISV) — curado",
   "iuc-2026": "DR — Lei 22-A/2007 (CIUC) — curado",
+  "imi-2026": "AT/DR — CIMI (DL 287/2003) — curado",
 };
 
 /** Normaliza "YYYY" | "YYYY-MM" | "YYYY-MM-DD" para data completa ISO. */

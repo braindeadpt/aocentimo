@@ -544,17 +544,9 @@
     "frequencia": "semestral"
   },
   {
-    "id": "fiscal-isv-2026",
-    "fonte": "DR — Lei 22-A/2007 (CISV) — curado",
-    "url": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2007-34445975",
-    "recolhidoEm": "2026-01-01T00:00:00Z",
-    "serieAte": "2026",
-    "frequencia": "anual"
-  },
-  {
-    "id": "fiscal-iuc-2026",
-    "fonte": "DR — Lei 22-A/2007 (CIUC) — curado",
-    "url": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2007-34445975-47488175",
+    "id": "fiscal-imi-2026",
+    "fonte": "AT/DR — CIMI (DL 287/2003) — curado",
+    "url": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimi/Pages/cimi112.aspx",
     "recolhidoEm": "2026-01-01T00:00:00Z",
     "serieAte": "2026",
     "frequencia": "anual"
