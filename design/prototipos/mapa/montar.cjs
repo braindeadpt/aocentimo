@@ -28,12 +28,21 @@ const DADOS = {
   gasoleo: gas.v, gasolina: g95.v, dataComb: dia(gas.t),
   euribor12: eur12.v, ca: ca.oficialPct, desemprego: une.v, inflacao: +((at(cp00, T1) / at(cp00, Tano) - 1) * 100).toFixed(1),
   cabaz10: +(10 * at(cp01, T1) / at(cp01, T0)).toFixed(2), cabazPct: Math.round((at(cp01, T1) / at(cp01, T0) - 1) * 100), cafesPct: Math.round((at(cp11, T1) / at(cp11, T0) - 1) * 100),
+  merc: (() => {
+    const ser = (c) => L("data/sources/eurostat/hicp-pt-cp" + c + ".json").series.filter((p) => p.t >= "2019-01").map((p) => ({ t: p.t, v: p.v }));
+    const itens = [["0111", "pao", "Cereais e derivados", "pão, arroz, massa"], ["0112", "carne", "Carne", ""], ["0113", "peixe", "Peixe e marisco", ""], ["0114", "leite", "Leite, laticínios e ovos", ""],
+      ["0115", "azeite", "Óleos e gorduras", "azeite, manteiga"], ["0116", "fruta", "Fruta", ""], ["0117", "legumes", "Legumes e batatas", ""], ["0118", "acucar", "Açúcar e doces", ""]];
+    const iva = L("data/fiscal/iva.json");
+    return { T0, T1, itens: itens.map(([c, id, nome, ex]) => ({ c, id, nome, ex, serie: ser(c) })), total: ser("00"), comida: ser("01"), iva: { taxas: iva.taxas, fonte: iva.fonte, regiao: iva.regiao } };
+  })(),
   euriborSerie: L("data/sources/bpstat/euribor-12m-mensal.json").series.filter((p) => p.t >= "2019-01").map((p) => ({ t: p.t, v: p.v })),
   irs: (() => { const r = L("data/fiscal/irs-2026.json"), ss = L("data/fiscal/ss.json"); return { ano: r.ano, escaloes: r.escaloes.map((e) => ({ ate: e.ate, taxa: e.taxa })), dedEsp: r.deducaoEspecificaFixa, despesasGerais: r.despesasGeraisPorTitular, ssTaxa: ss.trabalhador.taxa, fonte: r.fonte, motorIrsAnual: l.ano14.irsAnual }; })(),
   sal: { bruto: l.bruto, custo: l.custo, tsu: l.tsu, ss: l.ss, irs: l.irs, liq: l.liquido, fica: l.pontos.fica, moedas },
   fontes: {
     financas: `IRS — escalões de 2026 (art. 68.º do CIRS, Orçamento do Estado para 2026) · solteiro, sem dependentes, rendimentos de trabalho por conta de outrem`,
     bancoCena: `Banco de Portugal (BPstat) · Euribor a 12 meses, média mensal, jan 2019 → ${mes(eur12.t)} · prestação pelo método francês (motor do AO CÊNTIMO)`,
+    mercCena: `Eurostat · índice harmonizado de preços no consumidor, Portugal, por produto (ECOICOP 01.1.1 a 01.1.8) · ${mes(T0)} → ${mes(T1)}`,
+    ivaCena: `Código do IVA — Listas I e II anexas e art. 18.º · taxas do continente em vigor em 2026`,
     fabrica: `Motores AO CÊNTIMO · regras ${cen.meta.ano} · ${cen.meta.perfil}`,
     mercearia: `Eurostat · IHPC Portugal, alimentação e bebidas não alcoólicas · ${mes(T0)} → ${mes(T1)}`,
     bomba: `DGEG · preço médio de venda ao público · ${dia(gas.t)}`,
@@ -56,6 +65,7 @@ h = h.replace("__DADOS__", () => JSON.stringify(DADOS)).replace("__LOGO__", () =
   .replace("__MAPA__", () => fs.readFileSync(path.join(__dirname, "mapa.js"), "utf8"))
   .replace("__FINANCAS__", () => fs.readFileSync(path.join(__dirname, "cena-financas.js"), "utf8"))
   .replace("__BANCO__", () => fs.readFileSync(path.join(__dirname, "cena-banco.js"), "utf8"))
+  .replace("__MERC__", () => fs.readFileSync(path.join(__dirname, "cena-mercearia.js"), "utf8"))
   .replace("__PERSONAGENS__", () => fs.readFileSync(path.join(__dirname, "personagens.js"), "utf8"));
 const resto = h.match(/__[A-Z]+__/g); if (resto) throw new Error("por substituir: " + resto);
 fs.writeFileSync(path.join(__dirname, "mapa.html"), h);

@@ -150,6 +150,24 @@
   #banBj { background: var(--vermelho-2); color: var(--vermelho); } #banBc { background: var(--verde-2); color: var(--verde); }
   .exemplo summary { cursor: pointer; font-size: 14px; font-weight: 700; }
   .exemplo label { display: flex; justify-content: space-between; font-size: 14px; margin-top: 6px; } .exemplo output { font-weight: 900; }
+  .subidas { display: grid; gap: 6px; }
+  .sub-l { display: grid; grid-template-columns: minmax(0, 11em) minmax(0, 1fr) 4.6em; gap: 10px; align-items: center; font-size: 14px; }
+  .sub-n { font-weight: 800; line-height: 1.15; } .sub-n small { display: block; font-weight: 500; color: var(--suave); font-size: 12px; }
+  .sub-b { position: relative; height: 16px; background: var(--linha); border-radius: 4px; }
+  .sub-b i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--vermelho-2); border: 2px solid var(--vermelho); border-radius: 4px; }
+  .sub-b i.top { background: var(--vermelho); }
+  .sub-b em, .sub-leg em { position: absolute; top: -4px; bottom: -4px; border-left: 2.5px dashed var(--tinta); }
+  .sub-l > b { font-weight: 900; text-align: right; font-variant-numeric: tabular-nums; }
+  .sub-leg { font-size: 13px; color: var(--tinta-2); margin-top: 4px; } .sub-leg span { position: relative; padding-left: 14px; } .sub-leg em { left: 2px; top: 0; bottom: 0; }
+  @media (max-width: 520px) { .sub-l { grid-template-columns: minmax(0, 1fr) 4.6em; } .sub-b { grid-column: 1 / -1; grid-row: 2; } }
+  .talao { display: grid; gap: 3px; background: #fff; border: 2px solid var(--tinta); padding: 14px 16px 16px; max-width: 340px; font-family: ui-monospace, "Cascadia Mono", "Courier New", monospace; font-size: 14px; font-variant-numeric: tabular-nums; box-shadow: 4px 5px 0 var(--linha); mask: linear-gradient(#000 calc(100% - 8px), transparent 0) , conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 12px 100%; }
+  .talao .t-cab { text-align: center; font-size: 15px; background: none; padding: 0; } .talao b { background: none; padding: 0; }
+  .talao .t-sub { text-align: center; color: var(--suave); font-size: 12.5px; }
+  .talao .t-l { display: flex; justify-content: space-between; gap: 10px; }
+  .talao .t-sep { border-top: 2px dashed var(--tinta); margin: 4px 0; }
+  .talao .t-tot { margin-top: 4px; font-size: 15px; }
+  .btn.ligado { background: var(--tinta); color: #fff; }
+  .prod { transition: opacity .3s; } #mercArte:has(.prod.realce) .prod:not(.realce) { opacity: .35; }
   @media (max-width: 820px) { .cena-perto { grid-template-columns: 1fr; align-content: start; } .cena-arte { border-right: 0; border-bottom: 4px solid var(--tinta); position: static; height: auto; } .cena-arte svg { max-height: 300px; } }
 
   /* ——— personagens ——— */
@@ -220,6 +238,17 @@
       <div id="banCorpo" style="display:grid;gap:12px"></div>
       <div class="acoes" id="banAcoes"></div>
       <span class="fonte" id="banFonte"></span>
+    </div>
+  </div>
+  <div class="cena-perto" id="cenaMerc" hidden role="dialog" aria-modal="false" aria-labelledby="mercQuem">
+    <div class="cena-arte"><svg id="mercArte" viewBox="0 0 640 470" role="img" aria-label="Dentro da mercearia: uma estante com oito produtos essenciais e as etiquetas do quanto subiram, o Sr. Manuel ao balcão com a balança, a caixa registadora e o saco das compras."></svg></div>
+    <div class="cena-texto">
+      <button class="fechar" id="mercFechar" type="button" aria-label="Voltar ao bairro">×</button>
+      <span class="quem" id="mercQuem">Mercearia do Sr. Manuel · os preços</span>
+      <p class="fala" id="mercFala" aria-live="polite"></p>
+      <div id="mercCorpo" style="display:grid;gap:12px"></div>
+      <div class="acoes" id="mercAcoes"></div>
+      <span class="fonte" id="mercFonte"></span>
     </div>
   </div>
   <div class="painel" id="painel" hidden role="dialog" aria-labelledby="painelQuem">
@@ -553,7 +582,7 @@ function entrar(id) {
   cartao.classList.remove("on");
   mapa.querySelectorAll(".ed").forEach((g) => g.classList.toggle("ativo", g.dataset.id === id));
   if (id === "fabrica") return cenaSalario();
-  if (id === "mercearia") return cenaMercearia();
+  if (id === "mercearia") return cenaMerc();
   if (id === "financas") return cenaFinancas();
   if (id === "banco") return cenaBanco();
   const [x, y] = pontoEcra(id); ir(x + 60, y - 60, 640);
@@ -605,25 +634,9 @@ function cenaSalario() {
     .add(() => { etiqueta(cx, cy - 214, EURO(S.liq), "#0c8f5c"); $("painelFala").innerHTML = fala[4]; estado.ss = S.tsu + S.ss; estado.irs = S.irs; estado.casa = S.liq; cont(); fimBotoes(); }, 1 + lista.length * .16 + 10.6);
 }
 
-/* ——— CENA · a mercearia do Sr. Manuel ——— */
-function cenaMercearia() {
-  const [x, y] = pontoEcra("mercearia"); ir(x + 80, y - 70, 620);
-  acenar(PS.manuel);
-  abrirPainel("A mercearia · o Sr. Manuel", `Em agosto de 2020, este saco de compras custava <b>10 €</b>. Quanto custa hoje o mesmo saco? Arrasta e adivinha!`, [["Mostrar a resposta", revelar]],
-    `<div class="palpite-linha"><output id="outPalpite">12,00 €</output><input type="range" id="palpite" min="8" max="18" step="0.1" value="12" aria-label="O teu palpite em euros"></div>`, DADOS.fontes.mercearia);
-  const pal = $("palpite"); pal.oninput = () => $("outPalpite").textContent = EURO(+pal.value, 2);
-  function revelar() {
-    const real = DADOS.cabaz10, g = +pal.value, dif = Math.abs(real - g);
-    const juizo = dif <= .3 ? "Acertaste em cheio!" : dif <= 1 ? "Quase!" : g < real ? "Mais caro do que pensavas!" : "Um pouco menos!";
-    surpreso(PS.manuel); const o = { v: 10 }, out = $("outPalpite");
-    if (temG) gsap.to(o, { v: real, duration: 1.3, ease: "power2.out", onUpdate: () => out.textContent = EURO(o.v, 2) }); else out.textContent = EURO(real, 2);
-    $("painelFala").innerHTML = `${juizo} Hoje custa <span class="r">${EURO(real, 2)}</span>. O pão e os legumes subiram mais de um terço. <b>Isto chama-se inflação.</b>`;
-    botoes([["Tentar outra vez", cenaMercearia, true]]);
-  }
-}
-
 __FINANCAS__
 __BANCO__
+__MERC__
 /* ——— as personagens: cartas ——— */
 const CARTAS = [
   ["ines", "Inês", "Operária da fábrica", "Conta de outrem · setor privado", "Porque é que 1 500 € brutos viram 1 167 €.", "#dfe5ff"],
