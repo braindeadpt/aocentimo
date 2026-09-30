@@ -1,16 +1,8 @@
 {
   "nome": "AO CÊNTIMO — dados abertos",
   "descricao": "Séries estáticas geradas a partir de fontes oficiais (Eurostat, BPstat, DGEG, IGCP, AT). Atualizadas a cada build.",
-  "geradoEm": "2026-09-30T16:19:39.665Z",
+  "geradoEm": "2026-09-30T16:37:27.178Z",
   "endpoints": [
-    {
-      "path": "/api/deposito-prazo-ate1a-mensal.json",
-      "descricao": "Série deposito-prazo-ate1a-mensal (bpstat)"
-    },
-    {
-      "path": "/api/deposito-prazo-total-mensal.json",
-      "descricao": "Série deposito-prazo-total-mensal (bpstat)"
-    },
     {
       "path": "/api/euribor-12m-mensal.json",
       "descricao": "Série euribor-12m-mensal (bpstat)"
@@ -222,10 +214,6 @@
     {
       "path": "/api/desemprego-gap.json",
       "descricao": "Desemprego PT menos UE27, em pontos percentuais"
-    },
-    {
-      "path": "/api/deposito-real.json",
-      "descricao": "Juro de depósitos a prazo menos a inflação homóloga do mês"
     },
     {
       "path": "/api/painel.json",

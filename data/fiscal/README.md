@@ -25,6 +25,7 @@ legislativa/oficial (DR, AT, OE, IGCP, Código do IVA).
 | `catb.json` | Recibos verdes: coeficiente 0,75, SS 21,4 % sobre rendimento relevante, retenção | CIRS + Código Contributivo |
 | `mais-valias.json` | Taxa autónoma, exclusões por detenção, cripto ≥365 dias, imóveis 50 % | CIRS arts. 10.º, 43.º, 72.º |
 | `usura-YYYY.json` | Tetos de TAEG/TAN por tipo de crédito ao consumo, por trimestre | BdP — Instrução trimestral (DL 133/2009) |
+| `servicos-minimos.json` | Conta de serviços mínimos bancários: quem tem direito, serviços e tecto anual de comissão (1 % do IAS) | DL 27-C/2000 + DGAEP |
 | `calendario-YYYY.json` | Prazos fiscais do ano (IRS, IMI, IUC, e-Fatura) | AT / códigos tributários |
 
 ## Regras

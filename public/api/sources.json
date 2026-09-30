@@ -211,7 +211,7 @@
     "id": "euribor-1m-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168439&lang=PT",
-    "recolhidoEm": "2026-09-30T16:12:26.759Z",
+    "recolhidoEm": "2026-09-30T12:11:37.864Z",
     "serieAte": "2026-08",
     "frequencia": "mensal"
   },
@@ -219,7 +219,7 @@
     "id": "euribor-3m-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168436&lang=PT",
-    "recolhidoEm": "2026-09-30T16:12:26.952Z",
+    "recolhidoEm": "2026-09-30T12:11:38.080Z",
     "serieAte": "2026-08",
     "frequencia": "mensal"
   },
@@ -227,7 +227,7 @@
     "id": "euribor-6m-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168438&lang=PT",
-    "recolhidoEm": "2026-09-30T16:12:27.215Z",
+    "recolhidoEm": "2026-09-30T12:11:38.292Z",
     "serieAte": "2026-08",
     "frequencia": "mensal"
   },
@@ -235,7 +235,7 @@
     "id": "euribor-12m-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168437&lang=PT",
-    "recolhidoEm": "2026-09-30T16:12:27.398Z",
+    "recolhidoEm": "2026-09-30T12:11:38.536Z",
     "serieAte": "2026-08",
     "frequencia": "mensal"
   },
@@ -243,7 +243,7 @@
     "id": "pmd-gasoleo-diario",
     "fonte": "DGEG — Preços dos Combustíveis",
     "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=2101&dataIni=2017-01-01&dataFim=2026-09-30",
-    "recolhidoEm": "2026-09-30T16:12:29.394Z",
+    "recolhidoEm": "2026-09-30T12:11:50.010Z",
     "serieAte": "2026-09-29",
     "frequencia": "diaria"
   },
@@ -251,7 +251,7 @@
     "id": "pmd-gasolina95-diario",
     "fonte": "DGEG — Preços dos Combustíveis",
     "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=3201&dataIni=2017-01-01&dataFim=2026-09-30",
-    "recolhidoEm": "2026-09-30T16:12:29.632Z",
+    "recolhidoEm": "2026-09-30T12:11:50.746Z",
     "serieAte": "2026-09-29",
     "frequencia": "diaria"
   },
@@ -259,7 +259,7 @@
     "id": "pmd-gpl-diario",
     "fonte": "DGEG — Preços dos Combustíveis",
     "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=1120&dataIni=2017-01-01&dataFim=2026-09-30",
-    "recolhidoEm": "2026-09-30T16:12:29.738Z",
+    "recolhidoEm": "2026-09-30T12:11:50.973Z",
     "serieAte": "2026-09-29",
     "frequencia": "diaria"
   },
@@ -403,7 +403,7 @@
     "id": "taeg-pessoal-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168963&lang=PT",
-    "recolhidoEm": "2026-09-30T16:12:27.696Z",
+    "recolhidoEm": "2026-09-30T12:11:38.977Z",
     "serieAte": "2026-07",
     "frequencia": "mensal"
   },
@@ -411,7 +411,7 @@
     "id": "taeg-pessoal-educacao-saude-energia-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168938&lang=PT",
-    "recolhidoEm": "2026-09-30T16:12:27.825Z",
+    "recolhidoEm": "2026-09-30T12:11:39.260Z",
     "serieAte": "2026-07",
     "frequencia": "mensal"
   },
@@ -419,7 +419,7 @@
     "id": "taeg-pessoal-outros-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168943&lang=PT",
-    "recolhidoEm": "2026-09-30T16:12:27.990Z",
+    "recolhidoEm": "2026-09-30T12:11:39.514Z",
     "serieAte": "2026-07",
     "frequencia": "mensal"
   },
@@ -427,7 +427,7 @@
     "id": "taeg-automovel-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168944&lang=PT",
-    "recolhidoEm": "2026-09-30T16:12:28.131Z",
+    "recolhidoEm": "2026-09-30T12:11:39.818Z",
     "serieAte": "2026-07",
     "frequencia": "mensal"
   },
@@ -435,7 +435,7 @@
     "id": "taeg-automovel-novo-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168942&lang=PT",
-    "recolhidoEm": "2026-09-30T16:12:28.307Z",
+    "recolhidoEm": "2026-09-30T12:11:40.138Z",
     "serieAte": "2026-07",
     "frequencia": "mensal"
   },
@@ -443,7 +443,7 @@
     "id": "taeg-automovel-usado-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168941&lang=PT",
-    "recolhidoEm": "2026-09-30T16:12:28.609Z",
+    "recolhidoEm": "2026-09-30T12:11:40.477Z",
     "serieAte": "2026-07",
     "frequencia": "mensal"
   },
@@ -451,7 +451,7 @@
     "id": "taeg-automovel-ald-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168939&lang=PT",
-    "recolhidoEm": "2026-09-30T16:12:28.751Z",
+    "recolhidoEm": "2026-09-30T12:11:40.818Z",
     "serieAte": "2026-07",
     "frequencia": "mensal"
   },
@@ -459,7 +459,7 @@
     "id": "taeg-renovavel-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168964&lang=PT",
-    "recolhidoEm": "2026-09-30T16:12:28.920Z",
+    "recolhidoEm": "2026-09-30T12:11:41.125Z",
     "serieAte": "2026-07",
     "frequencia": "mensal"
   },
@@ -544,19 +544,11 @@
     "frequencia": "semestral"
   },
   {
-    "id": "deposito-prazo-ate1a-mensal",
-    "fonte": "Banco de Portugal — BPstat",
-    "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=12519805&lang=PT",
-    "recolhidoEm": "2026-09-30T16:12:29.046Z",
-    "serieAte": "2026-07",
-    "frequencia": "mensal"
-  },
-  {
-    "id": "deposito-prazo-total-mensal",
-    "fonte": "Banco de Portugal — BPstat",
-    "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=12519807&lang=PT",
-    "recolhidoEm": "2026-09-30T16:12:29.128Z",
-    "serieAte": "2026-07",
-    "frequencia": "mensal"
+    "id": "fiscal-servicos-minimos",
+    "fonte": "DL 27-C/2000 + DGAEP — curado",
+    "url": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/2000-106398173",
+    "recolhidoEm": "2026-01-01T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
   }
 ]
