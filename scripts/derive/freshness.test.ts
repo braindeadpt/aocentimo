@@ -1,10 +1,10 @@
-import { describe, it, expect } from "vitest";
-import { avaliar, periodoEsperado } from "./freshness";
+import { describe, it, expect, afterEach } from "vitest";
+import { avaliar, periodoEsperado, registrarSla, apagarSla } from "./freshness";
 
 const AGORA = new Date("2026-09-16T12:00:00Z");
 
-const fonte = (serieAte: string, frequencia = "mensal") => ({
-  id: "x",
+const fonte = (serieAte: string, frequencia = "mensal", id = "x") => ({
+  id,
   fonte: "F",
   url: "",
   recolhidoEm: "",
@@ -84,5 +84,58 @@ describe("avaliar", () => {
     const r = avaliar([fonte("2020-01", "vigencia-declarada")], AGORA);
     expect(r.series[0].estado).toBe("sem-sla");
     expect(r.estado).toBe("ok");
+  });
+});
+
+/**
+ * O SLA por série serve para as fontes oficiais que não publicam à
+ * cadência da sua frequência. Sem isto, uma série anual com três anos de
+ * atraso marca «atrasada» e o gate parte sozinho, sem ninguém ter falhado
+ * em nada — que é o pior sítio para o watchdog estar.
+ *
+ * Usa `registarSla` para pôr uma excepção a sério num id de teste, em vez
+ * de deixar o mapa de produção com um exemplo fictício.
+ */
+describe("SLA por série", () => {
+  afterEach(() => apagarSla("serie-de-teste"));
+
+  it("sem excepção, uma série anual de 2022 está atrasada (regra: 1 período)", () => {
+    const r = avaliar([fonte("2022", "anual", "serie-de-teste")], AGORA);
+    expect(r.series[0].estado).toBe("atrasada");
+  });
+
+  it("com excepção de 4 períodos, a mesma série passa a estar em dia", () => {
+    registrarSla("serie-de-teste", { periodos: 4, gran: "ano" });
+    const r = avaliar([fonte("2022", "anual", "serie-de-teste")], AGORA);
+    expect(r.series[0].estado).toBe("em-dia");
+    expect(r.estado).toBe("ok");
+  });
+
+  it("a excepção vence a regra pela frequência", () => {
+    // mensal tem SLA de 2 períodos; com excepção de 6, um dado de 4 meses
+    // deixa de contar como atrasado
+    const semExcepcao = avaliar([fonte("2026-05", "mensal", "outra")], AGORA);
+    expect(semExcepcao.series[0].estado).toBe("atrasada");
+
+    registrarSla("serie-de-teste", { periodos: 6, gran: "mes" });
+    const comExcepcao = avaliar([fonte("2026-05", "mensal", "serie-de-teste")], AGORA);
+    expect(comExcepcao.series[0].estado).toBe("em-dia");
+  });
+
+  it("a excepção não afasta as outras séries", () => {
+    registrarSla("serie-de-teste", { periodos: 6, gran: "mes" });
+    const r = avaliar(
+      [fonte("2026-05", "mensal", "serie-de-teste"), fonte("2025-12", "mensal", "outra")],
+      AGORA
+    );
+    expect(r.series[0].estado).toBe("em-dia");
+    expect(r.series[1].estado).toBe("atrasada");
+    expect(r.estado).toBe("atrasado");
+  });
+
+  it("uma excepção mais apertada também pode falhar mais cedo", () => {
+    registrarSla("serie-de-teste", { periodos: 1, gran: "mes" });
+    const r = avaliar([fonte("2026-05", "mensal", "serie-de-teste")], AGORA);
+    expect(r.series[0].estado).toBe("atrasada");
   });
 });
