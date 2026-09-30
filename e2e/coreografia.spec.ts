@@ -271,7 +271,9 @@ test("acima da dobra o valor nasce final — nenhuma roda roda ao carregar (1D-0
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  // o <Painel> passou a viver em /dados quando a home virou o mapa do
+  // bairro (P1-1); a regra é a mesma, noutro sítio
+  await page.goto("/dados", { waitUntil: "domcontentloaded" });
   // o primeiro cartão do painel está acima da dobra; a amostra corre a
   // ~350 ms — um roll de entrada duraria ~1,4 s e ainda estaria a correr
   const primeiro = page.locator("[data-painel] .leitura-valor").first();

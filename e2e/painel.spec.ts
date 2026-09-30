@@ -15,10 +15,15 @@ import { test, expect } from "@playwright/test";
 // cartão que enche a linha não é órfão; o critério é sempre o mesmo:
 // a linha fecha a grelha.
 //
-// Medido nos dois sítios onde o <Painel> vive: home («Hoje em
-// Portugal», 6 cartões) e /dados («O país, em leituras», 7).
+// Medido onde o <Painel> vive agora: /dados («O país, em leituras», 7
+// cartões).
+//
+// A home deixou de ter um <Painel> no P1-1 — passou a ser o mapa do
+// bairro, e os seus marcadores são o que está medido (em
+// `bairro.spec.ts`). A rota "/" saiu daqui; as restantes regras deste
+// ficheiro valem tal como estavam.
 
-const ROTAS = ["/", "/dados"];
+const ROTAS = ["/dados"];
 const LARGURAS = [1440, 1024, 768, 375];
 
 interface Linha {

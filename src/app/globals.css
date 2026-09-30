@@ -3847,6 +3847,33 @@ h3 {
    inteiro; até lá, nenhuma rota muda de aspeto.
    ─────────────────────────────────────────────────────────────────────── */
 
+/* A home do bairro é uma PÁGINA DE PAPEL em qualquer tema.
+   O mapa é desenhado com a paleta fixa do protótipo — `--tinta` é sempre
+   escuro, senão os contornos dos edifícios desaparecem no céu da noite — e
+   o texto à volta usa `--tinta-2`, que também é escuro. Se a superfície
+   da página seguisse o interruptor do site, em `dark` o texto escuro
+   ficava sobre o fundo escuro: medido no browser, 2,07:1 no parágrafo de
+   entrada e 1,33:1 no «ao cêntimo» sobre o amarelo.
+
+   Por isso, enquanto o bairro está no ecrã, a superfície volta aos
+   valores claros. Só a superfície — as cores com significado
+   (`--accent`, `--keep`, `--up`…) continuam a seguir o tema.
+
+   *A conferir com o dono:* na home o interruptor claro/escuro deixa de
+   ter efeito visível. É a leitura correcta do protótipo (que nunca teve
+   tema), mas é uma decisão de produto e não minha. Ver NOTAS-V5.md. */
+:root:has([data-pele="v5"]) {
+  --floor: #f4f3ec;
+  --panel: #fbfaf6;
+  --raised: #fdfcf9;
+  --overlay: #ffffff;
+  --ink: #1b1811;
+  --ink2: #57534a;
+  --muted: #6f6a58;
+  --line: #e0dcc9;
+  --line2: #b7b19d;
+}
+
 [data-pele="v5"] {
   color-scheme: light;
 
@@ -3867,6 +3894,15 @@ h3 {
   --azul-2: #dfe5ff;
   --verde: #0c8f5c;
   --verde-2: #d3f2e3;
+  /* O `--verde` por si só dá 3,45:1 sobre o `--verde-2` — abaixo do AA de
+     4,5:1 que um texto normal exige. Este é o mesmo verde escurecido até
+     passar comFOLGA, para texto verde SOBRE um fundo verde-claro. Não
+     substitui o `--verde`: esse é legível sobre o fundo do papel e mudar
+     aqui mexia no site inteiro.
+
+     A folga importa: o primeiro candidato deu 4,4999:1 — passa a régua,
+     reprova o e2e de contraste. Este dá 5,50:1 (medido). */
+  --verde-fundo: #096b44;
   --vermelho: #e2412a;
   --vermelho-2: #ffe1d9;
 
@@ -3916,6 +3952,10 @@ h3 {
   --azul-2: #26305c;
   --verde: #3fc48a;
   --verde-2: #123a2c;
+  /* no escuro o `--verde` já dá 5,68:1 sobre o `--verde-2` (medido): o
+     token existe para os dois temas e para o ficheiro não ficar com uma
+     regra só num deles. */
+  --verde-fundo: #3fc48a;
   --vermelho: #ff7a5c;
   --vermelho-2: #47211a;
   --vidro: #ffe066;

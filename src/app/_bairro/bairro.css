@@ -365,6 +365,10 @@
   left: 16px;
   bottom: 16px;
   z-index: 3;
+  /* `--tinta` e não a cor herdada: o cartão é branco (`--papel`) nos dois
+     temas, e com o tema escuro herdava-se texto claro sobre branco —
+     1,18:1, medido. */
+  color: var(--tinta);
   background: var(--papel);
   border: 3px solid var(--tinta);
   border-radius: 16px;
@@ -755,7 +759,9 @@
   color: var(--tinta-2);
 }
 [data-pele="v5"] .b-independente b {
-  color: var(--verde);
+  /* `--verde-fundo`, não `--verde`: sobre o fundo `--verde-2` do selo o
+     verde normal dá 3,45:1 e o e2e de contraste reprova (medido). */
+  color: var(--verde-fundo);
 }
 [data-pele="v5"] .b-intro {
   display: flex;
@@ -774,6 +780,9 @@
   letter-spacing: -0.015em;
 }
 [data-pele="v5"] .b-intro h1 span {
+  /* o realce é sempre amarelo; o texto sobre ele tem de ser o escuro do
+     mapa, ou no tema escuro ficava claro sobre amarelo (1,33:1, medido) */
+  color: var(--tinta);
   background: var(--amarelo);
   padding: 0 0.12em;
   border-radius: 4px;
