@@ -33,6 +33,15 @@ export async function fetchJson<T = unknown>(
   url: string,
   opts: OpcoesHttp = {}
 ): Promise<T> {
+  const corpo = await fetchTexto(url, opts);
+  return JSON.parse(corpo) as T;
+}
+
+/** Igual ao fetchJson, mas devolve o corpo em texto — HTML do EUR-Lex, DR, etc. */
+export async function fetchTexto(
+  url: string,
+  opts: OpcoesHttp = {}
+): Promise<string> {
   const timeoutMs = opts.timeoutMs ?? 20_000;
   const tentativas = opts.tentativas ?? 3;
   const backoffMs = opts.backoffMs ?? 1_000;
@@ -42,7 +51,7 @@ export async function fetchJson<T = unknown>(
     try {
       const res = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return (await res.json()) as T;
+      return await res.text();
     } catch (e) {
       ultimo = e;
       const espera = backoffMs * 2 ** i;
