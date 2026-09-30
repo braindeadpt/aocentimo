@@ -1,0 +1,243 @@
+<title>Onde Mora Cada Tema</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Caveat:wght@600;700&display=swap">
+<style>
+  /* Layout: uma planta do bairro — cada edifício é um bloco com os seus balcões em forma de senha de atendimento */
+  :root {
+    --papel: #ffffff; --chao: #f6f2ea; --tinta: #16130f; --tinta-2: #4a4540; --suave: #6e675e; --linha: #e4ddd0;
+    --amarelo: #ffc62b; --amarelo-2: #fff1c2; --azul: #2445d6; --azul-2: #dfe5ff; --verde: #0c7a4f; --verde-2: #d3f2e3;
+    --vermelho: #c7361f; --vermelho-2: #ffe1d9; --cinza-2: #ecebe8;
+    --display: "Archivo", "Arial Black", system-ui, sans-serif; --mao: "Caveat", "Comic Sans MS", cursive;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--chao); color: var(--tinta); font-family: var(--display); font-size: 16px; line-height: 1.5; }
+  .largura { max-width: 1120px; margin-inline: auto; padding-inline: 20px; }
+  a { color: var(--azul); }
+  :focus-visible { outline: 3px solid var(--azul); outline-offset: 3px; border-radius: 6px; }
+
+  header { background: var(--papel); border-bottom: 4px solid var(--tinta); padding-block: 28px 26px; }
+  .kicker { font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--azul); }
+  h1 { font-weight: 880; font-stretch: 115%; font-size: clamp(34px, 6vw, 64px); line-height: .95; letter-spacing: -.015em; margin: 8px 0 12px; text-wrap: balance; }
+  h1 span { background: var(--amarelo); padding: 0 .12em; border-radius: 4px; }
+  .lead { font-size: 18px; color: var(--tinta-2); max-width: 62ch; margin: 0; }
+  .carimbo { display: inline-block; margin-top: 14px; font-size: 13.5px; font-weight: 700; border: 2.5px solid var(--tinta); border-radius: 999px; padding: 5px 12px; background: var(--verde-2); }
+
+  h2 { font-weight: 860; font-stretch: 112%; font-size: clamp(24px, 3.4vw, 34px); line-height: 1.05; margin: 0 0 6px; text-wrap: balance; }
+  section { padding-block: 34px 8px; }
+  .sub { color: var(--tinta-2); margin: 0 0 18px; max-width: 64ch; }
+
+  .regras { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); gap: 14px; }
+  .regra { background: var(--papel); border: 3px solid var(--tinta); border-radius: 18px; box-shadow: 4px 5px 0 var(--tinta); padding: 16px 18px; min-width: 0; }
+  .regra b { display: block; font-size: 19px; font-weight: 850; line-height: 1.15; margin-bottom: 6px; }
+  .regra p { margin: 0; color: var(--tinta-2); font-size: 15px; }
+  .regra em { font-family: var(--mao); font-style: normal; font-size: 21px; color: var(--azul); }
+
+  .legenda { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 0 0 18px; font-size: 14px; font-weight: 700; }
+  .estado { display: inline-flex; align-items: center; gap: 6px; border: 2px solid var(--tinta); border-radius: 999px; padding: 2px 10px; font-size: 12.5px; font-weight: 800; white-space: nowrap; }
+  .estado::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+  .e-temos { background: var(--verde-2); color: var(--verde); }
+  .e-parcial { background: var(--amarelo-2); color: #7a5600; }
+  .e-falta { background: var(--vermelho-2); color: var(--vermelho); }
+  .e-desenhar { background: var(--cinza-2); color: var(--tinta-2); }
+
+  .edificios { display: grid; gap: 18px; }
+  .ed { background: var(--papel); border: 3px solid var(--tinta); border-radius: 22px; box-shadow: 5px 6px 0 var(--tinta); overflow: hidden; }
+  .ed-cab { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-bottom: 3px solid var(--tinta); flex-wrap: wrap; }
+  .ed-cab .cor { width: 34px; height: 34px; border: 3px solid var(--tinta); border-radius: 8px; flex: none; }
+  .ed-cab h3 { margin: 0; font-size: 22px; font-weight: 860; font-stretch: 110%; line-height: 1.1; }
+  .ed-cab .pergunta { font-family: var(--mao); font-size: 22px; font-weight: 700; color: var(--azul); line-height: 1.1; }
+  .ed-cab .titulos { display: grid; gap: 2px; min-width: 0; flex: 1 1 220px; }
+  .ed-cab .contagem { font-size: 13px; font-weight: 800; color: var(--suave); white-space: nowrap; }
+  .balcoes { display: grid; }
+  .balcao { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 4px 16px; align-items: start; padding: 14px 18px; border-top: 2px dashed var(--linha); }
+  .balcao:first-child { border-top: 0; }
+  .senha { grid-row: span 2; width: 58px; border: 2.5px solid var(--tinta); border-radius: 6px; background: var(--amarelo-2); text-align: center; padding: 3px 0 4px; position: relative; }
+  .senha::before, .senha::after { content: ""; position: absolute; top: 50%; width: 9px; height: 9px; margin-top: -4.5px; border-radius: 50%; background: var(--papel); border: 2.5px solid var(--tinta); }
+  .senha::before { left: -6.5px; clip-path: inset(0 0 0 50%); } .senha::after { right: -6.5px; clip-path: inset(0 50% 0 0); }
+  .senha small { display: block; font-size: 9px; font-weight: 800; letter-spacing: .08em; color: var(--suave); }
+  .senha b { display: block; font-size: 24px; font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; }
+  .balcao .tema { font-weight: 820; font-size: 17px; line-height: 1.25; }
+  .balcao .q { color: var(--tinta-2); font-size: 15px; }
+  .balcao .fonte { grid-column: 2 / -1; font-size: 13.5px; color: var(--suave); }
+  .balcao .fonte code { font-size: 12.5px; background: var(--chao); border: 1px solid var(--linha); border-radius: 4px; padding: 0 4px; overflow-wrap: anywhere; }
+  .balcao .estado { justify-self: end; }
+  @media (max-width: 620px) { .balcao { grid-template-columns: 58px minmax(0, 1fr); } .balcao .estado { grid-column: 2; justify-self: start; } .balcao .fonte { grid-column: 1 / -1; } }
+
+  .percursos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 14px; }
+  .percurso { background: var(--papel); border: 3px solid var(--tinta); border-radius: 18px; padding: 14px 16px; min-width: 0; }
+  .percurso b { font-size: 18px; font-weight: 850; }
+  .percurso .quem { font-size: 13px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--azul); }
+  .percurso ol { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; counter-reset: p; }
+  .percurso li { counter-increment: p; display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 8px; font-size: 15px; color: var(--tinta-2); }
+  .percurso li::before { content: counter(p); width: 24px; height: 24px; border: 2px solid var(--tinta); border-radius: 50%; display: grid; place-items: center; font-weight: 900; font-size: 12px; color: var(--tinta); background: var(--amarelo); }
+  .percurso li strong { color: var(--tinta); }
+  .percurso .feito { margin-top: 10px; }
+
+  .tabela-wrap { overflow-x: auto; background: var(--papel); border: 3px solid var(--tinta); border-radius: 18px; }
+  table { border-collapse: collapse; width: 100%; font-size: 15px; min-width: 640px; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 2px solid var(--linha); vertical-align: top; }
+  th { font-size: 12.5px; letter-spacing: .06em; text-transform: uppercase; font-weight: 800; color: var(--suave); }
+  tr:last-child td { border-bottom: 0; }
+  td code { font-size: 13px; }
+  .decisoes { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .decisoes li { background: var(--papel); border: 2.5px solid var(--tinta); border-radius: 14px; padding: 10px 14px; }
+  .decisoes time { font-weight: 800; font-variant-numeric: tabular-nums; margin-right: 8px; }
+  footer { padding-block: 34px 48px; font-size: 14px; color: var(--suave); }
+</style>
+
+<header>
+  <div class="largura">
+    <span class="kicker">AO CÊNTIMO · V5 · referência de conteúdos</span>
+    <h1>Onde mora <span>cada tema.</span></h1>
+    <p class="lead">O bairro do Porto é o mapa do site. Esta página diz em que edifício e em que balcão vive cada assunto, que dados já existem no repositório e o que ainda precisa de fonte oficial. É a referência para desenhar as cenas e para as sessões que implementam.</p>
+    <span class="carimbo">Aprovado pelo dono a 30 de setembro de 2026</span>
+  </div>
+</header>
+
+<main class="largura">
+  <section aria-labelledby="t-regras">
+    <h2 id="t-regras">Três regras de arrumação</h2>
+    <p class="sub">Servem para decidir sem discussão onde entra um tema novo.</p>
+    <div class="regras">
+      <div class="regra"><b>1 · Onde o dinheiro se paga ou se recebe</b><p>Cada tema vive no sítio onde isso acontece na vida real. O IMI e o IUC pagam-se nas Finanças, o imposto do combustível paga-se na bomba, o juro dos depósitos recebe-se no Banco. <em>sem dúvidas</em></p></div>
+      <div class="regra"><b>2 · Cada edifício tem balcões com senha</b><p>Entras, tiras a senha e vais ao balcão do teu assunto. Cada balcão é uma cena curta: uma pergunta, um palpite, a revelação e um gráfico que ensina a ler-se.</p></div>
+      <div class="regra"><b>3 · As histórias atravessam o bairro</b><p>O que envolve vários sítios conta-se com uma personagem a andar pelo mapa, como as moedas do salário da Inês. Os percursos estão no fim desta página.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-ed">
+    <h2 id="t-ed">Os edifícios e os seus balcões</h2>
+    <p class="sub">Regra nº1: sem fonte oficial não entra número nenhum. O estado diz o que já está no repositório (<code>data/</code>) e o que falta ir buscar.</p>
+    <div class="legenda" aria-label="Legenda dos estados">
+      <span class="estado e-temos">Dados prontos</span>
+      <span class="estado e-parcial">Parcial</span>
+      <span class="estado e-falta">Falta fonte</span>
+      <span class="estado e-desenhar">Sem dados novos, falta desenhar</span>
+    </div>
+    <div class="edificios" id="edificios"></div>
+  </section>
+
+  <section aria-labelledby="t-perc">
+    <h2 id="t-perc">Percursos pelo bairro</h2>
+    <p class="sub">Histórias que ligam vários balcões. Cada uma é uma personagem a andar pelo mapa com o seu dinheiro.</p>
+    <div class="percursos" id="percursos"></div>
+  </section>
+
+  <section aria-labelledby="t-dados">
+    <h2 id="t-dados">Dados a ir buscar</h2>
+    <p class="sub">Tudo o que está marcado «Falta fonte». Cada linha é uma sessão do pack <code>docs/PACK-DADOS-V5.md</code>, num ramo próprio e com PR, nunca direto no <code>main</code>.</p>
+    <div class="tabela-wrap">
+      <table>
+        <thead><tr><th>Sessão</th><th>Dado</th><th>Onde vai morar</th><th>Fonte oficial a usar</th></tr></thead>
+        <tbody id="tabela-dados"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="t-dec">
+    <h2 id="t-dec">Decisões</h2>
+    <ul class="decisoes">
+      <li><time datetime="2026-09-30">30 set 2026</time>Regra de arrumação: onde o dinheiro se paga ou se recebe, com balcões de senha e percursos entre edifícios.</li>
+      <li><time datetime="2026-09-30">30 set 2026</time>O IVA vive na Mercearia, no talão das compras, e não nas Finanças.</li>
+      <li><time datetime="2026-09-30">30 set 2026</time>Autorizada a recolha dos dados novos listados acima, sempre com fonte oficial e data.</li>
+      <li><time datetime="2026-09-30">30 set 2026</time>Comissões e anuidades bancárias só entram como valores agregados publicados pelo Banco de Portugal. O site nunca compara bancos: não é um comparador comercial.</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="largura">Protótipo do mapa: <code>referencias/V5/prototipo-mapa.html</code>. Regras de produto: <code>docs/PRODUTO.md</code> e <code>AGENTS.md</code>.</footer>
+
+<script>
+const E = { temos: ["e-temos", "Dados prontos"], parcial: ["e-parcial", "Parcial"], falta: ["e-falta", "Falta fonte"], desenhar: ["e-desenhar", "Falta desenhar"] };
+const EDIFICIOS = [
+  { nome: "Banco", cor: "#dcd3c3", pergunta: "Quanto custa o dinheiro, e quanto rende?", balcoes: [
+    ["Crédito à habitação", "Quanto é a prestação, e o que acontece quando a Euribor sobe?", "temos", "Euribor 1/3/6/12 meses e TAEG (BPstat), motores <code>prestacao</code> e <code>taeg</code>."],
+    ["Crédito pessoal e automóvel", "Porque é que o mesmo carro custa mais a prestações?", "temos", "TAEG médias do crédito pessoal e automóvel (BPstat), tetos de usura (<code>usura-2026.json</code>)."],
+    ["Cartões de crédito", "O que é o plafond, e porque é que pagar só o mínimo sai caro?", "parcial", "TAEG do crédito renovável e usura: temos. Anuidades: falta fonte agregada do Banco de Portugal (sessão D-05)."],
+    ["Depósitos a prazo", "O juro que te pagam chega para a inflação? E quanto fica para o Estado?", "parcial", "Inflação e retenção de 28 % (<code>capitais.json</code>): temos. Juro médio dos depósitos novos: falta ingerir do BPstat (D-01)."],
+    ["Conta à ordem", "Quanto custa só ter a conta aberta? O que é a conta de serviços mínimos?", "falta", "Comissão de manutenção média e regras dos serviços mínimos bancários (D-04)."],
+    ["Poupar para a reforma (PPR)", "Vale a pena? Quanto devolve o IRS?", "temos", "Dedução por idade e tributação no resgate (<code>ppr.json</code>)."],
+  ]},
+  { nome: "Finanças", cor: "#cfc5b3", pergunta: "Que impostos pagas, e porquê?", balcoes: [
+    ["IRS", "Como funcionam os escalões? Porque não perdes dinheiro ao subir de escalão?", "temos", "Escalões, retenção, deduções e IRS Jovem (<code>irs-2026</code>, <code>retencao-2026</code>, <code>deducoes-2026</code>, <code>irs-jovem</code>)."],
+    ["Casa: IMT, Imposto do Selo e IMI", "Quanto pagas ao comprar casa, e quanto pagas todos os anos por a teres?", "parcial", "IMT e Imposto do Selo: temos (<code>imt-2026.json</code>). IMI (taxa de cada câmara, IMI familiar): falta (D-02)."],
+    ["Carro: ISV e IUC", "Quanto do preço do carro é imposto, e quanto pagas por ano só por o teres?", "falta", "Tabelas do ISV e do IUC para 2026 (D-03)."],
+    ["Mais-valias e rendimentos de capitais", "Ganhei com ações ou cripto: quanto pago?", "temos", "<code>mais-valias.json</code>, <code>capitais.json</code>."],
+    ["O calendário dos impostos", "Quando se entrega o IRS, quando se paga o IMI e o IUC?", "temos", "<code>calendario-2026.json</code>."],
+  ]},
+  { nome: "Mercearia do Sr. Manuel", cor: "#0c8f5c", pergunta: "Porque está tudo mais caro?", balcoes: [
+    ["Inflação", "O que quer dizer «os preços subiram X % num ano»?", "temos", "Índice de preços no consumidor harmonizado, total (Eurostat)."],
+    ["Os essenciais ao longo dos anos", "Quanto subiram o pão, a carne, o peixe, o leite, a fruta, os legumes, o óleo e o açúcar?", "temos", "Índices mensais por produto, desde 2000 (Eurostat, ECOICOP 01.1.1 a 01.1.8)."],
+    ["O preço em euros de cada produto", "Quanto custa hoje um quilo de arroz, comparado com 2020?", "falta", "Não há série oficial evidente de preços médios em euros. Sessão de investigação antes de prometer (D-06)."],
+    ["O IVA no talão", "Quanto do que pagas no supermercado é imposto? Porque há 6 %, 13 % e 23 %?", "temos", "Taxas e exemplos (<code>iva.json</code>)."],
+  ]},
+  { nome: "Fábrica", cor: "#c4553a", pergunta: "Para onde vai o teu salário?", balcoes: [
+    ["O recibo de vencimento", "Porque é que o bruto não é o que chega à conta?", "temos", "Motores <code>recibo</code>, <code>irs</code>, <code>retencao</code>, <code>seg-social</code>. Cena já feita no protótipo."],
+    ["O subsídio de alimentação", "Em cartão ou em dinheiro: faz diferença?", "temos", "<code>subsidio-alimentacao.json</code>."],
+  ]},
+  { nome: "Segurança Social", cor: "#2445d6", pergunta: "Para que servem os descontos?", balcoes: [
+    ["Os descontos", "Porque descontas 11 % e a empresa 23,75 %? Para onde vai esse dinheiro?", "temos", "<code>ss.json</code>."],
+    ["Recibos verdes", "Quanto desconta o Pedro, e quando?", "temos", "<code>catb.json</code>, motor <code>independente</code>."],
+    ["Subsídio de desemprego", "Se perderes o emprego, quanto recebes e durante quanto tempo?", "temos", "<code>desemprego.json</code>."],
+    ["Pensões", "Como se calcula a pensão da Dona Arminda?", "falta", "Precisa de regras e motor novos. Fica para depois do V5."],
+  ]},
+  { nome: "Correios", cor: "#e2412a", pergunta: "Onde rende a poupança do Estado?", balcoes: [
+    ["Certificados de Aforro", "Quanto rende, e porque tem prémios de permanência?", "temos", "<code>ca.json</code>, <code>ca-base.json</code> (IGCP)."],
+    ["Certificados do Tesouro", "Qual a diferença para os de Aforro?", "falta", "Taxas do IGCP (D-07)."],
+  ]},
+  { nome: "Bomba de gasolina", cor: "#ffc62b", pergunta: "Quanto do litro é imposto?", balcoes: [
+    ["O litro por dentro", "Do que pagas por cada litro, quanto é ISP, taxa de carbono e IVA?", "temos", "Preços médios diários (DGEG), <code>isp.json</code>, <code>iva.json</code>."],
+    ["Quanto custa ter carro", "Combustível, IUC, seguro e prestação: quanto é por mês?", "parcial", "Combustível e prestação: temos. IUC: D-03. Seguro: sem fonte oficial agregada, fica de fora até haver."],
+  ]},
+  { nome: "Casa da Inês", cor: "#7fb3d9", pergunta: "Quanto chega mesmo ao fim do mês?", balcoes: [
+    ["O orçamento do mês", "O que sobra depois das contas?", "temos", "<code>cenarios-salario.json</code>."],
+    ["A luz", "Quanto custa o kWh, e quanto disso é imposto?", "temos", "Preço doméstico da eletricidade (Eurostat)."],
+    ["O preço das casas", "Quantos anos de salário custa uma casa?", "temos", "Índice de preços da habitação e custo do trabalho (<code>casa-em-salarios.json</code>)."],
+  ]},
+  { nome: "Pastelaria", cor: "#ff8fb7", pergunta: "Quanto subiu o café?", balcoes: [
+    ["O café e o pastel", "O café ao balcão ao longo dos anos.", "temos", "Índice de preços de restaurantes e cafés (Eurostat, ECOICOP 11)."],
+  ]},
+  { nome: "Quiosque da praça", cor: "#07613d", pergunta: "Como está o país hoje?", balcoes: [
+    ["Desemprego", "Quantos procuram trabalho? E os jovens, comparados com a Europa?", "temos", "Eurostat, total, jovens e UE27."],
+    ["A economia", "O PIB cresceu? Os portugueses estão confiantes?", "temos", "PIB homólogo e confiança dos consumidores (Eurostat)."],
+    ["O salário mínimo", "Quanto é, e quanto subiu?", "temos", "<code>smn.json</code>."],
+  ]},
+  { nome: "Escola", cor: "#e6a93a", pergunta: "As palavras do dinheiro, explicadas", balcoes: [
+    ["Aprender a ler um gráfico", "O que é um índice, uma variação homóloga, uma escala que não começa no zero?", "desenhar", "Usa as séries que já existem."],
+    ["O glossário", "Cada palavra do site explicada com um exemplo em euros.", "desenhar", "Conteúdo de <code>/aprender</code>."],
+    ["Modo aula", "Para professores: o bairro seguindo o Referencial de Educação Financeira.", "desenhar", "Camada por cima dos balcões."],
+  ]},
+];
+const PERCURSOS = [
+  ["Inês", "O salário da Inês", ["<strong>Fábrica</strong>: o custo total para a empresa", "<strong>Segurança Social</strong>: os descontos", "<strong>Finanças</strong>: o IRS retido", "<strong>Casa</strong>: o que chega à conta"], "temos", "Feito no protótipo"],
+  ["Rui e Marta", "Rui e Marta compram casa", ["<strong>Banco</strong>: o crédito, a Euribor e o spread", "<strong>Finanças</strong>: IMT e Imposto do Selo na escritura", "<strong>Casa</strong>: a prestação no orçamento do mês", "<strong>Finanças</strong>, todos os anos: o IMI"], "parcial", "Falta o IMI (D-02)"],
+  ["Pedro", "O primeiro carro do Pedro", ["<strong>Banco</strong>: o crédito automóvel e a TAEG", "<strong>Finanças</strong>: o ISV no preço do carro", "<strong>Bomba</strong>: o litro por dentro", "<strong>Finanças</strong>, todos os anos: o IUC"], "parcial", "Falta o ISV e o IUC (D-03)"],
+  ["Dona Arminda", "As poupanças da Dona Arminda", ["<strong>Banco</strong>: o depósito a prazo e os 28 % de imposto", "<strong>Mercearia</strong>: a inflação que come o juro", "<strong>Correios</strong>: os Certificados de Aforro"], "parcial", "Falta o juro dos depósitos (D-01)"],
+  ["Gonçalo", "O primeiro dinheiro do Gonçalo", ["<strong>Pastelaria</strong>: o trabalho de verão e o primeiro recibo", "<strong>Finanças</strong>: o IRS Jovem", "<strong>Banco</strong>: a primeira conta e o que ela custa"], "parcial", "Falta a conta à ordem (D-04)"],
+  ["Sr. Manuel", "O talão do Sr. Manuel", ["<strong>Mercearia</strong>: o preço, o IVA de 6 %, 13 % ou 23 %", "<strong>Finanças</strong>: o IVA que ele entrega ao Estado"], "temos", ""],
+];
+const DADOS = [
+  ["D-01", "Juro médio dos depósitos a prazo novos, particulares", "Banco · Depósitos", "BPstat (Banco de Portugal), estatísticas de taxas de juro. Série mensal."],
+  ["D-02", "IMI: taxas por município, IMI familiar", "Finanças · Casa", "Código do IMI (art. 112.º e 112.º-A) e a tabela de taxas por município do Portal das Finanças para 2026."],
+  ["D-03", "ISV e IUC: tabelas de 2026", "Finanças · Carro", "Código do ISV, Código do IUC e Lei do Orçamento do Estado 2026."],
+  ["D-04", "Comissão média de manutenção da conta à ordem; serviços mínimos bancários", "Banco · Conta à ordem", "Banco de Portugal: relatórios dos mercados bancários de retalho e Portal do Cliente Bancário. DL 27-C/2000 para os serviços mínimos."],
+  ["D-05", "Anuidade média dos cartões de crédito", "Banco · Cartões", "Banco de Portugal, só valores agregados. Se não existir, fica documentado como indisponível."],
+  ["D-06", "Preços médios em euros dos produtos essenciais", "Mercearia", "Investigação: INE, GPP e DGAE. Só relatório de fontes candidatas, sem ingestão até decisão do dono."],
+  ["D-07", "Taxas dos Certificados do Tesouro", "Correios", "IGCP."],
+];
+const esc = (s) => s;
+document.getElementById("edificios").innerHTML = EDIFICIOS.map((e, n) => `
+  <article class="ed" aria-labelledby="ed${n}">
+    <div class="ed-cab"><span class="cor" style="background:${e.cor}" aria-hidden="true"></span><div class="titulos"><h3 id="ed${n}">${e.nome}</h3><span class="pergunta">${e.pergunta}</span></div><span class="contagem">${e.balcoes.length} ${e.balcoes.length === 1 ? "balcão" : "balcões"}</span></div>
+    <div class="balcoes">${e.balcoes.map(([tema, q, est, fonte], k) => `
+      <div class="balcao"><div class="senha" aria-label="Senha ${String.fromCharCode(65 + k)}"><small>SENHA</small><b>${String.fromCharCode(65 + k)}</b></div>
+        <div class="tema">${tema}</div><span class="estado ${E[est][0]}">${E[est][1]}</span>
+        <div class="q">${q}</div>
+        <div class="fonte">${fonte}</div></div>`).join("")}</div>
+  </article>`).join("");
+document.getElementById("percursos").innerHTML = PERCURSOS.map(([quem, titulo, passos, est, nota]) => `
+  <div class="percurso"><span class="quem">${quem}</span><br><b>${titulo}</b><ol>${passos.map((p) => `<li><span>${p}</span></li>`).join("")}</ol><div class="feito"><span class="estado ${E[est][0]}">${nota || E[est][1]}</span></div></div>`).join("");
+document.getElementById("tabela-dados").innerHTML = DADOS.map(([s, d, onde, f]) => `<tr><td><strong>${s}</strong></td><td>${d}</td><td>${onde}</td><td>${f}</td></tr>`).join("");
+</script>

@@ -662,3 +662,28 @@ emprestam dinheiro entre si».
   meses em {y} — a taxa a que os bancos emprestam dinheiro entre
   si. Cada número com fonte e data.»
 
+
+
+## 2026-09-30 — V5: onde mora cada tema no bairro
+
+**Decidido pelo dono:** o bairro do Porto (mapa isométrico) é a
+navegação da V5. Os temas arrumam-se assim:
+
+- **Cada tema vive onde o dinheiro se paga ou se recebe na vida real.**
+  IMI e IUC nas Finanças; o imposto do combustível na bomba; o juro dos
+  depósitos no Banco.
+- **Cada edifício tem balcões com senha** (A, B, C…). Cada balcão é uma
+  cena curta: pergunta, palpite, revelação, gráfico que ensina a ler-se.
+- **As histórias atravessam o bairro**: temas que envolvem vários sítios
+  contam-se com uma personagem a andar pelo mapa (o salário da Inês, a
+  casa do Rui e da Marta, o carro do Pedro, as poupanças da Dona
+  Arminda, o primeiro dinheiro do Gonçalo, o talão do Sr. Manuel).
+- **O IVA vive na Mercearia**, no talão das compras.
+- **Comissões e anuidades bancárias só como valores agregados do Banco
+  de Portugal**; o site nunca compara bancos.
+- Autorizada a recolha dos dados em falta, pelas sessões de
+  `docs/PACK-DADOS-V5.md` (D-01 a D-07), cada uma em ramo próprio e PR.
+- Elenco: Inês (conta de outrem), Diana (professora, função pública),
+  Pedro (freelancer, recibos verdes), Sr. Manuel (mercearia, pequeno
+  empresário), Dona Arminda (reformada), Gonçalo (estudante, 16 anos),
+  Rui e Marta (casal com crédito à habitação).
