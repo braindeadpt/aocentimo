@@ -1,0 +1,83 @@
+{
+  "ano": 2026,
+  "vigencia": "2026-01-01",
+  "fonte": "Código do Imposto Único de Circulação, aprovado pela Lei n.º 22-A/2007, de 29 de junho (Anexo II) — versão consolidada do Diário da República: arts. 2.º, 4.º, 6.º, 7.º, 8.º, 9.º e 10.º",
+  "fonteUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2007-34445975-47488175",
+  "fonteTabelaCoeficientes": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/iuc/Pages/iuc10.aspx",
+  "nota": "O IUC é um imposto anual, cobrado pela propriedade do veículo (facto gerador, art. 6.º n.º 1). Ao contrário do ISV, incide sobre a idade, a cilindrada e as emissões — não sobre o preço. A categoria A abrange automóveis ligeiros de passageiros e de utilização mista com peso bruto não superior a 2500 kg que utilizem gasolina ou electricidade; a categoria B abrange os ligeiros a gasóleo e os de utilização mista com peso bruto superior a 2500 kg.",
+  "ultimaAlteracaoTaxas": {
+    "diploma": "Lei n.º 82/2023, de 29 de dezembro (art. 260.º), em vigor desde 2024-01-01",
+    "nota": "As taxas dos artigos 9.º e 10.º mantêm-se iguais em 2024, 2025 e 2026. A LOE 2026 (Lei n.º 73-A/2025) não alterou as taxas do IUC — alterou apenas o artigo 7.º (base tributável) do IUC, com efeitos a partir de 2027-01-01."
+  },
+  "actualizacaoAnual": {
+    "base": "art. 8.º n.º 3",
+    "nota": "As taxas constantes do código devem ser actualizadas todos os anos em função do índice de preços no consumidor. As tabelas aqui gravadas são as da Lei n.º 82/2023, que se mantêm em vigor em 2026."
+  },
+  "categoriaA": {
+    "base": "art. 9.º",
+    "descricao": "Automóveis ligeiros de passageiros e ligeiros de utilização mista com peso bruto não superior a 2500 kg, a gasolina ou a electricidade",
+    "nota": "Imposto anual consoante o ano da matrícula. A tabela tem escalões distintos para a gasolina e para os outros produtos, com limites de cilindrada diferentes. A coluna da electricidade não tem valores: os veículos exclusivamente elétricos não tributam por esta tabela.",
+    "gasolina": [
+      { "de": null, "ate": 1000, "posteriorA1995": 19.9, "de1990a1995": 12.55, "de1981a1989": 8.8 },
+      { "de": 1001, "ate": 1300, "posteriorA1995": 39.95, "de1990a1995": 22.45, "de1981a1989": 12.55 },
+      { "de": 1301, "ate": 1750, "posteriorA1995": 62.4, "de1990a1995": 34.87, "de1981a1989": 17.49 },
+      { "de": 1751, "ate": 2600, "posteriorA1995": 158.31, "de1990a1995": 83.49, "de1981a1989": 36.09 },
+      { "de": 2601, "ate": 3500, "posteriorA1995": 287.49, "de1990a1995": 156.54, "de1981a1989": 79.72 },
+      { "de": 3501, "ate": null, "posteriorA1995": 512.23, "de1990a1995": 263.11, "de1981a1989": 120.9 }
+    ],
+    "outrosProdutos": [
+      { "de": null, "ate": 1500, "posteriorA1995": 19.9, "de1990a1995": 12.55, "de1981a1989": 8.8 },
+      { "de": 1501, "ate": 2000, "posteriorA1995": 39.95, "de1990a1995": 22.45, "de1981a1989": 12.55 },
+      { "de": 2001, "ate": 3000, "posteriorA1995": 62.4, "de1990a1995": 34.87, "de1981a1989": 17.49 },
+      { "de": 3001, "ate": null, "posteriorA1995": 158.31, "de1990a1995": 83.49, "de1981a1989": 36.09 }
+    ]
+  },
+  "categoriaB": {
+    "base": "art. 10.º",
+    "descricao": "Automóveis ligeiros de passageiros e de utilização mista a gasóleo",
+    "nota": "A coleta resulta da soma da componente de cilindrada e da componente de CO2; a vehicles com primeira matrícula posterior a 2017-01-01 acresce a taxa adicional de CO2. O total é depois multiplicado pelo coeficiente do ano de aquisição.",
+    "cilindrada": [
+      { "de": null, "ate": 1250, "taxa": 31.77 },
+      { "de": 1251, "ate": 1750, "taxa": 63.74 },
+      { "de": 1751, "ate": 2500, "taxa": 127.35 },
+      { "de": 2501, "ate": null, "taxa": 435.84 }
+    ],
+    "co2": [
+      { "deNedc": null, "ateNedc": 120, "deWltp": null, "ateWltp": 140, "taxa": 65.15 },
+      { "deNedc": 121, "ateNedc": 180, "deWltp": 141, "ateWltp": 205, "taxa": 97.63 },
+      { "deNedc": 181, "ateNedc": 250, "deWltp": 206, "ateWltp": 260, "taxa": 212.04 },
+      { "deNedc": 251, "ateNedc": null, "deWltp": 261, "ateWltp": null, "taxa": 363.25 }
+    ],
+    "co2Nota": "Os limites diferem entre normas: NEDC 120/180/250 g/km, WLTP 140/205/260 g/km. A lei escreve as duas colunas lado a lado na mesma linha da tabela.",
+    "adicionalCo2": {
+      "condicao": "Primeira matrícula em Portugal, num Estado-Membro da UE ou do EEE posterior a 2017-01-01",
+      "base": "art. 10.º n.º 2",
+      "nota": "Taxa adicional que acresce à componente de CO2, não à coleta total.",
+      "escaloes": [
+        { "deNedc": 181, "ateNedc": 250, "deWltp": 206, "ateWltp": 260, "taxa": 31.77 },
+        { "deNedc": 251, "ateNedc": null, "deWltp": 261, "ateWltp": null, "taxa": 63.74 }
+      ]
+    },
+    "coeficientes": {
+      "base": "art. 10.º n.º 3",
+      "nota": "Multiplicam-se à coleta obtida a partir das tabelas dos números anteriores, em função do ano de aquisição do veículo da categoria B.",
+      "tabela": [
+        { "de": 2007, "ate": 2007, "coeficiente": 1.0 },
+        { "de": 2008, "ate": 2008, "coeficiente": 1.05 },
+        { "de": 2009, "ate": 2009, "coeficiente": 1.1 },
+        { "de": 2010, "ate": null, "coeficiente": 1.15 }
+      ]
+    }
+  },
+  "notaConversaoWltp2019": {
+    "base": "nota 1 do art. 10.º",
+    "nota": "Durante 2019, as emissões WLTP constantes do certificado de conformidade eram reduzidas por uma tabela de conversão para efeitos de IUC. A tabela não foi lida nesta sessão porque só valia para 2019 e não afecta o cálculo de 2026."
+  },
+  "veiculosIsentos": {
+    "nota": "Regras gerais do código — os veículos das categorias A, C, D e E com mais de 30 anos, considerados de interesse histórico pelas entidades competentes e com deslocações limitadas, e os veículos não motorizados, exclusivamente elétricos ou movidos a energias renováveis não combustíveis. O restante regime das isenções não foi curado nesta sessão."
+  },
+  "cobrancas": {
+    "nota": "Em 2026 o IUC deixou de ser pago no mês da matrícula: ou se paga tudo em fevereiro, ou, acima de 100 €, se divide em duas prestções (fevereiro e outubro). Ver data/fiscal/calendario-2026.json."
+  },
+  "verAlteracoes": "https://diariodarepublica.pt/dr/legislacao-consolidada/lei/2007-34445975-47488175"
+}

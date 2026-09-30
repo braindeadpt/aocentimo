@@ -1,5 +1,5 @@
 {
-  "verificadoEm": "2026-09-30T12:11:51.538Z",
+  "verificadoEm": "2026-09-30T18:54:40.131Z",
   "estado": "ok",
   "series": [
     {
@@ -611,6 +611,24 @@
       "serieAte": "2025-12-31",
       "esperadoAte": "2025-06-30",
       "frequencia": "semestral",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-isv-2026",
+      "fonte": "DR — Lei 22-A/2007 (CISV) — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-iuc-2026",
+      "fonte": "DR — Lei 22-A/2007 (CIUC) — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
       "estado": "em-dia",
       "atrasoPeriodos": 0
     }

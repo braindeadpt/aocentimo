@@ -26,6 +26,8 @@ legislativa/oficial (DR, AT, OE, IGCP, Código do IVA).
 | `mais-valias.json` | Taxa autónoma, exclusões por detenção, cripto ≥365 dias, imóveis 50 % | CIRS arts. 10.º, 43.º, 72.º |
 | `usura-YYYY.json` | Tetos de TAEG/TAN por tipo de crédito ao consumo, por trimestre | BdP — Instrução trimestral (DL 133/2009) |
 | `calendario-YYYY.json` | Prazos fiscais do ano (IRS, IMI, IUC, e-Fatura) | AT / códigos tributários |
+| `isv-YYYY.json` | Tabelas A/B/C, agravamento do gasóleo, taxas intermédias e reduzidas, redução de usados importados da UE | CISV (Lei 22-A/2007) — DR consolidado |
+| `iuc-YYYY.json` | Tabelas das categorias A e B, adicional de CO2 e coeficientes por ano de matrícula | CIUC (Lei 22-A/2007, Anexo II) — DR consolidado + AT |
 
 ## Regras
 
