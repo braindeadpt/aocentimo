@@ -39,7 +39,8 @@ export const LAD = Math.hypot(TW / 2, TH / 2);
 const OX = 720;
 const OY = 250;
 
-const f1 = (n: number): number => +n.toFixed(1);
+/** Arredonda a uma casa decimal — o número que sai no SVG tem de ser curto. */
+export const f1 = (n: number): number => +n.toFixed(1);
 
 /** Formata uma lista de pontos para o atributo `points` de um SVG. */
 export const pts = (...ps: readonly Ponto[]): string =>
@@ -306,6 +307,8 @@ export interface OpcoesRibeira {
   rh?: number;
   chamine?: number;
   semCornija?: boolean;
+  /** Peça desenhada na fachada esquerda, depois de `fachadaRibeira()`. */
+  extraEsq?: (w: number, hh: number) => string;
   /** Peça desenhada por cima do telhado, com os cantos já levantados. */
   extraTopo?: (c: CantosCaixa) => string;
 }
@@ -466,7 +469,7 @@ export function casaRibeira(i: number, j: number, wi: number, dj: number, h: num
       rh,
       corTelhado: o.telha || C.telha,
       corTelhado2: o.telha2,
-      esq: (w, hh) => fachadaRibeira(w, hh, o),
+      esq: (w, hh) => fachadaRibeira(w, hh, o) + (o.extraEsq ? o.extraEsq(w, hh) : ""),
       dir: (w, hh) => grelhaJanelas(w, hh, Math.max(1, (o.pisos || 3) - 1), 1, { jw: 12, jh: 18, top: 18, base: 44 }),
       extraTopo: ({ A, B, C: Cc, D: Dd, m1, m2 }) => {
         const tv = o.chamine ?? 0.7;
