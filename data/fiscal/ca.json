@@ -20,6 +20,10 @@
   },
   "ctpc": {
     "nota": "Certificados do Tesouro Poupança Crescimento — prazo 7 anos, juros anuais, taxa fixa crescente por ano de vida",
+    "emVenda": false,
+    "subscricaoSuspensaDesde": "2021-09-10",
+    "subscricaoBase": "Resolução do Conselho de Ministros n.º 131-B/2021, de 10 de setembro (DR 177/2021, 3.º Suplemento, Série I de 2021-09-10)",
+    "aviso": "NÃO SE PODE SUBSCREVER. Este bloco fica aqui porque o IGCP continua a publicar o prémio — para quem já tinha — e porque o motor precisa das taxas. Mas quem ler isto e for subscrever vai encontrar a porta fechada. Os Certificados do Tesouro que ainda se vendem em 2026 estão em data/fiscal/ct.json (série 5).",
     "taxasPorAno": [0.0075, 0.0075, 0.0105, 0.0135, 0.0165, 0.0195, 0.0225],
     "premio": {
       "atual": 0.0081,
