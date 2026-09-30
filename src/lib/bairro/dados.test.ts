@@ -55,6 +55,12 @@ describe("marcadores()", () => {
     expect(M.gasoleo).toMatch(/^\d+,\d{3}$/);
     expect(M.gasoleo).toContain(g.series.at(-1)!.v.toFixed(3).replace(".", ","));
     expect(M.gasoleoUn.endsWith("€/L")).toBe(true);
+    // e o espaço antes da unidade é o FINO (U+202F), nunca um espaço normal:
+    // o `audit` de lettering reprova a página se for normal ou NBSP largo
+    expect(M.gasoleoUn).toBe(`${M.gasoleo}\u202F€/L`);
+    // nenhum espaço NORMAL nem NBSP largo: só o FINO que separa o número
+    // da unidade (o «/» do «/L» é parte da unidade, não um espaço)
+    expect(M.gasoleoUn.replace(/\u202F/g, "")).not.toMatch(/[\s\u00A0]/);
   });
 
   it("a variação do cabaz e dos cafés é homóloga desde 2020-08", () => {
