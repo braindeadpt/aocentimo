@@ -24,6 +24,7 @@ import { simularIndependente } from "./independente";
 import { simularMaisValia } from "./mais-valias";
 import { inflacionar, salarioReal } from "./deflator";
 import { taxaBaseCA } from "./ca-base";
+import { simularCartao, custoDoSaldar } from "./cartao";
 import ca from "@data/fiscal/ca.json";
 import capitais from "@data/fiscal/capitais.json";
 
@@ -525,11 +526,104 @@ describe("impostos", () => {
     expect(d.iva).toBeCloseTo(0.3459, 3);
     expect(d.pesoImpostos).toBeCloseTo(0.513, 2);
     expect(d.produto + d.impostos).toBeCloseTo(1.85, 6);
-  });
-
-  it("IVA contido: 1,23 € a 23 % → 0,23 € de imposto", () => {
+  });it("IVA contido: 1,23 € a 23 % → 0,23 € de imposto", () => {
     const r = ivaContido(1.23, 0.23);
     expect(r.iva).toBeCloseTo(0.23, 6);
     expect(r.semIva).toBeCloseTo(1.0, 6);
+  });
+});
+
+/**
+ * Cartão de crédito — casos conferidos por cálculo independente, não
+ * por leitura do código. A prestação mínima é condição do contrato: em
+ * Portugal não há percentagem mínima legal, e é por isso que entra como
+ * argumento (ver data/fiscal/cartoes.json).
+ *
+ * Caso principal: 1 000 € a 15 % ao ano, pagando 4 % do saldo em cada
+ * mês. A dívida decai geometricamente a 0,971715 por mês (paga-se 4 %,
+ * acresce 1,1715 % de juros), o que dá ≈ 314 meses no cálculo contínuo —
+ * e 305 com o arredondamento a cêntimos, que é o que se vê.
+ */
+describe("simularCartao", () => {
+  it("primeiro mês: 11,71 € de juros sobre 1 000 €, e paga-se 40 €", () => {
+    const r = simularCartao({ saldo: 1000, taegAnualPct: 15, prestacaoMinimaPct: 4 });
+    const m1 = r.linhas[0];
+    expect(m1.mes).toBe(1);
+    expect(m1.dividaInicio).toBe(1000);
+    expect(m1.juros).toBe(11.71);
+    expect(m1.prestacao).toBe(40);
+    expect(m1.amortizacao).toBe(28.29);
+    expect(m1.dividaFim).toBe(971.71);
+  });
+
+  it("1000 € a 15 % com 4 % ao mês: 305 meses e 414,01 € de juros", () => {
+    const r = simularCartao({ saldo: 1000, taegAnualPct: 15, prestacaoMinimaPct: 4 });
+    expect(r.meses).toBe(305);
+    expect(r.jurosTotais).toBeCloseTo(414.01, 2);
+    expect(r.totalPago).toBeCloseTo(1414.01, 2);
+    expect(r.liquidado).toBe(true);
+  });
+
+  it("pagar o que se pode em cada mês zera a divida no fim, nunca a menos", () => {
+    const r = simularCartao({ saldo: 1000, taegAnualPct: 15, prestacaoMinimaPct: 4 });
+    expect(r.linhas[r.linhas.length - 1].dividaFim).toBe(0);
+    // o total pago é a soma das prestações: capital + juros
+    expect(r.totalPago - r.jurosTotais).toBeCloseTo(1000, 2);
+  });
+
+  it("um tecto mínimo em euros manda quando é maior que a percentagem", () => {
+    // com 4,33 € de tecto, os primeiros meses passam a pagar pelo tecto
+    const r = simularCartao({
+      saldo: 1000,
+      taegAnualPct: 15,
+      prestacaoMinimaPct: 4,
+      prestacaoMinimaEuros: 4.33,
+    });
+    expect(r.linhas[0].prestacao).toBe(40); // a percentagem ainda ganha
+    expect(r.meses).toBe(108);
+    expect(r.jurosTotais).toBeCloseTo(389.87, 2);
+  });
+
+  it("pagar 100 % ao mês liquida em 3 meses", () => {
+    const r = simularCartao({ saldo: 1000, taegAnualPct: 15, prestacaoMinimaPct: 100 });
+    expect(r.meses).toBe(3);
+    expect(r.jurosTotais).toBeCloseTo(11.85, 2);
+    expect(r.liquidado).toBe(true);
+  });
+
+  it("se o mínimo não cobre os juros, a divida cresce e o motor diz que não liquidou", () => {
+    // 0,5 % ao mês contra 1,1715 % de juros: nunca amortiza
+    const r = simularCartao({ saldo: 1000, taegAnualPct: 15, prestacaoMinimaPct: 0.5 });
+    expect(r.liquidado).toBe(false);
+    expect(r.esgotouMeses).toBe(true);
+    expect(r.linhas).toHaveLength(600); // chegou ao tecto de meses
+    expect(r.linhas[599].dividaFim).toBeGreaterThan(1000); // a divida cresceu
+  });
+
+  it("saldo a liquidar nunca fica preso num residuo que não paga", () => {
+    // o resíduo arredonda a 0 cêntimos na prestação mínima; tem de pagar
+    const r = simularCartao({ saldo: 1000, taegAnualPct: 15, prestacaoMinimaPct: 4 });
+    const ultima = r.linhas[r.linhas.length - 1];
+    expect(ultima.prestacao).toBeGreaterThan(0);
+    expect(ultima.dividaFim).toBe(0);
+  });
+
+  it("erro alto quando os parâmetros não fazem sentido", () => {
+    expect(() => simularCartao({ saldo: 0, taegAnualPct: 15, prestacaoMinimaPct: 4 })).toThrow();
+    expect(() => simularCartao({ saldo: 1000, taegAnualPct: 15, prestacaoMinimaPct: 0 })).toThrow();
+    expect(() => simularCartao({ saldo: 1000, taegAnualPct: 15, prestacaoMinimaPct: 150 })).toThrow();
+    expect(() =>
+      simularCartao({ saldo: 1000, taegAnualPct: -1, prestacaoMinimaPct: 4 })
+    ).toThrow();
+  });
+
+  it("custoDoSaldar devolve o resumo sem o plano mensal", () => {
+    const r = custoDoSaldar(1000, 15, 4);
+    expect(r).toEqual({
+      meses: 305,
+      jurosTotais: 414.01,
+      totalPago: 1414.01,
+      liquidado: true,
+    });
   });
 });

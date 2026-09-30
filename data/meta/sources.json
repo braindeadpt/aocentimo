@@ -544,9 +544,9 @@
     "frequencia": "semestral"
   },
   {
-    "id": "fiscal-servicos-minimos",
-    "fonte": "DL 27-C/2000 + DGAEP — curado",
-    "url": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/2000-106398173",
+    "id": "fiscal-cartoes",
+    "fonte": "DL 133/2009 + Regulamento (UE) 2015/751 — curado",
+    "url": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/2009-34518975",
     "recolhidoEm": "2026-01-01T00:00:00Z",
     "serieAte": "2026",
     "frequencia": "anual"
