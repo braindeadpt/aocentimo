@@ -35,6 +35,7 @@ const NOME_POR_FICHEIRO: Record<string, string> = {
   "desemprego": "Seg. Social/DL 220/2006 — curado",
   "subsidio-alimentacao": "Portaria 51-B/2026/1 — curado",
   "irs-jovem": "Art. 12.º-B CIRS — curado",
+  "servicos-minimos": "DL 27-C/2000 + DGAEP — curado",
 };
 
 /** Normaliza "YYYY" | "YYYY-MM" | "YYYY-MM-DD" para data completa ISO. */
