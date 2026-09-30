@@ -1,0 +1,81 @@
+{
+  "vigencia": "2026-01-01",
+  "vigenciaLei": "2023-08-27",
+  "fonte": "Decreto-Lei n.º 27-C/2000, de 10 de março — versão consolidada no Diário da República (texto do art. 3.º alterado pelo art. 6.º da Lei n.º 24/2023, de 28 de março, em vigor desde 2023-08-27); valor do indexante dos apoios sociais na DGAEP",
+  "fonteUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/2000-106398173",
+  "nota": "Regra legal, não preço de mercado. O tecto é o que a lei proíbe ultrapassar — não é o que os bancos cobram, que é livre abaixo dele (ver comissoes-bancarias.json, que não existe: ver a nota desse ficheiro).",
+
+  "quemTemDireito": {
+    "regra": "Qualquer pessoa singular que não seja titular de outra conta de depósito à ordem junto de uma instituição de crédito estabelecida em território nacional (art. 4.º, n.os 1, 2 e 5).",
+    "declaracao": "O interessado declara por escrito, nos impressos de abertura de conta ou em documento anexo, que não é titular de outra conta de depósito à ordem, ou que foi notificado de que a sua conta de pagamento será encerrada (art. 4.º, n.º 2).",
+    "prazoAbertura": "A instituição abre a conta ou recusa o pedido, sem demora indevida e o mais tardar 10 dias úteis após a receção do pedido completo (art. 4.º, n.º 3).",
+    "excecoes": [
+      "Quem tenha outras contas de depósito à ordem pode ser contitular de uma conta de serviços mínimos bancários com uma pessoa singular com mais de 65 anos ou com grau de invalidez permanente igual ou superior a 60 %, desde que essa pessoa reúna os requisitos (art. 4.º-B, n.os 3 e 4).",
+      "Nessa contitularidade, quem tem menos de 65 anos e não é dependente de terceiros continua a poder aceder individualmente aos serviços mínimos bancários (art. 4.º-B, n.º 4).",
+      "Para efeitos da exceção, «dependente de terceiros» é quem tenha grau de invalidez permanente igual ou superior a 60 %, devidamente comprovado pela entidade competente (art. 4.º-B, n.º 5)."
+    ],
+    "conversao": "Quem já tem conta de depósito à ordem pode convertê-la em conta de serviços mínimos bancários — por encerramento e nova conta noutra instituição, ou por aditamento ao contrato existente. A conversão não pode acarretar custos (art. 4.º-A, n.º 2)."
+  },
+
+  "servicosIncluidos": [
+    "Constituição, manutenção, gestão e titularidade de conta de depósito à ordem (art. 1.º, n.º 2, alínea a), i)",
+    "Titularidade de cartão de débito (art. 1.º, n.º 2, alínea a), ii))",
+    "Acesso à movimentação da conta através de caixas automáticos no interior da União Europeia, homebanking e balcões da instituição de crédito (art. 1.º, n.º 2, alínea a), iii))",
+    "Operações incluídas: depósitos, levantamentos, pagamentos de bens e serviços, débitos diretos e transferências, incluindo ordens permanentes, no interior da União Europeia, e transferências através de aplicações de pagamento operadas por terceiros (art. 1.º, n.º 2, alínea a), iv))"
+  ],
+
+  "tectoComissaoAnual": {
+    "baseLegal": "1 % do valor do indexante dos apoios sociais",
+    "redacao": "«pelos serviços e operações em euros referidos na alínea a) do n.º 2 do artigo 1.º, não podem ser cobrados, pelas instituições de crédito, comissões, despesas ou outros encargos que, anualmente, e no seu conjunto, representem valor superior ao equivalente a 1 % do valor do indexante dos apoios sociais» (art. 3.º, n.º 1).",
+    "periodicidade": "anual, e no seu conjunto — o tecto cobre todas as comissões, despesas e encargos juntos, não a comissão de manutenção isolada",
+    "indexanteApoiosSociais": {
+      "ano": 2026,
+      "valor": 537.13,
+      "diploma": "Portaria n.º 480-A/2025/1, de 30 de dezembro",
+      "diplomaAnterior": "Portaria n.º 6-B/2025/1, de 6 de janeiro (2025: € 522,50)",
+      "criadoPor": "Lei n.º 53-B/2006, de 29 de dezembro",
+      "fonteUrl": "https://www.dgaep.gov.pt/index.cfm?OBJID=3E74CF19-DA87-4B8F-81E2-51E0649AAA9F"
+    },
+    "tectoAnualEuros": 5.37,
+    "comoFoiCalculado": "1 % de 537,13 € = 5,3713 €, arredondado a 5,37 €.",
+    "confirmacaoDaFonte": "O Banco de Portugal aplica a mesma leitura e dá o resultado em euros: «As instituições de crédito não podem cobrar pela prestação de serviços mínimos bancários comissões, despesas, ou outros encargos que, anualmente e no seu conjunto, representem um valor superior a 1 % do valor do indexante dos apoios sociais (IAS), ou seja, 5,37 euros de acordo com o IAS em 2026.» (Portal do Cliente Bancário, Perguntas Frequentes)",
+    "confirmacaoUrl": "https://clientebancario.bportugal.pt/pt-pt/perguntas-frequentes",
+    "mesmoCriterioNoutroLoc": "A mesma leitura está confirmada noutro artigo do mesmo regime: as comissões no processo de habilitação de herdeiros não podem exceder 10 % do IAS, «ou seja, 53,71 euros de acordo com o valor do IAS em 2026» — o que prova que a percentagem se aplica ao valor mensal do indexante tal como a DGAEP o publica."
+  },
+
+  "transferenciasIncluidasNoTecto": [
+    "Transferências intrabancárias, sem restrição de número (art. 3.º, n.º 2)",
+    "Transferências efectuadas através de caixas automáticos (art. 3.º, n.º 2)",
+    "48 transferências interbancárias por cada ano civil, efectuadas através de homebanking ou de aplicações próprias (art. 3.º, n.º 2)",
+    "5 transferências por cada mês, com o limite de 30 € por operação, realizadas através de aplicações de pagamento operadas por terceiros (art. 3.º, n.º 2)"
+  ],
+
+  "custosQueOClienteSuporta": {
+    "foraDoTecto": "Pelos serviços e operações não abrangidos acima, o titular suporta os custos normalmente praticados pela instituição e previstos em preçário (art. 3.º, n.º 3).",
+    "cartaoDebito": "Há custo pela emissão do cartão de débito se o titular pedir a substituição antes de decorridos 18 meses sobre a emissão, salvo se a validade for inferior a esse prazo ou o motivo da substituição for imputável à instituição de crédito (art. 3.º, n.º 3).",
+    "semDescoberto": "As instituições não podem contratar facilidades de descoberto associadas a contas de serviços mínimos bancários, nem permitir tacitamente a movimentação para além do saldo (ultrapassagem de crédito).",
+    "produtosAdicionais": "O titular pode contratar outros produtos — depósitos a prazo, contas-poupança, crédito — sujeitos ao preçário da instituição."
+  },
+
+  "encerramento": {
+    "imediato": [
+      "O titular utilizou deliberadamente a conta para fins contrários à lei (art. 5.º, n.º 1, a))",
+      "O titular prestou informações incorretas para obter a conta, quando não preenchia os requisitos de acesso (art. 5.º, n.º 1, c))"
+    ],
+    "apos60Dias": [
+      "O titular não realizou nenhuma das operações da subalínea iv) da alínea a) do n.º 2 do art. 1.º durante, pelo menos, 24 meses consecutivos (art. 5.º, n.º 1, b))",
+      "O titular deixou de ser residente legal na União Europeia, sem ser consumidor sem domicílio fixo ou requerente de asilo (art. 5.º, n.º 1, d))",
+      "O titular detém outra conta de depósito à ordem em instituição de crédito em Portugal que lhe permita utilizar os serviços mínimos, salvo os casos do art. 4.º-B (art. 5.º, n.º 1, e))"
+    ],
+    "encargosAoEncerrar": "Salvo no caso da alínea b) — a conta parada há 24 meses —, a instituição pode exigir a diferença entre os encargos habitualmente associados aos serviços entretanto prestados e os encargos da conta de serviços mínimos bancários (art. 5.º, n.º 4). Se o encerramento decorrer da inatividade de 24 meses, não pode cobrar encargos adicionais.",
+    "comunicacao": "A comunicação de encerramento é gratuita, em papel ou suporte duradouro, com os motivos e, quando exista, a exigência de pagamento de comissões; tem de indicar ainda os procedimentos de reclamação e os meios de resolução alternativa de litígios (art. 5.º, n.os 5 e 6).",
+    "devolucaoDoSaldo": "Em caso de resolução nos termos do n.º 1, as instituições são obrigadas a devolver o saldo depositado (art. 5.º, n.º 7)."
+  },
+
+  "contaBase": {
+    "oQueE": "A conta base é uma conta de depósito à ordem padronizada, distinta da conta de serviços mínimos bancários: não tem tecto legal de comissão.",
+    "servicos": "A abertura e manutenção da conta, cartão de débito, acesso por caixas automáticos, homebanking e balcões (as instituições podem limitar a três os levantamentos ao balcão no mesmo mês), depósitos, levantamentos, pagamentos, débitos diretos e transferências intrabancárias nacionais.",
+    "comissao": "As instituições de crédito fixam livremente a comissão de manutenção da conta base, como retribuição por este conjunto de serviços.",
+    "fonte": "Portal do Cliente Bancário, Perguntas Frequentes"
+  }
+}
