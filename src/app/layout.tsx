@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ViewTransition } from "react";
-import { Archivo, Source_Serif_4, Space_Grotesk, Space_Mono } from "next/font/google";
+import { Archivo, Caveat, Source_Serif_4, Space_Grotesk, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -36,6 +36,15 @@ const spaceMono = Space_Mono({
   subsets: ["latin"],
   weight: ["400", "700"],
   variable: "--font-space",
+  display: "optional",
+});
+// Caveat — a mão que escreve (P0, contrato visual V5). Só entra em vigor
+// dentro de [data-pele="v5"] (ver globals.css); carregada na V5, não vale
+// para as rotas V4. display: optional pela mesma razão das outras (4B-03).
+const caveat = Caveat({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+  variable: "--font-mao",
   display: "optional",
 });
 
@@ -88,7 +97,7 @@ export default function RootLayout({
       suppressHydrationWarning
       data-scroll-behavior="smooth"
       data-theme="dark"
-      className={`${archivo.variable} ${grotesk.variable} ${serif.variable} ${spaceMono.variable}`}
+      className={`${archivo.variable} ${grotesk.variable} ${serif.variable} ${spaceMono.variable} ${caveat.variable}`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
