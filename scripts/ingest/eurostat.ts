@@ -140,6 +140,10 @@ const seriesSchema = z.object({
     serieAte: z.string(),
     frequencia: z.string().optional(),
     rotuloAte: z.string().optional(),
+    /** Título da série tal como a fonte o mostra, quando esta o declara. */
+    tituloOficial: z.string().optional(),
+    /** Periodicidade tal como a fonte a declara («Mensal», «Trimestral»…). */
+    periodicidade: z.string().optional(),
   }),
   series: z.array(z.object({ t: z.string(), v: z.number() })),
 });
