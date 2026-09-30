@@ -226,6 +226,22 @@ em ficheiros à parte, e o JS inicial da home subiu só 2,2 KB
    parte do desenho. `.b-fumo`, `.b-baforada`, `.b-corpo-pombo` e
    `.b-gaivota` ganham-no, para o CSS da V4 não apanhar o fumo da fábrica.
 
+### O CI — o que passa e o que não passa
+
+Corrido no GitHub (é a primeira vez que o código V5 chega ao CI):
+
+| passo | resultado |
+|---|---|
+| `lint`, `typecheck`, `test:unit`, `derive`, `validate:data` | ✅ |
+| **`build`** | ✅ **com Turbopack** — a ressalva do P1-1 fica resolvida |
+| `test:e2e` | ❌ **33 falhas, todas da home V4** |
+
+As 33 falhas são `smoke`, `painel`, `sessao-2-hero`, `sessao-2-painel`,
+`sessao-2-portas`, `coreografia` e `controlos` — ou seja, testes que
+descrevem a home V4, que a V5 substituiu. **Não é regressão**; é o P1-5 do
+pack (linha 217), que ainda não foi feito. Os 195 e2e que não tocam na home
+passam. Está anotado em `docs/PACK-V5-PRODUCAO.md` §P1-5.
+
 ### O que ficou em aberto
 
 - **O HTML da home tem 130,8 KB gzip**, acima dos 80 KB que o pack impõe
