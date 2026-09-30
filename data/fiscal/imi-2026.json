@@ -1,0 +1,74 @@
+{
+  "ano": 2026,
+  "anoImposto": 2025,
+  "vigencia": "2026-01-01",
+  "fonte": "Código do Imposto Municipal sobre Imóveis (CIMI), aprovado pelo Decreto-Lei n.º 287/2003, de 12 de novembro — versão consolidada na AT: arts. 112.º, 112.º-A e 120.º",
+  "fonteUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimi/Pages/cimi112.aspx",
+  "nota": "O IMI é um imposto municipal anual: IMI = valor patrimonial tributário (VPT) × taxa. O VPT é o valor fiscal do imóvel, não o preço de compra nem o valor de mercado, e é determinado pela AT segundo os artigos 7.º a 46.º do CIMI, com base em área, localização, idade, qualidade e custo de construção. A taxa é fixada por cada município, por deliberação da assembleia municipal, dentro do intervalo legal. Por isso não existe um IMI nacional: a taxa muda conforme o município, a freguesia e o ano.",
+  "taxasLegais": {
+    "rusticos": 0.008,
+    "urbanos": { "min": 0.003, "max": 0.0045 },
+    "nota": "Art. 112.º n.º 1: prédios rústicos 0,8 %; prédios urbanos de 0,3 % a 0,45 %. A redacção de 0,3 % a 0,45 % é da Lei n.º 7-A/2016, de 30 de março."
+  },
+  "municipios": {
+    "nota": "NÃO foi possível obter a tabela completa de taxas por município numa fonte oficial legível. A consulta oficial da AT exige autenticação e o simulador é geográfico, por clique no mapa, sem lista. Ficou gravado apenas o Porto, lido directamente na minuta da Assembleia Municipal, com a redacção literal. Todos os outros municípios ficam por curar — ver o relatório do PR.",
+    "leiDosDados": "Nunca inventar. Se a taxa do município não estiver na fonte, o motor falha em vez de assumir a mínima."
+  },
+  "porto": {
+    "taxa": 0.00324,
+    "anoImposto": 2025,
+    "reducaoHabitacaoPropriaPermanente": 0.15,
+    "taxaEfetivaHabitacaoPropriaPermanente": 0.002754,
+    "majoracaoPrediosDegradados": 0.3,
+    "fonteUrl": "https://bme.cm-porto.pt/apex/f?p=101:40:::NO::P40_ID,TEXT_SEARCH:154026,",
+    "fonte": "Minuta da Ata da 3.ª Reunião, Sessão Ordinária da Assembleia Municipal do Porto, de 19 de dezembro de 2025, ponto 3",
+    "redacaoLiteral": "A Fixação da taxa do IMI em 0,324% para os prédios urbanos",
+    "nota": "A minuta descreve a redução de 15 % para habitação própria e permanente ao abrigo do Regulamento de Isenções de Impostos Municipais do Município do Porto (RIIMMP), que representa uma taxa efetiva de 0,2754 %. A majoração de 30 % aplica-se aos prédios urbanos degradados. Atenção: a minuta do ponto 16 da reunião da Câmara de 10-12-2025 diz «para o ano 2025» apesar de a reunião ser de dezembro de 2025, o que é provável gralha na fonte municipal. O valor de 0,324 % foi mantido de 2025 para 2026. O ano do imposto gravado é 2025, porque é o IMI de 2025 que é liquidado e pago em 2026.",
+    "casaDesfazAmbito": "O valor de 0,324 % é a taxa bruta. Quem tem o domicílio fiscal no prédio e o usa como habitação própria e permanente paga 15 % menos, por via do RIIMMP."
+  },
+  "imiFamiliar": {
+    "base": "art. 112.º-A (redacção da Lei n.º 56/2023, de 6 de outubro)",
+    "mecanismo": "Redução da taxa em euros, não em percentagem. O município delibera o valor; a AT verifica os pressupostos automaticamente com base nas matrizes prediais, no registo de contribuintes e nas declarações de rendimentos.",
+    "condicoes": "Prédio ou parte de prédio urbano destinado a habitação própria e permanente do sujeito passivo ou do seu agregado familiar, e efetivamente afeto a tal fim. A lei presume o afeto quando o domicílio fiscal está fixado no prédio.",
+    "composicaoAgregado": "A composição do agregado familiar é a que se verificar no último dia do ano anterior àquele a que respeita o imposto.",
+    "deducoes": [
+      { "dependentes": 1, "valor": 30 },
+      { "dependentes": 2, "valor": 70 },
+      { "dependentes": 3, "valor": 140, "designacao": "3 ou mais" }
+    ],
+    "nota": "Os valores 30/70/140 € são o tecto legal: cada município pode deliberar uma redução menor. Se o município não deliberar, não há dedução. A redução aplica-se ao valor liquidado, que nunca fica abaixo de zero."
+  },
+  "majoracoes": {
+    "devolutos": {
+      "fator": 3,
+      "nota": "Art. 112.º n.º 3 (redacção da Lei n.º 119/2019): a taxa é elevada ao triplo para prédios urbanos devolutos há mais de um ano ou em ruínas, cujo estado de conservação não tenha sido provocado por desastre natural ou calamidade. Para prédios parcialmente devolutos, o agravamento incide apenas sobre a parte do VPT correspondente às partes devolutas."
+    },
+    "degradados": {
+      "variacaoMax": 0.3,
+      "nota": "Prédios urbanos que, face ao estado de conservação, não cumpram satisfatoriamente a sua função ou façam perigar a segurança de pessoas e bens. A majoração é deliberada município a município, dentro do limite dos 30 %."
+    },
+    "zonaPressaoUrbanistica": {
+      "base": "art. 112.º-B",
+      "nota": "Agravamento dos prédios devolutos localizados em zonas de pressão urbanística, aplicável sem deliberação da assembleia municipal. Os valores não foram lidos nesta sessão."
+    }
+  },
+  "variacoesPorArea": {
+    "nota": "Art. 112.º n.os 6 e 7. Os municípios podem definir áreas territoriais (freguesias ou zonas delimitadas) e majorar ou minorar até 30 % a taxa, por deliberação. Podem ainda reduzir até 20 % a taxa dos prédios urbanos arrendados, de forma cumulativa. São casos que exigem conhecimento da deliberação municipal concreta, pelo que o motor não os aplica por omissão."
+  },
+  "arrendados": {
+    "reducaoMax": 0.2,
+    "nota": "Redução de até 20 % para prédios urbanos arrendados, cumulável com a variação por área. Deliberada município a município."
+  },
+  "prestacoes": {
+    "base": "art. 120.º n.º 1 (redacção da Lei n.º 71/2018, de 31 de dezembro)",
+    "regras": [
+      { "ate": 100, "prestacoes": 1, "meses": [5] },
+      { "de": 100.01, "ate": 500, "prestacoes": 2, "meses": [5, 11] },
+      { "de": 500.01, "ate": null, "prestacoes": 3, "meses": [5, 8, 11] }
+    ],
+    "nota": "As prestações são iguais, salvo se o município decidir em contrário.",
+    "cge": "Os cônjuges não separados judicialmente de pessoas e bens ou unidos de facto beneficiam do disposto no n.º 1 relativamente à totalidade do imposto a liquidar, mesmo no caso de prédios em compropriedade, desde que o prédio esteja afeto à habitação própria e permanente e o domicílio fiscal esteja nele fixado (art. 120.º n.os 6 e 7, adicionados pela Lei n.º 2/2020).",
+    "atraso": "O art. 120.º n.º 3 permite pagar imposto de vários anos em atraso de seis em seis meses, a partir do mês seguinte ao da notificação, quando o montante total exceda 250 €, sendo pago primeiro o mais antigo. O não pagamento de uma prestação implica o imediato vencimento das restantes."
+  },
+  "verAlteracoes": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimi/Pages/codigo-do-imi-indice.aspx"
+}

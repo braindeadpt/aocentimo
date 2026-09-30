@@ -26,6 +26,7 @@ legislativa/oficial (DR, AT, OE, IGCP, Código do IVA).
 | `mais-valias.json` | Taxa autónoma, exclusões por detenção, cripto ≥365 dias, imóveis 50 % | CIRS arts. 10.º, 43.º, 72.º |
 | `usura-YYYY.json` | Tetos de TAEG/TAN por tipo de crédito ao consumo, por trimestre | BdP — Instrução trimestral (DL 133/2009) |
 | `calendario-YYYY.json` | Prazos fiscais do ano (IRS, IMI, IUC, e-Fatura) | AT / códigos tributários |
+| `imi-YYYY.json` | Intervalo legal da taxa, taxa por município, IMI familiar (30/70/140 €) e regras de prestação | CIMI (DL 287/2003) — DR + AT |
 
 ## Regras
 
