@@ -16,6 +16,10 @@ interface SerieGuardada {
     serieAte: string;
     rotuloAte?: string;
     frequencia?: string;
+    recolhidoEm?: string;
+    fontes?: string[];
+    formula?: string;
+    nota?: string;
   };
   series: { t: string; v: number }[];
 }
@@ -32,7 +36,10 @@ function carregar(dataDir: string, dir: string, nome: string): SerieGuardada | n
 
 const arred = (v: number, casas = 2) => {
   const f = 10 ** casas;
-  return Math.round(v * f) / f;
+  const r = Math.round(v * f) / f;
+  // Math.round devolve -0 e o JSON serializa isso como -0: um valor que
+  // aparece com sinal negativo quando é zero não é um número para mostrar
+  return r === 0 ? 0 : r;
 };
 
 /**
@@ -121,11 +128,76 @@ function desempregoGap(dataDir: string) {
   };
 }
 
+/**
+ * deposito-real: taxa de juro de novos depósitos a prazo dos particulares
+ * menos a inflação homóloga do mesmo mês.
+ *
+ * As duas séries são oficiais e anuais na mesma base (a do BPstat é uma taxa
+ * acordada anualizada, TAA), por isso a subtracção é legítima: taxa real
+ * aproximada = taxa nominal − variação anual do HICP. A variação homóloga sai
+ * do índice hicp-pt-cp00 (2025=100): pch(t) = índice(t)/índice(t−12) − 1.
+ *
+ * O que este derivado NÃO é: o juro que um depósito rende no bolso de alguém.
+ * Não conta com impostos (sobre a taxa, ou a retenção na fonte), nem com a
+ * inflação dos bens que essa pessoa consome — o HICP é a inflação geral.
+ * A nota vai escrita no meta para não se perder no caminho até à UI.
+ */
+export function depositoReal(
+  dataDir: string,
+  deposito = "ate1a"
+): SerieGuardada | null {
+  const dep = carregar(dataDir, "bpstat", `deposito-prazo-${deposito}-mensal`);
+  const hicp = carregar(dataDir, "eurostat", "hicp-pt-cp00");
+  if (!dep || !hicp) return null;
+
+  const indice = new Map(hicp.series.map((p) => [p.t, p.v]));
+  const dozeMesesAntes = (t: string): string => {
+    const [y, m] = t.split("-").map(Number);
+    const total = y * 12 + (m - 1) - 12;
+    return `${Math.floor(total / 12)}-${String((total % 12) + 1).padStart(2, "0")}`;
+  };
+
+  const series = dep.series
+    .map((p) => {
+      const anterior = indice.get(dozeMesesAntes(p.t));
+      const atual = indice.get(p.t);
+      if (anterior === undefined || atual === undefined || anterior === 0) return null;
+      const pch = (atual / anterior - 1) * 100;
+      return { t: p.t, v: arred(p.v - pch) };
+    })
+    .filter((p): p is { t: string; v: number } => p !== null);
+
+  if (series.length === 0) return null;
+
+  const rotuloAte = series[series.length - 1].t;
+  return {
+    meta: {
+      id: "deposito-real",
+      fonte: "Banco de Portugal — BPstat · Eurostat — prc_hicp_m",
+      fontes: [dep.meta.url, hicp.meta.url],
+      formula:
+        "Taxa de juro (TAA) de novos depósitos a prazo até 1 ano dos particulares menos a variação homóloga do HICP total de Portugal (prc_hicp_minr, I25) no mesmo mês.",
+      nota: "Aproximação: não conta com impostos. É diferença entre duas séries oficiais, não o juro real de um depósito concreto.",
+      unidade: "pontos_percentuais",
+      url: dep.meta.url,
+      recolhidoEm: new Date().toISOString(),
+      serieAte: rotuloAte,
+      rotuloAte,
+      frequencia: "mensal",
+    },
+    series,
+  };
+}
+
 export function runDerivados(dataDir: string) {
   const outDir = path.join(dataDir, "derived");
   mkdirSync(outDir, { recursive: true });
   const feitos: string[] = [];
-  for (const doc of [casaEmSalarios(dataDir), desempregoGap(dataDir)]) {
+  for (const doc of [
+    casaEmSalarios(dataDir),
+    desempregoGap(dataDir),
+    depositoReal(dataDir),
+  ]) {
     if (!doc) continue;
     writeFileSync(
       path.join(outDir, `${doc.meta.id}.json`),
