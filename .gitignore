@@ -26,3 +26,10 @@ scripts/tmp/
 # material de referência (terceiros, capturas, PDFs) — nunca commitar
 referencias/
 .ref/
+
+# scratch das sessões: bring para o repo e o ESLint passa a lintar o
+# build do Next lá dentro (o .gitignore não apanha o que ainda não está
+# versionado)
+.preview-scratch/
+.freebuff/
+
