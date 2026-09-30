@@ -4,6 +4,9 @@ import {
   simularPoupanca,
   simularCA,
   simularCTPC,
+  simularCT,
+  resgateAntecipadoCT,
+  trajetoriaCT,
   taxaCAPorAno,
   trajetoriaDeposito,
   trajetoriaCA,
@@ -25,6 +28,7 @@ import { simularMaisValia } from "./mais-valias";
 import { inflacionar, salarioReal } from "./deflator";
 import { taxaBaseCA } from "./ca-base";
 import ca from "@data/fiscal/ca.json";
+import ct from "@data/fiscal/ct.json";
 import capitais from "@data/fiscal/capitais.json";
 
 describe("simularPrestacao", () => {
@@ -335,6 +339,134 @@ describe("simularCTPC", () => {
   it("prémio só conta do 2.º ano; ano 1 = taxa fixa", () => {
     const r = simularCTPC(10000, 1, taxas, premio, imposto);
     expect(r.capitalFinalLiquido).toBeCloseTo(10000 * (1 + 0.0075 * (1 - imposto)), 4);
+  });
+});
+
+/**
+ * Certificados do Tesouro série 5 — juros anuais, taxa fixa por ano de vida
+ * e **sem capitalização**. Os casos foram somados à mão sobre as taxas da
+ * ficha técnica, não lidos do código.
+ *
+ * Para 10 000 €, juros brutos ano a ano: 235, 245, 245, 265, 265, 275, 275,
+ * 285, 285 e 335 — total 2 710 €, sobre os quais a retenção de 28 % leva
+ * 758,80 €. Liquido: 11 951,20 €.
+ */
+describe("simularCT (Certificados do Tesouro, série 5)", () => {
+  const taxas = ct.serie5.taxasPorAno;
+  const imposto = capitais.retencaoLiberatoria.taxa;
+
+  it("10 000 € a 10 anos: 2 710 € brutos, 758,80 € de imposto, 11 951,20 € líquidos", () => {
+    const r = simularCT(10000, 10, taxas, imposto);
+    expect(r.jurosBrutos).toBeCloseTo(2710, 2);
+    expect(r.imposto).toBeCloseTo(758.8, 2);
+    expect(r.capitalFinalLiquido).toBeCloseTo(11951.2, 2);
+    expect(r.capitalFinalBruto).toBeCloseTo(12710, 2);
+    expect(r.taxaLiquida).toBeCloseTo(0.19512, 5);
+  });
+
+  it("ano 1: 235 € brutos, 65,80 € de imposto", () => {
+    const r = simularCT(10000, 1, taxas, imposto);
+    expect(r.jurosBrutos).toBeCloseTo(235, 2);
+    expect(r.imposto).toBeCloseTo(65.8, 2);
+    expect(r.capitalFinalLiquido).toBeCloseTo(10169.2, 2);
+  });
+
+  it("não capitaliza: 10 anos à mesma taxa dão 10 vezes o juro de um ano", () => {
+    const taxa = [0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03];
+    const r = simularCT(10000, 10, taxa, imposto);
+    // 3 % de 10 000 = 300 € por ano, 3 000 € em dez anos — não 3 000 € sobre
+    // um saldo que ia crescendo, que daria bem mais
+    expect(r.jurosBrutos).toBeCloseTo(3000, 6);
+    expect(r.capitalFinalLiquido).toBeCloseTo(10000 + 3000 * (1 - imposto), 6);
+  });
+
+  it("os juros da CA e dos CT são maiores que os dos CT para os mesmos anos — é a falta de capitalização", () => {
+    const ct10 = simularCT(10000, 10, taxas, imposto);
+    const ca10 = simularCA(10000, 10, 0.025, ca.serieF.premiosPermanencia, imposto);
+    expect(ct10.capitalFinalLiquido).toBeLessThan(ca10.capitalFinalLiquido);
+  });
+
+  it("valor real: a 3 % de inflação, 10 000 € ficam a 8 893 €", () => {
+    const r = simularCT(10000, 10, taxas, imposto, 0.03);
+    expect(r.valorReal).toBeCloseTo(8892.82, 2);
+  });
+
+  it("anos a mais do que as taxas não inventa juros", () => {
+    const r = simularCT(10000, 15, taxas, imposto);
+    const r10 = simularCT(10000, 10, taxas, imposto);
+    expect(r.capitalFinalLiquido).toBe(r10.capitalFinalLiquido);
+  });
+});
+
+describe("trajetoriaCT", () => {
+  const taxas = ct.serie5.taxasPorAno;
+  const imposto = capitais.retencaoLiberatoria.taxa;
+
+  it("um ponto por ano, e o último bate com o simularCT", () => {
+    const pontos = trajetoriaCT(10000, taxas, imposto);
+    const r = simularCT(10000, 10, taxas, imposto);
+    expect(pontos).toHaveLength(10);
+    expect(pontos[0].ano).toBe(1);
+    expect(pontos[9].saldo).toBeCloseTo(r.capitalFinalLiquido, 6);
+  });
+
+  it("o saldo cresce por soma, não a juro composto", () => {
+    const pontos = trajetoriaCT(10000, taxas, imposto);
+    // de um ponto para o seguinte cresce pelo juro LÍQUIDO desse mesmo ano
+    for (let i = 1; i < pontos.length; i++) {
+      expect(pontos[i].saldo - pontos[i - 1].saldo).toBeCloseTo(
+        pontos[i].juro * (1 - imposto),
+        6
+      );
+    }
+  });
+});
+
+describe("resgateAntecipadoCT", () => {
+  const taxas = ct.serie5.taxasPorAno;
+  const imposto = capitais.retencaoLiberatoria.taxa;
+
+  it("resgatar antes de um ano perde tudo: devolve só o capital", () => {
+    const r = resgateAntecipadoCT(10000, 0.5, taxas, imposto);
+    expect(r.valorRecebido).toBe(10000);
+    expect(r.jurosPerdidos).toBeCloseTo(169.2, 2); // 235 € brutos do ano 1
+  });
+
+  it("resgatar a meio do 2.º ano mantém o ano 1 e perde o ano 2", () => {
+    const r = resgateAntecipadoCT(10000, 1.5, taxas, imposto);
+    expect(r.valorRecebido).toBeCloseTo(10000 + 235 * (1 - imposto), 6);
+    expect(r.jurosPerdidos).toBeCloseTo(245 * (1 - imposto), 6);
+  });
+
+  it("resgatar a meio do 4.º ano custa o juro inteiro desse ano", () => {
+    const meio = resgateAntecipadoCT(10000, 3.5, taxas, imposto);
+    const noFim = resgateAntecipadoCT(10000, 4, taxas, imposto);
+    // a diferença entre resgatar a meio e resgatar no fim do ano é
+    // exactamente o juro líquido do 4.º ano — a penalidade é um ano inteiro,
+    // não os dias que faltavam
+    expect(noFim.valorRecebido - meio.valorRecebido).toBeCloseTo(
+      265 * (1 - imposto),
+      6
+    );
+    expect(meio.jurosPerdidos).toBeCloseTo(265 * (1 - imposto), 6);
+    // no fim do 4.º ano já se venceu o juro do ano 4: nada a perder
+    expect(noFim.jurosPerdidos).toBe(0);
+  });
+
+  it("resgatar no dia do vencimento não custa juro nenhum", () => {
+    const r = resgateAntecipadoCT(10000, 4, taxas, imposto);
+    expect(r.jurosPerdidos).toBe(0);
+    // e o valor recebido é o capital mais os quatro primeiros anos
+    expect(r.valorRecebido).toBeCloseTo(
+      10000 + (235 + 245 + 245 + 265) * (1 - imposto),
+      6
+    );
+  });
+
+  it("diz quantos anos faltavam correr, e o juro que se perde a meio do ano", () => {
+    const r = resgateAntecipadoCT(10000, 1.5, taxas, imposto);
+    expect(r.anosQueFaltavam).toBe(8.5);
+    expect(r.jurosPerdidos).toBeCloseTo(245 * (1 - imposto), 6);
   });
 });
 

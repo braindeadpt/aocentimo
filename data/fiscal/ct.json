@@ -1,0 +1,97 @@
+{
+  "vigencia": "2026-07-16",
+  "fonte": "IGCP, E.P.E. — Ficha Técnica Certificados do tesouro «série 5» (informação actualizada em 16 de julho de 2026); criação pela RCM n.º 141-A/2026, de 3 de julho (DR n.º 127/2026, Suplemento da Série I de 2026-07-03)",
+  "fonteUrl": "https://www.igcp.pt/pt/ficha-tecnica-certificados-do-tesouro-serie-5-0",
+  "nota": "Ao contrário dos Certificados de Aforro (ca.json), aqui não há capitalização: os juros vencem e são liquidados no IBAN, ano a ano. O capital só é devolvido no fim do prazo. É esta diferença que faz a taxa liquidada parecer menor — e é a diferença certa.",
+
+  "serie5": {
+    "nome": "Certificados do tesouro «série 5»",
+    "emVenda": true,
+    "criacao": "Resolução do Conselho de Ministros n.º 141-A/2026, de 3 de julho (DR n.º 127/2026, Suplemento da Série I de 2026-07-03)",
+    "subscricaoDesde": "2026-07-06",
+    "canais": [
+      "AforroNet",
+      "Balcões dos CTT — Correios de Portugal",
+      "Espaços Cidadão",
+      "Canais digitais do Banco de Investimento Global"
+    ],
+
+    "valorNominalUnidadeEUR": 1,
+    "minimoSubscricao": { "unidades": 1000, "euros": 1000 },
+    "maximoPorConta": { "unidades": 1000000, "euros": 1000000 },
+    "minimoPorConta": { "unidades": 1000, "euros": 1000, "nota": "É o remanescente que tem de ficar se o resgate for parcial" },
+
+    "prazoAnos": 10,
+    "prazoBase": "10 anos, a partir da respetiva data-valor da subscrição",
+
+    "taxasPorAno": [0.0235, 0.0245, 0.0245, 0.0265, 0.0265, 0.0275, 0.0275, 0.0285, 0.0285, 0.0335],
+    "taxasPorAnoLegivel": {
+      "1.º ano": "2,35 %",
+      "2.º ano": "2,45 %",
+      "3.º ano": "2,45 %",
+      "4.º ano": "2,65 %",
+      "5.º ano": "2,65 %",
+      "6.º ano": "2,75 %",
+      "7.º ano": "2,75 %",
+      "8.º ano": "2,85 %",
+      "9.º ano": "2,85 %",
+      "10.º ano": "3,35 %"
+    },
+    "premio": null,
+    "premioNota": "Não há prémio. A taxa é fixa por ano de vida da aplicação, já inscrita nas taxas acima — não há nada a calcular. (O prémio ligado ao PIB é só dos CTPC, ver ca.json → ctpc.)",
+    "taxasAlteraveis": "As taxas aplicáveis a novas subscrições podem ser alteradas a qualquer altura pelo IGCP, E.P.E., através de instrução e mediante prévia autorização por despacho do membro do Governo responsável pela área das finanças. As taxas em vigor são divulgadas no sítio do IGCP.",
+
+    "juros": {
+      "periodicidade": "Anual",
+      "convencao": "30/360",
+      "vencimento": "No dia do mês correspondente ao da data-valor da subscrição. Se esse dia não existir no mês, o crédito é no 1.º dia do mês seguinte; se cair em dia não útil, no dia útil seguinte.",
+      "capitalizacao": false,
+      "distribuicao": "O valor dos juros, líquido de IRS, é creditado no IBAN registado na conta do tesouro aberta junto do IGCP, E.P.E."
+    },
+
+    "reembolso": {
+      "quando": "Vencimento do capital ao valor nominal, no 10.º aniversário da data-valor da subscrição",
+      "como": "Creditado no IBAN registado na conta aberta no IGCP, E.P.E.",
+      "regraDia": "Se esse dia não existir no mês, o crédito é no 1.º dia do mês seguinte; se cair em dia não útil, no dia útil seguinte."
+    },
+
+    "resgateAntecipado": {
+      "quando": "Só é possível um ano após a data-valor da subscrição",
+      "custo": "Decorrido o 1.º ano, o resgate pode ser feito a qualquer momento e acarreta a perda TOTAL dos juros decorridos desde o último vencimento de juros até à data de resgate.",
+      "capital": "O resgate devolve o capital ao valor nominal das unidades resgatadas",
+      "parcial": "Pode ser total ou parcial; no parcial, o total de unidades remanescentes nunca pode ser inferior a 1.000 unidades",
+      "porqueImporta": "Resgatar a meio do ano custa os juros do ano inteiro em curso, mesmo que faltem dias para completar. É a armadilha destes certificados, e vale a pena dizê-la com todas as letras."
+    },
+
+    "titularidade": "As condições de titularidade e transmissão são as definidas pelo IGCP, E.P.E. em Instruções para o efeito (Instrução 2/2025).",
+
+    "regimeFiscal": {
+      "irs": "Os juros estão sujeitos a IRS, com retenção na fonte, à taxa liberatória existente na data do vencimento de juros — ver data/fiscal/capitais.json",
+      "impostoDeSelo": "Isentos de imposto de selo, desde que revertam a favor de herdeiros legitimários"
+    },
+
+    "garantiaCapital": "Garantia da totalidade do capital investido"
+  },
+
+  "seriesSuspostas": {
+    "ctpv": {
+      "nome": "Certificados do Tesouro Poupança Valor (CTPV)",
+      "emVenda": false,
+      "suspensaDesde": "2026-07-06",
+      "base": "Resolução do Conselho de Ministros n.º 141-A/2026, de 3 de julho (DR n.º 127/2026, Suplemento da Série I de 2026-07-03)",
+      "fonteUrl": "https://www.igcp.pt/pt/ficha-tecnica-certificados-do-tesouro-poupanca-valor",
+      "nota": "Não se pode subscrever. Quem já tinha continua a receber juros e a poder resgatar. Não havia ficha deste produto no repo."
+    },
+    "ctpc": {
+      "nome": "Certificados do Tesouro Poupança Crescimento (CTPC)",
+      "emVenda": false,
+      "suspensaDesde": "2021-09-10",
+      "base": "Resolução do Conselho de Ministros n.º 131-B/2021, de 10 de setembro (DR 177/2021, 3.º Suplemento, Série I de 2021-09-10)",
+      "fonteUrl": "https://www.igcp.pt/pt/ficha-tecnica-certificados-do-tesouro-poupanca-crescimento",
+      "premioAindaPublicado": "Sim. O IGCP continua a publicar o prémio de remuneração dos CTPC — o de setembro de 2026 é 0,810 % (IGCP, 28 de agosto de 2026) — porque os subscritores existentes continuam a ter direito a ele. As condições estão em ca.json → ctpc.",
+      "nota": "Subscreveu-se em 2017, altura em que a RCM n.º 157-D/2017 criou o produto. Nunca mais se subscreveu."
+    }
+  },
+
+  "leituraParaOPublico": "Em 2026 há uma série de Certificados do Tesouro à venda: a série 5, dez anos, taxa fixa que sobe de 2,35 % no primeiro ano para 3,35 % no décimo. As outras duas séries — Poupança Valor e Poupança Crescimento — estão fechadas à subscrição. Se alguém lhe vender um destes certificados a dizer que são «do tesouro», convém perguntar qual é a série e se ainda se pode subscrever."
+}

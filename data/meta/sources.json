@@ -542,5 +542,13 @@
     "recolhidoEm": "2026-09-20T19:43:34.509Z",
     "serieAte": "2025-12-31",
     "frequencia": "semestral"
+  },
+  {
+    "id": "fiscal-ct",
+    "fonte": "IGCP — Ficha Técnica Certificados do tesouro série 5 — curado",
+    "url": "https://www.igcp.pt/pt/ficha-tecnica-certificados-do-tesouro-serie-5-0",
+    "recolhidoEm": "2026-07-16T00:00:00Z",
+    "serieAte": "2026",
+    "frequencia": "anual"
   }
 ]

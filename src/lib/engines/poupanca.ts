@@ -126,6 +126,32 @@ export function trajetoriaCTPC(
   return out;
 }
 
+/**
+ * Trajectória anual dos Certificados do Tesouro (série 5) — juros anuais
+ * com taxa fixa por ano de vida e, ao contrário da CA e dos CTPC,
+ * **sem capitalização**: cada juro incide sobre o capital subscrito, não
+ * sobre o acumulado, porque os juros são creditados no IBAN ano a ano.
+ * O `saldo` de cada ponto é por isso o que o bolso tem fora — capital mais
+ * os juros já recebidos, líquidos — e não uma conta que cresce a juro
+ * composto. Ver data/fiscal/ct.json.
+ */
+export function trajetoriaCT(
+  capital: number,
+  taxasPorAno: number[],
+  taxaImposto: number,
+  inflacaoAnual = 0
+): PontoPoupanca[] {
+  const out: PontoPoupanca[] = [];
+  let recebido = 0;
+  for (let a = 1; a <= taxasPorAno.length; a++) {
+    const juro = capital * taxasPorAno[a - 1];
+    const imp = juro * taxaImposto;
+    recebido += juro - imp;
+    out.push(ponto(a, capital + recebido, juro, imp, inflacaoAnual));
+  }
+  return out;
+}
+
 /** O colchão: nominal parado, o real a escorregar para a inflação. */
 export function trajetoriaColchao(
   capital: number,
@@ -249,5 +275,93 @@ export function simularCTPC(
     capitalFinalLiquido: capLiquido,
     taxaLiquida: capLiquido / capital - 1,
     valorReal: capLiquido / Math.pow(1 + inflacaoAnual, anos),
+  };
+}
+
+/**
+ * Certificados do Tesouro — série 5: dez anos, taxa fixa por ano de vida,
+ * juros anuais e **sem capitalização**. Cada ano o juro incide sobre o
+ * capital subscrito; o capital só volta ao fim do prazo, ao valor nominal.
+ *
+ * Por isso o resultado não é uma compoundagem disfarçada: a diferença entre
+ * este motor e `simularCTPC` para os mesmos números é real e grande, e é
+ * exactamente o que a pessoa que subscreve vai ter no banco.
+ */
+export function simularCT(
+  capital: number,
+  anos: number,
+  taxasPorAno: number[],
+  taxaImposto: number,
+  inflacaoAnual = 0
+): ResultadoPoupanca {
+  const n = Math.min(Math.round(anos), taxasPorAno.length);
+  let jurosBrutos = 0;
+  let imposto = 0;
+
+  for (let a = 0; a < n; a++) {
+    const juro = capital * taxasPorAno[a];
+    jurosBrutos += juro;
+    imposto += juro * taxaImposto;
+  }
+
+  const liquido = capital + jurosBrutos - imposto;
+  return {
+    capitalFinalBruto: capital + jurosBrutos,
+    jurosBrutos,
+    imposto,
+    capitalFinalLiquido: liquido,
+    taxaLiquida: liquido / capital - 1,
+    valorReal: liquido / Math.pow(1 + inflacaoAnual, n),
+  };
+}
+
+/**
+ * Resgate antecipado dos Certificados do Tesouro, como a ficha técnica
+ * escreve: só a partir de um ano, e **perde-se a totalidade dos juros
+ * decorridos desde o último vencimento** até à data do resgate. O capital
+ * volta ao valor nominal.
+ *
+ * `anosDecorridos` é o tempo que passou desde a subscrição, em anos
+ * completos e uma fracção: o resgate pode acontecer a meio do ano, e é
+ * esse meio ano que se perde por inteiro. Resgatar no dia do vencimento
+ * não custa juro nenhum — o crédito foi feito nesse dia.
+ *
+ * O que se devolve é o capital mais os juros já *vencidos* (isto é, os dos
+ * anos completos anteriores), e não o que estaria a correr até à data.
+ */
+export function resgateAntecipadoCT(
+  capital: number,
+  anosDecorridos: number,
+  taxasPorAno: number[],
+  taxaImposto: number
+): {
+  /** Capital mais os juros já vencidos, líquidos — o que entra na conta. */
+  valorRecebido: number;
+  /** Juros do ano em curso que se perdem por resgatar agora. */
+  jurosPerdidos: number;
+  /** Anos que o certificado ainda tinha para correr. */
+  anosQueFaltavam: number;
+} {
+  const decorridos = Math.max(0, anosDecorridos);
+  const anosCompletos = Math.min(Math.floor(decorridos), taxasPorAno.length);
+  const fracao = decorridos - anosCompletos;
+
+  let recebido = 0;
+  for (let a = 0; a < anosCompletos; a++) {
+    recebido += capital * taxasPorAno[a] * (1 - taxaImposto);
+  }
+
+  // Só se perde o juro se já passou algum tempo desde o último vencimento.
+  // Resgatar no dia do vencimento não custa nada: o juro foi creditado.
+  const anoEmCurso = anosCompletos + 1;
+  const jurosPerdidos =
+    fracao > 0 && anoEmCurso <= taxasPorAno.length
+      ? capital * taxasPorAno[anoEmCurso - 1] * (1 - taxaImposto)
+      : 0;
+
+  return {
+    valorRecebido: capital + recebido,
+    jurosPerdidos,
+    anosQueFaltavam: Math.max(0, taxasPorAno.length - decorridos),
   };
 }
