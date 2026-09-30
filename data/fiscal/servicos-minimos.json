@@ -3,7 +3,7 @@
   "vigenciaLei": "2023-08-27",
   "fonte": "Decreto-Lei n.º 27-C/2000, de 10 de março — versão consolidada no Diário da República (texto do art. 3.º alterado pelo art. 6.º da Lei n.º 24/2023, publicada no DR n.º 103/2023, Série I, de 2023-05-29, em vigor desde 2023-08-27); valor do indexante dos apoios sociais na DGAEP",
   "fonteUrl": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/2000-106398173",
-  "nota": "Regra legal, não preço de mercado. O tecto é o que a lei proíbe ultrapassar — não é o que os bancos cobram, que é livre abaixo dele (ver comissoes-bancarias.json, que não existe: ver a nota desse ficheiro).",
+  "nota": "Regra legal, não preço de mercado. O tecto é o que a lei proíbe ultrapassar — não é o que os bancos cobram, que é livre abaixo dele. Não há ficheiro de comissões bancárias no pack: a razão (não existe valor agregado oficial; a fonte de banco a banco é o Comparador de Comissões, que o site não reproduz) está em data/fiscal/cartoes.json → anuidadeMedia.",
 
   "quemTemDireito": {
     "regra": "Qualquer pessoa singular que não seja titular de outra conta de depósito à ordem junto de uma instituição de crédito estabelecida em território nacional (art. 4.º, n.os 1, 2 e 5).",

@@ -159,7 +159,9 @@ export interface EntradaIsv {
   matriculaUE?: boolean;
   /**
    * Percentagem de taxa intermédia a aplicar à totalidade (art. 8.º):
-   * 60 para híbrido elegível, 25 para plug-in, 40 para gás natural.
+   * 60 para híbrido não plug-in elegível (autonomia elétrica >50 km e
+   * emissões <50 gCO2/km), 25 para plug-in, 40 para gás natural exclusivo
+   * ou utilização mista de 7 lugares sem tracção às quatro rodas.
    */
   taxaIntermedia?: number;
   ano?: number;
@@ -312,7 +314,11 @@ export function iuc(e: EntradaIuc): ResultadoIuc {
   if (!linhaCo2) throw new Error(`iuc: CO2 ${e.co2} g/km fora de tabela (${norma})`);
 
   let adicionalCo2 = 0;
-  if (e.anoMatricula > 2017) {
+  // Art. 10.º n.º 2 do CIUC: a taxa adicional é devida quando a primeira
+  // matrícula é «posterior a 1 de janeiro de 2017» — ou seja, desde 2017.
+  // Com `> 2017`, um carro matriculado em junho de 2017 perdia a taxa que a
+  // lei lhe dá; a fronteira certa com o ano como único dado é `>= 2017`.
+  if (e.anoMatricula >= 2017) {
     const linhaAd = r.categoriaB.adicionalCo2.escaloes.find((a) => {
       if (norma === "NEDC") return e.co2! > a.deNedc && (a.ateNedc === null || e.co2! <= a.ateNedc);
       return e.co2! > a.deWltp && (a.ateWltp === null || e.co2! <= a.ateWltp);

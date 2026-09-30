@@ -135,9 +135,12 @@ export function imi(e: EntradaImi): ResultadoImi {
 
   // A taxa tem de estar dentro do intervalo legal (art. 112.º n.º 1).
   const { min, max } = r.taxasLegais.urbanos;
+  // toFixed(1) sobre 0,0045 escreve "0.0" em some runtimes (float); o fix(2)
+  // garante «0,45 %» — e a vírgula é porque o resto do repo fala PT-PT.
+  const pct = (v: number) => (v * 100).toFixed(2).replace(".", ",");
   if (taxa < min || taxa > max)
     throw new Error(
-      `imi: taxa ${(taxa * 100).toFixed(3)} % fora do intervalo legal ${(min * 100).toFixed(1)} % – ${(max * 100).toFixed(1)} %`
+      `imi: taxa ${pct(taxa)} % fora do intervalo legal ${pct(min)} % – ${pct(max)} %`
     );
 
   const coletaBruta = arred(e.vpt * taxa);

@@ -172,7 +172,17 @@ describe("IUC — categoria B (gasóleo)", () => {
     expect(r.total).toBeCloseTo(426.83, 2);
   });
 
-  // 63,74 + 65,15 = 128,89; sem adicional (2015 ≤ 2017); × 1,15 = 148,22
+  // Art. 10.º n.º 2: o adicional é devido quando a 1.ª matrícula é «posterior
+  // a 1 de janeiro de 2017» — quem matriculou em 2017 paga. (Apanhado na 2.ª
+  // auditoria: o motor usava `> 2017` e um carro de 20-06-2017 ficava sem a
+  // taxa que a lei lhe dá — 390,30 € em vez de 426,83 €.)
+  it("matrícula de 2017 paga o adicional de CO2 («posterior a 1 de janeiro de 2017»)", () => {
+    const r = iuc({ cilindrada: 2000, anoMatricula: 2017, combustivel: "gasoleo", co2: 230, norma: "WLTP" });
+    expect(r.adicionalCo2).toBe(31.77);
+    expect(r.total).toBe(426.83); // (127,35 + 212,04 + 31,77) × 1,15
+  });
+
+  // 63,74 + 65,15 = 128,89; sem adicional (2015 < 2017); × 1,15 = 148,22
   it("matrícula anterior a 2017 não paga a taxa adicional de CO2", () => {
     const r = iuc({
       cilindrada: 1600,

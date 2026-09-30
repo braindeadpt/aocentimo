@@ -1,21 +1,20 @@
 {
   "vigencia": "2026-01-01",
   "ano": 2026,
-  "fonte": "Autoridade Tributária — obrigações declarativas (CIRS, CIMI, CIUC) e alterações OE2026",
+  "fonte": "Autoridade Tributária — obrigações declarativas (CIRS, CIMI, CIUC); regime do IUC 2026: Código do IUC, art. 7.º (mês da matrícula)",
   "fonteUrl": "https://info.portaldasfinancas.gov.pt",
-  "nota": "Datas para contribuintes singulares no continente. Quando o último dia calha a fim de semana ou feriado, o prazo corre normalmente para o dia útil seguinte.",
+  "nota": "Datas para contribuintes singulares no continente. Quando o último dia calha a fim de semana ou feriado, o prazo corre normalmente para o dia útil seguinte. IUC: em 2026 paga-se no mês da matrícula — o regime de pagamento em abril (com prestações) só entra em 2027 (Decreto-Lei n.º 161/2026, efeitos a partir de 2027-01-01).",
   "prazos": [
     {
       "id": "efatura",
       "titulo": "e-Fatura — validar faturas do ano anterior",
       "mes": "2026-02",
       "descricao": "Até 25 de fevereiro: verifica e completa as faturas de 2025 — é daqui que saem as deduções à coleta do teu IRS."
-    },
-    {
+    },    {
       "id": "iuc-1",
-      "titulo": "IUC — 1.ª prestação (ou total se ≤ 100 €)",
+      "titulo": "IUC — pagamento no mês da matrícula (ou total se ≤ 100 €)",
       "mes": "2026-02",
-      "descricao": "Novo em 2026: o IUC deixa o mês da matrícula. Até 100 € paga-se tudo em fevereiro; acima disso podes dividir — fevereiro e outubro."
+      "descricao": "Em 2026 o IUC continua a pagar-se no mês da matrícula — não há mudança em fevereiro. O novo regime (pagamento em abril, com prestações) só vale a partir de 2027. Se a tua matrícula não é em fevereiro, o teu IUC não vence neste mês."
     },
     {
       "id": "irs",
@@ -34,12 +33,11 @@
       "titulo": "IMI — 2.ª prestação (se > 500 €)",
       "mes": "2026-08",
       "descricao": "Segunda prestação de três, para IMI acima de 500 €."
-    },
-    {
+    },    {
       "id": "iuc-2",
-      "titulo": "IUC — 2.ª prestação (se > 100 €)",
+      "titulo": "IUC — 2.ª prestação (se > 100 €)",
       "mes": "2026-10",
-      "descricao": "Quem dividiu o IUC paga a segunda metade até ao fim de outubro."
+      "descricao": "Em 2026 não há 2.ª prestação de IUC: o imposto paga-se no mês da matrícula. As duas prestações (abril e outubro) só existem a partir de 2027, para liquidações entre 100 € e 500 €."
     },
     {
       "id": "imi-3",
