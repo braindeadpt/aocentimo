@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Bairro do Cêntimo · mapa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,12 +30,30 @@
 
   /* ——— o mapa ——— */
   .palco { position: relative; margin-inline: -20px; border-block: 4px solid var(--tinta); background: var(--fundo-mapa); transition: background 1.2s; overflow: hidden; }
-  .janela-mapa { height: clamp(460px, 74vh, 760px); touch-action: none; cursor: grab; }
+  .palco { background: linear-gradient(#9fd6f3, #dff2fb 75%); }
+  .fim-tarde .palco { background: linear-gradient(#ff9464, #ffc98f 50%, #ffe6c4); }
+  .noite .palco { background: linear-gradient(#050a26, #16235c 80%); }
+  .janela-mapa { position: relative; height: clamp(460px, 74vh, 760px); touch-action: none; cursor: grab; }
+  .sombra-d { transition: opacity 1.2s; } .sombra-t { opacity: 0; transition: opacity 1.2s; }
+  .fim-tarde .sombra-t { opacity: 1; } .fim-tarde .sombra-d, .noite .sombra-d { opacity: 0; }
+  .sol, #gEstrelas { opacity: 0; transition: opacity 1.2s; } .fim-tarde .sol, .noite #gEstrelas { opacity: 1; }
+  .noite .nuvem { opacity: .35; } .nuvem { transition: opacity 1.2s; }
+  .solto { position: absolute; overflow: visible; pointer-events: none; will-change: transform, translate, opacity; }
+  .nuvem-sp { animation: nuvemAnda var(--dur) ease-in-out infinite alternate; }
+  @keyframes nuvemAnda { from { translate: 0 0; } to { translate: var(--dx) 0; } }
+  .barco-sp { opacity: 1; }
+  @keyframes balouca { from { transform: translateY(0); } to { transform: translateY(2.5px); } }
+  .noite .estrela { animation: brilha 3s ease-in-out infinite; } .estrela:nth-child(3n) { animation-delay: -1s; } .estrela:nth-child(3n+1) { animation-delay: -2s; }
+  @keyframes brilha { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+  .jorro { stroke-dasharray: 4 3; animation: jorro .5s linear infinite; } @keyframes jorro { to { stroke-dashoffset: -7; } }
   .janela-mapa.arrasto { cursor: grabbing; }
-  .janela-mapa svg { width: 100%; height: 100%; display: block; }
+  #mundo { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  .camada { position: absolute; left: 0; top: 0; display: block; overflow: visible; will-change: transform; pointer-events: none; }
+  #mundo.repinta .camada { will-change: auto; }
+  #cFundo > *, #cFrente > * { pointer-events: visiblePainted; } #gChao, #gNuvens { pointer-events: none; }
   .vidro { fill: var(--vidro); transition: fill 1.2s; }
-  #noite { mix-blend-mode: multiply; transition: opacity 1.2s, fill 1.2s; opacity: 0; pointer-events: none; }
-  .noite #noite { opacity: .62; fill: #0e1a52; } .fim-tarde #noite { opacity: .22; fill: #ff8a3d; }
+  #noite { position: absolute; left: 0; top: 0; mix-blend-mode: multiply; pointer-events: none; display: none; }
+  .noite #noite { display: block; opacity: .62; background: #0e1a52; } .fim-tarde #noite { display: block; opacity: .22; background: #ff8a3d; }
   .luz { transition: opacity 1.2s; } .noite .luz { opacity: 1 !important; }
   .ed { cursor: pointer; outline: none; }
   .ed > * { transition: transform .25s cubic-bezier(.3,1.6,.5,1); }
@@ -46,7 +65,15 @@
   .bandeira { animation: vento 2.2s ease-in-out infinite; } .bandeira:nth-child(odd) { animation-delay: -1.1s; }
   .gato .cauda { animation: cauda 3s ease-in-out infinite; transform-box: fill-box; transform-origin: 0% 100%; }
   @keyframes cauda { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-26deg); } }
-  .copa { transform-box: fill-box; transform-origin: 50% 50%; animation: copa 5s ease-in-out infinite; } .copa:nth-child(even) { animation-delay: -2.5s; }
+  .bandeira-pt { animation: ondula 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: 0% 50%; }
+  @keyframes ondula { 0%, 100% { transform: skewY(0) scaleX(1); } 50% { transform: skewY(-7deg) scaleX(.94); } }
+  .noite .miudo, .noite .nadador { display: none; }
+  .bandeira-fcp { animation: ondula 2.8s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 0%; }
+  .balao-sj { animation: balanca 3.2s ease-in-out infinite; } .balao-sj:nth-child(odd) { animation-delay: -1.6s; }
+  @keyframes balanca { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
+  .acesa { fill: #ffd86b; opacity: 0; transition: opacity 1.2s; } .noite .acesa { opacity: .95; } .fim-tarde .acesa.cedo { opacity: .7; }
+  .luzes-ed { transition: transform .25s cubic-bezier(.3,1.6,.5,1); } .luzes-ed.sobe { transform: translateY(-7px); }
+  .copa { transform-box: fill-box; transform-origin: 50% 50%; }
   @keyframes copa { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
 
   .controlos { position: absolute; right: 16px; top: 14px; display: flex; gap: 8px; z-index: 3; flex-wrap: wrap; justify-content: end; max-width: calc(100% - 32px); }
@@ -56,7 +83,7 @@
   .zoom .ctl { width: 48px; height: 48px; padding: 0; font-size: 22px; }
   .dica-mapa { position: absolute; left: 16px; bottom: 16px; z-index: 3; background: var(--papel); border: 3px solid var(--tinta); border-radius: 16px; padding: 8px 14px; font-weight: 700; font-size: 14px; box-shadow: 3px 4px 0 var(--tinta); }
   .dica-mapa em { font-style: normal; font-family: var(--mao); font-size: 20px; color: var(--azul); }
-  @media (max-width: 700px) { .ctl { padding: 5px 9px; font-size: 12px; min-height: 34px; } .dica-mapa { display: none; } }
+  @media (max-width: 700px) { .ctl { padding: 5px 9px; font-size: 12px; min-height: 34px; } .dica-mapa { display: none; } .controlos { top: auto; right: auto; left: 12px; bottom: 14px; justify-content: start; max-width: calc(100% - 90px); } }
 
   .cartao-ed { position: absolute; z-index: 4; pointer-events: none; background: var(--papel); border: 3px solid var(--tinta); border-radius: 18px; padding: 10px 14px; box-shadow: 4px 5px 0 var(--tinta); max-width: 260px; transform: translate(-50%, calc(-100% - 16px)); opacity: 0; transition: opacity .15s; }
   .cartao-ed.on { opacity: 1; }
@@ -116,9 +143,9 @@
 
 <section class="palco" aria-label="Mapa do bairro">
   <div class="janela-mapa" id="janela">
-    <svg id="mapa" role="img" aria-labelledby="descMapa"></svg>
+    <div id="mundo" role="img" aria-labelledby="descMapa"></div>
   </div>
-  <p class="sr" id="descMapa">Mapa ilustrado de um bairro português visto de cima: fábrica, Segurança Social, Finanças, banco, correios e bomba de gasolina na avenida do elétrico; mercearia, pastelaria, a casa da Inês, a praça com o quiosque e a escola na rua de baixo. Cada edifício tem por cima um número real de hoje.</p>
+  <p class="sr" id="descMapa">Mapa ilustrado de um bairro português visto de cima: fábrica, Segurança Social, Finanças, banco, correios e bomba de gasolina na avenida do elétrico; mercearia, pastelaria, a casa da Inês, a praça com o quiosque e a escola cá em baixo, no Cais da Ribeira, ligados à avenida por umas escadinhas; a Torre dos Clérigos lá atrás; à frente o Douro, os barcos rabelos e a Ponte D. Luís I à frente. Cada edifício tem por cima um número real de hoje.</p>
   <div class="controlos" role="group" aria-label="Hora do dia">
     <button class="ctl" type="button" data-hora="dia">Dia</button>
     <button class="ctl" type="button" data-hora="tarde">Fim de tarde</button>
@@ -172,22 +199,112 @@ const D = {
   gasoleo: eur(DADOS.gasoleo, 3), gasolina: eur(DADOS.gasolina, 3), inflacao: "+" + eur(DADOS.inflacao, 1) + " %", desemprego: eur(DADOS.desemprego, 1) + " %",
 };
 const M = montarMapa(D);
-const mapa = $("mapa");
-mapa.innerHTML = `<defs>${padroes()}</defs><g id="gChao">${M.chao}</g><g id="gTras">${M.tras}</g><g id="movA"></g><g id="gFrente">${M.frente}</g><g id="movB"></g>
-  <rect id="noite" x="-3000" y="-3000" width="8000" height="8000"/><g id="gLuzes"></g><g id="gPinos"></g><g id="gEtiq"></g>`;
+const mapa = $("mundo");
+const W = { x: -900, y: -700, w: 3600, h: 2500 };
+const camada = (id, html) => `<svg class="camada" id="${id}" viewBox="${W.x} ${W.y} ${W.w} ${W.h}" width="${W.w}" height="${W.h}" aria-hidden="true">${html}</svg>`;
+// o céu: sol do fim da tarde e nuvens por trás de tudo; estrelas e lua por cima do véu da noite, só onde é céu
+let semCeu = 3; const acaso = () => (semCeu = (semCeu * 9301 + 49297) % 233280) / 233280;
+const solto = (cls, vb, html, estilo = "") => { const [x, y, w, h] = vb; return `<svg class="solto ${cls}" viewBox="${x} ${y} ${w} ${h}" width="${w}" height="${h}" style="left:${x - W.x}px;top:${y - W.y}px;${estilo}" aria-hidden="true">${html}</svg>`; };
+const nuvens = [[-260, 60, 1], [420, -40, .8], [1180, -20, 1.1], [1850, 180, .9], [-420, 360, .7]].map(([x, y, e], k) => solto("nuvem-sp", [x - 10, y - 50 * e, 120 * e, 56 * e], nuvem(x, y, e), `--dx:${180 + k * 40}px;--dur:${60 + k * 12}s`)).join("");
+// rabelos a descer o Douro: cada um é uma peça solta com a sua viagem em CSS (linha j fixa, de i = −1,6 a 12,4)
+const BARCO = [585, 130, 295, 225];
+// o metro: duas composições, uma para cada lado, entre o tabuleiro e a treliça da frente (peças soltas animadas por CSS)
+const PM = { iA: 14.3, iB: 14.78, j0: JM + .1, j1: 18.7 };
+const METRO = (i) => { const [x, y] = P(i, 0, HP); return [Math.round(x - 15), Math.round(y - 92), 128, 102]; };
+const metros = [[PM.iA + (PM.iB - PM.iA) * .36, 0, 26, 0], [PM.iA + (PM.iB - PM.iA) * .66, 1, 26, 13]].map(([i, volta, dur, fase], k) => {
+  const pos = (j) => [-64 * j, 32 * j], [xa, ya] = pos(volta ? PM.j1 : PM.j0 + 1.45), [xb, yb] = pos(volta ? PM.j0 + 1.45 : PM.j1);
+  return { css: `@keyframes metro${k} { 0% { translate: ${xa}px ${ya}px; opacity: 0; } 6% { opacity: 1; } 44% { opacity: 1; } 50% { translate: ${xb}px ${yb}px; opacity: 0; } 100% { translate: ${xb}px ${yb}px; opacity: 0; } }
+    #metro${k} { translate: ${pos(11)[0]}px ${pos(11)[1]}px; animation: metro${k} ${dur}s linear -${fase}s infinite; }`, html: solto("metro-sp", METRO(i), metroIso(i, HP)).replace('class="solto metro-sp"', `class="solto metro-sp" id="metro${k}"`) };
+});
+const viagens = [[12.1, 58, 0], [13.6, 84, 46]].map(([j, dur, fase], k) => {
+  const pos = (i) => [(i - j) * 64, (i + j) * 32 + 22];
+  const [x0, y0] = pos(-1.6), [x1, y1] = pos(12.4), [xs, ys] = pos(k ? 8.5 : 3.5);
+  return { css: `@keyframes desce${k} { 0% { translate: ${x0}px ${y0}px; opacity: 0; } 9% { opacity: 1; } 91% { opacity: 1; } 100% { translate: ${x1}px ${y1}px; opacity: 0; } }
+    #barco${k} { translate: ${xs}px ${ys}px; animation: desce${k} ${dur}s linear -${fase}s infinite, balouca 1.6s ease-in-out infinite alternate; }`, html: solto("barco-sp", BARCO, rabelo(true)).replace('class="solto barco-sp"', `class="solto barco-sp" id="barco${k}"`) };
+});
+document.head.insertAdjacentHTML("beforeend", `<style>${[...viagens, ...metros].map((v) => v.css).join("")}</style>`);
+const estrelas = Array.from({ length: 70 }, () => { const x = -700 + acaso() * 3200, y = x < 250 ? -300 + acaso() * 560 : x > 1500 ? -300 + acaso() * 640 : -320 + acaso() * 230; return `<circle class="estrela" cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${(1.2 + acaso() * 1.8).toFixed(1)}" fill="#fff8d6"/>`; }).join("");
+const lua = `<g transform="translate(60 40)"><circle r="34" fill="#fff4c4" stroke="#16130f" stroke-width="2.6"/><circle cx="14" cy="-8" r="30" fill="#16235c"/><circle cx="-12" cy="10" r="4" fill="#e9dca6"/></g>`;
+mapa.innerHTML = nuvens + camada("cFundo", `<defs>${padroes()}</defs><g id="gNuvens"><g class="sol"><circle cx="1640" cy="110" r="58" fill="#ffb347" stroke="#16130f" stroke-width="2.6"/><circle cx="1640" cy="110" r="84" fill="#ffd27a" opacity=".35"/></g></g><g id="gChao">${M.chao}</g><g id="gTras">${M.tras}</g>`)
+  + camada("cA", `<g id="movA"></g>`) + camada("cFrente", `<g id="gFrente">${M.frente}</g>`)
+  + camada("cB", `<g id="movB"></g><g id="gVida">${M.vida}</g><g id="gAgua">${M.agua}</g>`) + viagens.map((v) => v.html).join("") + camada("cRio", `<g id="gGaia">${M.gaia}</g><g id="gRio">${M.ponte.tras}</g>`) + metros.map((v) => v.html).join("") + camada("cPonte", M.ponte.frente) + camada("cCeu", `<g id="gCeu"></g>`)
+  + `<div id="noite" style="width:${W.w}px;height:${W.h}px"></div>` + camada("cTopo", `<g id="gEstrelas">${estrelas}${lua}</g><g id="gLuzes"></g><g id="gPinos"></g><g id="gEtiq"></g>`);
+// reflexos no Douro: as fachadas da Ribeira (plano j = 8,6) e a ponte (plano i = 14,7) espelhadas na água, às riscas
+{
+  const F1 = 2 * (OY + 64 * 8.6 - OX / 2) + 44, F2 = 2 * (OY + 64 * 14.54 + OX / 2) + 44;
+  $("reflexos").innerHTML = `<g clip-path="url(#clipAgua)"><g mask="url(#mascOndas)" opacity=".26"><g id="refRibeira" transform="matrix(1 1 0 -1 0 ${F1})"></g><use href="#ponteT" transform="matrix(1 -1 0 -1 0 ${F2})"/><use href="#ponteF" transform="matrix(1 -1 0 -1 0 ${F2})"/></g></g>`;
+  const copia = $("gRibeira").cloneNode(true); copia.removeAttribute("id");
+  copia.querySelectorAll("[id]").forEach((e) => e.removeAttribute("id"));
+  copia.querySelectorAll(".roupa, .peca, .cauda, .gato, .balao-sj, .bandeira-pt, .bandeira-fcp, .jorro, .vizinho, .ed, .caixa").forEach((e) => { e.removeAttribute("class"); e.removeAttribute("tabindex"); e.removeAttribute("role"); e.removeAttribute("aria-label"); });
+  $("refRibeira").appendChild(copia);
+}
 const movA = $("movA"), movB = $("movB");
 // luzes dos candeeiros por cima do véu da noite
 mapa.querySelectorAll(".candeeiro").forEach((c) => { const t = c.getAttribute("transform"); $("gLuzes").insertAdjacentHTML("beforeend", `<g transform="${t}"><circle class="luz" cx="0" cy="-60" r="46" fill="url(#brilho)" opacity="0"/></g>`); });
+let luzesFeitas = false;
+function calcularLuzes() {
+  let semente = 11;
+  const sorte = () => (semente = (semente * 9301 + 49297) % 233280) / 233280;
+  // silhuetas convexas das caixas, pela ordem em que se pintam: só se acende a janela que nenhuma caixa da frente tapa
+  const cruz = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const casca = (ps) => { ps.sort((a, b) => a[0] - b[0] || a[1] - b[1]); const meia = (arr) => { const h = []; for (const p of arr) { while (h.length > 1 && cruz(h.at(-2), h.at(-1), p) <= 0) h.pop(); h.push(p); } return h.slice(0, -1); }; return meia(ps).concat(meia([...ps].reverse())); };
+  const dentro = (h, p) => h.every((a, k) => cruz(a, h[(k + 1) % h.length], p) > 0);
+  const caixas = [...mapa.querySelectorAll("#gTras .caixa, #gFrente .caixa, #gGaia .caixa")];
+  const cascas = caixas.map((c) => casca(c.dataset.sil.split(" ").map((q) => q.split(",").map(Number))));
+  const grupos = new Map();
+  mapa.querySelectorAll("#gTras .vidro, #gFrente .vidro, #gGaia .vidro").forEach((v) => {
+    const r = sorte(); if (r > .58) return;
+    const b = v.getBBox(), m = v.ownerSVGElement.getScreenCTM().inverse().multiply(v.getScreenCTM());
+    const cantos = [[b.x, b.y], [b.x + b.width, b.y], [b.x + b.width, b.y + b.height], [b.x, b.y + b.height]].map(([x, y]) => [m.a * x + m.c * y + m.e, m.b * x + m.d * y + m.f]);
+    const meio = [(cantos[0][0] + cantos[2][0]) / 2, (cantos[0][1] + cantos[2][1]) / 2];
+    const n = caixas.indexOf(v.closest(".caixa"));
+    if (cascas.some((h, k) => k > n && dentro(h, meio))) return;
+    const pts = cantos.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
+    const id = v.closest(".ed")?.dataset.id || "";
+    grupos.set(id, (grupos.get(id) || "") + `<polygon class="acesa${r < .2 ? " cedo" : ""}" points="${pts}"/>`);
+  });
+  let html = ""; grupos.forEach((pol, id) => html += `<g class="luzes-ed" data-ed="${id}">${pol}</g>`);
+  $("gLuzes").insertAdjacentHTML("afterbegin", html);
+  mapa.querySelectorAll(".ed").forEach((g) => {
+    const l = mapa.querySelector(`.luzes-ed[data-ed="${g.dataset.id}"]`); if (!l) return;
+    const sync = () => l.classList.toggle("sobe", g.matches(":hover, :focus-visible, .ativo"));
+    ["pointerenter", "pointerleave", "focus", "blur"].forEach((ev) => g.addEventListener(ev, () => requestAnimationFrame(sync)));
+    new MutationObserver(sync).observe(g, { attributes: true, attributeFilter: ["class"] });
+  });
+}
 // pinos de dados
 M.pinos.forEach(([id, p, alt, rot, val]) => $("gPinos").insertAdjacentHTML("beforeend", pin(p[0], p[1] - alt, rot, val).replace('class="pin"', `class="pin" data-id="${id.replace(/\d$/, "")}"`)));
-if (temG) mapa.querySelectorAll(".pin-corpo").forEach((p, k) => gsap.to(p, { y: -5, duration: 1.4 + (k % 3) * .3, yoyo: true, repeat: -1, ease: "sine.inOut", delay: k * .2 }));
+const PINOS = [...mapa.querySelectorAll(".pin")].map((g) => ({ g, x: +g.dataset.x, y: +g.dataset.y, w: +g.dataset.w, guia: g.querySelector(".guia") }));
+function arrumarPinos() {
+  const k = Math.min(1.7, Math.max(.55, vb.w / janela.clientWidth)), alto = 64 * k, folga = 6 * k, postos = [];
+  // de baixo para cima: os da frente ficam no sítio, os de trás sobem até caberem
+  for (const p of [...PINOS].sort((a, b) => b.y - a.y)) {
+    let y = p.y;
+    const toca = () => postos.some((o) => Math.abs(o.x - p.x) < (o.w + p.w) / 2 * k + folga && y > o.y - alto - folga && y - alto - folga < o.y);
+    while (toca() && y > p.y - 800) y -= 6 * k;
+    postos.push({ x: p.x, y, w: p.w });
+    p.g.setAttribute("transform", `translate(${p.x.toFixed(1)} ${y.toFixed(1)}) scale(${k.toFixed(3)})`);
+    p.guia.setAttribute("d", `M0 0 V${((p.y - y) / k).toFixed(1)}`);
+  }
+}
+
 
 /* ——— câmara: viewBox com arrastar, roda e pinça ——— */
 const janela = $("janela"), painel = $("painel");
-const LIM = { x: -60, y: -20, w: 1840, h: 1150 };
+const LIM = { x: -300, y: -120, w: 2150, h: 1520 };
 const vb = { x: 0, y: 0, w: 1000, h: 600 };
-const razao = () => janela.clientHeight / janela.clientWidth;
-function aplicar() { vb.h = vb.w * razao(); mapa.setAttribute("viewBox", `${vb.x.toFixed(1)} ${vb.y.toFixed(1)} ${vb.w.toFixed(1)} ${vb.h.toFixed(1)}`); if (cartaoAlvo) posCartao(cartaoAlvo); }
+const razao = () => janela.clientWidth ? janela.clientHeight / janela.clientWidth : .6;
+// o mundo desenha-se uma vez num SVG grande (W); a câmara só o desloca e escala por CSS — arrastar não obriga a repintar.
+// Quando a escala muda e a câmara pára, pede-se uma pintura nova à escala certa (senão fica desfocado).
+let escalaPintada = 0, repinta = null, kPinos = 0;
+function aplicar() {
+  vb.h = vb.w * razao();
+  const s = janela.clientWidth / vb.w;
+  mapa.style.transform = `translate(${(-(vb.x - W.x) * s).toFixed(2)}px, ${(-(vb.y - W.y) * s).toFixed(2)}px) scale(${s.toFixed(5)})`;
+  if (Math.abs(s - escalaPintada) / s > .03) { clearTimeout(repinta); repinta = setTimeout(() => { escalaPintada = s; mapa.classList.add("repinta"); requestAnimationFrame(() => requestAnimationFrame(() => mapa.classList.remove("repinta"))); }, 180); }
+  const k = vb.w / janela.clientWidth; if (Math.abs(k - kPinos) > .004) { kPinos = k; arrumarPinos(); }
+  if (cartaoAlvo) posCartao(cartaoAlvo);
+}
 function larguraTudo() { return Math.max(LIM.w, LIM.h / razao()); }
 function tudo(suave = true) { const w = larguraTudo(), h = w * razao(); ir(LIM.x + LIM.w / 2, LIM.y + LIM.h / 2, w, suave); }
 function ir(cx, cy, w, suave = true, dur = 1, desvio = !painel.hidden && janela.clientWidth > 700) {
@@ -195,6 +312,7 @@ function ir(cx, cy, w, suave = true, dur = 1, desvio = !painel.hidden && janela.
   if (suave && temG) gsap.to(vb, { ...alvo, duration: dur, ease: "power2.inOut", onUpdate: aplicar }); else { Object.assign(vb, alvo); aplicar(); }
 }
 function zoom(f, px = .5, py = .5) {
+  mexeu = true;
   const w = Math.min(larguraTudo() * 1.15, Math.max(300, vb.w / f)), h = w * razao();
   const cx = vb.x + vb.w * px, cy = vb.y + vb.h * py;
   vb.x = cx - w * px; vb.y = cy - h * py; vb.w = w; aplicar();
@@ -211,7 +329,9 @@ addEventListener("pointermove", (e) => {
 });
 addEventListener("pointerup", (e) => { toques.delete(e.pointerId); if (toques.size < 2) pinca = null; janela.classList.remove("arrasto"); setTimeout(() => { if (!toques.size) arr = null; }, 0); });
 $("zMais").onclick = () => zoom(1.4); $("zMenos").onclick = () => zoom(1 / 1.4); $("zTudo").onclick = () => tudo();
-addEventListener("resize", aplicar);
+let mexeu = false;
+["pointerdown", "wheel"].forEach((ev) => janela.addEventListener(ev, () => { mexeu = true; }, { passive: true }));
+function enquadrar() { if (janela.clientWidth < 700) { const [x, y] = P(3.6, 5.6); ir(x, y - 10, 820, false); } else ir(760, 470, Math.max(1500, 1140 / razao()), false); }
 
 /* ——— hora do dia ——— */
 function hora(h) {
@@ -255,36 +375,96 @@ function andar(p, rota, v = .9, fim) {
   return tl;
 }
 function acenar(p) { if (!temG) return; const b = p.parte(".braco-d"); gsap.timeline().to(b, { rotation: -150, transformOrigin: "50% 0%", duration: .25 }).to(b, { rotation: -120, duration: .15, yoyo: true, repeat: 3 }).to(b, { rotation: 0, duration: .3 }); }
-function contente(p) { if (!temG) return; const bo = p.parte(".boca"); bo.setAttribute("d", "M-7 -102 q7 9 14 0 z"); bo.setAttribute("fill", "#16130f"); gsap.fromTo(p.parte(".escala"), { y: 0 }, { y: -20, duration: .2, yoyo: true, repeat: 1, ease: "power2.out" }); setTimeout(() => { bo.setAttribute("d", "M-5 -101 q5 5 10 0"); bo.setAttribute("fill", "none"); }, 1400); }
-function surpreso(p) { const bo = p.parte(".boca"); bo.setAttribute("d", "M-4 -101 a4 5 0 1 0 8 0 a4 5 0 1 0 -8 0"); bo.setAttribute("fill", "#16130f"); setTimeout(() => { bo.setAttribute("d", "M-5 -101 q5 5 10 0"); bo.setAttribute("fill", "none"); }, 1500); }
+// a boca em repouso guarda-se uma vez; as expressões desenham-se à altura dela (com bigode fica mais abaixo)
+function boca(p, forma, ms) {
+  const bo = p.parte(".boca"); bo.dataset.d0 ??= bo.getAttribute("d"); const y = +bo.dataset.d0.split(" ")[1];
+  bo.setAttribute("d", forma(y)); bo.setAttribute("fill", "#16130f"); clearTimeout(bo._t);
+  bo._t = setTimeout(() => { bo.setAttribute("d", bo.dataset.d0); bo.setAttribute("fill", "none"); }, ms);
+}
+function contente(p) { if (!temG) return; boca(p, (y) => `M-6.5 ${y - 1} q6.5 8 13 0 z`, 1400); gsap.fromTo(p.parte(".escala"), { y: 0 }, { y: -20, duration: .2, yoyo: true, repeat: 1, ease: "power2.out" }); }
+function surpreso(p) { boca(p, (y) => `M-3.5 ${y + 1} a3.5 4.5 0 1 0 7 0 a3.5 4.5 0 1 0 -7 0`, 1500); }
 
 const PT = {
   fabrica: [2.14, 3.75], segsocial: [4.58, 3.75], financas: [5.78, 3.75], banco: [9.4, 3.75], correios: [11.7, 3.75], bomba: [13.6, 3.75],
-  mercearia: [1.5, 8.75], pastelaria: [3.3, 8.75], casa: [4.48, 8.75], quiosque: [6.2, 8.2], escola: [10.5, 8.75],
+  mercearia: [.67, 8.75], pastelaria: [2.24, 8.75], casa: [4.13, 8.75], quiosque: [6.02, 8.2], escola: [9.99, 8.75],
 };
 const PS = {
-  ines: colocar("ines", PT.fabrica[0] - .35, 3.78), manuel: colocar("manuel", PT.mercearia[0], 8.78, -1), rosa: colocar("rosa", 3.9, 8.8),
-  leonor: colocar("leonor", PT.escola[0] - .5, 8.8), joana: colocar("joana", PT.escola[0] + .1, 8.78, -1), rui: colocar("rui", PT.banco[0] - .25, 3.8), marta: colocar("marta", PT.banco[0] + .1, 3.82, -1),
-  tiago: colocar("tiago", 5, 3.85),
+  ines: colocar("ines", PT.fabrica[0] - .35, 3.78), manuel: colocar("manuel", PT.mercearia[0], 8.78, -1), arminda: colocar("arminda", 3.3, 8.85),
+  goncalo: colocar("goncalo", PT.escola[0] - .5, 8.8), diana: colocar("diana", PT.escola[0] + .1, 8.78, -1), rui: colocar("rui", PT.banco[0] - .25, 3.8), marta: colocar("marta", PT.banco[0] + .1, 3.82, -1),
+  pedro: colocar("pedro", 5, 3.85),
 };
+const pescador = colocar({ pele: "c", cabelo: "careca", corCabelo: "#9a9a9a", roupa: "#ffc62b", calcas: "#2b3a55", barba: true, sapato: "#16130f" }, 4.35, 10.52, -1);
+pescador.g.insertAdjacentHTML("beforeend", `<path d="M10 -64 L96 -124" stroke="#6b4a2f" stroke-width="3.4" stroke-linecap="round"/><path d="M96 -124 Q104 -20 72 96" fill="none" stroke="#16130f" stroke-width="1.3"/><circle class="boia" cx="72" cy="96" r="4.5" fill="#e2412a" stroke="#16130f" stroke-width="1.3"/>`);
+const MIUDOS = [
+  { j: 12.55, fig: { pele: "d", cabelo: "curto", corCabelo: "#1d1410", roupa: "#b97a52", calcas: "#e2412a", sapato: "#b97a52", escala: .82 }, atraso: 0, pirueta: false },
+  { j: 13.35, fig: { pele: "b", cabelo: "curto", corCabelo: "#6b4226", roupa: "#e8b48f", calcas: "#2445d6", sapato: "#e8b48f", escala: .78 }, atraso: 2.6, pirueta: true },
+];
+const iBorda = 14.8, zGuarda = 20;
+MIUDOS.forEach((mi) => {
+  const g = document.createElementNS(NS, "g"); g.innerHTML = pessoa(mi.fig); g.classList.add("miudo"); $("gCeu").appendChild(g);
+  const o = { i: iBorda, z: zGuarda, r: 0, op: 1 };
+  mi.poe = () => { const [x, y] = P(o.i, mi.j, o.z); g.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${ESC.toFixed(3)}) rotate(${o.r.toFixed(0)} 0 -64)`); g.style.opacity = o.op; };
+  mi.g = g; mi.o = o; mi.poe();
+});
+{ // um miúdo a nadar debaixo da ponte: só a cabeça e os braços
+  const [x, y] = P(15.05, 12.95, -22);
+  $("gCeu").insertAdjacentHTML("beforeend", `<g class="nadador" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><ellipse rx="12" ry="4" fill="#dff2ff" opacity=".7"/><circle cy="-5" r="5.5" fill="#d49a72" stroke="#16130f" stroke-width="1.4"/><path d="M-5.5 -7 q5.5 -6 11 0" fill="#1d1410"/><path class="braco-n" d="M5 -2 q7 -6 12 -2" fill="none" stroke="#d49a72" stroke-width="3" stroke-linecap="round"/></g>`);
+}
 const eletrico = document.createElementNS(NS, "g"); eletrico.innerHTML = eletricoIso(); movA.appendChild(eletrico);
 if (temG) {
-  // o elétrico 28 sobe e desce a avenida
+  // o elétrico 22 sobe e desce a avenida
   const el = { i: -5 }; const poeEl = () => eletrico.setAttribute("transform", `translate(${(el.i * 64).toFixed(1)} ${(el.i * 32).toFixed(1)})`);
   gsap.timeline({ repeat: -1, repeatDelay: 2 }).fromTo(el, { i: -3.4 }, { i: 13.4, duration: 24, ease: "none", onUpdate: () => { poeEl(); eletrico.style.opacity = Math.max(0, Math.min(1, (el.i + 3.4) / 1.4, (13.4 - el.i) / 1.4)); } });
-  // o Tiago vai e vem na avenida; a Dona Rosa vai aos correios; a Joana entra e sai da escola
-  const tiagoVai = () => andar(PS.tiago, [[PS.tiago.i > 8 ? 1 : 14, 3.85]], .7, () => setTimeout(tiagoVai, 1800)); setTimeout(tiagoVai, 1200);
-  const rosaVai = () => andar(PS.rosa, [[7.5, 8.8], [7.5, 3.8], [PT.correios[0], 3.8]], .55, () => setTimeout(() => andar(PS.rosa, [[7.5, 3.8], [7.5, 8.8], [3.9, 8.8]], .55, () => setTimeout(rosaVai, 3000)), 2500)); setTimeout(rosaVai, 2500);
-  setInterval(() => contente(PS.leonor), 4700); setInterval(() => acenar(PS.manuel), 6100); setInterval(() => acenar(PS.marta), 7300);
-  // fumo da fábrica
+  // o Pedro vai e vem na avenida; a Dona Arminda vai aos correios; a Diana entra e sai da escola
+  const pedroVai = () => andar(PS.pedro, [[PS.pedro.i > 8 ? 1 : 14, 3.85]], .7, () => setTimeout(pedroVai, 1800)); setTimeout(pedroVai, 1200);
+  const armindaVai = () => andar(PS.arminda, [[7.5, 8.8], [7.5, 3.8], [PT.correios[0], 3.8]], .55, () => setTimeout(() => andar(PS.arminda, [[7.5, 3.8], [7.5, 8.85], [3.3, 8.85]], .55, () => setTimeout(armindaVai, 3000)), 2500)); setTimeout(armindaVai, 2500);
+  setInterval(() => contente(PS.goncalo), 4700); setInterval(() => acenar(PS.manuel), 6100); setInterval(() => acenar(PS.marta), 7300);
+  // o Douro corre: o padrão da água desliza; os rabelos descem o rio até à ponte
+  { let sb = 5; const r = () => (sb = (sb * 9301 + 49297) % 233280) / 233280; let h = "";
+    for (let k = 0; k < 8; k++) { const [x, y] = P(-.5 + r() * 15.5, 11.3 + r() * 3.6); h += `<path class="brilho-agua" d="M${(x - 8).toFixed(0)} ${y.toFixed(0)} q8 -5 16 0" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity="0"/>`; }
+    $("gAgua").insertAdjacentHTML("afterbegin", h);
+    mapa.querySelectorAll(".brilho-agua").forEach((b, k) => gsap.to(b, { opacity: .9, x: 6, duration: 1.2, yoyo: true, repeat: -1, repeatDelay: 1.5 + (k % 5) * .6, delay: k * .37, ease: "sine.inOut" })); }
+  [[P(8, 12.4), 150, 22, 9], [P(3, 12), 110, 18, 12], [P(12.5, 11.4), 80, 14, 7]].forEach(([c, rx, ry, dur], k) => {
+    const g = document.createElementNS(NS, "g"); g.innerHTML = gaivota(); $("gCeu").appendChild(g);
+    const o = { t: k * 2 };
+    gsap.to(o, { t: k * 2 + Math.PI * 2, duration: dur, ease: "none", repeat: -1, onUpdate: () => { const x = c[0] + Math.cos(o.t) * rx, y = c[1] - 150 + Math.sin(o.t) * ry; g.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${Math.sin(o.t) > 0 ? 1.15 : 1})`); } });
+    gsap.to(g.firstElementChild, { scaleY: .35, transformOrigin: "50% 100%", duration: .22, yoyo: true, repeat: -1, ease: "sine.inOut", delay: k * .1 });
+  });
+  gsap.to(pescador.g.querySelector(".boia"), { attr: { cy: 100 }, duration: 1.1, yoyo: true, repeat: -1, ease: "sine.inOut" });
+  mapa.querySelectorAll(".corpo-pombo").forEach((c, k) => gsap.timeline({ repeat: -1, repeatDelay: 1.2 + (k % 3) * .9, delay: k * .4 }).to(c, { rotation: 32, transformOrigin: "40% 90%", duration: .14 }).to(c, { rotation: 0, duration: .14 }).to(c, { rotation: 32, duration: .14 }).to(c, { rotation: 0, duration: .14 }));
+  const vizinhos = [...mapa.querySelectorAll("#gRibeira .vizinho")];
+  setInterval(() => { const v = vizinhos[Math.floor(Math.random() * vizinhos.length)]; if (!v || v._on) return; v._on = true; gsap.to(v, { opacity: 1, duration: .4 }); setTimeout(() => gsap.to(v, { opacity: 0, duration: .4, onComplete: () => v._on = false }), 3500); }, 1600);
+  // os saltos: agacha, salta em arco para fora da ponte, (às vezes pirueta), cai no rio, salpicos, volta a subir
+  MIUDOS.forEach((mi) => {
+    const { o, poe } = mi, [sx, sy] = P(15.18, mi.j, -22);
+    const salpico = document.createElementNS(NS, "g"); salpico.setAttribute("transform", `translate(${sx.toFixed(1)} ${sy.toFixed(1)})`); salpico.style.opacity = 0;
+    salpico.classList.add("miudo"); salpico.innerHTML = `<ellipse rx="16" ry="6" fill="none" stroke="#fff" stroke-width="2.6"/><path d="M-8 -4 l-4 -12 M0 -6 v-16 M8 -4 l4 -12" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>`;
+    $("gCeu").appendChild(salpico);
+    gsap.timeline({ repeat: -1, repeatDelay: 4.5, delay: 1.5 + mi.atraso })
+      .to(o, { z: zGuarda - 4, duration: .3, ease: "power1.out", onUpdate: poe })
+      .to(o, { i: 15.18, duration: 1, ease: "none", onUpdate: poe })
+      .to(o, { z: zGuarda + 22, duration: .38, ease: "power1.out", onUpdate: poe }, "<")
+      .to(o, { z: -26, duration: .62, ease: "power2.in", onUpdate: poe }, ">")
+      .to(o, { r: mi.pirueta ? -360 : -25, duration: .95, ease: "power1.inOut", onUpdate: poe }, "<-0.38")
+      .set(o, { op: 0, onComplete: poe })
+      .fromTo(salpico, { opacity: 1, scale: .3, transformOrigin: "50% 50%" }, { opacity: 0, scale: 1.5, duration: .9, ease: "power2.out" }, "<")
+      .set(o, { i: iBorda, z: zGuarda, r: 0 }, "+=2.2")
+      .to(o, { op: 1, duration: .5, onUpdate: poe });
+  });
+  gsap.to(".nadador", { y: "+=2", duration: 1, yoyo: true, repeat: -1, ease: "sine.inOut" });
+  gsap.to(".braco-n", { rotation: -40, transformOrigin: "0% 50%", duration: .6, yoyo: true, repeat: -1, ease: "sine.inOut" });
+  // fumo da fábrica (numa camada leve, para não repintar a fábrica)
+  const fumo = mapa.querySelector(".fumo"); if (fumo) $("gCeu").appendChild(fumo);
   mapa.querySelectorAll(".baforada").forEach((b, k) => { const cy = +b.getAttribute("cy"), cx = +b.getAttribute("cx"); const tl = gsap.timeline({ repeat: -1, delay: k * .9 }); tl.fromTo(b, { attr: { cy, cx }, scale: .5, transformOrigin: "50% 50%" }, { attr: { cy: cy - 110, cx: cx + 40 }, scale: 1.7, duration: 3.6, ease: "sine.out" }, 0).fromTo(b, { opacity: 0 }, { opacity: .95, duration: .8 }, 0).to(b, { opacity: 0, duration: 1.3 }, 2.3); });
 }
+
+
 
 /* ——— cartão ao passar por um edifício ——— */
 const INFO = {
   fabrica: { t: "Fábrica", p: "Para onde vai o teu salário?", viva: true }, segsocial: { t: "Segurança Social", p: "O que são os descontos e para que servem?" },
   financas: { t: "Finanças", p: "Como funcionam os escalões do IRS?" }, banco: { t: "Banco", p: "Quanto custa pedir dinheiro emprestado?" },
-  correios: { t: "Correios", p: "Onde rende a poupança da Dona Rosa?" }, bomba: { t: "Bomba de gasolina", p: "Quanto do litro é imposto?" },
+  correios: { t: "Correios", p: "Onde rende a poupança da Dona Arminda?" }, bomba: { t: "Bomba de gasolina", p: "Quanto do litro é imposto?" },
   mercearia: { t: "Mercearia do Manuel", p: "Porque está tudo mais caro?", viva: true }, pastelaria: { t: "Pastelaria", p: "Quanto subiu o café?" },
   casa: { t: "Casa da Inês", p: "Quanto chega mesmo ao fim do mês?" }, quiosque: { t: "Quiosque da praça", p: "Os números do país, hoje" }, escola: { t: "Escola", p: "As palavras do dinheiro, explicadas" },
 };
@@ -303,7 +483,7 @@ mapa.querySelectorAll(".ed").forEach((g) => {
 /* ——— painel ——— */
 function botoes(lista) { const a = $("painelAcoes"); a.innerHTML = ""; lista.forEach(([t, fn, claro]) => { const b = document.createElement("button"); b.type = "button"; b.className = "btn" + (claro ? " claro" : ""); b.textContent = t; b.onclick = fn; a.appendChild(b); }); }
 function abrirPainel(quem, fala, acoes = [], extra = "", fonte = "") { painel.hidden = false; $("painelQuem").textContent = quem; $("painelFala").innerHTML = fala; $("painelExtra").innerHTML = extra; $("painelFonte").textContent = fonte; botoes(acoes); if (temG) gsap.fromTo(painel, { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: .35, ease: "back.out(2)" }); }
-$("fecharPainel").onclick = () => { painel.hidden = true; mapa.querySelectorAll(".ed.ativo").forEach((g) => g.classList.remove("ativo")); };
+$("fecharPainel").onclick = () => { painel.hidden = true; if (cenaViva) { cenaViva.kill(); cenaViva = null; } $("gEtiq").innerHTML = ""; mapa.querySelectorAll(".moeda").forEach((m) => m.remove()); mapa.querySelectorAll(".ed.ativo").forEach((g) => g.classList.remove("ativo")); };
 const pontoEcra = (id) => P(...PT[id]);
 function entrar(id) {
   cartao.classList.remove("on");
@@ -379,11 +559,11 @@ function cenaMercearia() {
 /* ——— as personagens: cartas ——— */
 const CARTAS = [
   ["ines", "Inês", "Operária da fábrica", "Conta de outrem · setor privado", "Porque é que 1 500 € brutos viram 1 167 €.", "#dfe5ff"],
-  ["joana", "Joana", "Professora", "Função pública", "Descontos diferentes para o mesmo salário.", "#fff1c2"],
-  ["tiago", "Tiago", "Designer", "Independente · recibos verdes", "Segurança Social trimestral e IRS da categoria B.", "#ffe1d9"],
+  ["diana", "Diana", "Professora", "Função pública", "Descontos diferentes para o mesmo salário.", "#fff1c2"],
+  ["pedro", "Pedro", "Freelancer", "Independente · recibos verdes", "Segurança Social trimestral e IRS da categoria B.", "#ffe1d9"],
   ["manuel", "Sr. Manuel", "Dono da mercearia", "Pequeno empresário", "O IVA que cobra, a TSU que paga, o lucro da empresa.", "#d3f2e3"],
-  ["rosa", "Dona Rosa", "Reformada", "Pensão e poupança", "Quanto rende a poupança e o IRS sobre a pensão.", "#efe6ff"],
-  ["leonor", "Leonor", "Estudante, 16 anos", "Mesada e primeiro trabalho", "O primeiro recibo, o IRS Jovem, a primeira conta.", "#fff1c2"],
+  ["arminda", "Dona Arminda", "Reformada", "Pensão e poupança", "Quanto rende a poupança e o IRS sobre a pensão.", "#ffe1e6"],
+  ["goncalo", "Gonçalo", "Estudante, 16 anos", "Mesada e primeiro trabalho", "O primeiro recibo, o IRS Jovem, a primeira conta.", "#fff1c2"],
   ["rui", "Rui e Marta", "Casal com crédito", "Crédito à habitação", "A prestação, a Euribor e quanto do salário ela come.", "#dfe5ff"],
 ];
 $("cartas").innerHTML = CARTAS.map(([k, nome, papel, perfil, aprende, cor]) => {
@@ -395,9 +575,15 @@ $("cartas").querySelectorAll(".carta").forEach((b) => b.onclick = () => {
   palco.scrollIntoView({ behavior: reduz ? "auto" : "smooth", block: "start" });
   const [x, y] = P(p.i, p.j); ir(x, y - 60, 560, true, 1.1);
   setTimeout(() => { acenar(p); if (k === "rui") acenar(PS.marta); }, 900);
-  abrirPainel(`${c[1]} · ${c[2]}`, `Olá! Sou ${k === "rui" ? "o Rui, e esta é a Marta" : c[1] === "Sr. Manuel" ? "o Sr. Manuel" : k === "rosa" ? "a Dona Rosa" : (["ines", "joana", "leonor"].includes(k) ? "a " : "o ") + c[1]}. ${c[4]} <span class="a">Em breve</span> vais poder seguir o meu dinheiro pelo bairro.`, [["Fechar", () => $("fecharPainel").click(), true]], `<p style="margin:0;font-weight:700">${c[3]}</p>`);
+  abrirPainel(`${c[1]} · ${c[2]}`, `Olá! Sou ${k === "rui" ? "o Rui, e esta é a Marta" : c[1] === "Sr. Manuel" ? "o Sr. Manuel" : k === "arminda" ? "a Dona Arminda" : (["ines", "diana"].includes(k) ? "a " : "o ") + c[1]}. ${c[4]} <span class="a">Em breve</span> vais poder seguir o meu dinheiro pelo bairro.`, [["Fechar", () => $("fecharPainel").click(), true]], `<p style="margin:0;font-weight:700">${c[3]}</p>`);
 });
 $("notas").innerHTML = "<b>De onde vêm os números do bairro:</b> " + DADOS.notas;
 // no telemóvel começa perto da fábrica e da avenida; no computador vê-se o bairro todo
-if (janela.clientWidth < 700) { const [x, y] = P(4, 4.5); ir(x, y - 40, 760, false); } else tudo(false);
+// a câmara só se enquadra quando o mapa tem tamanho (no visualizador, a página pode nascer escondida e sem largura);
+// se a janela mudar de tamanho: enquadra de novo enquanto ninguém mexeu, senão mantém o centro
+new ResizeObserver(() => {
+  if (!janela.clientWidth || !janela.clientHeight) return;
+  if (!luzesFeitas) { luzesFeitas = true; try { calcularLuzes(); } catch (e) { console.warn("janelas acesas:", e); } }
+  if (!mexeu && painel.hidden) enquadrar(); else { const cy = vb.y + vb.h / 2; vb.h = vb.w * razao(); vb.y = cy - vb.h / 2; aplicar(); }
+}).observe(janela);
 </script>
