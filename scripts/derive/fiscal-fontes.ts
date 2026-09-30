@@ -38,6 +38,8 @@ const NOME_POR_FICHEIRO: Record<string, string> = {
   "servicos-minimos": "DL 27-C/2000 + DGAEP — curado",
   "cartoes": "DL 133/2009 + Regulamento (UE) 2015/751 — curado",
   "ct": "IGCP — Ficha Técnica Certificados do tesouro série 5 — curado",
+  "isv-2026": "DR — Lei 22-A/2007 (CISV) — curado",
+  "iuc-2026": "DR — Lei 22-A/2007 (CIUC) — curado",
 };
 
 /** Normaliza "YYYY" | "YYYY-MM" | "YYYY-MM-DD" para data completa ISO. */

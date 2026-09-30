@@ -29,6 +29,8 @@ legislativa/oficial (DR, AT, OE, IGCP, Código do IVA).
 | `servicos-minimos.json` | Conta de serviços mínimos bancários: quem tem direito, serviços e tecto anual de comissão (1 % do IAS) | DL 27-C/2000 + DGAEP |
 | `cartoes.json` | Regras legais dos cartões: comissões proibidas, taxa de intercâmbio, prestação mínima (contratual, não legal) | DL 133/2009 + Regulamento (UE) 2015/751 |
 | `calendario-YYYY.json` | Prazos fiscais do ano (IRS, IMI, IUC, e-Fatura) | AT / códigos tributários |
+| `isv-YYYY.json` | Tabelas A/B/C, agravamento do gasóleo, taxas intermédias e reduzidas, redução de usados importados da UE | CISV (Lei 22-A/2007) — DR consolidado |
+| `iuc-YYYY.json` | Tabelas das categorias A e B, adicional de CO2 e coeficientes por ano de matrícula | CIUC (Lei 22-A/2007, Anexo II) — DR consolidado + AT |
 
 ## Regras
 
