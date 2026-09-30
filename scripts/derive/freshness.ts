@@ -35,6 +35,45 @@ const SLA: Record<string, { periodos: number; gran: Granularidade }> = {
   anual: { periodos: 1, gran: "ano" },
 };
 
+/**
+ * SLA por série, para as fontes que não seguem a cadência da sua
+ * frequência.
+ *
+ * Uma série anual oficial só pode estar um ano atrasada, por regra. Mas há
+ * séries oficiais que não publicam todos os anos, e aí a regra atira-as
+ * para «atrasada» sem que ninguém tenha falhado em nada. O watchdog, que
+ * existe para apanhar falhas, passaria a falhar sozinho — que é o pior
+ * sítio para ele estar.
+ *
+ * A excepção vive aqui, e não em data/meta/sources.json, porque esse
+ * ficheiro é reescrito pela ingestão de cada fonte e a excepção
+ * perder-se-ia na próxima corrida. Chave: id da série em sources.json.
+ */
+const SLA_POR_SERIE: Record<string, { periodos: number; gran: Granularidade }> = {
+  // Exemplo documentado, sem série activa: o Eurostat publica a despesa
+  // das famílias em serviços financeiros (CP126, euros por habitante) com
+  // alguns anos de atraso em cada publicação. Quando vier a ser ingerida,
+  // é isto que a impede de partir o gate por estar «atrasada».
+};
+
+/**
+ * Põe uma excepção de SLA para uma série. Existe para os testes e para
+ * quando entra uma série nova que precisa de mais paciência do que a sua
+ * frequência dá — devolve uma função que desfaz, para não deixar excepção
+ * nenhuma por menor.
+ */
+export function registrarSla(
+  id: string,
+  sla: { periodos: number; gran: Granularidade }
+): () => void {
+  SLA_POR_SERIE[id] = sla;
+  return () => apagarSla(id);
+}
+
+export function apagarSla(id: string): void {
+  delete SLA_POR_SERIE[id];
+}
+
 interface FonteMeta {
   id: string;
   fonte: string;
@@ -239,7 +278,8 @@ export function periodoEsperado(
 
 export function avaliar(fontes: FonteMeta[], agora = new Date()): RelatorioFrescura {
   const series: SerieFrescura[] = fontes.map((f) => {
-    const sla = SLA[f.frequencia];
+    // A excepção por série vence a regra pela frequência
+    const sla = SLA_POR_SERIE[f.id] ?? SLA[f.frequencia];
     if (!sla) {
       return {
         id: f.id, fonte: f.fonte, serieAte: f.serieAte, esperadoAte: "—",
