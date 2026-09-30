@@ -251,6 +251,17 @@
       <span class="fonte" id="mercFonte"></span>
     </div>
   </div>
+  <div class="cena-perto" id="cenaCor" hidden role="dialog" aria-modal="false" aria-labelledby="corQuem">
+    <div class="cena-arte"><svg id="corArte" viewBox="0 0 640 470" role="img" aria-label="Dentro dos Correios: o guiché A com a funcionária, os cacifos na parede, a Dona Arminda com a caderneta e, no balcão, dois montes de notas: o do colchão e o dos Certificados de Aforro, cada um com uma linha que marca o que ainda compra."></svg></div>
+    <div class="cena-texto">
+      <button class="fechar" id="corFechar" type="button" aria-label="Voltar ao bairro">×</button>
+      <span class="quem" id="corQuem">Correios · senha A · poupança</span>
+      <p class="fala" id="corFala" aria-live="polite"></p>
+      <div id="corCorpo" style="display:grid;gap:12px"></div>
+      <div class="acoes" id="corAcoes"></div>
+      <span class="fonte" id="corFonte"></span>
+    </div>
+  </div>
   <div class="painel" id="painel" hidden role="dialog" aria-labelledby="painelQuem">
     <button class="fechar" type="button" id="fecharPainel" aria-label="Fechar">×</button>
     <span class="quem" id="painelQuem"></span>
@@ -557,7 +568,7 @@ if (temG) {
 const INFO = {
   fabrica: { t: "Fábrica", p: "Para onde vai o teu salário?", viva: true }, segsocial: { t: "Segurança Social", p: "O que são os descontos e para que servem?" },
   financas: { t: "Finanças", p: "Como funcionam os escalões do IRS?", viva: true }, banco: { t: "Banco", p: "Quanto custa pedir dinheiro emprestado?", viva: true },
-  correios: { t: "Correios", p: "Onde rende a poupança da Dona Arminda?" }, bomba: { t: "Bomba de gasolina", p: "Quanto do litro é imposto?" },
+  correios: { t: "Correios", p: "Onde rende a poupança da Dona Arminda?", viva: true }, bomba: { t: "Bomba de gasolina", p: "Quanto do litro é imposto?" },
   mercearia: { t: "Mercearia do Manuel", p: "Porque está tudo mais caro?", viva: true }, pastelaria: { t: "Pastelaria", p: "Quanto subiu o café?" },
   casa: { t: "Casa da Inês", p: "Quanto chega mesmo ao fim do mês?" }, quiosque: { t: "Quiosque da praça", p: "Os números do país, hoje" }, escola: { t: "Escola", p: "As palavras do dinheiro, explicadas" },
 };
@@ -585,6 +596,7 @@ function entrar(id) {
   if (id === "mercearia") return cenaMerc();
   if (id === "financas") return cenaFinancas();
   if (id === "banco") return cenaBanco();
+  if (id === "correios") return cenaCorreios();
   const [x, y] = pontoEcra(id); ir(x + 60, y - 60, 640);
   const extra = { bomba: `Hoje: gasóleo <b>${EURO(DADOS.gasoleo, 3)}</b> e gasolina 95 <b>${EURO(DADOS.gasolina, 3)}</b> por litro, em média.`, banco: `A Euribor a 12 meses está em <b>${eur(DADOS.euribor12, 2)} %</b>.`, correios: `Os Certificados de Aforro rendem <b>${eur(DADOS.ca, 2)} %</b> (taxa base).`, quiosque: `Inflação: <b>${D.inflacao}</b> num ano. Desemprego: <b>${D.desemprego}</b>.` }[id];
   abrirPainel(INFO[id].t, `${INFO[id].p} <span class="a">Em breve</span> — este edifício ainda está em obras.`, [["Fechar", () => $("fecharPainel").click(), true]], extra ? `<p style="margin:0">${extra}</p>` : "", DADOS.fontes[id] || "");
@@ -637,6 +649,7 @@ function cenaSalario() {
 __FINANCAS__
 __BANCO__
 __MERC__
+__CORREIOS__
 /* ——— as personagens: cartas ——— */
 const CARTAS = [
   ["ines", "Inês", "Operária da fábrica", "Conta de outrem · setor privado", "Porque é que 1 500 € brutos viram 1 167 €.", "#dfe5ff"],

@@ -28,6 +28,7 @@ const DADOS = {
   gasoleo: gas.v, gasolina: g95.v, dataComb: dia(gas.t),
   euribor12: eur12.v, ca: ca.oficialPct, desemprego: une.v, inflacao: +((at(cp00, T1) / at(cp00, Tano) - 1) * 100).toFixed(1),
   cabaz10: +(10 * at(cp01, T1) / at(cp01, T0)).toFixed(2), cabazPct: Math.round((at(cp01, T1) / at(cp01, T0) - 1) * 100), cafesPct: Math.round((at(cp11, T1) / at(cp11, T0) - 1) * 100),
+  aforro: (() => { const c = L("data/fiscal/ca.json"), k = L("data/fiscal/capitais.json"); return { taxa: c.serieF.taxaBrutaNovasSubscricoes, vigencia: c.vigencia, taxaNota: c.serieF.taxaNota, premios: c.serieF.premiosPermanencia.map((p) => ({ de: p.de, ate: p.ate, pp: p.pp })), imposto: k.retencaoLiberatoria.taxa, garantia: c.serieF.garantia }; })(),
   merc: (() => {
     const ser = (c) => L("data/sources/eurostat/hicp-pt-cp" + c + ".json").series.filter((p) => p.t >= "2019-01").map((p) => ({ t: p.t, v: p.v }));
     const itens = [["0111", "pao", "Cereais e derivados", "pão, arroz, massa"], ["0112", "carne", "Carne", ""], ["0113", "peixe", "Peixe e marisco", ""], ["0114", "leite", "Leite, laticínios e ovos", ""],
@@ -43,6 +44,7 @@ const DADOS = {
     bancoCena: `Banco de Portugal (BPstat) · Euribor a 12 meses, média mensal, jan 2019 → ${mes(eur12.t)} · prestação pelo método francês (motor do AO CÊNTIMO)`,
     mercCena: `Eurostat · índice harmonizado de preços no consumidor, Portugal, por produto (ECOICOP 01.1.1 a 01.1.8) · ${mes(T0)} → ${mes(T1)}`,
     ivaCena: `Código do IVA — Listas I e II anexas e art. 18.º · taxas do continente em vigor em 2026`,
+    aforroCena: `IGCP · Certificados de Aforro série F, taxa em vigor desde ${ca.vigenciaOficial} e prémios de permanência · retenção de 28 % (art. 71.º do CIRS) · inflação: Eurostat, índice harmonizado de preços, Portugal`,
     fabrica: `Motores AO CÊNTIMO · regras ${cen.meta.ano} · ${cen.meta.perfil}`,
     mercearia: `Eurostat · IHPC Portugal, alimentação e bebidas não alcoólicas · ${mes(T0)} → ${mes(T1)}`,
     bomba: `DGEG · preço médio de venda ao público · ${dia(gas.t)}`,
@@ -66,6 +68,7 @@ h = h.replace("__DADOS__", () => JSON.stringify(DADOS)).replace("__LOGO__", () =
   .replace("__FINANCAS__", () => fs.readFileSync(path.join(__dirname, "cena-financas.js"), "utf8"))
   .replace("__BANCO__", () => fs.readFileSync(path.join(__dirname, "cena-banco.js"), "utf8"))
   .replace("__MERC__", () => fs.readFileSync(path.join(__dirname, "cena-mercearia.js"), "utf8"))
+  .replace("__CORREIOS__", () => fs.readFileSync(path.join(__dirname, "cena-correios.js"), "utf8"))
   .replace("__PERSONAGENS__", () => fs.readFileSync(path.join(__dirname, "personagens.js"), "utf8"));
 const resto = h.match(/__[A-Z]+__/g); if (resto) throw new Error("por substituir: " + resto);
 fs.writeFileSync(path.join(__dirname, "mapa.html"), h);
