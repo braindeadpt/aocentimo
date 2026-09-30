@@ -21,7 +21,7 @@
  * entram em P2, com a cena à vista, em `dadosCena()`.
  */
 import { loadFonte, loadSerie, type Serie } from "@/lib/data";
-import { fmtEUR, fmtNum, fmtPct } from "@/lib/format";
+import { comUnidade, fmtEUR, fmtNum, fmtPct } from "@/lib/format";
 import caBase from "@data/derived/ca-base.json";
 import cenarios from "@data/derived/cenarios-salario.json";
 import ss from "@data/fiscal/ss.json";
@@ -177,8 +177,8 @@ export function marcadores(): MarcadoresBairro & { gasoleoUn: string; gasolinaUn
     // arredondar a «+4 %» era um número que não é o número da fonte
     inflacao: sinalPct(inflacao === null ? null : inflacao * 100, 1),
     desemprego: fmtPct(comoFracao(desemprego?.v ?? null) ?? 0, 1),
-    gasoleoUn: gasoleo ? `${fmtNum(gasoleo.v, 3)} €/L` : FALHOU,
-    gasolinaUn: gasolina ? `${fmtNum(gasolina.v, 3)} €/L` : FALHOU,
+    gasoleoUn: gasoleo ? comUnidade(fmtNum(gasoleo.v, 3), "€/L") : FALHOU,
+    gasolinaUn: gasolina ? comUnidade(fmtNum(gasolina.v, 3), "€/L") : FALHOU,
   };
 }
 
@@ -194,7 +194,9 @@ export function fontes(): string[] {
   if (euribor) notas.push(`Euribor 12M — BPstat, ${euribor.t}`);
 
   const ca = (caBase as { meta?: { oficialPct?: number } }).meta;
-  if (ca?.oficialPct !== undefined) notas.push(`Certificados de Aforro — IGCP, taxa base ${String(ca.oficialPct).replace(".", ",")} %`);
+  if (ca?.oficialPct !== undefined) notas.push(
+    `Certificados de Aforro — IGCP, taxa base ${comUnidade(String(ca.oficialPct).replace(".", ","), "%")}`
+  );
 
   const cp00 = ultimo(loadSerie("cp00"));
   if (cp00) notas.push(`inflação — Eurostat IHPC, ${cp00.t}`);
@@ -202,7 +204,9 @@ export function fontes(): string[] {
   const desemprego = ultimo(loadFonte("eurostat", "une-pt-total"));
   if (desemprego) notas.push(`desemprego — Eurostat, ${desemprego.t}`);
 
-  if (l) notas.push(`salário — motores AO CÊNTIMO, ${l.bruto} € brutos, regras ${l.ano}`);
+  if (l) notas.push(
+    `salário — motores AO CÊNTIMO, ${comUnidade(String(l.bruto), "€")} brutos, regras ${l.ano}`
+  );
 
   return notas;
 }
