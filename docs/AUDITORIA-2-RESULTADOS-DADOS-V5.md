@@ -218,10 +218,41 @@ alto e diz que não liquida** em vez de inventar, como promete o seu comentário
 Não é bug de aritmética; é a consequência honesta de simular um contrato sem o
 mínimo em euros que os contratos reais têm. Recomendação para as cenas do
 Banco: chamar sempre `simularCartao` com `prestacaoMinimaEuros` do contrato;
-sem ele, mostrar ao utilizador que a simulação não fecha.
+sem ele, mostrar ao utilizador que a simulação não fecha.Golden tests novos neste PR: IUC 2017 paga adicional (§2.2) e mensagem de erro
+ do IMI por inteiro (§2.5). Total: 473 testes, todos verdes.
 
-Golden tests novos neste PR: IUC 2017 paga adicional (§2.2) e mensagem de erro
-do IMI por inteiro (§2.5). Total: 473 testes, todos verdes.
+### 4-A · RESOLVIDO por OCR — a deliberação do IMI Familiar do Porto 2026
+
+O PDF digitalizado do município (3 páginas, zero texto embutido) foi lido com
+tesseract (WASM, via npm, sem alterar as dependências do repo) —
+`NUD/289978/2026/CMP`, do site da Câmara Municipal do Porto, baixado e lido a
+2026-09-30. Trechos literais do OCR:
+
+> «a Assembleia Municipal do Porto, reunida em sessão de 27/04/2026, delibera
+> recomendar ao Executivo Municipal que: … Adote, os escalões máximos de
+> dedução permitidos por lei, ou seja: 30,00€ para famílias com 1 dependente;
+> 70,00€ para famílias com 2 dependentes; 140,00€ para famílias com 3 ou mais
+> dependentes» — «para vigorar no próximo ano fiscal».
+>
+> «Deliberação: Aprovada, por maioria, com 8 votos a favor (3 IL + 3 CH + 2
+> FA), 3 votos contra (2 CDU + 1 B.E.) e 33 abstenções (15 PS + 13 PPD/PSD + 3
+> CDS-PP + 2 L). Deliberada em Sessão Ordinária de 27 de abril de 2026.»
+
+Duas consequências:
+
+1. **A dedução do Porto não entra no `imi-2026.json` como número ativo.** O
+   documento é uma **recomendação** ao Executivo («delibera recomendar ao
+   Executivo Municipal que: apresente uma proposta de fixação das taxas»), e a
+   própria diz «para vigorar no próximo ano fiscal». O art. 112.º n.º 14 do
+   CIMI (Portal das Finanças, lido a 2026-09-30) manda comunicar as deliberações
+   à AT «para vigorarem no ano seguinte», até 31 de dezembro — por isso nada
+   do que se decidiu em abril de 2026 muda o IMI de 2026. Os tectos legais
+   30/70/140 € do art. 112.º-A já estão no pack, e o motor aplica-os quando
+   `imiFamiliar: true`.
+2. **Fica registada a pista para 2027:** se o Executivo seguir a recomendação,
+   a proposta de taxas com os escalões máximos sai para o IMI de 2027. A nota
+   do `imi-2026.json → imiFamiliar` ficou atualizada com a fonte, o NUD e a
+   razão legal por que não se grava dedução ativa para 2026.
 
 ---
 
@@ -229,7 +260,7 @@ do IMI por inteiro (§2.5). Total: 473 testes, todos verdes.
 
 | Ponto | Porque não fechou nesta auditoria |
 |---|---|
-| IMI Familiar do Porto 2026 (valor da dedução deliberada) | A deliberação é um PDF digitalizado (3 imagens JPEG, zero texto). Sem OCR instalado; exigiria OCR ou uma pessoa a confirmar com o município/AT. Nenhum número em uso depende dele (o motor usa 30/70/140, tectos legais do art. 112.º-A) |
+| ~~IMI Familiar do Porto 2026~~ → **RESOLVIDO por OCR (ver §4-A)** | Era o único «NÃO CONSEGUI» desta auditoria. Fechado a 2026-09-30 com tesseract (WASM, npm) sobre o PDF digitalizado do município — ver §4-A |
 | Transcrição integral das tabelas do ISV/IUC/IMI, número a número (item A do prompt interno) | Não era o âmbito desta encomenda (C–F). As tabelas **usadas** pelos 15 casos F e pelas fronteiras verificadas (160/161 gasóleo WLTP, último escalão CO2, coeficientes, prestações) bateram todas; o resto da transcrição continua à espera de um varrimento com script |
 | «Não foi encontrada transposição da Dir. 2023/2225 para Portugal» (`cartoes.json`) | Afirmação negativa; exige repetir a varredura (DR, Portal do Cliente Bancário, EUR-Lex National transposition) próximo de 20-11-2026. As datas e a ausência de reembolso mínimo na diretiva estão provadas (E1); a ausência da transposição **hoje** não foi re-provada nesta sessão |
 | Anuidade média de cartões / comissões agregadas (afirmações negativas do BPstat) | Repetição do varrimento aos 76 domínios não feita nesta sessão (fora do âmbito C–F); a 1.ª auditoria varreu e o registo está em `cartoes.json → anuidadeMedia` |
@@ -240,7 +271,10 @@ do IMI por inteiro (§2.5). Total: 473 testes, todos verdes.
 ## 5. Frase final
 
 **O pack está em condições de sustentar as cenas do Banco, das Finanças, da
-Bomba e dos Correios — com as correções deste PR aplicadas.**
+Bomba e dos Correios — com as correções deste PR aplicadas.** Não resta
+nenhum «NÃO CONSEGUI» desta auditoria: a deliberação do IMI Familiar do Porto
+foi lida por OCR (§4-A) e confirmou que não há dedução do Porto a gravar para
+2026 — a recomendação de abril aponta para 2027.
 
 Antes delas, não: o calendário dizia a meio da página `/dados` que o IUC
 passava a pagar-se em fevereiro de 2026 — falso, e quem tem a matrícula em
@@ -251,7 +285,7 @@ levar com a coima; o motor do IUC negava a taxa adicional a quem matriculou em
 Diretiva 2023/2225, Lei 24/2023 com as suas datas, regime do IUC no DL
 161/2026 — bate com os JSON; os 15 casos F bateram com os motores ao cêntimo;
 e os dois bugs apanhados têm agora teste golden que os teria travado. O que
-fica em aberto está declarado no §4: o IMI Familiar do Porto espera um humano
-com OCR, a retranscrição integral das tabelas (item A) espera um varrimento com
-script, e a transposição da diretiva do crédito ao consumo tem de ser re-verificada
-antes de 20 de novembro de 2026.
+fica em aberto está declarado no §4: a retranscrição integral das tabelas (item
+A) espera um varrimento com script — o IMI Familiar do Porto foi fechado por
+OCR no §4-A — e a transposição da diretiva do crédito ao consumo tem de ser
+re-verificada antes de 20 de novembro de 2026.
