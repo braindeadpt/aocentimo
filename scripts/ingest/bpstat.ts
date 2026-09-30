@@ -43,6 +43,34 @@ export const SERIES_TAEG = {
 
 export type CategoriaTaeg = keyof typeof SERIES_TAEG;
 
+/**
+ * Taxas de juro de novos depósitos a prazo dos particulares (domínio 21 —
+ * Taxas de juro). São as taxas que o banco pratica no balcão quando abre
+ * uma conta com prazo — a referência do «quanto rende o meu dinheiro».
+ *
+ * IDs confirmados por chamada ao BPstat em 2026-09-30. Cada ID foi lido em
+ * /api/series/?series_ids=ID e o título que lá vem é o que fica escrito
+ * em `dataset` — não se copia o título de memória.
+ *
+ * - `ate1a` — prazo original até 1 ano, novas operações, particulares
+ *   residentes na UM e emigrantes portugueses fora da UM.
+ * - `total` — o mesmo recorte sem limite de prazo. Existe com a mesma
+ *   definição, por isso entra também.
+ */
+export const SERIES_DEPOSITOS = {
+  ate1a: 12519805,
+  total: 12519807,
+} as const;
+
+/** Títulos exactos lidos no BPstat, por série — para auditoria do ID. */
+export const TITULOS_DEPOSITOS: Record<PrazoDeposito, string> = {
+  ate1a:
+    "Taxa de juro (TAA) de novos depósitos a prazo até 1 ano dos particulares",
+  total: "Taxa de juro (TAA) de novos depósitos a prazo dos particulares",
+};
+
+export type PrazoDeposito = keyof typeof SERIES_DEPOSITOS;
+
 const observacaoSchema = z.object({
   value: z.string(),
   series_id: z.number().optional(),
@@ -59,6 +87,11 @@ const serieSchema = z.object({
     unidade: z.string(),
     recolhidoEm: z.string(),
     serieAte: z.string(),
+    /** Título da série tal como a fonte o mostra (BPstat devolve-o em PT). */
+    tituloOficial: z.string().optional(),
+    /** Periodicidade tal como a fonte a declara (BPstat: «Mensal»). */
+    periodicidade: z.string().optional(),
+    frequencia: z.string().optional(),
   }),
   series: z.array(z.object({ t: z.string(), v: z.number() })),
 });
@@ -68,7 +101,7 @@ const serieSchema = z.object({
  * (revisões da série). Deduplicamos por `t`, ficando a última — a mais
  * recente — e reordenamos.
  */
-function dedupeMes(series: { t: string; v: number }[]) {
+export function dedupeMes(series: { t: string; v: number }[]) {
   const porMes = new Map<string, number>();
   for (const p of series) porMes.set(p.t, p.v);
   return [...porMes.entries()]
@@ -128,6 +161,42 @@ export async function fetchTaeg(categoria: CategoriaTaeg): Promise<SerieGuardada
   return serieSchema.parse(doc);
 }
 
+/**
+ * Taxas de juro de novos depósitos a prazo dos particulares.
+ *
+ * O BPstat devolve, tal como nas TAEG, mais do que uma observação para
+ * alguns meses (revisões). A deduplicação é a mesma: fica a última, a
+ * mais recente. Unidade e periodicidade são as que o BPstat declara na
+ * série — «Percentagem» e «Mensal».
+ */
+export async function fetchDepositos(prazo: PrazoDeposito): Promise<SerieGuardada> {
+  const id = SERIES_DEPOSITOS[prazo];
+  const url = `${BASE}?series_ids=${id}&lang=PT`;
+  const { data } = respostaSchema.parse(await fetchJson(url));
+  const series = dedupeMes(
+    data
+      .map((o) => ({ t: o.reference_date.slice(0, 7), v: Number(o.value) }))
+      .filter((p) => Number.isFinite(p.v))
+  );
+  if (series.length === 0) throw new Error(`BPstat depósitos ${prazo}: série vazia`);
+
+  const doc: SerieGuardada = {
+    meta: {
+      id: `deposito-prazo-${prazo}-mensal`,
+      fonte: "Banco de Portugal — BPstat",
+      dataset: `serie ${id} (Taxas de juro — Depósitos)`,
+      url,
+      unidade: "percentagem",
+      recolhidoEm: new Date().toISOString(),
+      serieAte: series[series.length - 1].t,
+      tituloOficial: TITULOS_DEPOSITOS[prazo],
+      periodicidade: "Mensal",
+    },
+    series,
+  };
+  return serieSchema.parse(doc);
+}
+
 export async function runBpstat(
   outDir: string
 ): Promise<ResultadoFonte<SerieGuardada>> {
@@ -151,6 +220,17 @@ export async function runBpstat(
       );
       docs.push(doc);
       console.log(`✓ TAEG ${categoria}: ${doc.series.length} pontos até ${doc.meta.serieAte}`);
+    }
+    for (const prazo of Object.keys(SERIES_DEPOSITOS) as PrazoDeposito[]) {
+      const doc = await fetchDepositos(prazo);
+      writeFileSync(
+        path.join(outDir, `deposito-prazo-${prazo}-mensal.json`),
+        JSON.stringify(doc, null, 2)
+      );
+      docs.push(doc);
+      console.log(
+        `✓ Depósitos ${prazo}: ${doc.series.length} pontos até ${doc.meta.serieAte}`
+      );
     }
   } catch (e) {
     return { ok: false, erro: e instanceof Error ? e.message : String(e) };

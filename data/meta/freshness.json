@@ -1,5 +1,5 @@
 {
-  "verificadoEm": "2026-09-30T12:11:51.538Z",
+  "verificadoEm": "2026-09-30T16:19:59.514Z",
   "estado": "ok",
   "series": [
     {
@@ -611,6 +611,24 @@
       "serieAte": "2025-12-31",
       "esperadoAte": "2025-06-30",
       "frequencia": "semestral",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "deposito-prazo-ate1a-mensal",
+      "fonte": "Banco de Portugal — BPstat",
+      "serieAte": "2026-07",
+      "esperadoAte": "2026-07-31",
+      "frequencia": "mensal",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "deposito-prazo-total-mensal",
+      "fonte": "Banco de Portugal — BPstat",
+      "serieAte": "2026-07",
+      "esperadoAte": "2026-07-31",
+      "frequencia": "mensal",
       "estado": "em-dia",
       "atrasoPeriodos": 0
     }
