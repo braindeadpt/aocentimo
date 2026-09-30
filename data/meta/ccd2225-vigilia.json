@@ -1,0 +1,11 @@
+{
+  "consultadoEm": "2026-09-30T22:47:00Z",
+  "fonteUrl": "https://eur-lex.europa.eu/legal-content/PT/NIM/?uri=CELEX:32023L2225",
+  "nota": "Estado semente: captura integral da página NIM via curl a 2026-09-30 (~23:47 de Lisboa (WEST)), guardada como fixture scripts/ingest/ccd2225.fixture.html (excerto) e lida por parseNimPortugal. As re-consultas automáticas semanais devem sobrepor este estado quando conseguirem ler a página ao vivo.",
+  "transposto": false,
+  "medidas": 0,
+  "prazos": [],
+  "ligacoes": [],
+  "drAconferir": "https://diariodarepublica.pt/dr/legislacao-consolidada/decreto-lei/2009-34518975",
+  "accao": "Transposto: abrir docs/VIGILANCIA-CCD2225-2026.md e fazer a checklist — rever data/fiscal/cartoes.json e o motor do cartão antes de 2026-11-20."
+}

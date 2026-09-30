@@ -1,0 +1,108 @@
+name: vigilância — Diretiva (UE) 2023/2225 (crédito ao consumo)
+
+on:
+  schedule:
+    # segundas-feiras 07:23 UTC — 1× por semana; diário seria ruído para um
+    # sinal que muda (no máximo) uma vez na vida do site
+    - cron: "23 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: vigilancia-ccd2225
+  cancel-in-progress: false
+
+jobs:
+  vigiar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      # CLI sai: 0 = ok · 2 = ALARME (transposição apareceu) · 1 = falha honesta
+      - name: Consultar o NIM do EUR-Lex
+        id: vigilia
+        run: |
+          set +e
+          npx tsx scripts/ingest/ccd2225-cli.ts | tee /tmp/ccd2225-saida.txt
+          code=${PIPESTATUS[0]}
+          echo "codigo=$code" >> "$GITHUB_OUTPUT"
+          if [ "$code" = "2" ]; then echo "alarme=true" >> "$GITHUB_OUTPUT"; fi
+          exit 0
+
+      - name: Commit do estado da vigilância
+        if: steps.vigilia.outputs.codigo != '1'
+        run: |
+          git config user.name "bruto-bot"
+          git config user.email "bot@bruto.local"
+          git add data/meta/ccd2225-vigilia.json
+          git diff --staged --quiet || git commit -m "vigilancia: estado CC2 $(date -u +%Y-%m-%d)"
+          git pull --rebase origin main
+          git push
+
+      - name: Abrir/atualizar alarme em issue
+        if: steps.vigilia.outputs.alarme == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const titulo = "CC2 (Dir. 2023/2225): transposição detetada no EUR-Lex";
+            const { data: abertas } = await github.rest.issues.listForRepo({
+              owner, repo, state: "open", labels: "dados",
+            });
+            const corpo = [
+              "O NIM do EUR-Lex passou a listar medidas de transposição de Portugal.",
+              "",
+              "Abrir `docs/VIGILANCIA-CCD2225-2026.md` e fazer a checklist completa:",
+              "rever `data/fiscal/cartoes.json` e o motor do cartão **antes de 2026-11-20**.",
+              "",
+              "Estado: `data/meta/ccd2225-vigilia.json` (último commit da vigilância).",
+            ].join("\n");
+            const existente = abertas.find((i) => i.title.startsWith("CC2"));
+            if (existente) {
+              await github.rest.issues.createComment({ owner, repo, issue_number: existente.number, body: corpo });
+            } else {
+              await github.rest.issues.create({ owner, repo, title: titulo, labels: ["dados"], body: corpo });
+            }
+
+      - name: Registar falha honesta em issue
+        if: steps.vigilia.outputs.codigo == '1'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const titulo = "Vigilância CC2 falhou — EUR-Lex indisponível";
+            const { data: abertas } = await github.rest.issues.listForRepo({
+              owner, repo, state: "open", labels: "dados",
+            });
+            const corpo = "A consulta ao NIM do EUR-Lex falhou por indisponibilidade (fila 202). É falha honesta: NÃO significa que Portugal não tenha transposto. Repetir a consulta `npx tsx scripts/ingest/ccd2225-cli.ts` mais tarde ou verificar à mão em https://eur-lex.europa.eu/legal-content/PT/NIM/?uri=CELEX:32023L2225 .";
+            const existente = abertas.find((i) => i.title.startsWith("Vigilância CC2 falhou"));
+            if (existente) {
+              await github.rest.issues.createComment({ owner, repo, issue_number: existente.number, body: corpo });
+            } else {
+              await github.rest.issues.create({ owner, repo, title: titulo, labels: ["dados"], body: corpo });
+            }
+
+      - name: Fechar issues de falha quando a consulta volta a correr bem
+        if: steps.vigilia.outputs.codigo != '1'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const { data: abertas } = await github.rest.issues.listForRepo({
+              owner, repo, state: "open", labels: "dados",
+            });
+            for (const i of abertas.filter((i) => i.title.startsWith("Vigilância CC2 falhou"))) {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: i.number,
+                body: "Consulta ao EUR-Lex voltou a correr bem — fecho automático.",
+              });
+              await github.rest.issues.update({ owner, repo, issue_number: i.number, state: "closed" });
+            }
