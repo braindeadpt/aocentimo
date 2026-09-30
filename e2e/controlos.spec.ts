@@ -261,7 +261,10 @@ test.describe("o sistema nos produtos", () => {
     context,
   }) => {
     await context.grantPermissions(["clipboard-write", "clipboard-read"]);
-    await page.goto("/");
+    // O botão do JSON vem do <Leitura>, que vive nas rotas de conteúdo.
+    // Na V4 estava também na home; quando a home passou a ser o mapa do
+    // bairro (P1-1) ficou só aqui — que é onde o endpoint JSON interessa.
+    await page.goto("/poupanca");
     const copiar = page
       .getByRole("button", { name: "copiar o endereço do JSON" })
       .first();
