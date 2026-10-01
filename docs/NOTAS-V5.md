@@ -374,6 +374,55 @@ mais alto; o HTML da home nos 130,8 KB gzip provisórios.
 na faixa 452–876, altura do documento 1810px, violadores de contraste no
 load: 0.
 
+### O HTML da home medido — plano para decisão do dono (antes do P4)
+
+Medição sobre o build do deploy (`out/index.html` de `6afb9f9`):
+**131,0 KB gzip** (raw 1,19 MB). Dissecado por blocos com
+`scripts/_dieta-html.mjs` (versionado; correr após cada build):
+
+| bloco | raw | gzip |
+|---|---|---|
+| `.b-mundo` no DOM (o mapa) | 426 178 | 48 530 |
+| payload RSC (3 scripts `__next_f`) | 718 097 | 75 010 |
+| — **dos quais: o mapa REPETIDO no flight** | 448 276 | **≈ 53 268** |
+| `<style>` do bairro | 1 387 | 376 |
+| resto da página (hero, header, footer) | 40 282 | 7 138 |
+
+**A página é o mapa duas vezes.** `HomeBairro` (servidor) calcula
+`mundoBairro()` e passa o HTML **como prop** ao `<Bairro>` (cliente) —
+o Next embarca props no payload de hidratação, com escapes `\\"` e
+`\n` que gonfiam a string (por isso pesa mais que o próprio DOM). O React
+nunca usa essa string para criar nada: `dangerouslySetInnerHTML` já tem
+o mapa pintado. São ~53 KB gzip transportados à toa — **40% do ficheiro**.
+
+**O plano, por ordem de rendimento:**
+
+1. **Conserto do flight (recomendado): −53 KB → ~78 KB gzip.** O
+   `<Bairro>` deixa de receber `html` por prop e passa a receber só os
+   marcadores (pequenos), calculando `mundoBairro(montarMapa(…))`
+   localmente. No SSR do componente cliente os builders correm no
+   servidor — **o first paint sem JavaScript mantém-se**, a promessa V5
+   fica intacta; na hidratação o cliente recalcula a mesma string
+   (builders verificados: zero `Math.random`/`Date`, zero `fs` —
+   determinísticos, sem mismatch). Custo: ~15–20 KB gzip de JS no bundle
+   (planta/iso/mundo/personagens passam ao cliente; hoje estamos em
+   188 KB de 350). Risco baixo: os testes de geometria e o
+   `bairro-css.test.ts` vigiam exactamente isto. Esforço: pequeno-médio.
+2. **Aparo fino: −5,5 KB adicionais.** Arredondar coordenadas a inteiro
+   (−4,5 KB; ficam 5 575 de 18 222 números com décimas — os
+   `matrix(.8944 .4472 …)` do isométrico NÃO se tocam) e aparar os
+   `viewBox` das nuvens (`44.800000000000004`). Pode ir no mesmo PR.
+3. **Não fazer:** marcadores servidos à parte (poupam 1,2 KB — os 13
+   pins inteiros pesam menos que uma foto; uma segunda requisição e
+   complexidade por isso não paga) e tirar soltos/nuvens (−1,5 KB,
+   quebraria o ambiente sem JS). Os candidatos do enunciado original
+   («marcadores só no ecrã grande? SVG à parte?») são os que MENOS
+   rendem — os números mandam recusá-los.
+
+Com 1+2: **~73 KB gzip**, dentro dos 80 KB do pack (§4), sem cortar um
+milímetro de desenho. A decisão é do dono; o medidor fica no repo para
+confirmar cada passo.
+
 ## P2a–P2c · As cenas
 
 _(por preencher — toda a copy das onze cenas é PROPOSTA)_
