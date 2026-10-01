@@ -96,6 +96,11 @@ export default function CenaFabrica({ D, mundoRef, camaraRef, aoFechar }: PropsF
     // partilhado fazia — e pior, o efeito com deps [passo] matava a
     // corrida assim que o timeline chamava aoPasso(2)).
     let morto = false;
+    // `acabou` fecha a soma: o final do timeline fixa os totais EXACTOS,
+    // mas a rota da casa é a mais comprida e as moedas dela ainda
+    // chegam depois — sem a bandeira, cada `somar` tardio somava por
+    // cima do valor fixado (medido em build: o líquido ia ao dobro)
+    let acabou = false;
 
     // limpeza de moedas de corridas anteriores
     mundo.querySelectorAll(".moeda-salario").forEach((m) => m.remove());
@@ -207,7 +212,7 @@ export default function CenaFabrica({ D, mundoRef, camaraRef, aoFechar }: PropsF
           opacity: dest === "casa" ? 1 : 0,
           duration: 0.25,
           onComplete: () => {
-            if (!morto) somar(dest);
+            if (!morto && !acabou) somar(dest);
             if (dest !== "casa") m.remove();
           },
         });
@@ -235,6 +240,7 @@ export default function CenaFabrica({ D, mundoRef, camaraRef, aoFechar }: PropsF
       t1.add(() => !morto && etiq(pCasa, fmtEUR(l.liquido), "#0c8f5c"), 5);
       t1.add(() => {
         if (morto) return;
+        acabou = true;
         setTotais({ ss: etSS, irs: l.irs, casa: l.liquido });
         aoPasso(99);
       }, 5.8);

@@ -323,42 +323,52 @@ test.describe("as cenas P2a — o degrau bate certo com a gaveta", () => {
  * E o painel não pode tapar a fábrica nem o percurso.
  */
 test.describe("as cenas P2a — a fábrica corre de verdade", () => {
-  const TOTAIS = {
-    ss: "521,25", // tsu + ss da linha de referência (data/)
-    irs: "168,17",
-    casa: /1[\s\u202f]?166,83/,
-  };
-
   const contadores = (page: Page) => ({
     ss: page.locator(".b-painel .contador span").nth(0),
     irs: page.locator(".b-painel .contador span").nth(1),
     casa: page.locator(".b-painel .contador span").nth(2),
   });
 
-  async function esperaCorrida(page: Page) {
-    const c = contadores(page);
-    await expect(async () => {
-      await expect(c.ss).toContainText(TOTAIS.ss);
-      await expect(c.irs).toContainText(TOTAIS.irs);
-      await expect(c.casa).toContainText(TOTAIS.casa);
-    }).toPass({ timeout: 12_000, intervals: [400, 800, 1200] });
-  }
+  const EXACTOS = {
+    ss: /^Seg\. Social: 521,25[\s  ]?€$/,
+    irs: /^IRS: 168,17[\s  ]?€$/,
+    casa: /^Chega a casa: 1[\s ]?166,83[\s  ]?€$/,
+  };
 
-  test("com animação os contadores enchem ao fim de ≤12 s e «Ver outra vez» refaz a corrida", async ({
+  test("com animação os contadores enchem e FIXAM os totais exactos — também na 2.ª corrida", async ({
     page,
   }) => {
+    // duas corridas completas + 3 leituras espaçadas em cada uma — não
+    // cabe no timeout de 30 s por omissão
+    test.setTimeout(90_000);
     await page.goto("/#fabrica");
     const painel = page.locator(".b-painel");
     await expect(painel).toBeVisible();
 
-    await esperaCorrida(page);
-    // a fala final (passo 99) aparece com o link para o simulador
-    await expect(painel.locator(".b-fala")).toContainText(/chegam a casa/i);
+    const fixaExactos = async () => {
+      // a fala final (passo 99) é quando o «Ver outra vez» aparece
+      await expect(
+        page.getByRole("button", { name: /ver outra vez/i }),
+      ).toBeVisible({ timeout: 15_000 });
+      // o final fixa os totais exactos — as leituras espaçadas apanham o
+      // somar() que corria POR CIMA do valor já fixado: a rota da casa é
+      // a mais comprida e as moedas dela chegavam depois do fim, até ao
+      // dobro do líquido (medido em build: 2 333,66 €)
+      for (const espera of [2_000, 5_000, 5_000]) {
+        await page.waitForTimeout(espera);
+        const c = contadores(page);
+        await expect(c.ss).toHaveText(EXACTOS.ss);
+        await expect(c.irs).toHaveText(EXACTOS.irs);
+        await expect(c.casa).toHaveText(EXACTOS.casa);
+      }
+    };
 
-    // «Ver outra vez»: os contadores vão a zero e a corrida volta a acabar
+    await fixaExactos();
+
+    // «Ver outra vez»: os contadores vão a zero e a 2.ª corrida fixa igual
     await page.getByRole("button", { name: /ver outra vez/i }).click();
     await expect(contadores(page).ss).toContainText("0,00");
-    await esperaCorrida(page);
+    await fixaExactos();
     await expect(painel.locator(".b-fala")).toContainText(/chegam a casa/i);
   });
 
