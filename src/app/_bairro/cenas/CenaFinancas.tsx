@@ -196,7 +196,7 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
             <p className="pergunta-fin">
               {T.finPalpite(fmtEUR(1500), fmtEUR(1650), ordinal(g0.k + 1), ordinal(g1.k + 1))}
             </p>
-            <div className="opcoes" role="group" aria-label="O teu palpite">
+            <div className="opcoes" role="group" aria-label={T.finPalpiteAria}>
               <button className="b-btn b-claro" type="button" onClick={() => { setPalpite("menos"); setVisto(1650); setPasso(3); }}>{T.finBtnMenos}</button>
               <button className="b-btn b-claro" type="button" onClick={() => { setPalpite("igual"); setVisto(1650); setPasso(3); }}>{T.finBtnIgual}</button>
               <button className="b-btn b-claro" type="button" onClick={() => { setPalpite("mais"); setVisto(1650); setPasso(3); }}>{T.finBtnMais}</button>
@@ -215,7 +215,7 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
             ).map((p, k) => (
               <p key={k} dangerouslySetInnerHTML={{ __html: p }} />
             ))}
-            <div className="opcoes" role="group" aria-label="Ver as gavetas da Inês">
+            <div className="opcoes" role="group" aria-label={T.finGavetasAria}>
               <button className="b-btn b-claro" type="button" onClick={() => setVisto(1500)}>{T.finAntes(fmtEUR(1500))}</button>
               <button className="b-btn b-claro" type="button" onClick={() => setVisto(1650)}>{T.finDepois(fmtEUR(1650))}</button>
             </div>

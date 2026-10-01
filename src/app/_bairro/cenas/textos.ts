@@ -65,7 +65,7 @@ export const finGraficoTexto = (degrau: string, media: string) =>
   `A Inês está no degrau dos ${degrau}, mas paga em média ${media} do rendimento coletável. A curva está sempre abaixo do degrau e nunca dá saltos, porque cada gaveta nova só apanha o dinheiro a mais.`;
 
 export const finNotaRodape = (motor: string) =>
-  `Este é o IRS calculado só pelos escalões. Depois ainda se descontam as deduções à coleta: com as despesas gerais familiares, a Inês paga ${motor} por ano, o mesmo que o simulador do AO CÊNTIMO calcula. Nos rendimentos mais baixos, o mínimo de existência ainda baixa o imposto.`;
+  `Este é o IRS calculado só pelos escalões. Depois ainda se descontam as deduções à coleta: com as despesas gerais familiares, a Inês paga ${motor} por ano, o mesmo que o simulador do AO CÊNTIMO calcula. Nos rendimentos mais baixos, o mínimo de existência ainda baixa o imposto. O que se retém todos os meses é um adiantamento: o valor final acerta-se na declaração anual.`;
 
 export const finBtnGrafico = "Aprender a ler o gráfico";
 export const finBtnVoltar = "Voltar ao bairro";
@@ -170,7 +170,7 @@ export const mercFala4 =
   "E há uma parte de cada compra que vai para o Estado: o IVA. Já vem dentro do preço.";
 
 export const mercIvaTexto = (red: string, em10Red: string, inter: string, norm: string, em10Norm: string) =>
-  `O IVA tem três taxas. O que é essencial, como o pão, o leite, a fruta e os legumes, paga a reduzida, ${red}: em cada 10 € ficam ${em10Red} para o Estado. As conservas e o vinho pagam a intermédia, ${inter}. Tudo o que não está nas listas do Código do IVA paga a normal, ${norm}: ${em10Norm} em cada 10 €.`;
+  `O IVA tem três taxas. Os alimentos básicos da lista I do Código do IVA, como o pão, o leite, a fruta e os legumes, pagam a reduzida, ${red}: em cada 10 € ficam ${em10Red} para o Estado. As conservas e o vinho pagam a intermédia, ${inter}. Tudo o que não está nas listas do Código do IVA paga a normal, ${norm}: ${em10Norm} em cada 10 €.`;
 
 export const mercIvaNota = (regiao: string) =>
   `* Taxa normal: o que não está nas listas I e II do Código do IVA (art. 18.º). Os exemplos são indicativos; as listas definem o enquadramento exato de cada produto. ${regiao}.`;
@@ -194,12 +194,17 @@ export const fabFalaSS = (ss: string, tsu: string, ssInes: string) =>
   `Primeiro, ${ss} entram na Segurança Social: ${tsu} pagos pela empresa (a TSU) e ${ssInes} descontados à Inês.`;
 
 export const fabFalaIrs = (irs: string) =>
-  `Depois, ${irs} ficam nas Finanças — o IRS retido todos os meses.`;
+  `Depois, ${irs} ficam nas Finanças — o IRS retido todos os meses, um adiantamento que se acerta na declaração anual.`;
 
 export const fabFalaRua = "O resto desce a rua com a Inês até casa…";
 
 export const fabFalaCasa = (liq: string, fica: string) =>
   `Chegam a casa da Inês ${liq}. De cada euro que a empresa gasta, ${fica} cêntimos chegam à conta dela.`;
+
+export const fabSemDados = "Os dados do salário não estão disponíveis agora.";
+export const fabContAria = "O percurso do salário até agora";
+export const finPalpiteAria = "O teu palpite";
+export const finGavetasAria = "Ver as gavetas da Inês";
 
 export const fabContSS = (v: string) => `Seg. Social: ${v}`;
 export const fabContIrs = (v: string) => `IRS: ${v}`;
