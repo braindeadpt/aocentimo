@@ -164,19 +164,43 @@ test.describe("o bairro — o que o mapa mostra", () => {
       expect(texto, `falta o valor de ${nome} no mapa`).toMatch(padrao);
   });
 
-  test("sem JavaScript o bairro e os números continuam no HTML", async ({
+  test("sem JavaScript: os 13 marcadores e os onze edifícios estão no HTML", async ({
     browser,
   }) => {
     // um contexto sem scripts: é o que o pack exige («sem JS vê-se o
-    // bairro inteiro e os números») e o que o SSR tem de garantir
+    // bairro inteiro e os números») e o que o SSR tem de garantir. Depois
+    // do conserto do flight é também a prova de que o cliente continua a
+    // receber o mapa pronto — calcula-o no SSR do servidor, não espera
+    // pelo browser para o desenhar.
     const ctx = await browser.newContext({ javaScriptEnabled: false });
     const p = await ctx.newPage();
     await p.goto("/");
     await expect(p.locator(".b-mundo .ed")).toHaveCount(11);
+    await expect(p.locator(".b-mundo .pin")).toHaveCount(13);
     const texto = await p.locator(".b-mundo").innerText();
     expect(texto).toMatch(/1 500|1\u202f500/);
     expect(texto).toMatch(/23,75/);
     await ctx.close();
+  });
+
+  test("zero avisos de hidratação na consola", async ({ page }) => {
+    // O cliente recalcula o mapa (mundoBairro·montarMapa) em vez de o
+    // receber por prop: se a conta do browser não batesse com a do
+    // servidor, o React gritava «hydration mismatch» aqui. O produtor
+    // desta página é determinístico — este teste é o que o garante em
+    // cada build.
+    const avisos: string[] = [];
+    page.on("console", (msg) => {
+      if (msg.type() === "warning" || msg.type() === "error")
+        avisos.push(`${msg.type()}: ${msg.text().slice(0, 200)}`);
+    });
+    page.on("pageerror", (err) => avisos.push(`pageerror: ${String(err).slice(0, 200)}`));
+    await page.goto("/");
+    await page.waitForSelector(".b-mundo .pin");
+    // o ambiente (GSAP) e o mapa podem avisar de coisas suas; o que NÃO
+    // pode haver é mismatch de hidratação — o conserto todo está aqui
+    const hidratacao = avisos.filter((a) => /hydrat|did not match|mismatch/i.test(a));
+    expect(hidratacao, `avisos de hidratação: ${hidratacao.join(" · ")}`).toEqual([]);
   });
 
   test("não transborda na horizontal a 375 px", async ({ page }) => {
