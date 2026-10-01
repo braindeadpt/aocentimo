@@ -17,6 +17,10 @@ const eslintConfig = [
       "test-results/**",
       "design/**",
       ".preview-scratch/**", // chunks minificados de builds de sessões vizinhas (ignorado pelo git)
+      // o anexo OCR de docs/ arquiva o script EXATO que produziu a prova
+      // (require() CommonJS, byte-idêntico ao original de .preview-scratch/ocr);
+      // é documento/prova, não código — ver docs/ANEXO-OCR-IMI-FAMILIAR-PORTO/README.md
+      "docs/ANEXO-OCR-IMI-FAMILIAR-PORTO/run-ocr.cjs",
     ],
   },
 ];

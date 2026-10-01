@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { marcadores } from "../src/lib/bairro/dados";
 
 /**
  * A home do bairro (P1-5 do PACK V5 PRODUCAO, §P1 item 6).
@@ -16,35 +17,27 @@ import { test, expect } from "@playwright/test";
  *   · a câmara mexe ao arrastar.
  */
 
-// os valores que os marcadores têm de mostrar — lidos de data/ pelo
-// os valores que os marcadores têm de mostrar — LIDOS de data/ no início
-// da corrida, com a mesma formatação do site (`fmtNum` = toLocaleString
-// pt-PT). Hardcoded, o ingest diário partia o teste a cada variação do
-// gasóleo; assim o teste segue os dados e só falha quando a PÁGINA deixa
-// de mostrar o que data/ tem.
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
-
-/** O último valor de uma série `{ series: [{ t, v }] }`, formatado a N casas. */
-function ultimo(caminho: string, casas: number): string {
-  const serie = JSON.parse(readFileSync(join(process.cwd(), caminho), "utf8")) as {
-    series: { t: string; v: number }[];
-  };
-  return serie.series[serie.series.length - 1].v.toLocaleString("pt-PT", {
-    minimumFractionDigits: casas,
-    maximumFractionDigits: casas,
-  });
-}
-
+// Os valores que os marcadores têm de mostrar — lidos de data/ pelo
+// servidor. Se a lista mudar, o teste diz qual dos edifícios ficou atrás.
+//
+// A lista sai do MESMO código que desenha o mapa (`marcadores()`), e não
+// de números escritos à mão. Antes era o contrário — «gasóleo 2,181»,
+// «gasolina 2,097» — e a DGEG publica o PMD todos os dias úteis: a
+// ingest diária commita em main, o número do mapa muda ao dia seguinte e
+// o CI caía vermelho sem que nada do mapa tivesse deixado de estar certo.
+// Era um teste a datar o dado, não a prová-lo. E o teste recusa o «—»
+// (o fallback de falta de dado) antes de comparar: se o pack voltar a
+// faltar uma série, o teste diz qual em vez de passar a vazio.
+const ALVO = marcadores();
 const ESPERADOS = [
-  { nome: "salário", padrao: /1 500|1\u202f500/ },
-  { nome: "TSU", padrao: /23,75/ },
-  { nome: "IRS", padrao: /168/ },
-  { nome: "Euribor", padrao: /2,95/ },
-  { nome: "gasóleo", padrao: new RegExp(ultimo("data/sources/dgeg/pmd-gasoleo-diario.json", 3)) },
-  { nome: "gasolina", padrao: new RegExp(ultimo("data/sources/dgeg/pmd-gasolina95-diario.json", 3)) },
-  { nome: "inflação", padrao: /3,6/ },
-  { nome: "desemprego", padrao: /5,7/ },
+  { nome: "salário", valor: ALVO.salario },
+  { nome: "TSU", valor: ALVO.tsu },
+  { nome: "IRS", valor: ALVO.irs },
+  { nome: "Euribor", valor: ALVO.euribor },
+  { nome: "gasóleo", valor: ALVO.gasoleoUn },
+  { nome: "gasolina", valor: ALVO.gasolinaUn },
+  { nome: "inflação", valor: ALVO.inflacao },
+  { nome: "desemprego", valor: ALVO.desemprego },
 ];
 
 test.describe("o bairro — a geometria (veredicto do design, P1)", () => {
@@ -178,8 +171,12 @@ test.describe("o bairro — o que o mapa mostra", () => {
   test("os marcadores mostram os valores de data/", async ({ page }) => {
     await page.goto("/");
     const texto = await page.locator(".b-mundo").innerText();
-    for (const { nome, padrao } of ESPERADOS)
-      expect(texto, `falta o valor de ${nome} no mapa`).toMatch(padrao);
+    for (const { nome, valor } of ESPERADOS) {
+      // o «—» é o fallback de falta de dado: aceitá-lo seria aceitar um
+      // pack com a série em baixo sem o teste dizer nada
+      expect(valor, `a série de ${nome} não está no pack`).not.toBe("—");
+      expect(texto, `falta o valor de ${nome} no mapa`).toContain(valor);
+    }
   });
 
   test("sem JavaScript: os 13 marcadores e os onze edifícios estão no HTML", async ({
@@ -196,8 +193,10 @@ test.describe("o bairro — o que o mapa mostra", () => {
     await expect(p.locator(".b-mundo .ed")).toHaveCount(11);
     await expect(p.locator(".b-mundo .pin")).toHaveCount(13);
     const texto = await p.locator(".b-mundo").innerText();
-    expect(texto).toMatch(/1 500|1\u202f500/);
-    expect(texto).toMatch(/23,75/);
+    // os mesmos valores do marcador, tirados do pack — e não «1 500» e
+    // «23,75» escritos à mão, que só aguentavam enquanto a lei não mexesse
+    expect(texto).toContain(ALVO.salario);
+    expect(texto).toContain(ALVO.tsu);
     await ctx.close();
   });
 

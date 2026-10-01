@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { MUNDO } from "./iso";
 import { ESCD, HP, JM, MAPA, TERRENO, edificioIso, eletricoIso, margemGaia, montarMapa, type MarcadoresBairro } from "./planta";
 
 /* Os valores que `dadosBairro()` entrega. São TEXTO JÁ FORMATADO: a planta
@@ -180,6 +181,30 @@ describe("montarMapa", () => {
     expect(m.frente).toContain('id="gRibeira"');
     expect(m.gaia).toContain('class="gaia"');
     expect(m.gaia).toContain("VINHO DO PORTO");
+  });
+
+  it("cada árvore e cada candeeiro assenta dentro da caixa do mundo — nunca no canto (0,0)", () => {
+    // o defeito do jardim: coordenadas de grelha (i, j ≤ ~20) escritas
+    // sem o Pt() davam translate(14.5 7.2) — dentro da caixa, mas no
+    // canto. O mundo só tem peças a centenas de px da origem: a prova é
+    // a distância, não o rectângulo.
+    const todo = m.chao + m.tras + m.frente + m.vida + m.agua + m.gaia + m.ponte.tras + m.ponte.frente;
+    const grupos = [
+      ...todo.matchAll(/<g class="(?:arvore|candeeiro)" transform="translate\((-?[\d.]+) (-?[\d.]+)\)/g),
+    ];
+    expect(grupos.length).toBeGreaterThan(0);
+    for (const g of grupos) {
+      const x = +g[1];
+      const y = +g[2];
+      expect(x, `x=${x} fora da caixa do mundo`).toBeGreaterThanOrEqual(MUNDO.x);
+      expect(x, `x=${x} fora da caixa do mundo`).toBeLessThanOrEqual(MUNDO.x + MUNDO.w);
+      expect(y, `y=${y} fora da caixa do mundo`).toBeGreaterThanOrEqual(MUNDO.y);
+      expect(y, `y=${y} fora da caixa do mundo`).toBeLessThanOrEqual(MUNDO.y + MUNDO.h);
+      expect(
+        Math.hypot(x, y),
+        `translate(${x} ${y}) é coordenada de grelha sem Pt()`
+      ).toBeGreaterThan(150);
+    }
   });
 
   it("nada do mapa passa dos limites que o protótipo define", () => {
