@@ -495,8 +495,17 @@ três falhavam no main antes do conserto (127,9 KB; mapa no flight). A
 mensagem do gate aponta o dedo a quem voltar a passar HTML grande por
 prop.
 
-Não se fez (fora de âmbito): o aparo fino de coordenadas — fica para um
-commit separado com diff de pixels, como o dono condicionou.
+**O aparo fino de coordenadas tentou-se e NÃO ENTRA** (PR #28, fechado
+sem fundir): a `f1` passou a inteiro e uma rede final arredondava tudo o
+que escapava — o mapa perdia 7,9 KB gzip. A prova de pixels correcta
+(main vs. aparo, 1440/390, dia/noite, 1×/zoom 8×) mostrou **nenhum fio
+de luz** mas deslocação sub-píxel das arestas em todo o lado — no
+telemóvel (escala 0,48) meio píxel do mundo é um píxel inteiro no ecrã e
+34 % dos píxeis diferem. A condição «diff limpo ou não entra» falhou: a
+décima fica. Nota de método para a próxima: a primeira prova veio
+«limpa» porque a captura do «depois» correu contra a build antiga — as
+duas builds têm de estar servidas de sítios distintos, e o `data-x/y/w`
+dos pins é medida da câmara, não desenho.
 
 ## P2a–P2c · As cenas
 
