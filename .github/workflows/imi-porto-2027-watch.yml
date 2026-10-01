@@ -1,0 +1,120 @@
+name: vigilância — IMI Familiar do Porto (deliberação de taxas 2027)
+
+on:
+  schedule:
+    # segundas-feiras de novembro, 07:23 UTC (08:23 em Lisboa) — 1×/semana
+    # enquanto a proposta do Executivo costuma entrar
+    - cron: "23 7 * 11 1"
+    # segundas e quintas de dezembro — a deliberação de taxas aprova-se em
+    # sessão ordinária de dezembro (2025: 19-12) e o art. 112.º n.º 14 do CIMI
+    # manda comunicar à AT até 31/12 para vigorar no ano seguinte
+    - cron: "23 7 * 12 1,4"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: vigilancia-imi-porto-2027
+  cancel-in-progress: false
+
+jobs:
+  vigiar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      # CLI sai: 0 = ok (nada de novo) · 2 = ALARME (documento novo da AM)
+      # · 1 = falha honesta (rede/página mudou)
+      - name: Consultar as deliberações da AM do Porto
+        id: vigilia
+        run: |
+          set +e
+          npx tsx scripts/ingest/imi-porto-2027-cli.ts | tee /tmp/imi-porto-saida.txt
+          code=${PIPESTATUS[0]}
+          echo "codigo=$code" >> "$GITHUB_OUTPUT"
+          if [ "$code" = "2" ]; then echo "alarme=true" >> "$GITHUB_OUTPUT"; fi
+          exit 0
+
+      - name: Commit do estado da vigilância
+        if: steps.vigilia.outputs.codigo != '1'
+        run: |
+          git config user.name "bruto-bot"
+          git config user.email "bot@bruto.local"
+          git add data/meta/imi-porto-2027-vigilia.json
+          git diff --staged --quiet || git commit -m "vigilancia: estado IMI Porto 2027 $(date -u +%Y-%m-%d)"
+          git pull --rebase origin main
+          git push
+
+      - name: Abrir/atualizar alarme em issue
+        if: steps.vigilia.outputs.alarme == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const titulo = "IMI Porto 2027: documento novo da Assembleia Municipal";
+            const { data: abertas } = await github.rest.issues.listForRepo({
+              owner, repo, state: "open", labels: "dados",
+            });
+            const corpo = [
+              "Surgiu documento novo nas páginas de deliberações da AM do Porto",
+              "(minutas / propostas / recomendações). Entre novembro e dezembro,",
+              "é aí que entra a fixação das taxas do IMI 2027 — e, se a AM seguir",
+              "a recomendação NUD/289978/2026/CMP (2026-04-27), os escalões",
+              "máximos do IMI Familiar, 30/70/140 €.",
+              "",
+              "Abrir `docs/VIGILANCIA-IMI-PORTO-2027.md` e fazer a checklist:",
+              "abrir o PDF, procurar o ponto «fixação das taxas do IMI», e se a",
+              "deliberação estiver lá, criar `data/fiscal/imi-2027.json` conforme",
+              "a secção «O que atualizar no imi-2027.json». Prazo legal de",
+              "comunicação à AT: **31 de dezembro** (art. 112.º n.º 14 do CIMI).",
+              "",
+              "Estado: `data/meta/imi-porto-2027-vigilia.json` (último commit da vigilância).",
+            ].join("\n");
+            const existente = abertas.find((i) => i.title.startsWith("IMI Porto 2027"));
+            if (existente) {
+              await github.rest.issues.createComment({ owner, repo, issue_number: existente.number, body: corpo });
+            } else {
+              await github.rest.issues.create({ owner, repo, title: titulo, labels: ["dados"], body: corpo });
+            }
+
+      - name: Registar falha honesta em issue
+        if: steps.vigilia.outputs.codigo == '1'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const titulo = "Vigilância IMI Porto 2027 falhou — cm-porto.pt indisponível";
+            const { data: abertas } = await github.rest.issues.listForRepo({
+              owner, repo, state: "open", labels: "dados",
+            });
+            const corpo = "A consulta às páginas de deliberações da CM Porto falhou por indisponibilidade ou mudança de estrutura. É falha honesta: NÃO significa que não haja deliberação. Repetir `npx tsx scripts/ingest/imi-porto-2027-cli.ts` mais tarde ou verificar à mão em https://www.cm-porto.pt/deliberacoes-minutas e https://www.cm-porto.pt/deliberacoes-propostas .";
+            const existente = abertas.find((i) => i.title.startsWith("Vigilância IMI Porto 2027 falhou"));
+            if (existente) {
+              await github.rest.issues.createComment({ owner, repo, issue_number: existente.number, body: corpo });
+            } else {
+              await github.rest.issues.create({ owner, repo, title: titulo, labels: ["dados"], body: corpo });
+            }
+
+      - name: Fechar issues de falha quando a consulta volta a correr bem
+        if: steps.vigilia.outputs.codigo != '1'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const { data: abertas } = await github.rest.issues.listForRepo({
+              owner, repo, state: "open", labels: "dados",
+            });
+            for (const i of abertas.filter((i) => i.title.startsWith("Vigilância IMI Porto 2027 falhou"))) {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: i.number,
+                body: "Consulta ao cm-porto.pt voltou a correr bem — fecho automático.",
+              });
+              await github.rest.issues.update({ owner, repo, issue_number: i.number, state: "closed" });
+            }
