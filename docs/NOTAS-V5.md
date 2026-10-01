@@ -305,6 +305,75 @@ passam. Está anotado em `docs/PACK-V5-PRODUCAO.md` §P1-5.
 - Ressalva de ambiente: o build foi validado com `--webpack` (o
   `node_modules` é um symlink e o Turbopack recusa-o). O CI usa Turbopack.
 
+### Hotfix P1 — o veredicto do design, e o mapa publicado estava partido
+
+O P1 foi para a main (via PR, autorizado pelo dono) e o deploy correu. A
+auditoria de design ao mapa publicado devolveu **NÃO ACEITE**, com três
+bloqueantes: as camadas do mapa empilhavam em fluxo, o CSS de interacção
+estava escrito todo com classes que não existem no HTML, e o e2e não
+media geometria. Nada disto apanhavam os testes antigos — passavam todos
+sobre uma página de ~20 000px de altura. Este hotfix
+(`v5/hotfix-p1-rebase`, sobre o `fae9ce8`) é a correcção.
+
+**1 · O empilhamento.** `bairro.css` nunca recebeu o
+`.b-camada { position: absolute }` — os oito SVG de 3600×2500 seguiam o
+fluxo do documento, um debaixo do outro (o marcador da TSU ficava a
+y≈10 800). O fix traz também
+`#b-cFundo > *, #b-cFrente > * { pointer-events: visiblePainted }`, sem o
+qual as camadas interiores comiam o rato. (A primeira versão pôs o
+`visiblePainted` em `#b-cA`/`#b-cB`, que não existem no HTML gerado: o
+hover dos edifícios morreu, e a medição no browser apanhou-o antes do
+commit.)
+
+**2 · As classes CSS↔HTML.** O CSS escrevia `.b-ed`, `.b-pin`,
+`.b-sombra-d`, `.pin.b-on`, `.b-amb-off`…; o HTML usa `ed`, `pin`,
+`sombra-d`, `pin on`, `amb-off` — sem o prefixo. 16 seletores
+renomados; os keyframes `b-*` ficam, esses são legítimos. Para isto não
+voltar a acontecer, o novo `src/app/_bairro/bairro-css.test.ts` varre os
+seletores de classe do CSS e exige que cada um exista no HTML gerado, no
+código cliente, no conjunto `ESTADOS` ou na allowlist `FUTURO_P1` — as
+classes dos blocos de P2/P3 (painel do cartão, cena, cartas) ainda não
+têm HTML; saem da allowlist quando chegarem.
+
+**3 · O e2e passa a medir geometria.** Cinco testes novos em
+`bairro.spec.ts`: as 8 camadas no mesmo y (a 1440 e a 375), altura do
+documento <4000px, o pin da Fábrica dentro da janela no desktop e no
+telemóvel, e o hover a levantar o edifício. Detalhe que custou uma ronda:
+o CSS levanta os **filhos** de `.ed`, não o `.ed` — medir o próprio
+grupo nunca muda; o teste compara a caixa do `.ed > *` antes/depois do
+hover.
+
+**As quatro decisões do veredicto, aplicadas:**
+
+- **Tema claro por omissão.** `data-theme="light"` no JSX e no
+  `themeInit`. A armadilha estava no `ThemeToggle.tsx`: o
+  `useLayoutEffect` tinha fallback `?? "dark"` — na hidratação flipava o
+  atributo e as transições Tailwind do cabeçalho disparavam em carga. Era
+  esta a causa da falha e2e que se arrastava. Fallback agora `light`;
+  comentário M-16 actualizado.
+- **O interruptor sai da home.** Novo `InterruptorDeTema.tsx` (cliente;
+  `usePathname() === "/"` devolve `null`). O `SiteHeader` mantém-se
+  servidor: pôr `"use client"` nele quebra o build — `loadFontes()` lê o
+  sistema de ficheiros.
+- **Contraste.** A isenção do `.b-mundo` fica restrita a fora dos pins
+  (`el.closest(".b-mundo") && !el.closest(".pin")`); o `addStyleTag` que
+  matava transições no teste de contraste saiu — escondia o problema do
+  tema.
+- **Transição de tema.** Só no bloco `html[data-theme-anim] body *`
+  (~linha 3706), posto pelo toggle ao clicar (400ms), nunca no load. A
+  regra `body { transition }` que eu tinha acrescentado foi removida:
+  era duplicada e disparava em carga.
+
+**Não bloqueia (fica para P4):** o enquadramento desktop corta o marcador
+mais alto; o HTML da home nos 130,8 KB gzip provisórios.
+
+**Confirmação local sobre o `fae9ce8`:** 618 testes unitários verdes,
+213 e2e verdes (build `--webpack`, porta 3199), typecheck e lint limpos,
+`validate:data` 74 séries em dia, orçamento JS da home 187,9 KB gzip
+(limite 350). Medição directa no browser: 8 camadas no mesmo y, 13 pins
+na faixa 452–876, altura do documento 1810px, violadores de contraste no
+load: 0.
+
 ## P2a–P2c · As cenas
 
 _(por preencher — toda a copy das onze cenas é PROPOSTA)_

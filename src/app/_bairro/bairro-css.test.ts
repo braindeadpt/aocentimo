@@ -1,0 +1,136 @@
+import { readFileSync } from "fs";
+import { join } from "path";
+import { describe, it, expect } from "vitest";
+import { mundoBairro } from "@/lib/bairro/mundo";
+import { montarMapa, type MarcadoresBairro } from "@/lib/bairro/planta";
+
+/**
+ * O CSS do bairro contra o HTML que o servidor gera (P1, veredicto do
+ * design).
+ *
+ * O hotfix da P1 nasceu aqui: o CSS escrevia `.b-ed`, `.b-pin`,
+ * `.b-sombra-d`… e o HTML gerado usava `ed`, `pin`, `sombra-d` — cada
+ * regra apontava ao lado e NADA aplicava. Passava nos testes porque eles
+ * liam texto e não geometria; no site publicado as sombras não se
+ * apagavam, os edifícios não levantavam ao passar e os marcadores não
+ * cresciam.
+ *
+ * Este teste lê o `bairro.css` como texto, tira todos os seletores e
+ * exige que cada classe `b-…` exista (a) no HTML que o servidor gera,
+ * (b) no código do cliente, ou (c) na lista de classes de ESTADO — que
+ * são postas por JavaScript e por isso não estão no HTML estático.
+ *
+ * Os `@keyframes` têm nomes `b-*` legítimos que não são classes; são
+ * excluídos antes da análise.
+ */
+
+const CSS = readFileSync(
+  join(process.cwd(), "src/app/_bairro/bairro.css"),
+  "utf8"
+);
+
+/** As classes de estado — postas por JS, nunca no HTML do servidor. */
+const ESTADOS = new Set([
+  "b-on", // marcador aceso (cartão aberto)
+  "b-ativo", // edifício aberto
+  "b-arrasto", // a câmara está a ser arrastada
+  "b-fim-tarde", // hora do dia
+  "b-noite", // hora do dia
+  "b-repinta", // a câmara pede pintura nova à escala
+  "b-sobe", // as luzes sobem com o edifício focado
+]);
+
+/**
+ * O CSS de blocos que AINDA NÃO têm JSX — chegam em P1-3 (as cenas, o
+ * painel do cartão) e P1-4 (as cartas). O pack manda escrever o contrato
+ * visual do protótipo em bloco; este teste é o que garante que não
+ * envelhece sem ninguém dar por isso: quando o JSX chegar, estas classes
+ * saem daqui, e se um bloco for entretanto abandonado o teste continua a
+ * apontar-lhe.
+ */
+const FUTURO_P1 = new Set([
+  // o painel do cartão e a cena (P1-3)
+  "b-painel", "b-quem", "b-fala", "b-acoes", "b-fechar", "b-fonte",
+  "b-btn", "b-claro", "b-cena", "b-cena-arte", "b-cena-texto", "b-confirma",
+  // as cartas (P1-4)
+  "b-cartas", "b-fundo-carta", "b-papel", "b-aprende", "b-logo",
+]);
+/** O HTML completo que o servidor gera, com marcadores de mentira. */
+function htmlGerado(): string {
+  const D: MarcadoresBairro = {
+    salario: "1 500 €", tsu: "23,75 %", irs: "168 €", liquido: "1 167 €",
+    cabaz: "+35 %", cafes: "+47 %", euribor: "2,95 %", ca: "2,50 %",
+    gasoleo: "2,181", gasolina: "2,097",
+    gasoleoUn: "2,181\u202F€/L", gasolinaUn: "2,097\u202F€/L",
+    inflacao: "+3,6 %", desemprego: "5,7 %",
+  } as unknown as MarcadoresBairro;
+  const { html, css } = mundoBairro(montarMapa(D));
+  return html + css;
+}
+
+/** Todo o código do cliente que põe ou procura classes (JSX incluído). */
+function codigoCliente(): string {
+  return (
+    readFileSync(join(process.cwd(), "src/app/_bairro/Bairro.tsx"), "utf8") +
+    readFileSync(join(process.cwd(), "src/app/_bairro/HomeBairro.tsx"), "utf8") +
+    readFileSync(join(process.cwd(), "src/app/_bairro/camara.ts"), "utf8") +
+    readFileSync(join(process.cwd(), "src/app/_bairro/ambiente.ts"), "utf8")
+  );
+}
+
+/** As classes `b-…` referenciadas em seletores do CSS (sem keyframes). */
+function classesDoCss(): string[] {
+  const semKeyframes = CSS.replace(
+    /@keyframes\s+[\w-]+\s*\{(?:[^{}]|\{[^{}]*\})*\}/g,
+    ""
+  );
+  return [...new Set(semKeyframes.match(/\.((?:b-)?[a-zA-Z][\w-]*)/g) ?? [])]
+    .map((c) => c.slice(1))
+    .filter((c) => c.startsWith("b-"));
+}
+
+describe("o CSS do bairro só usa classes que existem", () => {
+  const html = htmlGerado();
+  const codigo = codigoCliente();
+
+  it("cada classe b-… do CSS existe no HTML, no código ou é um estado", () => {
+    const semLar: string[] = [];
+    for (const classe of classesDoCss()) {
+      const noHtml = html.includes(classe);
+      const noCodigo = codigo.includes(classe);
+      const eEstado = ESTADOS.has(classe);
+      const eFuturo = FUTURO_P1.has(classe);
+      if (!noHtml && !noCodigo && !eEstado && !eFuturo) semLar.push(classe);
+    }
+    expect(
+      semLar,
+      `seletores do bairro.css sem nenhum alvo real: ${semLar.join(", ")}`
+    ).toEqual([]);
+  });
+
+  it("as classes de estrutura não levam b- no HTML nem o CSS espera que levem", () => {
+    // o veredicto: o CSS escrevia .b-ed onde o HTML usa .ed. Se alguém
+    // renomear as classes no HTML para as alinhar com o CSS antigo (ou
+    // vice-versa), este teste diz que lado ficou desalinhado.
+    const htmlClasses = new Set(
+      [...html.matchAll(/class="([^"]+)"/g)].flatMap((m) => m[1].split(/\s+/))
+    );
+    // estas NÃO podem existir no HTML gerado — são os fantasmas do hotfix
+    for (const fantasma of ["b-ed", "b-pin", "b-pin-corpo", "b-sombra-d", "b-miudo"]) {
+      expect(
+        htmlClasses.has(fantasma),
+        `"${fantasma}" apareceu no HTML: o CSS e o HTML deixaram de falar a mesma língua`
+      ).toBe(false);
+    }
+  });
+});
+
+describe("o posicionamento das camadas (o outro defeito do hotfix)", () => {
+  it("o CSS declara .b-camada como absolute — senão as camadas empilham-se em fluxo", () => {
+    expect(CSS).toMatch(/\.b-camada\s*\{[^}]*position:\s*absolute/);
+  });
+
+  it("e o .b-solto também — as peças soltas têm left/top inline", () => {
+    expect(CSS).toMatch(/\.b-solto\s*\{[^}]*position:\s*absolute/);
+  });
+});

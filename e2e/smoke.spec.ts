@@ -155,18 +155,17 @@ const AA_EVAL = `(() => {
   };
   const falhas = [];
   for (const el of document.body.querySelectorAll("*")) {
-    // O mapa é uma ILUSTRAÇÃO (o desenho isométrico do bairro), não
+    // O DESENHO do mapa é uma ILUSTRAÇÃO (isométrico do bairro), não
     // interface: os letreiros pintados nos edifícios são parte da imagem,
     // e a WCAG 1.4.3 isenta o «texto que faz parte de uma imagem que
-    // contém outro conteúdo visual significativo». A informação que eles
-    // carregam continua acessível — cada edifício tem aria-label, e os
-    // valores dos marcadores são conferidos em bairro.spec.ts.
+    // contém outro conteúdo visual significativo». Medir o letreiro de um
+    // telhado contra o telhado ao lado dava «1,1:1» e reprovava a página
+    // por causa de decalques.
     //
-    // Medir o letreiro de um telhado contra o telhado ao lado dava
-    // «1,1:1» e reprovava a página inteira por causa de decalques. O que
-    // este teste tem de apanhar é texto de INTERFACE ilegível — o
-    // contraste do selo foi um defeito real apanhado por aqui.
-    if (el.closest(".b-mundo")) continue;
+    // Os MARCADORES não são desenhado: são dados. Ficam MEDIDOS — e o
+    // veredicto do design sobre a P1 foi claro nisto. Um valor ilegível
+    // no mapa é um número que o utilizador não consegue ler.
+    if (el.closest(".b-mundo") && !el.closest(".pin")) continue;
     const temTexto = [...el.childNodes].some(n => n.nodeType === 3 && (n.textContent ?? "").trim());
     if (!temTexto) continue;
     const cs = getComputedStyle(el);
@@ -197,10 +196,6 @@ test("todas as rotas cumprem contraste AA nos dois temas", async ({
   await page.emulateMedia({ reducedMotion: "reduce" });
   for (const path of rotasDoSite()) {
     await page.goto(path, { waitUntil: "domcontentloaded" });
-    // depois de cada `goto`: a folha não sobrevive à navegação
-    await page.addStyleTag({
-      content: "*,*::before,*::after{transition:none !important;animation:none !important}",
-    });
     for (const tema of ["light", "dark"]) {
       await page.evaluate(
         (t) => (document.documentElement.dataset.theme = t),

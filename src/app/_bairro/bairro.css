@@ -84,6 +84,42 @@
   transform-origin: 0 0;
   transform: translate(-36.9cqw, -31.41cqw) scale(0.6491);
 }
+/* AS CAMADAS EMPILHAM-SE AQUI, e não em fluxo. Cada `.b-camada` é um SVG
+   do tamanho do mundo inteiro (3600×2500): em `position: static` — o
+   default, e o que estava — oito SVGs desse tamanho escrevem-se um por
+   baixo do outro e a página teria ~20 000 px de altura, com os marcadores
+   lá ao fundo. Foi assim que a P1 chegou ao ar: o meu e2e lia TEXTO e o
+   screenshot mostrava a fila de trás, por isso «passava» sem o bairro se
+   ver. Em `absolute` com origem comum, todas as camadas ocupam a mesma
+   caixa e compõem-se na ordem do DOM, que é a ordem do protótipo.
+
+   `pointer-events: none` na camada deixa o clique passar; os grupos de
+   conteúdo (`b-cFundo`, onde estão os edifícios do fundo, e `b-cFrente`,
+   a Ribeira) repõem `visiblePainted` nos seus filhos — é lá que vivem os
+   `.ed` que se focam e se carregam. A primeira versão deste hotfix
+   repôs-no nos grupos errados (`b-cA`/`b-cB`, quem anda) e o rato
+   atravessava os edifícios sem os tocar. */
+[data-pele="v5"] .b-camada {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  overflow: visible;
+  will-change: transform;
+  pointer-events: none;
+}
+[data-pele="v5"] #b-cFundo > *,
+[data-pele="v5"] #b-cFrente > * {
+  pointer-events: visiblePainted;
+}
+/* o mesmo para as peças soltas (barcos, metro, nuvens): têm `left/top`
+   inline a posicioná-las no mundo — em static isso empilhava-as também */
+[data-pele="v5"] .b-solto {
+  position: absolute;
+  overflow: visible;
+  pointer-events: none;
+  will-change: transform, translate, opacity;
+}
 /* No telemóvel o protótipo começa perto da fábrica e da avenida, não no
    bairro inteiro: muda o centro e a escala. */
 @media (max-width: 700px) {
@@ -93,18 +129,18 @@
 }
 
 /* ——— o céu, o sol, a lua, as janelas acesas ——— */
-[data-pele="v5"] .b-sombra-d {
+[data-pele="v5"] .sombra-d {
   transition: opacity 1.2s;
 }
-[data-pele="v5"] .b-sombra-t {
+[data-pele="v5"] .sombra-t {
   opacity: 0;
   transition: opacity 1.2s;
 }
-[data-pele="v5"] .b-fim-tarde .b-sombra-t {
+[data-pele="v5"] .b-fim-tarde .sombra-t {
   opacity: 1;
 }
-[data-pele="v5"] .b-fim-tarde .b-sombra-d,
-[data-pele="v5"] .b-noite .b-sombra-d {
+[data-pele="v5"] .b-fim-tarde .sombra-d,
+[data-pele="v5"] .b-noite .sombra-d {
   opacity: 0;
 }
 [data-pele="v5"] .sol,
@@ -164,10 +200,10 @@
   background: #ff8a3d;
 }
 
-[data-pele="v5"] .b-luz {
+[data-pele="v5"] .luz {
   transition: opacity 1.2s;
 }
-[data-pele="v5"] .b-noite .b-luz {
+[data-pele="v5"] .b-noite .luz {
   opacity: 1;
 }
 /* as janelas que se acendem à noite; as «cedo» acendem antes das outras */
@@ -191,7 +227,7 @@
 }
 
 /* ——— o movimento ambiente, em CSS (não custa JS) ——— */
-[data-pele="v5"] .b-jorro {
+[data-pele="v5"] .jorro {
   stroke-dasharray: 4 3;
   animation: b-jorro 0.5s linear infinite;
 }
@@ -200,15 +236,15 @@
     stroke-dashoffset: -7;
   }
 }
-[data-pele="v5"] .roupa .b-peca {
+[data-pele="v5"] .roupa .peca {
   animation: b-vento 2.6s ease-in-out infinite;
   transform-box: fill-box;
   transform-origin: 50% 0%;
 }
-[data-pele="v5"] .roupa .b-p2 {
+[data-pele="v5"] .roupa .p2 {
   animation-delay: -0.8s;
 }
-[data-pele="v5"] .roupa .b-p3 {
+[data-pele="v5"] .roupa .p3 {
   animation-delay: -1.6s;
 }
 @keyframes b-vento {
@@ -220,13 +256,13 @@
     transform: rotate(10deg);
   }
 }
-[data-pele="v5"] .b-bandeira {
+[data-pele="v5"] .bandeira {
   animation: b-vento 2.2s ease-in-out infinite;
 }
-[data-pele="v5"] .b-bandeira:nth-child(odd) {
+[data-pele="v5"] .bandeira:nth-child(odd) {
   animation-delay: -1.1s;
 }
-[data-pele="v5"] .gato .b-cauda {
+[data-pele="v5"] .gato .cauda {
   animation: b-cauda 3s ease-in-out infinite;
   transform-box: fill-box;
   transform-origin: 0% 100%;
@@ -240,7 +276,7 @@
     transform: rotate(-26deg);
   }
 }
-[data-pele="v5"] .b-bandeira-pt {
+[data-pele="v5"] .bandeira-pt {
   animation: b-ondula 2.4s ease-in-out infinite;
   transform-box: fill-box;
   transform-origin: 0% 50%;
@@ -254,15 +290,15 @@
     transform: skewY(-7deg) scaleX(0.94);
   }
 }
-[data-pele="v5"] .b-bandeira-fcp {
+[data-pele="v5"] .bandeira-fcp {
   animation: b-ondula 2.8s ease-in-out infinite;
   transform-box: fill-box;
   transform-origin: 50% 0%;
 }
-[data-pele="v5"] .b-balao-sj {
+[data-pele="v5"] .balao-sj {
   animation: b-balanca 3.2s ease-in-out infinite;
 }
-[data-pele="v5"] .b-balao-sj:nth-child(odd) {
+[data-pele="v5"] .balao-sj:nth-child(odd) {
   animation-delay: -1.6s;
 }
 @keyframes b-balanca {
@@ -291,30 +327,30 @@
   }
 }
 /* de noite não há miúdos na ponte nem nadadores: fecha-se às sete */
-[data-pele="v5"] .b-noite .b-miudo,
+[data-pele="v5"] .b-noite .miudo,
 [data-pele="v5"] .b-noite .b-nadador {
   display: none;
 }
 
 /* ——— os edifícios e os marcadores ——— */
-[data-pele="v5"] .b-ed {
+[data-pele="v5"] .ed {
   cursor: pointer;
   outline: none;
 }
-[data-pele="v5"] .b-ed > * {
+[data-pele="v5"] .ed > * {
   transition: transform 0.25s cubic-bezier(0.3, 1.6, 0.5, 1);
 }
-[data-pele="v5"] .b-ed:hover > *,
-[data-pele="v5"] .b-ed:focus-visible > *,
-[data-pele="v5"] .b-ed.b-ativo > * {
+[data-pele="v5"] .ed:hover > *,
+[data-pele="v5"] .ed:focus-visible > *,
+[data-pele="v5"] .ed.b-ativo > * {
   transform: translateY(-7px);
 }
-[data-pele="v5"] .b-pin .b-pin-corpo {
+[data-pele="v5"] .pin .pin-corpo {
   transition: transform 0.25s cubic-bezier(0.3, 1.6, 0.5, 1);
   transform-box: fill-box;
   transform-origin: 50% 100%;
 }
-[data-pele="v5"] .b-pin.b-on .b-pin-corpo {
+[data-pele="v5"] .pin.on .pin-corpo {
   transform: scale(1.25);
 }
 
@@ -870,11 +906,11 @@
   }
 }
 
-/* O PAUSA AMBIENTE: `PausaAmbiente` põe `.b-amb-off` no embrulho quando o
+/* O PAUSA AMBIENTE: `PausaAmbiente` põe `.amb-off` no embrulho quando o
    mapa sai do ecrã ou o separador fica escondido. O mapa pára de
    anunciar fotogramas que ninguém vê. */
-[data-pele="v5"] .b-amb-off *,
-[data-pele="v5"] .b-amb-off *::before,
-[data-pele="v5"] .b-amb-off *::after {
+[data-pele="v5"] .amb-off *,
+[data-pele="v5"] .amb-off *::before,
+[data-pele="v5"] .amb-off *::after {
   animation-play-state: paused !important;
 }

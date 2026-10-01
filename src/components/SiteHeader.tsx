@@ -3,7 +3,7 @@ import { loadFontes } from "@/lib/data";
 import { fmtData } from "@/lib/format";
 import { m, t } from "@/lib/messages";
 import { Logo } from "@/components/Logo";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { InterruptorDeTema } from "@/components/InterruptorDeTema";
 import { SiteNav } from "@/components/SiteNav";
 
 export function SiteHeader() {
@@ -22,7 +22,13 @@ export function SiteHeader() {
             <span className="kicker-sm hidden sm:block">
               {serieAte ? t(m.brand.dataUntil, { date: fmtData(serieAte) }) : m.brand.edition}
             </span>
-            <ThemeToggle />
+            {/* O interruptor de tema esconde-se na home (veredicto do
+                design sobre a P1): a home do bairro é uma página de papel
+                e não tem tema — um botão que não muda nada à vista é uma
+                promessa falsa. Volta em P3, quando a pele V5 chegar às
+                outras rotas. O <InterruptorDeTema> é cliente porque sabe
+                em que rota está; o header de servidor não pode. */}
+            <InterruptorDeTema />
           </span>
         </div>
       </div>
