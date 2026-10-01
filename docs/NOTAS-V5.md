@@ -423,6 +423,46 @@ Com 1+2: **~73 KB gzip**, dentro dos 80 KB do pack (§4), sem cortar um
 milímetro de desenho. A decisão é do dono; o medidor fica no repo para
 confirmar cada passo.
 
+### P4 — o conserto do flight: a home deixou de ser o mapa duas vezes
+
+O plano do §«O HTML da home medido» executou-se
+(`v5/p4-flight`): o `<Bairro>` (cliente) passa a CALCULAR o mapa —
+`mundoBairro(montarMapa(marcadores))` num `useMemo` — em vez de o
+receber pronto por prop. O servidor só manda os 14 números já formatados
+(`d.marcadores`); o `reflexo` e o `<style>` das animações (metro/barcos)
+saem da mesma conta, dentro do componente. No build estático o SSR corre
+esse código NO SERVIDOR: o mapa segue no HTML sem JavaScript (e2e sem JS
+verde, 13 pins + 11 edifícios), e na hidratação o browser repete a
+mesma conta determinística — zero avisos de hidratação (e2e novo).
+
+**Os números** (`scripts/_dieta-html.mjs`, antes → depois):
+
+| | antes | depois |
+|---|---|---|
+| HTML da home (gzip) | 127,9 KB | **62,8 KB** (−65,1) |
+| payload RSC (gzip) | ≈53 KB com o mapa | **8,6 KB, sem o mapa** |
+| JS inicial da home | 187,9 KB | 211,0 KB (+23,1; limite 350) |
+| construção do mapa | 0 ms (não corria) | 4,89 ms ×4 CPU ≈ **19,6 ms** (≤30: sem idle) |
+| load→pintura estável (CPU 4×) | — | 942 ms, zero avisos |
+
+O custo do JS (+23 KB gzip) são os builders a entrar no cliente —
+`planta/iso/mundo/personagens`, como o plano previa. A troca: −65 KB de
+HTML por +23 KB de JS, e a promessa «sem JS vê-se o bairro inteiro»
+intacta. A regra dos 30 ms do dono mediu-se com
+`scripts/_tempo-mundo.mjs` (os builders são puros: a mesma engine V8 de
+Node dá o número do browser) — não chegou perto do limite, não houve
+necessidade de `requestIdleCallback`.
+
+**Vigilância nova:** `scripts/_gate-html.mjs` corre no CI depois do
+build (e `gate-html.test.ts` repete-o em Vitest): o HTML ≤80 KB gzip, o
+payload RSC SEM `b-camada`, 13 pins + 11 edifícios no HTML estático. Os
+três falhavam no main antes do conserto (127,9 KB; mapa no flight). A
+mensagem do gate aponta o dedo a quem voltar a passar HTML grande por
+prop.
+
+Não se fez (fora de âmbito): o aparo fino de coordenadas — fica para um
+commit separado com diff de pixels, como o dono condicionou.
+
 ## P2a–P2c · As cenas
 
 _(por preencher — toda a copy das onze cenas é PROPOSTA)_

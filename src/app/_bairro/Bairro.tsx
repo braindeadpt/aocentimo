@@ -29,6 +29,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PausaAmbiente } from "@/components/PausaAmbiente";
 import { Camera, arrumarPinos, type Enquadramentos, type MarcadorVivo } from "./camara";
 import { ligarAmbiente } from "./ambiente";
+import { mundoBairro, reflexos } from "@/lib/bairro/mundo";
+import { montarMapa, type MarcadoresBairro } from "@/lib/bairro/planta";
 import "./bairro.css";
 
 /** As três horas do dia. */
@@ -48,10 +50,21 @@ export interface InfoEdificio {
 }
 
 export interface PropsBairro {
-  /** O mapa montado no servidor, pronto a entrar no HTML. */
-  html: string;
-  /** O reflexo no Douro, montado no servidor. */
-  reflexo: string;
+  /**
+   * Os números de hoje, JÁ FORMATADOS pelo servidor (`dadosBairro()`):
+   * é tudo o que este componente precisa para montar o mapa. O desenho
+   * em si é calculado AQUI — antes o html vinha pronto por prop e o
+   * Next embarcava-o no payload de hidratação: o mapa inteiro viajava
+   * duas vezes (DOM + flight), ~53 KB gzip à toa. Os builders são
+   * determinísticos (zero `Math.random`/`Date`), por isso o servidor e
+   * o browser chegam à mesma string sem mismatch.
+   *
+   * Este componente continua a NÃO importar `data/*.json` nem
+   * `messages/pt.json`: o texto formatado chega por prop, como a casa
+   * manda. E no SSR (build estático) é o SERVIDOR que o corre — o mapa
+   * segue no HTML sem JavaScript.
+   */
+  marcadores: MarcadoresBairro;
   /** Os edifícios, com o texto de cada um (PROPOSTA, ver NOTAS-V5.md). */
   edificios: readonly InfoEdificio[];
   /** O que o cartão escreve à última linha. */
@@ -104,8 +117,7 @@ const CLASSE_HORA: Record<Hora, string> = {
 };
 
 export function Bairro({
-  html,
-  reflexo,
+  marcadores,
   edificios,
   entrada,
   horas,
@@ -129,6 +141,16 @@ export function Bairro({
 
   const [hora, setHora] = useState<Hora>(horaInicial);
   const [cartaoAberto, setCartaoAberto] = useState<string | null>(null);
+
+  // O mapa calcula-se aqui (e no servidor, no SSR do build). A mesma
+  // entrada dá sempre a mesma saída — os builders não têm relógio nem
+  // dados nem aleatório — por isso o HTML do servidor e a hidratação
+  // batem certo. `montarMapa` + `mundoBairro` já eram o caminho do
+  // servidor; a fronteira é que os cortava em dois.
+  const { html, css } = useMemo(() => mundoBairro(montarMapa(marcadores)), [marcadores]);
+  const reflexo = useMemo(() => reflexos(montarMapa(marcadores)), [marcadores]);
+
+
 
   // o mapa é grande; não vale a pena refazer a tabela a cada render
   const porId = useMemo(() => new Map(edificios.map((e) => [e.id, e])), [edificios]);
@@ -248,6 +270,10 @@ export function Bairro({
   return (
     <PausaAmbiente>
       <section ref={palcoRef} className={`b-palco ${CLASSE_HORA[hora]}`}>
+        {/* As animações do elétrico/barcos/metro têm coordenadas
+            calculadas (nascem com o mapa) — por isso o <style> vive aqui,
+            dentro do componente que as calcula, e não no servidor. */}
+        <style dangerouslySetInnerHTML={{ __html: css }} />
         <div className="b-janela" ref={janelaRef}>
           <div
             ref={mundoRef}

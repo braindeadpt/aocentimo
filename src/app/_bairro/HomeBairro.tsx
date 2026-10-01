@@ -1,5 +1,4 @@
 import { dadosBairro } from "@/lib/bairro/dados";
-import { mundoBairro, reflexos } from "@/lib/bairro/mundo";
 import { Pcom } from "@/lib/bairro/iso";
 import {
   ENQUADRAMENTOS,
@@ -26,7 +25,6 @@ import { Bairro, type Hora, type InfoEdificio } from "./Bairro";
  */
 export default function HomeBairro() {
   const d = dadosBairro();
-  const { html, css } = mundoBairro(d.mapa);
   const Pt = Pcom(TERRENO);
 
   
@@ -71,7 +69,6 @@ export default function HomeBairro() {
 
   return (
     <div data-pele="v5" className="b5 mx-auto max-w-[1240px] px-5">
-      <style dangerouslySetInnerHTML={{ __html: css }} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
@@ -96,8 +93,7 @@ export default function HomeBairro() {
       </div>
 
       <Bairro
-        html={html}
-        reflexo={reflexos(d.mapa)}
+        marcadores={d.marcadores}
         edificios={edificios}
         entrada={{ entrar: m.bairro.cartao.entrar, breve: m.bairro.cartao.breve }}
         horas={[m.bairro.hora.dia, m.bairro.hora.tarde, m.bairro.hora.noite]}
