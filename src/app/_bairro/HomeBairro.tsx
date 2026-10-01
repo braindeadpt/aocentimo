@@ -1,5 +1,5 @@
 import { dadosBairro } from "@/lib/bairro/dados";
-import { mundoBairro, reflexos } from "@/lib/bairro/mundo";
+import { mundoBairro, pinosDaCamera, reflexos } from "@/lib/bairro/mundo";
 import { Pcom } from "@/lib/bairro/iso";
 import {
   ENQUADRAMENTOS,
@@ -114,6 +114,7 @@ export default function HomeBairro() {
         descricao={m.bairro.mapa.descricao}
         rotuloHora={m.bairro.mapa.rotuloHora}
         enquadramentos={{ perto: [px, py], longe: [lx, ly] }}
+        pinos={pinosDaCamera(d.mapa)}
         coordenadas={PONTOS_ANIMACAO}
         pontos={pontos}
         gaivotas={gaivotas}

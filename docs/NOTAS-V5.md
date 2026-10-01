@@ -423,6 +423,42 @@ Com 1+2: **~73 KB gzip**, dentro dos 80 KB do pack (§4), sem cortar um
 milímetro de desenho. A decisão é do dono; o medidor fica no repo para
 confirmar cada passo.
 
+### Acabamento P1 — o enquadramento inicial medido (desktop cortava o TSU; telemóvel escondia o Euribor)
+
+A re-auditoria a produção deixou dois defeitos de enquadramento, ambos de
+CAUSAS DIFERENTES e ambos de câmara:
+
+- **Desktop:** a cadeia de subidas do `arrumarPinos` empurra o pin da
+  Segurança Social para topo = −172 unidades do mundo — e o
+  `enquadrar()` partia de constantes, sem saber onde estava o tecto.
+  Medido no main: cortado −45,7 px a 1920, −40,1 a 1440, −35,6 a 1280.
+- **Telemóvel:** a vista w=820 centrada no «perto» mostra 9 de 13 pins —
+  e o Banco (Euribor), essencial, fica fora (x=1155 da vista 182–1002).
+
+**O conserto é medir:** a cadeia de arrumação separou-se em duas fases —
+`repartirPinos()` (pura: onde cada âncora VAI ficar) e a escrita no DOM —
+e o novo `vistaInicial()` (puro, exportado) usa as caixas pós-cadeia para
+escolher a vista: no computador, os 13 inteiros com 12 px de folga em
+cima e 2 nos lados; no telemóvel, parte do «perto» do protótipo e alarga
+ATÉ os essenciais (Salário bruto, Chega à conta, Inflação, Euribor)
+caberem — a 390/375 a vista vai a w≈910 (fonte efectiva ~13,7–14,2 px,
+acima dos 11 px exigidos). Um piso de legibilidade impede o alargamento
+de derrubar a fonte abaixo de 11 px (ecrãs intermédios: encaixa só o
+topo, o resto fica ao arrasto). As âncoras viajam do servidor por prop
+(`pinosDaCamera`, 13 objectos pequenos); os `data-x/y/w` do HTML e o
+prop saem da mesma `larguraPin()` (iso.ts) — um número, um sítio.
+
+O enquadramento por omissão do CSS (sem JS) recalculou-se com a MESMA
+`vistaInicial()` — referencial 1440 (desktop) e 375 (telemóvel) — e os
+testes de acoplamento em `mundo.test.ts` conferem CSS↔câmara por ela.
+O fixture dos marcadores actualizou-se para o formato real de hoje
+(«1 500,00 €», não «1 500 €»): as larguras das placas alimentam a cadeia.
+
+e2e nova: 3 viewport de computador (13 pins inteiros, folgas do dono) e
+2 de telemóvel (essenciais dentro, fonte ≥11 px) — falharam os 5 no main
+antes do conserto. **O peso do HTML da home não mudou**: 131,24 KB gzip
+(+0,23 KB, os 13 objectos do prop).
+
 ## P2a–P2c · As cenas
 
 _(por preencher — toda a copy das onze cenas é PROPOSTA)_

@@ -581,8 +581,18 @@ export function nuvem(x: number, y: number, e = 1): string {
  * servem à câmara: é por eles que a etiqueta se mantém de tamanho
  * constante e sem sobreposição quando o mapa é ampliado (P1).
  */
+/**
+ * A largura da placa do marcador, em unidades do mundo. Vive aqui e não
+ * dentro do `pin()` porque a câmara precisa da MESMA conta para arrumar
+ * os marcadores sem se sobreporem (e para saber quanto mede a fila toda
+ * ao enquadrar): um número em dois sítios é um número que um dia diverge.
+ */
+export function larguraPin(rotulo: string, valor: string): number {
+  return Math.max(valor.length * 11.5 + 26, rotulo.length * 6.6 + 26);
+}
+
 export function pin(x: number, y: number, rotulo: string, valor: string, cor = K, fundo = "#fff"): string {
-  const w = Math.max(valor.length * 11.5 + 26, rotulo.length * 6.6 + 26);
+  const w = larguraPin(rotulo, valor);
   return `<g class="pin" data-x="${f1(x)}" data-y="${f1(y)}" data-w="${f1(w + 3)}" transform="translate(${f1(x)} ${f1(y)})"><path class="guia" d="M0 0 V0" stroke="${K}" stroke-width="2" stroke-dasharray="3 3"/><g class="pin-corpo">
     <rect x="${f1(-w / 2 + 3)}" y="-58" width="${f1(w)}" height="48" rx="11" fill="${K}"/>
     <path d="M-7 -16 L0 0 L7 -16 Z" fill="${fundo}" stroke="${K}" stroke-width="2.4" stroke-linejoin="round"/>

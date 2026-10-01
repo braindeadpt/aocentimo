@@ -37,6 +37,26 @@ export interface Enquadramentos {
 /** Os limites por onde a câmara pode passear (do protótipo). */
 export const LIMITES = { x: -300, y: -120, w: 2150, h: 1520 } as const;
 
+/** Um marcador como o servidor o descreve: âncora e largura da placa, em unidades do mundo. */
+export interface PinoPlanta {
+  id: string;
+  x: number;
+  y: number;
+  w: number;
+}
+
+/**
+ * As folgas do enquadramento inicial, em px de ecrã — o critério do dono:
+ * TODOS os marcadores inteiros no desktop com 12 px a mais em cima (é por
+ * cima que a cadeia os empurra, e é lá que cortavam) e 2 px nos outros
+ * lados. São critérios de teste também (`bairro.spec.ts`).
+ */
+export const FOLGA_TOPO = 12;
+export const FOLGA_LADO = 2;
+
+/** Os marcadores que a vista estreita tem de mostrar sempre. */
+export const ESSENCIAIS = new Set(["fabrica", "casa", "quiosque", "banco"]);
+
 /** O rectângulo que a câmara está a ver, em coordenadas do mundo. */
 export interface Vista {
   x: number;
@@ -67,6 +87,7 @@ export class Camera {
   private enquadrado = false;
   private gsap: { to: (alvo: object, vars: object) => unknown } | null = null;
   private enquadramentos: Enquadramentos | null = null;
+  private pinos: PinoPlanta[] = [];
 
   constructor(janela: HTMLElement, mundo: HTMLElement, opts: OpcoesCamera = {}) {
     this.janela = janela;
@@ -77,6 +98,15 @@ export class Camera {
   /** Os dois pontos de enquadramento, calculados no servidor. */
   defEnquadrar(e: Enquadramentos): void {
     this.enquadramentos = e;
+  }
+
+  /**
+   * Os marcadores, em âncoras do mundo — vêm do servidor (`pinosDaCamera`)
+   * porque é lá que se sabe onde os edifícios estão; o browser só sabe a
+   * largura da janela, e é com as duas coisas que o enquadramento se mede.
+   */
+  defPinos(p: PinoPlanta[]): void {
+    this.pinos = p;
   }
 
   /** Liga o GSAP quando ele chega. Sem ele, `ir()` salta em vez de deslizar. */
@@ -286,17 +316,18 @@ export class Camera {
     else this.aplicar();
   }
 
-  /** O enquadramento em si. */
+  /**
+   * O enquadramento em si — POR MEDIÇÃO, não por constantes: primeiro a
+   * cadeia de marcadores é repartida (a mesma conta que a aplicação lhes
+   * vai dar), e só depois se escolhe a vista que a mostra. Foi medir que
+   * faltava: a câmara antiga partia de constantes e o pin da Segurança
+   * Social, empurrado para cima pela cadeia, nascia cortado pelo tecto.
+   */
   enquadrar(): void {
     const e = this.enquadramentos;
-    if (!e) return;
-    if (this.janela.clientWidth < 700) {
-      const [x, y] = e.perto;
-      this.irPara(x, y - 10, 820);
-    } else {
-      const [x, y] = e.longe;
-      this.irPara(x, y, Math.max(1500, 1140 / this.razao()));
-    }
+    if (!e || !this.pinos.length) return;
+    const v = vistaInicial(e, this.janela.clientWidth, this.janela.clientHeight, this.pinos);
+    this.irPara(v.x + v.w / 2, v.y + v.h / 2, v.w);
   }
 
   /** O gesto actual foi um arrasto? Então o click não é um click. */
@@ -332,12 +363,43 @@ export function arrumarPinos(janela: HTMLElement, pinos: readonly MarcadorVivo[]
   const k = pinos.length
     ? Math.min(1.7, Math.max(0.55, pinos[0].g.ownerSVGElement?.viewBox.baseVal.width ?? 1000) / largura)
     : 1;
+
+  // fase 2: escrever — os y já vieram da mesma conta que o enquadramento usou
+  const ys = repartirPinos(
+    pinos.map((p) => ({ id: "", x: p.x, y: p.y, w: p.w })),
+    largura
+  );
+  pinos.forEach((p, i) => {
+    const y = ys[i];
+    p.g.setAttribute(
+      "transform",
+      `translate(${p.x.toFixed(1)} ${y.toFixed(1)}) scale(${k.toFixed(3)})`
+    );
+    // a guia estica-se para o edifício, que fica onde estava
+    if (p.guia) p.guia.setAttribute("d", `M0 0 V${((p.y - y) / k).toFixed(1)}`);
+  });
+}
+
+/**
+ * FASE 1 da arrumação: onde fica a âncora de cada marcador, sem sobre-
+ * posições — a MESMA cadeia de subidas de sempre (de baixo para cima, os
+ * da frente ficam, os de trás sobem de `PASSO` em `PASSO`), agora numa
+ * função pura que o enquadramento também usa: primeiro se calcula onde
+ * os marcadores VÃO ficar, depois se escolhe a vista que os mostra.
+ */
+function repartirPinos(pinos: readonly PinoPlanta[], largura: number): number[] {
+  const k = pinos.length
+    ? Math.min(1.7, Math.max(0.55, MUNDO.w / largura))
+    : 1;
   const alto = 64 * k;
   const folga = 6 * k;
+  const passo = 6 * k;
   const postos: { x: number; y: number; w: number }[] = [];
+  const res = new Array<number>(pinos.length);
 
-  // de baixo para cima: os da frente ficam no sítio, os de trás sobem
-  for (const p of [...pinos].sort((a, b) => b.y - a.y)) {
+  for (const [p, i] of pinos
+    .map((p, i) => [p, i] as const)
+    .sort((a, b) => b[0].y - a[0].y)) {
     let y = p.y;
     const toca = (): boolean =>
       postos.some(
@@ -346,17 +408,126 @@ export function arrumarPinos(janela: HTMLElement, pinos: readonly MarcadorVivo[]
           y > o.y - alto - folga &&
           y - alto - folga < o.y
       );
-    // sobe de 6 em 6 unidades do mundo até caber (nunca mais de 800)
     let guarda = 0;
-    while (toca() && y > p.y - 800 && guarda++ < 200) y -= 6 * k;
+    while (toca() && y > p.y - 800 && guarda++ < 200) y -= passo;
     postos.push({ x: p.x, y, w: p.w });
-    p.g.setAttribute(
-      "transform",
-      `translate(${p.x.toFixed(1)} ${y.toFixed(1)}) scale(${k.toFixed(3)})`
-    );
-    // a guia estica-se para o edifício, que fica onde estava
-    if (p.guia) p.guia.setAttribute("d", `M0 0 V${((p.y - y) / k).toFixed(1)}`);
+    res[i] = y;
   }
+  return res;
+}
+
+/**
+ * O encaixe puro: parte de uma vista candidata e ajusta-a (no x, e a
+ * subir no y) até que todas as caixas fiquem inteiras com as folgas do
+ * dono. Devolve a vista final — sem tocar em nada. Com `podeAlargar` a
+ * falso, a largura fica: desloca-se só o necessário e o que não couber
+ * nos lados fica de fora (o arrasto vai buscá-lo) — é o que se quer
+ * quando alargar derrubaria a fonte abaixo da legibilidade.
+ */
+function encaixaCaixas(
+  v: { x: number; y: number; w: number; h: number },
+  L: number,
+  caixas: { id: string; esq: number; dir: number; topo: number; fundo: number }[],
+  folgaTopo: number,
+  folgaLado: number,
+  podeAlargar = true
+): { x: number; y: number; w: number; h: number } {
+  const r = { ...v };
+  const razao = r.h / r.w;
+  const minEsq = Math.min(...caixas.map((c) => c.esq));
+  const maxDir = Math.max(...caixas.map((c) => c.dir));
+  const minTopo = Math.min(...caixas.map((c) => c.topo));
+  const maxFundo = Math.max(...caixas.map((c) => c.fundo));
+
+  // X: se o conteúdo não cabe, a vista alarga; senão, desloca-se o mínimo
+  const precisoX = (maxDir - minEsq) / (1 - (2 * folgaLado) / L);
+  if (podeAlargar && precisoX > r.w) {
+    r.w = precisoX;
+    r.h = r.w * razao;
+    const fm = folgaLado / (L / r.w);
+    r.x = minEsq - fm;
+  } else {
+    const fm = folgaLado / (L / r.w);
+    if (minEsq < r.x + fm) r.x = minEsq - fm;
+    else if (maxDir > r.x + r.w - fm) r.x = maxDir + fm - r.w;
+  }
+
+  // Y: sobe a vista até o marcador mais alto ter a folga do topo
+  const s = L / r.w;
+  const ft = folgaTopo / s;
+  const ff = folgaLado / s;
+  if (minTopo < r.y + ft) r.y = minTopo - ft;
+  else if (maxFundo > r.y + r.h - ff) r.y = maxFundo + ff - r.h;
+  return r;
+}
+
+/**
+ * A vista do arranque, EM PURA — e é esta função que o teste do CSS usa
+ * para conferir o enquadramento por omissão: o `bairro.css` e a câmara
+ * saem daqui, não de duas contas gémeas que um dia divergem.
+ *
+ * No computador mostram-se TODOS os marcadores com as folgas do dono; a
+ * vista parte do enquadramento de referência do protótipo e estica só o
+ * que faltar. No telemóvel começa-se perto da fábrica e da avenida (o
+ * protótipo), mas a vista tem de conter os marcadores essenciais: se não
+ * couberem, alarga-se ATÉ couberem — medido, não adivinhado. A fonte dos
+ * valores desce com a escala (19×k×s); nos ecrãs estreitos fica
+ * ~13,7–14,2 px, acima dos 11 px de legibilidade que o dono fixou; os
+ * outros marcadores ficam a um arrasto de distância.
+ */
+export function vistaInicial(
+  e: Enquadramentos,
+  L: number,
+  A: number,
+  pinos: readonly PinoPlanta[]
+): Vista {
+  const razao = A / L;
+  const caixas = caixasAposCadeia(pinos, L);
+  if (L < 700) {
+    const [x, y] = e.perto;
+    const ess = caixas.filter((c) => ESSENCIAIS.has(c.id));
+    const larguraConteudo = Math.max(...ess.map((c) => c.dir)) - Math.min(...ess.map((c) => c.esq));
+    const w = Math.max(820, larguraConteudo / (1 - (2 * FOLGA_LADO) / L));
+    const v = encaixaCaixas(
+      { x: x - w / 2, y: y - 10 - (w * razao) / 2, w, h: w * razao },
+      L, ess, FOLGA_TOPO, FOLGA_LADO
+    );
+    return v;
+  }
+  const [x, y] = e.longe;
+  const w0 = Math.max(1500, 1140 / razao);
+  const base = { x: x - w0 / 2, y: y - (w0 * razao) / 2, w: w0, h: w0 * razao };
+  const v = encaixaCaixas(base, L, caixas, FOLGA_TOPO, FOLGA_LADO, true);
+  // Piso de legibilidade: mostrar os 13 alarga a vista; se a fonte dos
+  // valores (19 unidades × compensação k × escala s) baixar de 11 px
+  // efectivos, mantém-se a largura do protótipo — encaixa-se só o topo
+  // (o defeito que o dono apanhou) e o que ficar nos lados fica ao
+  // alcance do arrasto. Nos ecrãs do dono (1280+) sobra folga.
+  const k = Math.min(1.7, Math.max(0.55, MUNDO.w / L));
+  if (19 * k * (L / v.w) < 11) {
+    return encaixaCaixas(base, L, caixas, FOLGA_TOPO, FOLGA_LADO, false);
+  }
+  return v;
+}
+
+/**
+ * As caixas dos marcadores DEPOIS da cadeia de subidas, em coordenadas
+ * do mundo: o rectângulo que o enquadramento tem de mostrar.
+ */
+function caixasAposCadeia(
+  pinos: readonly PinoPlanta[],
+  largura: number
+): { id: string; esq: number; dir: number; topo: number; fundo: number }[] {
+  const k = Math.min(1.7, Math.max(0.55, MUNDO.w / largura));
+  const alto = 64 * k;
+  const ys = repartirPinos(pinos, largura);
+  return pinos.map((p, i) => ({
+    id: p.id,
+    esq: p.x - (p.w / 2) * k,
+    dir: p.x + (p.w / 2) * k,
+    topo: ys[i] - alto,
+    fundo: ys[i],
+  }));
 }
 
 /** O `k` (escala do marcador) que `arrumarPinos` está a usar, para testes. */

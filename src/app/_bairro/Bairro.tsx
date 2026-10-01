@@ -27,7 +27,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PausaAmbiente } from "@/components/PausaAmbiente";
-import { Camera, arrumarPinos, type Enquadramentos, type MarcadorVivo } from "./camara";
+import { Camera, arrumarPinos, type Enquadramentos, type MarcadorVivo, type PinoPlanta } from "./camara";
 import { ligarAmbiente } from "./ambiente";
 import "./bairro.css";
 
@@ -68,6 +68,14 @@ export interface PropsBairro {
   rotuloHora: string;
   /** Onde a câmara enquadra ao arrancar: perto da fábrica, ou o bairro todo. */
   enquadramentos: Enquadramentos;
+  /**
+   * Os marcadores como a câmara os quer (âncora + largura da placa, em
+   * unidades do mundo): o enquadramento inicial MEDe estas caixas em vez
+   * de partir de constantes — foi assim que o pin da Segurança Social
+   * nasceu cortado pelo topo. Vêm do servidor (`pinosDaCamera`), que é
+   * quem sabe onde os edifícios estão.
+   */
+  pinos: readonly PinoPlanta[];
   /**
    * `P(i, j, z)` da planta em coordenadas de ecrã, por TABELA e não por
    * função: uma função de servidor não pode atravessar a fronteira para
@@ -114,6 +122,7 @@ export function Bairro({
   descricao,
   rotuloHora,
   enquadramentos,
+  pinos,
   horaInicial,
   coordenadas,
   pontos,
@@ -156,6 +165,7 @@ export function Bairro({
       },
     });
     camara.defEnquadrar(enquadramentos);
+    camara.defPinos([...pinos]);
     camaraRef.current = camara;
     const desligar = camara.ligar();
 
@@ -168,7 +178,7 @@ export function Bairro({
       desligar();
       camaraRef.current = null;
     };
-  }, [reflexo, enquadramentos]);
+  }, [reflexo, enquadramentos, pinos]);
 
   /* ————— a animação ambiente (P1-2) ————— */
   useEffect(() => {

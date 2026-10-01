@@ -279,3 +279,82 @@ test.describe("o bairro — o console", () => {
     expect(erros, `erros na consola:\n${erros.join("\n")}`).toEqual([]);
   });
 });
+test.describe("o bairro — a geometria do enquadramento inicial (P1, acabamento)", () => {
+  /**
+   * O hotfix #21 apanhou camadas em fluxo; o dono voltou a medir o mapa
+   * em produção e encontrou dois defeitos de ENQUADRAMENTO: no desktop o
+   * marcador mais alto fica cortado pelo topo da janela (a cadeia de
+   * subidas do `arrumarPinos` não sabia onde estava o tecto), e no
+   * telemóvel a vista inicial deixa fora o marcador do Banco.
+   *
+   * Estes dois testes medem CAIXAS no ecrã — lêem geometria, não texto.
+   * A folga pedida vem do dono: ≥12 px em cima, ≥2 px nos outros lados.
+   */
+
+  for (const [largura, altura] of [[1920, 1080], [1440, 900], [1280, 800]] as const) {
+    test(`no computador (${largura}×${altura}) os 13 marcadores cabem inteiros`, async ({ page }) => {
+      await page.setViewportSize({ width: largura, height: altura });
+      await page.goto("/");
+      await page.waitForSelector(".b-mundo .pin");
+
+      const fora = await page.evaluate(() => {
+        const janela = document.querySelector(".b-janela")!.getBoundingClientRect();
+        const pins = [...document.querySelectorAll<SVGGElement>(".b-mundo .pin")];
+        const falhas: string[] = [];
+        for (const pin of pins) {
+          const r = pin.getBoundingClientRect();
+          const nome = pin.getAttribute("data-id") ?? "?";
+          if (r.top < janela.top + 12)
+            falhas.push(`${nome}: topo ${r.top.toFixed(1)} vs janela ${(janela.top + 12).toFixed(1)} (folga ${(r.top - janela.top).toFixed(1)}px)`);
+          if (r.bottom > janela.bottom - 2)
+            falhas.push(`${nome}: fundo ${r.bottom.toFixed(1)} vs janela ${(janela.bottom - 2).toFixed(1)}`);
+          if (r.left < janela.left + 2)
+            falhas.push(`${nome}: esquerda ${r.left.toFixed(1)} vs janela ${(janela.left + 2).toFixed(1)}`);
+          if (r.right > janela.right - 2)
+            falhas.push(`${nome}: direita ${r.right.toFixed(1)} vs janela ${(janela.right - 2).toFixed(1)}`);
+        }
+        return { nPins: pins.length, falhas };
+      });
+
+      expect(fora.nPins).toBe(13);
+      expect(fora.falhas, `pins cortados: ${fora.falhas.join(" · ")}`).toEqual([]);
+    });
+  }
+
+  for (const [largura, altura] of [[390, 844], [375, 812]] as const) {
+    test(`no telemóvel (${largura}×${altura}) os marcadores essenciais estão na vista inicial`, async ({ page }) => {
+      await page.setViewportSize({ width: largura, height: altura });
+      await page.goto("/");
+      await page.waitForSelector(".b-mundo .pin");
+
+      const res = await page.evaluate(() => {
+        const janela = document.querySelector(".b-janela")!.getBoundingClientRect();
+        const dentro = (pin: Element) => {
+          const r = pin.getBoundingClientRect();
+          return r.top >= janela.top && r.bottom <= janela.bottom &&
+                 r.left >= janela.left && r.right <= janela.right;
+        };
+        // «Salário bruto», «Chega à conta», «Inflação 12 meses» e
+        // «Euribor 12 meses» — os data-id reais do HTML
+        const essenciais = ["fabrica", "casa", "quiosque", "banco"];
+        const visiveis = [...document.querySelectorAll<SVGGElement>(".b-mundo .pin")]
+          .filter((p) => dentro(p))
+          .map((p) => p.getAttribute("data-id") ?? "?");
+        // a fonte do valor tem de continuar legível (o pin compensa a
+        // escala do mundo com scale(k); 19*1.7*k/s — medimos o texto)
+        const valor = document.querySelector<SVGTextElement>('.b-mundo .pin[data-id="fabrica"] text[font-size="19"]');
+        const alturaFonte = valor ? valor.getBoundingClientRect().height : 0;
+        return { essenciais, visiveis, alturaFonte };
+      });
+
+      for (const id of res.essenciais) {
+        expect(
+          res.visiveis,
+          `o marcador essencial "${id}" ficou fora da vista inicial (visíveis: ${res.visiveis.join(", ")})`
+        ).toContain(id);
+      }
+      // legibilidade: o valor tem de ter ≥11 px efectivos
+      expect(res.alturaFonte).toBeGreaterThanOrEqual(11);
+    });
+  }
+});
