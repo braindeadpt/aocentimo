@@ -1,0 +1,1667 @@
+{
+  "consultadoEm": "2026-10-01T02:08:20.179Z",
+  "fontes": [
+    {
+      "rotulo": "Minutas (atas) da Assembleia Municipal",
+      "url": "https://www.cm-porto.pt/deliberacoes-minutas"
+    },
+    {
+      "rotulo": "Propostas",
+      "url": "https://www.cm-porto.pt/deliberacoes-propostas"
+    },
+    {
+      "rotulo": "Recomendações",
+      "url": "https://www.cm-porto.pt/deliberacoes-recomendacoes"
+    }
+  ],
+  "vistos": [
+    {
+      "titulo": "Minuta da Ata, 23.ª Reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 14 de setembro de 2026.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260914_MinutaAta23_Sess%C3%A3oExtAM_signed_signed.pdf",
+      "data": "2026-09-14"
+    },
+    {
+      "titulo": "Minuta da Ata, 22.ª Reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 27 de julho de 2026.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260727_MinutaAta22_SessaoExtAM_anon.pdf",
+      "data": "2026-07-27"
+    },
+    {
+      "titulo": "Minuta da Ata, 21.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 13 de julho de 2026.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260713_MinutaAta21_Sess%C3%A3oExtAM-anoni..pdf",
+      "data": "2026-07-13"
+    },
+    {
+      "titulo": "Minuta da Ata, 20.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 13 de julho de 2026 (2ª. Reunião de Continuação de Sessão iniciada em 29 de junho de 2026).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260713_MinutaAta20_ContSess%C3%A3oOrdAM_anon.pdf",
+      "data": "2026-07-13"
+    },
+    {
+      "titulo": "Minuta da Ata, 19.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 7 de julho de 2026 (Continuação de Sessão iniciada em 29 de junho de 2026).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260707_MinutaAta19_ContSess%C3%A3oOrdAM_signed_anon.pdf",
+      "data": "2026-07-07"
+    },
+    {
+      "titulo": "Minuta da Ata, 18.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 29 de junho de 2026.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260629_MinutaAta18_Sess%C3%A3oOrdAM_signed_signed.pdf",
+      "data": "2026-06-29"
+    },
+    {
+      "titulo": "Minuta da Ata, 17.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 15 de junho de 2026.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260615_MinutaAta17_Sess%C3%A3oExtAM_signed_signed_anon.pdf",
+      "data": "2026-06-15"
+    },
+    {
+      "titulo": "Minuta da Ata, 16.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 15 de junho de 2026 (Continuação de Sessão iniciada em 1 de junho de 2026).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260615_MinutaAta16_ContSess\\u00e3oExtAM_signed_signed (1).pdf",
+      "data": "2026-06-15"
+    },
+    {
+      "titulo": "Minuta da Ata, 15.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 01 de junho de 2026.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260601_MinutaAta15_Sess%C3%A3oExtAM_signed_signed-anonimizado.pdf",
+      "data": "2026-06-01"
+    },
+    {
+      "titulo": "Minuta da Ata, 14.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 18 de maio de 2026.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260518_MinutaAta14_Sessa%CC%83oExtAM_BE_signed_signed.pdf",
+      "data": "2026-05-18"
+    },
+    {
+      "titulo": "Minuta da Ata, 13.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 11 de maio de 2026 (2.ª Reunião de Continuação de Sessão iniciada em 27 de abril de 2026).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260511_MinutaAta13_2ContSess\\u00e3oOrdAM (1).pdf",
+      "data": "2026-05-11"
+    },
+    {
+      "titulo": "Minuta da Ata, 12.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 4 de maio de 2026 (Continuação de Sessão iniciada em 27 de abril de 2026).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260504_MinutaAta12_ContSess%C3%A3oOrdAM_signed_signed-anonimizado.pdf",
+      "data": "2026-05-04"
+    },
+    {
+      "titulo": "Minuta da Ata, 11.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 27 de abril de 2026.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260427_MinutaAta11_Sess%C3%A3oOrdAM_signed_signed.pdf",
+      "data": "2026-04-27"
+    },
+    {
+      "titulo": "Minuta da Ata, 10.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 24 de março de 2026 (Continuação de Sessão iniciada em 23 de março de 2026).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260324_MinutaAta10_ContSess%C3%A3oExtAM_signed_signed.pdf",
+      "data": "2026-03-24"
+    },
+    {
+      "titulo": "Minuta da Ata, 9.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 23 de março de 2026.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260323_MinutaAta9_Sess%C3%A3oExtAM_signed_signed.pdf",
+      "data": "2026-03-23"
+    },
+    {
+      "titulo": "Minuta da Ata, 8.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 2 de março de 2026 (Continuação de Sessão iniciada em 23 de fevereiro de 2026).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Minuta%208.pdf",
+      "data": "2026-03-02"
+    },
+    {
+      "titulo": "Minuta da Ata, 7.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 23 de fevereiro de 2026.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260223_MinutaAta7_Sess\\u00e3oOrdAM_signed_signed (1).pdf",
+      "data": "2026-02-23"
+    },
+    {
+      "titulo": "Minuta da Ata, 6.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 19 de janeiro de 2026.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260119_MinutaAta6_Sess%C3%A3oExtAM_CDU_signed_signed.pdf.pdf",
+      "data": "2026-01-19"
+    },
+    {
+      "titulo": "Minuta da Ata, 4.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 29 de dezembro de 2025 (continuação da Sessão iniciada em 19.12.2025).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20251229_MinutaAta4_Sess%C3%A3oOrdAM_assinada%20(1).pdf",
+      "data": "2025-12-29"
+    },
+    {
+      "titulo": "Minuta da Ata, 3.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 19 de dezembro de 2025.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20251219_MinutaAta3_Sess\\u00e3oOrdAM_signed_signed (1).pdf",
+      "data": "2025-12-19"
+    },
+    {
+      "titulo": "Minuta da Ata, 2ª. reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 09 de dezembro de 2025.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20251209_MinutaAta2_Sessa%CC%83o%20Ext_signed_signed.pdf",
+      "data": "2025-12-09"
+    },
+    {
+      "titulo": "Minuta da Ata, 119.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 06 de outubro de 2025.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20251006_MinutaAta119_Sess%C3%A3oExtAM_signed_AssDig.pdf",
+      "data": "2025-10-06"
+    },
+    {
+      "titulo": "Minuta da Ata, 118.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 25 de setembro de 2025 (continuação da Sessão iniciada em 22.09.2025).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250925_MinutaAta118_Cont.Sess%C3%A3oOrdAM_signed_AssDig.pdf",
+      "data": "2025-09-25"
+    },
+    {
+      "titulo": "Minuta da Ata, 117.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 22 de setembro de 2025.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250922_MinutaAta117_Sess\\u00e3oOrdAM_signed_AssDig.pdf",
+      "data": "2025-09-22"
+    },
+    {
+      "titulo": "Minuta da Ata, 116.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 15 de setembro de 2025.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250915_MinutaAta116_Sess%C3%A3oExtAM_signed_AssDig.pdf",
+      "data": "2025-09-15"
+    },
+    {
+      "titulo": "Minuta da Ata, 115.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 15 de setembro de 2025 (continuação da Sessão iniciada em 28.07.2025).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250915_MinutaAta115_Cont.Sess%C3%A3oExtAM_signed_AssDig.pdf",
+      "data": "2025-09-15"
+    },
+    {
+      "titulo": "Minuta da Ata, 114.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 28 de julho de 2025",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250728_MinutaAta114_Sess%C3%A3oExtAM_signed_AssDig_ANONIMIZADA%20E%20PUBLICACAO.pdf",
+      "data": "2025-07-28"
+    },
+    {
+      "titulo": "Minuta da Ata, 113.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 24 de julho de 2025.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250724_MinutaAta113_Sess\\u00e3oExtAM_signed_AssDig.pdf",
+      "data": "2025-07-24"
+    },
+    {
+      "titulo": "Minuta da Ata, 112.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 21 de julho de 2025",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250721_MinutaAta112_Sess%C3%A3oExtAM_signed_AssDig.pdf.pdf",
+      "data": "2025-07-21"
+    },
+    {
+      "titulo": "Minuta da Ata, 111.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 14 de julho de 2025.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250714_MinutaAta111_Sess%C3%A3oExtAM_signed_AssDig.pdf",
+      "data": "2025-07-14"
+    },
+    {
+      "titulo": "Minuta da Ata, 110.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 7 de julho de 2025 (continuação da Sessão iniciada em 30.06.2025).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250707_MinutaAta110_Cont.Sess%C3%A3oOrdAM_signed_AssDig.pdf",
+      "data": "2025-07-07"
+    },
+    {
+      "titulo": "Minuta da Ata, 109.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 30 de junho de 2025.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250630_MinutaAta109_Sess\\u00e3oOrdAM_signed_AssDig.pdf",
+      "data": "2025-06-30"
+    },
+    {
+      "titulo": "Minuta da Ata, 108.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 16 de junho de 2025.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250616_MinutaAta108_Sessa\\u0303oExtAM_signed_AssDig.pdf",
+      "data": "2025-06-16"
+    },
+    {
+      "titulo": "Minuta da Ata, 107.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 11 de junho de 2025.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250611_MinutaAta107_Sess%C3%A3oExtAM_signed_AssDig.pdf",
+      "data": "2025-06-11"
+    },
+    {
+      "titulo": "Minuta da Ata, 106.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 02 de junho de 2025.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250602_MinutaAta106_Sess%C3%A3oExtAM_ocred_AssDig.pdf",
+      "data": "2025-06-02"
+    },
+    {
+      "titulo": "Minuta da Ata,",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250526_MinutaAta105_Sess\\u00e3oExtAM_signed_AssDig.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Minuta da Ata, 104.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 05 de maio de 2025 (continuação da Sessão iniciada em 29.04.2025).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250505_MinutaAta104_Cont.Sess%C3%A3oOrdAM_signed_AssDig.pdf",
+      "data": "2025-05-05"
+    },
+    {
+      "titulo": "Minuta da Ata, 103.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 29 de abril de 2025",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250429_MinutaAta103_Sess%C3%A3oOrdAM_Signed_AssDig.pdf",
+      "data": "2025-04-29"
+    },
+    {
+      "titulo": "Minuta da Ata, 102.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 14 de abril de 2025.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250414_MinutaAta102_Sess\\u00e3oExtAM_signed_AssDig.pdf",
+      "data": "2025-04-14"
+    },
+    {
+      "titulo": "Minuta da Ata, 101.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 31 de março de 2025 (continuação da Sessão iniciada em 17.03.2025).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250331_MinutaAta101_Cont.Sess%C3%A3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2025-03-31"
+    },
+    {
+      "titulo": "Minuta da Ata, 100.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 17 de março de 2025.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250317_MinutaAta100_Sess%C3%A3o%20Ext.%20AM_ocred_signed_AssDig.pdf",
+      "data": "2025-03-17"
+    },
+    {
+      "titulo": "Minuta da Ata, 99.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 17 de fevereiro de 2025",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250217_MinutaAta99_Sess%C3%A3o%20Ext.%20AM_Ass_BC_Assdig_SFA.pdf",
+      "data": "2025-02-17"
+    },
+    {
+      "titulo": "Minuta da Ata, 98.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 3 de fevereiro de 2025.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250203_MinutaAta98_Sess\\u00e3oOrdAM_signed_AssDig.pdf",
+      "data": "2025-02-03"
+    },
+    {
+      "titulo": "Minuta da Ata, 97.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 27 de janeiro de 2025.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250127_MinutaAta97_Sess\\u00e3oExtAM_signed_AssDig.pdf",
+      "data": "2025-01-27"
+    },
+    {
+      "titulo": "Minuta da Ata, 96.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 20 de janeiro de 2025.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250120_MinutaAta96_Sess%C3%A3o%20Ext.%20AM%20-%20Carla%20Leit%C3%A3o_signed_AssDig.pdf",
+      "data": "2025-01-20"
+    },
+    {
+      "titulo": "Minuta da Ata, 95.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 16 de dezembro de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20241216_MinutaAta95_Sess%C3%A3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2024-12-16"
+    },
+    {
+      "titulo": "Minuta da Ata, 94.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 16 de dezembro de 2024 (Continuação da Sessão iniciada em 9 de dezembro de 2024).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20241216_MinutaAta94_ContSess%C3%A3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2024-12-16"
+    },
+    {
+      "titulo": "Minuta da Ata, 93.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 9 de dezembro de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20241209_MinutaAta93_Sess%C3%A3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2024-12-09"
+    },
+    {
+      "titulo": "Minuta da Ata, 92.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 2 de dezembro de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20241202_MinutaAta92_Sess\\u00e3oExtAM_signed_AssDig.pdf",
+      "data": "2024-12-02"
+    },
+    {
+      "titulo": "Minuta da Ata, 91.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no 28 de novembro de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20241128_MinutaAta91_Sess%C3%A3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2024-11-28"
+    },
+    {
+      "titulo": "Minuta da Ata, 90.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 25 de novembro de 2024 (Potestativa do Partido Chega)",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20241125_MinutaAta90_Sess%C3%A3oExtAM_signed_AssDig.pdf",
+      "data": "2024-11-25"
+    },
+    {
+      "titulo": "Minuta da Ata, 89.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 25 de novembro de 2024 (2.ª reunião de Continuação da Sessão iniciada em 18 de novembro de 2024)",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20241125_MinutaAta89_ContSess%C3%A3oOrdAM_signed_AssDig%20(1).pdf",
+      "data": "2024-11-25"
+    },
+    {
+      "titulo": "Minuta da Ata, 88.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 19 de novembro de 2024 (Continuação da Sessão iniciada em 18 de novembro de 2024).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20241119_MinutaAta88_ContSess\\u00e3oOrdAM_signed_AssDig.pdf",
+      "data": "2024-11-19"
+    },
+    {
+      "titulo": "Minuta da Ata, 87.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no 18 de novembro de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20241118_Minuta%20Ata%2087%20Sess%C3%A3o%20Ord.%20AM_signed_AssDig.pdf",
+      "data": "2024-11-18"
+    },
+    {
+      "titulo": "Minuta da Ata, 86.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no 31 de outubro de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20241031_MinutaAta86_Sess\\u00e3o Ext. AM_signed_AssDig.pdf",
+      "data": "2024-10-31"
+    },
+    {
+      "titulo": "Minuta da Ata, 85.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 21 de outubro de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20241021_MinutaAta_signed_AssDig.pdf",
+      "data": "2024-10-21"
+    },
+    {
+      "titulo": "Minuta da Ata, 84.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 14 de outubro de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20241014_MinutaAta84_Sess%C3%A3o%20Ext%20(1).%20AM",
+      "data": "2024-10-14"
+    },
+    {
+      "titulo": "Minuta da Ata, 83.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 07 de outubro de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20241007_Minuta%20Ata%2083%20Sess%C3%A3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2024-10-07"
+    },
+    {
+      "titulo": "Minuta da Ata, 82.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 30 de setembro de 2024 (Continuação de Sessão iniciada em 16 de setembro de 2024).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20240930_MinutaAta82_Cont.%20Sess%C3%A3o%20Ord.%20AM_signed_AssDig.pdf",
+      "data": "2024-09-30"
+    },
+    {
+      "titulo": "Minuta da Ata, 81.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 16 de setembro de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20240916_Minuta%20Ata%2081%20Sess%C3%A3o%20Ord.%20AM_signed_AssDig.pdf",
+      "data": "2024-09-16"
+    },
+    {
+      "titulo": "Minuta da Ata, 80.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 29 de julho de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20240729MinutaAta80_Sess%C3%A3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2024-07-29"
+    },
+    {
+      "titulo": "Minuta da Ata, 79.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 15 de julho de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20240715MinutaAta79_Sess%C3%A3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2024-07-15"
+    },
+    {
+      "titulo": "Minuta da Ata, 78.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 08 de julho de 2024 (Continuação de Sessão iniciada em 17 de junho de 2024).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20240708_MinutaAta78_Sess%C3%A3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2024-07-08"
+    },
+    {
+      "titulo": "Minuta da Ata, 77.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 17 de junho de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20240617_Minuta%20Ata%2077%20Sess%C3%A3o%20Ord.%20AM_signed_AssDig.pdf",
+      "data": "2024-06-17"
+    },
+    {
+      "titulo": "Minuta da Ata, 76.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 27 de maio de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20240527_MinutaAta76_Sess%C3%A3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2024-05-27"
+    },
+    {
+      "titulo": "Minuta da Ata, 75.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 20 de maio de 2024 (Continuação de Sessão iniciada em 13 de maio de 2024).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20240520_MinutaAta75_Sess%C3%A3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2024-05-20"
+    },
+    {
+      "titulo": "Minuta da Ata, 74.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 13 de maio de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20240513_MinutaAta74_Sess%C3%A3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2024-05-13"
+    },
+    {
+      "titulo": "Minuta da Ata, 73.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 13 de maio (Continuação de Sessão iniciada em 29 de abril de 2024).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20240513_Minuta%20Ata%2073%20Cont.%20Sess%C3%A3o%20Ord.%20AM_signed_AssDig.pdf",
+      "data": "2024-04-29"
+    },
+    {
+      "titulo": "Aditamento à Minuta da Ata, 72.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 29 de abril de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20240429_Minuta%20Ata%2072%20Sess%C3%A3o%20Ord_ERRATA.%20AM_signed_AssDig.pdf",
+      "data": "2024-04-29"
+    },
+    {
+      "titulo": "Minuta da Ata, 72.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 29 de abril de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20240429_Minuta%20Ata%2072%20Sess%C3%A3o%20Ord.%20AM_signed_AssDig.pdf",
+      "data": "2024-04-29"
+    },
+    {
+      "titulo": "Minuta da Ata, 71.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 15 de abril de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20240415_MinutaAta71_Sess%C3%A3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2024-04-15"
+    },
+    {
+      "titulo": "Minuta da Ata, 70.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 25 de março de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20240325_MinutaAta70_Sess%C3%A3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2024-03-25"
+    },
+    {
+      "titulo": "Minuta da Ata, 69.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 4 de março de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/202400304_Minuta%20Ata%2069%20Sess%C3%A3o%20Ext%20(1).%20AM_signed_AssDig",
+      "data": "2024-03-04"
+    },
+    {
+      "titulo": "Minuta da Ata, 68.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 29 de fevereiro de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20240229_Minuta%20Ata%2068%20Sess%C3%A3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2024-02-29"
+    },
+    {
+      "titulo": "Minuta da Ata, 67.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 19 de fevereiro de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20240219_Minuta%20Ata%2067%20Sess%C3%A3o%20Ord.%20AM_signed_AssDig.pdf",
+      "data": "2024-02-19"
+    },
+    {
+      "titulo": "Minuta da Ata, 66.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 05 de fevereiro de 2024",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20240205_Minuta%20Ata%2066%20Sess%C3%A3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2024-02-05"
+    },
+    {
+      "titulo": "Minuta da Ata, 65.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 22 de janeiro de 2024",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20240122_Minuta%20Ata%2065%20Sess%C3%A3o%20Ext.%20AM_signed_Assdig.pdf",
+      "data": "2024-01-22"
+    },
+    {
+      "titulo": "Minuta da Ata, 64.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 08 de janeiro de 2024.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20240108_Minuta Ata 64 Sess\\u00e3o Ext. AM_signed_AssDig.pdf",
+      "data": "2024-01-08"
+    },
+    {
+      "titulo": "Minuta da Ata, 63.&ordf; reuni&atilde;o, Sess&atilde;o Extraordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 11 de dezembro de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20231211_Minuta%20Ata%2063%20Sess%C3%A3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2023-12-11"
+    },
+    {
+      "titulo": "Minuta da Ata, 62.&ordf; reuni&atilde;o, Sess&atilde;o Extraordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 11 de dezembro de 2023 (continua&ccedil;&atilde;o da Sess&atilde;o Extraordin&aacute;ria iniciada em 4 de dezembro de 2023).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20231211_Minuta Ata 62 Cont. Sess&atilde;o Ext. AM_signed_AssDig.pdf",
+      "data": "2023-12-11"
+    },
+    {
+      "titulo": "Minuta da Ata, 61.&ordf; reuni&atilde;o, Sess&atilde;o Extraordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 4 de dezembro de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20231204_Minuta%20Ata%20Sess%C3%A3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2023-12-04"
+    },
+    {
+      "titulo": "Minuta da Ata, 60.&ordf; reuni&atilde;o, Sess&atilde;o Ordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 4 de dezembro de 2023 (continua&ccedil;&atilde;o da Sess&atilde;o Ordin&aacute;ria iniciada em 27 de novembro de 2023).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20231204_Minuta Ata cont. Sess&atilde;o Ord. AM_signed_AssDig.pdf",
+      "data": "2023-12-04"
+    },
+    {
+      "titulo": "Minuta da Ata, 59.&ordf; reuni&atilde;o, Sess&atilde;o Ordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 27 de novembro de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20231127_Minuta%20Ata%20Sess%c3%a3o%20Ordin%c3%a1ria_signed_AssDig.pdf",
+      "data": "2023-11-27"
+    },
+    {
+      "titulo": "Minuta da Ata, 58.&ordf; reuni&atilde;o, Sess&atilde;o Extraordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 20 de novembro de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20231120_Minuta%20Ata%20Sess%C3%A3o%20Ext.%20AM_BE_signed_AssDig.pdf",
+      "data": "2023-11-20"
+    },
+    {
+      "titulo": "Minuta da Ata, 57.&ordf; reuni&atilde;o, Sess&atilde;o Extraordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 13 de novembro de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20231113_Minuta%20Ata%20Sess%C3%A3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2023-11-13"
+    },
+    {
+      "titulo": "Minuta da Ata, 56.&ordf; reuni&atilde;o, Sess&atilde;o Extraordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 30 de outubro de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20231030_Minuta%20Ata%20Sess%c3%a3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2023-10-30"
+    },
+    {
+      "titulo": "Minuta da Ata, 55.&ordf; reuni&atilde;o, Sess&atilde;o Extraordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 16 de outubro de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20231016_Minuta%20Ata%20Sess%C3%A3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2023-10-16"
+    },
+    {
+      "titulo": "Minuta da Ata, 54.&ordf; reuni&atilde;o, Sess&atilde;o Extraordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 2 de outubro de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Minuta%2002102023.pdf",
+      "data": "2023-10-02"
+    },
+    {
+      "titulo": "Minuta da Ata, 53.&ordf; reuni&atilde;o, Sess&atilde;o Ordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 2 de outubro de 2023 (continua&ccedil;&atilde;o da Sess&atilde;o Ordin&aacute;ria iniciada em 18 de setembro de 2023).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20231002_Minuta Ata cont. Sess&atilde;o Ord. AM_signed_AssDig.pdf",
+      "data": "2023-10-02"
+    },
+    {
+      "titulo": "Minuta da Ata, 52.&ordf; reuni&atilde;o, Sess&atilde;o Ordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 18 de setembro de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20230918_Minuta Ata Sess&atilde;o Ord. AM_signed_AssDig.pdf",
+      "data": "2023-09-18"
+    },
+    {
+      "titulo": "Minuta da Ata, 51.&ordf; reuni&atilde;o, Sess&atilde;o Extraordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 27 de julho de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20230727_Minuta Ata Sess&atilde;o Ext. AM_AssDig_signed.pdf",
+      "data": "2023-07-27"
+    },
+    {
+      "titulo": "Minuta da Ata, 50.&ordf; reuni&atilde;o, Sess&atilde;o Extraordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 10 de julho de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20230710_Minuta Ata Sess&atilde;o Ext. AM_signed_AssDig.pdf",
+      "data": "2023-07-10"
+    },
+    {
+      "titulo": "Minuta da Ata, 49.&ordf; reuni&atilde;o, Sess&atilde;o Extraordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 27 de junho de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20230627_Minuta Ata Sess&atilde;o Ext. AM_signed_AssDig.pdf",
+      "data": "2023-06-27"
+    },
+    {
+      "titulo": "Minuta da Ata, 48.&ordf; reuni&atilde;o, Sess&atilde;o Ordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 26 de junho de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20230626_Minuta Ata Sess&atilde;o Ord. AM_signed_AssDig.pdf",
+      "data": "2023-06-26"
+    },
+    {
+      "titulo": "Minuta da Ata, 47.&ordf; reuni&atilde;o, Sess&atilde;o Extraordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 29 de maio de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20230529_Minuta%20Ata%20Sess%c3%a3o%20Ext.%20AM_signed_AssDig.pdf",
+      "data": "2023-05-29"
+    },
+    {
+      "titulo": "Minuta da Ata, 46.&ordf; reuni&atilde;o, Sess&atilde;o Extraordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 2 de maio de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20230502_Minuta Ata Sess&atilde;o Ext. AM_signed_AssDig.pdf",
+      "data": "2023-05-02"
+    },
+    {
+      "titulo": "Minuta da Ata, 45.&ordf; reuni&atilde;o, Sess&atilde;o Ordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 2 de maio de 2023 (continua&ccedil;&atilde;o da Sess&atilde;o Ordin&aacute;ria iniciada em 27 de abril de 2023).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20230502_Minuta Ata Cont. Sess&atilde;o Ord. AM_signed_AssDig.pdf",
+      "data": "2023-05-02"
+    },
+    {
+      "titulo": "Minuta da Ata, 44.&ordf; reuni&atilde;o, Sess&atilde;o Ordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 27 de abril de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20230427_Minuta Ata Sess&atilde;o Ord. AM_signed_AssDig.pdf",
+      "data": "2023-04-27"
+    },
+    {
+      "titulo": "Minuta da Ata, 43.&ordf; reuni&atilde;o, Sess&atilde;o Extraordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 3 de abril de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20230403_Minuta Ata Sess&atilde;o Ext. AM_signed_AssDig.pdf",
+      "data": "2023-04-03"
+    },
+    {
+      "titulo": "Minuta da Ata, 42.&ordf; reuni&atilde;o, Sess&atilde;o Extraordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 20 de mar&ccedil;o de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20230320_Minuta Ata Sess&atilde;o Ext. AM_signed_AssDig_ocred.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Minuta da Ata, 41.&ordf; reuni&atilde;o, Sess&atilde;o Extraordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 6 de mar&ccedil;o de 2023 .",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20230306_Minuta Ata Sess&atilde;o Ext. AM_signed_AssDig.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Minuta da Ata, 40.&ordf; reuni&atilde;o, Sess&atilde;o Ordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 6 de mar&ccedil;o de 2023 (Continua&ccedil;&atilde;o da",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20230306_Minuta Ata Cont. Sess&atilde;o Ord. AM_signed_AssDig.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Minuta da Ata, 39.&ordf; reuni&atilde;o, Sess&atilde;o Ordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 27 de fevereiro de 2023",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20230227_Minuta Ata Sess&atilde;o Ord. AM_signed_AssDig.pdf",
+      "data": "2023-02-27"
+    },
+    {
+      "titulo": ".",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20230206_Minuta%20Ata%20Sess%C3%A3o%20ExtvCtWaM4Udq.%20AM_signed_AssDig",
+      "data": null
+    },
+    {
+      "titulo": "Minuta da Ata, 38.&ordf; reuni&atilde;o, Sess&atilde;o Extraordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 6 de fevereiro de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20230206_Minuta Ata Sess&atilde;o ExtvCtWaM4Udq. AM_signed_AssDig",
+      "data": "2023-02-06"
+    },
+    {
+      "titulo": "Minuta da Ata, 37.&ordf; reuni&atilde;o, Sess&atilde;o Extraordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 16 de janeiro de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20230116_Minuta Ata Sess&atilde;o Ext. AM_signed_AssDig.pdf",
+      "data": "2023-01-16"
+    },
+    {
+      "titulo": "Minuta da Ata, 36.&ordf; reuni&atilde;o, Sess&atilde;o Extraordin&aacute;ria da Assembleia Municipal do Porto realizada no dia 9 de janeiro de 2023.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20230109_Minuta Ata Sess&atilde;o Ext. AM_signed_AssDig.pdf",
+      "data": "2023-01-09"
+    },
+    {
+      "titulo": "Minuta da Ata, 35.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 22 de dezembro de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20221222_Minuta Ata Sess\\u00e3o Ext. AM_corrigida_signed_AssDig.pdf",
+      "data": "2022-12-22"
+    },
+    {
+      "titulo": "Minuta da Ata, 34.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 7 de dezembro de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20221207_Minuta Ata Sess\\u00e3o Ext. AM_signed_AssDig.pdf",
+      "data": "2022-12-07"
+    },
+    {
+      "titulo": "Minuta da Ata, 33.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 5 de dezembro de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20221205_Minuta Ata Sess\\u00e3o Ext. AM_signed_AssDig.pdf",
+      "data": "2022-12-05"
+    },
+    {
+      "titulo": "Minuta da Ata, 32.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 5 de dezembro (continuação da Sessão Ordinária iniciada no dia 28 de novembro de 2022).",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20221205_Minuta Ata Cont. Sess\\u00e3o Ord. AM_signed_AssDig.pdf",
+      "data": "2022-11-28"
+    },
+    {
+      "titulo": "Minuta da Ata, 31.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 28 de novembro de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20221128_Minuta Ata Sess\\u00e3o Ord. AM_signed_AssDig.pdf",
+      "data": "2022-11-28"
+    },
+    {
+      "titulo": "Minuta da Ata, 30.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 7 de novembro de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20221107_Minuta Ata Sess\\u00e3o Ext. AM_signed_AssDig.pdf",
+      "data": "2022-11-07"
+    },
+    {
+      "titulo": "Minuta da Ata, 29.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 31 de outubro de 2022",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20221031_Minuta Ata Sess\\u00e3o Ext AM_signed_AssDig.pdf",
+      "data": "2022-10-31"
+    },
+    {
+      "titulo": "Minuta da Ata, 28.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 10 de outubro de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20221010_Minuta Ata Sess\\u00e3o Ext. AM_signed_AssDig.pdf",
+      "data": "2022-10-10"
+    },
+    {
+      "titulo": "Minuta da Ata, 27.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 3 de outubro de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20221003_Minuta Ata Sess\\u00e3o Ext. AM_signed_AssDig.pdf",
+      "data": "2022-10-03"
+    },
+    {
+      "titulo": "Minuta da Ata, 26.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 3 de outubro de 2022 (continuação da Sessão Ordinária iniciada no dia 26 de setembro de 2022).",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20221003_Minuta Ata Cont. Sess\\u00e3o Ord. AM_signed_AssDig.pdf",
+      "data": "2022-10-03"
+    },
+    {
+      "titulo": "Minuta da Ata, 25.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 26 de setembro de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20220926_Minuta Ata Sess\\u00e3o OrdfX7Jgkz2wg. AM_signed_AssDig",
+      "data": "2022-09-26"
+    },
+    {
+      "titulo": "Minuta da Ata, 24.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 19 de setembro de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20220919_Minuta Ata Sess\\u00e3o Ext AM_signed_AssDig.pdf",
+      "data": "2022-09-19"
+    },
+    {
+      "titulo": "Minuta da Ata, 23.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 12 de setembro de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20220912_Minuta Ata Sess\\u00e3o Ext AM_AssDig_AssDig.pdf",
+      "data": "2022-09-12"
+    },
+    {
+      "titulo": "Minuta da Ata, 22.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 25 de julho de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20220725_Minuta Ata Sess\\u00e3o Ext AM_signed_AssDig.pdf",
+      "data": "2022-07-25"
+    },
+    {
+      "titulo": "Minuta da Ata, 21.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 4 de julho de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20220704_Minuta Ata Sess\\u00e3o Ext AM_signed_AssDig.pdf",
+      "data": "2022-07-04"
+    },
+    {
+      "titulo": "Minuta da Ata, 20.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 20 de junho de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20220620_Minuta Ata Sess\\u00e3o Ord AM_AssDig_AssDig.pdf",
+      "data": "2022-06-20"
+    },
+    {
+      "titulo": "Minuta da Ata, 19.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 30 de maio de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20220530 Minuta Ata Sess\\u00e3o Ext AM_Ass_Dig_IMC_SFA.pdf",
+      "data": "2022-05-30"
+    },
+    {
+      "titulo": "Minuta da Ata, 18.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 9 de maio de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20220509 Minuta Ata Sess\\u00e3o Ext. AM.pdf",
+      "data": "2022-05-09"
+    },
+    {
+      "titulo": "Minuta da Ata, 17.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 9 de maio de 2022 (continuação da Sessão Ordinária iniciada no dia 28 de abril de 2022).",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20220509 Minuta Ata Cont. Sess\\u00e3o Ord. AM.pdf",
+      "data": "2022-05-09"
+    },
+    {
+      "titulo": "Minuta da Ata, 16.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 28 de abril de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20220428 Minuta Ata Sess\\u00e3o Ord AM.pdf",
+      "data": "2022-04-28"
+    },
+    {
+      "titulo": "Minuta da Ata, 15.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 11 de abril de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20220411_Minuta da Ata Sess\\u00e3o Ext. AM.pdf",
+      "data": "2022-04-11"
+    },
+    {
+      "titulo": "Minuta da Ata, 14.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 11 de abril de 2022 (continuação da Sessão Extraordinária iniciada no dia 28 de março de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20220411_Minuta da Ata Cont. Sess\\u00e3o Ext. AM.pdf",
+      "data": "2022-04-11"
+    },
+    {
+      "titulo": "Minuta da Ata, 13.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 28 de março de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20220328 Minuta da Ata Sess\\u00e3o Ext AM.pdf",
+      "data": "2022-03-28"
+    },
+    {
+      "titulo": "Minuta da Ata, 12.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 07 de março de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20220307Minuta da Ata Sess\\u00e3o Ext. AM.pdf",
+      "data": "2022-03-07"
+    },
+    {
+      "titulo": "Minuta da Ata, 11.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 07 de março de 2022 (Continuação da Sessão Ordinária iniciada no dia 21 de fevereiro de 2022).",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20220307Minuta da Ata_ Cont Sess\\u00e3o OrdZW24Y8U3Kl. AM 21",
+      "data": "2022-03-07"
+    },
+    {
+      "titulo": "Minuta da Ata, 10.ª reunião, Sessão Ordinária Assembleia Municipal realizada no dia 21 de fevereiro de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20220221Minuta da Ata Sess\\u00e3o Ord AM.pdf",
+      "data": "2022-02-21"
+    },
+    {
+      "titulo": "Minuta da Ata, 9.ª reunião, Sessão Extraordinária Assembleia Municipal realizada no dia 14 de fevereiro de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20220214Minuta%20Sess%C3%A3o%20Ext%20AM.pdf",
+      "data": "2022-02-14"
+    },
+    {
+      "titulo": "Minuta da Ata, 8.ª reunião, Sessão Extraordinária Assembleia Municipal realizada no dia 7 de fevereiro de 2022.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/20220207Minuta da Ata Sess\\u00e3o Ext. AM.pdf",
+      "data": "2022-02-07"
+    },
+    {
+      "titulo": "Minuta da Ata, 7.ª reunião, Sessão Extraordinária Assembleia Municipal realizada no dia 27 de dezembro de 2021.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata Sess\\u00e3o Ext. AM 27.12.2021.pdf",
+      "data": "2021-12-27"
+    },
+    {
+      "titulo": "Minuta da Ata, 6.ª reunião, Sessão Ordinária Assembleia Municipal realizada no dia 27 de dezembro de 2021 (Continuação da Sessão Ordinária iniciada no dia 20 de dezembro de 2021).",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata Cont. Sess\\u00e3o Ord. AM 27.12.2021.pdf",
+      "data": "2021-12-27"
+    },
+    {
+      "titulo": "Minuta da Ata, 5.ª reunião, Sessão Ordinária Assembleia Municipal realizada no dia 20 de dezembro de 2021",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata_Sess\\u00e3o Ord. AM 20.12.2021.pdf",
+      "data": "2021-12-20"
+    },
+    {
+      "titulo": "Minuta da Ata, 4.ª reunião, Sessão Extraordinária Assembleia Municipal realizada no dia 13 de dezembro de 2021.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata_Sess\\u00e3o Ext AM 13.12.2021.pdf",
+      "data": "2021-12-13"
+    },
+    {
+      "titulo": "Minuta da Ata, 3.ª reunião, Sessão Extraordinária Assembleia Municipal realizada no dia 6 de dezembro de 2021.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata Sess\\u00e3o Ext. AM 06.12.2021.pdf",
+      "data": "2021-12-06"
+    },
+    {
+      "titulo": "Minuta da Ata, 2.ª reunião, Sessão Extraordinária Assembleia Municipal realizada no dia 29 de novembro de 2021.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata Sess\\u00e3o Ext. AM 29.11.2021.pdf",
+      "data": "2021-11-29"
+    },
+    {
+      "titulo": "Minuta da Ata, 1.ª reunião, Sessão Extraordinária Assembleia Municipal realizada no dia 15 de novembro de 2021.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata_Sess\\u00e3o Ext AM 15.11.2021.pdf",
+      "data": "2021-11-15"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 27 de setembro de 2021.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata Sess\\u00e3o Ord. AM 27.09.2021.pdf",
+      "data": "2021-09-27"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 29 de julho de 2021",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata_Sess\\u00e3o Ext. AM_29.07.2021.pdf",
+      "data": "2021-07-29"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 19 de julho de 2021.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata_Sess\\u00e3o Ext. AM_19.07.2021.pdf",
+      "data": "2021-07-19"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 5 de julho de 2021 (requerida pelo Grupo Municipal Bloco de Esquerda).",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata Sess\\u00e3o Ext. AM_Requerida BE_05.07.2021.pdf",
+      "data": "2021-07-05"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 5 de julho de 2021.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata Sess\\u00e3o Ext. AM 05.07.2021.pdf",
+      "data": "2021-07-05"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal 28 de junho de 2021 (Continuação Sessão Ordinária iniciada no dia 21 de junho de 2021).",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata_Cont Sess\\u00e3o Ord. AM_28.06.2021.pdf",
+      "data": "2021-06-28"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 21 de junho de 2021.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata Sess\\u00e3o Ord. AM_21.06.2021.pdf",
+      "data": "2021-06-21"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 31 de maio de 2021.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata Sess\\u00e3o Ext. AM 31.05.2021.pdf",
+      "data": "2021-05-31"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 24 de maio de 2021.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata_Sess\\u00e3o Extraord. AM_ 24.05.2021.pdf",
+      "data": "2021-05-24"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 26 de abril de 2021.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata Sess\\u00e3o Ord. AM_26.04.2021.pdf",
+      "data": "2021-04-26"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 12 de abril de 2021.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata_Sess\\u00e3o Ext. AM_12.04.2021.pdf",
+      "data": "2021-04-12"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 29 de março de 2021.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata_Sess\\u00e3o Extraord. AM_29.03.2021.pdf",
+      "data": "2021-03-29"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 15 de março de 2021.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata Sess\\u00e3o Ext AM 15.03.2021.pdf",
+      "data": "2021-03-15"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 1 de março de 2021.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata_Sess\\u00e3o Extraord. AM_01.03.2021.pdf",
+      "data": "2021-03-01"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 22 de fevereiro de 2021.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata_Sess\\u00e3o Extraord. AM_22.02.2021.pdf",
+      "data": "2021-02-22"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 22 de fevereiro de 2021 (Continuação da Sessão Ordinária iniciada no dia 15 de fevereiro de 2021).",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata_Cont Sess\\u00e3o Ord. AM_22.02.2021.pdf",
+      "data": "2021-02-22"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 15 de fevereiro de 2021.",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata Sess\\u00e3o Ord. AM 15.02.2021.pdf",
+      "data": "2021-02-15"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 1 de fevereiro de 2021 (requerida pelo Grupo Municipal Coligação Democrática Unitária).",
+      "url": "http://www.cm-porto.pt/files/uploads/cms/Minuta da Ata_Sess\\u00e3o Ext. AM_01.02.2021.pdf",
+      "data": "2021-02-01"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 28 de dezembro de 2020.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/4054/minuta-da-ata-sessao-ext.-am-28.12.2020.pdf",
+      "data": "2020-12-28"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 14 de dezembro de 2020.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/4053/minuta-da-ata-sessao-ext.-am-14.12.2020.pdf",
+      "data": "2020-12-14"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 14 de dezembro de 2020 (continuação da Sessão Ordinária iniciada a 9 de dezembro de 2020).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/4052/minuta-da-ata-cont-sessao-ord.-am-14.12.2020.pdf",
+      "data": "2020-12-14"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 9 de dezembro de 2020.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/45/files/1618307424-bZmjAvMWsW.pdf",
+      "data": "2020-12-09"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 3 de dezembro de 2020.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/4050/minuta-03122020.pdf",
+      "data": "2020-12-03"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 30 de novembro de 2020.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/4049/minuta-de-ata-sessao-ext.-am-30.11.2020.pdf",
+      "data": "2020-11-30"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 26 de outubro de 2020.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/3798/minuta-da-ata-sessao-ext.-am-26102020.pdf",
+      "data": "2020-10-26"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 14 de setembro de 2020",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/3797/minuta-da-ata-sessao-ord.-14.09.2020.pdf",
+      "data": "2020-09-14"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 27 de julho de 2020",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/210/files/3712/minuta-da-ata-sessao-extraord.-am-27.07.2020.pdf",
+      "data": "2020-07-27"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 13 de julho de 2020",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/210/files/3711/minuta-13.07.2020.pdf",
+      "data": "2020-07-13"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 8 de julho de 2020",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/210/files/3710/minuta-da-ata-sessao-extraord.-am-08.07.2020.pdf",
+      "data": "2020-07-08"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal 8 de julho de 2020 (continuação da Sessão Ordinária iniciada a 25 de junho de 2020)",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/210/files/3709/minuta-da-ata-cont-sessao-ord.am-08.07.2020.pdf",
+      "data": "2020-07-08"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 25 junho de 2020",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/210/files/3708/minuta.pdf",
+      "data": "2020-06-25"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 18 de maio de 2020.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/1716/minuta-18.05.2020.pdf",
+      "data": "2020-05-18"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 18 de maio de 2020 (conitnuação da Sessão Extraordinária iniciada a 12 de maio de 2020).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/1715/minuta-da-ata-cont.-sessao-ext.-am-18.05.2020.pdf",
+      "data": "2020-05-18"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 12 de maio de 2020.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/503/minuta-da-ata-sessao-ext.-am-12.05.2020.pdf",
+      "data": "2020-05-12"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 9 de abril de 2020.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/502/minuta-da-ata-sessao-ext.-am-09.04.2020.pdf",
+      "data": "2020-04-09"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 9 de março de 2020.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/501/minuta-da-ata-sessao-ext.-am-09.03.2020.pdf",
+      "data": "2020-03-09"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 9 de março de 2020 (continuação Sessão Extraordinária iniciada a 2 de março 2020)",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/500/minuta-da-ata-cont.-sessao-ext.-am-09.03.2020.pdf",
+      "data": "2020-03-09"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 2 de março de 2020.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/499/minuta-da-ata-sessao-ext.-am-02.03.2020.pdf",
+      "data": "2020-03-02"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal 2 de março de 2020 (continuação Sessão Ordinária iniciada a 17 de fevereiro de 2020).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/498/minuta-da-ata-cont.-sessao-ord.-am-02.03.2020.pdf",
+      "data": "2020-03-02"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 17 de fevereiro de 2020.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/497/minuta-sessao-ord.-am-17.02.2020.pdf",
+      "data": "2020-02-17"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 27 de janeiro de 2020",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/496/minuta-da-ata-sessao-ext.-am-27.01.2020.pdf",
+      "data": "2020-01-27"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 13 de janeiro de 2020.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/495/minuta-da-ata-sessao-ext.-am-13.01.2020.pdf",
+      "data": "2020-01-13"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 16 de dezembro de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/494/minuta-da-ata-16.12.2019.pdf",
+      "data": "2019-12-16"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 02 de dezembro de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/493/minuta-sessao-extraord.-am-02.12.2019.pdf",
+      "data": "2019-12-02"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 11 de novembro de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/492/minuta-sessao-ext.-am-11.11.2019.pdf",
+      "data": "2019-11-11"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 11 de novembro de 2019 (continuação Sessão Ordinária iniciada a 4 de novembro de 2019).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/491/minuta-sessao-cont.-ord.-am-11.11.2019.pdf",
+      "data": "2019-11-11"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária da Assembleia Municipal realizada no dia 4 de novembro de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/490/minuta-sessao-ord.-am-04.11.2019.pdf",
+      "data": "2019-11-04"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 14 de outubro de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/489/minuta-da-ata-sessao-ext.-am-14.10.2019-docx.docx.pdf",
+      "data": "2019-10-14"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 14 de outubro de 2019 (continuação Sessão Extraordinária iniciada a 23 de setembro de 2019).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/488/minuta-da-ata-cont.-sessao-ext.-am-14.10.2019-docx.docx.pdf",
+      "data": "2019-10-14"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 30 de setembro de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/487/minuta-da-ata-sessao-ext.-am-30.09.2019.pdf",
+      "data": "2019-09-30"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 23 de setembro de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/486/minuta-sessao-extraordinaria-am-23.09.2019.docx.pdf",
+      "data": "2019-09-23"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 23 de setembro de 2019 (continuação Sessão Ordinária iniciada a 16 de setembro de 2019).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/485/minuta-cont.-sessao-ordinaria-am-23.09.2019.pdf",
+      "data": "2019-09-23"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 16 de setembro de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/484/minuta-sessao-ord.-am-16.09.2019.pdf",
+      "data": "2019-09-16"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 11 de setembro de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/483/minuta-da-ata-sessao-extraord.-am-11.09.2019.pdf",
+      "data": "2019-09-11"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 22 de julho de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/482/minuta-da-ata-sessao-ext.-am-22.07.2019.pdf",
+      "data": "2019-07-22"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 15 de julho de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/481/minuta-ata-sessao-extraordinaria-am-15.07.2019.pdf",
+      "data": "2019-07-15"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 08 de julho de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/480/minuta-sessao-ext.-am-08.07.2019.pdf",
+      "data": "2019-07-08"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 25 de junho de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/479/minuta-sessao-ext.-am-25.06.2019.pdf",
+      "data": "2019-06-25"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 25 de junho de 2019 (continuação Sessão Ordinária iniciada a 12 de junho de 2019).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/478/minuta-sessao-ord.-am-25.06.2019-cont.-12.06.2019.pdf",
+      "data": "2019-06-25"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 17 de junho de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/477/minuta-da-ata-sessao-extraord.-17.06.2019.pdf",
+      "data": "2019-06-17"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 12 de junho de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/476/minuta-da-ata-sessao-ord.-am-12.06.2019.pdf",
+      "data": "2019-06-12"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 27 de maio de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/475/minuta-da-ata-sessao-ext.-am-27.05.2019.pdf",
+      "data": "2019-05-27"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 13 de maio de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/474/minuta-da-ata-sessao-ext.-am-13-05-2019.pdf",
+      "data": "2019-05-13"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 6 de maio 2019 (continuação Sessão Ordinária iniciada a 29 de abril de 2019).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/473/minuta-da-ata-sessao-ord.-am-06.05.2019.pdf",
+      "data": "2019-05-06"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 29 de abril de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/472/minuta-da-ata-sessao-ord.-am-29.04.2019.pdf",
+      "data": "2019-04-29"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 25 de março de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/471/minuta-da-ata-sessao-ext.-am-25.03.2019.pdf",
+      "data": "2019-03-25"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 11 de março de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/470/minuta-sessao-ext.-am-11.03.2019.pdf",
+      "data": "2019-03-11"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 11 de março de 2019 (continuação Sessão Ordinária iniciada a 25 de fevereiro de 2019).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/469/minuta-cont.-sessao-ord.-am-11.03.2019.pdf",
+      "data": "2019-03-11"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 25 de fevereiro de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/468/minuta-da-ata-sessao-ord.-am-25.02.2019.pdf",
+      "data": "2019-02-25"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 28 de janeiro de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/467/minuta-da-ata-sessao-ext.-am-28.01.2019.pdf",
+      "data": "2019-01-28"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 14 de janeiro de 2019.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/466/minuta-da-ata-sessao-ext.-am-14.01.2019.pdf",
+      "data": "2019-01-14"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 20 de dezembro de 2018.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/465/minuta-da-sessao-extraord.-am-20.12.2018.pdf",
+      "data": "2018-12-20"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 3 de dezembro de 2018.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/464/minuta-da-ata-sessao-ext.-am-03.12.2018.pdf",
+      "data": "2018-12-03"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 19 de novembro de 2018.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/463/minuta-da-sessao-ext.-am-19.11.2018.pdf",
+      "data": "2018-11-19"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 19 de novembro de 2018 (continuação Sessão Ordinária iniciada a 12 de novembro 2018).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/462/minuta-da-ata-da-cont.-sessao-ord.-am-19.11.2018.pdf",
+      "data": "2018-11-19"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 12 de novembro de 2018.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/461/minuta-da-ata-ord.-am-12.11.2018.pdf",
+      "data": "2018-11-12"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 22 de outubro de 2018.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/460/minuta-da-ata-sessao-ext.-am-22.10.2018.pdf",
+      "data": "2018-10-22"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 1 de outubro de 2018.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/459/minuta-ata-ext.-am-01.10.2018.pdf",
+      "data": "2018-10-01"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 17 de setembro de 2018.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/458/minuta-da-ata-sessao-ord.-am-17.09.2018.pdf",
+      "data": "2018-09-17"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 10 de setembro de 2018.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/457/minuta-da-ata-sessao-ext.-10.09.2018.pdf",
+      "data": "2018-09-10"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 31 de julho de 2018.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/456/minuta-da-ata-am-31.07.2018.pdf",
+      "data": "2018-07-31"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 9 de julho de 2018.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/455/minuta-da-ata-ext.-am-09.07.2018.pdf",
+      "data": "2018-07-09"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 9 de julho de 2018 (continuação Sessão Ordinária iniciada a 25 de junho).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/455/minuta-da-ata-con.-ord.-am-09.07.2018.pdf",
+      "data": "2018-07-09"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária Assembleia Municipal realizada no dia 25 de junho de 2018.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/454/minuta-da-ata-am-25.06.2018.pdf",
+      "data": "2018-06-25"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 18 de junho de 2018.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/453/minuta-da-ata-sessao-extraordinaria-18.06.2018.pdf",
+      "data": "2018-06-18"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária Assembleia Municipal realizada no dia 21 de maio de 2018.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/452/minuta-am-21-de-maio-de-2018.pdf",
+      "data": "2018-05-21"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária da Assembleia Municipal realizada no dia 7 de maio de 2018.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/451/minuta-da-ata-07.05.2018.pdf",
+      "data": "2018-05-07"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária da Assembleia Municipal realizada no dia 23 de abril de 2018.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/450/minuta-da-ata-23.04.2018.pdf",
+      "data": "2018-04-23"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária da Assembleia Municipal realizada no dia 19 de março de 2018.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/449/minuta-da-ata-am-19.03.2018.pdf",
+      "data": "2018-03-19"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Ordinária da Assembleia Municipal realizada no dia 26 de fevereiro de 2018.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/448/minuta-ata-26.02.2018.pdf",
+      "data": "2018-02-26"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão Extraordinária da Assembleia Municipal realizada no dia 7 de fevereiro de 2018.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/447/minuta-da-ata-da-sessao-ext.-de-7.02.2018.pdf",
+      "data": "2018-02-07"
+    },
+    {
+      "titulo": "Minuta da Ata Sessão extraordinária da Assembleia Municipal realizada no dia 29 de janeiro de 2018.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/cmp/89/files/446/minuta-da-ata-da-sessao-ext.-a.m.-29.01.2017.pdf",
+      "data": "2018-01-29"
+    },
+    {
+      "titulo": "Eleição de um representante de cada partido ou força política com assento na Assembleia Municipal do Porto para o Conselho Municipal das Comunidades do Porto.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%201%20(45).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Deliberação sobre aprovação da cedência temporária de rés-do-chão de imóvel à União das Freguesias de Aldoar, Foz do Douro e Nevogilde para funcionamento e desenvolvimento das atividades da “Comunidade Trajetórias”.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%202%20(44).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Deliberação sobre Renovação do contrato de cedência temporária a terminar no decorrer do 4º trimestre de 2026 – Freguesias.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%203%20(42).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Deliberação sobre Aprovação da celebração dos contratos interadministrativos de delegação de competências com as Freguesias e Uniões de Freguesias do Município no âmbito do Orçamento Colaborativo – Edição 2026.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%204%20(36).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Deliberação sobre Autorização para celebração de contratos interadministrativos de delegação de competências com Freguesias e Uniões de Freguesias do Município para gerir os apoios a projetos selecionados no âmbito do programa «Fundo de Apoio ao Associativismo Portuense» – Edição 2026.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%205%20(34).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Deliberação sobre Autorização prévia da assunção de compromissos plurianuais relativos aos Protocolos Específicos do Serviço de Atendimento e Acompanhamento Social (SAAS).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%206%20(34).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Aprovação da Celebração do Contrato-Programa com a STCP - \"Serviço Via Livre\" e respetiva Autorização prévia da assunção de compromissos plurianuais.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20270727_Ponto 1 (1).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Autorização para a alineação do imóvel sito na Rua do Pinheiro Grande.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20270727_Ponto 2 (1).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Autorização para a constituição do direito de superfície sobre um imóvel ao Lar Rosa Santos.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20270727_Ponto 3 (1).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Desafetação da parcela de terreno do domínio público municipal, sita na Rua do Estoril.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20270727_Ponto 4 (1) (1).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Aprovação da celebração do contrato interadministrativo de delegação de competências com a Freguesia de Ramalde, no âmbito do desenvolvimento das Atividades de Enriquecimento Curricular e da Componente de Apoio à Família/Atividades de Animação e de Apoio ao Estudo - ano letivo 2026/2027.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20270727_Ponto 5 (1).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Aprovação do projeto de Regulamento do Conselho Municipal das Comunidades do Porto.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20270727_Ponto 6 (1) (1).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Proposta de Alteração ao Artigo 6.º (Composição)",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/PropostaAlteracaoCDU1.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Proposta de Alteração à alínea r) do N.1 do Artigo 6.º (Composição)",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/PropostaAlteracaoCDU2.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Eleição de um Presidente de Junta de Freguesia, em representação das Freguesias do Município, para o Conselho Municipal de Saúde.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%201-anonimizado%20(2).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Autorização para celebração da Modificação Objetiva do Contrato de cedência de utilização a título precário entre o Município do Porto e a Escola das Virtudes - Cooperativa de Ensino Polivalente e Artístico, CRL.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%202-anonimizado.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Autorização prévia da assunção de compromissos plurianuais relativos à Reabilitação e Valorização da Ribeira da Riguinha - concretização da empreitada do prolongamento do canal da Ribeira da Riguinha.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%203-anonimizado.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Autorização prévia da assunção de compromissos plurianuais relativos a Aquisição de Energia Elétrica 100% proveniente de fontes de energia renovável, em regime de mercado livre, dividido em lotes, para o Município do Porto e para as Empresas Municipais e Intermunicipais.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%206-anonimizado.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Nomeação do Revisor Oficial de Contas do Município.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%207-anonimizado.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Aprovação da Alteração ao Regulamento do Conselho Municipal de Cultura do Porto.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%208-anonimizado.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Apreciação e Votação do Relatório de Gestão, Demonstrações Orçamentais Consolidadas e Demonstrações Financeiras respeitantes ao ano de 2025.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%204_anonimizado.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Apreciação do Relatório da Petição de Cidadãos \"Boavista Futebol Clube: Mais que um Clube, um símbolo da cidade\".",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260617_Relat%C3%B3rioAM_BoavistaFutebolClube.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Apreciação do Relatório da Petição de Cidadãos \" Guerra Junqueiro Mais Alegre\".",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260629_Relat%C3%B3rioAM_Peti%C3%A7%C3%A3oGuerraJunqueiro.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Apreciação do Relatório da Petição de Cidadãos \"Contra a transferência da sala de consumo assistido para o Aleixo, na cidade do Porto\".",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260622_Relat%C3%B3rioAM_Peti%C3%A7%C3%A3oContraSalaConsumoAssistido.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Aprovação do Regimento do Conselho Municipal de Saúde do Porto.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260615_Ponto 1-anon..pdf",
+      "data": null
+    },
+    {
+      "titulo": "Aprovação da Revisão ao Plano Plurianual de Investimentos (PPI) e ao Plano de Atividades Mais Relevantes do ano 2026.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260615_Ponto 2-anon..pdf",
+      "data": null
+    },
+    {
+      "titulo": "Aprovação da Sétima Alteração ao Contrato do Bairro do Aleixo.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260615_Ponto 3-anon..pdf",
+      "data": null
+    },
+    {
+      "titulo": "Desafetação de parcela de terreno do domínio público municipal, sita na Travessa da Prelada.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260615_Ponto 9-anon..pdf",
+      "data": null
+    },
+    {
+      "titulo": "Desafetação da parcela de terreno do domínio público municipal, sita nas Ruas da Preciosa e do Conde da Covilhã.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260615_Ponto 10-anon..pdf",
+      "data": null
+    },
+    {
+      "titulo": "Desafetação de parcela de terreno do domínio público municipal, sita à Rua das Zínias.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260615_Ponto 11-anon..pdf",
+      "data": null
+    },
+    {
+      "titulo": "Desafetação de parcela de terreno do domínio público municipal, sita na Rua de Augusto Lessa.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260615_Ponto 12-anon..pdf",
+      "data": null
+    },
+    {
+      "titulo": "Aprovação da transformação da Associação Ibérica dos Municípios Ribeirinhos do Douro (AIMRD) num Agrupamento Europeu de Cooperação Territorial (AECT).",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260615_Ponto 13-anon..pdf",
+      "data": null
+    },
+    {
+      "titulo": "Designação de Fiscal Único/ROC da Sociedade de Transportes Colectivos do Porto, E.I.M., S.A",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%201-anon..pdf",
+      "data": null
+    },
+    {
+      "titulo": "Aprovação do Regulamento do Conselho Municipal do Desporto do Porto.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%202.anon..pdf",
+      "data": null
+    },
+    {
+      "titulo": "Aprovação da Alteração ao Regulamento do Conselho Municipal da Juventude do Porto.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%203-anon..pdf",
+      "data": null
+    },
+    {
+      "titulo": "Autorização prévia da assunção de compromissos plurianuais relativos às empresas Ágora – Cultura e Desporto do Porto, E.M., S.A., DomusSocial – Empresa de Habitação e Manutenção do Município do Porto, E. M., Gestão e Obras do Porto, E. M. e Porto Vivo, SRU - Sociedade de Reabilitação Urbana do Porto E.M., S.A.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%204-anon..pdf",
+      "data": null
+    },
+    {
+      "titulo": "Aprovação do 1.º aditamento ao Contrato-Programa para gestão do programa Porto Solidário 2024-2026 com a CMPH – DomusSocial – Empresa de Habitação e Manutenção do Município do Porto, E.M.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%205-anon..pdf",
+      "data": null
+    },
+    {
+      "titulo": "Aprovação do Contrato Programa 2026-2028 a celebrar com a CMPH – DomusSocial – Empresa de Habitação e Manutenção do Município do Porto, E.M.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%206.anon..pdf",
+      "data": null
+    },
+    {
+      "titulo": "Aprovação do 1.º Aditamento ao Contrato-Programa 2026-2028 celebrado com a empresa municipal ÁGORA – Cultura e Desporto do Porto E.M., S.A.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%207-anon..pdf",
+      "data": null
+    },
+    {
+      "titulo": "Aprovação do 1.º Aditamento ao Contrato de Mandato Administrativo 2026-2028 celebrado com a empresa municipal ÁGORA – Cultura e Desporto do Porto E.M., S.A.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%208-anon..pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Educação STEAM: preparar o Porto para o conhecimento”, apresentada pelo Grupo Municipal Iniciativa Liberal.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260629_01_GMIL_Moc%CC%A7a%CC%83oLiteracia%20STEAM.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Da Adesão do Município à ICORN”, apresentada pelo Grupo Municipal LIVRE.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260629_02_GML_Recomenda%C3%A7%C3%A3o_Ades%C3%A3o_ICORN-anon..pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Para Melhorar o Portal do Munícipe”, apresentada pelo Grupo Municipal LIVRE.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260629_03_GML_Recomenda%C3%A7%C3%A3oPortalMun%C3%ADcipe-anon..pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Por um Mecanismo Municipal de Monitorização e Ação para a Qualidade do Ar”, apresentada pelo Grupo Municipal Bloco de Esquerda.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260629_05_GMBE_Recomendacao_MecanismoQualidadeAr.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Para responder à falta de habitação digna, atualizar a Estratégia Local de Habitação e o Acordo de Colaboração com o IHRU”, apresentada pelo Grupo Municipal Bloco de Esquerda.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260629_06_GMBE_Recomendacao_EstrategiaHabitacao.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Pela resolução dos problemas associados ao inaceitável excesso de calor que se regista no interior das carruagens do Metro do Porto nos dias de maior temperatura”, apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260629_08_GMCDU_Recomendacao_ProblemasTemperaturaMetroPorto%20(1).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Pela preparação das envolventes escolares antes do início do ano lectivo”, apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260629_10_GMCDU_Recomendacao_PreparacaoAnoLetivo%20-%20C%C3%B3pia%20(1).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Por um Porto cada vez mais Cooperativo”, apresentada pelo Grupo Municipal Partido Social Democrata.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260629_11_GMPSD_Recomenda%C3%A7%C3%A3o_PortoCooperativo.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Deliberação “Pelo acompanhamento institucional do Boavista Futebol Clube e promoção da salvaguarda do seu património cultural”, apresentada pelo Grupo Municipal Bloco de Esquerda.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260629_14_GMBE_Deliberacao_AcompanhamentoBoavistaFutebolClube.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Em defesa do Boavista Futebol Clube e da zona desportiva do Bessa”, apresentada pelo Grupo Municipal Partido Socialista.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260629_15_GMPS_Recomenda%C3%A7ao_DefesaBoavistaFutebolClube.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Por um processo aberto, participado e fundamentado técnica e cientificamente sobre a eventual transferência da Sala de Consumo Assistido do Porto - Pasteleira para o Aleixo”, apresentada pelo Grupo Municipal Filipe Araújo: Fazer à Porto.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260629_18_GMFA_Recomenda%C3%A7%C3%A3o%20Sala%20Consumo%20Assistido.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Por uma resposta integrada ao problema da toxicodependência”, apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260629_19_GMCDU_Recomendacao_RespostaIntegradaToxicodependencia.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Promover um processo participado, transparente e tecnicamente fundamentado sobre a eventual transferência da Sala de Consumo Vigiado do Porto”, apresentada pelo Grupo Municipal Partido Socialista.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260629_20_GMPS_Recomendacao_ProcessoSalaVigiadoConsumo.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Por um novo estudo atualizado sobre a situação das dependências no Porto e na Área Metropolitana do Porto”, apresentada pelo Grupo Municipal B.E.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20260629_21_GMBE_Recomendacao_EstudoDependenciasPortoAreaMetropolitana.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação - Património com utilidade pública – pela criação de um Regulamento de Cedência e Utilização de Património Municipal, apresentada pelo Grupo Municipal Iniciativa Liberal.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/03_GMIL%20-%20Patrimonio%20Utilidade%20Publica.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação – Reforço da Rede de Parques Infantis no Porto para a Promoção do Bem-Estar das Crianças e das Famílias, apresentada pelo Grupo Municipal Partido Socialista.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/05_GMPS_Recomendacao_Rede%20Parques_signed.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação – Por uma Cultura Mais Inclusiva, Participativa e Descentralizada e por uma reformulação do programa “Cultura em Expansão”, apresentada pelo Grupo Municipal Partido Socialista.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/06_GMPS_Recomendacao_Cultura_signed.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação - Criação do Programa \"Assembleia Municipal Juvenil\", apresentada pelo Grupo Municipal Partido Socialista.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/07_GMPS_Assemb%20Municipal%20Juvenil_signed.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação – Cultura como pilar de desenvolvimento social e serviço público, apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/08_GMCDU_Servico%20Publico%20Cultura_signed.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação – Pela realização de um plano urgente de intervenção nas escolas do Porto, apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/09_GMCDU_Plano%20Urgente%20Escolas_signed.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação – Pela valorização do Movimento Associativo Portuense e reforço dos apoios municipais, apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/10_GMCDU_Associativismo_signed.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação – Por uma Política Municipal de Educação e Cultura para uma Cidade Educadora, apresentada pelo Grupo Municipal Bloco de Esquerda.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/11_GMBE_Por%20uma%20Pol%C3%ADtica%20Municipal%20de%20Educa%C3%A7%C3%A3o.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação – Por uma Gestão do Espaço Público para uma Cidade Integradora e Democrática, apresentada pelo Grupo Municipal Bloco de Esquerda.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/13_GMBE_Por%20uma%20Gest%C3%A3o%20do%20Espa%C3%A7o%20P%C3%BAblico.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação – Por uma Política Pública de Desporto no Porto, apresentada pelo Grupo Municipal Bloco de Esquerda.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/14_GMBE_Por%20uma%20Pol%C3%ADtica%20P%C3%BAblica%20de%20Desporto%20no%20Porto.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Pela divulgação das datas e ordens de trabalhos das reuniões dos órgãos municipais nas redes sociais e canais institucionais”, apresentada pelo Grupo Municipal Iniciativa Liberal.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/5_GMIL_Recomendac%CC%A7a%CC%83o%20IL_assinada.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Pelo levantamento das necessidades de conservação e manutenção dos edifícios dos Centros de Saúde do Porto”, apresentada pelo Grupo Municipal Partido Socialista.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/7_GMPS%20Recomendac%CC%A7a%CC%83o%20de%20Intervenc%CC%A7a%CC%83o%20nnos%20Centros%20de%20Sau%CC%81de_signed.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Por uma Mobilidade Sustentável, Segura e Justa no Porto”, apresentada pelo Grupo Municipal Bloco de Esquerda.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/13_GMBE_Proposta%20BE%20Mobilidade%20Sustent%C3%A1vel.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Para a aplicação da redução da taxa de IMI para agregados familiares com dependentes (IMI Familiar) em 2026 - Incentivo à natalidade e à fixação de População no Porto”, apresentada pelo Grupo Municipal CHEGA.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/14_GMCH_Recomenda%C3%A7%C3%A3o%20para%20a%20aplica%C3%A7%C3%A3o%20da%20redu%C3%A7%C3%A3o%20da%20taxa%20de%20IMI%20para%20agregados.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Pela Gestão Pública das Cantinas Escolares no Porto”, apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/17_GMCDU_PROPOSTA%20DE%20RECOMENDA%C3%87%C3%83O.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação sobre a adesão do Município do Porto à Associação Nacional das Assembleias Municipais (ANAM), apresentada pela Presidente da Assembleia Municipal do Porto.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/01_PAM_Recomenda\\u00e7\\u00e3o Ades\\u00e3o Munic\\u00edpio Porto \\u00e0 ANAM.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “100 dias, 100 passos” do mandato autárquico, apresentada pelo Grupo Municipal Partido Social Democrata.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/02_GMPSD_Recomenda\\u00e7\\u00e3o 100dias passos mandato aut\\u00e1rquico.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Solicitação de Parecer de Natureza Jurídico-Financeiro sobre a Unidade de Execução da UOPG1 – Avenida Nun’Álvares”, apresentada pelo Grupo Municipal Partido Socialista.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/06_GMPS_Recomendacao_Avenida Nun\\u2019A\\u0301lvares.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Reforço da Representatividade das Freguesias no Conselho Municipal de Educação”, apresentada pelo Grupo Municipal Partido Socialista.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/07_GMPS_Recomendacao_Representatividade Freguesias Conselho Municipal Educac\\u0327a\\u0303o.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Evocar os 50 anos do poder local democrático”, apresentada pelo Grupo Municipal Bloco de Esquerda.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/08_GMBE_Recomenda\\u00e7\\u00e3o_50 Anos Poder Local Democr\\u00e1tico.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Defender Regiões para Melhor Responder às Populações”, apresentada pelo Grupo Municipal Bloco de Esquerda.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/09_GMBE_Recomenda\\u00e7\\u00e3o_Defender Regi\\u00f5es Melhor Resposta Popula\\u00e7\\u00f5es.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Alteração ao Regulamento de Gestão do Parque Habitacional do Município do Porto e da respectiva Matriz”, apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/18_GMCDU_Matriz.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Por um urgente plano de desenvolvimento de construção de habitação”, apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/19_GMCDU_Plano_Habitacao.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Pelo aprofundamento das competências do Município do Porto no âmbito da Carta Municipal de Habitação”, apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20_GMCDU_CMH.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Para um Programa de Apoio às Cooperativas de Habitação e Associação de Moradores”, apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/21_GMCDU_Cooperativas.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Um Porto em comum: um novo impulso ao cooperativismo habitacional ”, apresentada pelo Grupo Municipal Partido Socialista.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/22_GMPS_Recomendacao_UmPortoemComum_signed.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Deliberação “Pelo reforço da regulação municipal na garantia do direito à habitação”, apresentada pelo Grupo Municipal Bloco de Esquerda.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/24_GMBE%20AMP%20Regula%C3%A7%C3%A3o%20Municipal%20Direito%20Habita%C3%A7%C3%A3o.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Pela defesa efetiva do direito à habitação no País e na Cidade“, apresentada pelo Grupo Municipal Bloco de Esquerda.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/25_GMBE%20AMP%20Delibera%C3%A7%C3%A3o%20Pacote%20Habita%C3%A7%C3%A3o.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Pela criação de uma unidade de missão para a implementação do código do IMI aos fogos devolutos no Porto”, apresentada pelo Grupo Municipal Bloco de Esquerda.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/26_GMBE%20AMP%20Unidade%20de%20Miss%C3%A3o%20Devolutos%20IMI.pdf.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Pela Revisão do Plano de Contingência para Pessoas em Situação de Sem-Abrigo e pela ativação do Programa Local de Espaços de Calor no Porto”, apresentada pelo Grupo Municipal Bloco de Esquerda.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20251219_Recomenda\\u00e7\\u00e3oPlanoContigencia.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Valorizar e divulgar a identidade e a memória do porto evocando os momentos marcantes da sua história que se assinalarão no 2026 a 2029”, apresentada pelo Grupo Municipal CDU.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20251219_RecomendacaoMemoriaPorto.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Por medidas imediatas para a VCI”, apresentada pelo Grupo Municipal CDU.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20251219_RecomendacaoMedidasVCI.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Pela resolução dos problemas associados ao inaceitável excesso de calor que se regista no interior de carruagens do metro do Porto nos dias de maior temperatura”, apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/05_GMCDU_Recomenda\\u00e7\\u00e3o_Contra excesso de calor no Metro do Porto.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Pelo envolvimento da Assembleia Municipal do Porto no processo de decisão sobre o projeto de chegada, saída e atravessamento do porto por parte da linha de alta velocidade”, apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/06_GMCDU_Recomenda\\u00e7\\u00e3o_Participa\\u00e7\\u00e3o AM Processo Decis\\u00e3o Atravessamento TGV.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Para que a Câmara Municipal do Porto não tome nenhuma decisão no âmbito da tramitação administrativa do processo relativo ao projeto de execução das operações de loteamento da UOPG 1 avenida Nun’Álvares, antes da tomada de posse dos novos órgãos municipais”, apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/07_GMCDU_Recomenda\\u00e7\\u00e3o_UOPG Av Nun Alvares.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Dotar os Grupos Municipais e os Membros da Assembleia Municipal do Porto de Condições que permitam a melhoria e dignificação da sua intervenção” apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250721_GMCDU%2004.pdf",
+      "data": null
+    },
+    {
+      "titulo": "ecomendação “Pela melhoria das condições de funcionamento da Assembleia Municipal do Porto” apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250721_GMCDU%2005.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Pela presença de pelo menos um(a) Vereador(a) com Pelouro atribuído no \"Período de Intervenção dos Cidadãos\" da Assembleia Municipal do Porto” apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20250721_GMCDU%2006.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Mês da Saúde Oral no Porto”, apresentada pelo Grupo Municipal Partido Socialista.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/01_GMPS_Moc%CC%A7a%CC%83o_signed.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Pela garantia da realização dos investimentos na construção, reabilitação e manutenção dos edifícios das USF e pela efetiva participação dos Municípios nos Conselhos de Administração das ULS”, apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/03_GMCDU_Proposta%20recomenda%C3%A7%C3%A3o%20investimentos%20USF14072025.pdf",
+      "data": null
+    },
+    {
+      "titulo": "Recomendação “Pelo reforço das verbas para o SNS para que este possa cumprir cabalmente a sua missão, designadamente na cidade do Porto”, apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/04_GMCDU_Proposta%20Recomenda%C3%A7%C3%A3o%20Refor%C3%A7o%20Verbas%20para%20o%20SNS%2014072025.pdf",
+      "data": null
+    }
+  ],
+  "novos": [],
+  "destacados": [],
+  "accao": "Documento novo da Assembleia Municipal do Porto: abrir docs/VIGILANCIA-IMI-PORTO-2027.md, abrir o PDF e procurar o ponto «fixação das taxas do IMI» (e o IMI Familiar 30/70/140 €). Se a deliberação estiver lá: criar data/fiscal/imi-2027.json conforme a checklist (prazo legal de comunicação à AT: 31 de dezembro, art. 112.º n.º 14 do CIMI)."
+}
