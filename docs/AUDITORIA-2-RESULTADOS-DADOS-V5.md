@@ -223,6 +223,11 @@ sem ele, mostrar ao utilizador que a simulação não fecha.Golden tests novos n
 
 ### 4-A · RESOLVIDO por OCR — a deliberação do IMI Familiar do Porto 2026
 
+> **Anexo arquivado:** a prova física desta leitura (PDF original, as 3
+> páginas rasterizadas e o transcript integral do OCR) está em
+> [`docs/ANEXO-OCR-IMI-FAMILIAR-PORTO/`](docs/ANEXO-OCR-IMI-FAMILIAR-PORTO/README.md),
+> com proveniência, método e hashes SHA-256.
+
 O PDF digitalizado do município (3 páginas, zero texto embutido) foi lido com
 tesseract (WASM, via npm, sem alterar as dependências do repo) —
 `NUD/289978/2026/CMP`, do site da Câmara Municipal do Porto, baixado e lido a
