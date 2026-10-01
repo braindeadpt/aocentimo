@@ -266,7 +266,7 @@ export default function CenaFabrica({ D, mundoRef, camaraRef, aoFechar }: PropsF
       <div className="b-painel" role="dialog" aria-labelledby="fab-quem">
         <button className="b-fechar" type="button" aria-label={T.fechar} onClick={aoFechar}>×</button>
         <span className="b-quem" id="fab-quem" tabIndex={-1}>{T.fabQuem}</span>
-        <p className="b-fala">A linha do salário não chegou — a cena não tem números de que não desconfie.</p>
+        <p className="b-fala">{T.fabSemDados}</p>
         <div className="b-acoes">
           <button className="b-btn b-claro" type="button" onClick={aoFechar}>{T.finBtnVoltar}</button>
         </div>
@@ -300,7 +300,7 @@ export default function CenaFabrica({ D, mundoRef, camaraRef, aoFechar }: PropsF
               : ""),
         }}
       />
-      <div className="contador" role="status" aria-label="O percurso do salário até agora">
+      <div className="contador" role="status" aria-label={T.fabContAria}>
         <span style={{ background: "var(--azul-2)" }}>{T.fabContSS(fmtEUR(totais.ss))}</span>
         <span style={{ background: "var(--vermelho-2)" }}>{T.fabContIrs(fmtEUR(totais.irs))}</span>
         <span style={{ background: "var(--verde-2)" }}>{T.fabContCasa(fmtEUR(totais.casa))}</span>

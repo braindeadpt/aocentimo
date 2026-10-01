@@ -559,6 +559,17 @@ quatro cenas vive em `src/app/_bairro/cenas/textos.ts` — portada do
 protótipo, com os números a entrar por parâmetro já formatados. Nada
 está em mensagem final sem essa revisão.
 
+**Revisão do dono, 2026-10-01 (copy das quatro cenas P2a):** lida e
+aprovada com três alterações, já em `textos.ts`:
+(1) a retenção mensal do IRS passa a dizer-se «adiantamento que se acerta
+na declaração anual» (Fábrica e nota da Finanças), porque o IRS retido por
+mês e o imposto final por ano não batem e o leitor faz a conta;
+(2) o IVA reduzido deixa de ser «o que é essencial» e passa a «os alimentos
+básicos da lista I do Código do IVA»;
+(3) três textos que estavam escritos dentro dos componentes (a falha de
+dados da Fábrica e dois `aria-label`) foram para `textos.ts`, para ficarem
+na lista que o dono revê.
+
 _(P2b — Correios, Bomba, Segurança Social — e P2c — Casa, Pastelaria,
 Quiosque, Escola — ficam para as sessões seguintes.)_
 
