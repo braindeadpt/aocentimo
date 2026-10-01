@@ -1,0 +1,354 @@
+/*
+ * bairro-cenas.css — o conteúdo das cenas (P2a): calculadoras, palpites,
+ * barras de subida, o talão do IVA e as gavetas do IRS.
+ *
+ * A moldura (.b-cena, .b-painel, .b-quem, .b-fala…) já vive no
+ * `bairro.css` (FUTURO_P1 esperava por este JSX). Aqui entra só o que o
+ * protótipo tinha como conteúdo de cena (`mapa.html` linhas 107–184),
+ * com o prefixo `b-` da casa — o mesmo motivo de `iso.ts`: o mapa entra
+ * numa página que tem mais CSS, e as colisões custam semanas.
+ *
+ * Zero tokens inventados: todos os valores vêm do protótipo ou das
+ * variáveis V5 (--papel, --tinta, --amarelo-2, --vermelho-2…).
+ */
+
+/* ————— conteúdo comum ————— */
+
+[data-pele="v5"] .b-cena .b-corpo {
+  display: grid;
+  gap: 12px;
+}
+
+[data-pele="v5"] .pergunta-fin {
+  font-size: 18px;
+}
+
+[data-pele="v5"] .opcoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+[data-pele="v5"] .opcoes .b-btn {
+  font-size: 14px;
+  padding: 7px 13px;
+  min-height: 40px;
+}
+
+[data-pele="v5"] .nota-fin {
+  font-size: 14px;
+  color: var(--tinta-2);
+}
+
+[data-pele="v5"] .grafico-irs {
+  width: 100%;
+  height: auto;
+  color: var(--tinta);
+}
+
+[data-pele="v5"] .contador {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+[data-pele="v5"] .contador span {
+  border: 2.5px solid var(--tinta);
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-weight: 800;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* o realce do produto escolhido na mercearia: os outros apagam */
+[data-pele="v5"] .b-cena-arte svg .prod {
+  transition: opacity 0.3s;
+}
+
+[data-pele="v5"] .b-cena-arte svg:has(.prod.realce) .prod:not(.realce) {
+  opacity: 0.35;
+}
+
+/* a gaveta do IRS que enche: a ativa sai da cómoda */
+[data-pele="v5"] .b-cena-arte svg .gaveta {
+  transition: transform 0.3s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+[data-pele="v5"] .b-cena-arte svg .gaveta.ativa {
+  transform: translateX(-12px);
+}
+
+[data-pele="v5"] .b-cena-arte svg .gaveta.ativa > rect:first-child {
+  stroke: var(--azul);
+  stroke-width: 3.4;
+}
+
+/* ————— o palpite ————— */
+
+[data-pele="v5"] .b-palpite {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+}
+
+[data-pele="v5"] .b-palpite output {
+  font-weight: 900;
+  font-size: 34px;
+  font-variant-numeric: tabular-nums;
+  min-width: 4.4ch;
+}
+
+[data-pele="v5"] input[type="range"] {
+  width: 100%;
+  accent-color: var(--azul);
+  height: 32px;
+}
+
+/* ————— a calculadora ————— */
+
+[data-pele="v5"] .b-calc {
+  border: 3px solid var(--tinta);
+  border-radius: 16px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 7px;
+  background: var(--amarelo-2);
+}
+
+[data-pele="v5"] .b-calc label {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+[data-pele="v5"] .b-calc label b,
+[data-pele="v5"] .b-calc .b-calc-linha b {
+  background: none;
+  padding: 0;
+}
+
+[data-pele="v5"] .b-calc output {
+  font-weight: 900;
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}
+
+[data-pele="v5"] .b-calc-linha {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+[data-pele="v5"] .b-calc-linha b.b-r {
+  background: var(--vermelho-2);
+  color: var(--vermelho);
+  font-weight: 800;
+  padding: 0 0.2em;
+  border-radius: 4px;
+}
+
+/* ————— a barra de juros do banco ————— */
+
+[data-pele="v5"] .b-barra-juros {
+  display: flex;
+  height: 24px;
+  border: 2.5px solid var(--tinta);
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+[data-pele="v5"] .b-barra-juros span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: width 0.2s;
+}
+
+[data-pele="v5"] .b-barra-juros .b-bj {
+  background: var(--vermelho-2);
+  color: var(--vermelho);
+}
+
+[data-pele="v5"] .b-barra-juros .b-bc {
+  background: var(--verde-2);
+  color: var(--verde);
+}
+
+/* ————— o exemplo ajustável do banco ————— */
+
+[data-pele="v5"] .b-exemplo summary {
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+[data-pele="v5"] .b-exemplo label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+[data-pele="v5"] .b-exemplo output {
+  font-weight: 900;
+}
+
+/* ————— as barras de subida da mercearia ————— */
+
+[data-pele="v5"] .b-subidas {
+  display: grid;
+  gap: 6px;
+}
+
+[data-pele="v5"] .b-sub-l {
+  display: grid;
+  grid-template-columns: minmax(0, 11em) minmax(0, 1fr) 4.6em;
+  gap: 10px;
+  align-items: center;
+  font-size: 14px;
+}
+
+[data-pele="v5"] .b-sub-n {
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+[data-pele="v5"] .b-sub-n small {
+  display: block;
+  font-weight: 500;
+  color: var(--suave);
+  font-size: 12px;
+}
+
+[data-pele="v5"] .b-sub-b {
+  position: relative;
+  height: 16px;
+  background: var(--linha);
+  border-radius: 4px;
+}
+
+[data-pele="v5"] .b-sub-b i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--vermelho-2);
+  border: 2px solid var(--vermelho);
+  border-radius: 4px;
+}
+
+[data-pele="v5"] .b-sub-b i.top {
+  background: var(--vermelho);
+}
+
+[data-pele="v5"] .b-sub-b em,
+[data-pele="v5"] .b-sub-leg em {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  border-left: 2.5px dashed var(--tinta);
+}
+
+[data-pele="v5"] .b-sub-l > b {
+  font-weight: 900;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+[data-pele="v5"] .b-sub-leg {
+  font-size: 13px;
+  color: var(--tinta-2);
+  margin-top: 4px;
+}
+
+[data-pele="v5"] .b-sub-leg span {
+  position: relative;
+  padding-left: 14px;
+}
+
+[data-pele="v5"] .b-sub-leg em {
+  left: 2px;
+  top: 0;
+  bottom: 0;
+}
+
+@media (max-width: 520px) {
+  [data-pele="v5"] .b-sub-l {
+    grid-template-columns: minmax(0, 1fr) 4.6em;
+  }
+
+  [data-pele="v5"] .b-sub-b {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+/* ————— o talão do IVA ————— */
+
+[data-pele="v5"] .b-talao {
+  display: grid;
+  gap: 3px;
+  background: #fff;
+  border: 2px solid var(--tinta);
+  padding: 14px 16px 16px;
+  max-width: 340px;
+  font-family: ui-monospace, "Cascadia Mono", "Courier New", monospace;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 4px 5px 0 var(--linha);
+  mask: linear-gradient(#000 calc(100% - 8px), transparent 0),
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 12px 100%;
+}
+
+[data-pele="v5"] .b-talao b,
+[data-pele="v5"] .b-talao .t-cab {
+  background: none;
+  padding: 0;
+}
+
+[data-pele="v5"] .b-talao .t-cab {
+  text-align: center;
+  font-size: 15px;
+}
+
+[data-pele="v5"] .b-talao .t-sub {
+  text-align: center;
+  color: var(--suave);
+  font-size: 12.5px;
+}
+
+[data-pele="v5"] .b-talao .t-l {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+[data-pele="v5"] .b-talao .t-sep {
+  border-top: 2px dashed var(--tinta);
+  margin: 4px 0;
+}
+
+[data-pele="v5"] .b-talao .t-tot {
+  margin-top: 4px;
+  font-size: 15px;
+}
+
+/* o produto ligado (as opções da mercearia) e a fonte extra no fim */
+[data-pele="v5"] .b-btn.b-ligado {
+  background: var(--tinta);
+  color: #fff;
+}
+
+[data-pele="v5"] .b-fonte-inline {
+  font-size: 12.5px;
+  color: var(--suave);
+}

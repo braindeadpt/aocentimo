@@ -509,7 +509,58 @@ dos pins é medida da câmara, não desenho.
 
 ## P2a–P2c · As cenas
 
-_(por preencher — toda a copy das onze cenas é PROPOSTA)_
+### P2a — as quatro primeiras cenas: Fábrica, Finanças, Banco, Mercearia
+
+Porta de `cenaSalario` (mapa.tpl.html), `cena-financas.js`,
+`cena-banco.js` e `cena-mercearia.js` para `src/app/_bairro/cenas/`,
+dentro da moldura `<CenaDePerto>` (o `cenaBase`). O que a casa obriga e
+como ficou:
+
+- **Chunks por cena:** o `<Bairro>` só pede a cena com `next/dynamic`
+  quando se entra no edifício (registry em `cenas/registry.ts`); o CSS
+  de conteúdo (`bairro-cenas.css`) viaja no chunk, não na home. O e2e
+  prova que nenhum pedido de cena acontece no load.
+- **Dados por props, séries compactas:** `dadosCenas()` corre no
+  servidor e manda números crus + fontes; as séries vão como
+  `{ inicio, v }` e o cliente reconstrói os meses (`cenas/utils.ts`) —
+  a mesma economia que as `coordenadas` da câmara. Nenhum JSON de
+  `data/` chega ao cliente.
+- **Contas pelo motor, sempre:** as gavetas do IRS
+  (`cenas/irs-gavetas.ts`) são testadas CONTRA `impostoPorEscaloes` (o
+  motor de /irs e /salario) e o rodapé da cena leva o IRS anual pronto
+  de `cenarios-salario.json`; a prestação do Banco é sempre
+  `simularPrestacao()` (método francês); o IVA vem de `iva.json`; na
+  Mercearia nenhum preço em euros é inventado — tudo são razões entre
+  índices ECOICOP.
+- **Fábrica = coreografia no mapa:** as moedas voam nas camadas
+  `b-movA/b-movB` com GSAP por dynamic import (o mesmo de
+  `ligarAmbiente`); sem GSAP (reduced-motion), a cena escreve DIRETO o
+  estado final no contador — que passa a mostrar CÊNTIMOS exatos
+  (1 166,83 €, e não o 1 167 arredondado do protótipo).
+- **Acessibilidade:** o foco entra no título da cena e volta ao
+  edifício ao fechar; Escape fecha; o URL leva a âncora (`/#banco`),
+  `hashchange` abre, Voltar fecha. As falas estão em `aria-live`.
+- **A nit do #27 aplicada:** `montarMapa(marcadores)` corre UMA vez no
+  `<Bairro>`; o reflexo reutiliza o mesmo mapa.
+
+**Os números:** home 63,2 → **67,3 KB gzip** (+4,1 KB: os dados das
+quatro cenas no flight, séries compactas — limite 80 KB ok, gate verde);
+JS inicial 211,0 → **213,2 KB** (o registry; as cenas ficam fora do
+bundle inicial — limite 350 KB ok).
+
+**Allowlist FUTURO_P1 encolheu de 17 para 6 classes:** as onze do painel
+e da moldura de cena (b-painel, b-quem, b-fala, b-acoes, b-fechar,
+b-fonte, b-btn, b-claro, b-cena, b-cena-arte, b-cena-texto) aterram em
+JSX e saem da lista; fica `b-confirma` (a cena da SS, P2b) e o grupo das
+cartas (P1-4).
+
+**Textos PROPOSTA (para o dono rever antes de lançar):** toda a copy das
+quatro cenas vive em `src/app/_bairro/cenas/textos.ts` — portada do
+protótipo, com os números a entrar por parâmetro já formatados. Nada
+está em mensagem final sem essa revisão.
+
+_(P2b — Correios, Bomba, Segurança Social — e P2c — Casa, Pastelaria,
+Quiosque, Escola — ficam para as sessões seguintes.)_
 
 ## P3 · A pele V5 nas 13 rotas
 
