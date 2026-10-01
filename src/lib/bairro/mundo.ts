@@ -28,9 +28,10 @@
  * de `dadosBairro()`; o céu, as estrelas e a lua são decorado, não dado.
  */
 import {
+  aparar,
   MUNDO,
   ORIGEM,
-  f1,
+  fi,
   metroIso,
   nuvem,
   padroes,
@@ -66,7 +67,10 @@ const solto = (
   estilo = ""
 ): string => {
   const [x, y, w, h] = vb;
-  return `<svg class="b-solto ${cls}" viewBox="${x} ${y} ${w} ${h}" width="${w}" height="${h}" style="left:${x - MUNDO.x}px;top:${y - MUNDO.y}px;${estilo}" aria-hidden="true">${html}</svg>`;
+  // aparo fino: as caixas das nuvens tinham décimas do produto (56×0.8 =
+  // 44.800000000000004 sai no HTML com todas as casas) — sai tudo inteiro.
+  const X = fi(x), Y = fi(y), W = fi(w), H = fi(h);
+  return `<svg class="b-solto ${cls}" viewBox="${X} ${Y} ${W} ${H}" width="${W}" height="${H}" style="left:${X - MUNDO.x}px;top:${Y - MUNDO.y}px;${estilo}" aria-hidden="true">${html}</svg>`;
 };
 
 /* ——————————————————————————————— o céu ——————————————————————————————— */
@@ -233,7 +237,7 @@ function semAcoes(svg: string): string {
 function nadador(): string {
   const [x, y] = Pcom(TERRENO)(15.05, 12.95, -22);
   return (
-    `<g class="b-nadador" transform="translate(${f1(x)} ${f1(y)})">` +
+    `<g class="b-nadador" transform="translate(${fi(x)} ${fi(y)})">` +
     `<ellipse rx="12" ry="4" fill="#dff2ff" opacity=".7"/>` +
     `<circle cy="-5" r="5.5" fill="#d49a72" stroke="#16130f" stroke-width="1.4"/>` +
     `<path d="M-5.5 -7 q5.5 -6 11 0" fill="#1d1410"/>` +
@@ -247,9 +251,9 @@ export function reflexos(m: MapaBairro): string {
   const F2 = 2 * (ORIGEM.y + 64 * 14.54 + ORIGEM.x / 2) + 44;
   return (
     `<g clip-path="url(#b-clipAgua)"><g mask="url(#b-mascOndas)" opacity=".26">` +
-    `<g id="b-refRibeira" transform="matrix(1 1 0 -1 0 ${f1(F1)})">${semAcoes(m.ribeira)}</g>` +
-    `<use href="#ponteT" transform="matrix(1 -1 0 -1 0 ${f1(F2)})"/>` +
-    `<use href="#ponteF" transform="matrix(1 -1 0 -1 0 ${f1(F2)})"/>` +
+    `<g id="b-refRibeira" transform="matrix(1 1 0 -1 0 ${fi(F1)})">${semAcoes(m.ribeira)}</g>` +
+    `<use href="#ponteT" transform="matrix(1 -1 0 -1 0 ${fi(F2)})"/>` +
+    `<use href="#ponteF" transform="matrix(1 -1 0 -1 0 ${fi(F2)})"/>` +
     `</g></g>`
   );
 }
@@ -332,5 +336,7 @@ export function mundoBairro(m: MapaBairro): { html: string; css: string } {
     camada("b-cCeu", `<g id="b-gCeu">${nadador()}</g>`) +
     `<div id="b-noite" style="width:${MUNDO.w}px;height:${MUNDO.h}px"></div>` +
     camada("b-cTopo", topo(m));
-  return { html, css };
+  // Aparo fino (P4): o solto (elétrico, nadador, barcos, metro, nuvens)
+  // nasce fora de `montarMapa`, por isso a rede passa aqui outra vez.
+  return { html: aparar(html), css };
 }

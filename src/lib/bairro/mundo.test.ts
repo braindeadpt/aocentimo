@@ -284,3 +284,66 @@ describe("o enquadramento por omissão do CSS", () => {
     expect(Math.abs(cssVista.ty / (-(vb.y - MUNDO.y) * s) - 1)).toBeLessThan(0.005);
   });
 });
+
+/* ————————————————————————————————————————————————————————————
+   O APARO FINO DAS COORDENADAS (P4). A precisão do desenho vive numa
+   função só — `fi`, em iso.ts — e hoje é ao inteiro. O que pode ter
+   décimas no mapa é só o que não passa por `fi`: os literais de direção
+   dos `matrix(.8944 .4472 …)` e os ângulos dos `rotate(26.57 …)`. Este
+   teste é o contrato: se alguém voltar a pôr décimas no desenho, é
+   deliberado e passa por aqui.
+   ———————————————————————————————————————————————————————————— */
+
+describe("o aparo fino das coordenadas", () => {
+  const { html } = mundoBairro(M);
+
+  const decimaisForaDe = (ctx: string): string[] =>
+    ctx.match(/-?\d+\.\d+/g) ?? [];
+
+  it("o viewBox das camadas e das peças soltas é inteiro", () => {
+    for (const m of html.matchAll(/viewBox="([^"]+)"/g)) {
+      expect(decimaisForaDe(m[1])).toEqual([]);
+    }
+  });
+
+  it("os atributos d, points e as translações dos matrix são inteiros", () => {
+    for (const m of html.matchAll(/\b(d|points)="([^"]+)"/g)) {
+      expect(decimaisForaDe(m[2]), `em ${m[1]}="${m[2].slice(0, 60)}…"`).toEqual([]);
+    }
+    // nos matrix só as translações (componentes e/f) podem ter número;
+    // os literais .8944/.4472 são a direção isométrica e ficam intactos —
+    // a esquerda leva (.8944 .4472), a direita a espelhada (.8944 -.4472).
+    for (const m of html.matchAll(/transform="matrix\(([^)]+)\)"/g)) {
+      const [a, b, c, dd] = m[1].trim().split(/[\s,]+/);
+      expect(Number(a)).toBeCloseTo(0.8944, 3);
+      expect(Math.abs(Number(b))).toBeCloseTo(0.4472, 3);
+      expect(Number(c)).toBe(0);
+      expect(Number(dd)).toBe(1);
+    }
+  });
+
+  it("fora de direções e estilos de traço, o mapa não tem um decimal", () => {
+    // O que pode ter décimas, e só isto: os literais de direção/escala
+    // (matrix, scale), o ângulo dos rotate, o traço (stroke-width,
+    // dasharray, opacity) e o raio das estrelas. Tudo o resto — posição,
+    // caixas, translações — é inteiro.
+    const limpo = html
+      .replace(/\b(matrix|scale)\([^)]*\)/g, "X()")
+      .replace(/\brotate\(-?[\d.]+/g, "rotate(")
+      .replace(/\bstroke-(width|dasharray)="[^"]*"/g, "")
+      .replace(/\bopacity="[^"]*"/g, "")
+      // font-size é tipografia, não coordenada: arredondá-lo mudava o
+      // tamanho do glifo (visível), por isso fica de fora do aparar.
+      .replace(/\bfont-size="[\d.]+"/g, "")
+      .replace(/(<circle class="estrela"[^>]*?\br=")[\d.]+/g, "$1");
+    const sobras = decimaisForaDe(limpo);
+    if (sobras.length) {
+      const onde = sobras.map((d) => {
+        const k = limpo.indexOf(d);
+        return `  ${d} @ …${limpo.slice(Math.max(0, k - 90), k + 40).replace(/\n/g, " ")}…`;
+      });
+      throw new Error(`decimais sobrando (${sobras.length}):
+${onde.join("\n")}`);
+    }
+  });
+});

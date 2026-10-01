@@ -460,8 +460,46 @@ três falhavam no main antes do conserto (127,9 KB; mapa no flight). A
 mensagem do gate aponta o dedo a quem voltar a passar HTML grande por
 prop.
 
-Não se fez (fora de âmbito): o aparo fino de coordenadas — fica para um
-commit separado com diff de pixels, como o dono condicionou.
+### P4 — o aparo fino de coordenadas: o mapa perde 8 KB sem mudar um pixel
+
+O passo 2 do plano (o «experimento A» do §anterior) executou-se num
+commit separado (`v5/p4-apear`), com a prova que o dono exigiu. A
+precisão de todo o desenho já vivia numa função só — a `f1` do `iso.ts`,
+uma décima — e passou a inteiro (renomeada `fi`, o nome tinha de dizer a
+verdade). Os decimais que escapavam à função — literais desenhados à mão
+nos paths, caixas das nuvens (`44.800000000000004`), atributos `r`/`cx`/
+`rx` — apanham-nos uma rede final, `aparar()`, sobre o SVG montado (no
+fim de `montarMapa` e no html de `mundoBairro`): arredonda `d`, `points`,
+`transform` e a geometria dos elementos, e NUNCA toca nos literais de
+direção dos `matrix(.8944 .4472 …)` nem nos ângulos dos `rotate(26.57 …)`
+— são eles que fazem a isometria; arredondá-los torcia o desenho. Fora
+do aparo, com o porquê escrito: `font-size` (tipografia muda o glifo) e
+os raios das estrelas (a única decoração estocástica — a noite não muda
+nem meio píxel).
+
+**Os números** (build estático, mesma máquina):
+
+| | antes | depois |
+|---|---|---|
+| HTML da home (gzip) | 64 326 B | **56 475 B (−7 851, −12,2 %)** |
+| só o mapa `.b-mundo` (gzip) | 48 530 B | **40 563 B (−16,4 %)** |
+| só o mapa (raw) | 426 178 B | **364 274 B (−61,9 KB)** |
+
+(Sobre os números do conserto do flight: 62,8 → 55,2 KB gzip.)
+
+**A prova de pixels** — a condição do dono («se houver qualquer fio de
+luz visível, não entra»): screenshots do build antes vs. depois, a 1440×900
+e 390×844, em dia e noite, a 1× e a zoom máximo (`scale(8)` sobre o
+enquadramento «perto»), animações congeladas, comparados pixel a pixel
+por canal (pior diferença é o veredicto). Resultado: **PC 4/4 vistas com
+ZERO pixels diferentes**; móvel: dia zero, noite 28–36 píxeis com
+diferença ≤ 6/255 — antialiasing sub-visível. **Nenhum fio de luz.**
+
+**Vigilância nova:** `mundo.test.ts` («o aparo fino das coordenadas», 3
+testes) é o contrato: viewBox, `d`, `points` e as translações dos
+`matrix` são inteiros; as isenções (direção dos `matrix`, ângulos dos
+`rotate`, traço, `font-size`, estrelas) estão nomeadas no teste — quem
+puser décimas no desenho volta a ter de as justificar lá.
 
 ## P2a–P2c · As cenas
 

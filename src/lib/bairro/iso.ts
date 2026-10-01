@@ -56,15 +56,48 @@ export const ORIGEM = { x: OX, y: OY } as const;
  */
 export const MUNDO = { x: -900, y: -700, w: 3600, h: 2500 } as const;
 
-/** Arredonda a uma casa decimal — o número que sai no SVG tem de ser curto. */
-export const f1 = (n: number): number => +n.toFixed(1);
+/**
+ * Arredonda ao inteiro — o número que sai no SVG tem de ser curto. Era uma
+ * casa decimal (`f1`); o aparo fino do P4 passou a inteiro: os únicos
+ * decimais que ficam no mapa são os literais de direção dos `matrix(…)`
+ * (`.8944`, `.4472`), que não passam por aqui. É esta função que define a
+ * precisão de todo o desenho — e é a única.
+ */
+export const fi = (n: number): number => Math.round(n);
+
+/**
+ * Aparo fino (P4): última passada sobre o SVG montado — arredonda ao
+ * inteiro os números dos atributos `d`, `points` e `transform`, apanhando
+ * os literais desenhados à mão nos paths (cantos, arcos) que não passam
+ * por `fi`. Os `transform` que começam por `matrix`/`translate`/`scale`
+ * ficam intactos: os `.8944`/`.4472` são a direção isométrica, não
+ * posição, e arredondá-los torcia o desenho. Forma partilhada com a
+ * medição do experimento A em `scripts/_dieta-html.mjs`.
+ */
+export const aparar = (s: string): string => {
+  // As estrelas são a única decoração estocástica: os seus raios com
+  // décimas ficam como estão, para a noite não mudar nem meio píxel.
+  const estrelas: string[] = [];
+  const guardadas = s.replace(
+    /<circle class="estrela"[^>]*>/g,
+    (m) => `\u0000${estrelas.push(m) - 1}\u0000`
+  );
+  const aparado = guardadas.replace(
+    /\b(d|points|transform|x|y|width|height|cx|cy|rx|ry|r|x1|y1|x2|y2)="([^"]*)"/g,
+    (m0, attr: string, v: string) =>
+      attr === "transform" && !/^(matrix|translate|scale)/.test(v)
+        ? m0
+        : `${attr}="${v.replace(/-?\d+\.\d+/g, (x) => String(Math.round(+x)))}"`
+  );
+  return aparado.replace(/\u0000(\d+)\u0000/g, (_, k: string) => estrelas[+k]);
+};
 
 /** Formata uma lista de pontos para o atributo `points` de um SVG. */
 export const pts = (...ps: readonly Ponto[]): string =>
-  ps.map((p) => `${f1(p[0])},${f1(p[1])}`).join(" ");
+  ps.map((p) => `${fi(p[0])},${fi(p[1])}`).join(" ");
 
 /** Formata uma lista de pontos já calculada para um atributo `points`. */
-const lista = (arr: readonly Ponto[]): string => arr.map((p) => `${f1(p[0])},${f1(p[1])}`).join(" ");
+const lista = (arr: readonly Ponto[]): string => arr.map((p) => `${fi(p[0])},${fi(p[1])}`).join(" ");
 
 /**
  * Projeção isométrica 2:1. Com a cota do terreno aplicada por omissão —
@@ -182,7 +215,7 @@ export function muroI(
   const a = P(i0, j, zBaixo);
   const w = (i1 - i0) * LAD;
   const h = zCima - zBaixo;
-  return `<g transform="matrix(.8944 .4472 0 1 ${f1(a[0])} ${f1(a[1])})"><rect x="0" y="${f1(-h)}" width="${f1(w)}" height="${f1(h)}" fill="${fill}" stroke="${K}" stroke-width="2.6"/>${extra}</g>`;
+  return `<g transform="matrix(.8944 .4472 0 1 ${fi(a[0])} ${fi(a[1])})"><rect x="0" y="${fi(-h)}" width="${fi(w)}" height="${fi(h)}" fill="${fill}" stroke="${K}" stroke-width="2.6"/>${extra}</g>`;
 }
 
 /* ———————— fachadas em 2D (coordenadas locais: 0..w, −h..0) ———————— */
@@ -221,24 +254,24 @@ export function varandaFerro(x0: number, x1: number, yb: number, flores?: boolea
   const n = Math.max(3, Math.round((x1 - x0) / 4));
   for (let k = 0; k <= n; k++) {
     const x = x0 + dx + ((x1 - x0) * k) / n;
-    s += `<path d="M${f1(x)} ${yb + dy - alt} V${yb + dy}" stroke="${C.ferro}" stroke-width="1.1"/>`;
+    s += `<path d="M${fi(x)} ${yb + dy - alt} V${yb + dy}" stroke="${C.ferro}" stroke-width="1.1"/>`;
   }
-  s += `<path d="M${x0} ${yb - alt} V${yb} M${x1} ${yb - alt} V${yb} M${f1(x0 + dx / 2)} ${f1(yb - alt + dy / 2)} v${alt} M${f1(x1 + dx / 2)} ${f1(yb - alt + dy / 2)} v${alt}" stroke="${C.ferro}" stroke-width="1.1"/>`;
+  s += `<path d="M${x0} ${yb - alt} V${yb} M${x1} ${yb - alt} V${yb} M${fi(x0 + dx / 2)} ${fi(yb - alt + dy / 2)} v${alt} M${fi(x1 + dx / 2)} ${fi(yb - alt + dy / 2)} v${alt}" stroke="${C.ferro}" stroke-width="1.1"/>`;
   return s;
 }
 
 /** Janela de sacada/guilhotina da Ribeira: aro claro, caixilho em cruz. */
 export function janelaR(x: number, y: number, w: number, h: number, o: OpcoesJanela = {}): string {
-  let s = `<rect x="${f1(x - 2.5)}" y="${f1(y - 2.5)}" width="${f1(w + 5)}" height="${f1(h + 5)}" fill="${o.moldura || "#f4efe4"}" stroke="${K}" stroke-width="1.8"/>`;
-  s += `<rect class="vidro" x="${f1(x)}" y="${f1(y)}" width="${f1(w)}" height="${f1(h)}" stroke="${K}" stroke-width="1.5"/>`;
-  if (o.vizinho) s += `<g class="vizinho" opacity="0"><circle cx="${f1(x + w / 2)}" cy="${f1(y + h * 0.52)}" r="${f1(w * 0.3)}" fill="${o.vizinho[0]}" stroke="${K}" stroke-width="1.2"/><path d="M${f1(x + w * 0.2)} ${f1(y + h * 0.48)} q${f1(w * 0.3)} ${f1(-w * 0.5)} ${f1(w * 0.6)} 0" fill="${o.vizinho[1]}" stroke="${K}" stroke-width="1"/></g>`;
-  s += `<path d="M${f1(x)} ${f1(y + h * 0.5)} H${f1(x + w)} M${f1(x + w / 2)} ${f1(y)} V${f1(y + h)}" stroke="${o.moldura || "#f4efe4"}" stroke-width="1.8"/>`;
-  s += `<path d="M${f1(x + 2)} ${f1(y + h * 0.4)} l${f1(w * 0.3)} ${f1(-h * 0.22)}" stroke="#fff" stroke-opacity=".6" stroke-width="1.5" stroke-linecap="round"/>`;
-  if (o.portadas) s += `<rect x="${f1(x - w * 0.42 - 2.5)}" y="${f1(y - 2)}" width="${f1(w * 0.42)}" height="${f1(h + 4)}" fill="${o.portadas}" stroke="${K}" stroke-width="1.5"/><rect x="${f1(x + w + 2.5)}" y="${f1(y - 2)}" width="${f1(w * 0.42)}" height="${f1(h + 4)}" fill="${o.portadas}" stroke="${K}" stroke-width="1.5"/>`;
+  let s = `<rect x="${fi(x - 2.5)}" y="${fi(y - 2.5)}" width="${fi(w + 5)}" height="${fi(h + 5)}" fill="${o.moldura || "#f4efe4"}" stroke="${K}" stroke-width="1.8"/>`;
+  s += `<rect class="vidro" x="${fi(x)}" y="${fi(y)}" width="${fi(w)}" height="${fi(h)}" stroke="${K}" stroke-width="1.5"/>`;
+  if (o.vizinho) s += `<g class="vizinho" opacity="0"><circle cx="${fi(x + w / 2)}" cy="${fi(y + h * 0.52)}" r="${fi(w * 0.3)}" fill="${o.vizinho[0]}" stroke="${K}" stroke-width="1.2"/><path d="M${fi(x + w * 0.2)} ${fi(y + h * 0.48)} q${fi(w * 0.3)} ${fi(-w * 0.5)} ${fi(w * 0.6)} 0" fill="${o.vizinho[1]}" stroke="${K}" stroke-width="1"/></g>`;
+  s += `<path d="M${fi(x)} ${fi(y + h * 0.5)} H${fi(x + w)} M${fi(x + w / 2)} ${fi(y)} V${fi(y + h)}" stroke="${o.moldura || "#f4efe4"}" stroke-width="1.8"/>`;
+  s += `<path d="M${fi(x + 2)} ${fi(y + h * 0.4)} l${fi(w * 0.3)} ${fi(-h * 0.22)}" stroke="#fff" stroke-opacity=".6" stroke-width="1.5" stroke-linecap="round"/>`;
+  if (o.portadas) s += `<rect x="${fi(x - w * 0.42 - 2.5)}" y="${fi(y - 2)}" width="${fi(w * 0.42)}" height="${fi(h + 4)}" fill="${o.portadas}" stroke="${K}" stroke-width="1.5"/><rect x="${fi(x + w + 2.5)}" y="${fi(y - 2)}" width="${fi(w * 0.42)}" height="${fi(h + 4)}" fill="${o.portadas}" stroke="${K}" stroke-width="1.5"/>`;
   if (o.varanda) s += varandaFerro(x - 3.5, x + w + 3.5, y + h + 2.5, o.flores);
   else {
-    s += `<rect x="${f1(x - 4)}" y="${f1(y + h + 2.5)}" width="${f1(w + 8)}" height="3" fill="#d8cbb4" stroke="${K}" stroke-width="1.3"/>`;
-    if (o.flores) s += `<circle cx="${f1(x + 2)}" cy="${f1(y + h)}" r="3" fill="#e2412a" stroke="${K}" stroke-width=".9"/><circle cx="${f1(x + w - 2)}" cy="${f1(y + h - 0.5)}" r="2.6" fill="#ff8fb7" stroke="${K}" stroke-width=".9"/>`;
+    s += `<rect x="${fi(x - 4)}" y="${fi(y + h + 2.5)}" width="${fi(w + 8)}" height="3" fill="#d8cbb4" stroke="${K}" stroke-width="1.3"/>`;
+    if (o.flores) s += `<circle cx="${fi(x + 2)}" cy="${fi(y + h)}" r="3" fill="#e2412a" stroke="${K}" stroke-width=".9"/><circle cx="${fi(x + w - 2)}" cy="${fi(y + h - 0.5)}" r="2.6" fill="#ff8fb7" stroke="${K}" stroke-width=".9"/>`;
   }
   return s;
 }
@@ -252,14 +285,14 @@ export function porta2(x: number, w: number, h: number, cor: string, arco = fals
 
 export function placa2(x: number, y: number, w: number, txt: string, fundo: string, cor: string): string {
   const tam = Math.min(15, (w - 10) / (txt.length * 0.74));
-  return `<rect x="${x}" y="${y}" width="${w}" height="${f1(tam + 10)}" rx="4" fill="${fundo}" stroke="${K}" stroke-width="2.2"/><text x="${x + w / 2}" y="${f1(y + tam + 3)}" text-anchor="middle" font-family="Archivo" font-weight="900" font-stretch="112%" font-size="${f1(tam)}" fill="${cor}">${txt}</text>`;
+  return `<rect x="${fi(x)}" y="${fi(y)}" width="${fi(w)}" height="${fi(tam + 10)}" rx="4" fill="${fundo}" stroke="${K}" stroke-width="2.2"/><text x="${fi(x + w / 2)}" y="${fi(y + tam + 3)}" text-anchor="middle" font-family="Archivo" font-weight="900" font-stretch="112%" font-size="${fi(tam)}" fill="${cor}">${txt}</text>`;
 }
 
 export function toldo2(x: number, y: number, w: number, c1: string, c2 = "#fff"): string {
   const n = Math.max(3, Math.round(w / 12));
   let s = "";
-  for (let k = 0; k < n; k++) s += `<path d="M${f1(x + (k * w) / n)} ${y} h${f1(w / n)} l-4 16 h${f1(-w / n)} z" fill="${k % 2 ? c2 : c1}" stroke="${K}" stroke-width="1.5"/>`;
-  s += `<path d="M${f1(x - 4)} ${y + 16} ${Array.from({ length: n }, () => `q${f1(w / n / 2)} 5 ${f1(w / n)} 0`).join(" ")}" fill="${c1}" stroke="${K}" stroke-width="1.5"/>`;
+  for (let k = 0; k < n; k++) s += `<path d="M${fi(x + (k * w) / n)} ${y} h${fi(w / n)} l-4 16 h${fi(-w / n)} z" fill="${k % 2 ? c2 : c1}" stroke="${K}" stroke-width="1.5"/>`;
+  s += `<path d="M${fi(x - 4)} ${y + 16} ${Array.from({ length: n }, () => `q${fi(w / n / 2)} 5 ${fi(w / n)} 0`).join(" ")}" fill="${c1}" stroke="${K}" stroke-width="1.5"/>`;
   return s;
 }
 
@@ -337,9 +370,9 @@ export function fachadaRibeira(w: number, hh: number, o: OpcoesRibeira): string 
   const n = o.porPiso || (w > 58 ? 2 : 1);
   const sem = o.semente || 0;
   let s = "";
-  if (o.chapa) s += `<rect x="0" y="${-hh}" width="${f1(w)}" height="${f1(hh - rc)}" fill="url(#b-chapa)"/>`;
-  s += `<rect x="0" y="${-hh}" width="5" height="${hh}" fill="${C.granito}" stroke="${K}" stroke-width="1.1"/><rect x="${f1(w - 5)}" y="${-hh}" width="5" height="${hh}" fill="${C.granito}" stroke="${K}" stroke-width="1.1"/>`;
-  s += `<rect x="0" y="${-rc - 5}" width="${f1(w)}" height="5" fill="${C.granito}" stroke="${K}" stroke-width="1.3"/>`;
+  if (o.chapa) s += `<rect x="0" y="${-hh}" width="${fi(w)}" height="${fi(hh - rc)}" fill="url(#b-chapa)"/>`;
+  s += `<rect x="0" y="${-hh}" width="5" height="${hh}" fill="${C.granito}" stroke="${K}" stroke-width="1.1"/><rect x="${fi(w - 5)}" y="${-hh}" width="5" height="${hh}" fill="${C.granito}" stroke="${K}" stroke-width="1.1"/>`;
+  s += `<rect x="0" y="${-rc - 5}" width="${fi(w)}" height="5" fill="${C.granito}" stroke="${K}" stroke-width="1.3"/>`;
   for (let r = 0; r < pisos; r++) {
     for (let k = 0; k < n; k++) {
       const jw = Math.min(15, (w - 10) / n - 12);
@@ -369,28 +402,28 @@ export function fachadaRibeira(w: number, hh: number, o: OpcoesRibeira): string 
       [0.48, C.amarelo, 10, 13],
       [0.68, "#fff", 7, 10],
     ];
-    s += `<g class="roupa"><path d="M6 ${f1(y)} Q${f1(w / 2)} ${f1(y + 6)} ${f1(w - 6)} ${f1(y)}" fill="none" stroke="${K}" stroke-width="1.1"/>${pecas.map(([t, c, pw, ph], k) => `<rect class="peca p${k + 1}" x="${f1(w * t - pw / 2)}" y="${f1(y + 3)}" width="${pw}" height="${ph}" fill="${c}" stroke="${K}" stroke-width="1.2"/>`).join("")}</g>`;
+    s += `<g class="roupa"><path d="M6 ${fi(y)} Q${fi(w / 2)} ${fi(y + 6)} ${fi(w - 6)} ${fi(y)}" fill="none" stroke="${K}" stroke-width="1.1"/>${pecas.map(([t, c, pw, ph], k) => `<rect class="peca p${k + 1}" x="${fi(w * t - pw / 2)}" y="${fi(y + 3)}" width="${pw}" height="${ph}" fill="${c}" stroke="${K}" stroke-width="1.2"/>`).join("")}</g>`;
   }
-  s += o.rdc ? o.rdc(w, rc) : porta2(f1(w / 2 - 9), 18, rc - 6, o.corPorta || "#5a3d27", true);
+  s += o.rdc ? o.rdc(w, rc) : porta2(fi(w / 2 - 9), 18, rc - 6, o.corPorta || "#5a3d27", true);
   return s;
 }
 
 /** Rés-do-chão em arcada de granito. */
 export function arcada(w: number, rc: number): string {
-  let s = `<rect x="0" y="${-rc}" width="${f1(w)}" height="${rc}" fill="url(#b-granito)" stroke="${K}" stroke-width="1.6"/>`;
+  let s = `<rect x="0" y="${-rc}" width="${fi(w)}" height="${rc}" fill="url(#b-granito)" stroke="${K}" stroke-width="1.6"/>`;
   const n = Math.max(1, Math.round(w / 34));
   const aw = w / n;
   for (let k = 0; k < n; k++) {
     const x = k * aw + 5;
     const lw = aw - 10;
-    s += `<path d="M${f1(x)} 0 V${-rc + lw / 2 + 4} A${f1(lw / 2)} ${f1(lw / 2)} 0 0 1 ${f1(x + lw)} ${-rc + lw / 2 + 4} V0 Z" fill="#3b2f26" stroke="${K}" stroke-width="2"/><rect x="${f1(x + lw * 0.25)}" y="-12" width="${f1(lw * 0.5)}" height="3" fill="#fff" stroke="${K}" stroke-width="1"/><path d="M${f1(x + lw / 2)} -9 V0" stroke="#fff" stroke-width="1.6"/>`;
+    s += `<path d="M${fi(x)} 0 V${-rc + lw / 2 + 4} A${fi(lw / 2)} ${fi(lw / 2)} 0 0 1 ${fi(x + lw)} ${-rc + lw / 2 + 4} V0 Z" fill="#3b2f26" stroke="${K}" stroke-width="2"/><rect x="${fi(x + lw * 0.25)}" y="-12" width="${fi(lw * 0.5)}" height="3" fill="#fff" stroke="${K}" stroke-width="1"/><path d="M${fi(x + lw / 2)} -9 V0" stroke="#fff" stroke-width="1.6"/>`;
   }
   return s;
 }
 
 function chamine(ridge: Ponto, k = 0): string {
   const [x, y] = ridge;
-  return `<rect x="${f1(x - 4 + k)}" y="${f1(y - 14)}" width="8" height="16" fill="${C.granito}" stroke="${K}" stroke-width="1.8"/><rect x="${f1(x - 5.5 + k)}" y="${f1(y - 17)}" width="11" height="4" fill="${C.telhaEsc}" stroke="${K}" stroke-width="1.6"/>`;
+  return `<rect x="${fi(x - 4 + k)}" y="${fi(y - 14)}" width="8" height="16" fill="${C.granito}" stroke="${K}" stroke-width="1.8"/><rect x="${fi(x - 5.5 + k)}" y="${fi(y - 17)}" width="11" height="4" fill="${C.telhaEsc}" stroke="${K}" stroke-width="1.6"/>`;
 }
 
 /* ————————————— caixa isométrica: duas paredes + telhado ————————————— */
@@ -453,9 +486,9 @@ export function caixa(i: number, j: number, wi: number, dj: number, h: number, o
     s += `<polygon class="sombra-d" points="${pts(B, Cc, [Cc[0] + h * 0.5, Cc[1] + h * 0.12], [B[0] + h * 0.5, B[1] + h * 0.12])}" fill="${C.sombra}"/><polygon class="sombra-t" points="${pts(A, B, Cc, [Cc[0] + h * 1.25, Cc[1] + h * 0.42], [B[0] + h * 1.25, B[1] + h * 0.42], [A[0] + h * 1.25, A[1] + h * 0.42])}" fill="rgba(90,40,20,.2)"/>`;
   }
   // parede esquerda, ao longo de i
-  s += `<g transform="matrix(.8944 .4472 0 1 ${f1(A[0])} ${f1(A[1])})"><rect x="0" y="${-h}" width="${f1(wE)}" height="${h}" fill="${o.fundoE || o.fundo || C.pedra}" stroke="${K}" stroke-width="2.6"/>${o.semRodape ? "" : `<rect x="0" y="-9" width="${f1(wE)}" height="9" fill="${C.pedraEsc}" stroke="${K}" stroke-width="1.8"/>`}${o.esq ? o.esq(wE, h) : ""}<rect x="0" y="-22" width="${f1(wE)}" height="22" fill="url(#b-baseSombra)" pointer-events="none"/>${o.semCornija ? "" : `<rect x="-2" y="${-h}" width="${f1(wE + 4)}" height="6" fill="${C.pedra}" stroke="${K}" stroke-width="1.8"/>`}</g>`;
+  s += `<g transform="matrix(.8944 .4472 0 1 ${fi(A[0])} ${fi(A[1])})"><rect x="0" y="${-h}" width="${fi(wE)}" height="${h}" fill="${o.fundoE || o.fundo || C.pedra}" stroke="${K}" stroke-width="2.6"/>${o.semRodape ? "" : `<rect x="0" y="-9" width="${fi(wE)}" height="9" fill="${C.pedraEsc}" stroke="${K}" stroke-width="1.8"/>`}${o.esq ? o.esq(wE, h) : ""}<rect x="0" y="-22" width="${fi(wE)}" height="22" fill="url(#b-baseSombra)" pointer-events="none"/>${o.semCornija ? "" : `<rect x="-2" y="${-h}" width="${fi(wE + 4)}" height="6" fill="${C.pedra}" stroke="${K}" stroke-width="1.8"/>`}</g>`;
   // parede direita, ao longo de −j; um pouco mais escura
-  s += `<g transform="matrix(.8944 -.4472 0 1 ${f1(B[0])} ${f1(B[1])})"><rect x="0" y="${-h}" width="${f1(wD)}" height="${h}" fill="${o.fundoD || o.fundo || C.pedra}" stroke="${K}" stroke-width="2.6"/>${o.semRodape ? "" : `<rect x="0" y="-9" width="${f1(wD)}" height="9" fill="${C.pedraEsc}" stroke="${K}" stroke-width="1.8"/>`}${o.dir ? o.dir(wD, h) : ""}<rect x="0" y="-22" width="${f1(wD)}" height="22" fill="url(#b-baseSombra)" pointer-events="none"/>${o.semCornija ? "" : `<rect x="-2" y="${-h}" width="${f1(wD + 4)}" height="6" fill="${C.pedra}" stroke="${K}" stroke-width="1.8"/>`}<rect x="0" y="${-h}" width="${f1(wD)}" height="${h}" fill="#1a2250" opacity=".13" pointer-events="none"/></g>`;
+  s += `<g transform="matrix(.8944 -.4472 0 1 ${fi(B[0])} ${fi(B[1])})"><rect x="0" y="${-h}" width="${fi(wD)}" height="${h}" fill="${o.fundoD || o.fundo || C.pedra}" stroke="${K}" stroke-width="2.6"/>${o.semRodape ? "" : `<rect x="0" y="-9" width="${fi(wD)}" height="9" fill="${C.pedraEsc}" stroke="${K}" stroke-width="1.8"/>`}${o.dir ? o.dir(wD, h) : ""}<rect x="0" y="-22" width="${fi(wD)}" height="22" fill="url(#b-baseSombra)" pointer-events="none"/>${o.semCornija ? "" : `<rect x="-2" y="${-h}" width="${fi(wD + 4)}" height="6" fill="${C.pedra}" stroke="${K}" stroke-width="1.8"/>`}<rect x="0" y="${-h}" width="${fi(wD)}" height="${h}" fill="#1a2250" opacity=".13" pointer-events="none"/></g>`;
   const m1: Ponto = [(Dd[0] + A[0]) / 2, (Dd[1] + A[1]) / 2];
   const m2: Ponto = [(Cc[0] + B[0]) / 2, (Cc[1] + B[1]) / 2];
   if (o.telhado === "duas") {
@@ -509,7 +542,7 @@ export function clerigos(ci: number, cj: number, E = 1.22, t: Terreno = PLANO): 
   let s = "";
   let z = z0;
   const pilastras = (w: number, hh: number): string =>
-    `<rect x="0" y="${-hh}" width="6" height="${hh}" fill="${G2}" stroke="${K}" stroke-width="1.2"/><rect x="${f1(w - 6)}" y="${-hh}" width="6" height="${hh}" fill="${G2}" stroke="${K}" stroke-width="1.2"/>`;
+    `<rect x="0" y="${-hh}" width="6" height="${hh}" fill="${G2}" stroke="${K}" stroke-width="1.2"/><rect x="${fi(w - 6)}" y="${-hh}" width="6" height="${hh}" fill="${G2}" stroke="${K}" stroke-width="1.2"/>`;
   const bloco = (lado: number, h: number, o: OpcoesCaixa = {}): void => {
     lado *= E;
     h *= E;
@@ -522,56 +555,56 @@ export function clerigos(ci: number, cj: number, E = 1.22, t: Terreno = PLANO): 
     const r = (lado * E) / 2;
     ([[-r, r], [r, r], [r, -r]] as const).forEach(([di, dj]) => {
       const p = P(ci + di, cj + dj, z);
-      s += `<g transform="translate(${f1(p[0])} ${f1(p[1])}) scale(${E})">${desenho}</g>`;
+      s += `<g transform="translate(${fi(p[0])} ${fi(p[1])}) scale(${E})">${desenho}</g>`;
     });
   };
   const urna = `<path d="M-3.5 0 h7 l-1 -5 q4 -4 0 -9 q-2.5 -4 -2.5 -7 q0 3 -2.5 7 q-4 5 0 9 z" fill="${G}" stroke="${K}" stroke-width="1.4"/>`;
   const faces = (fn: (w: number, hh: number) => string) => ({ esq: fn, dir: fn });
 
   bloco(1.02, 8, { fundo: G2, topo: G });
-  bloco(0.94, 92, faces((w, hh) => `${pilastras(w, hh)}${porta2(f1(w / 2 - 8), 16, 30, "#8a3b2a", true)}<ellipse cx="${f1(w / 2)}" cy="-42" rx="9" ry="7" fill="${G2}" stroke="${K}" stroke-width="1.6"/><path d="M${f1(w / 2 - 7)} -58 v-16 a7 7 0 0 1 14 0 v16 z" fill="#8f8574" stroke="${K}" stroke-width="1.6"/><circle cx="${f1(w / 2)}" cy="-68" r="2.6" fill="${G}" stroke="${K}" stroke-width="1"/><path d="M${f1(w / 2)} -66 v7" stroke="${K}" stroke-width="2.6"/>`));
+  bloco(0.94, 92, faces((w, hh) => `${pilastras(w, hh)}${porta2(fi(w / 2 - 8), 16, 30, "#8a3b2a", true)}<ellipse cx="${fi(w / 2)}" cy="-42" rx="9" ry="7" fill="${G2}" stroke="${K}" stroke-width="1.6"/><path d="M${fi(w / 2 - 7)} -58 v-16 a7 7 0 0 1 14 0 v16 z" fill="#8f8574" stroke="${K}" stroke-width="1.6"/><circle cx="${fi(w / 2)}" cy="-68" r="2.6" fill="${G}" stroke="${K}" stroke-width="1"/><path d="M${fi(w / 2)} -66 v7" stroke="${K}" stroke-width="2.6"/>`));
   cornija(1.02);
-  bloco(0.9, 46, faces((w, hh) => `${pilastras(w, hh)}<rect x="${f1(w / 2 - 6)}" y="-32" width="12" height="16" rx="5" fill="#3b342c" stroke="${K}" stroke-width="1.5"/><path d="M${f1(w / 2 - 6)} -24 h12 M${f1(w / 2)} -32 v16" stroke="${G2}" stroke-width="1.2"/>`));
+  bloco(0.9, 46, faces((w, hh) => `${pilastras(w, hh)}<rect x="${fi(w / 2 - 6)}" y="-32" width="12" height="16" rx="5" fill="#3b342c" stroke="${K}" stroke-width="1.5"/><path d="M${fi(w / 2 - 6)} -24 h12 M${fi(w / 2)} -32 v16" stroke="${G2}" stroke-width="1.2"/>`));
   cornija(0.98);
-  bloco(0.86, 86, faces((w, hh) => `${pilastras(w, hh)}<path d="M${f1(w / 2 - 10)} -14 V-52 a10 10 0 0 1 20 0 V-14 Z" fill="#2f2923" stroke="${K}" stroke-width="1.8"/><path d="M${f1(w / 2 - 6)} -24 q0 -12 6 -14 q6 2 6 14 z" fill="#6f7a4a" stroke="${K}" stroke-width="1.3"/><path d="M${f1(w / 2 - 9)} -76 h18 v8 q0 9 -9 11 q-9 -2 -9 -11 z" fill="${G2}" stroke="${K}" stroke-width="1.5"/>`));
+  bloco(0.86, 86, faces((w, hh) => `${pilastras(w, hh)}<path d="M${fi(w / 2 - 10)} -14 V-52 a10 10 0 0 1 20 0 V-14 Z" fill="#2f2923" stroke="${K}" stroke-width="1.8"/><path d="M${fi(w / 2 - 6)} -24 q0 -12 6 -14 q6 2 6 14 z" fill="#6f7a4a" stroke="${K}" stroke-width="1.3"/><path d="M${fi(w / 2 - 9)} -76 h18 v8 q0 9 -9 11 q-9 -2 -9 -11 z" fill="${G2}" stroke="${K}" stroke-width="1.5"/>`));
   cornija(1.0, 8);
-  bloco(0.74, 56, faces((w, hh) => `${pilastras(w, hh)}<circle cx="${f1(w / 2)}" cy="-30" r="12" fill="#fbfaf6" stroke="${K}" stroke-width="2"/>${Array.from({ length: 12 }, (_, k) => { const a = (k * Math.PI) / 6; return `<path d="M${f1(w / 2 + Math.sin(a) * 9.5)} ${f1(-30 - Math.cos(a) * 9.5)} L${f1(w / 2 + Math.sin(a) * 11)} ${f1(-30 - Math.cos(a) * 11)}" stroke="${K}" stroke-width="1"/>`; }).join("")}<path class="ponteiro" d="M${f1(w / 2)} -30 v-8" stroke="${K}" stroke-width="1.8" stroke-linecap="round"/><path class="ponteiro2" d="M${f1(w / 2)} -30 h6" stroke="${K}" stroke-width="1.8" stroke-linecap="round"/>`));
+  bloco(0.74, 56, faces((w, hh) => `${pilastras(w, hh)}<circle cx="${fi(w / 2)}" cy="-30" r="12" fill="#fbfaf6" stroke="${K}" stroke-width="2"/>${Array.from({ length: 12 }, (_, k) => { const a = (k * Math.PI) / 6; return `<path d="M${fi(w / 2 + Math.sin(a) * 9.5)} ${fi(-30 - Math.cos(a) * 9.5)} L${fi(w / 2 + Math.sin(a) * 11)} ${fi(-30 - Math.cos(a) * 11)}" stroke="${K}" stroke-width="1"/>`; }).join("")}<path class="ponteiro" d="M${fi(w / 2)} -30 v-8" stroke="${K}" stroke-width="1.8" stroke-linecap="round"/><path class="ponteiro2" d="M${fi(w / 2)} -30 h6" stroke="${K}" stroke-width="1.8" stroke-linecap="round"/>`));
   cantos(0.74, urna);
   cornija(0.8);
-  bloco(0.62, 24, faces((w) => `${Array.from({ length: Math.floor(w / 6) }, (_, k) => `<path d="M${4 + k * 6} -4 q-2 -6 0 -9 q2 3 0 9" fill="${G}" stroke="${K}" stroke-width="1"/>`).join("")}<rect x="0" y="-20" width="${f1(w)}" height="4" fill="${G2}" stroke="${K}" stroke-width="1.2"/>`));
-  bloco(0.5, 42, faces((w, hh) => `${pilastras(w, hh)}<path d="M${f1(w / 2 - 7)} -8 V-28 a7 7 0 0 1 14 0 V-8 Z" fill="#2f2923" stroke="${K}" stroke-width="1.6"/><path d="M${f1(w / 2 - 4)} -14 q0 -8 4 -9 q4 1 4 9 z" fill="#6f7a4a" stroke="${K}" stroke-width="1.1"/>`));
+  bloco(0.62, 24, faces((w) => `${Array.from({ length: Math.floor(w / 6) }, (_, k) => `<path d="M${4 + k * 6} -4 q-2 -6 0 -9 q2 3 0 9" fill="${G}" stroke="${K}" stroke-width="1"/>`).join("")}<rect x="0" y="-20" width="${fi(w)}" height="4" fill="${G2}" stroke="${K}" stroke-width="1.2"/>`));
+  bloco(0.5, 42, faces((w, hh) => `${pilastras(w, hh)}<path d="M${fi(w / 2 - 7)} -8 V-28 a7 7 0 0 1 14 0 V-8 Z" fill="#2f2923" stroke="${K}" stroke-width="1.6"/><path d="M${fi(w / 2 - 4)} -14 q0 -8 4 -9 q4 1 4 9 z" fill="#6f7a4a" stroke="${K}" stroke-width="1.1"/>`));
   cantos(0.5, urna);
   cornija(0.56, 5);
   const tp = P(ci, cj, z);
-  s += `<g transform="translate(${f1(tp[0])} ${f1(tp[1])}) scale(${E})"><path d="M-14 0 q0 -14 14 -18 q14 4 14 18 z" fill="${G}" stroke="${K}" stroke-width="2"/><path d="M-5 -2 q0 -9 5 -13" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.6"/><circle cy="-24" r="5.5" fill="#3a352f" stroke="${K}" stroke-width="1.6"/><path d="M0 -29 V-52 M-6 -44 H6" stroke="${K}" stroke-width="2.6" stroke-linecap="round"/></g>`;
+  s += `<g transform="translate(${fi(tp[0])} ${fi(tp[1])}) scale(${E})"><path d="M-14 0 q0 -14 14 -18 q14 4 14 18 z" fill="${G}" stroke="${K}" stroke-width="2"/><path d="M-5 -2 q0 -9 5 -13" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.6"/><circle cy="-24" r="5.5" fill="#3a352f" stroke="${K}" stroke-width="1.6"/><path d="M0 -29 V-52 M-6 -44 H6" stroke="${K}" stroke-width="2.6" stroke-linecap="round"/></g>`;
   return `<g class="clerigos">${s}</g>`;
 }
 
 /* ————————————— árvores, candeeiros, mobiliário do cais ————————————— */
 
 export function arvoreVerde(x: number, y: number, e = 1): string {
-  return `<g class="arvore" transform="translate(${f1(x)} ${f1(y)}) scale(${e})"><ellipse cx="0" cy="4" rx="26" ry="9" fill="${C.sombra}"/><path d="M0 4 V-26" stroke="#6b4a2f" stroke-width="6" stroke-linecap="round"/><circle class="copa" cx="0" cy="-44" r="24" fill="#4fae6a" stroke="${K}" stroke-width="2.6"/><circle cx="-8" cy="-52" r="8" fill="#7cc98c"/></g>`;
+  return `<g class="arvore" transform="translate(${fi(x)} ${fi(y)}) scale(${e})"><ellipse cx="0" cy="4" rx="26" ry="9" fill="${C.sombra}"/><path d="M0 4 V-26" stroke="#6b4a2f" stroke-width="6" stroke-linecap="round"/><circle class="copa" cx="0" cy="-44" r="24" fill="#4fae6a" stroke="${K}" stroke-width="2.6"/><circle cx="-8" cy="-52" r="8" fill="#7cc98c"/></g>`;
 }
 
 export function candeeiro(x: number, y: number): string {
-  return `<g class="candeeiro" transform="translate(${f1(x)} ${f1(y)})"><path d="M0 0 V-52" stroke="${K}" stroke-width="3.5"/><path d="M-4 0 h8" stroke="${K}" stroke-width="3"/><path d="M-6 -66 h12 l-2 12 h-8 z" class="lanterna" fill="#fff6c9" stroke="${K}" stroke-width="2.2"/><path d="M-7 -66 l7 -7 l7 7" fill="${K}"/></g>`;
+  return `<g class="candeeiro" transform="translate(${fi(x)} ${fi(y)})"><path d="M0 0 V-52" stroke="${K}" stroke-width="3.5"/><path d="M-4 0 h8" stroke="${K}" stroke-width="3"/><path d="M-6 -66 h12 l-2 12 h-8 z" class="lanterna" fill="#fff6c9" stroke="${K}" stroke-width="2.2"/><path d="M-7 -66 l7 -7 l7 7" fill="${K}"/></g>`;
 }
 
 /** Esplanada: chapéu-de-sol branco, mesa, duas cadeiras. */
 export function esplanada(x: number, y: number, cor = "#fff"): string {
-  return `<g class="esplanada" transform="translate(${f1(x)} ${f1(y)})"><ellipse cx="0" cy="2" rx="20" ry="7" fill="${C.sombra}"/><path d="M-12 0 v-10 h5 M12 2 v-10 h-5" stroke="${K}" stroke-width="2" fill="none"/><path d="M0 0 V-14 M-6 -14 h12" stroke="${K}" stroke-width="2.2"/><ellipse cx="0" cy="-14" rx="8" ry="3" fill="#fff" stroke="${K}" stroke-width="1.6"/><path d="M0 -14 V-40" stroke="${K}" stroke-width="2"/><path d="M-24 -32 L0 -46 L24 -32 q-12 5 -24 0 q-12 5 -24 0z" fill="${cor}" stroke="${K}" stroke-width="2.2" stroke-linejoin="round"/><path d="M0 -46 L-8 -32 M0 -46 L8 -32" stroke="${K}" stroke-width="1" opacity=".35"/></g>`;
+  return `<g class="esplanada" transform="translate(${fi(x)} ${fi(y)})"><ellipse cx="0" cy="2" rx="20" ry="7" fill="${C.sombra}"/><path d="M-12 0 v-10 h5 M12 2 v-10 h-5" stroke="${K}" stroke-width="2" fill="none"/><path d="M0 0 V-14 M-6 -14 h12" stroke="${K}" stroke-width="2.2"/><ellipse cx="0" cy="-14" rx="8" ry="3" fill="#fff" stroke="${K}" stroke-width="1.6"/><path d="M0 -14 V-40" stroke="${K}" stroke-width="2"/><path d="M-24 -32 L0 -46 L24 -32 q-12 5 -24 0 q-12 5 -24 0z" fill="${cor}" stroke="${K}" stroke-width="2.2" stroke-linejoin="round"/><path d="M0 -46 L-8 -32 M0 -46 L8 -32" stroke="${K}" stroke-width="1" opacity=".35"/></g>`;
 }
 
 export function cabeco(x: number, y: number): string {
-  return `<g transform="translate(${f1(x)} ${f1(y)})"><rect x="-4.5" y="-10" width="9" height="10" rx="2" fill="#3b3a38" stroke="${K}" stroke-width="1.8"/><ellipse cx="0" cy="-10" rx="6" ry="2.6" fill="#55534f" stroke="${K}" stroke-width="1.6"/></g>`;
+  return `<g transform="translate(${fi(x)} ${fi(y)})"><rect x="-4.5" y="-10" width="9" height="10" rx="2" fill="#3b3a38" stroke="${K}" stroke-width="1.8"/><ellipse cx="0" cy="-10" rx="6" ry="2.6" fill="#55534f" stroke="${K}" stroke-width="1.6"/></g>`;
 }
 
 export function pombo(x: number, y: number, d = 1): string {
-  return `<g class="pombo" transform="translate(${f1(x)} ${f1(y)}) scale(${d} 1)"><g class="b-corpo-pombo"><ellipse cx="0" cy="-5" rx="6.5" ry="4.5" fill="#9aa3ad" stroke="${K}" stroke-width="1.3"/><path d="M-6 -6 l-5 -2 l2 4 z" fill="#6c757f" stroke="${K}" stroke-width="1"/><circle cx="5.5" cy="-9" r="3" fill="#8b949e" stroke="${K}" stroke-width="1.2"/><path d="M8.2 -9 l2.4 1 l-2.4 .8" fill="#e69b3a"/></g><path d="M-1 -1 v2 M2 -1 v2" stroke="#e69b3a" stroke-width="1.2"/></g>`;
+  return `<g class="pombo" transform="translate(${fi(x)} ${fi(y)}) scale(${d} 1)"><g class="b-corpo-pombo"><ellipse cx="0" cy="-5" rx="6.5" ry="4.5" fill="#9aa3ad" stroke="${K}" stroke-width="1.3"/><path d="M-6 -6 l-5 -2 l2 4 z" fill="#6c757f" stroke="${K}" stroke-width="1"/><circle cx="5.5" cy="-9" r="3" fill="#8b949e" stroke="${K}" stroke-width="1.2"/><path d="M8.2 -9 l2.4 1 l-2.4 .8" fill="#e69b3a"/></g><path d="M-1 -1 v2 M2 -1 v2" stroke="#e69b3a" stroke-width="1.2"/></g>`;
 }
 
 export function nuvem(x: number, y: number, e = 1): string {
-  return `<g class="nuvem" transform="translate(${f1(x)} ${f1(y)}) scale(${e})"><path d="M0 0 h96 a16 16 0 0 0 -8 -30 a24 24 0 0 0 -42 -12 a18 18 0 0 0 -32 10 a15 15 0 0 0 -14 32 z" fill="#fff" stroke="${K}" stroke-width="2.6" stroke-linejoin="round"/><path d="M20 -8 h40" stroke="#dbe9f3" stroke-width="4" stroke-linecap="round"/></g>`;
+  return `<g class="nuvem" transform="translate(${fi(x)} ${fi(y)}) scale(${e})"><path d="M0 0 h96 a16 16 0 0 0 -8 -30 a24 24 0 0 0 -42 -12 a18 18 0 0 0 -32 10 a15 15 0 0 0 -14 32 z" fill="#fff" stroke="${K}" stroke-width="2.6" stroke-linejoin="round"/><path d="M20 -8 h40" stroke="#dbe9f3" stroke-width="4" stroke-linecap="round"/></g>`;
 }
 
 /* ————— o marcador de dados por cima de cada edifício (sempre de frente) ————— */
@@ -583,11 +616,11 @@ export function nuvem(x: number, y: number, e = 1): string {
  */
 export function pin(x: number, y: number, rotulo: string, valor: string, cor = K, fundo = "#fff"): string {
   const w = Math.max(valor.length * 11.5 + 26, rotulo.length * 6.6 + 26);
-  return `<g class="pin" data-x="${f1(x)}" data-y="${f1(y)}" data-w="${f1(w + 3)}" transform="translate(${f1(x)} ${f1(y)})"><path class="guia" d="M0 0 V0" stroke="${K}" stroke-width="2" stroke-dasharray="3 3"/><g class="pin-corpo">
-    <rect x="${f1(-w / 2 + 3)}" y="-58" width="${f1(w)}" height="48" rx="11" fill="${K}"/>
+  return `<g class="pin" data-x="${fi(x)}" data-y="${fi(y)}" data-w="${fi(w + 3)}" transform="translate(${fi(x)} ${fi(y)})"><path class="guia" d="M0 0 V0" stroke="${K}" stroke-width="2" stroke-dasharray="3 3"/><g class="pin-corpo">
+    <rect x="${fi(-w / 2 + 3)}" y="-58" width="${fi(w)}" height="48" rx="11" fill="${K}"/>
     <path d="M-7 -16 L0 0 L7 -16 Z" fill="${fundo}" stroke="${K}" stroke-width="2.4" stroke-linejoin="round"/>
-    <rect x="${f1(-w / 2)}" y="-62" width="${f1(w)}" height="48" rx="11" fill="${fundo}" stroke="${K}" stroke-width="2.6"/>
-    <path d="M${f1(-w / 2)} -46 V-51 a11 11 0 0 1 11 -11 H${f1(w / 2 - 11)} a11 11 0 0 1 11 11 V-46 Z" fill="${C.amarelo}" stroke="${K}" stroke-width="2.6" stroke-linejoin="round"/>
+    <rect x="${fi(-w / 2)}" y="-62" width="${fi(w)}" height="48" rx="11" fill="${fundo}" stroke="${K}" stroke-width="2.6"/>
+    <path d="M${fi(-w / 2)} -46 V-51 a11 11 0 0 1 11 -11 H${fi(w / 2 - 11)} a11 11 0 0 1 11 11 V-46 Z" fill="${C.amarelo}" stroke="${K}" stroke-width="2.6" stroke-linejoin="round"/>
     <text x="0" y="-50.5" text-anchor="middle" font-family="Archivo" font-weight="800" font-size="10.5" fill="${K}">${rotulo}</text>
     <text x="0" y="-22" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="19" fill="${cor}" font-variant-numeric="tabular-nums">${valor}</text></g></g>`;
 }
@@ -595,7 +628,7 @@ export function pin(x: number, y: number, rotulo: string, valor: string, cor = K
 /* ———————————————————————— peças do Porto ———————————————————————— */
 
 export function bandeiraPT(x: number, y: number, e = 1): string {
-  return `<g transform="translate(${f1(x)} ${f1(y)}) scale(${e})"><path d="M0 0 V-46" stroke="${K}" stroke-width="2.4"/><circle cx="0" cy="-47" r="2.2" fill="${C.amarelo}" stroke="${K}" stroke-width="1.2"/>
+  return `<g transform="translate(${fi(x)} ${fi(y)}) scale(${e})"><path d="M0 0 V-46" stroke="${K}" stroke-width="2.4"/><circle cx="0" cy="-47" r="2.2" fill="${C.amarelo}" stroke="${K}" stroke-width="1.2"/>
     <g class="bandeira-pt"><path d="M1 -44 h11 v16 h-11 z" fill="#0f7b3f" stroke="${K}" stroke-width="1.4"/><path d="M12 -44 h15 v16 h-15 z" fill="#d7262b" stroke="${K}" stroke-width="1.4"/><circle cx="12" cy="-36" r="3.6" fill="${C.amarelo}" stroke="${K}" stroke-width="1"/></g></g>`;
 }
 
@@ -607,7 +640,7 @@ export function cameleira(x: number, y: number, e = 1): string {
   const copas: readonly (readonly [number, number, number])[] = [
     [-14, -50, 22], [12, -56, 22], [0, -72, 20], [20, -40, 15], [-22, -38, 15],
   ];
-  return `<g class="arvore" transform="translate(${f1(x)} ${f1(y)}) scale(${e})"><ellipse cx="0" cy="4" rx="30" ry="10" fill="${C.sombra}"/><path d="M0 4 V-30 M0 -18 l10 -12" stroke="#6b4a2f" stroke-width="6" stroke-linecap="round" fill="none"/>
+  return `<g class="arvore" transform="translate(${fi(x)} ${fi(y)}) scale(${e})"><ellipse cx="0" cy="4" rx="30" ry="10" fill="${C.sombra}"/><path d="M0 4 V-30 M0 -18 l10 -12" stroke="#6b4a2f" stroke-width="6" stroke-linecap="round" fill="none"/>
     ${copas.map(([dx, dy, r]) => `<circle class="copa" cx="${dx}" cy="${dy}" r="${r}" fill="#2f8f55" stroke="${K}" stroke-width="2.4"/>`).join("")}
     ${flores.map(([dx, dy], k) => `<circle cx="${dx}" cy="${dy}" r="3.4" fill="${k % 2 ? "#ff8fb7" : "#e2412a"}" stroke="${K}" stroke-width="1"/>`).join("")}</g>`;
 }
@@ -615,13 +648,13 @@ export function cameleira(x: number, y: number, e = 1): string {
 /** Balões de papel do São João, pendurados num cordel. */
 export function baloesSaoJoao(a: Ponto, b: Ponto, n = 7): string {
   const cores = ["#e2412a", "#ffc62b", "#2445d6", "#0c8f5c", "#ff8fb7", "#ff8a3d"];
-  let s = `<path d="M${f1(a[0])} ${f1(a[1])} Q${f1((a[0] + b[0]) / 2)} ${f1((a[1] + b[1]) / 2 + 30)} ${f1(b[0])} ${f1(b[1])}" fill="none" stroke="${K}" stroke-width="1.4"/>`;
+  let s = `<path d="M${fi(a[0])} ${fi(a[1])} Q${fi((a[0] + b[0]) / 2)} ${fi((a[1] + b[1]) / 2 + 30)} ${fi(b[0])} ${fi(b[1])}" fill="none" stroke="${K}" stroke-width="1.4"/>`;
   for (let k = 0; k < n; k++) {
     const t = (k + 0.5) / n;
     const x = a[0] + (b[0] - a[0]) * t;
     const y = a[1] + (b[1] - a[1]) * t + 30 * 4 * t * (1 - t) * 0.5;
     const c = cores[k % cores.length];
-    s += `<g class="balao-sj" style="transform-origin:${f1(x)}px ${f1(y)}px"><path d="M${f1(x)} ${f1(y)} v4" stroke="${K}" stroke-width="1"/><ellipse cx="${f1(x)}" cy="${f1(y + 12)}" rx="7" ry="9" fill="${c}" stroke="${K}" stroke-width="1.4"/><path d="M${f1(x - 7)} ${f1(y + 12)} h14 M${f1(x)} ${f1(y + 3)} v18" stroke="${K}" stroke-width=".9" opacity=".6"/><rect x="${f1(x - 3)}" y="${f1(y + 20)}" width="6" height="2.6" fill="${K}"/></g>`;
+    s += `<g class="balao-sj" style="transform-origin:${fi(x)}px ${fi(y)}px"><path d="M${fi(x)} ${fi(y)} v4" stroke="${K}" stroke-width="1"/><ellipse cx="${fi(x)}" cy="${fi(y + 12)}" rx="7" ry="9" fill="${c}" stroke="${K}" stroke-width="1.4"/><path d="M${fi(x - 7)} ${fi(y + 12)} h14 M${fi(x)} ${fi(y + 3)} v18" stroke="${K}" stroke-width=".9" opacity=".6"/><rect x="${fi(x - 3)}" y="${fi(y + 20)}" width="6" height="2.6" fill="${K}"/></g>`;
   }
   return `<g class="sao-joao">${s}</g>`;
 }
@@ -643,10 +676,10 @@ export function rabelo(vela = true): string {
   const clara = "#a8683c";
   let s = `<g class="rabelo">`;
   const c = Q(0.5, CJ, -2);
-  s += `<ellipse cx="${f1(c[0])}" cy="${f1(c[1] + 4)}" rx="96" ry="13" transform="rotate(26.57 ${f1(c[0])} ${f1(c[1] + 4)})" fill="#1f5578" opacity=".35"/>`;
+  s += `<ellipse cx="${fi(c[0])}" cy="${fi(c[1] + 4)}" rx="96" ry="13" transform="rotate(26.57 ${fi(c[0])} ${fi(c[1] + 4)})" fill="#1f5578" opacity=".35"/>`;
   const e0 = Q(0.3, CJ, 50);
   const e1 = Q(-0.62, CJ + 0.02, -1);
-  s += `<path d="M${lista([e0])} L${lista([e1])}" stroke="${escura}" stroke-width="5.5" stroke-linecap="round"/><path d="M${lista([e0])} L${lista([e1])}" stroke="${clara}" stroke-width="2.4" stroke-linecap="round"/><ellipse cx="${f1(e1[0] + 4)}" cy="${f1(e1[1] - 2)}" rx="13" ry="4.5" transform="rotate(26 ${f1(e1[0] + 4)} ${f1(e1[1] - 2)})" fill="${clara}" stroke="${K}" stroke-width="1.6"/>`;
+  s += `<path d="M${lista([e0])} L${lista([e1])}" stroke="${escura}" stroke-width="5.5" stroke-linecap="round"/><path d="M${lista([e0])} L${lista([e1])}" stroke="${clara}" stroke-width="2.4" stroke-linecap="round"/><ellipse cx="${fi(e1[0] + 4)}" cy="${fi(e1[1] - 2)}" rx="13" ry="4.5" transform="rotate(26 ${fi(e1[0] + 4)} ${fi(e1[1] - 2)})" fill="${clara}" stroke="${K}" stroke-width="1.6"/>`;
   s += `<polygon points="${lista(T.map((t) => Q(t, CJ - boca(t), borda(t))))} ${lista(T.slice().reverse().map((t) => Q(t, CJ - boca(t) * 0.8, 4)))}" fill="${escura}" stroke="${K}" stroke-width="1.6" stroke-linejoin="round"/>`;
   s += `<polygon points="${lista(T.map((t) => Q(t, CJ - boca(t) * 0.8, 4)))} ${lista(T.slice().reverse().map((t) => Q(t, CJ + boca(t) * 0.8, 4)))}" fill="${clara}" stroke="${K}" stroke-width="1.2"/>`;
   for (const t of [0.2, 0.36, 0.52, 0.68, 0.84]) s += `<path d="M${lista([Q(t, CJ - boca(t) * 0.8, 4)])} L${lista([Q(t, CJ + boca(t) * 0.8, 4)])}" stroke="${madeira}" stroke-width="1.2"/>`;
@@ -655,7 +688,7 @@ export function rabelo(vela = true): string {
       const t = 0.5 + k * 0.1;
       const a = Q(t, CJ + dj - 0.06, 10);
       const b = Q(t, CJ + dj + 0.06, 10);
-      s += `<path d="M${f1(a[0])} ${f1(a[1] - 6)} L${f1(b[0])} ${f1(b[1] - 6)} L${f1(b[0])} ${f1(b[1] + 6)} L${f1(a[0])} ${f1(a[1] + 6)} Z" fill="#9a6232" stroke="${K}" stroke-width="1.2"/><ellipse cx="${f1(b[0])}" cy="${f1(b[1])}" rx="4.6" ry="6.4" fill="#b5773f" stroke="${K}" stroke-width="1.3"/><path d="M${f1((a[0] + b[0]) / 2)} ${f1((a[1] + b[1]) / 2 - 6.5)} v13" stroke="#3a3a3a" stroke-width="1.3"/>`;
+      s += `<path d="M${fi(a[0])} ${fi(a[1] - 6)} L${fi(b[0])} ${fi(b[1] - 6)} L${fi(b[0])} ${fi(b[1] + 6)} L${fi(a[0])} ${fi(a[1] + 6)} Z" fill="#9a6232" stroke="${K}" stroke-width="1.2"/><ellipse cx="${fi(b[0])}" cy="${fi(b[1])}" rx="4.6" ry="6.4" fill="#b5773f" stroke="${K}" stroke-width="1.3"/><path d="M${fi((a[0] + b[0]) / 2)} ${fi((a[1] + b[1]) / 2 - 6.5)} v13" stroke="#3a3a3a" stroke-width="1.3"/>`;
     }
   }
   const zT = 44;
@@ -682,9 +715,9 @@ export function rabelo(vela = true): string {
   s += `<path d="M${lista([Q(0.44, CJ, 4)])} L${lista([Q(0.44, CJ, 132)])}" stroke="${escura}" stroke-width="3.4" stroke-linecap="round"/>`;
   const vA = Q(0.44, CJ + 0.42, 0);
   if (vela) {
-    s += `<g transform="matrix(.8944 -.4472 0 1 ${f1(vA[0])} ${f1(vA[1])})"><path class="vela" d="M0 -124 H${f1(0.84 * LAD)} q9 30 3 64 H-3 q-6 -34 3 -64 z" fill="#f4ecd8" stroke="${K}" stroke-width="2.2" stroke-linejoin="round"/><path d="M${f1(0.28 * LAD)} -122 q4 30 1 60 M${f1(0.56 * LAD)} -122 q5 30 2 60" fill="none" stroke="${K}" stroke-width=".9" opacity=".25"/><path d="M-6 -126 H${f1(0.84 * LAD + 6)}" stroke="${escura}" stroke-width="3.2" stroke-linecap="round"/></g>`;
+    s += `<g transform="matrix(.8944 -.4472 0 1 ${fi(vA[0])} ${fi(vA[1])})"><path class="vela" d="M0 -124 H${fi(0.84 * LAD)} q9 30 3 64 H-3 q-6 -34 3 -64 z" fill="#f4ecd8" stroke="${K}" stroke-width="2.2" stroke-linejoin="round"/><path d="M${fi(0.28 * LAD)} -122 q4 30 1 60 M${fi(0.56 * LAD)} -122 q5 30 2 60" fill="none" stroke="${K}" stroke-width=".9" opacity=".25"/><path d="M-6 -126 H${fi(0.84 * LAD + 6)}" stroke="${escura}" stroke-width="3.2" stroke-linecap="round"/></g>`;
   } else {
-    s += `<g transform="matrix(.8944 -.4472 0 1 ${f1(vA[0])} ${f1(vA[1])})"><path d="M-6 -118 H${f1(0.84 * LAD + 6)}" stroke="${escura}" stroke-width="3.2" stroke-linecap="round"/><path d="M0 -118 q${f1(0.42 * LAD)} 12 ${f1(0.84 * LAD)} 0" fill="#f4ecd8" stroke="${K}" stroke-width="1.8"/></g>`;
+    s += `<g transform="matrix(.8944 -.4472 0 1 ${fi(vA[0])} ${fi(vA[1])})"><path d="M-6 -118 H${fi(0.84 * LAD + 6)}" stroke="${escura}" stroke-width="3.2" stroke-linecap="round"/><path d="M0 -118 q${fi(0.42 * LAD)} 12 ${fi(0.84 * LAD)} 0" fill="#f4ecd8" stroke="${K}" stroke-width="1.8"/></g>`;
   }
   return `${s}</g>`;
 }
@@ -800,7 +833,7 @@ export function ponteLuisI(o: OpcoesPonte): { tras: string; frente: string } {
       semRodape: true,
       semCornija: true,
       semSombra: true,
-      esq: (w) => `<path d="M${f1(w * 0.2)} -22 V-40 a${f1(w * 0.3)} ${f1(w * 0.3)} 0 0 1 ${f1(w * 0.6)} 0 V-22 Z" fill="#5b5147" stroke="${K}" stroke-width="1.8"/><path d="M${f1(w * 0.2)} -24 h${f1(w * 0.6)}" stroke="#8d8a84" stroke-width="4"/>`,
+      esq: (w) => `<path d="M${fi(w * 0.2)} -22 V-40 a${fi(w * 0.3)} ${fi(w * 0.3)} 0 0 1 ${fi(w * 0.6)} 0 V-22 Z" fill="#5b5147" stroke="${K}" stroke-width="1.8"/><path d="M${fi(w * 0.2)} -24 h${fi(w * 0.6)}" stroke="#8d8a84" stroke-width="4"/>`,
     });
   s += encontro(jA1 - 0.42) + encontro(jA2 - 0.18);
   return { tras: `<g class="ponte" id="ponteT">${tras}</g>`, frente: `<g class="ponte" id="ponteF">${s}</g>` };
@@ -824,12 +857,12 @@ export function metroIso(i: number, z: number): string {
       semRodape: true,
       semCornija: true,
       semSombra: true,
-      esq: (w, hh) => `<path d="M0 ${-hh + 3} q${f1(w / 2)} -5 ${f1(w)} 0 V-4 H0 Z" fill="${C.amarelo}" stroke="${K}" stroke-width="1.6"/><path d="M1.5 ${-hh + 5} q${f1(w / 2 - 1.5)} -4 ${f1(w - 3)} 0 V${-hh + 14} H1.5 Z" fill="#1d2126" stroke="${K}" stroke-width="1.2"/><circle cx="4" cy="-7" r="1.6" fill="#fff6c9"/><circle cx="${f1(w - 4)}" cy="-7" r="1.6" fill="#fff6c9"/>`,
+      esq: (w, hh) => `<path d="M0 ${-hh + 3} q${fi(w / 2)} -5 ${fi(w)} 0 V-4 H0 Z" fill="${C.amarelo}" stroke="${K}" stroke-width="1.6"/><path d="M1.5 ${-hh + 5} q${fi(w / 2 - 1.5)} -4 ${fi(w - 3)} 0 V${-hh + 14} H1.5 Z" fill="#1d2126" stroke="${K}" stroke-width="1.2"/><circle cx="4" cy="-7" r="1.6" fill="#fff6c9"/><circle cx="${fi(w - 4)}" cy="-7" r="1.6" fill="#fff6c9"/>`,
       dir: (w, hh) =>
-        `<rect x="0" y="${-hh + 5}" width="${f1(w)}" height="10" fill="#1d2126"/>${Array.from({ length: 9 }, (_, k) => `<rect x="${f1(4 + (k * w) / 9)}" y="${-hh + 6.5}" width="${f1(w / 9 - 3)}" height="7" rx="1.5" class="vidro" opacity=".55"/>`).join("")}<path d="M0 -8 H${f1(w)}" stroke="${C.amarelo}" stroke-width="3"/><path d="M${f1(w * 0.5)} ${-hh} V0" stroke="${K}" stroke-width="1.2"/>${[0.18, 0.38, 0.64, 0.84].map((f) => `<rect x="${f1(w * f - 4)}" y="${-hh + 5}" width="8" height="${hh - 7}" fill="none" stroke="${K}" stroke-width="1"/>`).join("")}`,
+        `<rect x="0" y="${-hh + 5}" width="${fi(w)}" height="10" fill="#1d2126"/>${Array.from({ length: 9 }, (_, k) => `<rect x="${fi(4 + (k * w) / 9)}" y="${-hh + 6.5}" width="${fi(w / 9 - 3)}" height="7" rx="1.5" class="vidro" opacity=".55"/>`).join("")}<path d="M0 -8 H${fi(w)}" stroke="${C.amarelo}" stroke-width="3"/><path d="M${fi(w * 0.5)} ${-hh} V0" stroke="${K}" stroke-width="1.2"/>${[0.18, 0.38, 0.64, 0.84].map((f) => `<rect x="${fi(w * f - 4)}" y="${-hh + 5}" width="8" height="${hh - 7}" fill="none" stroke="${K}" stroke-width="1"/>`).join("")}`,
       extraTopo: ({ A, C: Cc }) => {
         const m: Ponto = [(A[0] + Cc[0]) / 2, (A[1] + Cc[1]) / 2];
-        return `<path d="M${f1(m[0] - 6)} ${f1(m[1] - 1)} l6 -9 l6 9 M${f1(m[0] - 7)} ${f1(m[1] - 10)} h14" fill="none" stroke="${K}" stroke-width="1.4"/>`;
+        return `<path d="M${fi(m[0] - 6)} ${fi(m[1] - 1)} l6 -9 l6 9 M${fi(m[0] - 7)} ${fi(m[1] - 10)} h14" fill="none" stroke="${K}" stroke-width="1.4"/>`;
       },
     },
   );
@@ -842,22 +875,22 @@ export function cupula(x: number, y: number, rx: number, ardosia: string): strin
   const hC = rx * 1.45;
   const pedra = "#efe6d6";
   let s = `<g class="cupula">`;
-  s += `<path d="M${f1(x - rx)} ${f1(y)} V${f1(y - hT)} A${rx} ${ry} 0 0 0 ${f1(x + rx)} ${f1(y - hT)} V${f1(y)} A${rx} ${ry} 0 0 1 ${f1(x - rx)} ${f1(y)} Z" fill="${pedra}" stroke="${K}" stroke-width="2.2"/>`;
+  s += `<path d="M${fi(x - rx)} ${fi(y)} V${fi(y - hT)} A${rx} ${ry} 0 0 0 ${fi(x + rx)} ${fi(y - hT)} V${fi(y)} A${rx} ${ry} 0 0 1 ${fi(x - rx)} ${fi(y)} Z" fill="${pedra}" stroke="${K}" stroke-width="2.2"/>`;
   for (const f of [-0.6, 0, 0.6]) {
     const w = 2.6 * Math.sqrt(1 - f * f) + 1.2;
     const cx = x + rx * f;
     const cy = y - 3 + Math.sqrt(1 - f * f) * ry;
-    s += `<path d="M${f1(cx - w)} ${f1(cy)} V${f1(cy - 9)} a${f1(w)} ${f1(w)} 0 0 1 ${f1(2 * w)} 0 V${f1(cy)} Z" fill="#5a6b7a" stroke="${K}" stroke-width="1.1"/>`;
+    s += `<path d="M${fi(cx - w)} ${fi(cy)} V${fi(cy - 9)} a${fi(w)} ${fi(w)} 0 0 1 ${fi(2 * w)} 0 V${fi(cy)} Z" fill="#5a6b7a" stroke="${K}" stroke-width="1.1"/>`;
   }
-  s += `<ellipse cx="${f1(x)}" cy="${f1(y - hT)}" rx="${f1(rx + 3)}" ry="${f1(ry + 1.6)}" fill="${C.pedraEsc}" stroke="${K}" stroke-width="2"/>`;
+  s += `<ellipse cx="${fi(x)}" cy="${fi(y - hT)}" rx="${fi(rx + 3)}" ry="${fi(ry + 1.6)}" fill="${C.pedraEsc}" stroke="${K}" stroke-width="2"/>`;
   const b = y - hT;
-  s += `<path d="M${f1(x - rx)} ${f1(b)} C${f1(x - rx)} ${f1(b - hC * 0.75)} ${f1(x - rx * 0.35)} ${f1(b - hC)} ${f1(x)} ${f1(b - hC)} C${f1(x + rx * 0.35)} ${f1(b - hC)} ${f1(x + rx)} ${f1(b - hC * 0.75)} ${f1(x + rx)} ${f1(b)} A${rx} ${ry} 0 0 1 ${f1(x - rx)} ${f1(b)} Z" fill="${ardosia}" stroke="${K}" stroke-width="2.4"/>`;
+  s += `<path d="M${fi(x - rx)} ${fi(b)} C${fi(x - rx)} ${fi(b - hC * 0.75)} ${fi(x - rx * 0.35)} ${fi(b - hC)} ${fi(x)} ${fi(b - hC)} C${fi(x + rx * 0.35)} ${fi(b - hC)} ${fi(x + rx)} ${fi(b - hC * 0.75)} ${fi(x + rx)} ${fi(b)} A${rx} ${ry} 0 0 1 ${fi(x - rx)} ${fi(b)} Z" fill="${ardosia}" stroke="${K}" stroke-width="2.4"/>`;
   for (const f of [-0.6, -0.25, 0.12, 0.5]) {
-    s += `<path d="M${f1(x + rx * f)} ${f1(b + Math.sqrt(1 - f * f) * ry)} Q${f1(x + rx * f * 0.8)} ${f1(b - hC * 0.7)} ${f1(x)} ${f1(b - hC + 1)}" fill="none" stroke="${K}" stroke-width="1.2" opacity=".5"/>`;
+    s += `<path d="M${fi(x + rx * f)} ${fi(b + Math.sqrt(1 - f * f) * ry)} Q${fi(x + rx * f * 0.8)} ${fi(b - hC * 0.7)} ${fi(x)} ${fi(b - hC + 1)}" fill="none" stroke="${K}" stroke-width="1.2" opacity=".5"/>`;
   }
-  s += `<path d="M${f1(x - rx * 0.72)} ${f1(b - hC * 0.25)} Q${f1(x - rx * 0.65)} ${f1(b - hC * 0.8)} ${f1(x - rx * 0.2)} ${f1(b - hC * 0.95)}" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2.6" stroke-linecap="round"/>`;
+  s += `<path d="M${fi(x - rx * 0.72)} ${fi(b - hC * 0.25)} Q${fi(x - rx * 0.65)} ${fi(b - hC * 0.8)} ${fi(x - rx * 0.2)} ${fi(b - hC * 0.95)}" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2.6" stroke-linecap="round"/>`;
   const tt = b - hC;
-  s += `<rect x="${f1(x - 5)}" y="${f1(tt - 12)}" width="10" height="12" fill="${pedra}" stroke="${K}" stroke-width="1.8"/><path d="M${f1(x - 2)} ${f1(tt - 3)} v-6" stroke="#3b342c" stroke-width="2"/><path d="M${f1(x - 7)} ${f1(tt - 12)} q7 -9 14 0z" fill="${ardosia}" stroke="${K}" stroke-width="1.8"/><path d="M${f1(x)} ${f1(tt - 16)} v-9" stroke="${K}" stroke-width="2"/><circle cx="${f1(x)}" cy="${f1(tt - 26)}" r="2.6" fill="${C.amarelo}" stroke="${K}" stroke-width="1.2"/>`;
+  s += `<rect x="${fi(x - 5)}" y="${fi(tt - 12)}" width="10" height="12" fill="${pedra}" stroke="${K}" stroke-width="1.8"/><path d="M${fi(x - 2)} ${fi(tt - 3)} v-6" stroke="#3b342c" stroke-width="2"/><path d="M${fi(x - 7)} ${fi(tt - 12)} q7 -9 14 0z" fill="${ardosia}" stroke="${K}" stroke-width="1.8"/><path d="M${fi(x)} ${fi(tt - 16)} v-9" stroke="${K}" stroke-width="2"/><circle cx="${fi(x)}" cy="${fi(tt - 26)}" r="2.6" fill="${C.amarelo}" stroke="${K}" stroke-width="1.2"/>`;
   return `${s}</g>`;
 }
 
@@ -868,15 +901,15 @@ export function serraDoPilar(ci: number, cj: number, z: number): string {
   const ry = 22;
   const h = 58;
   const pedra = "#e8e0cf";
-  let s = `<ellipse cx="${f1(x)}" cy="${f1(y)}" rx="${rx + 6}" ry="${ry + 3}" fill="${C.sombra}"/>`;
-  s += `<path d="M${f1(x - rx)} ${f1(y)} V${f1(y - h)} A${rx} ${ry} 0 0 1 ${f1(x + rx)} ${f1(y - h)} V${f1(y)} A${rx} ${ry} 0 0 1 ${f1(x - rx)} ${f1(y)} Z" fill="${pedra}" stroke="${K}" stroke-width="2.4"/>`;
+  let s = `<ellipse cx="${fi(x)}" cy="${fi(y)}" rx="${rx + 6}" ry="${ry + 3}" fill="${C.sombra}"/>`;
+  s += `<path d="M${fi(x - rx)} ${fi(y)} V${fi(y - h)} A${rx} ${ry} 0 0 1 ${fi(x + rx)} ${fi(y - h)} V${fi(y)} A${rx} ${ry} 0 0 1 ${fi(x - rx)} ${fi(y)} Z" fill="${pedra}" stroke="${K}" stroke-width="2.4"/>`;
   for (const f of [-0.6, -0.2, 0.2, 0.6]) {
-    s += `<path d="M${f1(x + rx * f - 3)} ${f1(y - h * 0.55 + Math.sqrt(1 - f * f) * ry)} v-16 a3 3 0 0 1 6 0 v16 z" fill="#3b342c" stroke="${K}" stroke-width="1.2"/>`;
+    s += `<path d="M${fi(x + rx * f - 3)} ${fi(y - h * 0.55 + Math.sqrt(1 - f * f) * ry)} v-16 a3 3 0 0 1 6 0 v16 z" fill="#3b342c" stroke="${K}" stroke-width="1.2"/>`;
   }
-  s += `<path d="M${f1(x - rx)} ${f1(y - h)} A${rx} ${ry} 0 0 0 ${f1(x + rx)} ${f1(y - h)}" fill="none" stroke="${K}" stroke-width="2"/><path d="M${f1(x - rx - 3)} ${f1(y - h)} A${rx + 3} ${ry + 2} 0 0 0 ${f1(x + rx + 3)} ${f1(y - h)}" fill="none" stroke="${C.granitoEsc}" stroke-width="3"/>`;
-  s += `<path d="M${f1(x - rx + 4)} ${f1(y - h)} Q${f1(x - rx + 6)} ${f1(y - h - 44)} ${f1(x)} ${f1(y - h - 50)} Q${f1(x + rx - 6)} ${f1(y - h - 44)} ${f1(x + rx - 4)} ${f1(y - h)} A${rx - 4} ${ry - 2} 0 0 1 ${f1(x - rx + 4)} ${f1(y - h)} Z" fill="#cfc6b4" stroke="${K}" stroke-width="2.4"/>`;
-  s += `<path d="M${f1(x - 16)} ${f1(y - h - 30)} q6 -14 16 -18" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2.2"/>`;
-  s += `<rect x="${f1(x - 8)}" y="${f1(y - h - 66)}" width="16" height="18" fill="${pedra}" stroke="${K}" stroke-width="1.8"/><path d="M${f1(x - 9)} ${f1(y - h - 66)} q9 -12 18 0 z" fill="#cfc6b4" stroke="${K}" stroke-width="1.6"/><path d="M${f1(x)} ${f1(y - h - 72)} v-10 M${f1(x - 4)} ${f1(y - h - 78)} h8" stroke="${K}" stroke-width="1.8"/>`;
+  s += `<path d="M${fi(x - rx)} ${fi(y - h)} A${rx} ${ry} 0 0 0 ${fi(x + rx)} ${fi(y - h)}" fill="none" stroke="${K}" stroke-width="2"/><path d="M${fi(x - rx - 3)} ${fi(y - h)} A${rx + 3} ${ry + 2} 0 0 0 ${fi(x + rx + 3)} ${fi(y - h)}" fill="none" stroke="${C.granitoEsc}" stroke-width="3"/>`;
+  s += `<path d="M${fi(x - rx + 4)} ${fi(y - h)} Q${fi(x - rx + 6)} ${fi(y - h - 44)} ${fi(x)} ${fi(y - h - 50)} Q${fi(x + rx - 6)} ${fi(y - h - 44)} ${fi(x + rx - 4)} ${fi(y - h)} A${rx - 4} ${ry - 2} 0 0 1 ${fi(x - rx + 4)} ${fi(y - h)} Z" fill="#cfc6b4" stroke="${K}" stroke-width="2.4"/>`;
+  s += `<path d="M${fi(x - 16)} ${fi(y - h - 30)} q6 -14 16 -18" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2.2"/>`;
+  s += `<rect x="${fi(x - 8)}" y="${fi(y - h - 66)}" width="16" height="18" fill="${pedra}" stroke="${K}" stroke-width="1.8"/><path d="M${fi(x - 9)} ${fi(y - h - 66)} q9 -12 18 0 z" fill="#cfc6b4" stroke="${K}" stroke-width="1.6"/><path d="M${fi(x)} ${fi(y - h - 72)} v-10 M${fi(x - 4)} ${fi(y - h - 78)} h8" stroke="${K}" stroke-width="1.8"/>`;
   return `<g class="serra-pilar">${s}</g>`;
 }
 
@@ -884,8 +917,8 @@ export function serraDoPilar(ci: number, cj: number, z: number): string {
 export function bandeiraFCP(x: number, y: number, w = 30, h = 46): string {
   const n = 5;
   const az = "#0a3d91";
-  let s = Array.from({ length: n }, (_, k) => `<rect x="${f1(x + (k * w) / n)}" y="${y}" width="${f1(w / n)}" height="${h}" fill="${k % 2 ? "#fff" : az}"/>`).join("");
-  s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="${K}" stroke-width="1.6"/><rect x="${f1(x + 3)}" y="${f1(y + h / 2 - 7)}" width="${w - 6}" height="14" rx="3" fill="#fff" stroke="${K}" stroke-width="1.2"/><text x="${f1(x + w / 2)}" y="${f1(y + h / 2 + 4)}" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="10.5" fill="${az}">FCP</text>`;
+  let s = Array.from({ length: n }, (_, k) => `<rect x="${fi(x + (k * w) / n)}" y="${y}" width="${fi(w / n)}" height="${h}" fill="${k % 2 ? "#fff" : az}"/>`).join("");
+  s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="${K}" stroke-width="1.6"/><rect x="${fi(x + 3)}" y="${fi(y + h / 2 - 7)}" width="${w - 6}" height="14" rx="3" fill="#fff" stroke="${K}" stroke-width="1.2"/><text x="${fi(x + w / 2)}" y="${fi(y + h / 2 + 4)}" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="10.5" fill="${az}">FCP</text>`;
   return `<g class="bandeira-fcp">${s}<path d="M${x - 2} ${y} h${w + 4}" stroke="${K}" stroke-width="2.2"/></g>`;
 }
 
@@ -903,12 +936,12 @@ export function carro(i: number, j: number, cor: string, t: Terreno = PLANO): st
     semRodape: true,
     semCornija: true,
     semSombra: true,
-    esq: (w) => `<path d="M${f1(w * 0.5)} -11 V0" stroke="${K}" stroke-width="1.4"/>`,
+    esq: (w) => `<path d="M${fi(w * 0.5)} -11 V0" stroke="${K}" stroke-width="1.4"/>`,
   });
   const rodas = ([[0.12, 0.32], [0.5, 0.32]] as const)
     .map(([u, v]) => {
       const [x, y] = P(i + u, j + v, z);
-      return `<ellipse cx="${f1(x)}" cy="${f1(y - 3)}" rx="4.5" ry="5" fill="${K}"/>`;
+      return `<ellipse cx="${fi(x)}" cy="${fi(y - 3)}" rx="4.5" ry="5" fill="${K}"/>`;
     })
     .join("");
   return `<g class="carro">${caixa(i, j, 0.62, 0.32, 14, { z0: z + 2, fundo: cor, topo: cor, semRodape: true, semCornija: true }, t)}${rodas}${cabine}</g>`;
