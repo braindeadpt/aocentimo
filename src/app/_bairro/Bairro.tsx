@@ -31,6 +31,9 @@ import { Camera, arrumarPinos, type Enquadramentos, type MarcadorVivo, type Pino
 import { ligarAmbiente } from "./ambiente";
 import { mundoBairro, reflexos } from "@/lib/bairro/mundo";
 import { montarMapa, type MarcadoresBairro } from "@/lib/bairro/planta";
+import { CENAS } from "./cenas/registry";
+import { temCena } from "./cenas/com-cena";
+import type { CenasDados } from "./cenas/dados";
 import "./bairro.css";
 
 /** As três horas do dia. */
@@ -111,6 +114,8 @@ export interface PropsBairro {
    * hidratação que não bate certo com o servidor.
    */
   horaInicial: Hora;
+  /** Os dados das cenas (P2a), já montados no servidor. */
+  cenas: CenasDados;
   /** As cenas (P2+) e o painel «em breve». */
   children?: React.ReactNode;
   /** Chamado quando um edifício é escolhido. */
@@ -139,6 +144,7 @@ export function Bairro({
   coordenadas,
   pontos,
   gaivotas,
+  cenas,
   children,
   aoEntrar,
 }: PropsBairro) {
@@ -150,14 +156,19 @@ export function Bairro({
 
   const [hora, setHora] = useState<Hora>(horaInicial);
   const [cartaoAberto, setCartaoAberto] = useState<string | null>(null);
+  /** A cena aberta (P2a): o id do edifício, ou `null`. */
+  const [cenaAberta, setCenaAberta] = useState<string | null>(null);
 
   // O mapa calcula-se aqui (e no servidor, no SSR do build). A mesma
   // entrada dá sempre a mesma saída — os builders não têm relógio nem
   // dados nem aleatório — por isso o HTML do servidor e a hidratação
   // batem certo. `montarMapa` + `mundoBairro` já eram o caminho do
   // servidor; a fronteira é que os cortava em dois.
-  const { html, css } = useMemo(() => mundoBairro(montarMapa(marcadores)), [marcadores]);
-  const reflexo = useMemo(() => reflexos(montarMapa(marcadores)), [marcadores]);
+  // o mapa calcula-se UMA vez: montarMapa alimenta o mundo e o reflexo
+  // (a nit da revisão do #27 — a mesma conta não corre duas vezes)
+  const mapa = useMemo(() => montarMapa(marcadores), [marcadores]);
+  const { html, css } = useMemo(() => mundoBairro(mapa), [mapa]);
+  const reflexo = useMemo(() => reflexos(mapa), [mapa]);
 
 
 
@@ -190,6 +201,10 @@ export function Bairro({
     camara.defPinos([...pinos]);
     camaraRef.current = camara;
     const desligar = camara.ligar();
+    // o sinal para os e2e: o mapa está VIVO (ouvintes ligados) — o e2e
+    // que carrega Enter num edifício espera por este atributo, em vez de
+    // apostar no timing da hidratação
+    mundo.dataset.vivo = "1";
 
     // o reflexo no Douro só pode entrar depois das camadas existirem:
     // precisa do clipPath e da máscara, que vivem no cenário
@@ -268,10 +283,58 @@ export function Bairro({
           outro.classList.toggle("b-ativo", outro === g);
         }
       }
+      // P2a: quem tem cena abre-a; o resto continua no cartão «em breve»
+      if (temCena(id)) {
+        setCenaAberta(id);
+        // o URL conta onde se está: abrir link abre a cena, Voltar fecha
+        try {
+          history.pushState(null, "", `#${id}`);
+        } catch {
+          /* em file:// ou sandbox, a cena abre na mesma */
+        }
+      }
       aoEntrar?.(id);
     },
     [aoEntrar, esconderCartao]
   );
+
+  const fecharCena = useCallback(() => {
+    setCenaAberta(null);
+    // devolve o foco ao edifício que abriu a cena (PACK §2.3)
+    const g = mundoRef.current?.querySelector(`.ed[data-id="${cenaAberta}"]`);
+    (g as HTMLElement | null)?.focus?.();
+    try {
+      const url = new URL(window.location.href);
+      url.hash = "";
+      history.replaceState(null, "", url.pathname + url.search);
+    } catch {
+      /* sem history, a cena fecha na mesma */
+    }
+  }, [cenaAberta]);
+
+  /* o Voltar do browser fecha a cena — a âncora é o estado do URL */
+  useEffect(() => {
+    if (!cenaAberta) return;
+    const aoVoltar = () => setCenaAberta(null);
+    window.addEventListener("popstate", aoVoltar);
+    return () => window.removeEventListener("popstate", aoVoltar);
+  }, [cenaAberta]);
+
+  /*
+   * A âncora é o estado do URL (PACK §2.3): abre no load E em qualquer
+   * `hashchange` — um link dentro da página para /#banco abre a cena
+   * sem recarregar. O fechar (replaceState) e o entrar (pushState) não
+   * disparam `hashchange`, por isso não há eco.
+   */
+  useEffect(() => {
+    const ler = () => {
+      const id = window.location.hash.replace("#", "");
+      if (id && temCena(id)) setCenaAberta(id);
+    };
+    ler();
+    window.addEventListener("hashchange", ler);
+    return () => window.removeEventListener("hashchange", ler);
+  }, []);
 
   useEdificios(mundoRef, porId, entrar, mostrarCartao, esconderCartao);
 
@@ -352,9 +415,61 @@ export function Bairro({
         </div>
 
         {children}
+
+        {/* ————— a cena do edifício aberto (P2a) —————
+            O componente chega por `next/dynamic` (o chunk só descarrega
+            ao entrar); a Fábrica recebe as refs porque anima o mapa. */}
+        {cenaAberta && CENAS[cenaAberta] && (
+          <CenaViva
+            id={cenaAberta}
+            cenas={cenas}
+            mundoRef={mundoRef}
+            camaraRef={camaraRef}
+            aoFechar={fecharCena}
+          />
+        )}
       </section>
     </PausaAmbiente>
   );
+}
+
+/**
+ * O despachante das cenas: escolhe o componente certo e passa-lhe os
+ * dados certos. Mantido num componente à parte para o `<Bairro>` não
+ * conhecer a forma dos props de cada cena.
+ */
+function CenaViva({
+  id,
+  cenas,
+  mundoRef,
+  camaraRef,
+  aoFechar,
+}: {
+  id: string;
+  cenas: CenasDados;
+  mundoRef: React.RefObject<HTMLDivElement | null>;
+  camaraRef: React.MutableRefObject<Camera | null>;
+  aoFechar: () => void;
+}) {
+  const Cena = CENAS[id];
+  if (!Cena) return null;
+  // a câmara vai à cena pela REF (a regra `react-hooks/refs` proíbe ler
+  // `.current` durante o render): a cena só a toca dentro dos efeitos
+  if (id === "fabrica")
+    return (
+      <Cena
+        D={cenas.fabrica}
+        mundoRef={mundoRef}
+        camaraRef={camaraRef as unknown as React.MutableRefObject<{
+          ir: (cx: number, cy: number, w: number, dur?: number, desvio?: number) => void;
+          atual: { x: number; y: number; w: number; h: number };
+        } | null>}
+        aoFechar={aoFechar}
+      />
+    );
+  if (id === "financas") return <Cena D={cenas.financas} aoFechar={aoFechar} />;
+  if (id === "banco") return <Cena D={cenas.banco} aoFechar={aoFechar} />;
+  return <Cena D={cenas.mercearia} aoFechar={aoFechar} />;
 }
 
 /* ————————————————————— os onze edifícios ————————————————————— */

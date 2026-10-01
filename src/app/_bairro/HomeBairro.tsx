@@ -1,4 +1,6 @@
 import { dadosBairro } from "@/lib/bairro/dados";
+import { dadosCenas } from "./cenas/dados";
+import { temCena } from "./cenas/com-cena";
 import { pinosDaCamera } from "@/lib/bairro/mundo";
 import { Pcom } from "@/lib/bairro/iso";
 import {
@@ -26,6 +28,10 @@ import { Bairro, type Hora, type InfoEdificio } from "./Bairro";
  */
 export default function HomeBairro() {
   const d = dadosBairro();
+  // os dados das cenas montam-se no servidor e viajam numa prop — os
+  // JSON de data/ nunca chegam ao cliente (AGENTS.md), as séries viajam
+  // compactas (o cliente reconstrói os meses)
+  const cenas = dadosCenas();
   const Pt = Pcom(TERRENO);
 
   
@@ -51,8 +57,8 @@ export default function HomeBairro() {
       id,
       titulo: info.titulo,
       pergunta: info.pergunta,
-      // em P1 só o mapa existe: todas as cenas entram em P2
-      viva: false,
+      // P2a: quatro cenas são vivas — Fábrica, Finanças, Banco, Mercearia
+      viva: temCena(id),
       extra: extraDe(id, d.marcadores),
       fonte: "",
     })
@@ -95,6 +101,7 @@ export default function HomeBairro() {
 
       <Bairro
         marcadores={d.marcadores}
+        cenas={cenas}
         edificios={edificios}
         entrada={{ entrar: m.bairro.cartao.entrar, breve: m.bairro.cartao.breve }}
         horas={[m.bairro.hora.dia, m.bairro.hora.tarde, m.bairro.hora.noite]}

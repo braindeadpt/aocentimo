@@ -41,17 +41,17 @@ const ESTADOS = new Set([
 ]);
 
 /**
- * O CSS de blocos que AINDA NÃO têm JSX — chegam em P1-3 (as cenas, o
- * painel do cartão) e P1-4 (as cartas). O pack manda escrever o contrato
- * visual do protótipo em bloco; este teste é o que garante que não
- * envelhece sem ninguém dar por isso: quando o JSX chegar, estas classes
- * saem daqui, e se um bloco for entretanto abandonado o teste continua a
- * apontar-lhe.
+ * O CSS de blocos que AINDA NÃO têm JSX — chegam em P1-4 (as cartas) e
+ * no P2b (o `b-confirma` da cena da Segurança Social). O pack manda
+ * escrever o contrato visual do protótipo em bloco; este teste é o que
+ * garante que não envelhece sem ninguém dar por isso: quando o JSX
+ * chegar, a classe SAIO daqui — foi o que o P2a fez com as onze do
+ * painel e da moldura das cenas. Se um bloco for entretanto abandonado,
+ * o teste continua a apontar-lhe.
  */
 const FUTURO_P1 = new Set([
-  // o painel do cartão e a cena (P1-3)
-  "b-painel", "b-quem", "b-fala", "b-acoes", "b-fechar", "b-fonte",
-  "b-btn", "b-claro", "b-cena", "b-cena-arte", "b-cena-texto", "b-confirma",
+  // a cena da Segurança Social (P2b): o recibo com a tabela
+  "b-confirma",
   // as cartas (P1-4)
   "b-cartas", "b-fundo-carta", "b-papel", "b-aprende", "b-logo",
 ]);
@@ -70,11 +70,18 @@ function htmlGerado(): string {
 
 /** Todo o código do cliente que põe ou procura classes (JSX incluído). */
 function codigoCliente(): string {
+  const ler = (p: string): string => readFileSync(join(process.cwd(), p), "utf8");
   return (
-    readFileSync(join(process.cwd(), "src/app/_bairro/Bairro.tsx"), "utf8") +
-    readFileSync(join(process.cwd(), "src/app/_bairro/HomeBairro.tsx"), "utf8") +
-    readFileSync(join(process.cwd(), "src/app/_bairro/camara.ts"), "utf8") +
-    readFileSync(join(process.cwd(), "src/app/_bairro/ambiente.ts"), "utf8")
+    ler("src/app/_bairro/Bairro.tsx") +
+    ler("src/app/_bairro/HomeBairro.tsx") +
+    ler("src/app/_bairro/camara.ts") +
+    ler("src/app/_bairro/ambiente.ts") +
+    // as cenas P2a: os seletores de conteúdo (.b-calc, .b-talão…) vivem
+    // nos seus componentes e no bairro-cenas.css, carregado no chunk
+    ler("src/app/_bairro/bairro-cenas.css") +
+    ["CenaFabrica", "CenaFinancas", "CenaBanco", "CenaMercearia", "CenaDePerto"]
+      .map((f) => ler(`src/app/_bairro/cenas/${f}.tsx`))
+      .join("")
   );
 }
 
