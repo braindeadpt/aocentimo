@@ -272,3 +272,121 @@ test.describe("as cenas P2a — o desenho existe de facto", () => {
     await esperaDesenho(page);
   });
 });
+
+/**
+ * O «degrau» da Finanças bate com o desenho (P2a, revisão do dono):
+ * ao entrar no passo do gráfico a cena recomeça nos 1 500 € — o texto e a
+ * gaveta ativa dizem a mesma taxa — e mexer o slider muda os dois.
+ */
+test.describe("as cenas P2a — o degrau bate certo com a gaveta", () => {
+  // na fala diz-se «escalão dos X %», no corpo «degrau dos X %»
+  const degrauDo = async (loc: () => Promise<string>) =>
+    (await loc()).match(/(?:degrau|escalão) dos (\d+,\d+)\s*%/i)?.[1] ?? null;
+  // a gaveta é SVG: <g> não tem innerText — lê-se o textContent
+  const taxaDaGaveta = async (page: Page) =>
+    (await page
+      .locator(".b-cena-arte .gaveta.ativa")
+      .evaluate((el) => el.textContent ?? "")).match(/(\d+,\d+)\s*%/)?.[1] ?? null;
+
+  test("a fala e o texto dizem o degrau da gaveta acesa; o slider muda os três", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/#financas");
+    await expect(page.locator(".b-cena")).toBeVisible();
+    await page.getByRole("button", { name: /tirar senha/i }).click();
+    await page.getByRole("button", { name: /mais dinheiro/i }).click();
+    await page.getByRole("button", { name: /aprender a ler o gráfico/i }).click();
+    await expect(page.locator(".b-cena-texto .grafico-irs")).toBeVisible();
+
+    const fala = () => page.locator(".b-fala").innerText();
+    const corpo = () => page.locator(".b-cena-texto .b-corpo").innerText();
+    const gaveta = () => taxaDaGaveta(page);
+
+    // entrada: o protótipo recomeça em 1 500 € — texto, gaveta e ponto batem
+    const naGaveta = await gaveta();
+    expect(naGaveta, "há uma gaveta acesa no desenho").not.toBeNull();
+    expect(await degrauDo(fala), "a fala diz o degrau que o desenho mostra").toBe(naGaveta);
+    expect(await degrauDo(corpo), "o texto do gráfico diz o mesmo").toBe(naGaveta);
+
+    // o slider muda a gaveta acesa E o degrau dos dois textos
+    await page.locator("#finSal").fill("4000");
+    const novo = await gaveta();
+    expect(novo).not.toBe(naGaveta);
+    await expect.poll(() => degrauDo(fala)).toBe(novo);
+    await expect.poll(() => degrauDo(corpo)).toBe(novo);
+  });
+});
+
+/**
+ * A Fábrica COM movimento (P2a, revisão do dono): a corrida das moedas
+ * tem de chegar ao fim — o e2e antigo só cobria reduced-motion, que
+ * escreve o estado final direto e por isso passava com a corrida morta.
+ * E o painel não pode tapar a fábrica nem o percurso.
+ */
+test.describe("as cenas P2a — a fábrica corre de verdade", () => {
+  const TOTAIS = {
+    ss: "521,25", // tsu + ss da linha de referência (data/)
+    irs: "168,17",
+    casa: /1[\s\u202f]?166,83/,
+  };
+
+  const contadores = (page: Page) => ({
+    ss: page.locator(".b-painel .contador span").nth(0),
+    irs: page.locator(".b-painel .contador span").nth(1),
+    casa: page.locator(".b-painel .contador span").nth(2),
+  });
+
+  async function esperaCorrida(page: Page) {
+    const c = contadores(page);
+    await expect(async () => {
+      await expect(c.ss).toContainText(TOTAIS.ss);
+      await expect(c.irs).toContainText(TOTAIS.irs);
+      await expect(c.casa).toContainText(TOTAIS.casa);
+    }).toPass({ timeout: 12_000, intervals: [400, 800, 1200] });
+  }
+
+  test("com animação os contadores enchem ao fim de ≤12 s e «Ver outra vez» refaz a corrida", async ({
+    page,
+  }) => {
+    await page.goto("/#fabrica");
+    const painel = page.locator(".b-painel");
+    await expect(painel).toBeVisible();
+
+    await esperaCorrida(page);
+    // a fala final (passo 99) aparece com o link para o simulador
+    await expect(painel.locator(".b-fala")).toContainText(/chegam a casa/i);
+
+    // «Ver outra vez»: os contadores vão a zero e a corrida volta a acabar
+    await page.getByRole("button", { name: /ver outra vez/i }).click();
+    await expect(contadores(page).ss).toContainText("0,00");
+    await esperaCorrida(page);
+    await expect(painel.locator(".b-fala")).toContainText(/chegam a casa/i);
+  });
+
+  for (const { w, h } of [
+    { w: 1440, h: 900 },
+    { w: 390, h: 844 },
+  ] as const) {
+    test(`o painel não tapa a fábrica nem o percurso — ${w}×${h}`, async ({ page }) => {
+      await page.setViewportSize({ width: w, height: h });
+      await page.goto("/#fabrica");
+      const painel = page.locator(".b-painel");
+      await expect(painel).toBeVisible();
+
+      const ed = page.locator('.b-mundo .ed[data-id="fabrica"]');
+      // a câmara desliza até enquadrar o percurso ao lado do painel —
+      // mede-se quando ela assenta (o GSAP chega por chunk dinâmico)
+      await expect(async () => {
+        const a = await ed.boundingBox();
+        const b = await painel.boundingBox();
+        expect(a, "a fábrica tem caixa").not.toBeNull();
+        expect(b, "o painel tem caixa").not.toBeNull();
+        const cruza =
+          a!.x < b!.x + b!.width &&
+          a!.x + a!.width > b!.x &&
+          a!.y < b!.y + b!.height &&
+          a!.y + a!.height > b!.y;
+        expect(cruza, "a fábrica fica debaixo do painel").toBe(false);
+      }).toPass({ timeout: 15_000, intervals: [500, 800, 1200] });
+    });
+  }
+});

@@ -45,6 +45,8 @@ interface PropsFabrica {
   /** A câmara, para a cena a mover (o mesmo objecto do zoom). */
   camaraRef: React.MutableRefObject<{
     ir: (cx: number, cy: number, w: number, dur?: number, desvio?: number) => void;
+    /** A vista de agora — a cena lê-a para medir o painel contra o mapa. */
+    atual: { x: number; y: number; w: number; h: number };
   } | null>;
   /** Fechar: o pai limpa o mapa e devolve o foco ao edifício. */
   aoFechar: () => void;
@@ -54,9 +56,12 @@ export default function CenaFabrica({ D, mundoRef, camaraRef, aoFechar }: PropsF
   const [totais, setTotais] = useState({ ss: 0, irs: 0, casa: 0 });
   /** O passo da história: 1 fábrica · 2 SS · 3 Finanças · 4 rua · 99 fim. */
   const [passo, setPasso] = useState(1);
-  const mortoRef = useRef(false);
+  /** A corrida das moedas: montagem + cada «Ver outra vez». O `passo`
+      NÃO pode dispará-la — é o próprio timeline que o muda. */
+  const [rodada, setRodada] = useState(0);
   const aoPasso = setPasso;
   const focoRef = useRef<HTMLSpanElement>(null);
+  const painelRef = useRef<HTMLDivElement>(null);
 
   // o foco entra no título, como nas cenas com moldura (PACK §2.3)
   useEffect(() => {
@@ -77,8 +82,7 @@ export default function CenaFabrica({ D, mundoRef, camaraRef, aoFechar }: PropsF
 
   /* ————— a corrida das moedas ————— */
   useEffect(() => {
-    if (passo !== 1 || !l || !rotas) return;
-    mortoRef.current = false;
+    if (!l || !rotas) return;
     const mundo = mundoRef.current;
     if (!mundo) return;
 
@@ -86,6 +90,12 @@ export default function CenaFabrica({ D, mundoRef, camaraRef, aoFechar }: PropsF
     const movB = mundo.querySelector("#b-movB");
     const gEtiq = mundo.querySelector("#b-gEtiq");
     if (!movA || !movB || !gEtiq) return;
+
+    // `morto` é LOCAL a cada execução: a bandeira de uma corrida velha não
+    // pode ressuscitar-se quando a nova a repõe (era o que `mortoRef`
+    // partilhado fazia — e pior, o efeito com deps [passo] matava a
+    // corrida assim que o timeline chamava aoPasso(2)).
+    let morto = false;
 
     // limpeza de moedas de corridas anteriores
     mundo.querySelectorAll(".moeda-salario").forEach((m) => m.remove());
@@ -109,21 +119,66 @@ export default function CenaFabrica({ D, mundoRef, camaraRef, aoFechar }: PropsF
       }));
 
     let limpar = () => {};
+    const tls: { kill: () => void }[] = [];
 
     (async () => {
       const { motionActiva, carregarGsap } = await import("@/lib/motion/gsap");
-      if (!motionActiva() || mortoRef.current) {
+      if (!motionActiva() || morto) {
         // SEM ANIMAÇÃO: o estado final, direto — é isto que o e2e vê
         setTotais({ ss: l.tsu + l.ss, irs: l.irs, casa: l.liquido });
         aoPasso(99); // a fala final
         return;
       }
       const { gsap } = await carregarGsap();
-      if (mortoRef.current) return;
+      if (morto) return;
 
-      // a fábrica fica à vista
+      // a fábrica e o percurso ficam À VISTA, ao lado do painel que os
+      // tapava (revisão do dono). Mede-se o edifício, o painel e a vista
+      // actual no ecrã; das posições de ecrã recuperam-se as coordenadas
+      // do mundo e a câmara enquadra o edifício no centro da faixa livre
+      // — no desktop o painel cobre a esquerda e a faixa livre é à
+      // direita; no telemóvel o painel está em cima e o alvo desce.
       const ini = rotas.ss[0];
-      camaraRef.current?.ir(ini.x + 180, ini.y + 40, 820, 1, 1.1);
+      const janela = mundo.closest(".b-janela");
+      const ed = mundo.querySelector('.ed[data-id="fabrica"]');
+      const painel = painelRef.current;
+      const cam = camaraRef.current;
+      let cx = ini.x + 180;
+      let cy = ini.y + 40;
+      let w = 820;
+      if (janela && ed && painel && cam) {
+        const jr = janela.getBoundingClientRect();
+        const pr = painel.getBoundingClientRect();
+        const er = ed.getBoundingClientRect();
+        const vista = cam.atual;
+        if (jr.width > 0 && vista.w > 0) {
+          const FOLGA = 14;
+          const sCur = jr.width / vista.w;
+          // o edifício em unidades do mundo, recuperado do ecrã
+          const ecx = vista.x + (er.left + er.width / 2 - jr.left) / sCur;
+          const ecy = vista.y + (er.top + er.height / 2 - jr.top) / sCur;
+          const razao = jr.height / jr.width;
+          if (jr.width <= 700) {
+            // painel em cima — o alvo desce para o centro da faixa livre
+            const topo = pr.bottom - jr.top + FOLGA;
+            const livre = Math.max(80, jr.height - topo - FOLGA);
+            const sy = topo + livre / 2;
+            const s = jr.width / w;
+            cx = ecx;
+            cy = ecy - sy / s + (w * razao) / 2;
+          } else {
+            // painel à esquerda — a faixa livre é à direita; se o
+            // edifício for mais largo que ela, a vista afasta até caber
+            const livreE = pr.right - jr.left + FOLGA;
+            const livreW = Math.max(200, jr.width - livreE - FOLGA);
+            w = Math.max(820, Math.min(1600, ((er.width / sCur) * jr.width) / livreW));
+            const s = jr.width / w;
+            cx = ecx + w / 2 - (livreE + livreW / 2) / s;
+            cy = ecy;
+          }
+        }
+      }
+      camaraRef.current?.ir(cx, cy, w, 1, 0);
 
       lista.forEach(({ dest }, k) => {
         const rota = rotas[dest];
@@ -134,6 +189,7 @@ export default function CenaFabrica({ D, mundoRef, camaraRef, aoFechar }: PropsF
         m.style.opacity = "0";
 
         const tl = gsap.timeline({ delay: 1 + k * 0.16 });
+        tls.push(tl);
         const o = { x: rota[0].x, y: rota[0].y };
         tl.set(m, { opacity: 1 });
         rota.slice(1).forEach((p, i) => {
@@ -151,7 +207,7 @@ export default function CenaFabrica({ D, mundoRef, camaraRef, aoFechar }: PropsF
           opacity: dest === "casa" ? 1 : 0,
           duration: 0.25,
           onComplete: () => {
-            if (!mortoRef.current) somar(dest);
+            if (!morto) somar(dest);
             if (dest !== "casa") m.remove();
           },
         });
@@ -170,32 +226,34 @@ export default function CenaFabrica({ D, mundoRef, camaraRef, aoFechar }: PropsF
       };
       const etSS = l.tsu + l.ss;
       const t1 = gsap.timeline({ delay: 1.6 });
-      t1.add(() => !mortoRef.current && aoPasso(2), 0);
-      t1.add(() => !mortoRef.current && etiq(pSS, "+" + fmtEUR(etSS), "#2445d6"), 1.8);
-      t1.add(() => !mortoRef.current && aoPasso(3), 2.6);
-      t1.add(() => !mortoRef.current && etiq(pIRS, "+" + fmtEUR(l.irs), "#e2412a"), 3.4);
-      t1.add(() => !mortoRef.current && aoPasso(4), 4.2);
-      t1.add(() => !mortoRef.current && etiq(pCasa, fmtEUR(l.liquido), "#0c8f5c"), 5);
+      tls.push(t1);
+      t1.add(() => !morto && aoPasso(2), 0);
+      t1.add(() => !morto && etiq(pSS, "+" + fmtEUR(etSS), "#2445d6"), 1.8);
+      t1.add(() => !morto && aoPasso(3), 2.6);
+      t1.add(() => !morto && etiq(pIRS, "+" + fmtEUR(l.irs), "#e2412a"), 3.4);
+      t1.add(() => !morto && aoPasso(4), 4.2);
+      t1.add(() => !morto && etiq(pCasa, fmtEUR(l.liquido), "#0c8f5c"), 5);
       t1.add(() => {
-        if (mortoRef.current) return;
+        if (morto) return;
         setTotais({ ss: etSS, irs: l.irs, casa: l.liquido });
         aoPasso(99);
       }, 5.8);
 
       limpar = () => {
-        t1.kill();
-        lista.forEach(() => {}); // as moedas morrem com os seus timelines
+        tls.forEach((t) => t.kill());
         mundo.querySelectorAll(".moeda-salario").forEach((m) => m.remove());
         gEtiq.innerHTML = "";
       };
     })();
 
     return () => {
-      mortoRef.current = true;
+      morto = true;
       limpar();
     };
+    // a corrida corre uma vez à montagem e outra por cada «Ver outra vez»
+    // — NUNCA por mudança de `passo`, porque é o timeline que o escreve
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [passo]);
+  }, [rodada]);
 
   if (!l || !rotas) {
     return (
@@ -222,7 +280,7 @@ export default function CenaFabrica({ D, mundoRef, camaraRef, aoFechar }: PropsF
             : T.fabFala(fmtEUR(l.custo));
 
   return (
-    <div className="b-painel" role="dialog" aria-labelledby="fab-quem">
+    <div className="b-painel" role="dialog" aria-labelledby="fab-quem" ref={painelRef}>
       <button className="b-fechar" type="button" aria-label={T.fechar} onClick={aoFechar}>×</button>
       <span className="b-quem" id="fab-quem" tabIndex={-1} ref={focoRef}>{T.fabQuem}</span>
       <p
@@ -243,7 +301,7 @@ export default function CenaFabrica({ D, mundoRef, camaraRef, aoFechar }: PropsF
       </div>
       <div className="b-acoes">
         {passo === 99 && (
-          <button className="b-btn b-claro" type="button" onClick={() => { setTotais({ ss: 0, irs: 0, casa: 0 }); aoPasso(1); }}>
+          <button className="b-btn b-claro" type="button" onClick={() => { setTotais({ ss: 0, irs: 0, casa: 0 }); aoPasso(1); setRodada((r) => r + 1); }}>
             {T.fabBtnOutra}
           </button>
         )}

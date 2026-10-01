@@ -89,6 +89,12 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
   const g0 = gavetaMaisAlta(D.escaloes, c0)!;
   const c1 = coletavel(1650, D.dedEsp, D.ssTaxa);
   const g1 = gavetaMaisAlta(D.escaloes, c1)!;
+  // o que o `visto` está a mostrar — no passo 4 a fala e o texto do
+  // gráfico seguem ESTE degrau (o da gaveta acesa no desenho), não o
+  // fixo de 1 500 €: se o slider mexer, mudam os dois juntos
+  const cV = coletavel(visto, D.dedEsp, D.ssTaxa);
+  const gV = gavetaMaisAlta(D.escaloes, cV);
+  const medV = cV > 0 ? irsPorEscaloes(D.escaloes, cV) / cV : 0;
 
   const interior = useMemo(() => interiorFinancas(D.escaloes), [D.escaloes]);
   const grafico = useMemo(() => graficoIrs(D.escaloes, T.finGraficoAria), [D.escaloes]);
@@ -176,7 +182,7 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
                 ? T.finFala2("A 023")
                 : passo === 3
                   ? `<b>${palpite === "mais" ? T.finAcertou : T.finAfinalNao}</b> <span class="b-g">${T.finResposta(ganho)}</span>`
-                  : T.finFala4(pctTaxa(g0.taxa)),
+                  : T.finFala4(gV ? pctTaxa(gV.taxa) : "—"),
         }}
       />
       <div className="b-corpo">
@@ -220,7 +226,7 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
           <>
             {/* o gráfico fica na coluna da conversa, como no protótipo */}
             <div dangerouslySetInnerHTML={{ __html: grafico }} />
-            <p>{T.finGraficoTexto(pctTaxa(g0.taxa), pctTaxa(irsPorEscaloes(D.escaloes, c0) / c0))}</p>
+            <p>{T.finGraficoTexto(gV ? pctTaxa(gV.taxa) : "—", cV > 0 ? pctTaxa(medV) : "—")}</p>
             <p className="nota-fin">{T.finNotaRodape(D.motorIrsAnual === null ? "—" : fmtEUR(D.motorIrsAnual))}</p>
             <Calc D={D} valor={salario} aoMudar={setVistoEMarca} />
           </>
@@ -228,7 +234,10 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
       </div>
       <div className="b-acoes">
         {passo === 3 && (
-          <button className="b-btn" type="button" onClick={() => setPasso(4)}>
+          // o protótipo recomeça em 1 500 € ao entrar no gráfico
+          // (calcFinancas(1500)): senão a fala dizia o degrau dos 1 500 e
+          // a gaveta acesa e o ponto mostravam os 1 650 do palpite
+          <button className="b-btn" type="button" onClick={() => { setVisto(1500); setSalario(1500); setPasso(4); }}>
             {T.finBtnGrafico}
           </button>
         )}

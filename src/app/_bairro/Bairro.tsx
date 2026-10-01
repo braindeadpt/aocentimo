@@ -462,6 +462,7 @@ function CenaViva({
         mundoRef={mundoRef}
         camaraRef={camaraRef as unknown as React.MutableRefObject<{
           ir: (cx: number, cy: number, w: number, dur?: number, desvio?: number) => void;
+          atual: { x: number; y: number; w: number; h: number };
         } | null>}
         aoFechar={aoFechar}
       />
