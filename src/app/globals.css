@@ -432,9 +432,15 @@ body {
   color: var(--ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  transition: background-color var(--dur-curta) var(--ease-entra),
-    color var(--dur-curta) var(--ease-entra);
 }
+/* A transição de TEMA vive em dois sítios, ambos condicionados a
+   `html[data-theme-anim]` (posto pelo toggle ao clicar, retirado ao fim
+   de 400 ms): a do `body` aqui em baixo já não existe — ver o bloco
+   `html[data-theme-anim] body *` mais abaixo (transição de tema —
+   suave, sem flash). Condições duas vezes: só em trocas posteriores ao
+   load (o primeiro render nunca «anima»), e só para quem aceita
+   movimento (reduced-motion troca à seca, e o e2e de contraste mede os
+   tokens assentados). */
 
 /* ————— textura de fundo — só no nível 0 (floor) —————
    claro = «o documento»: papel milimetrado de worksheet, grelha de

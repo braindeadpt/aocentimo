@@ -9,7 +9,7 @@ import { useLayoutEffect, useSyncExternalStore } from "react";
  * com React morto. Aqui só lemos data-theme via useSyncExternalStore para
  * manter o rótulo e o aria-pressed sincronizados.
  *
- * M-16: a reconciliação do <html> pode repor o data-theme do SSR ("dark")
+ * M-16: a reconciliação do <html> pode repor o data-theme do SSR ("light")
  * sobre a escolha clara que o script inline já tinha posto. O layout
  * effect corre antes do paint pós-hidratação e repõe a escolha guardada —
  * sem frame errado, sem transição (os dois writes caem na mesma frame).
@@ -17,7 +17,12 @@ import { useLayoutEffect, useSyncExternalStore } from "react";
 export function ThemeToggle() {
   useLayoutEffect(() => {
     try {
-      const t = localStorage.getItem("aocentimo-theme") ?? "dark";
+      // o default é CLARO desde o veredicto do design sobre a P1 — o
+      // mesmo valor do script inline do layout e do data-theme do JSX;
+      // três sítios a dizer o mesmo, senão este effect reescreve o
+      // atributo no load e as transições Tailwind do header disparam
+      // (foi assim que o e2e «nada anima ao carregar» se pôs a falhar)
+      const t = localStorage.getItem("aocentimo-theme") ?? "light";
       if (document.documentElement.dataset.theme !== t) {
         document.documentElement.dataset.theme = t;
       }

@@ -75,17 +75,19 @@ export const viewport = {
 /** Resolve o tema antes da primeira pintura: escolha guardada → escuro.
  *  ESCURO POR OMISSÃO: o instrumento é a cara do produto.
  *  prefers-color-scheme não distingue «sem preferência» de «claro» —
- *  light é o fallback universal dos browsers, não uma escolha. Tratar o
- *  sinal do SO como escolha escondia o escuro à maioria. Quem prefere
- *  claro usa o toggle (persistido, visível no topo).
+ *  O OMISSÃO é CLARO desde o veredicto do design sobre a P1: a home do
+ *  bairro é uma página de papel e não tem tema — era estranho o site
+ *  nascer escuro e a home clarear sozinha. Quem prefere escuro usa o
+ *  toggle (persistido, visível no topo), e a preferência passa a valer
+ *  em todo o site a partir da P3.
  *  E liga o toggle por delegação de eventos em vanilla JS — funciona mesmo
  *  numa página que nunca hidratou (React morto, cache velha). O React só
  *  sincroniza o rótulo do botão via MutationObserver no data-theme.
- *  O `data-theme` é declarado no JSX (<html data-theme="dark">): a
+ *  O `data-theme` é declarado no JSX (<html data-theme="light">): a
  *  reconciliação remove atributos que o JSX não declara — sem ele, o tema
  *  escuro era apagado na hidratação e o site ficava claro depois de
  *  hidratar (M-16 fix). */
-const themeInit = `(function(){try{var r=document.documentElement;var t=localStorage.getItem("aocentimo-theme");if(!t){t=localStorage.getItem("bruto-theme");if(t)localStorage.setItem("aocentimo-theme",t);}if(!t)t="dark";r.dataset.theme=t;}catch(e){r.dataset.theme="dark";}
+const themeInit = `(function(){try{var r=document.documentElement;var t=localStorage.getItem("aocentimo-theme");if(!t){t=localStorage.getItem("bruto-theme");if(t)localStorage.setItem("aocentimo-theme",t);}if(!t)t="light";r.dataset.theme=t;}catch(e){r.dataset.theme="light";}
 document.addEventListener("click",function(e){var b=e.target&&e.target.closest?e.target.closest("[data-theme-toggle]"):null;if(!b)return;var root=document.documentElement;var next=root.dataset.theme==="dark"?"light":"dark";if(!matchMedia("(prefers-reduced-motion: reduce)").matches){root.setAttribute("data-theme-anim","");setTimeout(function(){root.removeAttribute("data-theme-anim")},400);}root.dataset.theme=next;try{localStorage.setItem("aocentimo-theme",next);}catch(x){}});})()`;
 
 export default function RootLayout({
@@ -96,7 +98,7 @@ export default function RootLayout({
       lang="pt-PT"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
-      data-theme="dark"
+      data-theme="light"
       className={`${archivo.variable} ${grotesk.variable} ${serif.variable} ${spaceMono.variable} ${caveat.variable}`}
     >
       <head>

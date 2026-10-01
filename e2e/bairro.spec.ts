@@ -29,6 +29,114 @@ const ESPERADOS = [
   { nome: "desemprego", padrao: /5,7/ },
 ];
 
+test.describe("o bairro — a geometria (veredicto do design, P1)", () => {
+  /**
+   * O hotfix da P1 nasceu de aqui só haver testes de TEXTO: as camadas
+   * estavam `position: static` — oito SVGs de 3600×2500 empilhavam-se em
+   * fluxo, a página media ~20 000 px e só a fila de trás se via. Os
+   * marcadores estavam a y≈10 800 e o teste «passava», porque `innerText`
+   * apanha tudo o que está no DOM, visível ou não.
+   *
+   * Estes três medem POSIÇÕES, e são os que teriam apanhado o defeito.
+   */
+
+  for (const largura of [1440, 375]) {
+    test(`as oito camadas estão na mesma origem e o mapa cabe — a ${largura}px`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: largura, height: 900 });
+      await page.goto("/");
+
+      const ys = await page.evaluate(() => {
+        const cs = [...document.querySelectorAll(".b-mundo .b-camada")];
+        return {
+          n: cs.length,
+          ys: [...new Set(cs.map((c) => Math.round(c.getBoundingClientRect().top)))],
+        };
+      });
+      // TODAS as camadas no mesmo y: se duas divergem, há camada em fluxo
+      expect(ys.n, "faltam camadas").toBe(8);
+      expect(
+        ys.ys,
+        `as camadas estão espalhadas (y = ${ys.ys.join(", ")}) — há SVG em position:static`
+      ).toHaveLength(1);
+
+      // e a página não pode medir ~20 000 px: é o sintoma do empilhamento
+      const altura = await page.evaluate(
+        () => document.documentElement.scrollHeight
+      );
+      expect(
+        altura,
+        "a página é uma torre: as camadas empilham-se em fluxo"
+      ).toBeLessThan(4000);
+    });
+
+    test(`o marcador da Fábrica está dentro da janela do mapa — a ${largura}px`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: largura, height: 900 });
+      await page.goto("/");
+
+      const dentro = await page.evaluate(() => {
+        const janela = document
+          .querySelector(".b-janela")
+          ?.getBoundingClientRect();
+        const pin = document
+          .querySelector('.b-mundo .pin[data-id="fabrica"]')
+          ?.getBoundingClientRect();
+        if (!janela || !pin) return { ok: false, motivo: "sem janela ou pin" };
+        return {
+          ok:
+            pin.top >= janela.top - 2 &&
+            pin.bottom <= janela.bottom + 2 &&
+            pin.left >= janela.left - 2 &&
+            pin.right <= janela.right + 2,
+          pin: { t: Math.round(pin.top), b: Math.round(pin.bottom) },
+          janela: {
+            t: Math.round(janela.top),
+            b: Math.round(janela.bottom),
+          },
+        };
+      });
+      expect(
+        dentro.ok,
+        `o marcador da Fábrica saiu da janela: pin ${JSON.stringify(dentro.pin)} vs janela ${JSON.stringify(dentro.janela)}`
+      ).toBe(true);
+    });
+  }
+
+  test("passar o rato num edifício levanta-o (o .ed do CSS aplica-se ao HTML)", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    // o CSS levanta os FILHOS do .ed (`.ed > *`), não o grupo em si — o
+    // que sobe é a silhueta, e o rótulo `data-id` fica onde estava
+    const filho = page.locator(
+      '.b-mundo .ed[data-id="fabrica"] > *'
+    ).first();
+
+    const transformDe = () =>
+      filho.evaluate((el) => getComputedStyle(el).transform);
+    const antes = await transformDe();
+
+    // hover no centro da caixa real, não em coordenadas às cegas — a
+    // caixa é do GRUPO (é ele que tem a área de rato, `pointer-events`)
+    const r = await page
+      .locator('.b-mundo .ed[data-id="fabrica"]')
+      .boundingBox();
+    if (!r) throw new Error("a Fábrica não tem caixa visível");
+    await page.mouse.move(r.x + r.width / 2, r.y + r.height / 2);
+    await page.waitForTimeout(400); // a transição é de 0,25s
+
+    const depois = await transformDe();
+    expect(
+      depois,
+      "o hover não mexeu o edifício — o seletor .ed não está a aplicar"
+    ).not.toBe(antes);
+  });
+});
+
 test.describe("o bairro — o que o mapa mostra", () => {
   test("tem os onze edifícios, cada um focável e com nome", async ({ page }) => {
     await page.goto("/");
