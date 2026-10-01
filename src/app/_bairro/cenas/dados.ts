@@ -76,8 +76,10 @@ export interface DadosFinancas {
   dedEsp: number;
   /** A taxa da Segurança Social do trabalhador (11 %), para o aumento. */
   ssTaxa: number;
-  /** O IRS anual completo do motor, para a nota de rodapé da cena. */
-  motorIrsAnual: number;
+  /** O IRS anual completo do motor, para a nota de rodapé da cena.
+      `null` quando a linha de referência falta — a nota diz «—», nunca
+      0 € inventado (regra nº1). */
+  motorIrsAnual: number | null;
   fonte: string;
 }
 
@@ -101,13 +103,15 @@ export function dadosFinancas(): DadosFinancas {
   return {
     ano: r.ano,
     escaloes: r.escaloes.map((e, k) => ({
-      de: k === 0 ? 0 : (r.escaloes[k - 1].ate ?? 0),
+      // um `ate` que falta a meio da tabela não é um 0: é NaN, e daí
+      // para a frente todos os formatadores mostram «—»
+      de: k === 0 ? 0 : (r.escaloes[k - 1].ate ?? NaN),
       ate: e.ate ?? null,
       taxa: e.taxa,
     })),
     dedEsp: r.deducaoEspecificaFixa,
     ssTaxa: s.trabalhador.taxa,
-    motorIrsAnual: linha?.ano14.irsAnual ?? 0,
+    motorIrsAnual: linha?.ano14.irsAnual ?? null,
     fonte: `IRS — escalões de ${r.ano} (art. 68.º do CIRS, Orçamento do Estado) · solteiro, sem dependentes, trabalho por conta de outrem`,
   };
 }

@@ -72,8 +72,17 @@ export default function CenaMercearia({ D, aoFechar }: { D: DadosMercearia; aoFe
           ? "Mais caro do que pensavas!"
           : "Um pouco menos!";
 
+  // as taxas do IVA vêm de data/fiscal/iva.json — se uma faltar, o texto
+  // diz «—», nunca 0 % inventado (regra nº1)
+  const ivaDe = (nome: string) => D.iva.taxas.find((x) => x.nome === nome)?.taxa ?? null;
+  const ivaPct = (t: number | null) => (t === null ? "—" : `${fmtNum(t * 100, 0)}%`);
+  const ivaEm10 = (t: number | null) => (t === null ? "—" : `${fmtNum((10 * t) / (1 + t), 2)} €`);
+  const ivaRed = ivaDe("Reduzida");
+  const ivaInt = ivaDe("Intermédia");
+  const ivaNor = ivaDe("Normal");
+
   return (
-    <CenaDePerto quem={T.mercQuem} fonte={D.fonte} aoFechar={aoFechar} arteHtml={interior} refArte={arteRef}>
+    <CenaDePerto quem={T.mercQuem} fonte={D.fonte} aoFechar={aoFechar} arteHtml={interior} refArte={arteRef} rotuloArte={T.mercRotuloArte}>
       <p
         className="b-fala"
         aria-live="polite"
@@ -157,11 +166,11 @@ export default function CenaMercearia({ D, aoFechar }: { D: DadosMercearia; aoFe
             <p
               dangerouslySetInnerHTML={{
                 __html: T.mercIvaTexto(
-                  `${fmtNum((D.iva.taxas.find((x) => x.nome === "Reduzida")?.taxa ?? 0) * 100, 0)}%`,
-                  `${fmtNum((10 * ((D.iva.taxas.find((x) => x.nome === "Reduzida")?.taxa ?? 0)) / (1 + (D.iva.taxas.find((x) => x.nome === "Reduzida")?.taxa ?? 0)), 2))} €`,
-                  `${fmtNum((D.iva.taxas.find((x) => x.nome === "Intermédia")?.taxa ?? 0) * 100, 0)}%`,
-                  `${fmtNum((D.iva.taxas.find((x) => x.nome === "Normal")?.taxa ?? 0) * 100, 0)}%`,
-                  `${fmtNum((10 * ((D.iva.taxas.find((x) => x.nome === "Normal")?.taxa ?? 0)) / (1 + (D.iva.taxas.find((x) => x.nome === "Normal")?.taxa ?? 0)), 2))} €`
+                  ivaPct(ivaRed),
+                  ivaEm10(ivaRed),
+                  ivaPct(ivaInt),
+                  ivaPct(ivaNor),
+                  ivaEm10(ivaNor)
                 ),
               }}
             />

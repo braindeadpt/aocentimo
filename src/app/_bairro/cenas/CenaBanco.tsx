@@ -58,9 +58,12 @@ export default function CenaBanco({ D, aoFechar }: { D: DadosBanco; aoFechar: ()
   );
 
   // O quadro + papel + taxa: sempre acompanham `kVivo` e `exemplo`. O
-  // DOM do interior NÃO é estado React: escreve-se por efeito.
+  // DOM do interior NÃO é estado React: escreve-se por efeito. A raiz de
+  // procura é a `.b-cena` inteira: os ids do interior estão na arte e os
+  // do gráfico (banPa, banPb, banCursor) na coluna do texto — o gráfico
+  // não pode ir para o desenho, sobrepunha-se ao interior.
   useEffect(() => {
-    const raiz = arteRef.current;
+    const raiz = arteRef.current?.closest(".b-cena");
     if (!raiz || eur.length === 0) return;
     mostrarMesSvg(raiz, eur, kVivo, exemplo);
     if (passo === 4) cursorGrafico(raiz, grafico, eur, kVivo);
@@ -68,7 +71,7 @@ export default function CenaBanco({ D, aoFechar }: { D: DadosBanco; aoFechar: ()
 
   if (eur.length === 0) {
     return (
-      <CenaDePerto quem={T.banQuem} fonte={D.fonte} aoFechar={aoFechar}>
+      <CenaDePerto quem={T.banQuem} fonte={D.fonte} aoFechar={aoFechar} rotuloArte={T.banRotuloArte}>
         <p className="b-fala">A série da Euribor não chegou — a cena precisa dela para existir.</p>
       </CenaDePerto>
     );
@@ -96,8 +99,9 @@ export default function CenaBanco({ D, aoFechar }: { D: DadosBanco; aoFechar: ()
       quem={T.banQuem}
       fonte={D.fonte}
       aoFechar={aoFechar}
-      arteHtml={passo === 4 ? interior + grafico.svg : interior}
+      arteHtml={interior}
       refArte={arteRef}
+      rotuloArte={T.banRotuloArte}
     >
       <p
         className="b-fala"
@@ -156,6 +160,9 @@ export default function CenaBanco({ D, aoFechar }: { D: DadosBanco; aoFechar: ()
         )}
         {passo === 4 && (
           <>
+            {/* o gráfico fica na coluna da conversa (`.b-corpo`), como no
+                protótipo — nunca dentro do desenho */}
+            <div dangerouslySetInnerHTML={{ __html: grafico.svg }} />
             <p>{T.banGraficoTexto(mesLongo(hoje.t), pct2(hoje.v), fmtEUR(ph))}</p>
             <p className="nota-fin">{T.banNotaGrafico}</p>
             <div className="b-calc">

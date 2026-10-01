@@ -92,14 +92,16 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
 
   const interior = useMemo(() => interiorFinancas(D.escaloes), [D.escaloes]);
   const grafico = useMemo(() => graficoIrs(D.escaloes, T.finGraficoAria), [D.escaloes]);
-  // no passo 4 o gráfico entra NO MESMO div do interior: os ids dele
-  // (grLinha, grMarg…) têm de estar onde os efeitos os procuram
-  const conteudo = passo === 4 ? interior + grafico : interior;
+  // no passo 4 o gráfico entra na COLUNA DO TEXTO (`.b-corpo`), como no
+  // protótipo — por isso os efeitos procuram a partir da `.b-cena` toda:
+  // os ids do interior (gav…) estão na arte, os do gráfico (grLinha,
+  // grMarg…) no texto. Se o gráfico fosse para a arte sobrepunha-se ao
+  // desenho e ficava ilegível.
 
   // AS GAVETAS: para cada escalão, a largura verde (fica) e vermelha (IRS)
   // do salário `visto`, escritas directamente no SVG do interior.
   useEffect(() => {
-    const raiz = arteRef.current;
+    const raiz = arteRef.current?.closest(".b-cena");
     if (!raiz) return;
     const c = coletavel(visto, D.dedEsp, D.ssTaxa);
     const W = 246; // GV.w - 4, dentro do desenho
@@ -127,7 +129,7 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
   // O PONTO DO GRÁFICO (passo 4): acompanha o `visto`
   useEffect(() => {
     if (passo !== 4) return;
-    const raiz = arteRef.current;
+    const raiz = arteRef.current?.closest(".b-cena");
     if (!raiz) return;
     const c = coletavel(visto, D.dedEsp, D.ssTaxa);
     const p = pontoGrafico(D.escaloes, c);
@@ -159,8 +161,9 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
       quem={T.finQuem}
       fonte={D.fonte}
       aoFechar={aoFechar}
-      arteHtml={conteudo}
+      arteHtml={interior}
       refArte={arteRef}
+      rotuloArte={T.finRotuloArte}
     >
       <p
         className="b-fala"
@@ -215,8 +218,10 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
         )}
         {passo === 4 && (
           <>
+            {/* o gráfico fica na coluna da conversa, como no protótipo */}
+            <div dangerouslySetInnerHTML={{ __html: grafico }} />
             <p>{T.finGraficoTexto(pctTaxa(g0.taxa), pctTaxa(irsPorEscaloes(D.escaloes, c0) / c0))}</p>
-            <p className="nota-fin">{T.finNotaRodape(fmtEUR(D.motorIrsAnual))}</p>
+            <p className="nota-fin">{T.finNotaRodape(D.motorIrsAnual === null ? "—" : fmtEUR(D.motorIrsAnual))}</p>
             <Calc D={D} valor={salario} aoMudar={setVistoEMarca} />
           </>
         )}

@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 
 /**
  * As cenas P2a (PACK V5 PRODUÇÃO §P2a) — Fábrica, Finanças, Banco e
@@ -186,5 +186,89 @@ test.describe("as cenas P2a — abrir, percorrer, fechar", () => {
       if (await btn.isVisible()) await btn.click();
     }
     expect(erros, erros.join("\n")).toEqual([]);
+  });
+});
+
+/**
+ * O DESENHO das cenas — o defeito que os testes de texto não viam:
+ * `arteHtml` tem de entrar dentro de um `<svg viewBox="0 0 640 470">`;
+ * sem ele, o parser de HTML aninha os <rect> como elementos desconhecidos
+ * e nada se desenha (o lado esquerdo ficava bege, vazio).
+ */
+test.describe("as cenas P2a — o desenho existe de facto", () => {
+  const COM_ARTE = ["financas", "banco", "mercearia"] as const;
+  const ECRAS = [
+    { w: 1440, h: 900 },
+    { w: 390, h: 844 },
+  ] as const;
+
+  /** O interior: um svg na coluna da arte, com caixa real e desenho dentro. */
+  async function esperaDesenho(page: Page) {
+    const svg = page.locator(".b-cena .b-cena-arte > svg").first();
+    await expect(svg).toBeAttached();
+    const caixa = await svg.boundingBox();
+    expect(caixa, "a caixa do svg da arte").not.toBeNull();
+    expect(caixa!.width).toBeGreaterThanOrEqual(250);
+    expect(caixa!.height).toBeGreaterThanOrEqual(150);
+    const desenhados = await svg.locator("rect, path, g, circle").count();
+    expect(desenhados, "elementos desenhados dentro do svg da arte").toBeGreaterThanOrEqual(10);
+  }
+
+  for (const id of COM_ARTE) {
+    for (const { w, h } of ECRAS) {
+      test(`«${id}» a ${w}×${h}: o interior está dentro de um svg com desenho`, async ({ page }) => {
+        await page.setViewportSize({ width: w, height: h });
+        await page.goto(`/#${id}`);
+        await expect(page.locator(".b-cena")).toBeVisible();
+        await esperaDesenho(page);
+      });
+    }
+  }
+
+  test("no Banco o gráfico fica na coluna de texto, o interior fica no desenho e o cursor segue o tempo", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/#banco");
+    await expect(page.locator(".b-cena")).toBeVisible();
+    await page.getByRole("button", { name: /chamar a senha/i }).click();
+    await page.getByRole("button", { name: /mostrar a resposta/i }).click();
+    await page.getByRole("button", { name: /aprender a ler o gráfico/i }).click();
+
+    // o gráfico é da conversa (como no protótipo), não do desenho
+    await expect(page.locator(".b-cena-texto .grafico-irs")).toBeVisible();
+    await expect(page.locator(".b-cena-arte .grafico-irs")).toHaveCount(0);
+    await esperaDesenho(page);
+
+    // arrastar o tempo muda a prestação E o cursor do gráfico
+    const prest = () => page.locator(".b-calc-linha").nth(2).locator("b").innerText();
+    const cursor = () => page.locator(".b-cena-texto #banPa").getAttribute("cx");
+    const antes = { prest: await prest(), cx: await cursor() };
+    await page.locator("#banTempo").fill("0");
+    const depois = { prest: await prest(), cx: await cursor() };
+    expect(depois.prest).not.toBe(antes.prest);
+    expect(depois.cx).not.toBe(antes.cx);
+
+    // mudar o exemplo redesenha o gráfico — o cursor continua a mexer
+    await page.locator(".b-exemplo summary").click();
+    await page.locator("#banSpread").fill("2");
+    await page.locator("#banTempo").fill("10");
+    const cx1 = await cursor();
+    await page.locator("#banTempo").fill("40");
+    const cx2 = await cursor();
+    expect(cx2).not.toBe(cx1);
+  });
+
+  test("nas Finanças o gráfico fica na coluna de texto e o interior continua desenhado", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/#financas");
+    await expect(page.locator(".b-cena")).toBeVisible();
+    await page.getByRole("button", { name: /tirar senha/i }).click();
+    await page.getByRole("button", { name: /mais dinheiro/i }).click();
+    await page.getByRole("button", { name: /aprender a ler o gráfico/i }).click();
+
+    await expect(page.locator(".b-cena-texto .grafico-irs")).toBeVisible();
+    await expect(page.locator(".b-cena-arte .grafico-irs")).toHaveCount(0);
+    await esperaDesenho(page);
   });
 });

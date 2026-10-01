@@ -59,7 +59,7 @@ describe("o IRS em gavetas", () => {
     expect(F.motorIrsAnual).toBeCloseTo(linha!.ano14.irsAnual, 2);
 
     const c = coletavel(1500, F.dedEsp, F.ssTaxa);
-    expect(irsPorEscaloes(ESC, c)).toBeGreaterThan(F.motorIrsAnual);
+    expect(irsPorEscaloes(ESC, c)).toBeGreaterThan(F.motorIrsAnual!);
   });
 
   it("a taxa média fica sempre abaixo ou igual ao degrau", () => {

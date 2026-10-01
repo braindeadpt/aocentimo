@@ -16,7 +16,10 @@
  *
  * O desenho do interior chega por `arteHtml` (string SVG, injetada como
  * o mapa) e o `refArte` dá a cena o sítio onde manipular os seus ids —
- * a árvore React nunca vê o interior.
+ * a árvore React nunca vê o interior. O `arteHtml` entra DENTRO de um
+ * `<svg viewBox="0 0 640 470">` (o que o `cenaBase` do protótipo fazia):
+ * sem o embrulho, o parser de HTML lê os <rect> como elementos
+ * desconhecidos e nada desenha.
  *
  * Não há GSAP aqui: a entrada é CSS e `prefers-reduced-motion` corta-a
  * no stylesheet — estado final sem animação, como manda a casa.
@@ -42,11 +45,15 @@ interface PropsCenaDePerto {
 }
 
 export default function CenaDePerto({ quem, rotuloArte, fonte, aoFechar, arteHtml, refArte, children }: PropsCenaDePerto) {
+  const cenaRef = useRef<HTMLDivElement>(null);
   const tituloRef = useRef<HTMLSpanElement>(null);
   const id = "cena-quem";
 
-  // o foco entra no título: quem navega por teclado sabe onde está
+  // ao abrir: a cena inteira vem para o ecrã (tem ~666 px e a 1440×900 o
+  // fundo ficava cortado) e o foco entra no título — quem navega por
+  // teclado sabe onde está
   useEffect(() => {
+    cenaRef.current?.scrollIntoView({ block: "nearest" });
     tituloRef.current?.focus();
   }, []);
 
@@ -59,9 +66,15 @@ export default function CenaDePerto({ quem, rotuloArte, fonte, aoFechar, arteHtm
   }, [aoFechar]);
 
   return (
-    <div className="b-cena" role="dialog" aria-modal="false" aria-labelledby={id}>
+    <div className="b-cena" ref={cenaRef} role="dialog" aria-modal="false" aria-labelledby={id}>
       {arteHtml ? (
-        <div className="b-cena-arte" ref={refArte} dangerouslySetInnerHTML={{ __html: arteHtml }} />
+        <div
+          className="b-cena-arte"
+          ref={refArte}
+          dangerouslySetInnerHTML={{
+            __html: `<svg viewBox="0 0 640 470" role="img" aria-label="${rotuloArte ?? quem}">${arteHtml}</svg>`,
+          }}
+        />
       ) : (
         <div className="b-cena-arte">
           <svg viewBox="0 0 640 470" role="img" aria-label={rotuloArte ?? quem} />
