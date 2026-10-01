@@ -10,14 +10,20 @@ interface Vista {
   s: number;
 }
 import { montarMapa, ENQUADRAMENTOS, type MarcadoresBairro } from "./planta";
+import { pinosDaCamera } from "./mundo";
+import { vistaInicial } from "@/app/_bairro/camara";
 
 /* Os valores que `dadosBairro()` entrega: texto JÁ FORMATADO. A planta
    não formata nada e o mundo também não. */
+/* Os valores com o formato que `dadosBairro()` produz HOJE («1 500,00 €»,
+   não «1 500 €»): as larguras das placas alimentam a cadeia de arrumação
+   e o enquadramento medido — um fixture com formatos velhos aqui dava um
+   enquadramento do CSS que não bate com o que a câmara calcula no ar. */
 const D: MarcadoresBairro = {
-  salario: "1 500 €",
+  salario: "1 500,00 €",
   tsu: "23,75 %",
-  irs: "168 €",
-  liquido: "1 167 €",
+  irs: "168,17 €",
+  liquido: "1 166,83 €",
   cabaz: "+35 %",
   cafes: "+47 %",
   euribor: "2,95 %",
@@ -128,7 +134,7 @@ describe("marcadoresSvg", () => {
   });
 
   it("escreve o valor que recebeu, sem o formatar", () => {
-    expect(marcadoresSvg(M.pinos)).toContain("1 500 €");
+    expect(marcadoresSvg(M.pinos)).toContain(D.salario);
   });
 });
 
@@ -250,37 +256,37 @@ describe("o enquadramento por omissão do CSS", () => {
   });
 
   it("no computador é o enquadramento que a câmara escolhe ao arrancar", () => {
-    // a câmara enquadra `ENQUADRAMENTOS.longe` com uma largura de vista
-    // max(1500, 1140/razao). A janela de referência é a do contentor do
-    // mapa num ecrã de 1440 px, que é onde este valor foi apurado.
+    // A câmara agora MEDe os marcadores (`vistaInicial`): a janela de
+    // referência é a do contentor do mapa num ecrã de 1440×900 — com os
+    // 13 marcadores inteiros e as folgas do dono (12 px em cima, 2 nos
+    // lados). O CSS e a câmara saem da mesma função: um número, um sítio.
     const largura = 1240;
-    const altura = 740;
-    const razao = altura / largura;
-    const vbw = Math.max(1500, 1140 / razao);
-    const s = largura / vbw;
-    const c = ENQUADRAMENTOS.longe;
-    const vb = { x: c.x - vbw / 2, y: c.y - (vbw * razao) / 2 };
+    const altura = 666;
+    const v = vistaInicial(
+      { perto: [...ENQUADRAMENTOS.perto], longe: [ENQUADRAMENTOS.longe.x, ENQUADRAMENTOS.longe.y] },
+      largura, altura, pinosDaCamera(montarMapa(D))
+    );
+    const s = largura / v.w;
 
     const cssVista = transformDoCss(bloco("desktop"), largura);
     // a tolerância é de meio por cento: o CSS arredonda a quatro casas
     expect(Math.abs(cssVista.s / s - 1)).toBeLessThan(0.005);
-    expect(Math.abs(cssVista.tx / (-(vb.x - MUNDO.x) * s) - 1)).toBeLessThan(0.005);
-    expect(Math.abs(cssVista.ty / (-(vb.y - MUNDO.y) * s) - 1)).toBeLessThan(0.005);
+    expect(Math.abs(cssVista.tx / (-(v.x - MUNDO.x) * s) - 1)).toBeLessThan(0.005);
+    expect(Math.abs(cssVista.ty / (-(v.y - MUNDO.y) * s) - 1)).toBeLessThan(0.005);
   });
 
   it("no telemóvel é o enquadramento que a câmara escolhe ao arrancar", () => {
     const largura = 375;
-    const altura = 600;
-    const razao = altura / largura;
-    const vbw = 820;
-    const s = largura / vbw;
-    // o centro vem da planta: `ENQUADRAMENTOS.perto`, na cota da Avenida
-    const [cx, cy] = ENQUADRAMENTOS.perto;
-    const vb = { x: cx - vbw / 2, y: cy - 10 - (vbw * razao) / 2 };
+    const altura = 0.74 * 812; // o clamp(460px, 74vh, 760px) a 812 de altura
+    const v = vistaInicial(
+      { perto: [...ENQUADRAMENTOS.perto], longe: [ENQUADRAMENTOS.longe.x, ENQUADRAMENTOS.longe.y] },
+      largura, altura, pinosDaCamera(montarMapa(D))
+    );
+    const s = largura / v.w;
 
     const cssVista = transformDoCss(bloco("telemovel"), largura);
     expect(Math.abs(cssVista.s / s - 1)).toBeLessThan(0.005);
-    expect(Math.abs(cssVista.tx / (-(vb.x - MUNDO.x) * s) - 1)).toBeLessThan(0.005);
-    expect(Math.abs(cssVista.ty / (-(vb.y - MUNDO.y) * s) - 1)).toBeLessThan(0.005);
+    expect(Math.abs(cssVista.tx / (-(v.x - MUNDO.x) * s) - 1)).toBeLessThan(0.005);
+    expect(Math.abs(cssVista.ty / (-(v.y - MUNDO.y) * s) - 1)).toBeLessThan(0.005);
   });
 });

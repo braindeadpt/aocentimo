@@ -28,6 +28,7 @@
  * de `dadosBairro()`; o céu, as estrelas e a lua são decorado, não dado.
  */
 import {
+  larguraPin,
   MUNDO,
   ORIGEM,
   f1,
@@ -258,6 +259,23 @@ export function reflexos(m: MapaBairro): string {
 
 /** O `data-id` do marcador é o do edifício, sem o índice do marcador gémio. */
 const idDoPin = (id: string): string => id.replace(/\d$/, "");
+
+/**
+ * Os marcadores no formato que a câmara consome: âncora (x, y) e
+ * largura da placa, em coordenadas do mundo. Os `data-x/y/w` do HTML e
+ * esta função saem da mesma `larguraPin()` — um número, um sítio. O
+ * servidor manda-os por prop (13 objectos pequenos) e é a câmara, no
+ * cliente, que sabe onde os vai arrumar: a cadeia depende da largura da
+ * janela, que o servidor não conhece.
+ */
+export function pinosDaCamera(m: MapaBairro): { id: string; x: number; y: number; w: number }[] {
+  return m.pinos.map(([id, p, alt, rotulo, valor]) => ({
+    id: idDoPin(id),
+    x: p[0],
+    y: p[1] - alt,
+    w: larguraPin(rotulo, valor) + 3,
+  }));
+}
 
 /**
  * Todos os marcadores, com o `data-id` que os liga aos edifícios (é por
