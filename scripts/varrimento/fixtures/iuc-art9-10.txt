@@ -1,0 +1,73 @@
+Artigo 9.º
+Taxas - categoria A
+As taxas aplicáveis aos veículos da categoria A são as seguintes:
+
+Combustível utilizado	Eletricidade
+Voltagem Total	Imposto anual segundo o ano da matrícula (em euros)
+Gasolina cilindrada (cm3)	Outros produtos cilindrada (cm3)	Posterior a 1995	De 1990 a 1995	De 1981 a 1989
+					
+Até 1 000...	Até 1 500...	Até 100...	19,90	12,55	8,80
+Mais de 1 000 até 1 300...	Mais de 1 500 até 2 000...	Mais de 100...	39,95	22,45	12,55
+Mais de 1 300 até 1 750...	Mais de 2 000 até 3 000...		62,40	34,87	17,49
+Mais de 1750 até 2 600...	Mais de 3 000...		158,31	83,49	36,09
+Mais de 2 600 até 3 500...			287,49	156,54	79,72
+Mais de 3 500...			512,23	263,11	120,90
+Alterado pelo/a Artigo 260.º do/a Lei n.º 82/2023 - Diário da República n.º 250/2023, Série I de 2023-12-29, em vigor a partir de 2024-01-01
+Alterado pelo/a Artigo 249.º do/a Lei n.º 24-D/2022 - Diário da República n.º 251/2022, 2º Suplemento, Série I de 2022-12-30, em vigor a partir de 2023-01-01
+Alterado pelo/a Artigo 304.º do/a Lei n.º 12/2022 - Diário da República n.º 122/2022, Série I de 2022-06-27, em vigor a partir de 2022-06-28
+Alterado pelo/a Artigo 354.º do/a Lei n.º 2/2020 - Diário da República n.º 64/2020, Série I de 2020-03-31, em vigor a partir de 2020-04-01
+Alterado pelo/a Artigo 289.º do/a Lei n.º 71/2018 - Diário da República n.º 251/2018, Série I de 2018-12-31, em vigor a partir de 2019-01-01
+Alterado pelo/a Artigo 262.º do/a Lei n.º 114/2017 - Diário da República n.º 249/2017, Série I de 2017-12-29, em vigor a partir de 2018-01-01
+Alterado pelo/a Artigo 222.º do/a Lei n.º 42/2016 - Diário da República n.º 248/2016, Série I de 2016-12-28, em vigor a partir de 2017-01-01
+Alterado pelo/a Artigo 168.º do/a Lei n.º 7-A/2016 - Diário da República n.º 62/2016, 1º Suplemento, Série I de 2016-03-30, em vigor a partir de 2016-03-31
+Alterado pelo/a Artigo 201.º do/a Lei n.º 83-C/2013 - Diário da República n.º 253/2013, 1º Suplemento, Série I de 2013-12-31, em vigor a partir de 2014-01-01
+Alterado pelo/a Artigo 214.º do/a Lei n.º 66-B/2012 - Diário da República n.º 252/2012, 1º Suplemento, Série I de 2012-12-31, em vigor a partir de 2013-01-01
+Alterado pelo/a Artigo 140.º do/a Lei n.º 64-B/2011 - Diário da República n.º 250/2011, 1º Suplemento, Série I de 2011-12-30, em vigor a partir de 2012-01-01
+Alterado pelo/a Artigo 114.º do/a Lei n.º 55-A/2010 - Diário da República n.º 253/2010, 1º Suplemento, Série I de 2010-12-31, em vigor a partir de 2011-01-01
+Alterado pelo/a Artigo 107.º do/a Lei n.º 3-B/2010 - Diário da República n.º 82/2010, 1º Suplemento, Série I de 2010-04-28, em vigor a partir de 2010-04-29
+Alterado pelo/a Artigo 91.º do/a Lei n.º 64-A/2008 - Diário da República n.º 252/2008, 1º Suplemento, Série I de 2008-12-31, em vigor a partir de 2009-01-01
+Ver alterações ao texto
+
+
+
+@@@ART10@@@
+Artigo 10.º
+Taxas - categoria B
+1 - As taxas aplicáveis aos veículos da categoria B são as seguintes:
+
+Escalão de cilindrada(em centímetros cúbicos)	Taxas(em euros)	Escalão de CO(índice 2) (em gramas por quilómetro)	Taxas(em euros)
+NEDC	WLTP
+				
+Até 1 250...	31,77	Até 120 ...	Até 140...	65,15
+Mais de 1 250 até 1 750...	63,74	Mais de 120 até 180...	Mais de 140 até 205...	97,63
+Mais de 1 750 até 2 500...	127,35	Mais de 180 até 250 ...	Mais de 205 até 260...	212,04
+Mais de 2 500...	435,84	Mais de 250...	Mais de 260...	363,25
+
+2 - Aos veículos da categoria B cuja data da primeira matrícula no território nacional ou num Estado-Membro da União Europeia ou do Espaço Económico Europeu seja posterior a 1 de janeiro de 2017, aplicam-se as seguintes taxas adicionais:
+
+Escalão de CO(índice 2) (em gramas por quilómetro)	Taxas(em euros)
+NEDC	WLTP
+		
+Mais de 180 até 250...	Mais de 205 até 260...	31,77
+Mais de 250...	Mais de 260...	63,74
+
+3 - Na determinação do valor total do IUC, devem multiplicar-se à coleta obtida a partir das tabelas previstas nos números anteriores os seguintes coeficientes, em função do ano da primeira matrícula do veículo em território nacional ou num Estado-Membro da União Europeia ou do Espaço Económico Europeu.
+Alterado pelo/a Artigo 260.º do/a Lei n.º 82/2023 - Diário da República n.º 250/2023, Série I de 2023-12-29, em vigor a partir de 2024-01-01
+Alterado pelo/a Artigo 249.º do/a Lei n.º 24-D/2022 - Diário da República n.º 251/2022, 2º Suplemento, Série I de 2022-12-30, em vigor a partir de 2023-01-01
+Alterado pelo/a Artigo 304.º do/a Lei n.º 12/2022 - Diário da República n.º 122/2022, Série I de 2022-06-27, em vigor a partir de 2022-06-28
+Alterado pelo/a Artigo 354.º do/a Lei n.º 2/2020 - Diário da República n.º 64/2020, Série I de 2020-03-31, em vigor a partir de 2020-04-01
+Alterado pelo/a Artigo 12.º do/a Lei n.º 119/2019 - Diário da República n.º 179/2019, Série I de 2019-09-18, em vigor a partir de 2019-10-01
+Alterado pelo/a Artigo 289.º do/a Lei n.º 71/2018 - Diário da República n.º 251/2018, Série I de 2018-12-31, em vigor a partir de 2019-01-01
+Alterado pelo/a Artigo 262.º do/a Lei n.º 114/2017 - Diário da República n.º 249/2017, Série I de 2017-12-29, em vigor a partir de 2018-01-01
+Alterado pelo/a Artigo 222.º do/a Lei n.º 42/2016 - Diário da República n.º 248/2016, Série I de 2016-12-28, em vigor a partir de 2017-01-01
+Alterado pelo/a Artigo 168.º do/a Lei n.º 7-A/2016 - Diário da República n.º 62/2016, 1º Suplemento, Série I de 2016-03-30, em vigor a partir de 2016-03-31
+Alterado pelo/a Artigo 201.º do/a Lei n.º 83-C/2013 - Diário da República n.º 253/2013, 1º Suplemento, Série I de 2013-12-31, em vigor a partir de 2014-01-01
+Alterado pelo/a Artigo 214.º do/a Lei n.º 66-B/2012 - Diário da República n.º 252/2012, 1º Suplemento, Série I de 2012-12-31, em vigor a partir de 2013-01-01
+Alterado pelo/a Artigo 140.º do/a Lei n.º 64-B/2011 - Diário da República n.º 250/2011, 1º Suplemento, Série I de 2011-12-30, em vigor a partir de 2012-01-01
+Alterado pelo/a Artigo 114.º do/a Lei n.º 55-A/2010 - Diário da República n.º 253/2010, 1º Suplemento, Série I de 2010-12-31, em vigor a partir de 2011-01-01
+Alterado pelo/a Artigo 107.º do/a Lei n.º 3-B/2010 - Diário da República n.º 82/2010, 1º Suplemento, Série I de 2010-04-28, em vigor a partir de 2010-04-29
+Alterado pelo/a Artigo 91.º do/a Lei n.º 64-A/2008 - Diário da República n.º 252/2008, 1º Suplemento, Série I de 2008-12-31, em vigor a partir de 2009-01-01
+Alterado pelo/a Artigo 68.º do/a Lei n.º 67-A/2007 - Diário da República n.º 251/2007, 1º Suplemento, Série I de 2007-12-31, em vigor a partir de 2008-01-01
+Ver alterações ao texto
+
+

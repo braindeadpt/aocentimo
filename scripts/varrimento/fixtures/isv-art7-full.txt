@@ -1,0 +1,115 @@
+Artigo 7.º
+Taxas normais - automóveis
+1 - A tabela A, a seguir indicada, estabelece as taxas de imposto, tendo em conta a componente cilindrada e ambiental, e é aplicável aos seguintes veículos:
+a) Aos automóveis de passageiros;
+TABELA A
+Componente cilindrada
+
+Expandir
+Escalão de cilindrada (em centímetros cúbicos)	Taxas por centímetros cúbicos(em euros)	Parcela a abater(em euros)
+		
+Até 1 000...	1,09	849,03
+Entre 1 001 e 1 250...	1,18	850,69
+Mais de 1 250...	5,61	6 194,88
+
+Componente ambiental
+Aplicável a veículos com emissões de CO(índice 2) resultantes dos testes realizados ao abrigo do Novo Ciclo de Condução Europeu Normalizado (New European Driving Cycle - NEDC)
+Veículos a gasolina
+
+Expandir
+Escalão de CO(índice 2) (em gramas por quilómetro)	Taxas(em euros)	Parcela a abater(em euros)
+		
+Até 99...	4,62	427,00
+De 100 a 115...	8,09	750,99
+De 116 a 145...	52,56	5 903,94
+De 146 a 175...	61,24	7 140,17
+De 176 a 195...	155,97	23 627,27
+Mais de 195...	205,65	33 390,12
+
+
+Veículos a gasóleo
+
+Expandir
+Escalão de CO(índice 2) (em gramas por quilómetro)	Taxas(em euros)	Parcela a abater(em euros)
+		
+Até 79...	5,78	439,04
+De 80 a 95...	23,45	1 848,58
+De 96 a 120...	79,22	7 195,63
+De 121 a 140...	175,73	18 924,92
+De 141 a 160...	195,43	21 720,92
+Mais de 160...	268,42	33 447,90
+
+Componente ambiental
+Aplicável a veículos com emissões de CO(índice 2) resultantes dos testes realizados ao abrigo do Procedimento Global de Testes Harmonizados de Veículos Ligeiros (Worldwide Harmonized Light Vehicle Test Procedure - WLTP)
+Veículos a gasolina
+
+Expandir
+Escalão de CO(índice 2) (em gramas por quilómetro)	Taxas(em euros)	Parcela a abater(em euros)
+		
+Até 110...	0,44	43,02
+De 111 a 115...	1,10	115,80
+De 116 a 120...	1,38	147,79
+De 121 a 130...	5,27	619,17
+De 131 a 145...	6,38	762,73
+De 146 a 175...	41,54	5 819,56
+De 176 a 195...	51,38	7 247,39
+De 196 a 235...	193,01	34 190,52
+Mais de 235...	233,81	41 910,96
+
+Veículos a gasóleo
+
+Expandir
+Escalão de CO(índice 2) (em gramas por quilómetro)	Taxas(em euros)	Parcela a abater(em euros)
+		
+Até 110...	1,72	11,50
+De 111 a 120...	18,96	1 906,19
+De 121 a 140...	65,04	7 360,85
+De 141 a 150...	127,40	16 080,57
+De 151 a 160...	160,81	21 176,06
+De 161 a 170...	221,69	29 227,38
+De 171 a 190...	274,08	36 987,98
+Mais de 190...	282,35	38 271,32
+
+
+2 - A tabela B, a seguir indicada, tem em conta exclusivamente a componente cilindrada, sendo aplicável aos seguintes veículos:
+a) Na totalidade do imposto, aos automóveis ligeiros de mercadorias, de caixa fechada, com lotação máxima de três lugares, incluindo o do condutor, e altura interior da caixa de carga inferior a 120 cm;
+b) Na totalidade do imposto, aos automóveis ligeiros de mercadorias, de caixa fechada, com lotação máxima de três lugares, incluindo o do condutor, e tracção às quatro rodas, permanente ou adaptável;
+c) Aos automóveis abrangidos pelos n.os 2 e 3 do artigo seguinte, nas percentagens aí previstas;
+d) Aos automóveis abrangidos pelo artigo 9.º, nas percentagens aí previstas.
+e) Na totalidade do imposto, às autocaravanas, sem prejuízo da aplicação do disposto no n.º 3 do artigo 9.º
+TABELA B
+Componente cilindrada
+
+Expandir
+Escalão de cilindrada (em centímetros cúbicos)	Taxas por centímetros
+cúbicos(em euros)	Parcela a abater(em euros)
+		
+Até 1 250...	5,30	3 331,68
+Mais de 1 250...	12,58	12 138,47
+
+
+3 - Os veículos ligeiros, equipados com sistema de propulsão a gasóleo ficam sujeitos a um agravamento de 500 (euro) no total do montante do imposto a pagar, sendo esse valor reduzido para 250 (euro) relativamente aos veículos ligeiros de mercadorias referidos no n.º 2 do artigo 9.º, com exceção dos veículos que apresentarem nos respetivos certificados de conformidade ou, na sua inexistência, nas homologações técnicas, um valor de emissão de partículas inferior a 0,001 g/km.
+4 - Sempre que o imposto relativo à componente ambiental apresentar um resultado negativo, será o mesmo deduzido ao montante do imposto da componente cilindrada, não podendo o total do imposto a pagar ser inferior a (euro) 100, independentemente do cálculo que resultar da aplicação da tabela A ou da tabela B.
+5 - A cilindrada dos automóveis movidos por motores Wankel corresponde ao dobro da cilindrada nominal, calculada nos termos do Regulamento das Homologações CE de Veículos, Sistemas e Unidades Técnicas Relativo às Emissões Poluentes, aprovado pelo Decreto-Lei n.º 202/2000, de 1 de Setembro.
+6 - Nas situações previstas na alínea b) do n.º 2 do artigo 5.º, o montante do imposto a pagar é o que resulta da diferença entre o imposto incidente sobre o veículo após a respectiva operação, atento o tempo de uso entretanto decorrido, e o imposto originariamente pago, excepto nos casos de mudança de chassis, em que o imposto é devido pela totalidade.
+7 - (Revogado.)
+8 - Os veículos que se encontrem equipados com motores preparados para o consumo, no seu sistema de propulsão, exclusivamente de gás de petróleo liquefeito (GPL), gás natural ou bioetanol, são tributados, na componente ambiental, pelas taxas correspondentes aos veículos a gasolina.
+9 - Os veículos que se encontrem equipados com motores preparados para o consumo, no seu sistema de propulsão, de biodiesel são tributados, na componente ambiental, pelas taxas correspondentes aos veículos a gasóleo.
+10 - Os veículos que se encontrem equipados com motores preparados para o consumo, no seu sistema de propulsão, quer de gás de petróleo liquefeito (GPL) ou gás natural, quer de gasolina ou gasóleo são tributados, na componente ambiental, pelas taxas e as emissões de CO(índice 2) resultantes do sistema de propulsão a gasolina ou a gasóleo, consoante for o caso.
+
+Alterado pelo/a Artigo 256.º do/a Lei n.º 82/2023 - Diário da República n.º 250/2023, Série I de 2023-12-29, em vigor a partir de 2024-01-01
+Alterado pelo/a Artigo 2.º do/a Lei n.º 20/2023 - Diário da República n.º 95/2023, Série I de 2023-05-17, em vigor a partir de 2023-05-18, produz efeitos a partir de 2024-01-01
+Alterado pelo/a Artigo 246.º do/a Lei n.º 24-D/2022 - Diário da República n.º 251/2022, 2º Suplemento, Série I de 2022-12-30, em vigor a partir de 2023-01-01
+Alterado pelo/a Artigo 299.º do/a Lei n.º 12/2022 - Diário da República n.º 122/2022, Série I de 2022-06-27, em vigor a partir de 2022-06-28
+Alterado pelo/a Artigo 351.º do/a Lei n.º 2/2020 - Diário da República n.º 64/2020, Série I de 2020-03-31, em vigor a partir de 2020-04-01
+Alterado pelo/a Artigo 254.º do/a Lei n.º 114/2017 - Diário da República n.º 249/2017, Série I de 2017-12-29, em vigor a partir de 2018-01-01
+Alterado pelo/a Artigo 217.º do/a Lei n.º 42/2016 - Diário da República n.º 248/2016, Série I de 2016-12-28, em vigor a partir de 2017-01-01
+Alterado pelo/a Artigo 159.º do/a Lei n.º 7-A/2016 - Diário da República n.º 62/2016, 1º Suplemento, Série I de 2016-03-30, em vigor a partir de 2016-03-31
+Alterado pelo/a Artigo 7.º do/a Lei n.º 82-D/2014 - Diário da República n.º 252/2014, 2º Suplemento, Série I de 2014-12-31, em vigor a partir de 2015-01-01
+Alterado pelo/a Artigo 198.º do/a Lei n.º 83-C/2013 - Diário da República n.º 253/2013, 1º Suplemento, Série I de 2013-12-31, em vigor a partir de 2014-01-01
+Alterado pelo/a Artigo 137.º do/a Lei n.º 64-B/2011 - Diário da República n.º 250/2011, 1º Suplemento, Série I de 2011-12-30, em vigor a partir de 2012-01-01
+Alterado pelo/a Artigo 113.º do/a Lei n.º 55-A/2010 - Diário da República n.º 253/2010, 1º Suplemento, Série I de 2010-12-31, em vigor a partir de 2011-01-01
+Alterado pelo/a Artigo 104.º do/a Lei n.º 3-B/2010 - Diário da República n.º 82/2010, 1º Suplemento, Série I de 2010-04-28, em vigor a partir de 2010-04-29
+Alterado pelo/a Artigo 89.º do/a Lei n.º 64-A/2008 - Diário da República n.º 252/2008, 1º Suplemento, Série I de 2008-12-31, em vigor a partir de 2009-01-01
+Alterado pelo/a Artigo 66.º do/a Lei n.º 67-A/2007 - Diário da República n.º 251/2007, 1º Suplemento, Série I de 2007-12-31, em vigor a partir de 2008-01-01
+Ver alterações ao texto

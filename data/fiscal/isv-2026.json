@@ -82,13 +82,12 @@
   },
   "tabelaC": {
     "aplicavelA": "Art. 10.º — motociclos, triciclos e quadriciclos, tributados só pela cilindrada",
-    "nota": "Lida do DR consolidado e registada por completude da fonte; não é usada pelo motor de ligeiros.",
+    "nota": "Redação atual do DR consolidado (Lei n.º 82/2023, art. 256.º): cinco escalões, o primeiro «De 120 até 250» — a linha «Até 120» que aqui estava vinha da estrutura antiga da tabela, com os valores deslocados; corrigido no varrimento de 2026-10-01. Não é usada pelo motor de ligeiros.",
     "cilindrada": [
-      { "de": null, "ate": 120, "valorFixo": 73.78 },
-      { "de": 121, "ate": 250, "valorFixo": 91.63 },
-      { "de": 251, "ate": 350, "valorFixo": 122.57 },
-      { "de": 351, "ate": 500, "valorFixo": 184.45 },
-      { "de": 501, "ate": 750, "valorFixo": 245.14 },
+      { "de": 120, "ate": 250, "valorFixo": 73.78 },
+      { "de": 251, "ate": 350, "valorFixo": 91.63 },
+      { "de": 351, "ate": 500, "valorFixo": 122.57 },
+      { "de": 501, "ate": 750, "valorFixo": 184.45 },
       { "de": 751, "ate": null, "valorFixo": 245.14 }
     ]
   },
