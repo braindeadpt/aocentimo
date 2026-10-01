@@ -294,11 +294,15 @@ export function marcadoresSvg(pinos: readonly Pino[]): string {
 
 /* ———————————————————————— o mundo inteiro ———————————————————————— */
 
-/** O que fica por cima de tudo: estrelas, lua, o lugar das luzes e os pinos. */
+/** O halo de cada candeeiro — acende só à noite (`.b-noite .luz` no CSS). */
+const luz = (x: number, y: number): string =>
+  `<g transform="translate(${f1(x)} ${f1(y)})"><circle class="luz" cx="0" cy="-60" r="46" fill="url(#b-brilho)" opacity="0"/></g>`;
+
+/** O que fica por cima de tudo: estrelas, lua, as luzes e os pinos. */
 function topo(m: MapaBairro): string {
   return (
     `<g id="b-gEstrelas">${estrelas()}${LUA}</g>` +
-    `<g id="b-gLuzes"></g>` +
+    `<g id="b-gLuzes">${m.luzes.map(([x, y]) => luz(x, y)).join("")}</g>` +
     `<g id="b-gPinos">${marcadoresSvg(m.pinos)}</g>` +
     `<g id="b-gEtiq"></g>`
   );

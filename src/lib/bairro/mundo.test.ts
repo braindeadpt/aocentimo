@@ -68,6 +68,20 @@ describe("mundoBairro — a ordem das camadas", () => {
     expect(topo).toContain('id="b-gEtiq"');
   });
 
+  it("há um halo .luz por candeeiro, no mesmo sítio do poste", () => {
+    const candeeiros = [...(M.tras + M.frente).matchAll(
+      /<g class="candeeiro" transform="translate\((-?[\d.]+) (-?[\d.]+)\)"/g
+    )].map((g) => `${g[1]} ${g[2]}`);
+    const luzes = [...html.matchAll(
+      /<g transform="translate\((-?[\d.]+) (-?[\d.]+)\)"><circle class="luz"/g
+    )].map((g) => `${g[1]} ${g[2]}`);
+    expect(candeeiros.length).toBeGreaterThan(0);
+    expect(luzes.length).toBe(candeeiros.length);
+    for (const t of candeeiros) expect(luzes).toContain(t);
+    // nasce apagado — o CSS .b-noite é que o acende
+    expect(html).toContain('class="luz" cx="0" cy="-60" r="46" fill="url(#b-brilho)" opacity="0"');
+  });
+
   it("cada camada é do tamanho do mundo e escondida ao leitor de ecrã", () => {
     for (const id of ORDEM_CAMADAS) {
       expect(html).toContain(

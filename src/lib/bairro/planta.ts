@@ -215,6 +215,8 @@ export interface MapaBairro {
   ribeira: string;
   portas: Portas;
   pinos: Pino[];
+  /** Onde cada candeeiro assenta — as luzes da noite nascem daqui (P1). */
+  luzes: Ponto[];
 }
 
 /** Um edifício focável: o `data-id` é o que liga o mapa à cena e ao e2e. */
@@ -588,14 +590,23 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
   const arvoresTras = ([[-0.4, 2.2, 0.9], [-0.5, 3.1, 0.8], [2.9, 3.35, 0.7]] as const)
   .map(([i, j, e]) => { const [x, y] = Pt(i, j); return arvoreVerde(x, y, e); })
   .join("");
-  const miradouro = [0.4, 2.2, 3.9, 9.6, 11.6, 13.4].map((ii) => { const [x, y] = Pt(ii, 6.05); return arvoreVerde(x, y, 0.74); }).join("") + [1.3, 5.2, 10.6, 14.4].map((ii) => { const [x, y] = Pt(ii, 6.3); return candeeiro(x, y); }).join("");
-  const candTras = [1.2, 4.6, 9.6, 12].map((ii) => { const [x, y] = Pt(ii, 3.8); return candeeiro(x, y); }).join("");
-  const jardim = [arvoreVerde(14.5, 7.2, 1), arvoreVerde(15.1, 8.1, 0.85), arvoreVerde(14.2, 8.3, 0.75)].join("");
+  // cada candeeiro desenhado regista a sua posição: o `#b-gLuzes` do
+  // topo acende um halo por cada um (como o gLuzes do protótipo)
+  const luzes: Ponto[] = [];
+  const cand = (x: number, y: number): string => {
+    luzes.push([x, y]);
+    return candeeiro(x, y);
+  };
+  const miradouro = [0.4, 2.2, 3.9, 9.6, 11.6, 13.4].map((ii) => { const [x, y] = Pt(ii, 6.05); return arvoreVerde(x, y, 0.74); }).join("") + [1.3, 5.2, 10.6, 14.4].map((ii) => { const [x, y] = Pt(ii, 6.3); return cand(x, y); }).join("");
+  const candTras = [1.2, 4.6, 9.6, 12].map((ii) => { const [x, y] = Pt(ii, 3.8); return cand(x, y); }).join("");
+  const jardim = ([[14.5, 7.2, 1], [15.1, 8.1, 0.85], [14.2, 8.3, 0.75]] as const)
+    .map(([i, j, e]) => { const [x, y] = Pt(i, j); return arvoreVerde(x, y, e); })
+    .join("");
   const cais = ([[0.5, 9.3], [2.1, 9.35], [10.8, 9.3], [12.1, 9.35], [13.4, 9.3]] as const)
     .map(([ii, jj], k) => { const [x, y] = Pt(ii, jj); return esplanada(x, y, k % 2 ? "#fff" : "#fff6e3"); })
     .join("")
     + [-0.4, 1.4, 3.2, 5, 6.8, 9, 10.8, 12.6].map((ii) => { const [x, y] = Pt(ii, 10.62); return cabeco(x, y); }).join("")
-    + [0.9, 3.8, 6.1, 9.8, 12.8].map((ii) => { const [x, y] = Pt(ii, 9.05); return candeeiro(x, y); }).join("");
+    + [0.9, 3.8, 6.1, 9.8, 12.8].map((ii) => { const [x, y] = Pt(ii, 9.05); return cand(x, y); }).join("");
   const vida = ([[5.55, 8.55, 1], [5.85, 8.7, -1], [6.5, 8.62, 1], [4.9, 10.1, -1], [8.8, 9.9, 1]] as const)
     .map(([ii, jj, d]) => { const [x, y] = Pt(ii, jj); return pombo(x, y, d); })
     .join("");
@@ -613,6 +624,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     gaia: margemGaia(),
     portas,
     pinos,
+    luzes,
   };
 }
 
