@@ -201,6 +201,10 @@ export function Bairro({
     camara.defPinos([...pinos]);
     camaraRef.current = camara;
     const desligar = camara.ligar();
+    // o sinal para os e2e: o mapa está VIVO (ouvintes ligados) — o e2e
+    // que carrega Enter num edifício espera por este atributo, em vez de
+    // apostar no timing da hidratação
+    mundo.dataset.vivo = "1";
 
     // o reflexo no Douro só pode entrar depois das camadas existirem:
     // precisa do clipPath e da máscara, que vivem no cenário

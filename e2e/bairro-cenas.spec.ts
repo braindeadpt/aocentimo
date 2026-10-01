@@ -35,6 +35,11 @@ test.describe("as cenas P2a — abrir, percorrer, fechar", () => {
         if (/cena|Cena/.test(r.url())) pedidosCena.push(r.url());
       });
 
+      // esperar pelo mapa VIVO: o efeito que liga os ouvintes poe
+      // data-vivo="1" no .b-mundo — sem isto, o Enter podia cair antes
+      // da hidratação (foi o que partiu o CI)
+      await expect(page.locator('.b-mundo[data-vivo="1"]')).toBeAttached();
+
       // entrar por TECLADO: tab até ao edifício e Enter
       const ed = page.locator(`.b-mundo .ed[data-id="${id}"]`);
       await ed.focus();
@@ -79,6 +84,7 @@ test.describe("as cenas P2a — abrir, percorrer, fechar", () => {
 
   test("a cena das Finanças percorre os passos só com teclado até ao gráfico", async ({ page }) => {
     await page.goto("/");
+    await expect(page.locator('.b-mundo[data-vivo="1"]')).toBeAttached();
     const ed = page.locator('.b-mundo .ed[data-id="financas"]');
     await ed.focus();
     await page.keyboard.press("Enter");

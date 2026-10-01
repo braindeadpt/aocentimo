@@ -17,14 +17,32 @@ import { test, expect } from "@playwright/test";
  */
 
 // os valores que os marcadores têm de mostrar — lidos de data/ pelo
-// servidor. Se a lista mudar, o teste diz qual dos edifícios ficou atrás.
+// os valores que os marcadores têm de mostrar — LIDOS de data/ no início
+// da corrida, com a mesma formatação do site (`fmtNum` = toLocaleString
+// pt-PT). Hardcoded, o ingest diário partia o teste a cada variação do
+// gasóleo; assim o teste segue os dados e só falha quando a PÁGINA deixa
+// de mostrar o que data/ tem.
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
+/** O último valor de uma série `{ series: [{ t, v }] }`, formatado a N casas. */
+function ultimo(caminho: string, casas: number): string {
+  const serie = JSON.parse(readFileSync(join(process.cwd(), caminho), "utf8")) as {
+    series: { t: string; v: number }[];
+  };
+  return serie.series[serie.series.length - 1].v.toLocaleString("pt-PT", {
+    minimumFractionDigits: casas,
+    maximumFractionDigits: casas,
+  });
+}
+
 const ESPERADOS = [
   { nome: "salário", padrao: /1 500|1\u202f500/ },
   { nome: "TSU", padrao: /23,75/ },
   { nome: "IRS", padrao: /168/ },
   { nome: "Euribor", padrao: /2,95/ },
-  { nome: "gasóleo", padrao: /2,181/ },
-  { nome: "gasolina", padrao: /2,097/ },
+  { nome: "gasóleo", padrao: new RegExp(ultimo("data/sources/dgeg/pmd-gasoleo-diario.json", 3)) },
+  { nome: "gasolina", padrao: new RegExp(ultimo("data/sources/dgeg/pmd-gasolina95-diario.json", 3)) },
   { nome: "inflação", padrao: /3,6/ },
   { nome: "desemprego", padrao: /5,7/ },
 ];
