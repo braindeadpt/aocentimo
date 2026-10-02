@@ -806,5 +806,33 @@ Mono e dos tokens V4 sem uso; a decisão de ligação para `/impostos`,
 
 ## P4 · Qualidade e lançamento
 
+### P4 — os dados das cenas saem do payload da home
+
+Os dados das cenas viajavam na prop `cenas` do `<Bairro>`: o Next
+embarcava-os no flight (`self.__next_f`) da home — ~19 KB raw de séries
+e tabelas pagos por quem nunca abre um edifício.
+
+Decisão: um ficheiro estático por cena — `public/cenas/<id>.json`,
+escrito no `npm run derive` pelo passo `scripts/derive/cenas.ts`, que
+chama a MESMA `dadosCenas()` do servidor (nenhuma lógica copiada). O
+cliente (`CenaViva` no `Bairro.tsx`) faz `fetch("/cenas/<id>.json")` ao
+abrir, com cache por id; os ficheiros vão commitados como a
+`public/api/` e a ingest diária actualiza-os no mesmo gesto.
+
+Enquanto o json não chega — ou se falhar — a moldura `CenaDePerto`
+abre na mesma, sem desenho (`semDesenho`), com Escape/× a funcionar e
+a falha honesta em vez de zeros. Duas asneiras do JSON registadas:
+não tem NaN (o gerador falha alto se uma série trouxer um buraco, em
+vez de escrever `null` que a aritmética leria como 0) e não tem
+`undefined` (nenhum campo de `CenasDados` o usa — verificado).
+
+Copy PROPOSTA nova (em `cenas/textos.ts`, para o dono rever):
+- `aCarregar` = «A ir buscar os números…»
+- `falhaAoCarregar` = «Os números desta cena não chegaram. Fecha e tenta
+  outra vez.»
+
+Medido (`scripts/_dieta-html.mjs`, home): payload RSC 17 184 →
+**9 088 B gzip**; home 78 246 → **70 099 B gzip**.
+
 _(por preencher — a lista final de textos PROPOSTA é a que o dono revê
 antes do lançamento. Não lançar sem essa revisão.)_

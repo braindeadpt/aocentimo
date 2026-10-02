@@ -7,6 +7,7 @@ import { runDerivados } from "./derivados";
 import { runCenarios } from "./cenarios";
 import { runPainel } from "./painel";
 import { runApi } from "./api";
+import { runCenasJson } from "./cenas";
 
 const ROOT = path.resolve(__dirname, "..", "..");
 const DATA = path.join(ROOT, "data");
@@ -46,6 +47,9 @@ function main() {
   runPainel(DATA, frescura, ROOT);
 
   runApi(ROOT);
+
+  const cenas = runCenasJson(ROOT);
+  console.log(`✓ cenas: ${cenas.length} ficheiros em public/cenas/ (${cenas.join(", ")})`);
 
   if (frescura.estado === "atrasado") {
     console.error("\nFALHA: há séries atrasadas — ver data/meta/freshness.json");

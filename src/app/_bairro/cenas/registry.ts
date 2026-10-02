@@ -14,8 +14,9 @@
  * pastelaria → o café e o IVA; quiosque → o Jornal do Bairro;
  * escola → ler gráficos (P2c). Os onze edifícios têm cena.
  *
- * Os dados de cada cena chegam do servidor por props (`CenasDados`);
- * nenhum componente daqui importa `data/*.json` (AGENTS.md). O JSX da
+ * Os dados de cada cena chegam por `fetch("/cenas/<id>.json")` ao abrir
+ * (P4 — gerados no derive pela `dadosCenas()` do servidor); nenhum
+ * componente daqui importa `data/*.json` (AGENTS.md). O JSX da
  * cena NÃO pode importar a planta (iso/planta arrastariam o desenho) —
  * por isso os dados Fabrica chegam com os pontos das rotas já em píxeis.
  */

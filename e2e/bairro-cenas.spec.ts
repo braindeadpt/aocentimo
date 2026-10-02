@@ -32,7 +32,10 @@ test.describe("as cenas P2a — abrir, percorrer, fechar", () => {
       // zero chunks de cena no arranque: abrem só ao entrar
       const pedidosCena: string[] = [];
       page.on("request", (r) => {
-        if (/cena|Cena/.test(r.url())) pedidosCena.push(r.url());
+        // só chunks JS: o json de dados (/cenas/<id>.json) passou a ser
+        // pedido ao ENTRAR no edifício (P4) — já não é carga inicial
+        if (/cena|Cena/.test(r.url()) && r.resourceType() === "script")
+          pedidosCena.push(r.url());
       });
 
       // esperar pelo mapa VIVO: o efeito que liga os ouvintes poe

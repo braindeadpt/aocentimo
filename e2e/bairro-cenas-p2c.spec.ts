@@ -40,7 +40,10 @@ test.describe("as cenas P2c — abrir e fechar", () => {
     test(`a cena «${id}» abre por teclado e Escape devolve o foco ao edifício`, async ({ page }) => {
       const pedidosCena: string[] = [];
       page.on("request", (r) => {
-        if (/cena|Cena/.test(r.url())) pedidosCena.push(r.url());
+        // só chunks JS: o json de dados (/cenas/<id>.json) passou a ser
+        // pedido ao ENTRAR no edifício (P4) — já não é carga inicial
+        if (/cena|Cena/.test(r.url()) && r.resourceType() === "script")
+          pedidosCena.push(r.url());
       });
       const erros: string[] = [];
       page.on("pageerror", (e) => erros.push(String(e)));
