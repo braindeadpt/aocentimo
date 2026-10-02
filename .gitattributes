@@ -1,5 +1,9 @@
-# Limpeza C — fixtures e ferramentas de ingestão fora das estatísticas do GitHub.
-# (As capturas .screenshots/ e os scripts/_shots-* saíram do repo; o .gitignore
-# já os ignora para não voltarem a entrar.)
-scripts/ingest/*.fixture* linguist-generated=true
-scripts/ingest/** linguist-vendored=true
+# Fins de linha das fixtures e do HTML: LF em qualquer sistema.
+#
+# ccd2225.test.ts casa a fixture por texto exacto (o `replace` do caso
+# "Portugal transposto" e os `toContain` de id="SVN_numOfNims"). Com CRLF —
+# o que um checkout no Windows faz por omissão — essas linhas não existem e o
+# teste, que protege o parser da Directiva, passa em Linux e falha em Windows.
+# Fixar LF aqui, e não na máquina: a regra vive no repositório.
+scripts/ingest/*.fixture.* text eol=lf
+*.html text eol=lf
