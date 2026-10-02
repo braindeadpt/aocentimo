@@ -570,8 +570,71 @@ básicos da lista I do Código do IVA»;
 dados da Fábrica e dois `aria-label`) foram para `textos.ts`, para ficarem
 na lista que o dono revê.
 
-_(P2b — Correios, Bomba, Segurança Social — e P2c — Casa, Pastelaria,
-Quiosque, Escola — ficam para as sessões seguintes.)_
+### P2b — Correios, Bomba, Segurança Social
+
+Porta de `cena-correios.js`, `cena-bomba.js` e `cenaSegSocial`
+(cenas-bairro.js) para `src/app/_bairro/cenas/`, no mesmo molde da P2a:
+`CenaDePerto`, interior em `<svg viewBox="0 0 640 470">` gerado no
+servidor, gráfico na coluna do texto (`.b-corpo`), dados por props.
+Ficheiros novos: `dados-p2b.ts` (servidor), `textos-p2b.ts` (copy
+PROPOSTA), `correios-arte.ts`, `bomba-arte.ts`, `segsocial-arte.ts`,
+`CenaCorreios.tsx`, `CenaBomba.tsx`, `CenaSegSocial.tsx`. Em
+`registry.ts`/`dados.ts`/`com-cena.ts`/`Bairro.tsx` só se acrescentaram
+linhas — a P2c mantém as suas. O cartão «em breve» sai dos três
+edifícios.
+
+**Contas e dados (regra nº1):**
+
+- **Correios → /poupanca.** Os 10 000 € são exemplo e dizem-se exemplo.
+  O passado é medido: poder de compra = `IHPC(2020-08) / IHPC(hoje)`
+  (série `cp00`, a mesma data-base da Mercearia). O futuro é HIPÓTESE
+  dita como hipótese: `trajetoriaColchao` e `trajetoriaCA` do motor
+  `poupanca.ts`, com taxa, prémios de permanência, vigência e garantia
+  de `data/fiscal/ca.json` e retenção de `capitais.json`. Sliders de
+  anos e de inflação refazem a trajetória no cliente.
+- **Bomba → /precos.** Decomposição por `decomporCombustivel` no
+  servidor (o cliente não vê `iva.json`): ISP e carbono de
+  `data/fiscal/isp.json` (portaria e data na fonte), IVA normal sobre
+  produto+ISP+carbono — a cena mostra o IVA a incidir sobre impostos.
+  O gráfico usa as séries diárias DGEG (`pmd-gasolina95-diario`,
+  `pmd-gasoleo-diario`) amostradas 1 ponto/semana como no protótipo; a
+  copy diz a primeira data real da série (jan 2017), nunca «desde 2017»
+  escrito à mão. O atestar é um exemplo de 50 litros.
+- **Segurança Social → /salario.** O recibo usa a mesma linha de
+  `cenarios-salario.json` da cena da Fábrica — 165,00 € (11 %) +
+  356,25 € (TSU 23,75 %) = 521,25 € sobre 1 500 €; teste golden
+  compara os dois. O Pedro sai de `simularIndependente(1500×12)`:
+  21,4 % sobre 70 % do faturado (mínimo 1,5×IAS), regras de
+  `catb.json`. Nada reimplementado no componente.
+
+**Animações:** GSAP só por `carregarGsap()`; cada pilha/camada mata o
+tween anterior e um bilhete de geração invalida callbacks atrasados (o
+defeito do contador da Fábrica não se repete). Em reduced-motion o
+estado final é escrito direto e o chunk não é pedido — o e2e prova-o.
+
+**Textos PROPOSTA (para o dono rever antes de lançar):** toda a copy
+das três cenas vive em `src/app/_bairro/cenas/textos-p2b.ts`, com os
+números a entrar por parâmetro já formatados. Inclui as falas de cada
+passo, o painel «como ler o gráfico», as legendas das camadas do litro,
+o comparativo Inês/Pedro, os `aria-label` dos gráficos e as chamadas
+para /poupanca, /precos e /salario. Nada publica sem essa revisão.
+
+**Divergências anotadas (protótipo → produto):**
+
+1. O protótipo mostrava a inflação futura como barra de «confiança»;
+   aqui é slider («se a inflação fosse, por ano…») — mesma informação,
+   sem fingir previsão.
+2. Na Bomba, o gráfico DGEG mostra o preço, e a legenda diz que a parte
+   de imposto por dia não está no gráfico (o repo só guarda o ISP em
+   vigor hoje) — dito ao leitor, não escondido.
+3. A mini-pessoa das cenas ganhou `.braco-d` para o aceno da senha — o
+   braço direito faltava na miniatura do P2a.
+
+**Os números:** home → **71,8 KB gzip** (limite 80 KB, gate verde); as
+três cenas viajam em `next/dynamic`, fora do JS inicial.
+
+_(P2c — Casa, Pastelaria, Quiosque, Escola — fica para a sessão
+seguinte.)_
 
 ## P3 · A pele V5 nas 13 rotas
 
