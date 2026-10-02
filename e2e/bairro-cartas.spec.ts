@@ -155,6 +155,95 @@ test.describe("as sete cartas — escolhe a tua personagem (P1-4)", () => {
     }
   });
 
+  // a câmara TEM de pousar a personagem dentro da janela, na faixa que
+  // o painel não tapa — mede-se o rect real da figura, não o transform
+  test.describe("a câmara pousa a figura na janela (P1-4, defeito medido)", () => {
+    for (const [k, , figs] of [
+      ["ines", "Inês", ["ines"]],
+      ["diana", "Diana", ["diana"]],
+      ["pedro", "Pedro", ["pedro"]],
+      ["manuel", "Sr. Manuel", ["manuel"]],
+      ["arminda", "Dona Arminda", ["arminda"]],
+      ["goncalo", "Gonçalo", ["goncalo"]],
+      ["rui", "Rui e Marta", ["rui", "marta"]],
+    ] as const) {
+      for (const [vw, vh] of [
+        [1440, 900],
+        [390, 844],
+      ] as const) {
+        test(`${k} a ${vw}×${vh}: a figura fica dentro da janela e fora do painel`, async ({
+          page,
+        }) => {
+          await page.setViewportSize({ width: vw, height: vh });
+          await page.goto("/");
+          await carta(page, k).click();
+          await expect(page.locator(".b-painel")).toBeVisible();
+          // o deslize dura ~1,1 s; 4,5 s apanha o fim com folga mesmo
+          // com o chunk do GSAP frio
+          await page.waitForTimeout(4500);
+          const j = await page.locator(".b-janela").boundingBox();
+          const pn = await page.locator(".b-painel").boundingBox();
+          expect(j).toBeTruthy();
+          for (const f of figs) {
+            const fig = page.locator(`.b-mundo [data-pessoa="${f}"]`);
+            const r = await fig.boundingBox();
+            expect(r, `a figura ${f} existe`).toBeTruthy();
+            const tol = 2;
+            expect(
+              r!.x >= j!.x - tol &&
+                r!.y >= j!.y - tol &&
+                r!.x + r!.width <= j!.x + j!.width + tol &&
+                r!.y + r!.height <= j!.y + j!.height + tol,
+              `a figura ${f} fica dentro da .b-janela`
+            ).toBe(true);
+            // e NÃO tapada pelo painel (no telemóvel o painel está em cima)
+            const tapada =
+              pn &&
+              r!.x < pn.x + pn.width - tol &&
+              pn.x < r!.x + r!.width - tol &&
+              r!.y < pn.y + pn.height - tol &&
+              pn.y < r!.y + r!.height - tol;
+            expect(tapada, `a figura ${f} não fica debaixo do painel`).toBe(
+              false
+            );
+          }
+        });
+      }
+    }
+
+    test("reduced-motion: a figura pousa na janela sem GSAP", async ({
+      browser,
+    }) => {
+      const ctx = await browser.newContext({
+        reducedMotion: "reduce",
+        viewport: { width: 1440, height: 900 },
+      });
+      const p = await ctx.newPage();
+      const pedidos: string[] = [];
+      p.on("request", (r) => {
+        if (/gsap/i.test(r.url())) pedidos.push(r.url());
+      });
+      await p.goto("/");
+      await carta(p, "ines").click();
+      await expect(p.locator(".b-painel")).toBeVisible();
+      await p.waitForTimeout(1200);
+      const j = await p.locator(".b-janela").boundingBox();
+      const r = await p
+        .locator('.b-mundo [data-pessoa="ines"]')
+        .boundingBox();
+      expect(r).toBeTruthy();
+      expect(
+        r!.x >= j!.x - 2 &&
+          r!.x + r!.width <= j!.x + j!.width + 2 &&
+          r!.y >= j!.y - 2 &&
+          r!.y + r!.height <= j!.y + j!.height + 2,
+        "a Inês fica dentro da janela sem animação"
+      ).toBe(true);
+      expect(pedidos).toEqual([]);
+      await ctx.close();
+    });
+  });
+
   test("reduced-motion: clicar não descarrega o GSAP", async ({ browser }) => {
     const ctx = await browser.newContext({ reducedMotion: "reduce" });
     const p = await ctx.newPage();

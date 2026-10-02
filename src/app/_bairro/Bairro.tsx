@@ -375,24 +375,54 @@ export function Bairro({
     const alvo = mundo.querySelector(`[data-pessoa="${chave}"]`);
     if (!(alvo instanceof SVGGraphicsElement)) return;
 
-    // o centro da caixa em coordenadas do mundo: o getCTM da figura já
-    // inclui o translate com que a planta a pôs no mapa, e as camadas
-    // partilham o viewBox do mundo — o ponto sai pronto a usar
     try {
-      const bb = alvo.getBBox();
-      const ctm = alvo.getCTM();
-      if (!ctm) return;
-      const c = new DOMPoint(
-        bb.x + bb.width / 2,
-        bb.y + bb.height / 2
-      ).matrixTransform(ctm);
-      // em desktop o painel ocupa a esquerda do palco; desvia o alvo
-      // para a faixa livre, como o `w*.2` do protótipo
-      const desvio =
-        janelaRef.current && janelaRef.current.clientWidth > 700
-          ? 560 * 0.2
-          : 0;
-      camara.ir(c.x, c.y, 560, 1.1, desvio);
+      const janela = janelaRef.current;
+      if (!janela) return;
+      // o painel da personagem pode ainda não estar pintado (o estado
+      // React só entra no DOM no frame seguinte, e em reduced-motion
+      // não houve await de GSAP que deixasse o React correr) — mede-se
+      // depois de um frame
+      if (!palcoRef.current?.querySelector(".b-painel")) {
+        await new Promise<void>((res) => requestAnimationFrame(() => res()));
+        if (!mundoRef.current) return;
+      }
+
+      // o centro da figura em unidades do MUNDO, recuperado do ecrã:
+      // a vista actual diz que faixa do mundo a janela mostra e o rect
+      // da figura diz onde ela está em px — getCTM não serve, devolve
+      // px do viewport da camada SVG, não unidades do mundo
+      const jr = janela.getBoundingClientRect();
+      const fr = alvo.getBoundingClientRect();
+      const vista = camara.atual;
+      if (jr.width <= 0 || vista.w <= 0) return;
+      const sCur = jr.width / vista.w;
+      const ecx = vista.x + (fr.left + fr.width / 2 - jr.left) / sCur;
+      const ecy = vista.y + (fr.top + fr.height / 2 - jr.top) / sCur;
+
+      // a figura pousa na faixa que o painel não tapa — a conta da
+      // Fábrica: no telemóvel o painel fica em cima e o alvo desce; no
+      // desktop fica à esquerda e o alvo vai para a faixa da direita
+      const FOLGA = 14;
+      const w = 560;
+      const razao = jr.height / jr.width;
+      const s = jr.width / w;
+      const pr = palcoRef.current
+        ?.querySelector(".b-painel")
+        ?.getBoundingClientRect();
+      let cx = ecx;
+      let cy = ecy;
+      if (pr && jr.width <= 700) {
+        const topo = pr.bottom - jr.top + FOLGA;
+        const livre = Math.max(80, jr.height - topo - FOLGA);
+        cy = ecy - (topo + livre / 2) / s + (w * razao) / 2;
+      } else if (pr) {
+        const livreE = pr.right - jr.left + FOLGA;
+        const livreW = Math.max(200, jr.width - livreE - FOLGA);
+        cx = ecx + w / 2 - (livreE + livreW / 2) / s;
+      } else if (jr.width > 700) {
+        cx = ecx + (560 * 0.2) / s;
+      }
+      camara.ir(cx, cy, w, 1.1);
       // o aceno quando a câmara lá chega — só com GSAP; sem ele o
       // estado final já está parado e certo
       if (gsap) {
@@ -603,7 +633,9 @@ function PainelPersonagem({
 }) {
   const quemRef = useRef<HTMLSpanElement>(null);
   useEffect(() => {
-    quemRef.current?.focus();
+    // preventScroll: o scroll até ao palco já corre (aoEscolher); o
+    // scroll-para-o-foco do browser cancelava-o e o ecrã ficava a meio
+    quemRef.current?.focus({ preventScroll: true });
   }, []);
   useEffect(() => {
     const aoTeclar = (e: KeyboardEvent) => {

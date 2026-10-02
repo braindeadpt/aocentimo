@@ -757,6 +757,14 @@
   border-radius: 14px;
   padding-top: 6px;
 }
+/* as cores do CARTAS do mapa.tpl.html, por ordem do elenco */
+[data-pele="v5"] .b-carta[data-k="ines"] .b-fundo-carta { background: #dfe5ff; }
+[data-pele="v5"] .b-carta[data-k="diana"] .b-fundo-carta { background: #fff1c2; }
+[data-pele="v5"] .b-carta[data-k="pedro"] .b-fundo-carta { background: #ffe1d9; }
+[data-pele="v5"] .b-carta[data-k="manuel"] .b-fundo-carta { background: #d3f2e3; }
+[data-pele="v5"] .b-carta[data-k="arminda"] .b-fundo-carta { background: #ffe1e6; }
+[data-pele="v5"] .b-carta[data-k="goncalo"] .b-fundo-carta { background: #fff1c2; }
+[data-pele="v5"] .b-carta[data-k="rui"] .b-fundo-carta { background: #dfe5ff; }
 [data-pele="v5"] .b-carta b {
   font-size: 19px;
   font-weight: 850;

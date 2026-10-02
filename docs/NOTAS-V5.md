@@ -242,9 +242,20 @@ O e2e lê o mesmo JSON e compara com o texto da página.
 
 **A ponte carta→mapa é um `CustomEvent`.** As cartas vivem no `<main>`
 do servidor e não podem receber uma função do `<Bairro>` (cliente);
-`b:escolhe-personagem` na janela leva a escolha pronta — chave, título,
-fala e fechar, tudo texto de `pt.json` montado no servidor. O cliente
-das cartas (`Cartas.tsx`) é pequeno de propósito: só o clique.
+`b:escolhe-personagem` na janela leva a escolha — chave mais as partes
+do painel. O cliente das cartas (`Cartas.tsx`) é pequeno de propósito:
+só o clique e a composição do detalhe.
+
+**O payload das cartas tem dieta própria** (reparação pós-gente): a
+figura já não viaja por prop — desenha-se no cliente com
+`pessoa(ELENCO[·])` (o kit é puro e já está no bundle; o SSR continua a
+pô-la no HTML) e sai-lhe o HTML morto (`data-nome`, as classes que são
+ganchos do mapa, `scale(1)`, whitespace). O `CartaDados` e o `comum`
+são tuplos — os nomes das chaves repetiam-se sete vezes no flight. A
+fala «Olá!» monta-se no cliente de `olaTpl`+`ola`+`aprende` (strings de
+`pt.json` na mesma, só repartidas). A cor do fundo vive no CSS por
+`[data-k]`, não em `style` inline. Resultado: ~0,7 KB gzip de props
+das cartas (antes ~8,4 KB com as figuras), home a 79,9 KB no gate.
 
 **No `<Bairro>`:** o clique esconde o cartão de edifício, fecha a cena
 aberta (com a âncora limpa do URL), faz scroll suave ao palco
@@ -253,10 +264,19 @@ existia e voa a câmara para o centro da caixa do
 `[data-pessoa="<chave>"]` — o contrato com a sessão «gente no mapa».
 Se a figura ainda não existir (a gente funde noutro ramo), fica o
 scroll e o painel — nunca falha. Com GSAP activo a câmara desliza
-(`ligarGsap` + `ir(·, ·, 560, 1.1, w·0.2)`, o desvio que o painel pede
-em desktop) e a personagem acena — `.braco-d`, e nos dois quando a
-carta é a do casal. Em reduced-motion o chunk nem é pedido: o `ir()`
-salta para a vista final.
+(`ligarGsap` + `ir(·, ·, 560, 1.1)`) e a personagem acena — `.braco-d`,
+e nos dois quando a carta é a do casal. Em reduced-motion o chunk nem
+é pedido: o `ir()` salta para a vista final.
+
+**A câmara mede o alvo em unidades do mundo, nunca `getCTM()`.**
+`getCTM()` devolve px do viewport da camada SVG — metia a personagem a
+−1050 px e fora do mundo (defeito medido no build integrado). A conta
+é a da `CenaFabrica`: `getBoundingClientRect()` do alvo e da janela +
+`camara.atual` convertem px do ecrã em unidades do mundo. O destino
+pousa na faixa que o painel não tapa — em desktop à direita do painel
+à esquerda, no telemóvel abaixo do painel no topo. E o foco do painel
+é `preventScroll`: o scroll-para-o-foco do browser cancelava o
+`scrollIntoView` do palco a meio (o ecrã ficava a 360 px do destino).
 
 **Acessibilidade:** cada carta é `<button>` com nome acessível «Nome,
 papel» e o «o que aprendes» ligado por `aria-describedby`; a figura é
