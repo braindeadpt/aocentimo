@@ -24,6 +24,16 @@ import ssJson from "@data/fiscal/ss.json";
 import { P0 } from "@/lib/bairro/iso";
 import { dadosBomba, dadosCorreios, dadosSegSocial } from "./dados-p2b";
 import type { DadosBomba, DadosCorreios, DadosSegSocial } from "./dados-p2b";
+import {
+  dadosCasaP2c,
+  dadosEscolaP2c,
+  dadosPastelariaP2c,
+  dadosQuiosqueP2c,
+  type DadosCasa,
+  type DadosEscola,
+  type DadosPastelaria,
+  type DadosQuiosque,
+} from "./dados-p2c";
 
 /** Um ponto de uma série temporal (o `t` é `AAAA-MM`). */
 export interface Ponto {
@@ -336,6 +346,10 @@ export interface CenasDados {
   correios: DadosCorreios;
   bomba: DadosBomba;
   segsocial: DadosSegSocial;
+  casa: DadosCasa;
+  pastelaria: DadosPastelaria;
+  quiosque: DadosQuiosque;
+  escola: DadosEscola;
 }
 
 export function dadosCenas(): CenasDados {
@@ -347,5 +361,9 @@ export function dadosCenas(): CenasDados {
     correios: dadosCorreios(),
     bomba: dadosBomba(),
     segsocial: dadosSegSocial(),
+    casa: dadosCasaP2c(),
+    pastelaria: dadosPastelariaP2c(),
+    quiosque: dadosQuiosqueP2c(),
+    escola: dadosEscolaP2c(),
   };
 }
