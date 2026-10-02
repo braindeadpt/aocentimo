@@ -1,6 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useSyncExternalStore } from "react";
+import { m } from "@/lib/messages";
 
 /**
  * Alternador claro/escuro — apenas apresentação.
@@ -50,16 +51,16 @@ export function ThemeToggle() {
     <button
       type="button"
       data-theme-toggle
-      aria-label={escuro ? "Mudar para tema claro" : "Mudar para tema escuro"}
-      title={escuro ? "Mudar para tema claro" : "Mudar para tema escuro"}
+      aria-label={escuro ? m.tema.mudarParaClaro : m.tema.mudarParaEscuro}
+      title={escuro ? m.tema.mudarParaClaro : m.tema.mudarParaEscuro}
       aria-pressed={escuro}
-      className="kicker-sm inline-flex items-center gap-1.5 border border-line2 px-2 py-1 text-ink2 transition-colors hover:border-ink hover:text-ink"
+      className="pil-tema"
     >
       {/* círculo: cheio no escuro, vazado no claro — o aspecto vem do
           data-theme em CSS (posto pelo script inline ANTES do primeiro
           paint): não há flip pós-hidratação nem transição ao carregar */}
       <span aria-hidden className="tema-ponto" />
-      {escuro ? "claro" : "escuro"}
+      {escuro ? m.tema.claro : m.tema.escuro}
     </button>
   );
 }
