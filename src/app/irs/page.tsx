@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ALT_FEED } from "@/lib/meta";
 import { Pagina, PaginaDetalhe } from "@/components/Pagina";
 import { Source } from "@/components/Source";
+import { m } from "@/lib/messages";
 import { simularSalario } from "@/lib/engines/irs";
 import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
 import irs from "@data/fiscal/irs-2026.json";
@@ -57,6 +58,7 @@ export default function IrsPage() {
   const cats = deducoes.categorias;
 
   return (
+    <div className="rt5">
     <ProvedorIrs
       ano={ANO}
       brutoInicial={brutoCanonico}
@@ -85,6 +87,7 @@ export default function IrsPage() {
       />
       <Pagina
         pergunta="Subir de escalão faz-te perder dinheiro?"
+        edificio={{ href: "/#financas", titulo: m.bairro.edificios.financas.titulo }}
         rota="/irs"
         kicker="Imposto sobre o rendimento"
         resposta={{
@@ -345,5 +348,6 @@ export default function IrsPage() {
         seguinte={{ href: "/trabalho", rotulo: "E se ficares sem trabalho?" }}
       />
     </ProvedorIrs>
+    </div>
   );
 }

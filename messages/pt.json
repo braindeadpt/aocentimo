@@ -52,7 +52,8 @@
   "pagina": {
     "explora": "Explora",
     "confirma": "Confirma",
-    "aSeguir": "A pergunta seguinte"
+    "aSeguir": "A pergunta seguinte",
+    "voltarBairro": "Voltar ao bairro"
   },
   "chart": {
     "scrubAria": "Régua de interrogação — as setas percorrem, Home e End vão aos extremos, Escape limpa",

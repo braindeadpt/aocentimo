@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Children, Fragment, isValidElement, type ReactNode } from "react";
 import { m } from "@/lib/messages";
 import { LinkVoo, TituloPagina } from "@/components/Voo";
@@ -36,6 +37,11 @@ export interface RespostaPagina {
 export interface PaginaProps {
   /** a pergunta da página — o h1 (o único da rota) */
   pergunta: string;
+  /** P3b — o edifício do bairro onde este assunto mora: desenha a
+      ligação de volta no topo («Voltar ao bairro — Fábrica»,
+      âncora /#fabrica). Omitido nas páginas sem edifício
+      (/metodologia, /sobre). */
+  edificio?: { href: string; titulo: string };
   /** o caminho desta página ("/salario") — activa a aterragem do voo:
       o h1 ganha o nome partilhado que a «pergunta seguinte» da página
       anterior morfa até aqui. Só com `perguntaAs` h1 (o defeito). */
@@ -93,6 +99,7 @@ function nInstrumentos(node: ReactNode): number {
 
 export function Pagina({
   pergunta,
+  edificio,
   rota,
   kicker,
   resposta,
@@ -135,6 +142,14 @@ export function Pagina({
   return (
     <div className="pagina mx-auto max-w-5xl px-5 pt-14">
       <section className="pg-nivel" aria-labelledby={`${id}-pergunta`}>
+        {edificio && (
+          <p className="lnk-edificio">
+            <Link href={edificio.href} className="lnk-edificio-a">
+              <span aria-hidden="true">← </span>
+              {m.pagina.voltarBairro}: {edificio.titulo}
+            </Link>
+          </p>
+        )}
         {kicker && <p className="kicker">{kicker}</p>}
         {perguntaEl}
         <div className="pg-instrumento">{resposta.instrumento}</div>

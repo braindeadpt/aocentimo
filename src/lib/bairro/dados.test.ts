@@ -3,7 +3,7 @@ import { loadFonte, loadSerie } from "@/lib/data";
 import caBase from "@data/derived/ca-base.json";
 import cenarios from "@data/derived/cenarios-salario.json";
 import ss from "@data/fiscal/ss.json";
-import { FINO } from "@/lib/format";
+import { FINO, fmtNum } from "@/lib/format";
 import { FALHOU, dadosBairro, fontes, linhaSalario, marcadores, moedasDaLinha } from "./dados";
 
 const M = marcadores();
@@ -53,7 +53,9 @@ describe("marcadores()", () => {
   it("o preço do litro sai com três casas, como a DGEG publica", () => {
     const g = loadFonte("dgeg", "pmd-gasoleo-diario")!;
     expect(M.gasoleo).toMatch(/^\d+,\d{3}$/);
-    expect(M.gasoleo).toContain(g.series.at(-1)!.v.toFixed(3).replace(".", ","));
+    // compara com fmtNum — o mesmo arredondamento do marcador; o
+    // toFixed diverge em meios (2.1795 → "2.179" em binário, "2,180" real)
+    expect(M.gasoleo).toContain(fmtNum(g.series.at(-1)!.v, 3));
     expect(M.gasoleoUn.endsWith("€/L")).toBe(true);
     // e o espaço antes da unidade é o FINO (U+202F), nunca um espaço normal:
     // o `audit` de lettering reprova a página se for normal ou NBSP largo

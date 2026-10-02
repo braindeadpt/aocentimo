@@ -38,6 +38,7 @@ export default function CreditoPage() {
   const rotulos = rotulosLeitura();
 
   return (
+    <div className="rt5">
     <>
       <JsonLd
         data={webApplication(
@@ -51,6 +52,7 @@ export default function CreditoPage() {
       <CreditoProvider euriborInicial={ultimo?.v ?? null}>
         <Pagina
           pergunta="Quanto vais pagar ao banco, no total?"
+          edificio={{ href: "/#banco", titulo: m.bairro.edificios.banco.titulo }}
           rota="/credito"
           kicker="O banco · Crédito habitação"
           resposta={{
@@ -225,5 +227,6 @@ export default function CreditoPage() {
         />
       </CreditoProvider>
     </>
+    </div>
   );
 }

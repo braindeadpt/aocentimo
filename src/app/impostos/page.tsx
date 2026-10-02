@@ -70,6 +70,7 @@ export default function ImpostosPage() {
   const pmd = loadFonte("dgeg", "pmd-gasoleo-diario");
 
   return (
+    <div className="rt5">
     <>
       <JsonLd
         data={webApplication(
@@ -80,6 +81,7 @@ export default function ImpostosPage() {
       />
       <Pagina
       pergunta="Quanto do que compras é imposto?"
+      edificio={{ href: "/#financas", titulo: m.bairro.edificios.financas.titulo }}
       rota="/impostos"
       kicker="Impostos — o imposto dentro do preço"
       resposta={{
@@ -252,5 +254,6 @@ export default function ImpostosPage() {
       seguinte={{ href: "/precos", rotulo: "Quanto custa encher o depósito hoje?" }}
     />
     </>
+    </div>
   );
 }

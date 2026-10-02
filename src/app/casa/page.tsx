@@ -136,6 +136,7 @@ export default function CasaPage() {
       : null;
 
   return (
+    <div className="rt5">
     <>
       <JsonLd
         data={webApplication(
@@ -149,6 +150,7 @@ export default function CasaPage() {
       <CasaProvider euriborInicial={ultimo?.v ?? null}>
         <Pagina
           pergunta="Quanto custa mesmo comprar esta casa?"
+          edificio={{ href: "/#casa", titulo: m.bairro.edificios.casa.titulo }}
           rota="/casa"
           kicker="O banco · Comprar casa"
           resposta={{
@@ -282,5 +284,6 @@ export default function CasaPage() {
         />
       </CasaProvider>
     </>
+    </div>
   );
 }
