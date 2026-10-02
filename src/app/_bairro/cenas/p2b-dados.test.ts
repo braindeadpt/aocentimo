@@ -3,7 +3,7 @@ import { decomporCombustivel, IVA_NORMAL } from "@/lib/engines/impostos";
 import { trajetoriaCA, trajetoriaColchao } from "@/lib/engines/poupanca";
 import { simularIndependente } from "@/lib/engines/independente";
 import { contribuicoes } from "@/lib/engines/seg-social";
-import { loadSerie } from "@/lib/data";
+import { loadFonte, loadSerie } from "@/lib/data";
 import caJson from "@data/fiscal/ca.json";
 import capitaisJson from "@data/fiscal/capitais.json";
 import ispJson from "@data/fiscal/isp.json";
@@ -110,14 +110,20 @@ describe("Bomba — o litro por dentro é decomporCombustivel do motor", () => {
     const diarios = 3560;
     expect(D.gasolina.serie!.v.length).toBeGreaterThan(400);
     expect(D.gasolina.serie!.v.length).toBeLessThanOrEqual(Math.ceil(diarios / 7) + 1);
-    expect(D.gasolina.serie!.v.at(-1)).toBe(2.0958); // último PMD real
+    // o último ponto do gráfico é o último PMD real da fonte — lê-se
+    // da série, nunca um literal (a DGEG publica todos os dias úteis)
+    expect(D.gasolina.serie!.v.at(-1)).toBe(
+      loadFonte("dgeg", "pmd-gasolina95-diario")!.series.at(-1)!.v
+    );
     // sem pontos inventados: cada valor existe na série diária
     expect(D.gasolina.serie!.v.every((v) => v > 0.9 && v < 3)).toBe(true);
   });
 
   it("o preço de hoje é o último ponto da série e os impostos são de hoje", () => {
     expect(D.gasolina.preco).toBeCloseTo(D.gasolina.serie!.v.at(-1)!, 9);
-    expect(D.gasolina.data).toBe("2026-09-30");
+    expect(D.gasolina.data).toBe(
+      loadFonte("dgeg", "pmd-gasolina95-diario")!.series.at(-1)!.t
+    );
     expect(D.ispVigencia).toBe(ispJson.vigencia);
   });
 });
