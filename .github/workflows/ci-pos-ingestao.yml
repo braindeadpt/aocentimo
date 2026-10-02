@@ -1,0 +1,205 @@
+# CI pós-ingestão — verifica o main depois de cada ingestão com commit
+#
+# Porquê: os commits da ingestão diária/mensal são feitos pelo GITHUB_TOKEN,
+# e um push feito com esse token NÃO dispara outros workflows (nem o CI nem
+# o deploy). Sem este workflow, uma ingestão que muda um número parte os
+# testes de valores fixos e o main fica vermelho sem ninguém reparar (#31;
+# de novo os testes da DGEG no #36).
+#
+# Como: corre quando uma ingestão acaba em main. Só avança se a ingestão
+# acabou com sucesso E fez commit (sem dados novos não há nada para
+# verificar). Faz checkout fresco do main e corre o CI em pequeno
+# (sem e2e — o e2e corre no deploy-pages antes de publicar).
+# Falha → issue `dados` «CI vermelho depois da ingestão de AAAA-MM-DD»
+# (abre ou comenta); verde seguinte → fecha sozinha.
+#
+# O workflow_dispatch existe para prova manual do fluxo (ver o PR).
+
+name: CI pós-ingestão
+
+run-name: "CI pós-ingestão (${{ github.event_name }})"
+
+on:
+  workflow_run:
+    workflows: ["ingest — diária", "ingest — mensal"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: ci-pos-ingestao
+  cancel-in-progress: false
+
+jobs:
+  decidir:
+    # barreira barata: só se correu bem e fez commit é que vale a pena
+    # gastar minutos de CI. Um erro aqui falha o job sem abrir issue —
+    # a barreira nunca deve acusar a ingestão.
+    runs-on: ubuntu-latest
+    outputs:
+      correr: ${{ steps.gate.outputs.correr }}
+      data: ${{ steps.gate.outputs.data }}
+      ingestao: ${{ steps.gate.outputs.ingestao }}
+    steps:
+      - uses: actions/checkout@v4
+        if: github.event_name == 'workflow_run'
+        with:
+          # no workflow_run o checkout por omissão não garante o ramo da
+          # ingestão — fixamos o head_branch (é sempre main: ver branches
+          # acima), já com o commit que a ingestão acabou de empurrar
+          ref: ${{ github.event.workflow_run.head_branch }}
+      - uses: actions/checkout@v4
+        if: github.event_name == 'workflow_dispatch'
+      - id: gate
+        run: |
+          CORRER=false
+          DATA="$(date -u +%F)"
+          INGESTAO=""
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            # prova manual: corre sempre, sobre o ramo onde se fez dispatch
+            CORRER=true
+            INGESTAO="manual (workflow_dispatch)"
+          else
+            CONCLUSAO="${{ github.event.workflow_run.conclusion }}"
+            NOME="${{ github.event.workflow_run.name }}"
+            BASE="${{ github.event.workflow_run.head_sha }}"
+            CRIADO="${{ github.event.workflow_run.created_at }}"
+            INGESTAO="$NOME"
+            DATA="$(date -u -d "$CRIADO" +%F)"
+            if [ "$CONCLUSAO" = "success" ]; then
+              ENCONTROU=false
+              if [ -n "$BASE" ] && git fetch --quiet origin "$BASE" 2>/dev/null; then
+                if git merge-base --is-ancestor "$BASE" HEAD 2>/dev/null; then
+                  if git log --format=%s "$BASE"..HEAD | grep -qE '^data: ingest (diária|mensal)'; then
+                    ENCONTROU=true
+                  fi
+                fi
+              fi
+              # recurso: a própria HEAD é o commit da ingestão (cobre a
+              # corrida em que outro merge entrou pelo meio e o BASE ficou
+              # para trás sem o commit sair do intervalo)
+              if [ "$ENCONTROU" = false ] && git log -1 --format=%s | grep -qE '^data: ingest (diária|mensal)'; then
+                ENCONTROU=true
+              fi
+              if [ "$ENCONTROU" = true ]; then
+                CORRER=true
+              else
+                echo "A ingestão '$NOME' acabou bem mas não fez commit — nada para verificar."
+              fi
+            else
+              echo "A ingestão '$NOME' acabou com conclusão '$CONCLUSAO' — a falha dela já tem issue própria; nada para verificar."
+            fi
+          fi
+          echo "correr=$CORRER" >> "$GITHUB_OUTPUT"
+          echo "data=$DATA" >> "$GITHUB_OUTPUT"
+          echo "ingestao=$INGESTAO" >> "$GITHUB_OUTPUT"
+
+  qualidade:
+    needs: decidir
+    if: needs.decidir.outputs.correr == 'true'
+    runs-on: ubuntu-latest
+    env:
+      DATA_INGESTAO: ${{ needs.decidir.outputs.data }}
+      NOME_INGESTAO: ${{ needs.decidir.outputs.ingestao }}
+    steps:
+      - uses: actions/checkout@v4
+        if: github.event_name == 'workflow_run'
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+      - uses: actions/checkout@v4
+        if: github.event_name == 'workflow_dispatch'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - name: Testes unitários
+        # o tee guarda a saída para a issue dizer QUE testes falharam,
+        # não só que o passo falhou (é aqui que as ingestões partem: #31,
+        # expectativas DGEG no #36)
+        run: npm run test:unit 2>&1 | tee /tmp/pos-ingestao-unit.log; test ${PIPESTATUS[0]} -eq 0
+      - run: npm run validate:data
+      - run: npm run build
+      # o orçamento do HTML da home (≤80 KB gzip; o mapa fora do flight):
+      # unitários (gate-html.test.ts) não correm sem build — o script é o
+      # mesmo gate em linha, com a mensagem para quem quebrou
+      - run: node scripts/_gate-html.mjs
+      - name: Recolher testes falhados
+        id: falhas
+        if: failure()
+        run: |
+          {
+            echo "linhas<<FIMFALHAS"
+            grep -E "FAIL|✗|×|AssertionError|failed" /tmp/pos-ingestao-unit.log 2>/dev/null | head -25 || true
+            echo "FIMFALHAS"
+          } >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: pos-ingestao-logs
+          path: /tmp/pos-ingestao-*.log
+          if-no-files-found: ignore
+      - name: Registar CI vermelho em issue
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const data = process.env.DATA_INGESTAO;
+            const titulo = `CI vermelho depois da ingestão de ${data}`;
+            await github.rest.issues.createLabel({ owner, repo, name: "dados" }).catch(() => {});
+            const { data: abertas } = await github.rest.issues.listForRepo({
+              owner, repo, state: "open", labels: "dados",
+            });
+            const { data: trabalhos } = await github.rest.actions.listJobsForWorkflowRun({
+              owner, repo, run_id: context.runId, per_page: 50,
+            });
+            const passos = [];
+            for (const t of trabalhos.jobs) {
+              for (const p of (t.steps || [])) {
+                if (p.conclusion === "failure") passos.push(`- ${t.name} → ${p.name}`);
+              }
+            }
+            const unit = ${{ toJSON(steps.falhas.outputs.linhas) }}.trim();
+            const ingestaoUrl = context.payload.workflow_run?.html_url ?? "—";
+            const corpo = [
+              `A verificação pós-ingestão falhou sobre o main (${context.sha.slice(0, 7)}).`,
+              ``,
+              `Ingestão: ${process.env.NOME_INGESTAO} (acabou com sucesso e fez commit).`,
+              `Run da ingestão: ${ingestaoUrl}.`,
+              `Run desta verificação: ${context.payload.repository.html_url}/actions/runs/${context.runId}.`,
+              ``,
+              `Passos falhados:`,
+              ...(passos.length ? passos : ["- (não foi possível listar — ver o run)"]),
+              ...(unit ? ["", "Saída dos unitários (primeiras linhas com falha):", "```", unit, "```"] : []),
+              ``,
+              `Fecha sozinha quando uma verificação seguinte passar. Dono decide o resto.`,
+            ].join("\n");
+            const existente = abertas.find((i) => i.title.startsWith("CI vermelho depois da ingestão"));
+            if (existente) {
+              await github.rest.issues.createComment({ owner, repo, issue_number: existente.number, body: corpo });
+            } else {
+              await github.rest.issues.create({ owner, repo, title: titulo, labels: ["dados"], body: corpo });
+            }
+      - name: Fechar issues de CI vermelho
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const { data: abertas } = await github.rest.issues.listForRepo({
+              owner, repo, state: "open", labels: "dados",
+            });
+            for (const i of abertas.filter((i) => i.title.startsWith("CI vermelho depois da ingestão"))) {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: i.number,
+                body: "A verificação pós-ingestão voltou a passar sobre o main — fecho automático.",
+              });
+              await github.rest.issues.update({ owner, repo, issue_number: i.number, state: "closed" });
+            }
