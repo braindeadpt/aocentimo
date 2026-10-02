@@ -36,6 +36,12 @@ interface PropsCenaDePerto {
   aoFechar: () => void;
   /** O desenho do interior, como HTML/SVG pronto (injetado, não hidratado). */
   arteHtml?: string;
+  /**
+   * Sem desenho NENHUM — o estado de carga/falha do `<CenaViva>` (P4):
+   * a moldura abre antes dos dados chegarem, e uma falha não desenha
+   * nada. Um `<svg>` vazio aqui fingia um interior que ainda não existe.
+   */
+  semDesenho?: boolean;
   /** Onde a cena vai manipular os ids do `arteHtml`. */
   refArte?: RefObject<HTMLDivElement | null>;
   /** O rótulo do desenho, quando não há `arteHtml`. */
@@ -44,7 +50,7 @@ interface PropsCenaDePerto {
   children: ReactNode;
 }
 
-export default function CenaDePerto({ quem, rotuloArte, fonte, aoFechar, arteHtml, refArte, children }: PropsCenaDePerto) {
+export default function CenaDePerto({ quem, rotuloArte, fonte, aoFechar, arteHtml, refArte, semDesenho, children }: PropsCenaDePerto) {
   const cenaRef = useRef<HTMLDivElement>(null);
   const tituloRef = useRef<HTMLSpanElement>(null);
   const id = "cena-quem";
@@ -67,7 +73,9 @@ export default function CenaDePerto({ quem, rotuloArte, fonte, aoFechar, arteHtm
 
   return (
     <div className="b-cena" ref={cenaRef} role="dialog" aria-modal="false" aria-labelledby={id}>
-      {arteHtml ? (
+      {semDesenho ? (
+        <div className="b-cena-arte" />
+      ) : arteHtml ? (
         <div
           className="b-cena-arte"
           ref={refArte}

@@ -34,6 +34,8 @@ import { montarMapa, type MarcadoresBairro } from "@/lib/bairro/planta";
 import { CENAS } from "./cenas/registry";
 import { temCena } from "./cenas/com-cena";
 import type { CenasDados } from "./cenas/dados";
+import CenaDePerto from "./cenas/CenaDePerto";
+import { aCarregar, falhaAoCarregar } from "./cenas/textos";
 import "./bairro.css";
 
 /** As três horas do dia. */
@@ -114,8 +116,12 @@ export interface PropsBairro {
    * hidratação que não bate certo com o servidor.
    */
   horaInicial: Hora;
-  /** Os dados das cenas (P2a), já montados no servidor. */
-  cenas: CenasDados;
+  /**
+   * Os dados das cenas NÃO viajam aqui (P4 — a dieta do payload): cada
+   * uma é um ficheiro estático `/cenas/<id>.json`, gerado no derive pela
+   * mesma `dadosCenas()` do servidor, e o `<CenaViva>` pede-o só quando
+   * se entra no edifício. Quem nunca abre uma cena nunca paga o peso.
+   */
   /** As cenas (P2+) e o painel «em breve». */
   children?: React.ReactNode;
   /** Chamado quando um edifício é escolhido. */
@@ -144,7 +150,6 @@ export function Bairro({
   coordenadas,
   pontos,
   gaivotas,
-  cenas,
   children,
   aoEntrar,
 }: PropsBairro) {
@@ -300,9 +305,11 @@ export function Bairro({
 
   const fecharCena = useCallback(() => {
     setCenaAberta(null);
-    // devolve o foco ao edifício que abriu a cena (PACK §2.3)
+    // devolve o foco ao edifício que abriu a cena (PACK §2.3) — no frame
+    // seguinte, depois do React desmontar a cena: focar antes podia ser
+    // anulado quando o nó com foco saía do DOM na mesma batida
     const g = mundoRef.current?.querySelector(`.ed[data-id="${cenaAberta}"]`);
-    (g as HTMLElement | null)?.focus?.();
+    requestAnimationFrame(() => (g as HTMLElement | null)?.focus?.());
     try {
       const url = new URL(window.location.href);
       url.hash = "";
@@ -421,8 +428,9 @@ export function Bairro({
             ao entrar); a Fábrica recebe as refs porque anima o mapa. */}
         {cenaAberta && CENAS[cenaAberta] && (
           <CenaViva
+            key={cenaAberta}
             id={cenaAberta}
-            cenas={cenas}
+            titulo={porId.get(cenaAberta)?.titulo ?? cenaAberta}
             mundoRef={mundoRef}
             camaraRef={camaraRef}
             aoFechar={fecharCena}
@@ -434,31 +442,77 @@ export function Bairro({
 }
 
 /**
- * O despachante das cenas: escolhe o componente certo e passa-lhe os
- * dados certos. Mantido num componente à parte para o `<Bairro>` não
- * conhecer a forma dos props de cada cena.
+ * Os dados de cada cena moram em `/cenas/<id>.json` — ficheiros estáticos
+ * escritos no derive pela mesma `dadosCenas()` que antes alimentava a
+ * prop. O cache é por id: voltar a entrar na mesma cena não repete o
+ * pedido; uma falha NÃO fica em cache, para a próxima tentar de verdade.
+ */
+const pedidosCena = new Map<string, Promise<unknown>>();
+
+function pedirDadosCena(id: string): Promise<unknown> {
+  let p = pedidosCena.get(id);
+  if (!p) {
+    p = fetch(`/cenas/${id}.json`).then((r) => {
+      if (!r.ok) throw new Error(`cenas/${id}: HTTP ${r.status}`);
+      return r.json() as Promise<unknown>;
+    });
+    p.catch(() => pedidosCena.delete(id));
+    pedidosCena.set(id, p);
+  }
+  return p;
+}
+
+/**
+ * O despachante das cenas: vai buscar o json, escolhe o componente certo
+ * e passa-lhe os dados. Enquanto o json não chega — ou se falhar — a
+ * moldura abre na mesma, com o título do edifício, o Escape e o × a
+ * funcionarem, e a falha honesta em vez de zeros (regra nº1).
  */
 function CenaViva({
   id,
-  cenas,
+  titulo,
   mundoRef,
   camaraRef,
   aoFechar,
 }: {
   id: string;
-  cenas: CenasDados;
+  titulo: string;
   mundoRef: React.RefObject<HTMLDivElement | null>;
   camaraRef: React.MutableRefObject<Camera | null>;
   aoFechar: () => void;
 }) {
+  const [dados, setDados] = useState<unknown>(null);
+  const [falhou, setFalhou] = useState(false);
+
+  // o `key={id}` no pai monta um CenaViva novo por cena — o estado nasce
+  // sempre «a carregar», sem resets síncronos dentro do efeito
+  useEffect(() => {
+    let vivo = true;
+    pedirDadosCena(id).then(
+      (v) => vivo && setDados(v),
+      () => vivo && setFalhou(true)
+    );
+    return () => {
+      vivo = false;
+    };
+  }, [id]);
+
+  if (falhou || dados === null)
+    return (
+      <CenaDePerto quem={titulo} fonte="—" aoFechar={aoFechar} semDesenho>
+        <p className="b-fala">{falhou ? falhaAoCarregar : aCarregar}</p>
+      </CenaDePerto>
+    );
+
   const Cena = CENAS[id];
   if (!Cena) return null;
+  const D = dados as CenasDados[keyof CenasDados];
   // a câmara vai à cena pela REF (a regra `react-hooks/refs` proíbe ler
   // `.current` durante o render): a cena só a toca dentro dos efeitos
   if (id === "fabrica")
     return (
       <Cena
-        D={cenas.fabrica}
+        D={D}
         mundoRef={mundoRef}
         camaraRef={camaraRef as unknown as React.MutableRefObject<{
           ir: (cx: number, cy: number, w: number, dur?: number, desvio?: number) => void;
@@ -467,12 +521,7 @@ function CenaViva({
         aoFechar={aoFechar}
       />
     );
-  if (id === "financas") return <Cena D={cenas.financas} aoFechar={aoFechar} />;
-  if (id === "banco") return <Cena D={cenas.banco} aoFechar={aoFechar} />;
-  if (id === "correios") return <Cena D={cenas.correios} aoFechar={aoFechar} />;
-  if (id === "bomba") return <Cena D={cenas.bomba} aoFechar={aoFechar} />;
-  if (id === "segsocial") return <Cena D={cenas.segsocial} aoFechar={aoFechar} />;
-  return <Cena D={cenas.mercearia} aoFechar={aoFechar} />;
+  return <Cena D={D} aoFechar={aoFechar} />;
 }
 
 /* ————————————————————— os onze edifícios ————————————————————— */

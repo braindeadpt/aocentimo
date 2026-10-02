@@ -13,8 +13,11 @@
  * da câmara viajam por tabela. Uma cena a entrar no flight com séries
  * verbosas era o peso do mapa a voltar pela janela do lado.
  *
- * Este módulo corre SÓ no servidor (`HomeBairro` manda o resultado por
- * props). Os JSON de `data/` nunca entram no cliente — AGENTS.md.
+ * Este módulo corre SÓ fora do browser: o `scripts/derive/cenas.ts`
+ * chama-o e grava o resultado em `public/cenas/<id>.json` — o cliente
+ * faz `fetch` desse ficheiro ao abrir a cena (P4 — antes viajava todo
+ * numa prop do `<Bairro>` e a home pagava-o sem abrir nada). Os JSON
+ * de `data/` nunca entram no cliente — AGENTS.md.
  */
 import { loadFonte, loadSerie } from "@/lib/data";
 import cenariosJson from "@data/derived/cenarios-salario.json";
