@@ -468,12 +468,14 @@ export function LineChart({
               strokeWidth={1}
               vectorEffect="non-scaling-stroke"
             />
+            {/* --muted e não --color-muted: o alias resolve à raiz e
+                falha AA sobre o chão-noite dentro do .rt5 (4.31:1) */}
             <text
               x={pad.left - 8}
               y={y(v) + 4}
               textAnchor="end"
               style={{ fontSize: "var(--text-svg-rotulo)" }}
-              fill="var(--color-muted)"
+              fill="var(--muted)"
               fontFamily="var(--font-mono)"
             >
               {yFormat(v)}
@@ -488,7 +490,7 @@ export function LineChart({
             y={height - 8}
             textAnchor="middle"
             style={{ fontSize: "var(--text-svg-rotulo)" }}
-            fill="var(--color-muted)"
+            fill="var(--muted)"
             fontFamily="var(--font-mono)"
           >
             {new Date(t).getUTCFullYear()}

@@ -163,7 +163,7 @@ export default function DadosPage() {
   ];
 
   return (
-    <>
+    <div className="rt5">
       {serieFim && (
         <JsonLd
           data={dataset({
@@ -186,6 +186,7 @@ export default function DadosPage() {
       )}
       <Pagina
         pergunta="Como está Portugal hoje?"
+        edificio={{ href: "/#quiosque", titulo: m.bairro.edificios.quiosque.titulo }}
         rota="/dados"
         kicker="O país · dados oficiais"
         resposta={{
@@ -678,6 +679,6 @@ export default function DadosPage() {
           rotulo: "O que querem dizer estes termos?",
         }}
       />
-    </>
+    </div>
   );
 }

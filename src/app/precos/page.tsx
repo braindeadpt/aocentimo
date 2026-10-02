@@ -120,7 +120,7 @@ export default function PrecosPage() {
     .filter((x) => x !== null);
 
   return (
-    <>
+    <div className="rt5">
       <JsonLd
         data={webApplication(
           "Preços dos combustíveis — Portugal",
@@ -130,6 +130,7 @@ export default function PrecosPage() {
       />
       <Pagina
         pergunta="Quanto custa encher o depósito hoje?"
+        edificio={{ href: "/#bomba", titulo: m.bairro.edificios.bomba.titulo }}
         rota="/precos"
         kicker="Preços oficiais, quase diários"
         resposta={{
@@ -425,6 +426,6 @@ export default function PrecosPage() {
           rotulo: "Quanto mais caro está o que compras?",
         }}
       />
-    </>
+    </div>
   );
 }

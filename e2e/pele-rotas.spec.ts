@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 
 /**
- * P3b — a pele V5 nas rotas (grupo 1: dinheiro).
+ * P3b — a pele V5 nas rotas (grupo 1: dinheiro; grupo 2: preços e trabalho).
  *
  * O que este spec prova, por rota:
  *
@@ -23,6 +23,15 @@ const ROTAS: { rota: string; edificio: string; titulo: string }[] = [
   { rota: "/poupanca", edificio: "correios", titulo: "Correios" },
   { rota: "/credito", edificio: "banco", titulo: "Banco" },
   { rota: "/casa", edificio: "casa", titulo: "Casa da Inês" },
+];
+
+// o /dados não tem cartão-instrumento (.leitura) — só células; aí a
+// mobília V5 prova-se na pílula do detalhe em vez de no cartão
+const ROTAS_2: { rota: string; edificio: string; titulo: string; cartao: string | null }[] = [
+  { rota: "/inflacao", edificio: "mercearia", titulo: "Mercearia do Manuel", cartao: ".leitura" },
+  { rota: "/precos", edificio: "bomba", titulo: "Bomba de gasolina", cartao: ".leitura" },
+  { rota: "/trabalho", edificio: "quiosque", titulo: "Quiosque da praça", cartao: ".leitura" },
+  { rota: "/dados", edificio: "quiosque", titulo: "Quiosque da praça", cartao: null },
 ];
 
 const PAPEL_CLARO = "rgb(255, 255, 255)";
@@ -100,12 +109,84 @@ test.describe("a pele V5 nas rotas (P3b — grupo 1)", () => {
     expect(await page.locator(".lnk-edificio").count()).toBe(0);
   });
 
-  test("rotas por migrar (grupo 2/3) continuam sem a pele", async ({
+  test("rotas por migrar (grupo 3) continuam sem a pele", async ({
     page,
   }) => {
-    await page.goto("/dados");
+    await page.goto("/aprender");
     expect(await page.locator(".rt5").count()).toBe(0);
     await page.goto("/metodologia");
     expect(await page.locator(".lnk-edificio").count()).toBe(0);
   });
+});
+
+test.describe("a pele V5 nas rotas (P3b — grupo 2)", () => {
+  for (const { rota, edificio, titulo, cartao } of ROTAS_2) {
+    test(`${rota}: scope rt5, chão V5 e a ligação «Voltar ao bairro» → /#${edificio}`, async ({
+      page,
+    }) => {
+      await page.goto(rota);
+      await expect(page.locator(".rt5").first()).toBeAttached();
+
+      // superfície: chão de papel, sem a grelha milimetrada da V4
+      expect(await fundoBody(page)).toBe(CHAO_CLARO);
+
+      // a ligação de volta ao edifício, no topo, aponta à âncora
+      const lnk = page.locator(".lnk-edificio-a");
+      await expect(lnk).toBeVisible();
+      await expect(lnk).toHaveAttribute("href", `/#${edificio}`);
+      await expect(lnk).toContainText(titulo);
+
+      // a ligação veste a pílula do contrato: traço 3px + sombra dura
+      const traco = await lnk.evaluate(
+        (el) => getComputedStyle(el).borderTopWidth
+      );
+      expect(parseFloat(traco)).toBeGreaterThanOrEqual(2.5);
+      const sombra = await lnk.evaluate(
+        (el) => getComputedStyle(el).boxShadow
+      );
+      expect(sombra).not.toBe("none");
+
+      if (cartao) {
+        // um cartão da página leva a mesma matéria (traço grosso + papel)
+        const el = page.locator(cartao).first();
+        await expect(el).toBeAttached();
+        const tracoCartao = await el.evaluate(
+          (el) => getComputedStyle(el).borderTopWidth
+        );
+        expect(parseFloat(tracoCartao)).toBeGreaterThanOrEqual(2.5);
+        expect(await el.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe(
+          PAPEL_CLARO
+        );
+      } else {
+        // sem cartão-instrumento: a mobília V5 está na pílula do detalhe
+        const sumario = page.locator(".pg-detalhe > summary").first();
+        await expect(sumario).toBeVisible();
+        expect(await sumario.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe(
+          PAPEL_CLARO
+        );
+        const fonteSumario = await sumario.evaluate(
+          (el) => getComputedStyle(el).fontFamily
+        );
+        expect(fonteSumario.toLowerCase()).toContain("archivo");
+      }
+
+      // o corpo da página fala Archivo (a pele), não a grotesca V4
+      const fonte = await page.locator(".pg-frase").first().evaluate(
+        (el) => getComputedStyle(el).fontFamily
+      );
+      expect(fonte.toLowerCase()).toContain("archivo");
+    });
+
+    test(`${rota}: em tema escuro o chão é a noite do bairro`, async ({
+      page,
+    }) => {
+      // semeia a escolha antes do load — sem corrida com a hidratação
+      await page.addInitScript(() =>
+        localStorage.setItem("aocentimo-theme", "dark")
+      );
+      await page.goto(rota);
+      await page.locator(".rt5").first().waitFor({ state: "attached" });
+      expect(await fundoBody(page)).toBe(CHAO_NOITE);
+    });
+  }
 });
