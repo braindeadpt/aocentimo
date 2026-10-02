@@ -119,7 +119,9 @@ export default function MetodologiaPage() {
   const resumo = `${celulas.length} séries · ${celulas.length - nLimite - nAtrasadas - nSemSla} com folga · ${nLimite} no limite · ${nAtrasadas} atrasadas${nSemSla ? ` · ${nSemSla} sem prazo` : ""}`;
 
   return (
-    <div className="mx-auto max-w-5xl px-5 pt-14">
+    // a pele V5 sem a ligação ao edifício: esta página não é <Pagina>
+    // e não tem edifício natural no bairro (é a página das fontes)
+    <div className="rt5 mx-auto max-w-5xl px-5 pt-14">
       <p className="kicker">Transparência</p>
       <TituloPagina rota="/metodologia">Metodologia e fontes</TituloPagina>
       <p className="lede mt-5">

@@ -965,6 +965,45 @@ seguinte; a home não recebeu uma linha de HTML.
 2 temas); o trinco das «rotas por migrar» passa a cobrir só o grupo
 3 (`/aprender` sem `.rt5`, `/metodologia` sem ligações). Total 22.
 
+### P3b · grupo 3 — aprender e metodologia (ramo `v5/p3-pele-b3`)
+
+**O que entrou.** As duas últimas rotas de conteúdo — `/aprender` e
+`/metodologia` — vestem a pele V5. O `/aprender` (o glossário) recebe
+o gesto inteiro do grupo 1 e 2: `<div className="rt5">` mais a ligação
+de volta «← Voltar ao bairro: Escola» (`/#escola`) — a Escola é o
+edifício do bairro cuja pergunta é «Aprender a ler gráficos e as
+palavras do dinheiro», que é a promessa da página. A `/metodologia`
+veste só a pele: é a página das fontes, e nenhum edifício do bairro
+lhe corresponde (ver decisão 2).
+
+**Decisões tomadas (a rever):**
+
+1. **O glossário pertence à Escola.** Era o único edifício com
+   pergunta sobre aprender que ficava órfão (`segsocial` e `pastelaria`
+   continuam por atribuir — não foram forçadas a nenhuma rota).
+2. **`/metodologia` veste a pele sem ligação de volta.** Não passa por
+   `<Pagina>` (tem layout próprio, com `<TituloPagina>` directo), logo
+   a prop `edificio` não existe lá; e nenhum edifício do bairro é «a
+   página das fontes». Escrever a `.lnk-edificio` à mão seria
+   inventar uma âncora sem dono — a pele entra, a ligação não.
+   A classe juntou-se ao contentor existente em vez de criar um
+   invólucro novo.
+3. **Títulos de `messages/pt.json`**, como nos grupos 1 e 2 —
+   `bairro.edificios.escola.titulo`.
+4. **Um fix de lettering que não é deste grupo.** O audit já saía a
+   falhar em `origin/main` (c754128): cinco «espaço normal entre número
+   e unidade» na nota da taxa de carbono que o #47 pôs em
+   `data/fiscal/isp.json` (`70,0405 €/tCO2`, espaço normal em vez de
+   U+202F), em `/impostos` e `/precos`. Como o audit é gate do
+   deploy, o grupo 3 não passava sem isto: um carácter para
+   `U+202F` no dado. Verificado com build limpo de `origin/main` — as
+   mesmas cinco falhas, sem as alterações deste ramo.
+
+**Teste novo:** `e2e/pele-rotas.spec.ts` — mais 4 casos (2 rotas × 2
+temas), com `ROTAS_3` a servir `edificio: null` na `/metodologia` (o
+ramo sem ligação). O trinco das «rotas por migrar» foi retirado — não
+sobrou nenhuma. Total 26.
+
 ## P4 · Qualidade e lançamento
 
 ### P4 — os dados das cenas saem do payload da home

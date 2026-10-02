@@ -1,7 +1,8 @@
 import { test, expect, type Page } from "@playwright/test";
 
 /**
- * P3b — a pele V5 nas rotas (grupo 1: dinheiro; grupo 2: preços e trabalho).
+ * P3b — a pele V5 nas rotas (grupo 1: dinheiro; grupo 2: preços e trabalho;
+ * grupo 3: aprender e metodologia).
  *
  * O que este spec prova, por rota:
  *
@@ -32,6 +33,17 @@ const ROTAS_2: { rota: string; edificio: string; titulo: string; cartao: string 
   { rota: "/precos", edificio: "bomba", titulo: "Bomba de gasolina", cartao: ".leitura" },
   { rota: "/trabalho", edificio: "quiosque", titulo: "Quiosque da praça", cartao: ".leitura" },
   { rota: "/dados", edificio: "quiosque", titulo: "Quiosque da praça", cartao: null },
+];
+
+// grupo 3: o glossário é a Escola do bairro; /metodologia não passa por
+// <Pagina> e não tem edifício natural — veste a pele sem ligação de volta
+const ROTAS_3: {
+  rota: string;
+  edificio: string | null;
+  titulo: string | null;
+}[] = [
+  { rota: "/aprender", edificio: "escola", titulo: "Escola" },
+  { rota: "/metodologia", edificio: null, titulo: null },
 ];
 
 const PAPEL_CLARO = "rgb(255, 255, 255)";
@@ -109,12 +121,13 @@ test.describe("a pele V5 nas rotas (P3b — grupo 1)", () => {
     expect(await page.locator(".lnk-edificio").count()).toBe(0);
   });
 
-  test("rotas por migrar (grupo 3) continuam sem a pele", async ({
+  test("as rotas sem <Pagina> não vestem a ligação de volta", async ({
     page,
   }) => {
-    await page.goto("/aprender");
-    expect(await page.locator(".rt5").count()).toBe(0);
+    // /metodologia não passa por <Pagina>: a pele entra, a ligação ao
+    // edifício não — não há edifício natural para esta página
     await page.goto("/metodologia");
+    expect(await page.locator(".rt5").count()).toBe(1);
     expect(await page.locator(".lnk-edificio").count()).toBe(0);
   });
 });
@@ -181,6 +194,54 @@ test.describe("a pele V5 nas rotas (P3b — grupo 2)", () => {
       page,
     }) => {
       // semeia a escolha antes do load — sem corrida com a hidratação
+      await page.addInitScript(() =>
+        localStorage.setItem("aocentimo-theme", "dark")
+      );
+      await page.goto(rota);
+      await page.locator(".rt5").first().waitFor({ state: "attached" });
+      expect(await fundoBody(page)).toBe(CHAO_NOITE);
+    });
+  }
+});
+
+test.describe("a pele V5 nas rotas (P3b — grupo 3)", () => {
+  for (const { rota, edificio, titulo } of ROTAS_3) {
+    test(`${rota}: scope rt5, chão V5${edificio ? ` e a ligação → /#${edificio}` : ", sem ligação de volta"}`, async ({
+      page,
+    }) => {
+      await page.goto(rota);
+      await expect(page.locator(".rt5").first()).toBeAttached();
+      expect(await fundoBody(page)).toBe(CHAO_CLARO);
+
+      if (edificio && titulo) {
+        const lnk = page.locator(".lnk-edificio-a");
+        await expect(lnk).toBeVisible();
+        await expect(lnk).toHaveAttribute("href", `/#${edificio}`);
+        await expect(lnk).toContainText(titulo);
+
+        // a ligação veste a pílula do contrato: traço 3px + sombra dura
+        const traco = await lnk.evaluate(
+          (el) => getComputedStyle(el).borderTopWidth
+        );
+        expect(parseFloat(traco)).toBeGreaterThanOrEqual(2.5);
+        const sombra = await lnk.evaluate(
+          (el) => getComputedStyle(el).boxShadow
+        );
+        expect(sombra).not.toBe("none");
+      } else {
+        expect(await page.locator(".lnk-edificio").count()).toBe(0);
+      }
+
+      // o corpo da página fala Archivo (a pele), não a grotesca V4
+      const fonte = await page.locator("h1").first().evaluate(
+        (el) => getComputedStyle(el).fontFamily
+      );
+      expect(fonte.toLowerCase()).toContain("archivo");
+    });
+
+    test(`${rota}: em tema escuro o chão é a noite do bairro`, async ({
+      page,
+    }) => {
       await page.addInitScript(() =>
         localStorage.setItem("aocentimo-theme", "dark")
       );

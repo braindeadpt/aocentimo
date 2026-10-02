@@ -52,10 +52,11 @@ export default function AprenderPage() {
   }));
 
   return (
-    <>
+    <div className="rt5">
       <JsonLd data={ld} />
       <Pagina
-        pergunta="O que querem dizer estes termos?"
+        pergunta="O que queremos dizer estes termos?"
+        edificio={{ href: "/#escola", titulo: m.bairro.edificios.escola.titulo }}
         rota="/aprender"
         kicker={m.aprender.kicker}
         resposta={{
@@ -168,6 +169,6 @@ export default function AprenderPage() {
           rotulo: "De onde vêm os números?",
         }}
       />
-    </>
+    </div>
   );
 }
