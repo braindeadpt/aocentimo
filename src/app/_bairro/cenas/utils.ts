@@ -35,3 +35,27 @@ export function pontosDaSerie(s: SerieCena): Ponto[] {
 export function indiceDe(pontos: readonly Ponto[], t: string): number {
   return pontos.findIndex((p) => p.t === t);
 }
+
+/** Um ponto de uma série diária (o `t` é `AAAA-MM-DD`). */
+export interface PontoDia {
+  t: string;
+  v: number;
+}
+
+const DIA_MS = 86_400_000;
+
+/**
+ * O par da `SerieDias` compacta de `dados-p2b.ts`: `v[k]` é o dia
+ * `inicio + 7k` — menos o último índice, que é sempre o dia `fim`
+ * (a série diária não acaba necessariamente numa sexta da amostra).
+ */
+export function pontosDeDias(s: { inicio: string; fim: string; v: number[] }): PontoDia[] {
+  const t0 = Date.parse(`${s.inicio}T00:00:00Z`);
+  return s.v.map((v, k) => ({
+    t:
+      k === s.v.length - 1 && s.fim
+        ? s.fim
+        : new Date(t0 + k * 7 * DIA_MS).toISOString().slice(0, 10),
+    v,
+  }));
+}
