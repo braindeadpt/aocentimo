@@ -874,6 +874,62 @@ trincos de regressão do tema (persistência e sem-flash já existiam).
 Mono e dos tokens V4 sem uso; a decisão de ligação para `/impostos`,
 `/metodologia` e `/sobre` (em aberto, por propor em P3b).
 
+### P3b · grupo 1 — as rotas de dinheiro (ramo `v5/p3-pele-b1`)
+
+**O que entrou.** As seis rotas de dinheiro — `/salario`, `/irs`,
+`/impostos`, `/poupanca`, `/credito`, `/casa` — vestem a pele V5 e
+ganham no topo a ligação de volta ao edifício: «← Voltar ao bairro:
+Fábrica» etc., âncoras `/#fabrica`, `/#financas` (irs e impostos),
+`/#correios`, `/#banco`, `/#casa`. Os grupos 2 e 3 ficam a V4 até aos
+PRs seguintes; a home não recebeu uma linha de HTML.
+
+**Como funciona.** Cada rota embrulha o conteúdo num `<div
+class="rt5">` e o `globals.css` ganha um bloco com escopo `.rt5`: os
+tokens V4 (`--floor`, `--ink`, `--accent`, `--line`, o raio, as
+sombras, a fonte) passam a apontar para os V5 — o componente não sabe
+que mudou de pele, lê os mesmos nomes. Por cima do remapeamento vão as
+pílulas: a ligação de volta (`.lnk-edificio`, variante azul-2), a
+«pergunta seguinte» e o `<summary>` do detalhe vestem o `.btn` do
+protótipo (traço grosso, sombra dura, o gesto físico de sobe/afunda).
+
+**Decisões tomadas (a rever):**
+
+1. **`Pagina` ganhou a prop `edificio?: { href; titulo }`.** A ligação
+   mora no componente comum, não em seis páginas — quem não a passar
+   (`/metodologia`, `/sobre`, e as rotas por migrar) não mostra nada.
+   O texto «Voltar ao bairro» é a fórmula do protótipo e está em
+   `messages/pt.json` (`pagina.voltarBairro`) — PROPOSTA, como sempre.
+2. **O `--linha` recupera o sentido da pele dentro do `.rt5`.** A
+   fronteira de P3a (`#conteudo { --linha: initial }`) continua a
+   proteger as rotas por migrar; dentro do `.rt5` o `--linha` volta a
+   ser a cor do fio. O escalonamento não quebra: quem escreve o
+   contador inline ganha sempre à herança; quem lia `var(--linha, 0)`
+   passa a ler uma cor, o `calc()` invalida-se e o delay cai a 0 —
+   o mesmo efeito do reset, sem `animation-delay` partido. A fronteira
+   só se apaga quando TODAS as rotas estiverem migradas (fim da P3b).
+3. **Chão a cor chapada — a grelha milimetrada e o grão saem nas rotas
+   migradas** (`:root:has(.rt5) body`: a especificidade empata com a
+   regra V4 e ganha por vir depois no ficheiro).
+4. **As cores semânticas do protótipo falham AA em texto pequeno.**
+   `#e2412a` mede 4.18:1 e `#0c8f5c` 4.1:1 sobre papel — o smoke de
+   contraste apanhou-o em `/credito`. Nas rotas migradas os tokens
+   V4 de texto (`--accent`, `--accent-ink`, `--up`, `--down`, `--keep`)
+   passam por `-txt`: a mesma família escurecida até 4.5+ (`#c73a1d` /
+   `#0a7a4f` em claro; em escuro voltam aos valores do protótipo, que
+   lá passam). A regra da casa ganhou ao protótipo — se o dono quiser
+   vermelho em vez de vermelho-escuro, só em tamanho ≥18px/negrito.
+5. **`--font-editorial` passa a Archivo nas rotas migradas** — a
+   frase-resposta V3 («Da tua empresa saem…») deixa de ser Source
+   Serif. O mono V4 fica nos meta/breadcrumbs — fora disto ficava
+   artifício a mais para o protótipo; decisão para rever.
+6. **Home intacta.** O gate mede 79,3 KB gzip — nada foi acrescentado
+   ao HTML da home; a pele vive no chunk CSS partilhado.
+
+**Teste novo:** `e2e/pele-rotas.spec.ts` — 14 casos: cada rota do
+grupo 1 tem `.rt5`, chão V5 e a âncora certa nos dois temas; a home
+não tem `.rt5` nem ligações; as rotas dos grupos 2 e 3 continuam
+sem pele.
+
 ## P4 · Qualidade e lançamento
 
 ### P4 — os dados das cenas saem do payload da home

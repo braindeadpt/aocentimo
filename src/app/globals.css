@@ -4252,3 +4252,200 @@ html[data-theme="dark"] .tema-ponto {
 .rodape-v5 .footnote {
   color: var(--suave);
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   V5 — ROTAS MIGRADAS (P3b)
+   ═══════════════════════════════════════════════════════════════════════
+   `.rt5` no contentor da rota marca a migração: os tokens V4 passam a
+   apontar para os V5 (que já resolvem em todo o lado desde P3a, via
+   `data-pele` no <html>) e a mobília de página veste o contrato do
+   protótipo — papel/tinta, traço grosso, raio largo, sombra dura, cor
+   chapada sem grelha nem grão. O componente não sabe que mudou de pele:
+   lê os mesmos nomes de sempre.
+
+   `--linha`: dentro do `.rt5` volta a ser a cor de fio da pele (o reset
+   de `#conteudo` protege o escalonamento das rotas AINDA não migradas).
+   Os elementos com o contador inline (style={{ "--linha": i }}) ganham
+   sempre à herança — o escalonamento continua a funcionar; quem lia o
+   fallback var(--linha,0) passa a ler uma cor, o calc() invalida-se e o
+   delay cai a 0 — mesmo efeito que o reset, sem animação quebrada. */
+
+/* superfície da rota migrada: chão plano, sem grelha milimetrada nem
+   grão — o contrato V5 é cor chapada */
+html:has(.rt5) {
+  --grain-opacity: 0;
+}
+/* :root:has() + body: (0,2,1) — empata com a regra da grelha V4 e ganha
+   por vir depois no ficheiro; :has(.rt5) mais fraco perdia e a grelha
+   milimetrada ficava por cima do chão V5 */
+:root:has(.rt5) body {
+  background-color: var(--chao);
+  background-image: none;
+}
+
+.rt5 {
+  --floor: var(--chao);
+  --panel: var(--papel);
+  --raised: var(--papel);
+  --overlay: var(--papel);
+  --ink: var(--tinta);
+  --ink2: var(--tinta-2);
+  --muted: var(--suave);
+  --linha: #e4e1da;
+  --line: var(--linha);
+  --line2: var(--suave);
+  /* cor com significado — a regra da casa mantém-se: verde fica,
+     vermelho sai, azul é o acento neutro (marcação, foco, «ver →»).
+     AA nos textos pequenos: o #e2412a do protótipo mede 4.18:1 sobre
+     papel e o #0c8f5c mede 4.1:1 — falham os 4.5:1 para texto normal.
+     `-txt` é a mesma família escurecida até 4.5+ em claro; em escuro
+     volta ao valor do protótipo (que lá passa) */
+  --vermelho-txt: #c73a1d;
+  --verde-txt: #0a7a4f;
+  --accent: var(--vermelho-txt);
+  --accent-ink: var(--vermelho-txt);
+  --keep: var(--verde-txt);
+  --down: var(--verde-txt);
+  --up: var(--vermelho-txt);
+  --mark: var(--azul);
+  /* matéria: sombra dura sem desfoque substitui a elevação difusa;
+     o raio largo do cartão V5 substitui o maquinado de 14 px */
+  --elev-raised: var(--sombra-dura);
+  --elev-overlay: var(--sombra-dura);
+  --recess: none;
+  --raio-instrumento: var(--raio-cartao);
+  /* tipografia: Archivo para tudo (o mono V4 fica — os meta/breadcrumb
+     e a numeração tabular guardam a cadência do instrumento; decisão
+     registada no NOTAS-V5 para o dono rever) */
+  --font-sans: var(--font-archivo), "Arial", sans-serif;
+  --font-editorial: var(--font-archivo), "Arial", sans-serif;
+}
+html[data-theme="dark"] .rt5 {
+  --linha: #2f3760;
+  --vermelho-txt: var(--vermelho);
+  --verde-txt: var(--verde);
+}
+
+/* ————— mobília de página ————— */
+
+/* o cartão-instrumento: papel com traço grosso e sombra dura */
+.rt5 .leitura {
+  border-width: var(--traco);
+  border-color: var(--tinta);
+}
+.rt5 .leitura-head,
+.rt5 .leitura-foot {
+  border-color: var(--linha);
+}
+
+/* os cabeçalhos de nível: régua de tinta grossa, número em Archivo */
+.rt5 .pg-h {
+  border-bottom: var(--traco) solid var(--tinta);
+}
+.rt5 .pg-h-num {
+  color: var(--suave);
+}
+
+/* o detalhe (nível 3): o summary passa a pílula de traço fino */
+.rt5 .pg-detalhe {
+  border-top: 0;
+}
+.rt5 .pg-detalhe:last-of-type {
+  border-bottom: 0;
+}
+.rt5 .pg-detalhe > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0.3rem 0;
+  padding: 0.5rem 1rem;
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--tinta);
+  background: var(--papel);
+  border: var(--traco-fino) solid var(--tinta);
+  border-radius: var(--raio-pilula);
+  transition:
+    transform 0.15s cubic-bezier(0.3, 1.6, 0.5, 1),
+    box-shadow 0.15s;
+}
+.rt5 .pg-detalhe > summary:hover {
+  color: var(--tinta);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--tinta);
+}
+.rt5 .pg-detalhe[open] > summary {
+  transform: none;
+  box-shadow: none;
+}
+
+/* a pergunta seguinte: pílula do contrato (o .btn do protótipo) */
+.rt5 .pg-seguinte {
+  border-top: var(--traco) solid var(--tinta);
+}
+.rt5 .pg-seguinte-lnk {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  color: var(--tinta);
+  background: var(--papel);
+  border: var(--traco) solid var(--tinta);
+  border-radius: var(--raio-pilula);
+  box-shadow: var(--sombra-dura);
+  transition:
+    transform 0.15s cubic-bezier(0.3, 1.6, 0.5, 1),
+    box-shadow 0.15s;
+}
+.rt5 .pg-seguinte-lnk:hover {
+  color: var(--tinta);
+  text-decoration: none;
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 6px 0 var(--tinta);
+}
+.rt5 .pg-seguinte-lnk:active {
+  transform: translate(2px, 3px);
+  box-shadow: 1px 1px 0 var(--tinta);
+}
+
+/* a ligação de volta ao edifício (P3b): a mesma pílula, variante
+   «claro» — azul-2, o neutro informativo */
+.lnk-edificio {
+  margin: 0 0 1.1rem;
+}
+.lnk-edificio-a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 40px;
+  padding: 0.4rem 0.95rem;
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  line-height: 1;
+  color: var(--tinta);
+  background: var(--azul-2);
+  border: var(--traco) solid var(--tinta);
+  border-radius: var(--raio-pilula);
+  box-shadow: var(--sombra-dura);
+  text-decoration: none;
+  transition:
+    transform 0.15s cubic-bezier(0.3, 1.6, 0.5, 1),
+    box-shadow 0.15s;
+}
+.lnk-edificio-a:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 6px 0 var(--tinta);
+}
+.lnk-edificio-a:active {
+  transform: translate(2px, 3px);
+  box-shadow: 1px 1px 0 var(--tinta);
+}
+.lnk-edificio-a:focus-visible {
+  outline: 3px solid var(--azul);
+  outline-offset: 2px;
+}

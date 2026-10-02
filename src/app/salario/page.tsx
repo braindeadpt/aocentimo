@@ -45,6 +45,7 @@ const ANO = irs.ano;
  */
 export default function SalarioPage() {
   return (
+    <div className="rt5">
     <ProvedorSalario
       ano={ANO}
       cenarios={cenariosJson as unknown as CenariosSalario}
@@ -74,6 +75,7 @@ export default function SalarioPage() {
       />
       <Pagina
         pergunta="Quanto vais receber mesmo?"
+        edificio={{ href: "/#fabrica", titulo: m.bairro.edificios.fabrica.titulo }}
         rota="/salario"
         kicker="Do bruto ao líquido"
         resposta={{
@@ -173,5 +175,6 @@ export default function SalarioPage() {
         seguinte={{ href: "/irs", rotulo: "E no fim do ano, recebes ou pagas?" }}
       />
     </ProvedorSalario>
+    </div>
   );
 }

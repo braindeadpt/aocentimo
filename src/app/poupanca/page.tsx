@@ -119,6 +119,7 @@ export default function PoupancaPage() {
     .join(" · ");
 
   return (
+    <div className="rt5">
     <>
       <JsonLd
         data={webApplication(
@@ -139,6 +140,7 @@ export default function PoupancaPage() {
       >
         <Pagina
           pergunta="Onde rende mais o teu dinheiro — depois de impostos e inflação?"
+          edificio={{ href: "/#correios", titulo: m.bairro.edificios.correios.titulo }}
           rota="/poupanca"
           kicker="O banco · Poupança"
           resposta={{
@@ -388,5 +390,6 @@ export default function PoupancaPage() {
         />
       </PoupancaProvider>
     </>
+    </div>
   );
 }
