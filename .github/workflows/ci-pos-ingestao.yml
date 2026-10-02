@@ -69,7 +69,9 @@ jobs:
             BASE="${{ github.event.workflow_run.head_sha }}"
             CRIADO="${{ github.event.workflow_run.created_at }}"
             INGESTAO="$NOME"
-            DATA="$(date -u -d "$CRIADO" +%F)"
+            # created_at vem sempre em ISO-8601 UTC (AAAA-MM-DDTHH:MM:SSZ);
+            # cortar no T é portátil (sem depender de `date -d` do GNU)
+            DATA="${CRIADO%%T*}"
             if [ "$CONCLUSAO" = "success" ]; then
               ENCONTROU=false
               if [ -n "$BASE" ] && git fetch --quiet origin "$BASE" 2>/dev/null; then
