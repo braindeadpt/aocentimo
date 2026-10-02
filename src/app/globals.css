@@ -4246,3 +4246,9 @@ html[data-theme="dark"] .tema-ponto {
 .rodape-v5 .rule {
   border-top-color: var(--linha);
 }
+/* dentro do cartão de papel a nota de rodapé fala com o suave da pele —
+   o --muted V4 foi calibrado para o chão V4 e fica a 4.31:1 sobre o
+   papel da noite do bairro (falha AA medida pelo smoke em dark) */
+.rodape-v5 .footnote {
+  color: var(--suave);
+}
