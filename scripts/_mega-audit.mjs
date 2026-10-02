@@ -3,7 +3,8 @@
 // a11y estrutural (alts, labels, headings, ids duplicados, aria-hidden focável)
 import { readFile, readdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
-import { join, dirname, resolve, sep } from "node:path";
+import { join, resolve, sep } from "node:path";
+import { ehFicheiro, resolveHref as resolveHrefBruto, temAlvo } from "./audit-links.mjs";
 
 const OUT = resolve("out");
 const SITE = "https://aocentimo.pt";
@@ -26,17 +27,9 @@ function rota(file) {
   return rel.replace(/\/index\.html$/, "").replace(/\.html$/, "");
 }
 
-// resolve um href interno para ficheiro em out/
-function resolveHref(base, href) {
-  const path = href.split("#")[0].split("?")[0];
-  if (!path) return { file: null, hash: href.split("#")[1] ?? null };
-  let p;
-  if (path.startsWith("/")) p = join(OUT, path);
-  else p = resolve(dirname(base), path);
-  const cand = [p, join(p, "index.html"), p + ".html"];
-  for (const c of cand) if (existsSync(c)) return { file: c, hash: href.split("#")[1] ?? null };
-  return { file: p, hash: href.split("#")[1] ?? null };
-}
+// resolve um href interno para ficheiro em out/ — a implementação mora
+// em audit-links.mjs (só ficheiros são candidatos; «/» → out/index.html)
+const resolveHref = (base, href) => resolveHrefBruto(OUT, base, href);
 
 const strip = (s) =>
   s
@@ -131,17 +124,17 @@ for (const { file, rota: r, html } of paginas) {
     // interno
     const { file: alvo, hash } = resolveHref(file, href);
     if (hash !== null && hash !== "" && alvo === null && href.startsWith("#")) {
-      if (!new RegExp(` id="${hash.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`).test(html))
+      if (!temAlvo(html, hash))
         falhas.push(tag(`âncora #${hash} sem alvo "${txt.slice(0, 30)}"`));
       continue;
     }
-    if (alvo && !existsSync(alvo) && !alvo.endsWith(sep + "index.html")) {
+    if (alvo && !ehFicheiro(alvo) && !alvo.endsWith(sep + "index.html")) {
       falhas.push(tag(`link partido → ${href} "${txt.slice(0, 30)}"`));
       continue;
     }
-    if (alvo && existsSync(alvo) && hash) {
+    if (alvo && ehFicheiro(alvo) && hash) {
       const alvoHtml = await readFile(alvo, "utf8");
-      if (!new RegExp(` id="${hash.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`).test(alvoHtml))
+      if (!temAlvo(alvoHtml, hash))
         falhas.push(tag(`âncora ${href} sem alvo "${txt.slice(0, 30)}"`));
     }
   }
@@ -152,7 +145,7 @@ for (const { file, rota: r, html } of paginas) {
     if (u.startsWith("//") || u.startsWith("/_next/static/media")) { /* media pode estar embutida */ }
     if (/^\/(_next|.*\.(css|js|svg|png|jpg|webp|ico|woff2|xml|json|txt|webmanifest))/.test(u)) {
       const { file: alvo } = resolveHref(file, u);
-      if (!alvo || !existsSync(alvo)) {
+      if (!alvo || !ehFicheiro(alvo)) {
         // pode ser rota (link já coberto) — só falha se parecer asset
         if (/\.(css|js|svg|png|jpg|webp|ico|woff2|xml|json|txt|webmanifest)$/.test(u))
           falhas.push(tag(`asset em falta: ${u}`));
