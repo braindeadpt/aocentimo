@@ -52,8 +52,8 @@ const ESTADOS = new Set([
 const FUTURO_P1 = new Set([
   // a cena da Segurança Social (P2b): o recibo com a tabela
   "b-confirma",
-  // as cartas (P1-4)
-  "b-cartas", "b-fundo-carta", "b-papel", "b-aprende", "b-logo",
+  // o logótipo do protótipo — sem lar ainda (a casa não repete o cabeçalho)
+  "b-logo",
 ]);
 /** O HTML completo que o servidor gera, com marcadores de mentira. */
 function htmlGerado(): string {
@@ -73,6 +73,7 @@ function codigoCliente(): string {
   const ler = (p: string): string => readFileSync(join(process.cwd(), p), "utf8");
   return (
     ler("src/app/_bairro/Bairro.tsx") +
+    ler("src/app/_bairro/Cartas.tsx") +
     ler("src/app/_bairro/HomeBairro.tsx") +
     ler("src/app/_bairro/camara.ts") +
     ler("src/app/_bairro/ambiente.ts") +

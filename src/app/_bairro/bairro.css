@@ -517,6 +517,10 @@
   background: var(--azul-2);
   color: var(--azul);
 }
+[data-pele="v5"] .b-painel .b-perfil {
+  margin: 0;
+  font-weight: 700;
+}
 [data-pele="v5"] .b-painel .b-acoes {
   display: flex;
   gap: 10px;
@@ -753,6 +757,14 @@
   border-radius: 14px;
   padding-top: 6px;
 }
+/* as cores do CARTAS do mapa.tpl.html, por ordem do elenco */
+[data-pele="v5"] .b-carta[data-k="ines"] .b-fundo-carta { background: #dfe5ff; }
+[data-pele="v5"] .b-carta[data-k="diana"] .b-fundo-carta { background: #fff1c2; }
+[data-pele="v5"] .b-carta[data-k="pedro"] .b-fundo-carta { background: #ffe1d9; }
+[data-pele="v5"] .b-carta[data-k="manuel"] .b-fundo-carta { background: #d3f2e3; }
+[data-pele="v5"] .b-carta[data-k="arminda"] .b-fundo-carta { background: #ffe1e6; }
+[data-pele="v5"] .b-carta[data-k="goncalo"] .b-fundo-carta { background: #fff1c2; }
+[data-pele="v5"] .b-carta[data-k="rui"] .b-fundo-carta { background: #dfe5ff; }
 [data-pele="v5"] .b-carta b {
   font-size: 19px;
   font-weight: 850;
@@ -769,6 +781,11 @@
   font-size: 14px;
   color: var(--tinta-2);
   line-height: 1.35;
+}
+[data-pele="v5"] .b-carta .b-aprende i {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--tinta);
 }
 [data-pele="v5"] .b-notas {
   font-size: 13.5px;

@@ -226,6 +226,76 @@ em ficheiros à parte, e o JS inicial da home subiu só 2,2 KB
    parte do desenho. `.b-fumo`, `.b-baforada`, `.b-corpo-pombo` e
    `.b-gaivota` ganham-no, para o CSS da V4 não apanhar o fumo da fábrica.
 
+### P1-4 — as sete cartas: «Escolhe a tua personagem»
+
+A secção do elenco deixa de ser um título vazio. As sete cartas do
+`CARTAS` do `mapa.tpl.html` entram com a mesma ordem, as mesmas cores e
+o mesmo desenho — a figura é `pessoa(ELENCO[·])`, a mesma função que o
+mapa usa, e a do casal junta o Rui e a Marta num só `svg`, como lá.
+
+**O número da Inês sai dos dados.** A dúvida 1 das P0 resolvia-se aqui:
+a frase «Porque é que 1 500 € brutos viram 1 167 €.» compõe-se em
+`HomeBairro` com `linhaSalario()` (a linha de `brutoRef` de
+`cenarios-salario.json`) e `fmtEUR0` — o «1 167 €» é o líquido real
+arredondado, calculado e não digitado. Se a linha faltar, sai «—».
+O e2e lê o mesmo JSON e compara com o texto da página.
+
+**A ponte carta→mapa é um `CustomEvent`.** As cartas vivem no `<main>`
+do servidor e não podem receber uma função do `<Bairro>` (cliente);
+`b:escolhe-personagem` na janela leva a escolha — chave mais as partes
+do painel. O cliente das cartas (`Cartas.tsx`) é pequeno de propósito:
+só o clique e a composição do detalhe.
+
+**O payload das cartas tem dieta própria** (reparação pós-gente): a
+figura já não viaja por prop — desenha-se no cliente com
+`pessoa(ELENCO[·])` (o kit é puro e já está no bundle; o SSR continua a
+pô-la no HTML) e sai-lhe o HTML morto (`data-nome`, as classes que são
+ganchos do mapa, `scale(1)`, whitespace). O `CartaDados` e o `comum`
+são tuplos — os nomes das chaves repetiam-se sete vezes no flight. A
+fala «Olá!» monta-se no cliente de `olaTpl`+`ola`+`aprende` (strings de
+`pt.json` na mesma, só repartidas). A cor do fundo vive no CSS por
+`[data-k]`, não em `style` inline. Resultado: ~0,7 KB gzip de props
+das cartas (antes ~8,4 KB com as figuras), home a 79,9 KB no gate.
+
+**No `<Bairro>`:** o clique esconde o cartão de edifício, fecha a cena
+aberta (com a âncora limpa do URL), faz scroll suave ao palco
+(instantâneo em reduced-motion), abre a moldura `.b-painel` que já
+existia e voa a câmara para o centro da caixa do
+`[data-pessoa="<chave>"]` — o contrato com a sessão «gente no mapa».
+Se a figura ainda não existir (a gente funde noutro ramo), fica o
+scroll e o painel — nunca falha. Com GSAP activo a câmara desliza
+(`ligarGsap` + `ir(·, ·, 560, 1.1)`) e a personagem acena — `.braco-d`,
+e nos dois quando a carta é a do casal. Em reduced-motion o chunk nem
+é pedido: o `ir()` salta para a vista final.
+
+**A câmara mede o alvo em unidades do mundo, nunca `getCTM()`.**
+`getCTM()` devolve px do viewport da camada SVG — metia a personagem a
+−1050 px e fora do mundo (defeito medido no build integrado). A conta
+é a da `CenaFabrica`: `getBoundingClientRect()` do alvo e da janela +
+`camara.atual` convertem px do ecrã em unidades do mundo. O destino
+pousa na faixa que o painel não tapa — em desktop à direita do painel
+à esquerda, no telemóvel abaixo do painel no topo. E o foco do painel
+é `preventScroll`: o scroll-para-o-foco do browser cancelava o
+`scrollIntoView` do palco a meio (o ecrã ficava a 360 px do destino).
+
+**Acessibilidade:** cada carta é `<button>` com nome acessível «Nome,
+papel» e o «o que aprendes» ligado por `aria-describedby`; a figura é
+`aria-hidden`; ao fechar (Escape, × ou Fechar) o foco volta à carta.
+
+**CSS:** o bloco `.b-cartas`/`.b-carta`/`.b-fundo-carta`/`.b-papel`/
+`.b-aprende` já estava portado e saiu da lista `FUTURO_P1` do teste —
+mais as regras novas `.b-aprende i` (o negrito do perfil, que no
+protótipo era estilo inline) e `.b-painel .b-perfil`.
+
+**Textos PROPOSTA novos** (`bairro.elenco.*`): a tabela das sete cartas
+já estava listada acima; entram agora também `ola` («Olá! Sou {quem}.»),
+`emBreve` («Em breve»), `segueDinheiro` («vais poder seguir o meu
+dinheiro pelo bairro.») e, por carta, o `ola` gramatical («a Inês»,
+«o Rui, e esta é a Marta»…). Os nomes acessíveis («Inês, operária da
+fábrica») derivam do nome+papel.
+
+---
+
 ### P1-5 — os e2e da home V4 reconciledos, e três defeitos reais
 
 As 33 falhas do CI **não eram todas relics da V4**. Separadas:
