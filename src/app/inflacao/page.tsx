@@ -141,7 +141,7 @@ export default function InflacaoPage() {
     .filter((x) => x !== null);
 
   return (
-    <>
+    <div className="rt5">
       {cp00 && (
         <JsonLd
           data={dataset({
@@ -158,6 +158,7 @@ export default function InflacaoPage() {
       )}
       <Pagina
         pergunta="Quanto mais caro está o que compras?"
+        edificio={{ href: "/#mercearia", titulo: m.bairro.edificios.mercearia.titulo }}
         rota="/inflacao"
         kicker="Inflação — preços no consumidor"
         resposta={{
@@ -423,6 +424,6 @@ export default function InflacaoPage() {
           rotulo: "E o dinheiro emprestado, quanto custa?",
         }}
       />
-    </>
+    </div>
   );
 }

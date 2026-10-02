@@ -90,6 +90,7 @@ export default function TrabalhoPage() {
       : null;
 
   return (
+    <div className="rt5">
     <ProvedorTrabalho
       regua={{
         rotulo: "Salário bruto mensal (antes do desemprego)",
@@ -112,6 +113,7 @@ export default function TrabalhoPage() {
       />
       <Pagina
         pergunta="Se ficares sem trabalho, quanto recebes e por quanto tempo?"
+        edificio={{ href: "/#quiosque", titulo: m.bairro.edificios.quiosque.titulo }}
         rota="/trabalho"
         kicker="Proteção no desemprego"
         resposta={{
@@ -271,5 +273,6 @@ export default function TrabalhoPage() {
         }}
       />
     </ProvedorTrabalho>
+    </div>
   );
 }

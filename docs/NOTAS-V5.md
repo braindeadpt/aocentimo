@@ -930,6 +930,41 @@ grupo 1 tem `.rt5`, chão V5 e a âncora certa nos dois temas; a home
 não tem `.rt5` nem ligações; as rotas dos grupos 2 e 3 continuam
 sem pele.
 
+### P3b · grupo 2 — preços e trabalho (ramo `v5/p3-pele-b2`)
+
+**O que entrou.** As quatro rotas de preços e trabalho — `/inflacao`,
+`/precos`, `/trabalho`, `/dados` — vestem a pele V5 com o mesmo gesto
+do grupo 1 (`<div className="rt5">` + `edificio` no `<Pagina>`) e
+ganham a ligação de volta: «← Voltar ao bairro: Mercearia do Manuel»
+(`/#mercearia`), «Bomba de gasolina» (`/#bomba`) e «Quiosque da
+praça» (`/#quiosque`, no `/trabalho` e no `/dados` — o primeiro
+edifício partilhado por duas rotas). O grupo 3 fica a V4 até ao PR
+seguinte; a home não recebeu uma linha de HTML.
+
+**Decisões tomadas (a rever):**
+
+1. **Quase zero CSS novo — mas o smoke de contraste abriu a boca.**
+   Os ticks dos eixos do `<LineChart>` (`fill="var(--color-muted)""
+   em atributo) resolvem à raiz (`#8f8878`) e falham AA sobre o chão-
+   noite dentro do `.rt5` (4.31:1) — o audit chumbou `/inflacao` e
+   `/precos` em `dark`, como o deploy parte. O grupo 1 escapou porque
+   nenhuma rota dele desenha `LineChart`. Fix de duas linhas: os ticks
+   passam a `fill="var(--muted)"`, que dentro do `.rt5` é o `--suave`
+   (5.6:1 nos dois temas) e fora dele resolve ao mesmo de antes.
+   O bloco `.rt5` em si não cresceu.
+2. **O `/dados` não tem cartão-instrumento** (só células
+   `<Instrumento>`, sem `.leitura`) — no e2e a mobília V5 prova-se
+   aí na pílula do detalhe (papel + Archivo) em vez de no cartão.
+   O `cartao` do teste é por rota, `null` no `/dados`.
+3. **Títulos dos edifícios vêm de `messages/pt.json`**
+   (`bairro.edificios.*.titulo`), como no grupo 1 — «Mercearia do
+   Manuel», «Bomba de gasolina», «Quiosque da praça», não alcunhas
+   inventadas na rota.
+
+**Teste novo:** `e2e/pele-rotas.spec.ts` — mais 8 casos (4 rotas ×
+2 temas); o trinco das «rotas por migrar» passa a cobrir só o grupo
+3 (`/aprender` sem `.rt5`, `/metodologia` sem ligações). Total 22.
+
 ## P4 · Qualidade e lançamento
 
 ### P4 — os dados das cenas saem do payload da home
