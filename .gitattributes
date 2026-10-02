@@ -1,0 +1,5 @@
+# Limpeza C — fixtures e ferramentas de ingestão fora das estatísticas do GitHub.
+# (As capturas .screenshots/ e os scripts/_shots-* saíram do repo; o .gitignore
+# já os ignora para não voltarem a entrar.)
+scripts/ingest/*.fixture* linguist-generated=true
+scripts/ingest/** linguist-vendored=true
