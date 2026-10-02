@@ -1,0 +1,120 @@
+name: vigilância — ISP dos combustíveis rodoviários (portarias)
+
+on:
+  schedule:
+    # sextas 16:30 UTC (16:30 de inverno / 17:30 de verão em Lisboa) — a
+    # portaria da semana sai à sexta para vigorar segunda (437-B: 25 set →
+    # 28 set); apanha-se ainda antes do fim de semana
+    - cron: "30 16 * * 5"
+    # domingos 08:00 UTC (08:00/09:00 em Lisboa) — rede de segurança para
+    # as publicações de sexta à noite que a ronda de sexta não viu
+    - cron: "0 8 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: vigilancia-isp
+  cancel-in-progress: false
+
+jobs:
+  vigiar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      # CLI sai: 0 = ok · 2 = ALARME (portaria nova no DR) · 1 = falha honesta
+      - name: Consultar o feed restrito ao DR
+        id: vigilia
+        run: |
+          set +e
+          npx tsx scripts/ingest/isp-cli.ts | tee /tmp/isp-saida.txt
+          code=${PIPESTATUS[0]}
+          echo "codigo=$code" >> "$GITHUB_OUTPUT"
+          if [ "$code" = "2" ]; then echo "alarme=true" >> "$GITHUB_OUTPUT"; fi
+          exit 0
+
+      - name: Commit do estado da vigilância
+        if: steps.vigilia.outputs.codigo != '1'
+        run: |
+          git config user.name "bruto-bot"
+          git config user.email "bot@bruto.local"
+          git add data/meta/isp-vigilia.json
+          git diff --staged --quiet || git commit -m "vigilancia: estado ISP $(date -u +%Y-%m-%d)"
+          git pull --rebase origin main
+          git push
+
+      - name: Abrir/atualizar alarme em issue
+        if: steps.vigilia.outputs.alarme == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const estado = JSON.parse(require("fs").readFileSync("data/meta/isp-vigilia.json", "utf8"));
+            const numeros = estado.novas.map((n) => n.numero).join(", ");
+            const titulo = `ISP: portaria nova no DR — ${numeros}`;
+            const { data: abertas } = await github.rest.issues.listForRepo({
+              owner, repo, state: "open", labels: "dados",
+            });
+            const corpo = [
+              `O feed restrito ao DR traz portaria(s) mais recente(s) que a citada no isp.json (vigência ${estado.ispJson.vigencia}, ${estado.ispJson.portaria ?? "sem portaria"}): **${numeros}**.`,
+              ``,
+              ...estado.novas.map((n) => `- ${n.numero} (${n.data}): ${n.titulo} — <${n.link}>`),
+              ``,
+              `Isto é um despertador, nunca um dado: confirmar cada portaria no Diário da República (pesquisar o número em https://diariodarepublica.pt) e só depois mexer no JSON. Checklist:`,
+              ``,
+              `1. Abrir a portaria no DR e ler o art. 2.º (as taxas por produto);`,
+              `2. Atualizar \`data/fiscal/isp.json\`: \`vigencia\`, \`fonte\`, \`fonteUrl\`, \`ispELitro\` (e \`carbonoELitro\` se mudar) e a \`nota\`;`,
+              `3. Correr os testes que leem o isp.json (\`npm run test:unit\`, cena da Bomba) — número novo sem teste é número por confirmar;`,
+              `4. Fechar esta issue à mão quando o isp.json citar a portaria (ela não fecha sozinha: enquanto o JSON estiver velho, cada ronda volta a avisar).`,
+              ``,
+              `Estado: \`data/meta/isp-vigilia.json\` (último commit da vigilância).`,
+            ].join("\n");
+            const existente = abertas.find((i) => i.title.startsWith("ISP: portaria nova no DR"));
+            if (existente) {
+              await github.rest.issues.createComment({ owner, repo, issue_number: existente.number, body: corpo });
+            } else {
+              await github.rest.issues.create({ owner, repo, title: titulo, labels: ["dados"], body: corpo });
+            }
+
+      - name: Registar falha honesta em issue
+        if: steps.vigilia.outputs.codigo == '1'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const titulo = "Vigilância ISP falhou — feed indisponível";
+            const { data: abertas } = await github.rest.issues.listForRepo({
+              owner, repo, state: "open", labels: "dados",
+            });
+            const corpo = "A consulta ao feed restrito ao DR falhou (rede ou Google a responder 429). É falha honesta: NÃO significa que não haja portaria nova. O estado em `data/meta/isp-vigilia.json` ficou por gravar nesta ronda; a próxima (sexta/domingo) tenta de novo.";
+            const existente = abertas.find((i) => i.title.startsWith("Vigilância ISP falhou"));
+            if (existente) {
+              await github.rest.issues.createComment({ owner, repo, issue_number: existente.number, body: corpo });
+            } else {
+              await github.rest.issues.create({ owner, repo, title: titulo, labels: ["dados"], body: corpo });
+            }
+
+      - name: Fechar issues de falha quando a consulta volta a correr bem
+        if: steps.vigilia.outputs.codigo != '1'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const { data: abertas } = await github.rest.issues.listForRepo({
+              owner, repo, state: "open", labels: "dados",
+            });
+            for (const i of abertas.filter((i) => i.title.startsWith("Vigilância ISP falhou"))) {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: i.number,
+                body: "Consulta ao feed voltou a correr bem — fecho automático.",
+              });
+              await github.rest.issues.update({ owner, repo, issue_number: i.number, state: "closed" });
+            }
