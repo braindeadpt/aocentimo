@@ -1,4 +1,6 @@
-import { dadosBairro } from "@/lib/bairro/dados";
+import { dadosBairro, linhaSalario } from "@/lib/bairro/dados";
+import { fmtEUR0 } from "@/lib/format";
+import { ELENCO, pessoa } from "@/lib/bairro/personagens";
 import { dadosCenas } from "./cenas/dados";
 import { temCena } from "./cenas/com-cena";
 import { pinosDaCamera } from "@/lib/bairro/mundo";
@@ -13,6 +15,7 @@ import {
 import { m, t } from "@/lib/messages";
 import { SITE_URL } from "@/lib/site";
 import { Bairro, type Hora, type InfoEdificio } from "./Bairro";
+import { Cartas, type CartaDados } from "./Cartas";
 
 /**
  * A home do bairro (P1-1). O SERVIDOR monta tudo:
@@ -63,6 +66,12 @@ export default function HomeBairro() {
       fonte: "",
     })
   );
+
+  // as sete cartas do elenco (P1-4) — montadas AQUI, no servidor: as
+  // figuras são `pessoa(ELENCO[·])`, as mesmas que o mapa desenha, e os
+  // números saem de data/derived via linhaSalario() já formatados —
+  // o «1 500 € brutos viram 1 167 €» da Inês nunca se escreve à mão
+  const cartas = cartasDoElenco(linhaSalario());
 
   const ld = {
     "@context": "https://schema.org",
@@ -130,7 +139,7 @@ export default function HomeBairro() {
           <span className="b-etiqueta">{m.bairro.elenco.etiqueta}</span>
           <h2 id="tElenco">{m.bairro.elenco.h2}</h2>
           <p className="b-lead">{m.bairro.elenco.lead}</p>
-          {/* as sete cartas entram em P1-4 */}
+          <Cartas cartas={cartas} />
         </section>
         <p className="b-notas">
           <b>{m.bairro.elenco.notas}</b> {d.fontes.join(" · ")}
@@ -167,5 +176,70 @@ function extraDe(
     ca: mc.ca,
     inflacao: mc.inflacao,
     desemprego: mc.desemprego,
+  });
+}
+
+/* ————————————————————— as sete cartas (P1-4) ————————————————————— */
+
+/** A ordem e as cores do `CARTAS` do mapa.tpl.html — iguais às do
+    protótipo, que é o contrato visual. */
+const ORDEM_CARTAS = [
+  "ines",
+  "diana",
+  "pedro",
+  "manuel",
+  "arminda",
+  "goncalo",
+  "rui",
+] as const;
+type ChaveCarta = (typeof ORDEM_CARTAS)[number];
+const CORES_CARTAS: Record<ChaveCarta, string> = {
+  ines: "#dfe5ff",
+  diana: "#fff1c2",
+  pedro: "#ffe1d9",
+  manuel: "#d3f2e3",
+  arminda: "#ffe1e6",
+  goncalo: "#fff1c2",
+  rui: "#dfe5ff",
+};
+
+/**
+ * Monta as sete cartas no servidor: a figura é `pessoa(ELENCO[·])` — a
+ * mesma que o mapa desenha, e a do casal junta o Rui e a Marta, como no
+ * protótipo. O número da Inês vem de `linhaSalario()` (data/derived,
+ * via fmtEUR0): se a linha faltar sai «—», nunca um número escrito à
+ * mão. A fala do painel sai daqui já em HTML, com o realce do «Em
+ * breve» — é texto de pt.json, seguro para dangerouslySetInnerHTML.
+ */
+function cartasDoElenco(ref: ReturnType<typeof linhaSalario>): CartaDados[] {
+  const el = m.bairro.elenco;
+  return ORDEM_CARTAS.map((k) => {
+    const c = el.cartas[k];
+    const aprende = t(c.aprende, {
+      bruto: fmtEUR0(ref?.bruto ?? NaN),
+      liquido: fmtEUR0(ref?.liquido ?? NaN),
+    });
+    const figura =
+      k === "rui"
+        ? `<g transform="translate(-18 0)">${pessoa(ELENCO.rui)}</g><g transform="translate(20 0)">${pessoa(ELENCO.marta)}</g>`
+        : pessoa(ELENCO[k]);
+    return {
+      chave: k,
+      nome: c.nome,
+      papel: c.papel,
+      acessivel: `${c.nome}, ${c.papel[0].toLowerCase()}${c.papel.slice(1)}`,
+      perfil: c.perfil,
+      aprende,
+      cor: CORES_CARTAS[k],
+      viewBox: k === "rui" ? "-60 -142 120 150" : "-42 -142 84 150",
+      figura,
+      painel: {
+        chave: k,
+        quem: `${c.nome} · ${c.papel}`,
+        fala: `${t(el.ola, { quem: c.ola })} ${aprende} <span class="b-a">${el.emBreve}</span> ${el.segueDinheiro}`,
+        extra: c.perfil,
+        fechar: m.bairro.breve.fechar,
+      },
+    };
   });
 }

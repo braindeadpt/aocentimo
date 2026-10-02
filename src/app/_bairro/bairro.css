@@ -517,6 +517,10 @@
   background: var(--azul-2);
   color: var(--azul);
 }
+[data-pele="v5"] .b-painel .b-perfil {
+  margin: 0;
+  font-weight: 700;
+}
 [data-pele="v5"] .b-painel .b-acoes {
   display: flex;
   gap: 10px;
@@ -769,6 +773,11 @@
   font-size: 14px;
   color: var(--tinta-2);
   line-height: 1.35;
+}
+[data-pele="v5"] .b-carta .b-aprende i {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--tinta);
 }
 [data-pele="v5"] .b-notas {
   font-size: 13.5px;

@@ -226,6 +226,56 @@ em ficheiros à parte, e o JS inicial da home subiu só 2,2 KB
    parte do desenho. `.b-fumo`, `.b-baforada`, `.b-corpo-pombo` e
    `.b-gaivota` ganham-no, para o CSS da V4 não apanhar o fumo da fábrica.
 
+### P1-4 — as sete cartas: «Escolhe a tua personagem»
+
+A secção do elenco deixa de ser um título vazio. As sete cartas do
+`CARTAS` do `mapa.tpl.html` entram com a mesma ordem, as mesmas cores e
+o mesmo desenho — a figura é `pessoa(ELENCO[·])`, a mesma função que o
+mapa usa, e a do casal junta o Rui e a Marta num só `svg`, como lá.
+
+**O número da Inês sai dos dados.** A dúvida 1 das P0 resolvia-se aqui:
+a frase «Porque é que 1 500 € brutos viram 1 167 €.» compõe-se em
+`HomeBairro` com `linhaSalario()` (a linha de `brutoRef` de
+`cenarios-salario.json`) e `fmtEUR0` — o «1 167 €» é o líquido real
+arredondado, calculado e não digitado. Se a linha faltar, sai «—».
+O e2e lê o mesmo JSON e compara com o texto da página.
+
+**A ponte carta→mapa é um `CustomEvent`.** As cartas vivem no `<main>`
+do servidor e não podem receber uma função do `<Bairro>` (cliente);
+`b:escolhe-personagem` na janela leva a escolha pronta — chave, título,
+fala e fechar, tudo texto de `pt.json` montado no servidor. O cliente
+das cartas (`Cartas.tsx`) é pequeno de propósito: só o clique.
+
+**No `<Bairro>`:** o clique esconde o cartão de edifício, fecha a cena
+aberta (com a âncora limpa do URL), faz scroll suave ao palco
+(instantâneo em reduced-motion), abre a moldura `.b-painel` que já
+existia e voa a câmara para o centro da caixa do
+`[data-pessoa="<chave>"]` — o contrato com a sessão «gente no mapa».
+Se a figura ainda não existir (a gente funde noutro ramo), fica o
+scroll e o painel — nunca falha. Com GSAP activo a câmara desliza
+(`ligarGsap` + `ir(·, ·, 560, 1.1, w·0.2)`, o desvio que o painel pede
+em desktop) e a personagem acena — `.braco-d`, e nos dois quando a
+carta é a do casal. Em reduced-motion o chunk nem é pedido: o `ir()`
+salta para a vista final.
+
+**Acessibilidade:** cada carta é `<button>` com nome acessível «Nome,
+papel» e o «o que aprendes» ligado por `aria-describedby`; a figura é
+`aria-hidden`; ao fechar (Escape, × ou Fechar) o foco volta à carta.
+
+**CSS:** o bloco `.b-cartas`/`.b-carta`/`.b-fundo-carta`/`.b-papel`/
+`.b-aprende` já estava portado e saiu da lista `FUTURO_P1` do teste —
+mais as regras novas `.b-aprende i` (o negrito do perfil, que no
+protótipo era estilo inline) e `.b-painel .b-perfil`.
+
+**Textos PROPOSTA novos** (`bairro.elenco.*`): a tabela das sete cartas
+já estava listada acima; entram agora também `ola` («Olá! Sou {quem}.»),
+`emBreve` («Em breve»), `segueDinheiro` («vais poder seguir o meu
+dinheiro pelo bairro.») e, por carta, o `ola` gramatical («a Inês»,
+«o Rui, e esta é a Marta»…). Os nomes acessíveis («Inês, operária da
+fábrica») derivam do nome+papel.
+
+---
+
 ### P1-5 — os e2e da home V4 reconciledos, e três defeitos reais
 
 As 33 falhas do CI **não eram todas relics da V4**. Separadas:
