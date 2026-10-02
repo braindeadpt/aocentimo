@@ -138,7 +138,8 @@ jobs:
         run: |
           {
             echo "linhas<<FIMFALHAS"
-            grep -E "FAIL|✗|×|AssertionError|failed" /tmp/pos-ingestao-unit.log 2>/dev/null | head -25 || true
+            # sem as cores ANSI do vitest — na issue saíam como lixo ^[[31m
+            grep -E "FAIL|✗|×|AssertionError|failed" /tmp/pos-ingestao-unit.log 2>/dev/null | sed -e 's/\x1b\[[0-9;]*m//g' | head -25 || true
             echo "FIMFALHAS"
           } >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@v4
