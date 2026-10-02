@@ -557,6 +557,55 @@ décima fica. Nota de método para a próxima: a primeira prova veio
 duas builds têm de estar servidas de sítios distintos, e o `data-x/y/w`
 dos pins é medida da câmara, não desenho.
 
+### P1-gente — a gente do bairro no mapa
+
+O mapa publicado tinha 3 pessoas (a fila da Segurança Social); o
+protótipo tem a fila, as 8 personagens do elenco, um pescador no cais e
+dois miúdos na ponte. Portado o `colocar()` do `mapa.tpl.html` para
+`planta.ts`: cada figura leva os pés a `Pt(i, j)` (terreno como
+argumento, como sempre) e a escala do protótipo (`ESC = 0,36` nas
+camadas; os miúdos levam a deles). `mundo.ts` só distribui —
+`avenida → #b-movA`, `cais → #b-movB` (o `colocar()` escolhia por
+`j > 8,7`; aqui a escolha fica escrita na tabela), `ceu → #b-gCeu`,
+à frente dos miúdos, o `nadador()` que já lá estava.
+
+| quem | i | j | espelho | camada |
+|---|---|---|---|---|
+| Inês | 1,79 | 3,78 | — | movA (porta da fábrica) |
+| Rui | 9,15 | 3,80 | — | movA (banco) |
+| Marta | 9,50 | 3,82 | virada | movA (banco) |
+| Pedro | 5,00 | 3,85 | — | movA (meio do passeio) |
+| Sr. Manuel | 0,67 | 8,78 | virado | movB (mercearia) |
+| D. Arminda | 3,30 | 8,85 | — | movB (praça) |
+| Gonçalo | 9,49 | 8,80 | — | movB (escola) |
+| Diana | 10,09 | 8,78 | virada | movB (escola) |
+| pescador + cana | 4,35 | 10,52 | virado | movB (beira do cais) |
+| miúdo | 14,80 | 12,55 | — | gCeu (guarda da ponte, z=20) |
+| miúda | 14,80 | 13,35 | — | gCeu (idem) |
+
+Contagem final no HTML: 14 `.pessoa` (3 fila + 8 elenco + pescador +
+2 miúdos), 8 `data-pessoa`, 10 `.vizinho`, 1 `.b-nadador` — iguala o
+protótipo ao nível do mapa (as figuras das cenas ficam nas cenas).
+
+**Contrato cumprido:** cada personagem do ELENCO sai com
+`data-pessoa="<chave>"` dentro de `.pessoa`; passantes, pescador e
+miúdos levam `.pessoa` sem `data-pessoa`. Nenhum JavaScript novo por
+pessoa; o movimento é o CSS que já existia.
+
+**Duas divergências deliberadas (estáticas):** no protótipo o Pedro e
+a D. Arminda são PASSEADOS por código (ele anda o passeio, ela vai aos
+correios) e os miúdos saltam da ponte em loop — aqui nascem e ficam nas
+posições iniciais, porque «o movimento é só o que o protótipo já faz em
+CSS» e andar gente por JS era fora de âmbito. Se o dono quiser o passeio
+animado, é trabalho do ambiente, não do mapa.
+
+**Conserto apanhado de raspão:** `ambiente.ts` procurava `.b-brazo-n`
+mas `mundo.ts` emite `.b-braço-n` — o braço do nadador nunca animava.
+Corrigido o selector; `ambiente.test.ts` já esperava a classe acentuada.
+
+**Peso:** home 67,8 → **72,5 KB gzip** (+4,7; limite 80). A deduplicação
+`<symbol>/<use>` não foi precisa — nenhuma figura foi cortada.
+
 ## P2a–P2c · As cenas
 
 ### P2a — as quatro primeiras cenas: Fábrica, Finanças, Banco, Mercearia
@@ -620,8 +669,71 @@ básicos da lista I do Código do IVA»;
 dados da Fábrica e dois `aria-label`) foram para `textos.ts`, para ficarem
 na lista que o dono revê.
 
-_(P2b — Correios, Bomba, Segurança Social — e P2c — Casa, Pastelaria,
-Quiosque, Escola — ficam para as sessões seguintes.)_
+### P2b — Correios, Bomba, Segurança Social
+
+Porta de `cena-correios.js`, `cena-bomba.js` e `cenaSegSocial`
+(cenas-bairro.js) para `src/app/_bairro/cenas/`, no mesmo molde da P2a:
+`CenaDePerto`, interior em `<svg viewBox="0 0 640 470">` gerado no
+servidor, gráfico na coluna do texto (`.b-corpo`), dados por props.
+Ficheiros novos: `dados-p2b.ts` (servidor), `textos-p2b.ts` (copy
+PROPOSTA), `correios-arte.ts`, `bomba-arte.ts`, `segsocial-arte.ts`,
+`CenaCorreios.tsx`, `CenaBomba.tsx`, `CenaSegSocial.tsx`. Em
+`registry.ts`/`dados.ts`/`com-cena.ts`/`Bairro.tsx` só se acrescentaram
+linhas — a P2c mantém as suas. O cartão «em breve» sai dos três
+edifícios.
+
+**Contas e dados (regra nº1):**
+
+- **Correios → /poupanca.** Os 10 000 € são exemplo e dizem-se exemplo.
+  O passado é medido: poder de compra = `IHPC(2020-08) / IHPC(hoje)`
+  (série `cp00`, a mesma data-base da Mercearia). O futuro é HIPÓTESE
+  dita como hipótese: `trajetoriaColchao` e `trajetoriaCA` do motor
+  `poupanca.ts`, com taxa, prémios de permanência, vigência e garantia
+  de `data/fiscal/ca.json` e retenção de `capitais.json`. Sliders de
+  anos e de inflação refazem a trajetória no cliente.
+- **Bomba → /precos.** Decomposição por `decomporCombustivel` no
+  servidor (o cliente não vê `iva.json`): ISP e carbono de
+  `data/fiscal/isp.json` (portaria e data na fonte), IVA normal sobre
+  produto+ISP+carbono — a cena mostra o IVA a incidir sobre impostos.
+  O gráfico usa as séries diárias DGEG (`pmd-gasolina95-diario`,
+  `pmd-gasoleo-diario`) amostradas 1 ponto/semana como no protótipo; a
+  copy diz a primeira data real da série (jan 2017), nunca «desde 2017»
+  escrito à mão. O atestar é um exemplo de 50 litros.
+- **Segurança Social → /salario.** O recibo usa a mesma linha de
+  `cenarios-salario.json` da cena da Fábrica — 165,00 € (11 %) +
+  356,25 € (TSU 23,75 %) = 521,25 € sobre 1 500 €; teste golden
+  compara os dois. O Pedro sai de `simularIndependente(1500×12)`:
+  21,4 % sobre 70 % do faturado (mínimo 1,5×IAS), regras de
+  `catb.json`. Nada reimplementado no componente.
+
+**Animações:** GSAP só por `carregarGsap()`; cada pilha/camada mata o
+tween anterior e um bilhete de geração invalida callbacks atrasados (o
+defeito do contador da Fábrica não se repete). Em reduced-motion o
+estado final é escrito direto e o chunk não é pedido — o e2e prova-o.
+
+**Textos PROPOSTA (para o dono rever antes de lançar):** toda a copy
+das três cenas vive em `src/app/_bairro/cenas/textos-p2b.ts`, com os
+números a entrar por parâmetro já formatados. Inclui as falas de cada
+passo, o painel «como ler o gráfico», as legendas das camadas do litro,
+o comparativo Inês/Pedro, os `aria-label` dos gráficos e as chamadas
+para /poupanca, /precos e /salario. Nada publica sem essa revisão.
+
+**Divergências anotadas (protótipo → produto):**
+
+1. O protótipo mostrava a inflação futura como barra de «confiança»;
+   aqui é slider («se a inflação fosse, por ano…») — mesma informação,
+   sem fingir previsão.
+2. Na Bomba, o gráfico DGEG mostra o preço, e a legenda diz que a parte
+   de imposto por dia não está no gráfico (o repo só guarda o ISP em
+   vigor hoje) — dito ao leitor, não escondido.
+3. A mini-pessoa das cenas ganhou `.braco-d` para o aceno da senha — o
+   braço direito faltava na miniatura do P2a.
+
+**Os números:** home → **71,8 KB gzip** (limite 80 KB, gate verde); as
+três cenas viajam em `next/dynamic`, fora do JS inicial.
+
+_(P2c — Casa, Pastelaria, Quiosque, Escola — fica para a sessão
+seguinte.)_
 
 ## P3 · A pele V5 nas 13 rotas
 

@@ -583,6 +583,9 @@ function CenaViva({
     );
   if (id === "financas") return <Cena D={cenas.financas} aoFechar={aoFechar} />;
   if (id === "banco") return <Cena D={cenas.banco} aoFechar={aoFechar} />;
+  if (id === "correios") return <Cena D={cenas.correios} aoFechar={aoFechar} />;
+  if (id === "bomba") return <Cena D={cenas.bomba} aoFechar={aoFechar} />;
+  if (id === "segsocial") return <Cena D={cenas.segsocial} aoFechar={aoFechar} />;
   return <Cena D={cenas.mercearia} aoFechar={aoFechar} />;
 }
 

@@ -59,7 +59,7 @@ import {
   type Ponto,
   type Terreno,
 } from "./iso";
-import { PASSANTES, pessoa } from "./personagens";
+import { ELENCO, PASSANTES, pessoa, type ChaveElenco, type Personagem } from "./personagens";
 
 const K = "#16130f";
 
@@ -213,6 +213,13 @@ export interface MapaBairro {
    * por isso a fila vem aqui nua e `mundo.ts` espelha-a (P1-1).
    */
   ribeira: string;
+  /**
+   * A gente do bairro, já posicionada (P1-gente). No protótipo o
+   * `colocar()` escolhia a camada pelo `j` (`j > 8,7 → movB`) — aqui a
+   * escolha fica escrita na tabela e o mundo não adivinha:
+   * `avenida` → `#b-movA`, `cais` → `#b-movB`, `ceu` → `#b-gCeu`.
+   */
+  gente: { avenida: string; cais: string; ceu: string };
   portas: Portas;
   pinos: Pino[];
   /** Onde cada candeeiro assenta — as luzes da noite nascem daqui (P1). */
@@ -613,8 +620,69 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
   const atracados = ([[8.6, 10.95]] as const).map(([ii, jj]) => { const a = Pt(ii + 1, 10.62); return `<g transform="translate(${f1((ii - jj) * 64)} ${f1((ii + jj) * 32 + 22)})">${rabelo(false)}</g><path d="M${f1(a[0])} ${f1(a[1] - 8)} q20 20 34 26" fill="none" stroke="#7a5a3a" stroke-width="1.6"/>`; }).join("");
 
   const ribeira = rib.join("");
+
+  /* ——— a gente do bairro (P1-gente) ———
+     O `colocar()` do protótipo (mapa.tpl.html, «quem anda no bairro»),
+     em texto: cada figura leva os pés a Pt(i, j) e a escala ESC. `dir`
+     negativo vira a personagem. O movimento é o do CSS/ambiente já
+     existente — não há JavaScript por pessoa. */
+  const ESC_GENTE = 0.36;
+  const figura = (fig: Personagem, i: number, j: number, dir = 1, extra = ""): string => {
+    const [x, y] = Pt(i, j);
+    return `<g transform="translate(${f1(x)} ${f1(y)}) scale(${f1(ESC_GENTE * dir)} ${ESC_GENTE})">${pessoa(fig)}${extra}</g>`;
+  };
+  /** O elenco — o `data-pessoa` é o contrato com a sessão das cartas. */
+  const elenco = (chave: ChaveElenco, i: number, j: number, dir = 1): string => {
+    const [x, y] = Pt(i, j);
+    return `<g transform="translate(${f1(x)} ${f1(y)}) scale(${f1(ESC_GENTE * dir)} ${ESC_GENTE})">${pessoa(ELENCO[chave], chave)}</g>`;
+  };
+
+  /* a cana do pescador, com a linha e a boia — no protótipo entra no
+     mesmo invólucro da figura (`pescador.g`), à frente do `.pessoa` */
+  const CANA =
+    `<path d="M10 -64 L96 -124" stroke="#6b4a2f" stroke-width="3.4" stroke-linecap="round"/>` +
+    `<path d="M96 -124 Q104 -20 72 96" fill="none" stroke="${K}" stroke-width="1.3"/>` +
+    `<circle class="b-boia" cx="72" cy="96" r="4.5" fill="#e2412a" stroke="${K}" stroke-width="1.3"/>`;
+  const PESCADOR: Personagem = { pele: "c", cabelo: "careca", corCabelo: "#9a9a9a", roupa: "#ffc62b", calcas: "#2b3a55", barba: true, sapato: "#16130f" };
+
+  /* j ≤ 8,7 → movA: a Avenida. Inês à porta da fábrica, o Rui e a Marta
+     à entrada do banco, o Pedro a meio do passeio (é onde nasce; o
+     protótipo depois passeia-o). */
+  const movA =
+    elenco("ines", 1.79, 3.78) +
+    elenco("rui", 9.15, 3.8) +
+    elenco("marta", 9.5, 3.82, -1) +
+    elenco("pedro", 5, 3.85);
+
+  /* j > 8,7 → movB: cá em baixo. O Sr. Manuel à porta da mercearia, a
+     Dona Arminda na praça (é onde nasce; o protótipo depois leva-a aos
+     correios), o Gonçalo e a Diana à porta da escola, e o pescador na
+     beira do cais, virado para o rio. */
+  const movB =
+    elenco("manuel", 0.67, 8.78, -1) +
+    elenco("arminda", 3.3, 8.85) +
+    elenco("goncalo", 9.49, 8.8) +
+    elenco("diana", 10.09, 8.78, -1) +
+    figura(PESCADOR, 4.35, 10.52, -1, CANA);
+
+  /* os dois miúdos na guarda da ponte (i = 14,8, a 20 acima do rio) —
+     no protótipo saltam para o Douro em loop; aqui nascem parados na
+     posição inicial, e a classe `miudo` é a que o CSS esconde à noite */
+  const gCeu = (
+    [
+      [{ pele: "d", cabelo: "curto", corCabelo: "#1d1410", roupa: "#b97a52", calcas: "#e2412a", sapato: "#b97a52", escala: 0.82 }, 12.55],
+      [{ pele: "b", cabelo: "curto", corCabelo: "#6b4226", roupa: "#e8b48f", calcas: "#2445d6", sapato: "#e8b48f", escala: 0.78 }, 13.35],
+    ] as const
+  )
+    .map(([fig, j]) => {
+      const [x, y] = Pt(14.8, j, 20);
+      return `<g class="miudo" transform="translate(${f1(x)} ${f1(y)}) scale(${ESC_GENTE})">${pessoa(fig)}</g>`;
+    })
+    .join("");
+
   return {
     chao: chaoSvg,
+    gente: { avenida: movA, cais: movB, ceu: gCeu },
     tras: arvoresTras + candTras + ed.fabrica + ed.segsocial + ed.financas + torre + ed.banco + ed.correios + ed.bomba + miradouro,
     frente: `<g id="gRibeira">${ribeira}</g>` + jardim + cais,
     ribeira,

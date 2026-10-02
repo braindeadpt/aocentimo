@@ -304,7 +304,7 @@ export async function ligarAmbiente(
         repeat: -1,
         ease: "sine.inOut",
       });
-      const braco = nad.querySelector(".b-brazo-n");
+      const braco = nad.querySelector(".b-braço-n");
       const t2 = braco
         ? gsap.to(braco, {
             rotation: -40,

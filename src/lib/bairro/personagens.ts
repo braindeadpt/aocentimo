@@ -123,8 +123,14 @@ export interface Personagem {
   martelo?: boolean;
 }
 
-/** Desenha uma personagem de frente, com os pés na origem. */
-export function pessoa(o: Personagem): string {
+/**
+ * Desenha uma personagem de frente, com os pés na origem.
+ *
+ * `chave` é o contrato com a sessão das cartas: quando vem, o `.pessoa`
+ * leva `data-pessoa` e é por ele que a carta encontra a personagem no
+ * mapa. Sem `chave` a figura é anónima (passantes, miúdos, pescador).
+ */
+export function pessoa(o: Personagem, chave?: ChaveElenco): string {
   const pele = PELES[o.pele || "b"];
   const alt = o.escala || 1;
   const roupa = o.roupa;
@@ -139,7 +145,7 @@ export function pessoa(o: Personagem): string {
   const braco = (cls: string, lado: number): string =>
     `<g class="${cls}"><path d="M${lado * 15} -88 q${lado * 7} 16 ${lado * 6} 34" fill="none" stroke="${K}" stroke-width="12.5" stroke-linecap="round"/><path d="M${lado * 15} -88 q${lado * 7} 16 ${lado * 6} 34" fill="none" stroke="${roupa}" stroke-width="7.5" stroke-linecap="round"/><circle cx="${lado * 21}" cy="-51" r="5" fill="${pele}" stroke="${K}" stroke-width="2.2"/></g>`;
 
-  return `<g class="pessoa" data-nome="${o.nome || ""}"><g class="escala" transform="scale(${alt})">
+  return `<g class="pessoa"${chave ? ` data-pessoa="${chave}"` : ""} data-nome="${o.nome || ""}"><g class="escala" transform="scale(${alt})">
     <ellipse cx="0" cy="1" rx="20" ry="4.5" fill="${K}" opacity=".16"/>
     ${perna("perna-e", -6.5)}${perna("perna-d", 6.5)}
     <g class="tronco">

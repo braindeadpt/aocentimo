@@ -214,6 +214,71 @@ describe("montarMapa", () => {
   });
 });
 
+describe("a gente do bairro — as pessoas do mapa (P1-gente)", () => {
+  const m = montarMapa(D);
+  /* Tudo o que desenha gente, numa string só: as camadas da planta (a
+     fila da Segurança Social vive dentro do edifício, em `tras`) mais os
+     três grupos de `gente` que o mundo distribui por movA, movB e gCeu. */
+  const gente = [m.chao, m.tras, m.frente, m.vida, m.agua, m.gaia, m.ponte.tras, m.ponte.frente, m.gente?.avenida ?? "", m.gente?.cais ?? "", m.gente?.ceu ?? ""].join("");
+
+  it("há pelo menos 14 pessoas — a contagem do protótipo (3 fila + 8 elenco + pescador + 2 miúdos)", () => {
+    const n = (gente.match(/<g class="pessoa"/g) ?? []).length;
+    expect(n).toBeGreaterThanOrEqual(14);
+  });
+
+  it("as oito do elenco estão no mapa, uma vez cada, com data-pessoa", () => {
+    for (const k of ["ines", "manuel", "arminda", "goncalo", "rui", "marta", "diana", "pedro"] as const) {
+      const n = (gente.match(new RegExp(`data-pessoa="${k}"`, "g")) ?? []).length;
+      expect(n, `data-pessoa="${k}"`).toBe(1);
+    }
+    // e o contrato é no grupo da pessoa, não num invólucro qualquer
+    for (const x of gente.matchAll(/data-pessoa="([^"]+)"/g)) {
+      expect(gente.slice(Math.max(0, x.index - 40), x.index)).toContain('class="pessoa"');
+    }
+  });
+
+  it("passantes e miúdos não levam data-pessoa — e os miúdos ficam com a classe que a noite esconde", () => {
+    const total = (gente.match(/<g class="pessoa"/g) ?? []).length;
+    const nomeadas = (gente.match(/data-pessoa="/g) ?? []).length;
+    expect(total - nomeadas).toBe(14 - 8);
+    expect((gente.match(/class="miudo"/g) ?? []).length).toBe(2);
+  });
+
+  it("o pescador leva a cana e a boia", () => {
+    expect(m.gente?.cais ?? "").toContain("b-boia");
+  });
+
+  it("cada pessoa nasce dentro da caixa do mundo e longe do canto (0,0)", () => {
+    /* o mesmo defeito das árvores do jardim: um translate com (i, j) de
+       grelha em vez de Pt() fica «dentro» da caixa mas no canto — a
+       prova é a distância à origem, não o rectângulo */
+    const grupos = [
+      ...gente.matchAll(
+        /<g[^>]*transform="translate\((-?[\d.]+) (-?[\d.]+)\) scale\([^"]*\)">\s*<g class="pessoa"/g
+      ),
+    ];
+    expect(grupos.length, "não encontrei os invólucros translate+scale das pessoas").toBeGreaterThanOrEqual(14);
+    for (const g of grupos) {
+      const x = +g[1];
+      const y = +g[2];
+      expect(x, `x=${x} fora da caixa do mundo`).toBeGreaterThanOrEqual(MUNDO.x);
+      expect(x, `x=${x} fora da caixa do mundo`).toBeLessThanOrEqual(MUNDO.x + MUNDO.w);
+      expect(y, `y=${y} fora da caixa do mundo`).toBeGreaterThanOrEqual(MUNDO.y);
+      expect(y, `y=${y} fora da caixa do mundo`).toBeLessThanOrEqual(MUNDO.y + MUNDO.h);
+      expect(Math.hypot(x, y), `translate(${x} ${y}) é coordenada de grelha sem Pt()`).toBeGreaterThan(150);
+    }
+  });
+
+  it("não há duas pessoas exactamente no mesmo sítio", () => {
+    const posicoes = [
+      ...gente.matchAll(
+        /<g[^>]*transform="translate\((-?[\d.]+) (-?[\d.]+)\) scale\([^"]*\)">\s*<g class="pessoa"/g
+      ),
+    ].map((g) => `${g[1]} ${g[2]}`);
+    expect(new Set(posicoes).size).toBe(posicoes.length);
+  });
+});
+
 describe("as peças soltas", () => {
   it("o elétrico 22 é uma caixa deitada na Avenida", () => {
     const s = eletricoIso();
