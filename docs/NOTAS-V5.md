@@ -990,14 +990,15 @@ lhe corresponde (ver decisão 2).
    invólucro novo.
 3. **Títulos de `messages/pt.json`**, como nos grupos 1 e 2 —
    `bairro.edificios.escola.titulo`.
-4. **Um fix de lettering que não é deste grupo.** O audit já saía a
-   falhar em `origin/main` (c754128): cinco «espaço normal entre número
-   e unidade» na nota da taxa de carbono que o #47 pôs em
-   `data/fiscal/isp.json` (`70,0405 €/tCO2`, espaço normal em vez de
-   U+202F), em `/impostos` e `/precos`. Como o audit é gate do
-   deploy, o grupo 3 não passava sem isto: um carácter para
-   `U+202F` no dado. Verificado com build limpo de `origin/main` — as
-   mesmas cinco falhas, sem as alterações deste ramo.
+4. **Um fix de lettering que não é deste grupo — resolvido no #49.**
+   Quando este grupo arrancou, o audit já saía a falhar em
+   `origin/main` (c754128): cinco «espaço normal entre número e
+   unidade» na nota da taxa de carbono que o #47 pôs em
+   `data/fiscal/isp.json` (`70,0405 €/tCO2`), em `/impostos` e
+   `/precos`. Como o audit é gate do deploy, o grupo 3 não passava
+   sem isto. O fix entrou entretanto no #49 (fundido primeiro, para
+   não haver duas cópias do mesmo U+202F), e este ramo já nasce em
+   cima dele — o `isp.json` aqui é o do main, sem alterações.
 
 **Teste novo:** `e2e/pele-rotas.spec.ts` — mais 4 casos (2 rotas × 2
 temas), com `ROTAS_3` a servir `edificio: null` na `/metodologia` (o
