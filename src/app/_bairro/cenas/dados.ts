@@ -22,6 +22,16 @@ import irsJson from "@data/fiscal/irs-2026.json";
 import ivaJson from "@data/fiscal/iva.json";
 import ssJson from "@data/fiscal/ss.json";
 import { P0 } from "@/lib/bairro/iso";
+import {
+  dadosCasaP2c,
+  dadosEscolaP2c,
+  dadosPastelariaP2c,
+  dadosQuiosqueP2c,
+  type DadosCasa,
+  type DadosEscola,
+  type DadosPastelaria,
+  type DadosQuiosque,
+} from "./dados-p2c";
 
 /** Um ponto de uma série temporal (o `t` é `AAAA-MM`). */
 export interface Ponto {
@@ -325,12 +335,16 @@ function rotasDasMoedas(): { ss: PontoRota[]; irs: PontoRota[]; casa: PontoRota[
   }
 }
 
-/** As quatro cenas com dados, para o servidor mandar tudo numa prop. */
+/** As cenas com dados, para o servidor mandar tudo numa prop. */
 export interface CenasDados {
   fabrica: DadosFabrica;
   financas: DadosFinancas;
   banco: DadosBanco;
   mercearia: DadosMercearia;
+  casa: DadosCasa;
+  pastelaria: DadosPastelaria;
+  quiosque: DadosQuiosque;
+  escola: DadosEscola;
 }
 
 export function dadosCenas(): CenasDados {
@@ -339,5 +353,9 @@ export function dadosCenas(): CenasDados {
     financas: dadosFinancas(),
     banco: dadosBanco(),
     mercearia: dadosMercearia(),
+    casa: dadosCasaP2c(),
+    pastelaria: dadosPastelariaP2c(),
+    quiosque: dadosQuiosqueP2c(),
+    escola: dadosEscolaP2c(),
   };
 }

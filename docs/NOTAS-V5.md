@@ -570,8 +570,76 @@ básicos da lista I do Código do IVA»;
 dados da Fábrica e dois `aria-label`) foram para `textos.ts`, para ficarem
 na lista que o dono revê.
 
-_(P2b — Correios, Bomba, Segurança Social — e P2c — Casa, Pastelaria,
-Quiosque, Escola — ficam para as sessões seguintes.)_
+### P2c — Casa da Inês, Pastelaria, Quiosque, Escola
+
+Porta de `cenaCasa`, `cenaPastelaria`, `cenaQuiosque` e `cenaEscola`
+(`cenas-bairro.js`) e do desenhador `graficoLinhas` (`cena-base.js`).
+Mesmo molde da P2a: `CenaDePerto` + interior em `svg` gerado no
+componente + dados por props; os chunks só descem ao entrar no
+edifício. Para não colidir com a P2b (a correr em paralelo): dados em
+`dados-p2c.ts`, copy em `textos-p2c.ts`, arte em `*-arte.ts` próprios;
+nos partilhados (`dados.ts`, `registry.ts`, `com-cena.ts`,
+`Bairro.tsx`) só linhas acrescentadas.
+
+- **`src/lib/viz/grafico-linhas.ts`** — o gráfico reutilizável: função
+  pura (sem DOM, sem JSON), devolve `{ svg, texto }` com o `<dl
+  class="b-sr">` escondido a dizer os mesmos números. Falhas na série
+  QUEBRAM a linha (pen up); série vazia não desenha e o equivalente diz
+  «—»; todas vazias → sem gráfico de zeros. As três cenas com gráfico
+  usam-no. Os gráficos da P2a ficam como estão — refactorizá-los fica
+  como proposta, não como facto.
+- **Casa → `/casa`.** Os meses de trabalho vêm de
+  `casa-em-salarios.json` (hpi ÷ custo do trabalho, 2015 = 100; último:
+  ~192). A nota «não é o salário de ninguém» está na cena
+  (`casaNota`). A pilha de recibos cresce por manipulação directa do
+  SVG — com GSAP só se `motionActiva()`, e um bilhete de geração anula
+  callbacks atrasados (a lição do contador da Fábrica); depois do
+  passo 2 a pilha FICA no valor real.
+- **Pastelaria → `/inflacao`.** «Comer fora» é o IHPC CP11 real;
+  «comer em casa» o CP01 — nenhuma série inventada. O café de 2 € em
+  ago 2020 é EXEMPLO e a cena diz-o (também no passo 2, onde o «hoje»
+  aparece). O IVA sai de `iva.json` escolhido pelos exemplos da taxa
+  («restauração» → intermédia; «pão…» → reduzida): dos 3,22 €, 0,37 €
+  são IVA.
+- **Quiosque → `/trabalho` e `/dados`.** O Jornal do Bairro mostra seis
+  linhas — desemprego PT, jovens (razão ao total), PIB homólogo,
+  inflação, confiança e SMN — cada uma com a SUA data e fonte. Falta de
+  dado → «—» e a linha diz que a fonte falhou. A lição do denominador
+  («20,1 % dos jovens ≠ 20,1 % de todos os jovens») ficou intacta.
+- **Escola → `/aprender`.** Os minis são desenhos próprios
+  (`escola-arte.mini`) — o truque é o eixo batoteiro, coisa que o
+  `grafico-linhas` não deixa fazer por princípio. A lição das palavras
+  usa os termos REAIS do glossário (`ipc-ihpc`, `taxa-real`,
+  `escalao-irs`, `spread`, `tsu`), cada um ligado à cena onde vive por
+  âncora e a `/aprender/[slug]`.
+
+**Textos PROPOSTA:** toda a copy está em `src/app/_bairro/cenas/
+textos-p2c.ts`, portada do protótipo — falas, perguntas, juízos do
+palpite, legendas, placas, botões e `aria-label`s. Números entram por
+parâmetro. Nada disto está revisto — a lista é a desta secção até o
+dono a ler.
+
+**Divergências e dúvidas numeradas para o dono:**
+
+1. **«Homólogo» não existe no glossário do site.** O protótipo tinha
+   seis palavras na terceira lição; a nossa tem cinco — homólogo
+   aprende-se na lição 2 (o gráfico) mas não tem termo nem definição
+   oficiais, e inventar uma definição violaria a regra nº1 do texto.
+   Se quiser a palavra no glossário, a definição é sua.
+2. **`taxa-real` liga a `/#correios`** (o poder de compra mora na cena
+   dos Correios, da P2b). Enquanto a P2b não fundir, a âncora não abre
+   nada — degrada para o mapa. Alternativa: `/#mercearia` (índice
+   real). Mantive o lugar do protótipo.
+3. **A Pilha no passo 3 fica no valor real** (192), não volta aos 100
+   da pergunta — voltar atrás esquecia a resposta que a cena acabou de
+   dar.
+4. **A fonte do Quiosque agrega** («Eurostat · desemprego (une_rt_m),
+   PIB e confiança; INE/DR · salário mínimo em vigor desde jan 2026»)
+   porque cada LINHA já leva a sua data; fonte por linha no rodapé
+   seria ilegível. Se preferir fonte por linha, diz.
+
+_(P2b — Correios, Bomba, Segurança Social — fica para a sessão
+vizinha.)_
 
 ## P3 · A pele V5 nas 13 rotas
 
