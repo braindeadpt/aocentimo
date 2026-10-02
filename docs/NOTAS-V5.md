@@ -981,11 +981,11 @@ mesma regra — não há edifício que a represente).
    Source Serif, Space Mono). Migrar a página é visual; a reescrita
    da referência viva para a linguagem do bairro é editorial do dono
    — fica registado aqui como dívida de copy.
-2. **Correção à margem:** o `_lettering` (gate do deploy) chumbava
-   `impostos.html` e `precos.html` — o `fonte` do `data/fiscal/isp.json`
-   (entrou com a vigilância ISP, #44) tinha espaços normais entre número
-   e unidade em «70,0405 €/tCO2», «15,911 cênt/L» e «17,334 cênt/L».
-   Passaram a U+202F — tipografia, os números não mudaram.
+2. **Colisão de sessões, resolvida:** o `_lettering` chumbava main
+   (espaços normais no `fonte` do `isp.json`); este ramo trazia o mesmo
+   remendo U+202F que o #49 — ao fazer rebase sobre o main com o #49
+   fundido, o hunk caiu como idêntico. O #52, de outra sessão, cobre só
+   `/aprender` e `/metodologia`; este PR é o grupo 3 completo.
 3. **O teste dos slugs usa `/aprender/euribor`** (termo estável no
    glossário) em vez de iterar `generateStaticParams`.
 
