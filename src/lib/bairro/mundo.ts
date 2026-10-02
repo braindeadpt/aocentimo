@@ -342,16 +342,17 @@ export function mundoBairro(m: MapaBairro): { html: string; css: string } {
     ) +
     camada(
       "b-cA",
-      // o elétrico nasce aqui e a animação ambiente move-o: sem JS
+      // a gente da avenida primeiro, o elétrico por cima (o protótipo
+      // anexa-o depois das pessoas). A animação ambiente move-o: sem JS
       // fica parado na Avenida, que já é melhor do que não estar
-      `<g id="b-movA"><g id="b-eletrico">${eletricoIso()}</g></g>`
+      `<g id="b-movA">${m.gente.avenida}<g id="b-eletrico">${eletricoIso()}</g></g>`
     ) +
     camada("b-cFrente", `<g id="b-gFrente">${m.frente}</g>`) +
-    camada("b-cB", `<g id="b-movB"></g><g id="b-gVida">${m.vida}</g><g id="b-gAgua">${m.agua}</g>`) +
+    camada("b-cB", `<g id="b-movB">${m.gente.cais}</g><g id="b-gVida">${m.vida}</g><g id="b-gAgua">${m.agua}</g>`) +
     soltas +
     camada("b-cRio", `<g id="b-gGaia">${m.gaia}</g><g id="b-gRio">${m.ponte.tras}</g>`) +
     camada("b-cPonte", m.ponte.frente) +
-    camada("b-cCeu", `<g id="b-gCeu">${nadador()}</g>`) +
+    camada("b-cCeu", `<g id="b-gCeu">${m.gente.ceu}${nadador()}</g>`) +
     `<div id="b-noite" style="width:${MUNDO.w}px;height:${MUNDO.h}px"></div>` +
     camada("b-cTopo", topo(m));
   return { html, css };

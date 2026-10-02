@@ -22,6 +22,8 @@ import irsJson from "@data/fiscal/irs-2026.json";
 import ivaJson from "@data/fiscal/iva.json";
 import ssJson from "@data/fiscal/ss.json";
 import { P0 } from "@/lib/bairro/iso";
+import { dadosBomba, dadosCorreios, dadosSegSocial } from "./dados-p2b";
+import type { DadosBomba, DadosCorreios, DadosSegSocial } from "./dados-p2b";
 import {
   dadosCasaP2c,
   dadosEscolaP2c,
@@ -341,6 +343,9 @@ export interface CenasDados {
   financas: DadosFinancas;
   banco: DadosBanco;
   mercearia: DadosMercearia;
+  correios: DadosCorreios;
+  bomba: DadosBomba;
+  segsocial: DadosSegSocial;
   casa: DadosCasa;
   pastelaria: DadosPastelaria;
   quiosque: DadosQuiosque;
@@ -353,6 +358,9 @@ export function dadosCenas(): CenasDados {
     financas: dadosFinancas(),
     banco: dadosBanco(),
     mercearia: dadosMercearia(),
+    correios: dadosCorreios(),
+    bomba: dadosBomba(),
+    segsocial: dadosSegSocial(),
     casa: dadosCasaP2c(),
     pastelaria: dadosPastelariaP2c(),
     quiosque: dadosQuiosqueP2c(),

@@ -493,3 +493,49 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ————— as barras «por cada 100 €» da Segurança Social (P2b) ————— */
+
+[data-pele="v5"] .b-barras-quem {
+  display: grid;
+  grid-template-columns: 4.5em minmax(0, 1fr);
+  gap: 8px 10px;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+[data-pele="v5"] .bq-b {
+  display: flex;
+  height: 30px;
+  border: 2.5px solid var(--tinta);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--linha);
+}
+
+[data-pele="v5"] .bq-b i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: normal;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 12px;
+}
+
+[data-pele="v5"] .bq-b i.eu {
+  background: var(--azul-2);
+  color: var(--azul);
+}
+
+[data-pele="v5"] .bq-b i.emp {
+  background: var(--azul);
+  color: #fff;
+}
+
+[data-pele="v5"] .bq-leg {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--suave);
+}

@@ -8,7 +8,7 @@
  * dos loaders para o browser — o build não deixa mentir disto.
  */
 export const EDIFICIOS_COM_CENA = new Set(["fabrica", "financas", "banco", "mercearia",
-  "casa", "pastelaria", "quiosque", "escola"]);
+  "correios", "bomba", "segsocial", "casa", "pastelaria", "quiosque", "escola"]);
 
 /** Quem tem cena (o cartão deixa de dizer «em breve»). */
 export function temCena(id: string): boolean {

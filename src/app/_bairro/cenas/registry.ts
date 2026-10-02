@@ -9,9 +9,10 @@
  *
  * O mapa de ids é o do protótipo (`entrar()` no `mapa.tpl.html`):
  * fabrica → o salário; financas → as gavetas; banco → a Euribor;
- * mercearia → a inflação; casa → os meses de trabalho; pastelaria → o
- * café e o IVA; quiosque → o Jornal do Bairro; escola → ler gráficos.
- * Correios, bomba e segsocial são da P2b — chegam no merge dela.
+ * mercearia → a inflação; correios → a poupança; bomba → o litro;
+ * segsocial → os descontos (P2b); casa → os meses de trabalho;
+ * pastelaria → o café e o IVA; quiosque → o Jornal do Bairro;
+ * escola → ler gráficos (P2c). Os onze edifícios têm cena.
  *
  * Os dados de cada cena chegam do servidor por props (`CenasDados`);
  * nenhum componente daqui importa `data/*.json` (AGENTS.md). O JSX da
@@ -21,6 +22,7 @@
 import dynamic from "next/dynamic";
 import type { ComponentType, MutableRefObject, RefObject } from "react";
 import type { DadosBanco, DadosFabrica, DadosFinancas, DadosMercearia } from "./dados";
+import type { DadosBomba, DadosCorreios, DadosSegSocial } from "./dados-p2b";
 import type { DadosCasa, DadosEscola, DadosPastelaria, DadosQuiosque } from "./dados-p2c";
 
 import "./../bairro-cenas.css";
@@ -36,6 +38,9 @@ interface PropsComuns {
     | DadosFinancas
     | DadosBanco
     | DadosMercearia
+    | DadosCorreios
+    | DadosBomba
+    | DadosSegSocial
     | DadosCasa
     | DadosPastelaria
     | DadosQuiosque
@@ -49,6 +54,9 @@ const CenaFabrica = dynamic(() => import("./CenaFabrica"));
 const CenaFinancas = dynamic(() => import("./CenaFinancas"));
 const CenaBanco = dynamic(() => import("./CenaBanco"));
 const CenaMercearia = dynamic(() => import("./CenaMercearia"));
+const CenaCorreios = dynamic(() => import("./CenaCorreios"));
+const CenaBomba = dynamic(() => import("./CenaBomba"));
+const CenaSegSocial = dynamic(() => import("./CenaSegSocial"));
 const CenaCasa = dynamic(() => import("./CenaCasa"));
 const CenaPastelaria = dynamic(() => import("./CenaPastelaria"));
 const CenaQuiosque = dynamic(() => import("./CenaQuiosque"));
@@ -60,6 +68,9 @@ export const CENAS: Record<string, ComponentType<PropsComuns>> = {
   financas: CenaFinancas as ComponentType<PropsComuns>,
   banco: CenaBanco as ComponentType<PropsComuns>,
   mercearia: CenaMercearia as ComponentType<PropsComuns>,
+  correios: CenaCorreios as ComponentType<PropsComuns>,
+  bomba: CenaBomba as ComponentType<PropsComuns>,
+  segsocial: CenaSegSocial as ComponentType<PropsComuns>,
   casa: CenaCasa as ComponentType<PropsComuns>,
   pastelaria: CenaPastelaria as ComponentType<PropsComuns>,
   quiosque: CenaQuiosque as ComponentType<PropsComuns>,
