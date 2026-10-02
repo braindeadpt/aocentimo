@@ -1,6 +1,6 @@
 {
   "vigencia": "2026-09-28",
-  "fonte": "Portaria n.º 437-B/2026/1, de 25 de setembro (taxas efetivas com desconto extraordinário); taxa de carbono e valores de referência via impostos-combustiveis/AT",
+  "fonte": "Portaria n.º 437-B/2026/1, de 25 de setembro (taxas efetivas com desconto extraordinário); taxa de carbono: Ofício-Circulado AT n.º 25086/2025, em vigor 01-01-2026 — adicionamento 70,0405 €/tCO2 = 15,911 cênt/L na gasolina e 17,334 cênt/L no gasóleo (Quadro E-2 do estudo ERSE «Formação e evolução dos preços dos combustíveis», jul 2026; acesso 2026-10-02)",
   "fonteUrl": "https://diariodarepublica.pt/dr/detalhe/portaria/437-b-2026-1174266088",
   "nota": "O ISP é revisto por portaria, por vezes semanalmente (mecanismo de desconto extraordinário em vigor desde 2026). Valores indicativos — confirmar a portaria da semana. Cadeia recente: 270-A jun → 294-A jul → 345-C 14 ago → 372-A 21 ago → 432-A 18 set → 437-B 25 set.",
   "iva": "Taxa normal — ver data/fiscal/iva.json",
