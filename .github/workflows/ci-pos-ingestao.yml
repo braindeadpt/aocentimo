@@ -170,8 +170,10 @@ jobs:
             }
             const unit = ${{ toJSON(steps.falhas.outputs.linhas) }}.trim();
             const ingestaoUrl = context.payload.workflow_run?.html_url ?? "—";
+            const ramo = context.payload.workflow_run?.head_branch
+              ?? context.ref.replace(/^refs\/heads\//, "");
             const corpo = [
-              `A verificação pós-ingestão falhou sobre o main (${context.sha.slice(0, 7)}).`,
+              `A verificação pós-ingestão falhou sobre o ramo \`${ramo}\` (${context.sha.slice(0, 7)}).`,
               ``,
               `Ingestão: ${process.env.NOME_INGESTAO} (acabou com sucesso e fez commit).`,
               `Run da ingestão: ${ingestaoUrl}.`,
@@ -201,7 +203,7 @@ jobs:
             for (const i of abertas.filter((i) => i.title.startsWith("CI vermelho depois da ingestão"))) {
               await github.rest.issues.createComment({
                 owner, repo, issue_number: i.number,
-                body: "A verificação pós-ingestão voltou a passar sobre o main — fecho automático.",
+                body: "A verificação pós-ingestão voltou a passar — fecho automático.",
               });
               await github.rest.issues.update({ owner, repo, issue_number: i.number, state: "closed" });
             }
