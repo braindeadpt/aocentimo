@@ -81,11 +81,21 @@ describe("compararPortarias — a ordem da numeração do DR", () => {
 });
 
 describe("novasDesde — o despertador", () => {
-  it("contra a 372-A do isp.json, a fixture traz a 432-A e a 437-B como novas", () => {
+  it("as novas são sempre posteriores à citada no isp.json — seja ela qual for hoje", () => {
+    // Lição do #31 e do DGEG no #36, aprendida aqui à força: a PR #43
+    // atualizou o isp.json para a 437-B com o teste ainda a fixar a 372-A.
+    // A base lê-se dos dados, nunca se fixa no teste.
     const base = extrairPortariaIspJson(ISP_JSON);
-    expect(base).toBe("372-A/2026/1");
+    expect(base).not.toBeNull();
     const { portarias } = parseRssPortarias(FIXTURE);
-    const novas = novasDesde(portarias, base).map((n) => n.numero);
+    for (const n of novasDesde(portarias, base)) {
+      expect(compararPortarias(n.numero, base!)).toBeGreaterThan(0);
+    }
+  });
+
+  it("caso histórico fixo: contra a 372-A, a fixture traz a 432-A e a 437-B", () => {
+    const { portarias } = parseRssPortarias(FIXTURE);
+    const novas = novasDesde(portarias, "372-A/2026/1").map((n) => n.numero);
     expect(novas).toContain("432-A/2026/1");
     expect(novas).toContain("437-B/2026/1");
     expect(novas).not.toContain("372-A/2026/1");

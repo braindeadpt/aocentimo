@@ -1,5 +1,5 @@
 {
-  "consultadoEm": "2026-10-02T17:49:47.148Z",
+  "consultadoEm": "2026-10-02T17:53:24.862Z",
   "fonteUrl": "https://news.google.com/rss/search?q=ISP+site%3Adiariodarepublica.pt&hl=pt-PT&gl=PT&ceid=PT%3Apt",
   "nota": "Feed RSS do Google Notícias restrito ao DR; o DR não é legível por máquina (só shell JS).",
   "ultimaPortariaFeed": {
@@ -10,8 +10,8 @@
   },
   "ultimaReportada": "437-B/2026/1",
   "ispJson": {
-    "vigencia": "2026-08-24",
-    "portaria": "372-A/2026/1"
+    "vigencia": "2026-09-28",
+    "portaria": "437-B/2026/1"
   },
   "aConferir": [
     {
@@ -240,30 +240,5 @@
     }
   ],
   "accao": "Há novas: abrir a issue, confirmar cada portaria no DR, ler o art. 2.º e atualizar data/fiscal/isp.json (vigencia, fonte, fonteUrl, ispELitro, nota) com os testes. O alarme nunca é dado.",
-  "novas": [
-    {
-      "numero": "404-A/2026/1",
-      "data": "2026-09-04",
-      "titulo": "Portaria n.º 404-A/2026/1, de 4 de setembro - Diário da República",
-      "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1Oc1kxSXgwa3dkTVRKWFNWX3dUSmZUZWRXUE9pOU5oZE1jV2VWMjUzRVJYcXM2cW9DMy1RVC1YUHA0STg2OXhZTm0ydEFpVE10WVF6am9xWDFtNmR4enBGd1Q3alB2SlByRF8tNGpfcXVCZzVHZmVsQVV3?oc=5"
-    },
-    {
-      "numero": "430-A/2026/1",
-      "data": "2026-09-11",
-      "titulo": "Portaria n.º 430-A/2026/1, de 11 de setembro - Diário da República",
-      "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE53dTJjRWtpbEtkUGR6SHc3NUZIQlF3ZXBRVnhjXzEtM3hCX2lUOGVJaTBjNTRSb2IwZlZmdzB3QXZLM1JNQ0hrdGJ0akhqSjlEb2RXUlRORVU0elF3NTBLakRBdlZyODhjSTZCNGRkSnlxZlp2OGFvTmp3?oc=5"
-    },
-    {
-      "numero": "432-A/2026/1",
-      "data": "2026-09-22",
-      "titulo": "Análise Jurídica - Portaria n.º 432-A/2026/1 - Diário da República",
-      "link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQRDBvMDNNNnpzSlczT3ZmcVBpM2JqRTAwWHJ6MWJIdU1aVmtwSnREdVlZR2tGVjdPNERPRWM1N0lNWXFWUGpGeklSWXlodmdRMXVvLURxX0x5XzIzcUZzYW1UR09PQ0hqVFdSLTRmTGNtTHpzbEtsa3lmaExkMG4yaXh5ZERyYU1BcGJHM0hRVWdGSlMtTG02ZjRvZjJaWlU?oc=5"
-    },
-    {
-      "numero": "437-B/2026/1",
-      "data": "2026-09-25",
-      "titulo": "Portaria n.º 437-B/2026/1, de 25 de setembro - Diário da República",
-      "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1xckFrVzJJbWVuWUdnRG5ocHhCOXcwaEttVlptTWZGUXZfTmdvRkZ3R0wxSWRoMGJWQzRXR3RrTmNLSDJER1NZSW5kckVZbkpSZDhlMHVKeEQtR0Q4eGNDb01pb1lnejA3MlFtNTJybUgxUzluSU50bE53?oc=5"
-    }
-  ]
+  "novas": []
 }
