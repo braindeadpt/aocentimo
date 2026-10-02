@@ -1,5 +1,5 @@
-import { dadosBairro } from "@/lib/bairro/dados";
-import { dadosCenas } from "./cenas/dados";
+import { dadosBairro, linhaSalario } from "@/lib/bairro/dados";
+import { fmtEUR0 } from "@/lib/format";
 import { temCena } from "./cenas/com-cena";
 import { pinosDaCamera } from "@/lib/bairro/mundo";
 import { Pcom } from "@/lib/bairro/iso";
@@ -13,6 +13,7 @@ import {
 import { m, t } from "@/lib/messages";
 import { SITE_URL } from "@/lib/site";
 import { Bairro, type Hora, type InfoEdificio } from "./Bairro";
+import { Cartas, type CartaDados, type CartasComum } from "./Cartas";
 
 /**
  * A home do bairro (P1-1). O SERVIDOR monta tudo:
@@ -28,10 +29,9 @@ import { Bairro, type Hora, type InfoEdificio } from "./Bairro";
  */
 export default function HomeBairro() {
   const d = dadosBairro();
-  // os dados das cenas montam-se no servidor e viajam numa prop — os
-  // JSON de data/ nunca chegam ao cliente (AGENTS.md), as séries viajam
-  // compactas (o cliente reconstrói os meses)
-  const cenas = dadosCenas();
+  // os dados das cenas já NÃO viajam na prop: são ficheiros estáticos
+  // public/cenas/<id>.json escritos no derive pela mesma dadosCenas(),
+  // e o browser só os pede ao entrar no edifício (P4 — dieta do payload)
   const Pt = Pcom(TERRENO);
 
   
@@ -63,6 +63,13 @@ export default function HomeBairro() {
       fonte: "",
     })
   );
+
+  // as sete cartas do elenco (P1-4) — montadas AQUI, no servidor, mas
+  // só o texto: a figura desenha-se no cliente com `pessoa(ELENCO[·])`
+  // (não viaja no payload RSC). Os números saem de data/derived via
+  // linhaSalario() já formatados — o «1 500 € brutos viram 1 167 €» da
+  // Inês nunca se escreve à mão
+  const { cartas, comum: cartasComum } = cartasDoElenco(linhaSalario());
 
   const ld = {
     "@context": "https://schema.org",
@@ -101,7 +108,6 @@ export default function HomeBairro() {
 
       <Bairro
         marcadores={d.marcadores}
-        cenas={cenas}
         edificios={edificios}
         entrada={{ entrar: m.bairro.cartao.entrar, breve: m.bairro.cartao.breve }}
         horas={[m.bairro.hora.dia, m.bairro.hora.tarde, m.bairro.hora.noite]}
@@ -130,7 +136,7 @@ export default function HomeBairro() {
           <span className="b-etiqueta">{m.bairro.elenco.etiqueta}</span>
           <h2 id="tElenco">{m.bairro.elenco.h2}</h2>
           <p className="b-lead">{m.bairro.elenco.lead}</p>
-          {/* as sete cartas entram em P1-4 */}
+          <Cartas cartas={cartas} comum={cartasComum} />
         </section>
         <p className="b-notas">
           <b>{m.bairro.elenco.notas}</b> {d.fontes.join(" · ")}
@@ -168,4 +174,53 @@ function extraDe(
     inflacao: mc.inflacao,
     desemprego: mc.desemprego,
   });
+}
+
+/* ————————————————————— as sete cartas (P1-4) ————————————————————— */
+
+/** A ordem e as cores do `CARTAS` do mapa.tpl.html — iguais às do
+    protótipo, que é o contrato visual. */
+const ORDEM_CARTAS = [
+  "ines",
+  "diana",
+  "pedro",
+  "manuel",
+  "arminda",
+  "goncalo",
+  "rui",
+] as const;
+
+/**
+ * Monta as sete cartas no servidor — só texto e a chave; a figura é
+ * desenhada no cliente pelo `pessoa(ELENCO[·])` do kit (o SVG já não
+ * viaja duplicado no payload RSC). O número da Inês vem de
+ * `linhaSalario()` (data/derived, via fmtEUR0): se a linha faltar sai
+ * «—», nunca um número escrito à mão. O que se repete nas sete
+ * (o molde do «Olá!», o «Em breve», o «Fechar») vai uma vez no
+ * `comum`; o painel monta-se no cliente sem a fala viajar pronta —
+ * é sempre texto de pt.json, seguro para dangerouslySetInnerHTML.
+ */
+function cartasDoElenco(
+  ref: ReturnType<typeof linhaSalario>
+): { cartas: CartaDados[]; comum: CartasComum } {
+  const el = m.bairro.elenco;
+  return {
+    // tuplos: [chave, nome, papel, olá, perfil, aprende] — ver CartaDados
+    cartas: ORDEM_CARTAS.map((k) => {
+      const c = el.cartas[k];
+      return [
+        k,
+        c.nome,
+        c.papel,
+        c.ola,
+        c.perfil,
+        t(c.aprende, {
+          bruto: fmtEUR0(ref?.bruto ?? NaN),
+          liquido: fmtEUR0(ref?.liquido ?? NaN),
+        }),
+      ];
+    }),
+    // [molde do Olá, emBreve, segueDinheiro, fechar] — ver CartasComum
+    comum: [el.ola, el.emBreve, el.segueDinheiro, m.bairro.breve.fechar],
+  };
 }

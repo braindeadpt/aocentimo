@@ -466,7 +466,61 @@
       "etiqueta": "Quem vive no bairro",
       "h2": "Escolhe a tua personagem.",
       "lead": "O mesmo trabalho, pago de maneiras diferentes: por conta de outrem, na função pública, a recibos verdes ou com empresa própria. Cada pessoa do bairro mostra um caminho diferente do dinheiro. Toca numa para a encontrares no mapa.",
-      "notas": "De onde vêm os números do bairro:"
+      "notas": "De onde vêm os números do bairro:",
+      "ola": "Olá! Sou {quem}.",
+      "emBreve": "Em breve",
+      "segueDinheiro": "vais poder seguir o meu dinheiro pelo bairro.",
+      "cartas": {
+        "ines": {
+          "nome": "Inês",
+          "papel": "Operária da fábrica",
+          "perfil": "Conta de outrem · setor privado",
+          "ola": "a Inês",
+          "aprende": "Porque é que {bruto} brutos viram {liquido}."
+        },
+        "diana": {
+          "nome": "Diana",
+          "papel": "Professora",
+          "perfil": "Função pública",
+          "ola": "a Diana",
+          "aprende": "Descontos diferentes para o mesmo salário."
+        },
+        "pedro": {
+          "nome": "Pedro",
+          "papel": "Freelancer",
+          "perfil": "Independente · recibos verdes",
+          "ola": "o Pedro",
+          "aprende": "Segurança Social trimestral e IRS da categoria B."
+        },
+        "manuel": {
+          "nome": "Sr. Manuel",
+          "papel": "Dono da mercearia",
+          "perfil": "Pequeno empresário",
+          "ola": "o Sr. Manuel",
+          "aprende": "O IVA que cobra, a TSU que paga, o lucro da empresa."
+        },
+        "arminda": {
+          "nome": "Dona Arminda",
+          "papel": "Reformada",
+          "perfil": "Pensão e poupança",
+          "ola": "a Dona Arminda",
+          "aprende": "Quanto rende a poupança e o IRS sobre a pensão."
+        },
+        "goncalo": {
+          "nome": "Gonçalo",
+          "papel": "Estudante, 16 anos",
+          "perfil": "Mesada e primeiro trabalho",
+          "ola": "o Gonçalo",
+          "aprende": "O primeiro recibo, o IRS Jovem, a primeira conta."
+        },
+        "rui": {
+          "nome": "Rui e Marta",
+          "papel": "Casal com crédito",
+          "perfil": "Crédito à habitação",
+          "ola": "o Rui, e esta é a Marta",
+          "aprende": "A prestação, a Euribor e quanto do salário ela come."
+        }
+      }
     },
     "edificios": {
       "fabrica": {
