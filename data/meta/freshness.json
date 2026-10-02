@@ -1,5 +1,5 @@
 {
-  "verificadoEm": "2026-10-01T12:45:38.650Z",
+  "verificadoEm": "2026-10-02T12:09:38.435Z",
   "estado": "ok",
   "series": [
     {
@@ -275,8 +275,8 @@
     {
       "id": "pmd-gasoleo-diario",
       "fonte": "DGEG — Preços dos Combustíveis",
-      "serieAte": "2026-09-30",
-      "esperadoAte": "2026-09-28",
+      "serieAte": "2026-10-01",
+      "esperadoAte": "2026-09-29",
       "frequencia": "diaria",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -284,8 +284,8 @@
     {
       "id": "pmd-gasolina95-diario",
       "fonte": "DGEG — Preços dos Combustíveis",
-      "serieAte": "2026-09-30",
-      "esperadoAte": "2026-09-28",
+      "serieAte": "2026-10-01",
+      "esperadoAte": "2026-09-29",
       "frequencia": "diaria",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -293,8 +293,8 @@
     {
       "id": "pmd-gpl-diario",
       "fonte": "DGEG — Preços dos Combustíveis",
-      "serieAte": "2026-09-30",
-      "esperadoAte": "2026-09-28",
+      "serieAte": "2026-10-01",
+      "esperadoAte": "2026-09-29",
       "frequencia": "diaria",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -455,7 +455,7 @@
     {
       "id": "taeg-pessoal-mensal",
       "fonte": "Banco de Portugal — BPstat",
-      "serieAte": "2026-07",
+      "serieAte": "2026-08",
       "esperadoAte": "2026-07-31",
       "frequencia": "mensal",
       "estado": "em-dia",
@@ -464,7 +464,7 @@
     {
       "id": "taeg-pessoal-educacao-saude-energia-mensal",
       "fonte": "Banco de Portugal — BPstat",
-      "serieAte": "2026-07",
+      "serieAte": "2026-08",
       "esperadoAte": "2026-07-31",
       "frequencia": "mensal",
       "estado": "em-dia",
@@ -473,7 +473,7 @@
     {
       "id": "taeg-pessoal-outros-mensal",
       "fonte": "Banco de Portugal — BPstat",
-      "serieAte": "2026-07",
+      "serieAte": "2026-08",
       "esperadoAte": "2026-07-31",
       "frequencia": "mensal",
       "estado": "em-dia",
@@ -482,7 +482,7 @@
     {
       "id": "taeg-automovel-mensal",
       "fonte": "Banco de Portugal — BPstat",
-      "serieAte": "2026-07",
+      "serieAte": "2026-08",
       "esperadoAte": "2026-07-31",
       "frequencia": "mensal",
       "estado": "em-dia",
@@ -491,7 +491,7 @@
     {
       "id": "taeg-automovel-novo-mensal",
       "fonte": "Banco de Portugal — BPstat",
-      "serieAte": "2026-07",
+      "serieAte": "2026-08",
       "esperadoAte": "2026-07-31",
       "frequencia": "mensal",
       "estado": "em-dia",
@@ -500,7 +500,7 @@
     {
       "id": "taeg-automovel-usado-mensal",
       "fonte": "Banco de Portugal — BPstat",
-      "serieAte": "2026-07",
+      "serieAte": "2026-08",
       "esperadoAte": "2026-07-31",
       "frequencia": "mensal",
       "estado": "em-dia",
@@ -509,7 +509,7 @@
     {
       "id": "taeg-automovel-ald-mensal",
       "fonte": "Banco de Portugal — BPstat",
-      "serieAte": "2026-07",
+      "serieAte": "2026-08",
       "esperadoAte": "2026-07-31",
       "frequencia": "mensal",
       "estado": "em-dia",
@@ -518,7 +518,7 @@
     {
       "id": "taeg-renovavel-mensal",
       "fonte": "Banco de Portugal — BPstat",
-      "serieAte": "2026-07",
+      "serieAte": "2026-08",
       "esperadoAte": "2026-07-31",
       "frequencia": "mensal",
       "estado": "em-dia",
