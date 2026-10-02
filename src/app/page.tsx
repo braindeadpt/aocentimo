@@ -13,5 +13,11 @@ import HomeBairro from "./_bairro/HomeBairro";
  * `<Bairro>` por props. Ver `_bairro/HomeBairro.tsx`.
  */
 export default function Home() {
-  return <HomeBairro />;
+  return (
+    <>
+      <HomeBairro />
+      {/* PROVA DESCARTÁVEL do passo audit no CI: âncora sem alvo */}
+      <a href="#naoexiste" aria-hidden="true" tabIndex={-1} style={{ display: "none" }}>prova</a>
+    </>
+  );
 }
