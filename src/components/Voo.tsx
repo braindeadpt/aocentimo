@@ -45,6 +45,46 @@ export const NOME_VOO = "pg-voo";
    TituloPagina (o webpack deduplica — é a mesma instância) ——— */
 let vooAlvo: string | null = null;
 
+/**
+ * Prazo de segurança do selo, em ms. NÃO é o prazo do voo: é a rede
+ * que apaga um selo de um clique que nunca navegou (link interception,
+ * falha de rede), para que não contamine uma navegação normal mais
+ * tarde. O selo tem de sobreviver do clique até ao commit da página de
+ * destino — e esse commit pode demorar: medido a 8 workers, a
+ * navegação /estilo → /salario levou até 12,7 s (mediana 0,8 s). Com o
+ * prazo anterior de 4 s o selo morria a meio nessas navegações lentas e
+ * o morph não acontecia — falha de produto, não de teste.
+ * O selo normal é apagado pelo <VooLimpeza> logo após o commit.
+ */
+export const JANELA_SELO_MS = 30_000;
+
+/** Sela o voo para `rota` (já normalizada). */
+export function selar(rota: string): void {
+  vooAlvo = rota;
+  // salvaguarda: se a navegação falhar ou demorar demais, o selo não
+  // pode contaminar uma navegação normal posterior
+  setTimeout(() => limparSelo(rota), JANELA_SELO_MS);
+}
+
+/** Apaga o selo, mas só se ainda for o desta rota (um clique novo
+    refez o selo e não pode ser limpo pelo prazo do clique antigo). */
+export function limparSelo(rota: string): void {
+  if (vooAlvo === rota) vooAlvo = null;
+}
+
+/** O <TituloPagina> pergunta se esta rota está a aterrar um voo.
+    Consumir devolve a verdade e NUNCA limpa: a limpeza é do
+    <VooLimpeza>, depois do commit (limpar aqui mataria o próprio voo
+    quando outro <TituloPagina> monta mais tarde). */
+export function seloPara(rota: string): boolean {
+  return vooAlvo !== null && vooAlvo === rota;
+}
+
+/** Só para os testes: o estado bruto do marcador. */
+export function lerSelo(): string | null {
+  return vooAlvo;
+}
+
 /** a rota sem barra final — "/salario/" ≡ "/salario" */
 function norm(rota: string): string {
   const s = rota.split(/[?#]/, 1)[0].replace(/\/+$/, "");
@@ -77,14 +117,9 @@ export function LinkVoo({
           e.defaultPrevented
         )
           return;
-        vooAlvo = norm(href);
+        selar(norm(href));
         // a partida: o link ganha o nome para o fotograma velho
         e.currentTarget.style.viewTransitionName = NOME_VOO;
-        // salvaguarda: se a navegação falhar ou demorar demais, o
-        // selo não pode contaminar uma navegação normal posterior
-        window.setTimeout(() => {
-          if (vooAlvo === norm(href)) vooAlvo = null;
-        }, 4000);
       }}
     >
       {children}
@@ -111,9 +146,7 @@ export function TituloPagina({
 }) {
   // o initializer corre na montagem — dentro da transição, antes da
   // limpeza pós-commit; no SSR e na hidratação o marcador não existe
-  const [voo] = useState(
-    () => vooAlvo !== null && vooAlvo === norm(rota)
-  );
+  const [voo] = useState(() => seloPara(norm(rota)));
   return (
     <h1
       id={id}

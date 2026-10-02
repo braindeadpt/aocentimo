@@ -11,29 +11,84 @@ import { test, expect } from "@playwright/test";
 //      e com o separador escondido (document.hidden + visibilitychange)
 //      — nenhum fotograma fora da vista.
 
-type Janela = Window & { __vt?: Set<string> };
+type Janela = Window & {
+  __vt?: Set<string>;
+  __vtParar?: () => void;
+  __vtAmostras?: number;
+};
 
-/** instala um colector de pseudo-elementos de view-transition —
-    amostra getAnimations a cada frame durante ~3,2 s */
+/** Os três nomes que provam que a pergunta voou (o grupo partilhado,
+    a imagem velha e a nova). */
+const VOO = [
+  "::view-transition-group(pg-voo)",
+  "::view-transition-old(pg-voo)",
+  "::view-transition-new(pg-voo)",
+];
+
+/**(instala um colector de pseudo-elementos de view-transition.
+    Vive até ser parado à mão (`window.__vtParar()`), não 3,2 s: sob
+    carga a navegação pode demorar 6 s e o colector expirava ANTES da
+    transição começar — o teste lia um array vazio e acusava a animação
+    de estar partida, quando o defeito era o relógio do teste. A tampa
+    de segurança de 60 s evita um colector eterno. */
 const COLETOR_VT = `(() => {
   window.__vt = new Set();
-  const fim = performance.now() + 3200;
+  window.__vtAmostras = 0;
+  const fim = performance.now() + 60000;
+  let vivo = true;
+  window.__vtParar = () => { vivo = false; };
   const colhe = () => {
+    window.__vtAmostras++;
     for (const a of document.getAnimations({ subtree: true })) {
       const pe = a.effect && a.effect.pseudoElement;
       if (pe) window.__vt.add(pe);
     }
   };
+  // detecção DETERMINÍSTICA: no instante em que o browser cria as
+  // fotografias da transição (o updateCallbackDone), os pseudo-
+  // elementos do fotograma NOVO existem com certeza. A amostragem por
+  // frame é a rede de segurança, não o mecanismo principal — sob carga
+  // pode falhar uma janela e perder o voo inteiro.
+  const dv = document;
+  const orig = dv.startViewTransition;
+  dv.startViewTransition = function (cb) {
+    const t = orig.call(document, cb);
+    t.updateCallbackDone.then(colhe, colhe);
+    return t;
+  };
   const loop = () => {
+    if (!vivo) return;
     colhe();
     if (performance.now() < fim) requestAnimationFrame(loop);
   };
   requestAnimationFrame(loop);
   const t = setInterval(() => {
-    colhe();
-    if (performance.now() >= fim) clearInterval(t);
+    if (!vivo || performance.now() >= fim) { vivo = false; clearInterval(t); }
+    else colhe();
   }, 20);
 })()`;
+
+/** Lê o que o colector viu. */
+const vistosVt = (page: import("@playwright/test").Page) =>
+  page.evaluate(() => [...((window as Janela).__vt ?? [])] as string[]);
+
+/** Para o colector (para a página não ficar a amostrar até ao fim). */
+async function pararColetor(page: import("@playwright/test").Page) {
+  await page.evaluate(() => (window as Janela).__vtParar?.());
+}
+
+/** Quantos dos três nomes do voo já apareceram. */
+async function vistosDoVoo(page: import("@playwright/test").Page) {
+  const v = await vistosVt(page);
+  return VOO.filter((n) => v.includes(n)).length;
+}
+
+/** Quantas rondas o colector já fez — prova que esteve VIVO durante a
+    janela observada (numa asserção negativa, «não vi nada» só quer dizer
+    algo se o olhar esteve aberto). */
+async function amostrasDoColetor(page: import("@playwright/test").Page) {
+  return page.evaluate(() => (window as Janela).__vtAmostras ?? 0);
+}
 
 test("a pergunta seguinte morfa no h1 da página de destino", async ({
   page,
@@ -46,13 +101,21 @@ test("a pergunta seguinte morfa no h1 da página de destino", async ({
   await page.evaluate(COLETOR_VT);
   await lnk.click();
   await page.waitForURL("**/salario**");
-  await page.waitForTimeout(1800);
 
-  const vistos = await page.evaluate(
-    () => [...((window as Janela).__vt ?? [])] as string[]
-  );
   // a pergunta voou: o grupo partilhado existiu com velho e novo
   // (1D-02: o old corre pg-voo-fica — viaja opaco até ao h1)
+  // espera-se pelo ESTADO (os três nomes vistos), não por 1,8 s de
+  // relógio: sob carga a navegação passou dos 3,2 s do colector e o
+  // voo acontecia depois de o teste já ter lido
+  await expect
+    .poll(() => vistosDoVoo(page), {
+      timeout: 20_000,
+      message:
+        "a pergunta não voou: nenhum dos pseudo-elementos pg-voo apareceu",
+    })
+    .toBe(3);
+  await pararColetor(page);
+  const vistos = await vistosVt(page);
   expect(vistos).toContain("::view-transition-group(pg-voo)");
   expect(vistos).toContain("::view-transition-old(pg-voo)");
   expect(vistos).toContain("::view-transition-new(pg-voo)");
@@ -72,11 +135,25 @@ test("outros links para a mesma rota não disparam o voo", async ({
   await page.evaluate(COLETOR_VT);
   await page.locator('nav a[href="/salario"]').first().click();
   await page.waitForURL("**/salario**");
-  await page.waitForTimeout(1600);
 
-  const vistos = await page.evaluate(
-    () => [...((window as Janela).__vt ?? [])] as string[]
-  );
+  // asserção NEGATIVA: espera-se que o colector tenha observado a janela
+  // toda antes de se concluir que não houve voo — um «não vi nada» lido
+  // por um colector já expirado não prova nada. Conta-se as rondas de
+  // observação (não milissegundos): sob carga a página observa menos e a
+  // espera alonga-se sozinha.
+  const antes = await amostrasDoColetor(page);
+  await expect
+    .poll(
+      async () => (await amostrasDoColetor(page)) - antes,
+      {
+        timeout: 20_000,
+        message: "o colector não observou a navegação — a negativa não prova nada",
+      }
+    )
+    .toBeGreaterThanOrEqual(120);
+  await pararColetor(page);
+
+  const vistos = await vistosVt(page);
   expect(
     vistos.filter((p) => p.includes("pg-voo")),
     "navegação normal activou o nome do voo"
