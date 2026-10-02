@@ -13,8 +13,11 @@
  * da câmara viajam por tabela. Uma cena a entrar no flight com séries
  * verbosas era o peso do mapa a voltar pela janela do lado.
  *
- * Este módulo corre SÓ no servidor (`HomeBairro` manda o resultado por
- * props). Os JSON de `data/` nunca entram no cliente — AGENTS.md.
+ * Este módulo corre SÓ fora do browser: o `scripts/derive/cenas.ts`
+ * chama-o e grava o resultado em `public/cenas/<id>.json` — o cliente
+ * faz `fetch` desse ficheiro ao abrir a cena (P4 — antes viajava todo
+ * numa prop do `<Bairro>` e a home pagava-o sem abrir nada). Os JSON
+ * de `data/` nunca entram no cliente — AGENTS.md.
  */
 import { loadFonte, loadSerie } from "@/lib/data";
 import cenariosJson from "@data/derived/cenarios-salario.json";
@@ -24,6 +27,16 @@ import ssJson from "@data/fiscal/ss.json";
 import { P0 } from "@/lib/bairro/iso";
 import { dadosBomba, dadosCorreios, dadosSegSocial } from "./dados-p2b";
 import type { DadosBomba, DadosCorreios, DadosSegSocial } from "./dados-p2b";
+import {
+  dadosCasaP2c,
+  dadosEscolaP2c,
+  dadosPastelariaP2c,
+  dadosQuiosqueP2c,
+  type DadosCasa,
+  type DadosEscola,
+  type DadosPastelaria,
+  type DadosQuiosque,
+} from "./dados-p2c";
 
 /** Um ponto de uma série temporal (o `t` é `AAAA-MM`). */
 export interface Ponto {
@@ -336,6 +349,10 @@ export interface CenasDados {
   correios: DadosCorreios;
   bomba: DadosBomba;
   segsocial: DadosSegSocial;
+  casa: DadosCasa;
+  pastelaria: DadosPastelaria;
+  quiosque: DadosQuiosque;
+  escola: DadosEscola;
 }
 
 export function dadosCenas(): CenasDados {
@@ -347,5 +364,9 @@ export function dadosCenas(): CenasDados {
     correios: dadosCorreios(),
     bomba: dadosBomba(),
     segsocial: dadosSegSocial(),
+    casa: dadosCasaP2c(),
+    pastelaria: dadosPastelariaP2c(),
+    quiosque: dadosQuiosqueP2c(),
+    escola: dadosEscolaP2c(),
   };
 }

@@ -15,6 +15,12 @@
 export const fechar = "Voltar ao bairro";
 export const saltar = "Saltar para o fim";
 
+/* ————— o carregamento (P4 — os dados chegam por fetch ao abrir) ————— */
+
+export const aCarregar = "A ir buscar os números…";
+export const falhaAoCarregar =
+  "Os números desta cena não chegaram. Fecha e tenta outra vez.";
+
 /* ————— Finanças · o IRS em gavetas ————— */
 
 export const finQuem = "Finanças · balcão A · o IRS em gavetas";

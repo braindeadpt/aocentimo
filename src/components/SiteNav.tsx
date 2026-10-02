@@ -141,7 +141,7 @@ export function SiteNav() {
     <ViewTransition name="nav-ind" share="auto" default="none">
       <span
         aria-hidden
-        className="absolute inset-x-0 -bottom-1 h-[2px] bg-mark"
+        className="nav-ind-v5 absolute inset-x-2 -bottom-1.5 h-[3px] rounded-full"
       />
     </ViewTransition>
   );
@@ -149,7 +149,7 @@ export function SiteNav() {
   return (
     <>
       {/* desktop — grupos com menu ao passar/focar (CSS), JS só p/ aria-expanded */}
-      <nav aria-label="Principal" className="hidden items-center gap-5 lg:flex">
+      <nav aria-label="Principal" className="hidden items-center gap-3 lg:flex">
         {GRUPOS.map((g) => (
           <div
             key={g.id}
@@ -177,27 +177,20 @@ export function SiteNav() {
               type="button"
               aria-haspopup="true"
               aria-expanded={aberto === g.id}
-              className={`kicker relative cursor-pointer whitespace-nowrap transition-colors ${
-                grupoAtivo(g.itens)
-                  ? "text-ink"
-                  : "text-ink2 hover:text-ink"
+              className={`pil-nav relative${
+                grupoAtivo(g.itens) ? " ligado" : ""
               }`}
             >
               {g.rotulo}
               {grupoAtivo(g.itens) && indicador}
             </button>
-            <div className="absolute left-0 top-full z-50 hidden pt-1.5 group-focus-within:block group-hover:block">
-              <div className="flex min-w-44 flex-col border border-ink bg-overlay shadow-overlay">
+            <div className="absolute left-0 top-full z-50 hidden pt-2 group-focus-within:block group-hover:block">
+              <div className="nav-menu-v5">
                 {g.itens.map(([key, href]) => (
                   <Link
                     key={href}
                     href={href}
                     aria-current={ativo(href) ? "page" : undefined}
-                    className={`border-b border-line px-4 py-2.5 text-corpo-sm last:border-0 hover:bg-floor ${
-                      ativo(href)
-                        ? "text-ink underline decoration-mark underline-offset-4"
-                        : "text-ink2"
-                    }`}
                   >
                     {m.nav[key]}
                   </Link>
@@ -209,9 +202,7 @@ export function SiteNav() {
         <Link
           href="/aprender"
           aria-current={ativo("/aprender") ? "page" : undefined}
-          className={`kicker relative whitespace-nowrap transition-colors ${
-            ativo("/aprender") ? "text-ink" : "text-ink2 hover:text-ink"
-          }`}
+          className="pil-nav relative"
         >
           {m.nav.aprender}
           {ativo("/aprender") && indicador}
@@ -221,7 +212,7 @@ export function SiteNav() {
       {/* mobile — «Índice» abre a folha inferior */}
       <div className="flex items-center gap-3 lg:hidden">
         <details ref={detalhes}>
-          <summary className="kicker cursor-pointer list-none text-ink2">
+          <summary className="pil-nav list-none">
             {m.nav.index}
           </summary>
           <div aria-hidden className="fixed inset-0 z-40 bg-ink/25" />
@@ -230,32 +221,28 @@ export function SiteNav() {
             aria-label="Principal"
             role="dialog"
             aria-modal="true"
-            className="nav-sheet fixed inset-x-0 bottom-0 z-50 max-h-[80vh] overflow-y-auto border-t-2 border-ink bg-overlay shadow-overlay"
+            className="nav-sheet nav-sheet-v5 fixed inset-x-0 bottom-0 z-50 max-h-[80vh] overflow-y-auto"
           >
             <div className="flex items-baseline justify-between px-5 pb-1 pt-4">
-              <p className="kicker">{m.nav.index}</p>
+              <p className="folha-titulo">{m.nav.index}</p>
               <button
                 type="button"
-                className="kicker-xs cursor-pointer text-ink2 underline decoration-line2 underline-offset-4 hover:text-ink hover:decoration-mark"
+                className="cursor-pointer underline underline-offset-4"
                 onClick={() => detalhes.current?.removeAttribute("open")}
               >
                 {m.nav.fechar}
               </button>
             </div>
             {GRUPOS.map((g) => (
-              <div key={g.id} className="border-t border-line px-5 py-3">
-                <p className="kicker-xs mb-1 text-muted">{g.rotulo}</p>
+              <div key={g.id} className="folha-grupo px-5 py-3">
+                <p className="folha-titulo mb-1">{g.rotulo}</p>
                 <div className="flex flex-col">
                   {g.itens.map(([key, href]) => (
                     <Link
                       key={href}
                       href={href}
                       aria-current={ativo(href) ? "page" : undefined}
-                      className={`py-2 text-corpo-sm ${
-                        ativo(href)
-                          ? "text-ink underline decoration-mark underline-offset-4"
-                          : "text-ink2"
-                      }`}
+                      className="py-2"
                     >
                       {m.nav[key]}
                     </Link>
@@ -263,15 +250,11 @@ export function SiteNav() {
                 </div>
               </div>
             ))}
-            <div className="border-t-2 border-ink px-5 py-3">
+            <div className="folha-grupo px-5 py-3">
               <Link
                 href="/aprender"
                 aria-current={ativo("/aprender") ? "page" : undefined}
-                className={`block py-2 text-corpo ${
-                  ativo("/aprender")
-                    ? "text-ink underline decoration-mark underline-offset-4"
-                    : "text-ink"
-                }`}
+                className="block py-2"
               >
                 {m.nav.aprender}
               </Link>

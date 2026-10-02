@@ -69,9 +69,10 @@ test.describe("desktop @1440", () => {
         .getByRole("navigation", { name: "Principal" })
         .getByRole("link", { name: "Salário", exact: true })
     ).toHaveAttribute("aria-current", "page");
-    // o grupo da página activa está assinalado (tinta + barra ocre)
-    await expect(btn).toHaveClass(/text-ink/);
-    await expect(btn.locator("span")).toHaveClass(/bg-mark/);
+    // o grupo da página activa está assinalado — na pele V5 é a pílula
+    // ligada (tinta sobre papel) + a barra amarela partilhada nav-ind
+    await expect(btn).toHaveClass(/ligado/);
+    await expect(btn.locator("span")).toHaveClass(/nav-ind-v5/);
   });
 
   test("nenhum elemento da nav usa o vermilhão — chrome é mark/ink", async ({

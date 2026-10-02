@@ -43,6 +43,12 @@
     "fonte": "Fonte",
     "calculaOTeu": "Calcula o teu"
   },
+  "tema": {
+    "mudarParaClaro": "Mudar para tema claro",
+    "mudarParaEscuro": "Mudar para tema escuro",
+    "claro": "claro",
+    "escuro": "escuro"
+  },
   "pagina": {
     "explora": "Explora",
     "confirma": "Confirma",
