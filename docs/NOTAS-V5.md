@@ -507,6 +507,55 @@ décima fica. Nota de método para a próxima: a primeira prova veio
 duas builds têm de estar servidas de sítios distintos, e o `data-x/y/w`
 dos pins é medida da câmara, não desenho.
 
+### P1-gente — a gente do bairro no mapa
+
+O mapa publicado tinha 3 pessoas (a fila da Segurança Social); o
+protótipo tem a fila, as 8 personagens do elenco, um pescador no cais e
+dois miúdos na ponte. Portado o `colocar()` do `mapa.tpl.html` para
+`planta.ts`: cada figura leva os pés a `Pt(i, j)` (terreno como
+argumento, como sempre) e a escala do protótipo (`ESC = 0,36` nas
+camadas; os miúdos levam a deles). `mundo.ts` só distribui —
+`avenida → #b-movA`, `cais → #b-movB` (o `colocar()` escolhia por
+`j > 8,7`; aqui a escolha fica escrita na tabela), `ceu → #b-gCeu`,
+à frente dos miúdos, o `nadador()` que já lá estava.
+
+| quem | i | j | espelho | camada |
+|---|---|---|---|---|
+| Inês | 1,79 | 3,78 | — | movA (porta da fábrica) |
+| Rui | 9,15 | 3,80 | — | movA (banco) |
+| Marta | 9,50 | 3,82 | virada | movA (banco) |
+| Pedro | 5,00 | 3,85 | — | movA (meio do passeio) |
+| Sr. Manuel | 0,67 | 8,78 | virado | movB (mercearia) |
+| D. Arminda | 3,30 | 8,85 | — | movB (praça) |
+| Gonçalo | 9,49 | 8,80 | — | movB (escola) |
+| Diana | 10,09 | 8,78 | virada | movB (escola) |
+| pescador + cana | 4,35 | 10,52 | virado | movB (beira do cais) |
+| miúdo | 14,80 | 12,55 | — | gCeu (guarda da ponte, z=20) |
+| miúda | 14,80 | 13,35 | — | gCeu (idem) |
+
+Contagem final no HTML: 14 `.pessoa` (3 fila + 8 elenco + pescador +
+2 miúdos), 8 `data-pessoa`, 10 `.vizinho`, 1 `.b-nadador` — iguala o
+protótipo ao nível do mapa (as figuras das cenas ficam nas cenas).
+
+**Contrato cumprido:** cada personagem do ELENCO sai com
+`data-pessoa="<chave>"` dentro de `.pessoa`; passantes, pescador e
+miúdos levam `.pessoa` sem `data-pessoa`. Nenhum JavaScript novo por
+pessoa; o movimento é o CSS que já existia.
+
+**Duas divergências deliberadas (estáticas):** no protótipo o Pedro e
+a D. Arminda são PASSEADOS por código (ele anda o passeio, ela vai aos
+correios) e os miúdos saltam da ponte em loop — aqui nascem e ficam nas
+posições iniciais, porque «o movimento é só o que o protótipo já faz em
+CSS» e andar gente por JS era fora de âmbito. Se o dono quiser o passeio
+animado, é trabalho do ambiente, não do mapa.
+
+**Conserto apanhado de raspão:** `ambiente.ts` procurava `.b-brazo-n`
+mas `mundo.ts` emite `.b-braço-n` — o braço do nadador nunca animava.
+Corrigido o selector; `ambiente.test.ts` já esperava a classe acentuada.
+
+**Peso:** home 67,8 → **72,5 KB gzip** (+4,7; limite 80). A deduplicação
+`<symbol>/<use>` não foi precisa — nenhuma figura foi cortada.
+
 ## P2a–P2c · As cenas
 
 ### P2a — as quatro primeiras cenas: Fábrica, Finanças, Banco, Mercearia
