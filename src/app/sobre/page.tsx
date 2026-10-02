@@ -14,7 +14,7 @@ export default function SobrePage() {
      movimento; as promessas a cumprir são os links (repositório e
      contacto reais) e a voz. */
   return (
-    <div className="mx-auto max-w-2xl px-5 pt-14 pb-10">
+    <div className="rt5 mx-auto max-w-2xl px-5 pt-14 pb-10">
       <p className="kicker">Sobre</p>
       <TituloPagina rota="/sobre">Porque existe o AO CÊNTIMO</TituloPagina>
       <div className="body-copy mt-8 space-y-5">
