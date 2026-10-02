@@ -1,11 +1,16 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   compararPortarias,
   extrairPortariaIspJson,
+  idadeDiasVigencia,
+  LIMIAR_IDADE_DIAS,
   novasDesde,
   parseRssPortarias,
+  precisaAlarmeIdade,
+  runIsp,
 } from "./isp";
-import { readFileSync } from "fs";
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "fs";
+import { tmpdir } from "os";
 import path from "path";
 
 /**
@@ -128,5 +133,105 @@ describe("novasDesde — o despertador", () => {
     ];
     const novas = novasDesde(comFutura, "437-B/2026/1").map((n) => n.numero);
     expect(novas).toEqual(["449-C/2026/1"]);
+  });
+});
+
+describe("idadeDiasVigencia + precisaAlarmeIdade — a segunda protecção", () => {
+  it("conta dias completos de calendário", () => {
+    expect(idadeDiasVigencia("2026-09-28", "2026-10-07")).toBe(9);
+    expect(idadeDiasVigencia("2026-10-07", "2026-10-07")).toBe(0);
+  });
+
+  it("o limiar é 8: com 8 dias cala, com 9 fala; vigência inválida nunca alarma", () => {
+    expect(LIMIAR_IDADE_DIAS).toBe(8);
+    expect(precisaAlarmeIdade(8)).toBe(false);
+    expect(precisaAlarmeIdade(9)).toBe(true);
+    expect(precisaAlarmeIdade(Number.NaN)).toBe(false);
+  });
+});
+
+describe("runIsp com idade — o despertador que não depende do feed", () => {
+  // A base é sempre a 437-B (a mais recente da fixture real): o feed
+  // quieto é a própria fixture, sem nada inventado.
+  const ITEM_449_C =
+    `<item><title>Portaria n.º 449-C/2026/1, de 2 de outubro - Diário da República</title>` +
+    `<link>https://news.google.com/rss/articles/teste-449-C</link>` +
+    `<pubDate>Fri, 02 Oct 2026 18:00:00 GMT</pubDate>` +
+    `<source url="https://diariodarepublica.pt">Diário da República</source></item>`;
+  const RSS_COM_NOVA = FIXTURE.replace("</channel>", `${ITEM_449_C}</channel>`);
+
+  function hojeMenos(dias: number): string {
+    const d = new Date();
+    d.setUTCDate(d.getUTCDate() - dias);
+    return d.toISOString().slice(0, 10);
+  }
+
+  function dirComIsp(vigencia: string): string {
+    const dir = mkdtempSync(path.join(tmpdir(), "isp-idade-"));
+    mkdirSync(path.join(dir, "meta"), { recursive: true });
+    mkdirSync(path.join(dir, "fiscal"), { recursive: true });
+    writeFileSync(
+      path.join(dir, "fiscal", "isp.json"),
+      JSON.stringify({ vigencia, fonte: "Portaria n.º 437-B/2026/1, de 25 de setembro" })
+    );
+    return dir;
+  }
+
+  it("vigência de 3 dias + feed quieto → sem alarme", async () => {
+    const estado = await runIsp(dirComIsp(hojeMenos(3)), {
+      lerFeed: async () => FIXTURE,
+    });
+    expect(estado.novas).toEqual([]);
+    expect(estado.alarmeIdade).toBe(false);
+    expect(estado.alarme).toBe(false);
+    expect(estado.motivo).toBe("nenhum");
+  });
+
+  it("vigência de 9 dias + feed quieto → alarme de idade", async () => {
+    const estado = await runIsp(dirComIsp(hojeMenos(9)), {
+      lerFeed: async () => FIXTURE,
+    });
+    expect(estado.idadeDias).toBe(9);
+    expect(estado.alarmeIdade).toBe(true);
+    expect(estado.alarme).toBe(true);
+    expect(estado.motivo).toBe("idade");
+  });
+
+  it("9 dias + portaria nova no feed → um só alarme (motivo ambos, uma linha)", async () => {
+    const erro = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const estado = await runIsp(dirComIsp(hojeMenos(9)), {
+        lerFeed: async () => RSS_COM_NOVA,
+      });
+      expect(estado.novas.map((n) => n.numero)).toEqual(["449-C/2026/1"]);
+      expect(estado.alarme).toBe(true);
+      expect(estado.motivo).toBe("ambos");
+      const alarmes = erro.mock.calls.filter((c) => String(c[0]).includes("⚠ ISP:"));
+      expect(alarmes).toHaveLength(1);
+    } finally {
+      erro.mockRestore();
+    }
+  });
+
+  it("feed em falha + vigência velha → alarme de idade mesmo assim", async () => {
+    const estado = await runIsp(dirComIsp(hojeMenos(9)), {
+      lerFeed: async () => {
+        throw new Error("HTTP 429");
+      },
+    });
+    expect(estado.novas).toEqual([]);
+    expect(estado.alarme).toBe(true);
+    expect(estado.motivo).toBe("idade");
+    expect(estado.falhaFeed).toMatch(/429/);
+  });
+
+  it("feed em falha + vigência recente → falha honesta (lança, sem alarme)", async () => {
+    await expect(
+      runIsp(dirComIsp(hojeMenos(3)), {
+        lerFeed: async () => {
+          throw new Error("HTTP 429");
+        },
+      })
+    ).rejects.toThrow(/429/);
   });
 });
