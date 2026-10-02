@@ -90,7 +90,7 @@ export function Ticker() {
   // a pista duplica-se para o loop ser contínuo
   const pista = [...itens, ...itens];
   return (
-    <div className="ticker bg-panel" role="region" aria-label={m.ticker.label}>
+    <div className="ticker bg-chao" role="region" aria-label={m.ticker.label}>
       <div className="ticker-track">
         {pista.map((it, i) => {
           const est = estadoDe(it.frescura);
@@ -106,13 +106,13 @@ export function Ticker() {
                   tamanho={14}
                 />
               )}
-              <span className="text-muted">{it.label}</span>
-              <span className="text-ink">{it.valor}</span>
-              {it.detalhe && <span className="text-muted">{it.detalhe}</span>}
+              <span className="text-suave">{it.label}</span>
+              <span className="text-tinta">{it.valor}</span>
+              {it.detalhe && <span className="text-suave">{it.detalhe}</span>}
               {est === "atrasada" && (
                 <span className="text-warn">{m.chart.atrasada}</span>
               )}
-              <span aria-hidden className="text-muted">·</span>
+              <span aria-hidden className="text-suave">·</span>
             </span>
           );
         })}

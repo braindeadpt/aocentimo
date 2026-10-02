@@ -99,6 +99,7 @@ export default function RootLayout({
       suppressHydrationWarning
       data-scroll-behavior="smooth"
       data-theme="light"
+      data-pele="v5"
       className={`${archivo.variable} ${grotesk.variable} ${serif.variable} ${spaceMono.variable} ${caveat.variable}`}
     >
       <head>

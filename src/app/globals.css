@@ -270,6 +270,32 @@
   --font-sans: var(--font-grotesk), "Segoe UI", system-ui, sans-serif;
   --font-editorial: var(--font-serif), Georgia, "Times New Roman", serif;
   --font-mono: var(--font-space), "Courier New", monospace;
+
+  /* V5 — a paleta do bairro como utilitários (P3a). Os valores vivem
+     no âmbito [data-pele="v5"] (fim do ficheiro): resolvem no ponto de
+     uso, por isso seguem o tema e o rescate claro do .b5 sem CSS extra.
+     `--linha` V5 NÃO entra aqui — já é o contador de escalonamento das
+     rotas V4; a cor do fio usa-se via var(--linha) no CSS do chrome. */
+  --color-papel: var(--papel);
+  --color-chao: var(--chao);
+  --color-tinta: var(--tinta);
+  --color-tinta-2: var(--tinta-2);
+  --color-suave: var(--suave);
+  --color-amarelo: var(--amarelo);
+  --color-amarelo-2: var(--amarelo-2);
+  --color-azul: var(--azul);
+  --color-azul-2: var(--azul-2);
+  --color-verde: var(--verde);
+  --color-verde-2: var(--verde-2);
+  --color-verde-fundo: var(--verde-fundo);
+  --color-vermelho: var(--vermelho);
+  --color-vermelho-2: var(--vermelho-2);
+  --color-fundo-mapa: var(--fundo-mapa);
+  --color-vidro: var(--vidro);
+
+  --shadow-dura: var(--sombra-dura);
+  --radius-cartao: var(--raio-cartao);
+  --radius-pilula: var(--raio-pilula);
 }
 
 /* ————— escala tipográfica fechada (V4) — um papel por degrau —————
@@ -3865,10 +3891,13 @@ h3 {
    valores claros. Só a superfície — as cores com significado
    (`--accent`, `--keep`, `--up`…) continuam a seguir o tema.
 
-   *A conferir com o dono:* na home o interruptor claro/escuro deixa de
-   ter efeito visível. É a leitura correcta do protótipo (que nunca teve
-   tema), mas é uma decisão de produto e não minha. Ver NOTAS-V5.md. */
-:root:has([data-pele="v5"]) {
+   P3a: `data-pele="v5"` subiu para o <html> — o selector testa `.b5`,
+   não o atributo, senão a regra disparava em TODAS as rotas e o tema
+   escuro morria no site inteiro. `.b5` só existe na home (o div que
+   leva o bairro). Nessa página o chrome segue o tema (a noite do
+   bairro é visível no cabeçalho/rodapé); só o mapa e a superfície
+   ficam a papel — a decisão «o mapa nunca escurece» mantém-se. */
+:root:has(.b5) {
   --floor: #f4f3ec;
   --panel: #fbfaf6;
   --raised: #fdfcf9;
@@ -3966,4 +3995,254 @@ h3 {
   --vermelho-2: #47211a;
   --vidro: #ffe066;
   --fundo-mapa: #1b2656;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   V5 — CHROME DO SITE (P3a)
+   ═══════════════════════════════════════════════════════════════════════
+   `data-pele="v5"` subiu para o <html> (P3a): o cabeçalho, a navegação,
+   o ticker e o rodapé vestem o contrato do protótipo — papel/tinta,
+   pílulas de traço grosso, sombra dura sem desfoque, Archivo. Os nomes
+   do bairro ficam no bairro (.b-*); o chrome tem classes próprias.
+
+   `--linha`, AVISO: na pele V5 é a cor do fio (#e4e1da), mas nas rotas
+   V4 é o contador de escalonamento escrito INLINE nos elementos
+   (style={{ "--linha": i }}) e consumido em calc() com fallback
+   var(--linha, 0). Se a cor herdar para dentro do conteúdo, cada
+   fallback resolve uma cor, o calc morre e as linhas do talão deixam
+   de imprimir escalonadas. Enquanto as rotas V4 existirem, o conteúdo
+   vê o contador «vazio» (initial → o fallback 0 aplica-se); o fio é
+   cor só no chrome e no mapa. O .b5 tem data-pele próprio — re-declara
+   a cor para a sua sub-árvore dentro do #conteudo. P3b revê quando as
+   rotas migrarem. */
+#conteudo {
+  --linha: initial;
+}
+
+/* ————— cabeçalho — barra de papel rematada pelo traço de tinta ————— */
+.cab-v5 {
+  background: var(--papel);
+  color: var(--tinta);
+  border-bottom: var(--traco) solid var(--tinta);
+}
+/* fio de edição — meta + interruptor; fio fino, tinta suave, Archivo
+   (o kicker mono V4 é do instrumento; a pele do site fala Archivo) */
+.cab-fio {
+  border-bottom: 1.5px solid var(--linha);
+  color: var(--suave);
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.cab-v5 .logo {
+  color: var(--tinta);
+}
+
+/* ————— navegação — as pílulas do contrato (.btn/.btn.claro do
+   protótipo): traço grosso, raio total, sombra dura que cresce ao
+   pairar e achata ao premir — o gesto físico do mapa ————— */
+.pil-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 40px;
+  padding: 0.4rem 0.95rem;
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  line-height: 1;
+  color: var(--tinta);
+  background: var(--papel);
+  border: var(--traco) solid var(--tinta);
+  border-radius: var(--raio-pilula);
+  box-shadow: var(--sombra-dura);
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  transition:
+    transform 0.15s cubic-bezier(0.3, 1.6, 0.5, 1),
+    box-shadow 0.15s;
+}
+.pil-nav:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 6px 0 var(--tinta);
+}
+.pil-nav:active {
+  transform: translate(2px, 3px);
+  box-shadow: 1px 1px 0 var(--tinta);
+}
+/* o separador/grupo activo é o .btn.ligado do protótipo — pílula
+   invertida (tinta sobre papel); o indicador nav-ind continua por baixo */
+.pil-nav.ligado,
+.pil-nav[aria-current="page"] {
+  background: var(--tinta);
+  color: var(--papel);
+}
+/* o indicador partilhado (view-transition nav-ind) passa a amarelo —
+   o destaque de leitura da pele, legível sobre papel e sobre tinta */
+.nav-ind-v5 {
+  background: var(--amarelo);
+}
+
+/* menu de grupo — cartão de papel com traço grosso e sombra dura;
+   a ligação activa lê-se pela barra amarela à esquerda, não por
+   sublinhado (a pele não sublinha nav) */
+.nav-menu-v5 {
+  display: flex;
+  flex-direction: column;
+  min-width: 11rem;
+  background: var(--papel);
+  border: var(--traco-fino) solid var(--tinta);
+  border-radius: var(--raio-cartao);
+  box-shadow: var(--sombra-dura);
+  overflow: hidden;
+}
+.nav-menu-v5 a {
+  padding: 0.6rem 1rem;
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--tinta-2);
+  text-decoration: none;
+  border-bottom: 1.5px solid var(--linha);
+}
+.nav-menu-v5 a:last-child {
+  border-bottom: 0;
+}
+.nav-menu-v5 a:hover {
+  background: var(--amarelo-2);
+  color: var(--tinta);
+}
+.nav-menu-v5 a[aria-current="page"] {
+  color: var(--tinta);
+  font-weight: 800;
+  box-shadow: inset 4px 0 0 var(--amarelo);
+}
+
+/* folha inferior (mobile) — o mesmo cartão de papel, encostado ao
+   fundo do ecrã; o véu por trás é tinta desfeita */
+.nav-sheet-v5 {
+  background: var(--papel);
+  color: var(--tinta);
+  border-top: var(--traco) solid var(--tinta);
+  border-radius: var(--raio-cartao) var(--raio-cartao) 0 0;
+  box-shadow: 0 -4px 0 var(--tinta);
+}
+.nav-sheet-v5 .folha-grupo {
+  border-top: 1.5px solid var(--linha);
+}
+/* rótulo pequeno da pele — caixa-alta Archivo em tinta suave; serve a
+   folha de navegação e os títulos do rodapé */
+.folha-titulo {
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--suave);
+}
+.nav-sheet-v5 a,
+.nav-sheet-v5 button {
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--tinta-2);
+}
+.nav-sheet-v5 a:hover {
+  color: var(--tinta);
+}
+.nav-sheet-v5 a[aria-current="page"] {
+  color: var(--tinta);
+  font-weight: 800;
+  box-shadow: inset 4px 0 0 var(--amarelo);
+}
+
+/* ticker — faixa de chão com fio de tinta; rótulos suaves, valores
+   em tinta. A máscara e o marquee são os de sempre. */
+.ticker {
+  background: var(--chao);
+  border-bottom: 1.5px solid var(--linha);
+}
+
+/* skip-link — a primeira pílula do site; estado final = papel, traço
+   e sombra dura (AA nos dois temas: papel/tinta seguem o tema) */
+.skip-link {
+  background: var(--papel);
+  color: var(--tinta);
+  border: var(--traco-fino) solid var(--tinta);
+  border-radius: var(--raio-pilula);
+  box-shadow: var(--sombra-dura);
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-weight: 800;
+}
+
+/* interruptor de tema — a pílula pequena do cabeçalho; o nó é
+   tinta no claro, amarelo-cheio na noite do bairro */
+.pil-tema {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 34px;
+  padding: 0.3rem 0.8rem;
+  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tinta);
+  background: var(--papel);
+  border: var(--traco-fino) solid var(--tinta);
+  border-radius: var(--raio-pilula);
+  box-shadow: 2px 3px 0 var(--tinta);
+  cursor: pointer;
+  transition:
+    transform 0.15s cubic-bezier(0.3, 1.6, 0.5, 1),
+    box-shadow 0.15s;
+}
+.pil-tema:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 4px 0 var(--tinta);
+}
+.pil-tema:active {
+  transform: translate(1px, 2px);
+  box-shadow: 1px 1px 0 var(--tinta);
+}
+.tema-ponto {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  border: 2px solid var(--tinta);
+  background: transparent;
+}
+html[data-theme="dark"] .tema-ponto {
+  background: var(--amarelo);
+  border-color: var(--amarelo);
+}
+
+/* ————— rodapé — cartão de papel fechado pelo traço de tinta ————— */
+.rodape-v5 {
+  background: var(--papel);
+  color: var(--tinta);
+  border-top: var(--traco) solid var(--tinta);
+}
+.rodape-v5 .logo {
+  color: var(--tinta);
+}
+.rodape-v5 a {
+  color: var(--tinta-2);
+  text-decoration: none;
+}
+.rodape-v5 a:hover {
+  color: var(--tinta);
+  text-decoration: underline;
+  text-decoration-color: var(--amarelo);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+/* a regra que separa o colofão usa o fio da pele, não o --line V4 */
+.rodape-v5 .rule {
+  border-top-color: var(--linha);
 }

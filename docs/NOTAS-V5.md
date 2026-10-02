@@ -575,7 +575,59 @@ Quiosque, Escola — ficam para as sessões seguintes.)_
 
 ## P3 · A pele V5 nas 13 rotas
 
-_(por preencher)_
+### P3a — tokens + cabeçalho/navegação/rodapé (ramo `v5/p3-pele-a`)
+
+**O que entrou.** `data-pele="v5"` passou para o `<html>` — a pele vale
+no site inteiro. Cabeçalho, navegação, ticker, rodapé, skip-link e
+interruptor de tema vestem o contrato do protótipo: papel/tinta, traço
+grosso, pílulas com sombra dura (o gesto físico de `.btn`: sobe ao
+pairar, afunda ao premir), Archivo em todo o chrome. O grupo/separador
+activo usa o `.btn.ligado` do protótipo (pílula invertida); o indicador
+partilhado `nav-ind` (view-transition) manteve-se, agora amarelo.
+
+**Decisões tomadas (a rever):**
+
+1. **`data-pele` no `<html>`, não nos elementos do chrome.** Se o
+   atributo ficasse no `<header>`/`<footer>`, cada um re-declarava os
+   tokens claros no próprio elemento e em `dark` o chrome nunca
+   anoitecia — `[data-pele][data-theme="dark"]` só dispara quando os
+   dois atributos estão no MESMO elemento. No `<html>` a paleta da
+   noite chega a todo o chrome; a home resgata-se sozinha porque o
+   `.b5` leva `data-pele` próprio e re-declara os tokens claros para a
+   sua sub-árvore.
+2. **`:root:has(...)` passou a testar `.b5`, não `data-pele`.** Com o
+   atributo no `<html>` a regra antiga disparava em todas as rotas e
+   o escuro morria no site inteiro.
+3. **`--linha` tem dois sentidos e precisou de uma fronteira.** Na pele
+   é a cor do fio; nas rotas V4 é o contador de escalonamento escrito
+   inline (`style={{ "--linha": i }}`). O reset `#conteudo { --linha:
+   initial }` devolve o fallback `0` às rotas sem tocar nos ficheiros
+   delas; o fio fica cor no chrome e no mapa (o `.b5` re-declara-a).
+   Em P3b, quando as rotas migrarem, esta fronteira sai — fica apontado
+   aqui para não esquecer.
+4. **Na home em `dark`, o chrome anoitece e o mapa fica a papel.** O
+   interruptor passa a ter efeito visível na home (só no chrome — o
+   contrato «o mapa nunca escurece» mantém-se). É a leitura que me
+   parece certa de «escuro = a noite do bairro», mas é produto: se o
+   dono preferir o chrome claro na home em `dark`, força-se
+   `:root:has(.b5)` também sobre os tokens V5.
+5. **`InterruptorDeTema` desapareceu.** Existia só para esconder o
+   toggle na home; em P3 o toggle fica visível em todo o lado, por isso
+   o `SiteHeader` usa o `ThemeToggle` directamente e o ficheiro saiu.
+6. **Strings do toggle passaram para `messages/pt.json`** (`tema.*`) —
+   estavam escritas dentro do componente.
+7. **Nas rotas V4 em `dark`, o chrome fica azul-noite V5 sobre o chão
+   V4.** É o preço de fasear a pele — resolve-se em P3b quando as rotas
+   migrarem. Se a mistura incomodar antes disso, diz.
+
+**Teste novo:** `e2e/pele-chrome.spec.ts` — falhou 7/10 na base (sem
+`data-pele`, sem pílulas, sem toggle na home); os 3 que já passavam são
+trincos de regressão do tema (persistência e sem-flash já existiam).
+
+**Ficou para P3b/P3c:** rotas com tokens V5 + ligações aos edifícios;
+`/estilo` com o contrato V5; saída de Source Serif/Space Grotesk/Space
+Mono e dos tokens V4 sem uso; a decisão de ligação para `/impostos`,
+`/metodologia` e `/sobre` (em aberto, por propor em P3b).
 
 ## P4 · Qualidade e lançamento
 
