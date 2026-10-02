@@ -27,3 +27,7 @@ jobs:
       - run: node scripts/_gate-html.mjs
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
+      # o audit corre contra o out/ que o webServer do playwright já
+      # construiu para o e2e: mesma ordem do deploy (servidor + auditorias)
+      - run: node scripts/_serve-static.mjs &
+      - run: sleep 1 && npm run audit
