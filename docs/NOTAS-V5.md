@@ -682,12 +682,127 @@ para /poupanca, /precos e /salario. Nada publica sem essa revisão.
 **Os números:** home → **71,8 KB gzip** (limite 80 KB, gate verde); as
 três cenas viajam em `next/dynamic`, fora do JS inicial.
 
-_(P2c — Casa, Pastelaria, Quiosque, Escola — fica para a sessão
-seguinte.)_
+### P2c — Casa da Inês, Pastelaria, Quiosque, Escola
+
+Porta de `cenaCasa`, `cenaPastelaria`, `cenaQuiosque` e `cenaEscola`
+(`cenas-bairro.js`) e do desenhador `graficoLinhas` (`cena-base.js`).
+Mesmo molde da P2a: `CenaDePerto` + interior em `svg` gerado no
+componente + dados por props; os chunks só descem ao entrar no
+edifício. Para não colidir com a P2b (correu em paralelo): dados em
+`dados-p2c.ts`, copy em `textos-p2c.ts`, arte em `*-arte.ts` próprios;
+nos partilhados (`dados.ts`, `registry.ts`, `com-cena.ts`,
+`Bairro.tsx`) só linhas acrescentadas.
+
+- **`src/lib/viz/grafico-linhas.ts`** — o gráfico reutilizável: função
+  pura (sem DOM, sem JSON), devolve `{ svg, texto }` com o `<dl
+  class="b-sr">` escondido a dizer os mesmos números. Falhas na série
+  QUEBRAM a linha (pen up); série vazia não desenha e o equivalente diz
+  «—»; todas vazias → sem gráfico de zeros. As três cenas com gráfico
+  usam-no. Os gráficos da P2a ficam como estão — refactorizá-los fica
+  como proposta, não como facto.
+- **Casa → `/casa`.** Os meses de trabalho vêm de
+  `casa-em-salarios.json` (hpi ÷ custo do trabalho, 2015 = 100; último:
+  ~192). A nota «não é o salário de ninguém» está na cena
+  (`casaNota`). A pilha de recibos cresce por manipulação directa do
+  SVG — com GSAP só se `motionActiva()`, e um bilhete de geração anula
+  callbacks atrasados (a lição do contador da Fábrica); depois do
+  passo 2 a pilha FICA no valor real.
+- **Pastelaria → `/inflacao`.** «Comer fora» é o IHPC CP11 real;
+  «comer em casa» o CP01 — nenhuma série inventada. O café de 2 € em
+  ago 2020 é EXEMPLO e a cena diz-o (também no passo 2, onde o «hoje»
+  aparece). O IVA sai de `iva.json` escolhido pelos exemplos da taxa
+  («restauração» → intermédia; «pão…» → reduzida): dos 3,22 €, 0,37 €
+  são IVA.
+- **Quiosque → `/trabalho` e `/dados`.** O Jornal do Bairro mostra seis
+  linhas — desemprego PT, jovens (razão ao total), PIB homólogo,
+  inflação, confiança e SMN — cada uma com a SUA data e fonte. Falta de
+  dado → «—» e a linha diz que a fonte falhou. A lição do denominador
+  («20,1 % dos jovens ≠ 20,1 % de todos os jovens») ficou intacta.
+- **Escola → `/aprender`.** Os minis são desenhos próprios
+  (`escola-arte.mini`) — o truque é o eixo batoteiro, coisa que o
+  `grafico-linhas` não deixa fazer por princípio. A lição das palavras
+  usa os termos REAIS do glossário (`ipc-ihpc`, `taxa-real`,
+  `escalao-irs`, `spread`, `tsu`), cada um ligado à cena onde vive por
+  âncora e a `/aprender/[slug]`.
+
+**Textos PROPOSTA:** toda a copy está em `src/app/_bairro/cenas/
+textos-p2c.ts`, portada do protótipo — falas, perguntas, juízos do
+palpite, legendas, placas, botões e `aria-label`s. Números entram por
+parâmetro. Nada disto está revisto — a lista é a desta secção até o
+dono a ler.
+
+**Divergências e dúvidas numeradas para o dono:**
+
+1. **«Homólogo» não existe no glossário do site.** O protótipo tinha
+   seis palavras na terceira lição; a nossa tem cinco — homólogo
+   aprende-se na lição 2 (o gráfico) mas não tem termo nem definição
+   oficiais, e inventar uma definição violaria a regra nº1 do texto.
+   Se quiser a palavra no glossário, a definição é sua.
+2. **`taxa-real` liga a `/#correios`** (o poder de compra mora na cena
+   dos Correios, da P2b — já fundida, a âncora abre de facto).
+3. **A Pilha no passo 3 fica no valor real** (192), não volta aos 100
+   da pergunta — voltar atrás esquecia a resposta que a cena acabou de
+   dar.
+4. **A fonte do Quiosque agrega** («Eurostat · desemprego (une_rt_m),
+   PIB e confiança; INE/DR · salário mínimo em vigor desde jan 2026»)
+   porque cada LINHA já leva a sua data; fonte por linha no rodapé
+   seria ilegível. Se preferir fonte por linha, diz.
 
 ## P3 · A pele V5 nas 13 rotas
 
-_(por preencher)_
+### P3a — tokens + cabeçalho/navegação/rodapé (ramo `v5/p3-pele-a`)
+
+**O que entrou.** `data-pele="v5"` passou para o `<html>` — a pele vale
+no site inteiro. Cabeçalho, navegação, ticker, rodapé, skip-link e
+interruptor de tema vestem o contrato do protótipo: papel/tinta, traço
+grosso, pílulas com sombra dura (o gesto físico de `.btn`: sobe ao
+pairar, afunda ao premir), Archivo em todo o chrome. O grupo/separador
+activo usa o `.btn.ligado` do protótipo (pílula invertida); o indicador
+partilhado `nav-ind` (view-transition) manteve-se, agora amarelo.
+
+**Decisões tomadas (a rever):**
+
+1. **`data-pele` no `<html>`, não nos elementos do chrome.** Se o
+   atributo ficasse no `<header>`/`<footer>`, cada um re-declarava os
+   tokens claros no próprio elemento e em `dark` o chrome nunca
+   anoitecia — `[data-pele][data-theme="dark"]` só dispara quando os
+   dois atributos estão no MESMO elemento. No `<html>` a paleta da
+   noite chega a todo o chrome; a home resgata-se sozinha porque o
+   `.b5` leva `data-pele` próprio e re-declara os tokens claros para a
+   sua sub-árvore.
+2. **`:root:has(...)` passou a testar `.b5`, não `data-pele`.** Com o
+   atributo no `<html>` a regra antiga disparava em todas as rotas e
+   o escuro morria no site inteiro.
+3. **`--linha` tem dois sentidos e precisou de uma fronteira.** Na pele
+   é a cor do fio; nas rotas V4 é o contador de escalonamento escrito
+   inline (`style={{ "--linha": i }}`). O reset `#conteudo { --linha:
+   initial }` devolve o fallback `0` às rotas sem tocar nos ficheiros
+   delas; o fio fica cor no chrome e no mapa (o `.b5` re-declara-a).
+   Em P3b, quando as rotas migrarem, esta fronteira sai — fica apontado
+   aqui para não esquecer.
+4. **Na home em `dark`, o chrome anoitece e o mapa fica a papel.** O
+   interruptor passa a ter efeito visível na home (só no chrome — o
+   contrato «o mapa nunca escurece» mantém-se). É a leitura que me
+   parece certa de «escuro = a noite do bairro», mas é produto: se o
+   dono preferir o chrome claro na home em `dark`, força-se
+   `:root:has(.b5)` também sobre os tokens V5.
+5. **`InterruptorDeTema` desapareceu.** Existia só para esconder o
+   toggle na home; em P3 o toggle fica visível em todo o lado, por isso
+   o `SiteHeader` usa o `ThemeToggle` directamente e o ficheiro saiu.
+6. **Strings do toggle passaram para `messages/pt.json`** (`tema.*`) —
+   estavam escritas dentro do componente.
+7. **Nas rotas V4 em `dark`, o chrome fica azul-noite V5 sobre o chão
+   V4.** É o preço de fasear a pele — resolve-se em P3b quando as rotas
+   migrarem. Se a mistura incomodar antes disso, diz.
+
+**Teste novo:** `e2e/pele-chrome.spec.ts` — falhou 7/10 na base (sem
+`data-pele`, sem pílulas, sem toggle na home); os 3 que já passavam são
+trincos de regressão do tema (persistência e sem-flash já existiam).
+
+**Ficou para P3b/P3c:** rotas com tokens V5 + ligações aos edifícios;
+`/estilo` com o contrato V5; saída de Source Serif/Space Grotesk/Space
+Mono e dos tokens V4 sem uso; a decisão de ligação para `/impostos`,
+`/metodologia` e `/sobre` (em aberto, por propor em P3b).
 
 ## P4 · Qualidade e lançamento
 
