@@ -80,10 +80,19 @@ test("com reduced-motion a moeda não roda — dois frames idênticos", async ({
     return v.slice(0, 5);
   });
   expect(violadores).toEqual([]);
-  // a rotação da moeda é em canvas — depois de assentar, dois
-  // screenshots do palco com 400 ms de intervalo têm de ser pixel a
-  // pixel iguais (sem frames de rotação)
-  await page.waitForTimeout(800);
+  // A rotação da moeda é em canvas — e o canvas só entra quando o sim
+  // pinta o primeiro frame, sinal que o componente já publica em
+  // `data-pronto` do `.cc-palco`. Esperar por um prazo em vez disso
+  // media o relógio, não o estado: com a hidratação lenta, o primeiro
+  // frame chegava no meio das duas capturas e a comparação accusava uma
+  // rotação que não existe (medido a 40× de CPU: 4 falhas em 30, com
+  // 20% dos píxeis a mudar na área da moeda — a troca svg→canvas).
+  await expect(palco).toHaveAttribute("data-pronto", /imed|suave/, {
+    timeout: 20_000,
+  });
+  // duas capturas com 400 ms de intervalo têm de ser pixel a pixel
+  // iguais — a comparação é a mesma, e é ela que prova que o
+  // requestAnimationFrame parou
   const t1 = await palco.screenshot();
   await page.waitForTimeout(400);
   const t2 = await palco.screenshot();
@@ -96,7 +105,12 @@ test("a revelação moeda → montes assenta e acende os rótulos", async ({
   await page.goto("/estilo");
   const campo = page.locator(CC).first();
   await campo.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(300); // o sim hidrata e esconde o svg
+  // o sim hidrata e esconde o svg — espera-se pelo sinal, não por 300 ms
+  await expect(campo.locator(".cc-palco")).toHaveAttribute(
+    "data-pronto",
+    /imed|suave/,
+    { timeout: 20_000 }
+  );
 
   await page.getByRole("radio", { name: "Montes" }).click();
   // a transição termina: rótulos ligados, legenda final visível
@@ -126,6 +140,7 @@ test("os montes estáticos mostram rótulos e os 100 pontos do SSR", async ({
   // estado final servido: rótulos já ligados no SSR
   await expect(estatico.locator(".cc-rot.on")).toHaveCount(4);
   await expect(estatico.locator(".cc-legenda.on")).toHaveCount(0); // sem textos → sem legenda
-  // svg do SSR: 100 pontos no total (partes + livres)
-  await page.waitForTimeout(200);
+  // svg do SSR: 100 pontos no total (partes + livres) — a espera que
+  // aqui estava não afirmava nada; a afirmação é que são 100
+  await expect(estatico.locator(".cc-svg circle")).toHaveCount(100);
 });
