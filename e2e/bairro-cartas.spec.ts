@@ -174,13 +174,35 @@ test.describe("as sete cartas — escolhe a tua personagem (P1-4)", () => {
         test(`${k} a ${vw}×${vh}: a figura fica dentro da janela e fora do painel`, async ({
           page,
         }) => {
+          // a carga do CI é pesada (8 workers): o teclado de render e
+          // a câmara precisam de orçamento próprio, ou o teste rebenta
+          // por tempo — não por defeito
+          test.setTimeout(75_000);
           await page.setViewportSize({ width: vw, height: vh });
           await page.goto("/");
           await carta(page, k).click();
           await expect(page.locator(".b-painel")).toBeVisible();
-          // o deslize dura ~1,1 s; 4,5 s apanha o fim com folga mesmo
-          // com o chunk do GSAP frio
-          await page.waitForTimeout(4500);
+          // o deslize acaba quando a câmara assenta — espera-se pelo
+          // ESTADO (a transform deixar de mexer), não por 4,5 s de
+          // relógio: sob carga os 4,5 s acabavam antes do fim
+          await expect
+            .poll(
+              async () => {
+                const a = await page
+                  .locator(".b-mundo")
+                  .evaluate((el) => (el as HTMLElement).style.transform);
+                await page.waitForTimeout(200);
+                const b = await page
+                  .locator(".b-mundo")
+                  .evaluate((el) => (el as HTMLElement).style.transform);
+                return a === b;
+              },
+              {
+                timeout: 30_000,
+                message: `a câmara não assentou em ${k} a ${vw}×${vh}`,
+              }
+            )
+            .toBe(true);
           const j = await page.locator(".b-janela").boundingBox();
           const pn = await page.locator(".b-painel").boundingBox();
           expect(j).toBeTruthy();
