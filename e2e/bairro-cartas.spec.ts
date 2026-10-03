@@ -121,7 +121,34 @@ test.describe("as sete cartas — escolhe a tua personagem (P1-4)", () => {
     await expect(ines).toBeFocused();
   });
 
-  test("o clique leva ao palco e — havendo personagem no mapa — mexe a câmara", async ({
+  // O caso que o CI reprovou duas vezes: uma carta tocada ANTES de o React
+// hidratar. Os testes unitários da fila provam a lógica; este prova o
+// caminho real — o clique, o pedido, o painel — que é o que se.partiu no
+// telemóvel lento.
+test("o clique numa carta antes de hidratar não se perde: o painel abre na mesma", async ({
+  page,
+}) => {
+  // este caso atrasa de propósito os chunks e depois espera pela
+  // hidratação: precisa de mais do que os 30 s do ficheiro
+  test.setTimeout(60_000);
+  // o atraso garante que o clique chega ANTES de haver React — sem isto
+  // seria uma corrida e o teste valeria o que calhasse
+  await page.route("**/_next/static/chunks/*.js", async (route) => {
+    await new Promise((r) => setTimeout(r, 1200));
+    await route.continue();
+  });
+  await page.goto("/", { waitUntil: "commit" });
+  const ines = carta(page, "ines");
+  await ines.waitFor({ state: "attached" });
+  // nenhum React: o clique vai para o elemento que existe no HTML do servidor
+  await ines.dispatchEvent("click");
+  await expect(page.locator(".b-painel")).toBeVisible({ timeout: 20000 });
+  await expect(page.locator(".b-painel .b-quem")).toHaveText(
+    "Inês · Operária da fábrica"
+  );
+});
+
+test("o clique leva ao palco e — havendo personagem no mapa — mexe a câmara", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
