@@ -14,6 +14,7 @@ import { m, t } from "@/lib/messages";
 import { SITE_URL } from "@/lib/site";
 import { Bairro, type Hora, type InfoEdificio } from "./Bairro";
 import { Cartas, type CartaDados, type CartasComum } from "./Cartas";
+import { PONTE_JS } from "./personagem";
 
 /**
  * A home do bairro (P1-1). O SERVIDOR monta tudo:
@@ -136,6 +137,11 @@ export default function HomeBairro() {
           <span className="b-etiqueta">{m.bairro.elenco.etiqueta}</span>
           <h2 id="tElenco">{m.bairro.elenco.h2}</h2>
           <p className="b-lead">{m.bairro.elenco.lead}</p>
+          {/* A ponte vai ANTES das cartas e no HTML do servidor: é o
+              único código que pode correr antes de o React hidratar, e é
+              o que segura um clique feito cedo num ecrã lento. Ver
+              `personagem.ts`. */}
+          <script dangerouslySetInnerHTML={{ __html: PONTE_JS }} />
           <Cartas cartas={cartas} comum={cartasComum} />
         </section>
         <p className="b-notas">

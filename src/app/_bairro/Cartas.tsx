@@ -7,6 +7,9 @@
  * bairro, despachando `EVT_PERSONAGEM`. Todo o texto chega pronto do
  * servidor — nada de `pt.json` nem `data/` aqui dentro.
  *
+ * E, ao montar, entrega uma escolha que tenha chegado antes de haver
+ * hydration (a ponte de `personagem.ts`).
+ *
  * As figuras NÃO chegam por props: um SVG por carta viajava duplicado
  * no payload RSC (+8,4 KB gzip na home). Desenham-se aqui com
  * `pessoa(ELENCO[·])` — o kit é puro, determinístico e já está no
@@ -18,8 +21,15 @@
  * ligado por `aria-describedby` — o perfil e a promessa lêem-se a seguir
  * ao nome.
  */
+import { useEffect } from "react";
 import { ELENCO, pessoa, type ChaveElenco } from "@/lib/bairro/personagens";
-import { EVT_PERSONAGEM, type EscolhaPersonagem } from "./personagem";
+import {
+  EVT_BAIRRO_PRONTO,
+  EVT_PERSONAGEM,
+  escolhaPendente,
+  consumirPendente,
+  type EscolhaPersonagem,
+} from "./personagem";
 
 /** O que uma carta precisa — tuplo porque os nomes das chaves de um
     objeto repetem-se sete vezes no payload RSC (~60 B gzip de nada). */
@@ -84,6 +94,38 @@ export function Cartas({
   cartas: readonly CartaDados[];
   comum: CartasComum;
 }) {
+  /**
+   * Um clique pode ter chegado ANTES desta hidratação (ver a ponte em
+   * `personagem.ts`). A `PONTE_JS` guardou a chave; aqui traduz-se para
+   * o pedido completo e entrega-se ao bairro.
+   *
+   * A entrega só acontece quando as DUAS partes estão prontas: o bairro
+   * tem de estar à escuta e estas cartas têm de estar montadas. Se o
+   * bairro ainda não estiver, espera-se pelo aviso dele — assim a ordem
+   * em que o React hidrata as duas árvores não decide se o pedido se
+   * perde. A escolha só se gasta quando foi mesmo entregue.
+   */
+  useEffect(() => {
+    const g = globalThis as { __bBairroPronto?: boolean; __bCartasPronto?: boolean };
+    const entregar = () => {
+      if (!g.__bBairroPronto) return; // ainda ninguém à escuta: tenta-se outra vez
+      const chave = escolhaPendente();
+      const c = chave ? cartas.find((x) => x[0] === chave) : undefined;
+      if (!c) return;
+      consumirPendente();
+      window.dispatchEvent(
+        new CustomEvent(EVT_PERSONAGEM, { detail: escolha(c, comum) })
+      );
+    };
+    g.__bCartasPronto = true;
+    if (g.__bBairroPronto) {
+      entregar();
+      return;
+    }
+    window.addEventListener(EVT_BAIRRO_PRONTO, entregar, { once: true });
+    return () => window.removeEventListener(EVT_BAIRRO_PRONTO, entregar);
+  }, [cartas, comum]);
+
   return (
     <div className="b-cartas">
       {cartas.map((c) => {

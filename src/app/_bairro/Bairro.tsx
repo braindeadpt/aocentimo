@@ -28,7 +28,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PausaAmbiente } from "@/components/PausaAmbiente";
 import { motionActiva, carregarGsap, type MotorGsap } from "@/lib/motion/gsap";
-import { EVT_PERSONAGEM, type EscolhaPersonagem } from "./personagem";
+import {
+  EVT_BAIRRO_PRONTO,
+  EVT_PERSONAGEM,
+  type EscolhaPersonagem,
+} from "./personagem";
 import { Camera, arrumarPinos, type Enquadramentos, type MarcadorVivo, type PinoPlanta } from "./camara";
 import { ligarAmbiente } from "./ambiente";
 import { mundoBairro, reflexos } from "@/lib/bairro/mundo";
@@ -472,6 +476,13 @@ export function Bairro({
       void voarParaPersonagem(d.chave);
     };
     window.addEventListener(EVT_PERSONAGEM, aoEscolher);
+    // Aviso de que já estou à escuta — só depois de ligar o ouvinte, para
+    // que uma carta tocada antes da hydration (a ponte de `personagem.ts`)
+    // chegue a um bairro que a está à espera. Ver o bug medido no cabeçalho
+    // daquele ficheiro: o pedido ia para ninguém e o painel nunca abria.
+    const g = globalThis as { __bBairroPronto?: boolean };
+    g.__bBairroPronto = true;
+    window.dispatchEvent(new Event(EVT_BAIRRO_PRONTO));
     return () => window.removeEventListener(EVT_PERSONAGEM, aoEscolher);
   }, [cenaAberta, esconderCartao, voarParaPersonagem]);
 

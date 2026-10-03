@@ -93,9 +93,38 @@ test.describe("as sete cartas — escolhe a tua personagem (P1-4)", () => {
     ).toBe(true);
   });
 
+  // O clique pode chegar ANTES de o React hidratar — num telemóvel lento
+  // é o gesto natural: a carta já está no ecrã, a pessoa toca. Antes desta
+  // correcção o `onClick` ainda não existia e o pedido desaparecia.
+  test("o clique numa carta antes de hidratar não se perde: o painel abre na mesma", async ({
+    page,
+  }) => {
+    // este caso atrasa de propósito os chunks e depois espera pela
+    // hidratação: precisa de mais do que os 30 s do ficheiro
+    test.setTimeout(60_000);
+    // atrasa os chunks: garante que o clique chega antes da hidratação
+    await page.route("**/_next/static/chunks/*.js", async (route) => {
+      await new Promise((r) => setTimeout(r, 1200));
+      await route.continue();
+    });
+    await page.goto("/", { waitUntil: "commit" });
+    const ines = carta(page, "ines");
+    await ines.waitFor({ state: "attached" });
+    // o clique vai para o elemento que existe no HTML do servidor
+    await ines.dispatchEvent("click");
+    // e mesmo assim o bairro tem de abrir o painel
+    await expect(page.locator(".b-painel")).toBeVisible({ timeout: 20000 });
+    await expect(page.locator(".b-painel .b-quem")).toHaveText(
+      "Inês · Operária da fábrica"
+    );
+  });
+
   test("clicar abre o painel «Olá!» com o título certo; Escape fecha e devolve o foco à carta", async ({
     page,
   }) => {
+    // página inteira + abrir + fechar: orçamento maior para as mesmas
+    // asserções, pelos mesmos 30 s que não chegam num runner carregado
+    test.setTimeout(60_000);
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
 
@@ -124,6 +153,10 @@ test.describe("as sete cartas — escolhe a tua personagem (P1-4)", () => {
   test("o clique leva ao palco e — havendo personagem no mapa — mexe a câmara", async ({
     page,
   }) => {
+    // página inteira + voo da câmara: os 30 s do ficheiro não chegam num
+    // runner carregado (é um destes casos que reprovou o CI). Mesmo
+    // orçamento, mesmas comparações.
+    test.setTimeout(60_000);
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
 
@@ -174,13 +207,54 @@ test.describe("as sete cartas — escolhe a tua personagem (P1-4)", () => {
         test(`${k} a ${vw}×${vh}: a figura fica dentro da janela e fora do painel`, async ({
           page,
         }) => {
+          // este caso carrega a página INTEIRA e depois espera por uma
+          // animação: os 30 s do ficheiro não chegam num runner carregado
+          // (foi assim que o CI reprovou). Não é afrouxo de asserção — é
+          // orçamento para as mesmas comparações correrem.
+          test.setTimeout(60_000);
           await page.setViewportSize({ width: vw, height: vh });
           await page.goto("/");
           await carta(page, k).click();
           await expect(page.locator(".b-painel")).toBeVisible();
-          // o deslize dura ~1,1 s; 4,5 s apanha o fim com folga mesmo
-          // com o chunk do GSAP frio
-          await page.waitForTimeout(4500);
+          // espera pelo ESTADO, não por um prazo: a câmara só está pousada
+          // quando a figura está dentro da janela E o `.b-mundo` já não se
+          // mexe. O prazo de 4,5 s era um chute que não sabia se a animação
+          // já tinha chegado ao fim. As três leituras são feitas DENTRO do
+          // poll: o scroll ao palco é suave e o voo da câmara ainda pode
+          // estar a decorrer, e apanhar a figura «dentro» a meio do voo não é
+          // estar pousada.
+          let transformAnterior: string | null = null;
+          await expect
+            .poll(
+              async () => {
+                const transform = await page
+                  .locator(".b-mundo")
+                  .evaluate((el) => (el as HTMLElement).style.transform);
+                const j = await page.locator(".b-janela").boundingBox();
+                const r = await page
+                  .locator(`.b-mundo [data-pessoa="${figs[0]}"]`)
+                  .boundingBox();
+                const dentro =
+                  !!r &&
+                  !!j &&
+                  r.x >= j.x - 2 &&
+                  r.y >= j.y - 2 &&
+                  r.x + r.width <= j.x + j.width + 2 &&
+                  r.y + r.height <= j.y + j.height + 2;
+                if (!dentro) {
+                  transformAnterior = null;
+                  return false;
+                }
+                const pousada = transformAnterior === transform;
+                transformAnterior = transform;
+                return pousada;
+              },
+              {
+                timeout: 20_000,
+                message: `a câmara pousa ${k} dentro da janela`,
+              }
+            )
+            .toBe(true);
           const j = await page.locator(".b-janela").boundingBox();
           const pn = await page.locator(".b-painel").boundingBox();
           expect(j).toBeTruthy();
@@ -226,7 +300,38 @@ test.describe("as sete cartas — escolhe a tua personagem (P1-4)", () => {
       await p.goto("/");
       await carta(p, "ines").click();
       await expect(p.locator(".b-painel")).toBeVisible();
-      await p.waitForTimeout(1200);
+      // espera pelo estado (a figura pousada e a câmara parada), não por
+      // 1,2 s de relógio; as três leituras dentro do poll, pelo mesmo
+      // motivo do caso acima
+      let transformAnterior: string | null = null;
+      await expect
+        .poll(
+          async () => {
+            const transform = await p
+              .locator(".b-mundo")
+              .evaluate((el) => (el as HTMLElement).style.transform);
+            const j = await p.locator(".b-janela").boundingBox();
+            const rr = await p
+              .locator('.b-mundo [data-pessoa="ines"]')
+              .boundingBox();
+            const dentro =
+              !!rr &&
+              !!j &&
+              rr.x >= j.x - 2 &&
+              rr.x + rr.width <= j.x + j.width + 2 &&
+              rr.y >= j.y - 2 &&
+              rr.y + rr.height <= j.y + j.height + 2;
+            if (!dentro) {
+              transformAnterior = null;
+              return false;
+            }
+            const pousada = transformAnterior === transform;
+            transformAnterior = transform;
+            return pousada;
+          },
+          { timeout: 15_000, message: "a figura pousa sem GSAP" }
+        )
+        .toBe(true);
       const j = await p.locator(".b-janela").boundingBox();
       const r = await p
         .locator('.b-mundo [data-pessoa="ines"]')
