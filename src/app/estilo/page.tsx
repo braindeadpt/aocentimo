@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import { ALT_FEED } from "@/lib/meta";
+import { m } from "@/lib/messages";
+import { comUnidade } from "@/lib/format";
 import Link from "next/link";
 import { Delta } from "@/components/Delta";
 import { NumHero } from "@/components/NumHero";
@@ -190,18 +192,178 @@ const REGRAS_SUPERFICIE = [
 ];
 
 export default function EstiloPage() {
+  // a copy do contrato V5 vive em messages/pt.json (P3c) e é PROPOSTA —
+  // listada em docs/NOTAS-V5.md à espera da revisão do dono
+  const E = m.estilo;
   return (
     <div className="rt5 mx-auto max-w-6xl px-5 pt-14 pb-10">
       <p className="kicker">Referência viva</p>
-      <TituloPagina rota="/estilo">Sistema de design</TituloPagina>
+      <TituloPagina rota="/estilo">Contrato visual</TituloPagina>
       <p className="lede mt-5">
-        Direcção «Observatório»: um painel de instrumentos sobre o dinheiro.
-        Archivo expandido para manchetes, Space Grotesk para a interface,
-        Source Serif para a voz editorial, Space Mono para os números.
-        Vermilhão-sinal é o que sai, verde é o que fica — e o torrado marca
-        sempre a fonte. Escuro por omissão: o instrumento é a cara do
-        produto; o tema claro é o documento.
+        Direcção «O Bairro»: um bairro do Porto em cartoon claro, traço
+        preto grosso e cor chapada, para dos 11 aos 50 anos.{" "}
+        <strong>Archivo</strong> faz todo o trabalho — o eixo da largura
+        aperta a manchete e alarga o número, e é isso que separa título de
+        cuerpo. <strong>Caveat</strong> só escreve à mão, nos gráficos e no
+        quadro da escola. O talão e o recibo levam a monoespaçada do
+        sistema. Verde é o que fica contigo, vermelho é o que sai, azul é
+        neutro. Claro por omissão — o escuro é a noite do bairro.
       </p>
+
+      {/* ————— contrato V5 (P3c) ————— este bloco é o que a página passa
+          a prometer: as amostras são os tokens reais, lidas no browser,
+          por isso mudam com o tema sem uma linha de CSS extra. */}
+      <section className="stack-sec" data-contrato-v5="">
+        <h2 className="kicker mb-4">{E.titulo}</h2>
+        <p className="footnote mb-6 max-w-2xl">{E.nota}</p>
+
+        <h3 className="kicker mb-2">{E.cor}</h3>
+        <p className="footnote mb-4 max-w-2xl">{E.corNota}</p>
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
+          {(
+            [
+              ["papel", "--papel", "fundo de cartão"],
+              ["chão", "--chao", "fundo da página"],
+              ["tinta", "--tinta", "texto e traço"],
+              ["tinta-2", "--tinta-2", "texto secundário"],
+              ["suave", "--suave", "fontes e notas"],
+              ["linha", "--linha", "divisões"],
+              ["amarelo", "--amarelo", "destaque"],
+              ["azul", "--azul", "informação"],
+              ["verde", "--verde", "o que fica"],
+              ["vermelho", "--vermelho", "o que sai"],
+            ] as const
+          ).map(([nome, token, uso]) => (
+            <li key={nome} className="border border-linha px-3 py-2">
+              <span
+                aria-hidden
+                className="mb-2 block h-10 w-full border border-linha"
+                style={{ background: `var(${token})` }}
+              />
+              <code className="num block text-rotulo">{nome}</code>
+              <span className="footnote block">{uso}</span>
+            </li>
+          ))}
+        </ul>
+
+        <h3 className="kicker mt-8 mb-2">{E.tipografia}</h3>
+        <p className="footnote mb-4 max-w-2xl">{E.tipografiaNota}</p>
+        <div className="divide-y divide-linha border-y border-linha">
+          <div className="py-4">
+            <p className="kicker-xs mb-2">{E.arquivoEixo}</p>
+            <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
+              <span className="titulo-hero">Onde pára o teu euro</span>
+              <span className="text-corpo">Corpo em Archivo, peso 400</span>
+            </div>
+            <p className="footnote mt-2">{E.arquivoEixoNota}</p>
+          </div>
+          <div className="py-4">
+            <p className="kicker-xs mb-2">{E.mao}</p>
+            <p
+              className="text-[1.7rem] leading-tight"
+              style={{ fontFamily: "var(--mao)" }}
+            >
+              e foi assim que a Inês juntou o shortness
+            </p>
+            <p className="footnote mt-1">{E.maoNota}</p>
+          </div>
+          <div className="py-4">
+            <p className="kicker-xs mb-2">{E.mono}</p>
+            {/* a ponte número–unidade é sempre o FINO (U+202F) — este
+                excerto é a especificação, logo tem de ser exemplar */}
+            <p className="num text-[1.4rem] leading-tight">
+              {comUnidade("38,40", "€")} · {comUnidade("1 234,56", "€")}
+            </p>
+            <p className="footnote mt-1">{E.monoNota}</p>
+          </div>
+        </div>
+
+        <h3 className="kicker mt-8 mb-2">{E.forma}</h3>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="border border-linha px-4 py-3">
+            <p className="kicker-xs mb-3">{E.pilha}</p>
+            <span className="pil-nav">Botão em pílula</span>
+            {/* O amarelo é superfície clara nos dois temas: leva sempre tinta
+                escura, senão o contraste no escuro desce a 1,4:1. */}
+            <span
+              className="pil-nav ml-2"
+              style={{ background: "var(--amarelo)", color: "#16130f" }}
+            >
+              Em destaque
+            </span>
+            <p className="footnote mt-3">{E.pilhaNota}</p>
+          </div>
+          <div
+            className="px-4 py-3"
+            style={{
+              background: "var(--papel)",
+              border: "var(--traco) solid var(--tinta)",
+              borderRadius: "var(--raio-cartao)",
+              boxShadow: "var(--sombra-dura)",
+            }}
+          >
+            <p className="kicker-xs mb-2">{E.cartao}</p>
+            <p className="text-corpo">Um cartão de papel com traço de tinta.</p>
+            <p className="footnote mt-2">{E.cartaoNota}</p>
+          </div>
+        </div>
+
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="border border-linha px-4 py-3">
+            <p className="kicker-xs mb-2">{E.grafico}</p>
+            <svg viewBox="0 0 300 90" className="block w-full" role="img"
+                 aria-label="Duas séries de exemplo: uma sobe, outra desce.">
+              <polyline
+                fill="none"
+                stroke="var(--seq-1)"
+                strokeWidth={3}
+                points={[20, 70, 45, 35, 60, 25, 80, 15, 105, 30, 130, 20, 160, 12, 190, 22, 220, 10, 250, 18, 280].join(" ")}
+              />
+              <polyline
+                fill="none"
+                stroke="var(--seq-2)"
+                strokeWidth={3}
+                points={[20, 25, 45, 40, 60, 35, 80, 55, 105, 48, 130, 62, 160, 58, 190, 70, 220, 66, 250, 75, 280].join(" ")}
+              />
+            </svg>
+            <p className="footnote mt-2">{E.graficoNota}</p>
+          </div>
+          <div className="border border-linha px-4 py-3">
+            <p className="kicker-xs mb-2">{E.papel}</p>
+            <div className="talao-wrap w-48">
+              <div className="talao">
+                <div className="talao-face px-3 pb-3 pt-3">
+                  <p className="talao-head text-center">Mercearia</p>
+                  <p className="talao-total mt-2 flex justify-between">
+                    <span>Fica</span>
+                    <span className="num text-talao-numero">
+                      {comUnidade("12,30", "€")}
+                    </span>
+                  </p>
+                  <p className="talao-total flex justify-between">
+                    <span>Sai</span>
+                    <span className="num text-talao-numero">
+                      {comUnidade("26,10", "€")}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <p className="footnote mt-2">{E.papelNota}</p>
+          </div>
+        </div>
+
+        <h3 className="kicker mt-8 mb-2">{E.noite}</h3>
+        <p className="footnote mb-3 max-w-2xl">{E.noiteNota}</p>
+        <p className="footnote max-w-2xl">
+          <button type="button" className="pil-nav" data-theme-toggle="">
+            {m.tema.mudarParaEscuro}
+          </button>{" "}
+          <span className="footnote">
+            — o botão é o mesmo nos dois temas; muda só o céu por trás dele.
+          </span>
+        </p>
+      </section>
 
       <section className="stack-sec">
         <h2 className="kicker mb-4">Marca — «o cêntimo»</h2>
@@ -732,17 +894,18 @@ export default function EstiloPage() {
             </p>
           </div>
           <div className="py-5">
-            <p className="kicker mb-2">Insight — Source Serif 4 · .lede / .leitura-insight</p>
+            <p className="kicker mb-2">Insight — Archivo · .lede / .leitura-insight</p>
             <p className="lede">
               Entre o que a empresa paga e o que tu recebes há três cortes:
               Segurança Social, IRS e a TSU que nunca vês no recibo.
             </p>
           </div>
           <div className="py-5">
-            <p className="kicker mb-2">Corpo — Space Grotesk · .body-copy / text-corpo(-sm)</p>
+            <p className="kicker mb-2">Corpo — Archivo · .body-copy / text-corpo(-sm)</p>
             <p className="body-copy">
               O corpo da interface e das páginas. Neutro, técnico, sem ser
-              genérico — o par natural do Space Mono dos números.
+              genérico — o par natural da monoespaçada do sistema, que
+              escreve os números.
             </p>
           </div>
           <div className="py-5">
@@ -808,7 +971,7 @@ export default function EstiloPage() {
             </p>
           </div>
           <div className="py-5">
-            <p className="kicker mb-2">Leitura — .num-read · Space Mono ~1.4rem</p>
+            <p className="kicker mb-2">Leitura — .num-read · monoespaçada do sistema ~1.4rem</p>
             <div className="flex flex-wrap items-baseline gap-x-10 gap-y-2">
               <p className="num-read">4 320,00 €</p>
               <p className="num-read text-up">23,0 %</p>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ViewTransition } from "react";
-import { Archivo, Caveat, Source_Serif_4, Space_Grotesk, Space_Mono } from "next/font/google";
+import { Archivo, Caveat } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -19,23 +19,6 @@ const archivo = Archivo({
   subsets: ["latin"],
   axes: ["wdth"],
   variable: "--font-archivo",
-  display: "optional",
-});
-const grotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-grotesk",
-  display: "optional",
-});
-const serif = Source_Serif_4({
-  subsets: ["latin"],
-  weight: "400", // .lede é sempre regular — o variável trazia 200–900 por um parágrafo
-  variable: "--font-serif",
-  display: "optional",
-});
-const spaceMono = Space_Mono({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-space",
   display: "optional",
 });
 // Caveat — a mão que escreve (P0, contrato visual V5). Só entra em vigor
@@ -100,7 +83,7 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
       data-theme="light"
       data-pele="v5"
-      className={`${archivo.variable} ${grotesk.variable} ${serif.variable} ${spaceMono.variable} ${caveat.variable}`}
+      className={`${archivo.variable} ${caveat.variable}`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
