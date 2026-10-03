@@ -15,14 +15,14 @@ imagens a um PR (`gh pr upload-asset` foi removido no `gh` 2.101 e o
 
 | ficheiro | build | tema | viewport |
 | --- | --- | --- | --- |
-| `antes-claro-1440.png` | `origin/main` (V4) | claro | 1440 × 1000 |
-| `antes-escuro-1440.png` | `origin/main` (V4) | escuro | 1440 × 1000 |
-| `antes-claro-375.png` | `origin/main` (V4) | claro | 375 × 900 |
-| `antes-escuro-375.png` | `origin/main` (V4) | escuro | 375 × 900 |
-| `depois-claro-1440.png` | `v5/p3-pele-c` (V5) | claro | 1440 × 1000 |
-| `depois-escuro-1440.png` | `v5/p3-pele-c` (V5) | escuro | 1440 × 1000 |
-| `depois-claro-375.png` | `v5/p3-pele-c` (V5) | claro | 375 × 900 |
-| `depois-escuro-375.png` | `v5/p3-pele-c` (V5) | escuro | 375 × 900 |
+| `antes-claro-1440.jpg` | `origin/main` (V4) | claro | 1440 × 1000 |
+| `antes-escuro-1440.jpg` | `origin/main` (V4) | escuro | 1440 × 1000 |
+| `antes-claro-375.jpg` | `origin/main` (V4) | claro | 375 × 900 |
+| `antes-escuro-375.jpg` | `origin/main` (V4) | escuro | 375 × 900 |
+| `depois-claro-1440.jpg` | `v5/p3-pele-c` (V5) | claro | 1440 × 1000 |
+| `depois-escuro-1440.jpg` | `v5/p3-pele-c` (V5) | escuro | 1440 × 1000 |
+| `depois-claro-375.jpg` | `v5/p3-pele-c` (V5) | claro | 375 × 900 |
+| `depois-escuro-375.jpg` | `v5/p3-pele-c` (V5) | escuro | 375 × 900 |
 
 ## Como foram tiradas
 
@@ -31,6 +31,9 @@ Playwright sobre `scripts/_serve-static.mjs`, já construido, com
 `prefers-color-scheme`), e a secção `data-contrato-v5` trazida para o
 topo do ecrã antes do disparo.
 
-As imagens foram guardadas a 1400 px de largura para não pesar (os
-originais são de 2880 px, `deviceScaleFactor: 2`). O viewport foi
-sempre o indicado na tabela.
+Os ficheiros estão em **JPEG a 1100 px de largura, qualidade 78** (948 KB
+no total). Não é arbitrio: o repositório recusa por *push* qualquer
+ficheiro acima de ~1 MB (HTTP 400), e os PNG de tema escuro ficavam
+entre 1,0 e 1,5 MB por causa dos degradados. Os originais eram de
+2880 px (`deviceScaleFactor: 2`). O viewport foi sempre o indicado
+na tabela.
