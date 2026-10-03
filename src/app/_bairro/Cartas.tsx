@@ -19,7 +19,8 @@
  * ao nome.
  */
 import { ELENCO, pessoa, type ChaveElenco } from "@/lib/bairro/personagens";
-import { EVT_PERSONAGEM, type EscolhaPersonagem } from "./personagem";
+import type { EscolhaPersonagem } from "./personagem";
+import { janela, pedirPersonagem } from "./ponte-cartas";
 
 /** O que uma carta precisa — tuplo porque os nomes das chaves de um
     objeto repetem-se sete vezes no payload RSC (~60 B gzip de nada). */
@@ -77,6 +78,55 @@ function escolha(c: CartaDados, cm: CartasComum): EscolhaPersonagem {
   };
 }
 
+/**
+ * A captura sem React, em texto para ir num <script> inline. Tem de
+ * ser uma função SEM dependências (vive no HTML do servidor) e sem
+ * TypeScript — daí não exportada em tipos.
+ * Guarda o pedido na fila do window; o <Bairro> drena ao montar.
+ */
+function capturaCarta() {
+  document.addEventListener(
+    "click",
+    (e) => {
+      const marca = (window.__bToque = (window.__bToque || 0) + 1);
+      let alvo = e.target as HTMLElement | null;
+      while (alvo) {
+        if (
+          alvo.classList &&
+          alvo.classList.contains("b-carta") &&
+          alvo.getAttribute("data-d")
+        ) {
+          // este ouvinte é de CAPTURA: corre ANTES do React. Se o
+          // onClick da carta também levar a cabo este mesmo toque,
+          // ele aumenta o contador e nós recuamos — abrir duas vezes
+          // era abrir e fechar o painel.
+          const carta = alvo;
+          const aplica = function () {
+            let pedido;
+            try {
+              pedido = JSON.parse(carta.getAttribute("data-d") ?? "");
+            } catch {
+              return; /* data-d corrompido: deixa o React tratar */
+            }
+            (window.__bEscolhas = window.__bEscolhas || []).push(pedido);
+            window.dispatchEvent(
+              new CustomEvent("b:escolhe-personagem", { detail: pedido })
+            );
+          };
+          // o React trata o toque no mesmo evento, logo ainda não
+          // atendeu: agendamos para depois do ciclo de propagação
+          setTimeout(() => {
+            if ((window.__bToque || 0) === marca) aplica();
+          }, 0);
+          return;
+        }
+        alvo = alvo.parentElement;
+      }
+    },
+    true
+  );
+}
+
 export function Cartas({
   cartas,
   comum,
@@ -86,6 +136,17 @@ export function Cartas({
 }) {
   return (
     <div className="b-cartas">
+      {/* Rede de segurança SEM React: um toque pode chegar antes de a
+          carta hidratar (num telemóvel lento), e aí o onClick não
+          existe. Este script inline corre no HTML do servidor — liga
+          um ouvinte de captura que guarda o pedido na fila; quando o
+          <Bairro> montar, drena-a. O detalhe viaja em data-d (JSON),
+          não em JS: zero bundle, zero closure. */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `(${capturaCarta.toString()})();`,
+        }}
+      />
       {cartas.map((c) => {
         const [chave, nome, papel, , perfil, aprende] = c;
         const { svg, viewBox } = figuraDaCarta(chave);
@@ -95,13 +156,10 @@ export function Cartas({
             type="button"
             className="b-carta"
             data-k={chave}
+            data-d={JSON.stringify(escolha(c, comum))}
             aria-label={`${nome}, ${papel[0].toLowerCase()}${papel.slice(1)}`}
             aria-describedby={`b-a-${chave}`}
-            onClick={() =>
-              window.dispatchEvent(
-                new CustomEvent(EVT_PERSONAGEM, { detail: escolha(c, comum) })
-              )
-            }
+            onClick={() => pedirPersonagem(escolha(c, comum), janela())}
           >
             {/* a cor vem do CSS por [data-k] — não é texto, não é
                 dado: não gasta HTML nem payload */}

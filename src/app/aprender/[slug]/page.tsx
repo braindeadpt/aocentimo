@@ -93,11 +93,15 @@ export default async function TermoPage({
   const prox = proximoTermo(t.slug);
 
   return (
-    <>
+    <div className="rt5">
       <JsonLd data={definedTerm(t)} />
       <Pagina
         pergunta={`O que é «${t.termo}»?`}
         rota={`/aprender/${t.slug}`}
+        edificio={{
+          href: "/#escola",
+          titulo: m.bairro.edificios.escola.titulo,
+        }}
         kicker={
           <>
             <Link href="/aprender" className="hover:text-ink2">
@@ -212,6 +216,6 @@ export default async function TermoPage({
             : { href: "/metodologia", rotulo: "De onde vêm os números?" }
         }
       />
-    </>
+    </div>
   );
 }

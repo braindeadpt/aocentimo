@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 
 // 1B-04 — coreografia. Dois contratos medidos em runtime:
 //
@@ -25,7 +25,45 @@ const VOO = [
   "::view-transition-new(pg-voo)",
 ];
 
-/**(instala um colector de pseudo-elementos de view-transition.
+/** Espera a guarda de pausa do <OrbeEstado> ESTAR ARMADA.
+ *
+ *  A guarda nasce no `useEffect` do componente: o `IntersectionObserver`
+ *  só é criado quando o React hidrata, e o primeiro relato do
+ *  observador é assíncrono. Até essa altura o `animation-play-state`
+ *  é «running» por OMISSÃO — o mesmo valor que teria se a pausa
+ *  estivesse estragada. O teste que afirmava o estado antes desse
+ *  momento media o atraso da hidratação, não o contrato: foi o que
+ *  travou o deploy com «esperava "paused", recebeu "running"».
+ *
+ *  Por isso a espera é pela GUARDA (a classe que só o observador
+ *  põe), não por um estado com relógio. O orçamento generoso cobre a
+ *  hidratação de uma página de 21 000 px num runner carregado; se a
+ *  guarda nunca armar, isto falha com uma mensagem que diz isso — e
+ *  não com «a animação não pára», que seria mentira. */
+async function guardaArmada(page: Page): Promise<void> {
+  await expect
+    .poll(
+      () =>
+        page.evaluate(
+          () =>
+            document
+              .querySelector("svg.orbe-a-recolher")
+              ?.classList.contains("orbe-pausado") ?? false
+        ),
+      {
+        timeout: 15_000,
+        message: "a guarda de pausa do orbe não armou (hidratação ou IO)",
+      }
+    )
+    .toBe(true);
+}
+
+/** Orçamento das medições de estado, já com a guarda armada. Não é
+ *  um afrouxamento da asserção — os valores exigidos são os mesmos;
+ *  é a paciência de quem não quer que o relógio do CI decida. */
+const ORCAMENTO = { timeout: 10_000 } as const;
+
+/** Instala um colector de pseudo-elementos de view-transition.
     Vive até ser parado à mão (`window.__vtParar()`), não 3,2 s: sob
     carga a navegação pode demorar 6 s e o colector expirava ANTES da
     transição começar — o teste lia um array vazio e acusava a animação
@@ -69,16 +107,16 @@ const COLETOR_VT = `(() => {
 })()`;
 
 /** Lê o que o colector viu. */
-const vistosVt = (page: import("@playwright/test").Page) =>
+const vistosVt = (page: Page) =>
   page.evaluate(() => [...((window as Janela).__vt ?? [])] as string[]);
 
 /** Para o colector (para a página não ficar a amostrar até ao fim). */
-async function pararColetor(page: import("@playwright/test").Page) {
+async function pararColetor(page: Page) {
   await page.evaluate(() => (window as Janela).__vtParar?.());
 }
 
 /** Quantos dos três nomes do voo já apareceram. */
-async function vistosDoVoo(page: import("@playwright/test").Page) {
+async function vistosDoVoo(page: Page) {
   const v = await vistosVt(page);
   return VOO.filter((n) => v.includes(n)).length;
 }
@@ -86,7 +124,7 @@ async function vistosDoVoo(page: import("@playwright/test").Page) {
 /** Quantas rondas o colector já fez — prova que esteve VIVO durante a
     janela observada (numa asserção negativa, «não vi nada» só quer dizer
     algo se o olhar esteve aberto). */
-async function amostrasDoColetor(page: import("@playwright/test").Page) {
+async function amostrasDoColetor(page: Page) {
   return page.evaluate(() => (window as Janela).__vtAmostras ?? 0);
 }
 
@@ -200,18 +238,26 @@ test("o orbe «a-recolher» pára fora do ecrã e com o separador escondido", as
         ).animationPlayState
     );
 
+  // a guarda tem de estar armada antes de medir seja o que for: o
+  // orbe NASCE fora do ecrã (esta página tem 21 000 px de altura), e
+  // o primeiro relato do observador — «não intersecta» — é o que põe
+  // a classe. Enquanto isso não acontece, «running» não distingue
+  // «ainda não hidratou» de «a pausa está estragada».
+  await guardaArmada(page);
+  await expect.poll(playState, ORCAMENTO).toBe("paused");
+
   await orbe.scrollIntoViewIfNeeded();
-  await expect.poll(playState, { timeout: 4000 }).toBe("running");
+  await expect.poll(playState, ORCAMENTO).toBe("running");
 
   // fora do ecrã → pausado pelo IntersectionObserver
   await page.evaluate(() =>
     window.scrollTo({ top: 0, behavior: "instant" })
   );
-  await expect.poll(playState, { timeout: 4000 }).toBe("paused");
+  await expect.poll(playState, ORCAMENTO).toBe("paused");
 
   // de volta à vista mas com o separador «escondido» → continua parado
   await orbe.scrollIntoViewIfNeeded();
-  await expect.poll(playState, { timeout: 4000 }).toBe("running");
+  await expect.poll(playState, ORCAMENTO).toBe("running");
   await page.evaluate(() => {
     Object.defineProperty(document, "hidden", {
       get: () => true,
@@ -219,7 +265,7 @@ test("o orbe «a-recolher» pára fora do ecrã e com o separador escondido", as
     });
     document.dispatchEvent(new Event("visibilitychange"));
   });
-  await expect.poll(playState, { timeout: 4000 }).toBe("paused");
+  await expect.poll(playState, ORCAMENTO).toBe("paused");
 
   // separador de volta → retoma
   await page.evaluate(() => {
@@ -229,7 +275,7 @@ test("o orbe «a-recolher» pára fora do ecrã e com o separador escondido", as
     });
     document.dispatchEvent(new Event("visibilitychange"));
   });
-  await expect.poll(playState, { timeout: 4000 }).toBe("running");
+  await expect.poll(playState, ORCAMENTO).toBe("running");
 });
 
 test("o canvas do CampoCentimos pára fora do ecrã e com o separador escondido", async ({

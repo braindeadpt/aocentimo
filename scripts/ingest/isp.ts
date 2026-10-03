@@ -22,10 +22,21 @@ import { fetchTexto } from "./_http";
  *
  * O alarme é despertador, nunca dado: só diz que há portaria nova e manda
  * abrir a checklist. Nenhum número do feed entra em isp.json sozinho.
+ *
+ * Segunda protecção (não depende do feed): se a vigência do isp.json tiver
+ * mais de LIMIAR_IDADE_DIAS dias, há alarme de idade mesmo com o feed
+ * quieto — ou em falha. O ISP muda quase todas as semanas e o Google pode
+ * não indexar uma portaria; sem isto, o JSON envelhecia em silêncio.
  */
 
 export const ISP_RSS_URL =
   "https://news.google.com/rss/search?q=ISP+site%3Adiariodarepublica.pt&hl=pt-PT&gl=PT&ceid=PT%3Apt";
+
+/** Limiar da segunda protecção: vigência mais velha que isto dispara o alarme de idade. */
+export const LIMIAR_IDADE_DIAS = 8;
+
+/** De onde veio o (único) alarme da ronda — "nenhum" quando está tudo recente. */
+export type MotivoAlarmeIsp = "feed" | "idade" | "ambos" | "nenhum";
 
 export interface PortariaIsp {
   /** «437-B/2026/1» — número, letra, ano e série. */
@@ -56,6 +67,16 @@ export interface EstadoVigiliaIsp {
   accao: string;
   /** Portarias do feed mais recentes que a citada no isp.json. */
   novas: PortariaIsp[];
+  /** Dias completos entre a vigência do isp.json e o dia da corrida. */
+  idadeDias: number;
+  /** Vigência com mais de LIMIAR_IDADE_DIAS dias — alarme sem precisar do feed. */
+  alarmeIdade: boolean;
+  /** Veredicto único da ronda: um só alarme, nunca dois. */
+  alarme: boolean;
+  /** De onde veio o alarme (ou "nenhum"). */
+  motivo: MotivoAlarmeIsp;
+  /** Mensagem do erro quando o feed falhou (null quando correu bem). */
+  falhaFeed: string | null;
 }
 
 /** Estado anterior, se existir; senão null. */
@@ -188,36 +209,88 @@ export function parseRssPortarias(xml: string): {
 }
 
 /**
+ * Dias completos entre a vigência do isp.json e o dia da corrida (ambos
+ * YYYY-MM-DD). NaN se a vigência não for data — e NaN nunca alarma: sem
+ * idade legível, resta o sinal do feed.
+ */
+export function idadeDiasVigencia(vigenciaISO: string, hojeISO: string): number {
+  const t = Date.parse(`${vigenciaISO}T00:00:00Z`);
+  const h = Date.parse(`${hojeISO}T00:00:00Z`);
+  if (Number.isNaN(t) || Number.isNaN(h)) return NaN;
+  return Math.floor((h - t) / 86_400_000);
+}
+
+/** A segunda protecção: mais de LIMIAR_IDADE_DIAS dias dispara, com feed ou sem ele. */
+export function precisaAlarmeIdade(idadeDias: number): boolean {
+  return Number.isFinite(idadeDias) && idadeDias > LIMIAR_IDADE_DIAS;
+}
+
+/** Costura de teste do runIsp: o feed e o "hoje" injectam-se; por omissão é a ronda a sério. */
+export interface DependenciasRunIsp {
+  lerFeed?: (url: string) => Promise<string>;
+  hojeISO?: string;
+}
+
+/**
  * Corre a consulta, compara com o isp.json e grava o estado.
  * Há novas quando o feed traz portaria mais recente que a citada na fonte
  * do isp.json — a verdade humana manda, nunca o feed. O relatório de
  * «última reportada» é informativo: enquanto o isp.json não for atualizado,
  * cada corrida volta a alarmar (despertador até acordar).
+ *
+ * O feed pode falhar (429, rede): sem sinal de novidade, a idade decide.
+ * Vigência recente + feed em falha = falha honesta (lança, como antes).
+ * Vigência velha + feed em falha = alarme de idade na mesma.
  */
-export async function runIsp(dataDir: string): Promise<EstadoVigiliaIsp> {
+export async function runIsp(dataDir: string, deps: DependenciasRunIsp = {}): Promise<EstadoVigiliaIsp> {
   const ficheiro = path.join(dataDir, "meta", "isp-vigilia.json");
   const anterior = lerEstadoAnterior(ficheiro);
   const ispTexto = readFileSync(path.join(dataDir, "fiscal", "isp.json"), "utf8");
   const isp = JSON.parse(ispTexto) as { vigencia: string; fonte: string };
   const portariaIspJson = extrairPortariaIspJson(isp.fonte);
+  const hoje = deps.hojeISO ?? new Date().toISOString().slice(0, 10);
+  const idadeDias = idadeDiasVigencia(isp.vigencia, hoje);
+  const alarmeIdade = precisaAlarmeIdade(idadeDias);
 
   // Um único fetch por corrida (o Google responde 429 a bots insistentes) —
-  // o retry com backoff vive no fetchTexto; se esgotar, falha honesta.
-  const xml = await fetchTexto(ISP_RSS_URL, { timeoutMs: 30_000, tentativas: 3 });
-  const { portarias, aConferir } = parseRssPortarias(xml);
+  // o retry com backoff vive no fetchTexto; se esgotar e a vigência estiver
+  // recente, falha honesta. Velha, segue-se sem feed, só com a idade.
+  const lerFeed = deps.lerFeed ?? ((url: string) => fetchTexto(url, { timeoutMs: 30_000, tentativas: 3 }));
+  let portarias: PortariaIsp[] = [];
+  let aConferir: { titulo: string; data: string }[] = [];
+  let ultimaPortariaFeed: PortariaIsp | null = anterior?.ultimaPortariaFeed ?? null;
+  let falhaFeed: string | null = null;
+  try {
+    const { portarias: ps, aConferir: ac } = parseRssPortarias(await lerFeed(ISP_RSS_URL));
+    portarias = ps;
+    aConferir = ac;
+    const unicas = unicasOrdenadas(portarias);
+    ultimaPortariaFeed = unicas.length > 0 ? unicas[unicas.length - 1] : null;
+  } catch (e) {
+    if (!alarmeIdade) throw e;
+    falhaFeed = e instanceof Error ? e.message : String(e);
+  }
 
-  const unicas = unicasOrdenadas(portarias);
-  const ultimaPortariaFeed = unicas.length > 0 ? unicas[unicas.length - 1] : null;
-  const novas = novasDesde(portarias, portariaIspJson);
+  const novas = falhaFeed ? [] : novasDesde(portarias, portariaIspJson);
   const reportadas = novas.map((n) => n.numero);
   const ultimaReportada =
     reportadas.length > 0
       ? reportadas[reportadas.length - 1]
       : (anterior?.ultimaReportada ?? null);
+  const temFeed = novas.length > 0;
+  const alarme = temFeed || alarmeIdade;
+  const motivo: MotivoAlarmeIsp = temFeed && alarmeIdade ? "ambos" : temFeed ? "feed" : alarmeIdade ? "idade" : "nenhum";
 
-  if (novas.length > 0) {
+  // Um só alarme por ronda, nunca dois: com novas e idade, a mesma linha diz tudo.
+  if (temFeed) {
     console.error(
-      `⚠ ISP: ${novas.length} portaria(s) nova(s) no DR desde ${portariaIspJson} — ${reportadas.join(", ")} — o isp.json (vigência ${isp.vigencia}) está velho`
+      `⚠ ISP: ${novas.length} portaria(s) nova(s) no DR desde ${portariaIspJson} — ${reportadas.join(", ")} — o isp.json (vigência ${isp.vigencia}) está velho` +
+        (alarmeIdade ? `; além disso tem ${idadeDias} dias — confirma à mão se saiu mais alguma` : "")
+    );
+  } else if (alarmeIdade) {
+    console.error(
+      `⚠ ISP: isp.json com ${idadeDias} dias (vigência ${isp.vigencia}, ${portariaIspJson ?? "sem portaria citada"}): confirma à mão se saiu portaria nova — o feed não trouxe nada` +
+        (falhaFeed ? ` (e o feed falhou nesta ronda: ${falhaFeed})` : "")
     );
   } else {
     console.log(
@@ -236,6 +309,11 @@ export async function runIsp(dataDir: string): Promise<EstadoVigiliaIsp> {
     accao:
       "Há novas: abrir a issue, confirmar cada portaria no DR, ler o art. 2.º e atualizar data/fiscal/isp.json (vigencia, fonte, fonteUrl, ispELitro, nota) com os testes. O alarme nunca é dado.",
     novas,
+    idadeDias,
+    alarmeIdade,
+    alarme,
+    motivo,
+    falhaFeed,
   };
   writeFileSync(ficheiro, JSON.stringify(estado, null, 2));
   return estado;

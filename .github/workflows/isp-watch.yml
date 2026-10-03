@@ -30,7 +30,7 @@ jobs:
           cache: npm
       - run: npm ci
 
-      # CLI sai: 0 = ok · 2 = ALARME (portaria nova no DR) · 1 = falha honesta
+      # CLI sai: 0 = ok · 2 = ALARME (portaria nova no DR e/ou vigência com +8 dias) · 1 = falha honesta
       - name: Consultar o feed restrito ao DR
         id: vigilia
         run: |
@@ -58,30 +58,95 @@ jobs:
           script: |
             const { owner, repo } = context.repo;
             const estado = JSON.parse(require("fs").readFileSync("data/meta/isp-vigilia.json", "utf8"));
-            const numeros = estado.novas.map((n) => n.numero).join(", ");
-            const titulo = `ISP: portaria nova no DR — ${numeros}`;
+            const PREFIXO_FEED = "ISP: portaria nova no DR";
+            const PREFIXO_IDADE = "ISP: isp.json com";
             const { data: abertas } = await github.rest.issues.listForRepo({
               owner, repo, state: "open", labels: "dados",
             });
-            const corpo = [
-              `O feed restrito ao DR traz portaria(s) mais recente(s) que a citada no isp.json (vigência ${estado.ispJson.vigencia}, ${estado.ispJson.portaria ?? "sem portaria"}): **${numeros}**.`,
-              ``,
-              ...estado.novas.map((n) => `- ${n.numero} (${n.data}): ${n.titulo} — <${n.link}>`),
-              ``,
-              `Isto é um despertador, nunca um dado: confirmar cada portaria no Diário da República (pesquisar o número em https://diariodarepublica.pt) e só depois mexer no JSON. Checklist:`,
-              ``,
-              `1. Abrir a portaria no DR e ler o art. 2.º (as taxas por produto);`,
-              `2. Atualizar \`data/fiscal/isp.json\`: \`vigencia\`, \`fonte\`, \`fonteUrl\`, \`ispELitro\` (e \`carbonoELitro\` se mudar) e a \`nota\`;`,
-              `3. Correr os testes que leem o isp.json (\`npm run test:unit\`, cena da Bomba) — número novo sem teste é número por confirmar;`,
-              `4. Fechar esta issue à mão quando o isp.json citar a portaria (ela não fecha sozinha: enquanto o JSON estiver velho, cada ronda volta a avisar).`,
-              ``,
-              `Estado: \`data/meta/isp-vigilia.json\` (último commit da vigilância).`,
-            ].join("\n");
-            const existente = abertas.find((i) => i.title.startsWith("ISP: portaria nova no DR"));
-            if (existente) {
-              await github.rest.issues.createComment({ owner, repo, issue_number: existente.number, body: corpo });
-            } else {
-              await github.rest.issues.create({ owner, repo, title: titulo, labels: ["dados"], body: corpo });
+            // Um só alarme por ronda: havendo novas no feed, tudo vive na
+            // issue do feed; uma issue de idade ainda aberta fecha-se como
+            // substituída para não haver dois despertadores a tocar.
+            async function fecharIdadeSubstituida(ref) {
+              for (const i of abertas.filter((x) => x.title.startsWith(PREFIXO_IDADE))) {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: i.number,
+                  body: `Substituída pelo alarme de portaria nova (${ref}) — segue tudo aí.`,
+                });
+                await github.rest.issues.update({ owner, repo, issue_number: i.number, state: "closed" });
+              }
+            }
+            if (estado.novas.length > 0) {
+              const numeros = estado.novas.map((n) => n.numero).join(", ");
+              const titulo = `ISP: portaria nova no DR — ${numeros}`;
+              const corpo = [
+                `O feed restrito ao DR traz portaria(s) mais recente(s) que a citada no isp.json (vigência ${estado.ispJson.vigencia}, ${estado.ispJson.portaria ?? "sem portaria"}): **${numeros}**.`,
+                ``,
+                ...estado.novas.map((n) => `- ${n.numero} (${n.data}): ${n.titulo} — <${n.link}>`),
+                ``,
+                ...(estado.alarmeIdade
+                  ? [`Além disso, o isp.json tem ${estado.idadeDias} dias (limiar: 8) — confirma à mão se saiu mais alguma para além destas.`, ``]
+                  : []),
+                `Isto é um despertador, nunca um dado: confirmar cada portaria no Diário da República (pesquisar o número em https://diariodarepublica.pt) e só depois mexer no JSON. Checklist:`,
+                ``,
+                `1. Abrir a portaria no DR e ler o art. 2.º (as taxas por produto);`,
+                `2. Atualizar \`data/fiscal/isp.json\`: \`vigencia\`, \`fonte\`, \`fonteUrl\`, \`ispELitro\` (e \`carbonoELitro\` se mudar) e a \`nota\`;`,
+                `3. Correr os testes que leem o isp.json (\`npm run test:unit\`, cena da Bomba) — número novo sem teste é número por confirmar;`,
+                `4. Fechar esta issue à mão quando o isp.json citar a portaria (ela não fecha sozinha: enquanto o JSON estiver velho, cada ronda volta a avisar).`,
+                ``,
+                `Estado: \`data/meta/isp-vigilia.json\` (último commit da vigilância).`,
+              ].join("\n");
+              const existente = abertas.find((i) => i.title.startsWith(PREFIXO_FEED));
+              let ref;
+              if (existente) {
+                await github.rest.issues.createComment({ owner, repo, issue_number: existente.number, body: corpo });
+                ref = `#${existente.number}`;
+              } else {
+                const criada = await github.rest.issues.create({ owner, repo, title: titulo, labels: ["dados"], body: corpo });
+                ref = `#${criada.data.number}`;
+              }
+              if (estado.alarmeIdade) await fecharIdadeSubstituida(ref);
+            } else if (estado.alarmeIdade) {
+              const dias = estado.idadeDias;
+              const titulo = `ISP: isp.json com ${dias} dias — confirma à mão se saiu portaria nova`;
+              const corpo = [
+                `O \`data/fiscal/isp.json\` cita vigência **${estado.ispJson.vigencia}** (${estado.ispJson.portaria ?? "sem portaria citada"}) há **${dias} dias** — passou o limiar de 8. O ISP muda quase todas as semanas e o feed pode não ter indexado a portaria nova, por isso este alarme não depende dele.`,
+                ``,
+                `Isto é um despertador, nunca um dado: confirma à mão se saiu portaria nova — pesquisar «ISP» em https://diariodarepublica.pt/dr/pesquisa — e só depois mexe no JSON. Checklist:`,
+                ``,
+                `1. Confirmar no DR se saiu portaria nova desde a citada (a pesquisa do DR é à mão: não é legível por máquina);`,
+                `2. Havendo nova, ler o art. 2.º (as taxas por produto) e atualizar \`data/fiscal/isp.json\`: \`vigencia\`, \`fonte\`, \`fonteUrl\`, \`ispELitro\` (e \`carbonoELitro\` se mudar) e a \`nota\`;`,
+                `3. Correr os testes que leem o isp.json (\`npm run test:unit\`, cena da Bomba) — número novo sem teste é número por confirmar;`,
+                ...(estado.falhaFeed
+                  ? [``, `O feed falhou nesta ronda (${estado.falhaFeed}) — há ainda menos sinal que o costume, confirma com redobrada atenção.`]
+                  : []),
+                ``,
+                `Fecha sozinha quando a vigência voltar a estar recente (menos de 9 dias).`,
+                ``,
+                `Estado: \`data/meta/isp-vigilia.json\` (último commit da vigilância).`,
+              ].join("\n");
+              const existente = abertas.find((i) => i.title.startsWith(PREFIXO_IDADE));
+              if (existente) {
+                await github.rest.issues.createComment({ owner, repo, issue_number: existente.number, body: corpo });
+              } else {
+                await github.rest.issues.create({ owner, repo, title: titulo, labels: ["dados"], body: corpo });
+              }
+            }
+
+      - name: Fechar alarme de idade quando a vigência volta a estar recente
+        if: steps.vigilia.outputs.codigo == '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const { data: abertas } = await github.rest.issues.listForRepo({
+              owner, repo, state: "open", labels: "dados",
+            });
+            for (const i of abertas.filter((x) => x.title.startsWith("ISP: isp.json com"))) {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: i.number,
+                body: "A vigência do isp.json voltou a estar recente — fecho automático. (Só o alarme de idade fecha sozinho; uma issue de portaria nova continua a fechar-se à mão.)",
+              });
+              await github.rest.issues.update({ owner, repo, issue_number: i.number, state: "closed" });
             }
 
       - name: Registar falha honesta em issue

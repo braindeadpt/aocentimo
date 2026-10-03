@@ -29,6 +29,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PausaAmbiente } from "@/components/PausaAmbiente";
 import { motionActiva, carregarGsap, type MotorGsap } from "@/lib/motion/gsap";
 import { EVT_PERSONAGEM, type EscolhaPersonagem } from "./personagem";
+import { drenarEscolhas, janela } from "./ponte-cartas";
 import { Camera, arrumarPinos, type Enquadramentos, type MarcadorVivo, type PinoPlanta } from "./camara";
 import { ligarAmbiente } from "./ambiente";
 import { mundoBairro, reflexos } from "@/lib/bairro/mundo";
@@ -448,8 +449,7 @@ export function Bairro({
   }, []);
 
   useEffect(() => {
-    const aoEscolher = (e: Event) => {
-      const d = (e as CustomEvent<EscolhaPersonagem>).detail;
+    const aplicar = (d: EscolhaPersonagem) => {
       if (!d?.chave) return;
       esconderCartao();
       // se uma cena estava aberta, o painel da personagem substitui-a —
@@ -471,7 +471,12 @@ export function Bairro({
       });
       void voarParaPersonagem(d.chave);
     };
+    const aoEscolher = (e: Event) =>
+      aplicar((e as CustomEvent<EscolhaPersonagem>).detail);
     window.addEventListener(EVT_PERSONAGEM, aoEscolher);
+    // uma carta pode ter sido tocada ANTES de este efeito correr — o
+    // toque vai ao vazio se não a servirmos aqui (medido a 40× de CPU)
+    drenarEscolhas(aplicar, janela());
     return () => window.removeEventListener(EVT_PERSONAGEM, aoEscolher);
   }, [cenaAberta, esconderCartao, voarParaPersonagem]);
 

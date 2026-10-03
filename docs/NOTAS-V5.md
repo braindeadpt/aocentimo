@@ -965,6 +965,35 @@ seguinte; a home não recebeu uma linha de HTML.
 2 temas); o trinco das «rotas por migrar» passa a cobrir só o grupo
 3 (`/aprender` sem `.rt5`, `/metodologia` sem ligações). Total 22.
 
+### P3b · grupo 3 — aprender, meta e /estilo (ramo `v5/p3-pele-b3`)
+
+**O que entrou.** As últimas cinco rotas vestem `.rt5` e a migração
+fica completa — já nenhuma rota usa a pele V4. As duas do glossário
+ganham a ligação «← Voltar ao bairro: Escola» (`/#escola`);
+`/metodologia`, `/sobre` e `/estilo` não têm edifício e ficam sem
+ligação (decisão do dono para as duas primeiras; `/estilo` segue a
+mesma regra — não há edifício que a represente).
+
+**Decisões tomadas (a rever):**
+
+1. **`/estilo` vestiu a pele mas a copy continua a descrever a
+   direção «Observatório» V4** (Archivo expandido, Space Grotesk,
+   Source Serif, Space Mono). Migrar a página é visual; a reescrita
+   da referência viva para a linguagem do bairro é editorial do dono
+   — fica registado aqui como dívida de copy.
+2. **Colisão de sessões, resolvida:** o `_lettering` chumbava main
+   (espaços normais no `fonte` do `isp.json`); este ramo trazia o mesmo
+   remendo U+202F que o #49 — ao fazer rebase sobre o main com o #49
+   fundido, o hunk caiu como idêntico. O #52, de outra sessão, cobre só
+   `/aprender` e `/metodologia`; este PR é o grupo 3 completo.
+3. **O teste dos slugs usa `/aprender/euribor`** (termo estável no
+   glossário) em vez de iterar `generateStaticParams`.
+
+**Prova.** `pele-rotas.spec.ts` cobre as três camadas: grupos 1 e 2
+inalterados, grupo 3 (5 rotas × claro/escuro + ligações/ausência
+delas), home sem `.rt5` nem `.lnk-edificio`. Audit completo verde —
+o `_lettering` era a última falha conhecida de main.
+
 ## P4 · Qualidade e lançamento
 
 ### P4 — os dados das cenas saem do payload da home

@@ -191,7 +191,7 @@ const REGRAS_SUPERFICIE = [
 
 export default function EstiloPage() {
   return (
-    <div className="mx-auto max-w-6xl px-5 pt-14 pb-10">
+    <div className="rt5 mx-auto max-w-6xl px-5 pt-14 pb-10">
       <p className="kicker">Referência viva</p>
       <TituloPagina rota="/estilo">Sistema de design</TituloPagina>
       <p className="lede mt-5">
