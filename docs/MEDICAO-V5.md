@@ -6,6 +6,15 @@ nessa altura), Node `v22.23.1`, npm `10.9.8`, `npm run build` (EXIT 0).
 Nada aqui é estimado: ou saiu de um comando corrido, ou está marcado como
 tal. Não há "antes/depois" — isto é a linha de base, não uma comparação.
 
+**O ficheiro tem três secções, com três fontes diferentes.** A primeira
+(abaixo, sem título) é o **build local**, medido a 2026-10-02 no commit
+`c754128`. A segunda, «Medição no site publicado», é o **site no ar** medido
+a 2026-10-03 contra o deploy de `8b0d1c7`. A terceira, «Medição no site
+publicado — 2026-10-04», é o **site no ar** medido a 2026-10-04 contra dois
+deploys (`6ac1aed1-8e066` e `6ac253c2-8e537`). Só a primeira e a terceira se
+comparam com o método descrito no seu próprio «Como reproduzir»; a segunda
+usa o mesmo método da terceira e por isso são as duas comparáveis entre si.
+
 ## Como reproduzir
 
 ```bash
@@ -396,4 +405,398 @@ curl -s -H 'Accept-Encoding: gzip' -o /dev/null -w '%{size_download} %{time_star
 # Cenas por âncora e axe: Playwright com CDP (Network.emulateNetworkConditions
 # a 1,6 Mbps/150 ms + Emulation.setCPUThrottlingRate 4), a medir div.b-cena
 # e a correr axe-core sobre o document.
+```
+
+---
+
+# Medição no site publicado — 2026-10-04
+
+Segunda volta, feita **no site publicado** (`https://aocentimo.pt`) e não no
+build local, com o mesmo método da volta de 2026-10-03 (secção anterior) para
+que os dois momentos se comparem. Medido a **2026-10-04**, 13:47–15:35 WEST.
+macOS 26.6.2 (8 núcleos), Node `v22.23.1`, Chrome for Testing **153.0.8010.12**
+arm64 (o `chromium-1243` do Playwright), Lighthouse **13.5.0**, axe-core
+**4.13.0**, viewport 390×844. Instrumento: `scripts/_medir-publicado.mjs`.
+
+## As três coisas que há de saber antes de ler os números
+
+**1. O deploy mudou a meio da sessão.** Foram medidas duas
+construções, e cada tabela diz qual:
+
+| | deploy A | deploy B |
+|---|---|---|
+| `last-modified` | Sun, 04 Oct 2026 01:41:37 GMT | Sun, 04 Oct 2026 13:25:22 GMT |
+| `etag` | `"6ac1aed1-8e066"` | `"6ac253c2-8e537"` |
+| HTML raw | 581 734 B | 582 967 B |
+| onde foi medido | as 10 rotas do Lighthouse, as 11 cenas, o axe | reconfirmação da home (3 corridas) e as leituras (2) e (3) do peso do HTML |
+
+O deploy B entrou às 14:25 WEST, a meio das medições. Para não deixar a
+home fora de data, **a home foi repetida no deploy B** — é o número de
+(1b). As outras nove rotas e as cenas são do deploy A.
+
+**2. A máquina esteve carregada, e muito.** `vm.loadavg` ao longo da sessão:
+
+| Bloco | momento | carga (1/5/15 min) |
+|---|---|---|
+| Lighthouse, 10 rotas × 3 | 13:52–14:18 | 7,8 / 9,4 / 7,8 |
+| Cenas, 11 × 3 | 14:35–15:20 | 20 / 25 / 26 → pico de **55** |
+| axe, 14 alvos | 15:22–15:26 | 20 / 26 / 27 |
+| Home no deploy B + HTML | 15:27–15:35 | 9,9 / 16 / 22 |
+
+São 8 núcleos e havia outras threads a correr (Freebuff, Firefox). O
+Lighthouse simula a rede, mas os **tempos observados** vêm do CPU real, e o
+`--throttling-method=simulate` do Lighthouse constrói a sua linha do tempo a
+partir dessas observações. Os números abaixo são medianas de 3 corridas
+precisamente por causa disto, e a dispersão está publicada para se ver o que
+a mediana esconde.
+
+**3. Continua a não ser o Chrome do Mac.** O Chrome instalado é o build x64
+a correr sob Rosetta e o Lighthouse dá timeout com ele. Foi o Chrome for
+Testing arm64 da mesma máquina, mesmo motor. Para «o que vê um Mac de um
+utilizador» é preciso um CI Linux — e, melhor ainda, um **CrUX** (dados de
+campo), que é a única fonte que resolve a pergunta sem minta.
+
+## (1a) Lighthouse móvel — 10 rotas, deploy A
+
+`--throttling-method=simulate` (perfis padrão móvel: 1,6 Mbps / 150 ms /
+CPU 4×), 3 corridas por rota, mediana.
+
+| Rota | LCP | CLS | TBT | peso | JS | pedidos |
+|---|---|---|---|---|---|---|
+| `/` | 2 943 ms | 0 | **578 ms** | 522 KB | 249 KB | 27 |
+| `/salario` | 2 197 ms | 0,0002 | 90 ms | 448 KB | 211 KB | 26 |
+| `/irs` | 2 251 ms | 0 | 263 ms | 432 KB | 208 KB | 27 |
+| `/credito` | **1 732 ms** | 0 | 160 ms | 430 KB | 204 KB | 23 |
+| `/poupanca` | 2 383 ms | 0 | 159 ms | 469 KB | 237 KB | 30 |
+| `/inflacao` | 2 344 ms | 0 | 145 ms | 451 KB | 216 KB | 24 |
+| `/precos` | 2 500 ms | 0 | **804 ms** | 503 KB | 212 KB | 24 |
+| `/trabalho` | 2 585 ms | 0,0002 | 388 ms | 464 KB | 233 KB | 29 |
+| `/dados` | 2 748 ms | 0 | **605 ms** | 491 KB | 224 KB | 25 |
+| `/aprender` | **1 664 ms** | 0 | 187 ms | 413 KB | 191 KB | 23 |
+
+Dispersão das 3 corridas (LCP ms / TBT ms), para se ver o que a mediana
+esconde:
+
+| Rota | LCP | TBT |
+|---|---|---|
+| `/` | 4447 / 2455 / **2943** | 670 / 578 / 503 |
+| `/salario` | 2216 / **2197** / 1823 | 152 / **90** / 37 |
+| `/irs` | 1263 / 2774 / 2251 | 322 / **263** / 142 |
+| `/credito` | **1732** / 1862 / 1714 | 130 / **160** / 186 |
+| `/poupanca` | 2371 / 2779 / **2383** | 159 / **168** / 93 |
+| `/inflacao` | 2367 / **2344** / 2273 | 316 / 138 / **145** |
+| `/precos` | 2693 / **2500** / 2409 | **804** / 860 / 793 |
+| `/trabalho` | 2292 / **2585** / 9589 | 221 / 388 / 594 |
+| `/dados` | 2814 / **2748** / 2430 | 623 / 605 / **535** |
+| `/aprender` | 2464 / 1429 / **1664** | 175 / **187** / 213 |
+
+Duas leituras que se impõem:
+
+- **A dispersão é maior do que a diferença entre rotas.** `/trabalho` teve
+  uma corrida de 9 589 ms e duas de 2 292/2 585 ms; `/aprender` foi de 1 429
+  a 2 464 ms. Com 3 corridas e uma máquina a este load, uma diferença de
+  300 ms entre duas rotas **não é um facto**. O que é facto é a ordem de
+  grandeza: tudo entre 1,7 e 2,9 s.
+- **O TBT é o sinal mais limpo da tabela**, porque não depende da rede
+  simulada. `/` (578 ms), `/precos` (804 ms) e `/dados` (605 ms) são as três
+  rotas acima de 200 ms; as outras sete estão entre 37 e 388 ms. `/precos`
+  tem a mediana mais alta de todas e três das três corridas acima de
+  790 ms.
+
+## (1b) A home no deploy B — as metas do pack
+
+3 corridas, deploy `"6ac253c2-8e537"` (14:25 WEST):
+
+| Corrida | LCP | FCP | CLS | TBT | peso | JS | pedidos |
+|---|---|---|---|---|---|---|---|
+| 1 | 2 955 ms | 2 812 ms | 0 | 904 ms | 528 KB | 249 KB | 29 |
+| 2 | 2 998 ms | 2 636 ms | 0 | 810 ms | 528 KB | 249 KB | 29 |
+| 3 | 2 966 ms | 2 834 ms | 0 | 807 ms | 528 KB | 249 KB | 29 |
+| **mediana** | **2 966 ms** | 2 812 ms | **0** | **810 ms** | 528 KB | 249 KB | 29 |
+
+Contra as metas do `docs/PACK-V5-PRODUCAO.md` §4:
+
+| Meta | Valor medido | Resultado |
+|---|---|---|
+| LCP ≤ 2,5 s (home) | **2 966 ms** (mediana; 2 455–4 447 ms no deploy A) | **não cumpre** — 466 ms acima, e a dispersão é maior que a margem |
+| CLS ≤ 0,05 (home) | **0** | cumpre, com folga |
+| JS ≤ 350 KB gzip (home) | **249 KB** | cumpre — 71% do tecto |
+
+O TBT da home subiu face ao deploy A (578 → 810 ms) e face à volta de
+2026-10-03 (1 077 ms). **É a única métrica que piorou desde October e a
+única que é claramente pior**, porque é a que menos depende da rede
+simulada. A outra porção boa: **as fontes**.
+
+### As fontes: 222 KB → 161 KB, e de 6 ficheiros para 2
+
+O `largest-contentful-font` caiu de 222 KB para **161 KB** e de **6 ficheiros
+para 2**, em todas as rotas, sem uma linha de aplicação — é o efeito do P3c
+(a saída das fontes V4), que chegou ao `main` às 02:32 WEST de hoje, antes
+de qualquer medição desta sessão. Ainda são 31% do peso da home.
+
+### Onde estão os bytes (mediana, KB, deploy A)
+
+| Rota | total | HTML | CSS | JS | **fontes** | imagens | pedidos |
+|---|---|---|---|---|---|---|---|
+| `/` | 522 | 75 | 26 | 249 | **161** | 0 | 27 |
+| `/salario` | 448 | 38 | 26 | 211 | **161** | 0 | 26 |
+| `/irs` | 432 | 25 | 26 | 208 | **161** | 0 | 27 |
+| `/credito` | 430 | 28 | 26 | 204 | **161** | 0 | 23 |
+| `/poupanca` | 469 | 34 | 26 | 237 | **161** | 0 | 30 |
+| `/inflacao` | 451 | 36 | 26 | 216 | **162** | 0 | 24 |
+| `/precos` | 503 | **92** | 26 | 212 | **162** | 0 | 24 |
+| `/trabalho` | 464 | 32 | 26 | 233 | **162** | 0 | 29 |
+| `/dados` | 491 | **69** | 26 | 224 | **161** | 0 | 25 |
+| `/aprender` | 413 | 24 | 26 | 191 | **161** | 0 | 23 |
+
+**161 KB idênticos nas 10 rotas.** É o maior bloco isolado do site e é o
+único que não pode encolher sem mudar a configuração da fonte: as mesmas
+duas, qualquer que seja a página. Continuam em `font-display:
+optional`, portanto não bloqueiam o texto — o custo é banda, não render.
+
+`/precos` (92 KB de HTML) e `/dados` (69 KB) continuam a ser, de longe, os
+dois documentos mais pesados do site: o `/precos` é quase quatro vezes o
+`/aprender`.
+
+### O LCP é sempre texto, e o atraso está na pintura
+
+O elemento LCP é o parágrafo de introdução na home e o `h1` nas rotas da
+pele V5 — em todas as 10, sempre texto, nunca imagem. A decomposição
+(`lcp-breakdown-insight`, run mediana):
+
+| Rota | TTFB | element render delay | elemento |
+|---|---|---|---|
+| `/` | 2 055 ms | 3 282 ms | parágrafo de introdução |
+| `/salario` | 1 746 ms | 2 063 ms | o `h1` |
+| `/irs` | 404 ms | 2 782 ms | o `h1` |
+| `/credito` | 876 ms | 2 160 ms | o `h1` |
+| `/poupanca` | 787 ms | 2 596 ms | o `h1` |
+| `/inflacao` | 829 ms | 2 235 ms | o `h1` |
+| `/precos` | 2 134 ms | 3 259 ms | o `h1` |
+| `/trabalho` | 894 ms | 1 519 ms | o `h1` |
+| `/dados` | 1 421 ms | 3 349 ms | o `h1` |
+| `/aprender` | 2 764 ms | 2 101 ms | o parágrafo de entrada |
+
+O `load resource` das fases do LCP é **0 ms em todas**: não há nenhum
+ficheiro a atrasar o LCP. Em `/irs` o TTFB é 404 ms e o LCP é 2 251 ms —
+ou seja, **1 847 ms são pintura**, com o HTML já cá. O gargalo do LCP não é
+um recurso lento; é o CPU a pintar.
+
+### O navegador real não concorda com o simulador — e hoje não sei qual é o certo
+
+A volta de 2026-10-03 mediu o mesmo cenário no navegador real (mesma rede
+estrangulada, sem CPU estrangulada) e encontrou FCP = LCP = 1,4–2,4 s, contra
+3,2–3,8 s do simulador, e daí a conclusão «o LCP do Lighthouse é ~2× pior
+que o real». **Hoje isso não se reproduz.** Mesma rede estrangulada, sem
+CPU estrangulada, 3 corridas, deploy B:
+
+| Rota | FCP (3 corridas) | mediana | FCP simulado (mediana) |
+|---|---|---|---|
+| `/` | 8560 / 4484 / 4752 | 4 752 ms | 2 812 ms |
+| `/dados` | 2660 / 6116 / 3176 | 3 176 ms | 2 720 ms |
+| `/precos` | 4540 / 6584 / 7216 | 6 584 ms | 2 478 ms |
+
+O navegador real deu **pior** do que o simulador em todas as três — o
+oposto da volta anterior. A leitura honesta é que **os dois instrumentos
+divergem mais do que qualquer um deles diverge da meta de 2,5 s**, e que a
+diferença entre eles é a carga da máquina (medida com o load a 10–16). O
+número a levar para o lançamento não é nenhum dos dois: é o **LCP de campo**
+(CrUX), que ainda não temos. O que os dois concordam é: o LCP é texto, o
+atraso é de pintura, e o CLS é 0.
+
+## (2) As 11 cenas por âncora — deploy A
+
+Playwright com CDP: `Network.emulateNetworkConditions` a 1,6 Mbps / 150 ms
+(`cellular4g`) e `Emulation.setCPUThrottlingRate 4`, 390×844, **contexto
+novo em cada corrida** (sem cache herdada), a navegar a `/#<cena>` e a
+medir o instante em que o painel da cena passa de 80 caracteres de texto.
+3 corridas por cena, mediana.
+
+| Cena | até ao desenho | as 3 corridas | FCP | CLS | JSON pedido | JSON resposta | JSON (B) | chunk da cena | chunks JS |
+|---|---|---|---|---|---|---|---|---|---|
+| `financas` | **14 633 ms** | 14633 / 12907 / 22410 | 3 592 | 0 | 12 176 | 13 614 | 326 | 14 256 | 16 |
+| `casa` | **16 019 ms** | 17728 / 15687 / 16019 | 3 484 | 0,00013 | 12 780 | 14 832 | 1 248 | 15 768 | 16 |
+| `banco` | **16 246 ms** | 19484 / 16246 / 15460 | 6 048 | 0,00013 | 15 595 | 15 902 | 502 | 15 934 | 16 |
+| `bomba` | **16 864 ms** | 15672 / 16864 / 22862 | 4 768 | 0,00013 | 15 068 | 15 199 | 3 504 | 16 797 | 16 |
+| `correios` | **17 668 ms** | 17668 / 14545 / 24309 | 5 024 | 0,00013 | 14 437 | 16 230 | 438 | 17 481 | 16 |
+| `mercearia` | **18 314 ms** | 20389 / 17446 / 18314 | 5 352 | 0,00013 | 15 906 | 17 297 | 3 034 | 17 892 | 16 |
+| `quiosque` | **19 855 ms** | 23010 / 19855 / 18985 | 3 732 | 0,00013 | 15 055 | 18 589 | 627 | 19 333 | 16 |
+| `segsocial` | **21 217 ms** | 20685 / 21217 / 25990 | 4 012 | 0,00013 | 16 941 | 19 946 | 344 | 20 815 | 16 |
+| `pastelaria` | **23 647 ms** | 23647 / 16094 / 30903 | 5 388 | 0,00013 | 21 031 | 22 452 | 790 | 23 400 | 16 |
+| `escola` | **25 043 ms** | 20974 / 25043 / 34757 | 10 184 | 0,00013 | 18 513 | 23 995 | 1 205 | 24 744 | 16 |
+| `fabrica` | **25 381 ms** | 20942 / 31018 / 25381 | 6 124 | 0,00013 | 18 494 | 23 821 | 378 | 24 875 | 16 |
+
+Todas as 11 abrem, todas com conteúdo, **zero erros de consola e zero
+pedidos falhados**. O CLS por cena é 0,00013 (uma única) ou 0.
+
+Leituras:
+
+- **O tempo até à cena não depende do tamanho dos dados.** `segsocial`
+  (344 B) demora 21,2 s; `bomba` (3 504 B, 10× mais) demora 16,9 s. A
+  diferença entre a mais rápida e a mais lenta (10,7 s) não acompanha o
+  tamanho do JSON. O custo não é ler o ficheiro.
+- **Os bytes do JSON são irrelevantes para a velocidade percebida.** A resposta
+  do JSON chega 0,3–5,5 s depois do pedido; 3,5 KB e 326 B levam o mesmo.
+- **O pedido do JSON sai muito depois do texto estar no ecrã.** O FCP
+  mediano é 3,5–10,2 s e o pedido sai às 12,2–21,0 s — **4 a 11 s depois do
+  primeiro texto**, e depois da última das 16 peças de JS da página. O
+  `.b-cena` chega ao ecrã 0,6–1,5 s depois de a resposta do JSON.
+- **16 chunks de JS por cena**, sempre, e o chunk da cena é sempre o
+  **último** a chegar (14,3–24,9 s), sempre depois do JSON. O
+  `next/dynamic` faz o que promete: a cena não está no bundle inicial — mas
+  a cena é a última coisa a chegar, e chega por cima de 16 chunks que já
+  estavam a caminho.
+
+### Uma nota de método que vale mais do que os números
+
+A primeira tentativa mediu `div.b-cena` e **a `fabrica` devolveu 0
+caracteres nas três corridas** — o que parecia um cenário partido em
+produção. Não era: a `CenaFabrica` desenha o painel dela em `.b-painel`, e
+as outras dez cenas usam a moldura `.b-cena` do `CenaDePerto`. O `.b-painel`
+tem 201 caracteres e abre em 25,4 s, como as outras. Um instrumento que
+procura um único selector produz um falso positivo que custa uma
+investigação; o script mede agora os dois e regista qual respondeu.
+
+## (3) O HTML da home na rede — três momentos
+
+`curl -H 'Accept-Encoding: gzip' https://aocentimo.pt/`, três leituras por
+momento, `size_download` e `time_starttransfer`.
+
+| Momento (WEST) | deploy | bytes | TTFB (3 leituras) |
+|---|---|---|---|
+| 13:57 | A | 76 461 | 0,358 / 0,797 / 0,955 s |
+| 15:27 | **B** | **76 673** | 1,215 / 0,830 / 1,588 s |
+| 15:33 | B | 76 673 | 0,479 / 0,370 / 0,366 s |
+
+**76 673 B = 74,9 KB gzip**, `content-encoding: gzip`,
+`vary: Accept-Encoding`, `cache-control: max-age=600`,
+`x-github-edge-region: fra`, servido por GitHub Pages. Sem compressão são
+**582 967 B**. As 9 leituras deram sempre o mesmo número, como se espera de
+um export estático com `content-length` fixo.
+
+O que mudou face a 2026-10-03: **76 215 → 76 673 B (+458 B)**, e o raw
+581 734 → 582 967 B. O número só muda quando o deploy muda, e foi isso que
+aconteceu às 14:25 WEST.
+
+### Contra o gate
+
+O `scripts/_gate-html.mjs` mede o **build local** (`out/index.html`),
+não a rede. Corri-o em `origin/main` (`d7a2152`), `npm run build` EXIT 0:
+
+```
+home: 72.1 KB gzip (limite 80 KB)
+ok: mapa no DOM, flight limpo, dentro do orçamento.
+```
+
+| Origem | HTML da home | Contra o tecto de 80 KB |
+|---|---|---|
+| gate, build local `d7a2152` | 581 725 B raw → **72 759 B gzip** (72,1 KB) | −7,9 KB |
+| **rede, deploy B** | 582 967 B raw → **76 673 B gzip** (74,9 KB) | **−5,1 KB** |
+| rede, deploy A (10-03 era) | 579 714 B raw → 76 215 B gzip (74,4 KB) | −5,6 KB |
+
+**Os dois cumprem o tecto, com 5,1 KB de folga no que está no ar.** Mas
+reparar na diferença: o gate vê 72,1 KB e a rede serve 74,9 KB — **2,8 KB
+que o gate não vê**, porque o gate mede o `main` actual e a rede serve um
+deploy de ~40 minutos antes. Não é uma falha do gate (é um gate de
+regressão, e para isso serve), mas significa que **o gate não é uma
+medição do que os utilizadores recebem**. As duas perguntas são distintas e
+convém não trocar uma pela outra.
+
+## (4) axe na home, numa cena aberta e nas rotas migradas
+
+axe-core 4.13.0, WCAG 2.0/2.1 A+AA (`wcag2a`, `wcag2aa`, `wcag21a`,
+`wcag21aa`), no site publicado, 390×844, deploy A.
+
+| Onde | Violações |
+|---|---|
+| **12 rotas migradas** (`/salario`, `/irs`, `/impostos`, `/poupanca`, `/credito`, `/casa`, `/inflacao`, `/precos`, `/trabalho`, `/dados`, `/aprender`, `/metodologia`) | **nenhuma** |
+| `/` (home) | **2** |
+| `/#bomba` (cena aberta) | **1** |
+
+Comparado com 2026-10-03 (5 na home, 4 na cena aberta), **três violações
+desapareceram** — e eram as três de landmark
+(`landmark-no-duplicate-main`, `landmark-unique`,
+`landmark-main-is-top-level`). A página já tem um só `<main>` nomeado. As
+duas que ficam, com o alvo exato:
+
+| Regra | Impacto | Onde | Onde aparece |
+|---|---|---|---|
+| `aria-hidden-focus` | **sério** | `#b-cFundo` e `#b-cFrente` (×2 nós) são `aria-hidden="true"` mas contêm elementos focáveis | só na home |
+| `nested-interactive` | **sério** | `.b-mundo` tem `role="img"` e contém controlos interativos | home **e** cena aberta |
+
+As 12 rotas com a pele V5 continuam limpas, incluindo `/casa` e
+`/metodologia`. `passes` entre 24 e 31 por página. Incompletos: 1 por página
+(o mesmo item em todas, o que a verificação manual tem de confirmar), 0 na
+`/metodologia`.
+
+Ambas as violações restantes são **do mapa SVG do bairro** — a única coisa
+que este trabalho ainda não tocou — e nenhuma delas está nas cenas nem nas
+rotas de conteúdo.
+
+## Prioridade: o que corrigir antes de lançar
+
+Ordenado por (bytes ou segundos ganhos) ÷ (risco de partir). **Nada desta
+lista foi executado** — é a lista, não o resultado. O esforço é o meu
+palpite honesto; o ficheiro é onde o número aparece.
+
+### Lançar sem isto é defensável
+
+| # | quê | esforço | ficheiro provável | evidência |
+|---|---|---|---|---|
+| 1 | **As duas `<main>` da home já não são um problema** — 3 violações resolvidas sem custo | — | `src/app/_bairro/Bairro.tsx` | (4): home de 5 → 2 |
+| 2 | **Os 161 KB de fontes** são o maior bloco isolado e é igual em todas as rotas. Subconjuntos com os glifos usados: ~160 → ~40 KB | **médio** | config da fonte (`src/app/layout.tsx`, `<link>` das `woff2`) — não é CSS de aplicação | (1b): 31% do peso, 2 ficheiros, 10/10 rotas |
+| 3 | **`/precos` tem 92 KB de HTML** e `/dados` 69 KB, contra 24–38 KB das rotas leves. É o maior documento do site | **médio** | `src/app/precos/`, `src/app/dados/` | (1b): tabela de bytes |
+| 4 | **O CLS está a 0 em todo o lado** (10 rotas, 11 cenas) | — | — | (1a), (2) |
+
+### Antes de lançar, se houver tempo
+
+| # | quê | esforço | ficheiro provável | evidência |
+|---|---|---|---|---|
+| 5 | **O TBT da home (810 ms no deploy B)** e de `/precos` (804 ms) e `/dados` (605 ms). O mapa SVG do bairro é o suspeito da pintura — é o mesmo que produz o `element render delay` de 3,3 s do LCP | **médio–grande** | `src/app/_bairro/` (`Bairro.tsx`, `mapa`), `src/lib/bairro/` | (1b), (1a) fases do LCP |
+| 6 | **`.b-mundo` com `role="img"` a conter controlos** e os dois SVGs `aria-hidden` com conteúdo focável. As 2 violações sérias que restam | **médio** | `src/app/_bairro/Bairro.tsx` (`role`, `aria-hidden`) | (4) |
+| 7 | **A cena é sempre a última coisa a chegar**: o JSON sai 4–11 s depois do FCP, e o chunk da cena é o 16.º e último. Pedir o JSON no fim da hidratação, ou ao ver a âncora, e pré-carregar o chunk | **médio** | `src/app/_bairro/Bairro.tsx` (`CenaViva`, o `fetch`), `src/app/_bairro/cenas/registry.ts` | (2): colunas FCP / JSON pedido / chunk |
+| 8 | **O LCP da home está 466 ms acima da meta** e o sinal é ambíguo (simulador 2 966 ms, navegador real 4 752 ms, ambos sob carga) | — | ver abaixo | (1b), e o bloco «não concorda» |
+
+### O que **não** é para corrigir agora
+
+- **As 11 cenas, todas as 12 rotas migradas, o CLS e as imagens.** 0 KB de
+  imagem em 10 rotas, 0 de violações axe em 12 rotas, 0 de CLS em 11 cenas.
+  Não há nada a fazer.
+- **Os 249 KB de JS da home** contra o tecto de 350 KB. Passa com 71% do
+  orçamento e o redutor óbvio (fontes) já foi feito.
+- **Perseguir o LCP do Lighthouse sem o CrUX.** Os dois instrumentos
+  disponíveis divergem mais entre si do que da meta; optimize-se o
+  simulador e pode-se estar a optimize-se o simulador.
+
+### E o que esta medição não diz
+
+- **INP**: métrica de campo. O laboratório só dá TBT, que é o seu proxy.
+  Sem RUM ou CrUX, não há INP.
+- **O que um Mac de um utilizador vê.** Foi o Chromium arm64 desta máquina,
+  sob carga de 8 a 55. Um CI Linux com carga controlada, ou o CrUX, são as
+  duas saídas.
+- **Variância diurna do TTFB.** As três leituras do HTML caíram entre as
+  13:57 e as 15:35 — o pico do dia da semana já passou, e o número do
+  HTML não muda com o tráfego (é export estático). Para TTFB com
+  significado são precisas leituras às 08h, 14h e 21h em dias de semana,
+  durante uma semana.
+
+## Como reproduzir
+
+```bash
+# O instrumento (não precisa de nada instalado no projecto: o lighthouse e
+# o axe-core são ferramentas, resolve-as por --lighthouse e --axe)
+export CHROME_PATH=$(ls ~/Library/Caches/ms-playwright/chromium-*/chrome-mac-arm64/*.app/Contents/MacOS/* | head -1)
+node scripts/_medir-publicado.mjs lh        --rotas /,/salario  --corridas 3 --saida /tmp/lh-a.json
+node scripts/_medir-publicado.mjs cenas     --cenas banco,bomba --corridas 3 --saida /tmp/cenas.json
+node scripts/_medir-publicado.mjs html      --vezes 3 --saida /tmp/html.json
+node scripts/_medir-publicado.mjs axe       --saida /tmp/axe.json
+node scripts/_medir-publicado.mjs lh-cenas  --cenas banco       --corridas 3 --saida /tmp/lhc.json
+```
+
+Cada bloco escreve um JSON com todas as corridas — não só a mediana — para
+que a dispersão seja auditável. Para o gate, em paralelo:
+
+```bash
+npm run build && node scripts/_gate-html.mjs
 ```
