@@ -11,7 +11,7 @@ AGENTS.md, data/fiscal/README.md e docs/AUDITORIA-DADOS-V5.md. Carrega a skill l
 
 REGRA ACIMA DE TODAS: nunca inventar dados. O teu trabalho é tentar ENCONTRAR ERROS.
 Um número está errado até leres o artigo de lei ou a fonte oficial que o sustenta. Não
-confies em nada do que está nos JSON, nas notas (NOTAS-DADOS-V5.md) nem neste prompt.
+confies em nada do que está nos JSON, nas notas (docs/historico/NOTAS-DADOS-V5.md) nem neste prompt.
 Se não conseguires abrir ou ler uma fonte, diz «NÃO CONSEGUI» — nunca «confirmado»
 por ser plausível ou por memória. Trabalha só com leitura até teres o relatório pronto.
 

@@ -276,7 +276,7 @@ da dobra (regra M-09 mantida); barril de dynamics (ver acima).
 
 **Em aberto**: copy novo para revisão do dono (blocos `emprego.*`,
 `habitacao.*`, `economia.*`, `dados.*`, `nav.grupo*`, sub-divisões
-ECOICOP, `series.*` novas — listado em NOTAS-OBSERVATORIO.md);
+ECOICOP, `series.*` novas — listado em docs/historico/NOTAS-OBSERVATORIO.md);
 «no limite» como estado de frescura futuro (aviso antes de atrasar);
 o residual de ~460 KB é o piso do Next 16 — só desce mudando de stack.
 
@@ -597,7 +597,7 @@ Cobertura: `Controlos.test.tsx` (11 unitários) + `e2e/controlos.spec.ts`
   («a cor de sinal do cartão», convenção V3-2), estado activo/hover da
   nav e dos links, a banda preenchida da `Regua`, o selo «próximo» em
   `/dados`. A leitura estrita de «vermelhão só no que sai» (§Cor)
-  pediria `--mark` ou tinta nesses sítios — proposta em NOTAS-V4.md,
+  pediria `--mark` ou tinta nesses sítios — proposta em docs/historico/NOTAS-V4.md,
   o dono decide.
 
 ## 2026-09-24 — Sessão 4B: vermelhão só no dinheiro que sai (4B-01)
@@ -637,7 +637,7 @@ anual — o número do contrato — e nunca o rendimento coletável.
 - Nível 2: cartão novo «RENDIMENTO COLETÁVEL» com a conversão do
   canónico em números (bruto − dedução específica − mínimo de
   existência = coletável). Nível 3 e glossário mantêm o termo.
-- Copy nova assinalada como PROPOSTA em NOTAS-V4.md.
+- Copy nova assinalada como PROPOSTA em docs/historico/NOTAS-V4.md.
 
 
 ## 2026-09-24 — Sessão 4B: CLS de /casa e frase da Euribor (4B-03)
