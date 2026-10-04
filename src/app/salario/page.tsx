@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ALT_FEED } from "@/lib/meta";
+import { metaDeRota } from "@/lib/seo";
 import { Pagina, PaginaDetalhe } from "@/components/Pagina";
 import { Source } from "@/components/Source";
 import { fmtEUR, fmtPct } from "@/lib/format";
@@ -17,12 +17,7 @@ import { RespostaSalario, FraseSalario } from "./RespostaSalario";
 import { ExploraSalario } from "./ExploraSalario";
 import { AnoDetalhe, TaxasDetalhe } from "./ConfirmaSalario";
 
-export const metadata: Metadata = {
-  title: "Do bruto ao líquido — salário e IRS",
-  description:
-    "Calculadora de salário líquido em Portugal: Segurança Social, IRS por escalões, deduções e o custo real para a empresa.",
-  alternates: { canonical: "/salario", types: ALT_FEED },
-};
+export const metadata: Metadata = metaDeRota("/salario");
 
 const ANO = irs.ano;
 

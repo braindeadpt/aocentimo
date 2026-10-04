@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ALT_FEED } from "@/lib/meta";
+import { metaDeRota } from "@/lib/seo";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { EstadoVazio } from "@/components/EstadoVazio";
@@ -16,12 +16,7 @@ import { m } from "@/lib/messages";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 import eventos from "@data/fiscal/eventos.json";
 
-export const metadata: Metadata = {
-  title: "Crédito — Euribor, spread e prestação",
-  description:
-    "O que é a Euribor, como o spread forma a TAN, e simulador de prestação de crédito habitação com custo total do empréstimo.",
-  alternates: { canonical: "/credito", types: ALT_FEED },
-};
+export const metadata: Metadata = metaDeRota("/credito");
 
 export default function CreditoPage() {
   const eur = loadFonte("bpstat", "euribor-3m-mensal");

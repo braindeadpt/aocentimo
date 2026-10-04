@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ALT_FEED } from "@/lib/meta";
+import { metaDeRota } from "@/lib/seo";
 import { Figure } from "@/components/Figure";
 import { Leitura } from "@/components/Leitura";
 import { Source } from "@/components/Source";
@@ -29,14 +29,7 @@ import ca from "@data/fiscal/ca.json";
 import capitais from "@data/fiscal/capitais.json";
 import ppr from "@data/fiscal/ppr.json";
 import maisValias from "@data/fiscal/mais-valias.json";
-import { JsonLd, webApplication } from "@/lib/jsonld";
-
-export const metadata: Metadata = {
-  title: "Poupança — Certificados de Aforro, depósitos e inflação",
-  description:
-    "Como funcionam os Certificados de Aforro, a tributação de 28 % sobre juros, e porque a taxa que importa é a real, não a nominal.",
-  alternates: { canonical: "/poupanca", types: ALT_FEED },
-};
+import { JsonLd, webApplication } from "@/lib/jsonld";export const metadata: Metadata = metaDeRota("/poupanca");
 
 /** derivado ca-base: taxa base mensal dos CA Série F (IGCP oficial +
     Euribor 3M indicativa) — o meta é mais rico que uma fonte crua */

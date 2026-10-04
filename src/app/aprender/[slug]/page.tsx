@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
-import { ALT_FEED } from "@/lib/meta";
+import { metaDeTermo } from "@/lib/seo";
 import {
   GLOSSARIO,
   mencoesEm,
@@ -39,11 +39,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const t = termoPorSlug(slug);
   if (!t) return {};
-  return {
-    title: `${t.termo} — glossário`,
-    description: t.definicao,
-    alternates: { canonical: `/aprender/${t.slug}`, types: ALT_FEED },
-  };
+  return metaDeTermo(t.slug, t.termo, t.definicao);
 }
 
 const ROTULO_GRUPO: Record<GrupoId, keyof typeof m.nav> = {
@@ -98,6 +94,7 @@ export default async function TermoPage({
       <Pagina
         pergunta={`O que é «${t.termo}»?`}
         rota={`/aprender/${t.slug}`}
+        folha={{ nome: t.termo, rota: `/aprender/${t.slug}` }}
         edificio={{
           href: "/#escola",
           titulo: m.bairro.edificios.escola.titulo,

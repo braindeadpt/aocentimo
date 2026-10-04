@@ -8,6 +8,8 @@ import { Ticker } from "@/components/Ticker";
 import { PausaAmbiente } from "@/components/PausaAmbiente";
 import { VooLimpeza } from "@/components/Voo";
 import { ALT_FEED } from "@/lib/meta";
+import { m } from "@/lib/messages";
+import { urlOg } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
 // font-display: optional (4B-03) — com swap, a troca tardia de fonte
@@ -31,22 +33,32 @@ const caveat = Caveat({
   display: "optional",
 });
 
+/* O que a home tem em `<head>`, e que todas as rotas herdam. O texto vem
+   de `messages/pt.json` — nenhuma string de SEO vive num componente. As
+   rotas que precisam de canonical e og próprios usam `metaDeRota`
+   (`@/lib/seo`) e não esta constante. */
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "AO CÊNTIMO — literacia financeira para Portugal",
-    template: "%s · AO CÊNTIMO",
+    default: m.meta.title,
+    template: `%s · ${m.brand.name}`,
   },
-  description:
-    "Simuladores e dados de literacia financeira para Portugal — salário líquido, IRS, crédito habitação, poupança e inflação. Cada número com fonte e data.",
+  description: m.meta.description,
   alternates: {
     canonical: "/",
     types: ALT_FEED,
   },
+  manifest: "/manifest.webmanifest",
   openGraph: {
     type: "website",
     locale: "pt_PT",
-    siteName: "AO CÊNTIMO",
+    siteName: m.seo.card,
+    url: SITE_URL,
+    images: [{ url: urlOg(), width: 1200, height: 630, alt: m.seo.altImagem }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [urlOg()],
   },
 };
 

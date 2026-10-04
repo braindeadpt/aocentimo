@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ALT_FEED } from "@/lib/meta";
+import { metaDeRota } from "@/lib/seo";
 import { Pagina, PaginaDetalhe } from "@/components/Pagina";
 import { Leitura } from "@/components/Leitura";
 import { EstadoVazio } from "@/components/EstadoVazio";
@@ -23,14 +23,7 @@ import { m, t } from "@/lib/messages";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 import { ProvedorTrabalho } from "./contexto";
 import { RespostaTrabalho, FraseTrabalho } from "./RespostaTrabalho";
-import { ExploraTrabalho } from "./ExploraTrabalho";
-
-export const metadata: Metadata = {
-  title: "Subsídio de desemprego — quanto e por quanto tempo",
-  description:
-    "Simulador do subsídio de desemprego em Portugal: 65 % da remuneração de referência, limites do IAS, duração por idade e descontos.",
-  alternates: { canonical: "/trabalho", types: ALT_FEED },
-};
+import { ExploraTrabalho } from "./ExploraTrabalho";export const metadata: Metadata = metaDeRota("/trabalho");
 
 const ANO = irs.ano;
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ALT_FEED } from "@/lib/meta";
+import { metaDeRota } from "@/lib/seo";
 import { Figure } from "@/components/Figure";
 import { Source } from "@/components/Source";
 import { Leitura } from "@/components/Leitura";
@@ -22,12 +22,7 @@ import { m, t } from "@/lib/messages";
 import imt from "@data/fiscal/imt-2026.json";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 
-export const metadata: Metadata = {
-  title: "Comprar casa — IMT, Imposto de Selo e prestação",
-  description:
-    "O custo real de comprar casa em Portugal: IMT, Imposto de Selo, registos e a prestação com a Euribor atual do Banco de Portugal.",
-  alternates: { canonical: "/casa", types: ALT_FEED },
-};
+export const metadata: Metadata = metaDeRota("/casa");
 
 /** derivado casa-em-salarios: índice de preços da habitação ÷ custo do
     trabalho reindexado (2015=100) — razão de índices, não salários reais */

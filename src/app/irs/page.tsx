@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ALT_FEED } from "@/lib/meta";
+import { metaDeRota } from "@/lib/seo";
 import { Pagina, PaginaDetalhe } from "@/components/Pagina";
 import { Source } from "@/components/Source";
 import { m } from "@/lib/messages";
@@ -16,12 +16,7 @@ import { ProvedorIrs } from "./contexto";
 import { RespostaIrs, FraseIrs } from "./RespostaIrs";
 import { ExploraIrs } from "./ExploraIrs";
 
-export const metadata: Metadata = {
-  title: "IRS — escalões, retenção e IRS Jovem",
-  description:
-    "Os escalões de IRS em Portugal, a retenção na fonte mensal e o simulador de IRS Jovem: quanto poupas em cada um dos 10 anos.",
-  alternates: { canonical: "/irs", types: ALT_FEED },
-};
+export const metadata: Metadata = metaDeRota("/irs");
 
 const ANO = irs.ano;
 

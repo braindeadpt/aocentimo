@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
-import { ALT_FEED } from "@/lib/meta";
+import { metaDeRota } from "@/lib/seo";
 import { m } from "@/lib/messages";
 import { comUnidade } from "@/lib/format";
 import Link from "next/link";
@@ -43,12 +43,8 @@ import eur6m from "@data/sources/bpstat/euribor-6m-mensal.json";
 import eur12m from "@data/sources/bpstat/euribor-12m-mensal.json";
 import { TituloPagina } from "@/components/Voo";
 
-export const metadata: Metadata = {
-  title: "Sistema de design",
-  description: "Referência viva do design system do AO CÊNTIMO — tokens, tipografia e componentes.",
-  alternates: { canonical: "/estilo", types: ALT_FEED },
-  // indexável de propósito: é peça de portefólio, ligada do rodapé
-};
+// indexável de propósito: é peça de portefólio, ligada do rodapé
+export const metadata: Metadata = metaDeRota("/estilo");
 
 // Euribor por prazo — cauda real de 24 meses para a comparação de rampas
 const EURIBOR = [eur1m, eur3m, eur6m, eur12m].map((s) =>

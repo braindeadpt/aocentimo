@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Children, Fragment, isValidElement, type ReactNode } from "react";
+import { JsonLd, breadcrumb } from "@/lib/jsonld";
 import { m } from "@/lib/messages";
+import { tracosDe, type Traco } from "@/lib/seo";
 import { LinkVoo, TituloPagina } from "@/components/Voo";
 
 /**
@@ -57,6 +59,10 @@ export interface PaginaProps {
   seguinte?: { href: string; rotulo: string };
   /** base dos ids dos landmarks — por omissão deriva da pergunta */
   idBase?: string;
+  /** O último degrau do caminho de migalhas, quando não é uma secção
+   *  do site — hoje só o termo do glossário, cujo nome é conteúdo. As
+   *  rotas normais não passam isto: os degraus saem de `m.nav`. */
+  folha?: Traco;
   /** "h2" só para embutir a Pagina como demonstração (a /estilo já tem
       o seu h1). Em produção a pergunta é sempre h1. */
   perguntaAs?: "h1" | "h2";
@@ -107,6 +113,7 @@ export function Pagina({
   confirma,
   seguinte,
   idBase,
+  folha,
   perguntaAs,
 }: PaginaProps) {
   if (process.env.NODE_ENV !== "production") {
@@ -141,6 +148,13 @@ export function Pagina({
 
   return (
     <div className="pagina mx-auto max-w-5xl px-5 pt-14">
+      {/* As migalhas seguem a «Voltar ao bairro»: é essa ligação que
+          diz que a página mora dentro de uma secção do site. Onde não
+          há edifício — /metodologia, /sobre, /estilo — não há degraus
+          para seguir, e uma migalha sem caminho é pior que nenhuma. */}
+      {edificio && rota && (
+        <JsonLd data={breadcrumb(tracosDe(rota, folha))} />
+      )}
       <section className="pg-nivel" aria-labelledby={`${id}-pergunta`}>
         {edificio && (
           <p className="lnk-edificio">
