@@ -994,6 +994,149 @@ inalterados, grupo 3 (5 rotas × claro/escuro + ligações/ausência
 delas), home sem `.rt5` nem `.lnk-edificio`. Audit completo verde —
 o `_lettering` era a última falha conhecida de main.
 
+### P3c — as fontes, os tokens mortos e a `/estilo` escrita (ramo `v5/p3-pele-c`)
+
+Fecha a dívida que a P3b registou no ponto 1: `/estilo` já não descreve
+a direção «Observatório», e as três fontes V4 saíram do site.
+
+**1. Fontes — de cinco para duas.** `layout.tsx` carregava cinco
+`next/font`; ficam só **Archivo** e **Caveat**. Antes de apagar cada
+uma, cada `--font-*` foi procurado no CSS e no TSX:
+
+| token | origem V4 | destino V5 |
+| --- | --- | --- |
+| `--font-sans` | Space Grotesk | `var(--font-archivo), "Arial", sans-serif` |
+| `--font-editorial` | Source Serif 4 | o mesmo Archivo do `--font-sans` |
+| `--font-grotesk` | Space Grotesk | idem `--font-sans` |
+| `--font-serif` | Source Serif 4 | idem `--font-sans` |
+| `--font-space` | Space Mono | monoespaçada do sistema |
+| `--font-mao` | Caveat | **mantida** (gráficos e quadro da escola) |
+
+`--font-editorial` dobrou para o Archivo por decisão editorial, não por
+economia: o `--font-editorial` só era lido em `src/lib/pontos/tela.ts`
+(`lerCores()`, para medir a altura de um texto). Com ele a desenhar
+em Archivo — como o `.rt5` já fazia — a medição passa a bater certo
+com o que se vê. Era uma divergência latente.
+
+**Monoespaçada: a decisão que a P3b deixou em aberto.** Não há `@font-face`
+de monoespaçada em V5. Seria preciso *trazer* uma (≈ 20 KB por peso e
+estilo) para substituir uma fonte que só servia o talão e o recibo.
+Resolve-se com a pilha do sistema — `ui-monospace`,
+`SFMono-Regular`, Menlo, Monaco, Consolas, `Liberation Mono`,
+`Courier New` — que é o que a casa já usa no terminal. O talão fica
+monoespaçado em qualquer máquina, sem custar um pedido de rede.
+
+**Prova (o CSS construído, não o fonte).** O detector por `class=` não
+serve: o Tailwind só emite o que é usado, e `/estilo` monta tokens por
+template literal. A prova fiável é o CSS emitido:
+
+```
+ANTES:  8 declarações  font-family de Source Serif 4 / Space Grotesk / Space Mono
+DEPOIS: 0
+```
+
+E o `out/estilo.html` servido não menciona nenhuma delas. O
+`e2e/fontes-v4.spec.ts` novo fixa isto: o CSS servido não as nomeia,
+`document.fonts` só tem `Archivo` e `Caveat`, e cinco rotas
+(`/`, `/salario`, `/dados`, `/metodologia`, `/sobre`) são vigiadas por
+`page.on("request")` à caça de `.woff2`.
+
+**2. Tokens V4 apagados (31 linhas de token).** A prova de «sem uso» tem de ser
+o CSS construído, não o `grep` — aFont apaga o que ninguém pede:
+
+| apagado | onde | porquê morreu |
+| --- | --- | --- |
+| `--accent-t`, `--keep-t`, `--mark-t` | 2 temas, 6 linhas | substituídos pelas rampas `--seq`/`--seqb`/`--dink` |
+| `--text-svg-mini` | `:root` | nenhum utilitário emitido |
+| `--text-display-xl` (+companheiro `--line-height`) e `--text-talao-hero-lg` | `@theme` | a escala tem `--text-display-2xl` (3,75rem) por cima e `--text-talao-hero` (1,875rem) para o talão |
+| 21 aliases `@theme` (16 `--color-*`, 4 `--radius-*`, `--shadow-dura`) | `@theme inline` | o V5 lê o token cru, não o utilitário |
+
+**Ficaram, e porque:**
+
+- `--seq-1..4`, `--seqb-1..4`, `--dink-1..4` — usados **por template
+  literal**, tanto em `/estilo` (`var(--color-${rampa}-${i+1})`) como em
+  `src/lib/viz/cores.ts` (`corSeq`, `corDink`, `corSerie`,
+  `corQuantil`). O `grep` não os vê; apagá-los partia todos os gráficos.
+- `--papel-fica-tinta`, todos os `--raio-*` e `--elev-*`,
+  `--sombra-duda`→`--sombra-dura` — `var()` vivo.
+- `--radius-instrumento`, `--radius-controlo`, `--shadow-raised`,
+  `--shadow-overlay`, `--text-talao-hero`, `--text-talao-numero`,
+  `--text-display-xs` — utilitários que o Tailwind **emite** no build.
+  O script de tokensMortos dá-os como mortos; o build desmente-o.
+
+**3. Componentes V4.** Apagados os que **nada** referencia:
+`_home/EscolhePergunta.tsx`, `_home/portas-previews.tsx`,
+`_home/portas.css` (1 108 linhas, zero referências em lado nenhum).
+
+Ficam para o P4, listados no PR com o último commit:
+
+| ficheiro | último commit | quem o referencia |
+| --- | --- | --- |
+| `_home/HeroMoeda.tsx` | `9b1a121` (23-09) | só o próprio teste |
+| `_home/HeroMoedaCliente.tsx` | `856ea04` (24-09) | só o próprio teste |
+| `_home/hero-moeda.css` | `44c7df7` (24-09) | importado pelos dois de cima |
+| `_home/hero-moeda.test.tsx` | `9b1a121` (23-09) | — |
+
+Não foram apagados porque a casa diz «apagar em P4» e porque têm
+teste vivo: apagá-los agora seria apagar o que o P4 tem de decidir.
+
+**4. `/estilo` reescrita.** A intro passou a «o contrato visual «O
+Bairro», claro por omissão»; os rótulos que diziam «Source Serif 4»,
+«Space Grotesk» e «Space Mono» dizem agora «Archivo» e «monoespaçada
+do sistema». A secção nova (`data-contrato-v5`) mostra: dez tokens de
+cor lidos por `var(--token)`, a tipografia (heróico, mão, monoespaçada),
+a forma (`.pil-nav` ×2 e o cartão com `--traco`/`--raio-cartao`/
+`--sombra-dura`), dois gráficos com `aria-label`, o talão, e a noite do
+bairro com um `<button data-theme-toggle>` a sério.
+
+**AA — uma falha real, encontrada pelo audit.** A amostra amarela
+nascia com a tinta do tema, que anoitece: o audit mediu **1,37:1** em
+escuro. O `--amarelo` é superfície clara **nos dois temas**, por isso
+leva sempre `color: #16130f`. Componente corrigido, não regra do
+audit afrouxada.
+
+**Lettering — a especificação tem de ser exemplar.** O `_lettering`
+apanhou os números do meu excerto monoespaçado e do talão com espaço
+normal antes do `€`. Passaram por `comUnidade()` de `@/lib/format`
+(U+202F), que é a ponte da casa — e é o que uma página que **é** a
+especificação deve mostrar.
+
+**5. Copy — PROPOSTA.** 23 chaves novas em `messages/pt.json`, todas
+por rever:
+
+| chave | texto |
+| --- | --- |
+| `estilo.titulo` | Contrato visual «O Bairro» |
+| `estilo.nota` | O que o protótipo mostra é o que vai para produção. Onde esta página e o protótipo divergirem, ganha o protótipo; onde a página e as regras da casa divergirem, ganha a casa. |
+| `estilo.cor` | Cor |
+| `estilo.corNota` | Cada cor tem um nome e um sítio. O verde é o que fica contigo, o vermelho é o que sai, o azul é neutro e informa. Nenhuma cor decora. |
+| `estilo.tipografia` | Tipografia |
+| `estilo.tipografiaNota` | Uma família para tudo, uma mão para os gráficos, e a monoespaçada do sistema para o talão e o recibo. Não há fonte editorial. |
+| `estilo.arquivoEixo` | O eixo da largura |
+| `estilo.arquivoEixoNota` | O mesmo Archivo aperta a manchete e alarga o número. É assim que um título se distingue de um corpo — não é outra fonte. |
+| `estilo.mao` | Caveat — a mão |
+| `estilo.maoNota` | Só nos gráficos e no quadro da escola. Nunca num número que a pessoa precise de ler já. |
+| `estilo.mono` | Monoespaçada do sistema |
+| `estilo.monoNota` | O talão e o recibo. Não descarrega nada. |
+| `estilo.forma` | Forma |
+| `estilo.pilha` | Botão em pílula |
+| `estilo.pilhaNota` | Traço de 3 px em tinta preta e sombra dura 3px 4px. Sobe ao pairar, afunda ao premir — o gesto é o mesmo de quem carrega num botão de plástico. |
+| `estilo.cartao` | Cartão |
+| `estilo.cartaoNota` | Raio de 22 px, traço de tinta, a mesma sombra dura. Nada de vidro, nada de gradiente, nada de sombra difusa. |
+| `estilo.grafico` | Gráfico |
+| `estilo.graficoNota` | Toda a figura tem um equivalente textual e é legível nos dois temas. As séries que recuam de contexto usam a família de tinta, não cor. |
+| `estilo.papel` | O papel |
+| `estilo.papelNota` | O talão é um objecto físico: não muda de cor quando se apaga a luz. O verde é o papel do que fica contigo, o vermelho o do que sai. |
+| `estilo.noite` | A noite do bairro |
+| `estilo.noiteNota` | O tema escuro não é um inverso: é o céu (#141a33) sobre o papel das janelas (#1d2442). O mesmo azul, verde e vermelho, medidos para passarem em AA sobre a noite. |
+
+**Peso (medido nos dois builds completos, `out/`):**
+
+| | antes | depois | Δ |
+| --- | --- | --- | --- |
+| fontes (`.woff2`) | 588,7 KB / 22 ficheiros | 424,3 KB / 7 ficheiros | **−164,4 KB** |
+| CSS | 132,1 KB | 125,8 KB | **−6,3 KB** |
+
 ## P4 · Qualidade e lançamento
 
 ### P4 — os dados das cenas saem do payload da home

@@ -574,5 +574,30 @@
       "correios": "Os Certificados de Aforro rendem {ca} (taxa base).",
       "quiosque": "Inflação: {inflacao} num ano. Desemprego: {desemprego}."
     }
+  },
+  "estilo": {
+    "titulo": "Contrato visual «O Bairro»",
+    "nota": "O que o protótipo mostra é o que vai para produção. Onde esta página e o protótipo divergirem, ganha o protótipo; onde a página e as regras da casa divergirem, ganha a casa.",
+    "cor": "Cor",
+    "corNota": "Cada cor tem um nome e um sítio. O verde é o que fica contigo, o vermelho é o que sai, o azul é neutro e informa. Nenhuma cor decora.",
+    "tipografia": "Tipografia",
+    "tipografiaNota": "Uma família para tudo, uma mão para os gráficos, e a monoespaçada do sistema para o talão e o recibo. Não há fonte editorial.",
+    "arquivoEixo": "O eixo da largura",
+    "arquivoEixoNota": "O mesmo Archivo aperta a manchete e alarga o número. É assim que um título se distingue de um corpo — não é outra fonte.",
+    "mao": "Caveat — a mão",
+    "maoNota": "Só nos gráficos e no quadro da escola. Nunca num número que a pessoa precise de ler já.",
+    "mono": "Monoespaçada do sistema",
+    "monoNota": "O talão e o recibo. Não descarrega nada.",
+    "forma": "Forma",
+    "pilha": "Botão em pílula",
+    "pilhaNota": "Traço de 3 px em tinta preta e sombra dura 3px 4px. Sobe ao pairar, afunda ao premir — o gesto é o mesmo de quem carrega num botão de plástico.",
+    "cartao": "Cartão",
+    "cartaoNota": "Raio de 22 px, traço de tinta, a mesma sombra dura. Nada de vidro, nada de gradiente, nada de sombra difusa.",
+    "grafico": "Gráfico",
+    "graficoNota": "Toda a figura tem um equivalente textual e é legível nos dois temas. As séries que recuam de contexto usam a família de tinta, não cor.",
+    "papel": "O papel",
+    "papelNota": "O talão é um objecto físico: não muda de cor quando se apaga a luz. O verde é o papel do que fica contigo, o vermelho o do que sai.",
+    "noite": "A noite do bairro",
+    "noiteNota": "O tema escuro não é um inverso: é o céu (#141a33) sobre o papel das janelas (#1d2442). O mesmo azul, verde e vermelho, medidos para passarem em AA sobre a noite."
   }
 }

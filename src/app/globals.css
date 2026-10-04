@@ -59,9 +59,6 @@
 
   /* tintes das semânticas — preenchimentos sob linhas e fundos de célula;
      nunca traço nem texto */
-  --accent-t: color-mix(in srgb, var(--accent) 14%, transparent);
-  --keep-t: color-mix(in srgb, var(--keep) 14%, transparent);
-  --mark-t: color-mix(in srgb, var(--mark) 16%, transparent);
 
   /* papel da família do talão — FIXO nos dois temas: o objecto físico
      não muda quando apagas a luz. sai = papel avermelhado do troço
@@ -151,7 +148,6 @@
        svg        texto dentro de viewBox — unidades do desenho, não px
                   de página; escalam com o svg
        impressao  typesetting de papel de imprensa (pt, não rem) */
-  --text-svg-mini: 7px;
   --text-svg-micro: 10px;
   --text-svg-rotulo: 11px;
   --text-svg-valor: 13px;
@@ -194,10 +190,6 @@
   --seqb-2: #c99934;
   --seqb-3: #a8842a;
   --seqb-4: #7d6420;
-
-  --accent-t: color-mix(in srgb, var(--accent) 18%, transparent);
-  --keep-t: color-mix(in srgb, var(--keep) 16%, transparent);
-  --mark-t: color-mix(in srgb, var(--mark) 18%, transparent);
 
   --dink-1: var(--ink);
   --dink-2: var(--ink2);
@@ -248,9 +240,6 @@
   --color-seqb-2: var(--seqb-2);
   --color-seqb-3: var(--seqb-3);
   --color-seqb-4: var(--seqb-4);
-  --color-accent-t: var(--accent-t);
-  --color-keep-t: var(--keep-t);
-  --color-mark-t: var(--mark-t);
   --color-dink-1: var(--dink-1);
   --color-dink-2: var(--dink-2);
   --color-dink-3: var(--dink-3);
@@ -261,41 +250,27 @@
 
   /* raio com significado — os utilitários rounded-* apontam para os
      tokens de :root (papel · pormenor · instrumento · controlo) */
-  --radius-papel: var(--raio-papel);
-  --radius-pormenor: var(--raio-pormenor);
   --radius-instrumento: var(--raio-instrumento);
   --radius-controlo: var(--raio-controlo);
 
   --font-display: var(--font-archivo), "Arial Black", sans-serif;
-  --font-sans: var(--font-grotesk), "Segoe UI", system-ui, sans-serif;
-  --font-editorial: var(--font-serif), Georgia, "Times New Roman", serif;
-  --font-mono: var(--font-space), "Courier New", monospace;
+  /* Tipografia V5 (P3c, contrato PACK §3): Archivo para tudo — o eixo da
+     largura faz o trabalho que fazia a famiglia editorial. A monoespaçada
+     é a DO SISTEMA (o talão e o recibo), não uma fonte descargada.
+     Source Serif, Space Grotesk e Space Mono saíram do layout em P3c. */
+  --font-sans: var(--font-archivo), "Arial", sans-serif;
+  --font-editorial: var(--font-archivo), "Arial", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
 
   /* V5 — a paleta do bairro como utilitários (P3a). Os valores vivem
      no âmbito [data-pele="v5"] (fim do ficheiro): resolvem no ponto de
      uso, por isso seguem o tema e o rescate claro do .b5 sem CSS extra.
      `--linha` V5 NÃO entra aqui — já é o contador de escalonamento das
      rotas V4; a cor do fio usa-se via var(--linha) no CSS do chrome. */
-  --color-papel: var(--papel);
   --color-chao: var(--chao);
   --color-tinta: var(--tinta);
-  --color-tinta-2: var(--tinta-2);
   --color-suave: var(--suave);
-  --color-amarelo: var(--amarelo);
-  --color-amarelo-2: var(--amarelo-2);
-  --color-azul: var(--azul);
-  --color-azul-2: var(--azul-2);
-  --color-verde: var(--verde);
-  --color-verde-2: var(--verde-2);
-  --color-verde-fundo: var(--verde-fundo);
-  --color-vermelho: var(--vermelho);
-  --color-vermelho-2: var(--vermelho-2);
-  --color-fundo-mapa: var(--fundo-mapa);
-  --color-vidro: var(--vidro);
-
-  --shadow-dura: var(--sombra-dura);
-  --radius-cartao: var(--raio-cartao);
-  --radius-pilula: var(--raio-pilula);
 }
 
 /* ————— escala tipográfica fechada (V4) — um papel por degrau —————
@@ -336,8 +311,6 @@
   --text-display-md--line-height: 2.25rem;
   --text-display-lg: 2.25rem;   /* título sm · herói base */
   --text-display-lg--line-height: 2.5rem;
-  --text-display-xl: 3rem;      /* manchete · adivinha */
-  --text-display-xl--line-height: 1;
   --text-display-2xl: 3.75rem;  /* título de página md · herói sm */
   --text-display-2xl--line-height: 1;
   --text-display-3xl: 4.5rem;   /* herói lg · 404 */
@@ -359,7 +332,6 @@
   --text-talao-destaque: 1.125rem;/* valor destacado no papel */
   --text-talao-numero: 1.25rem;   /* número de leitura no papel */
   --text-talao-hero: 1.875rem;    /* total do documento */
-  --text-talao-hero-lg: 2.25rem;  /* o líquido no recibo */
 
   /* ————— tracking por papel (1B-02) — escala fechada de
      letter-spacing; nenhum literal fora dela, medida na fonte real.
@@ -595,8 +567,8 @@ html[data-theme="dark"] .tema-ponto {
                Archivo expandido (wdth 125) com dígitos tabulares —
                tnum medido na fonte real: «11111.11» e «88888.88» têm a
                mesma largura, o número não dança ao actualizar.
-   .num-read   leitura de apoio dentro do painel — Space Mono ~1.4rem.
-   .num-dense  séries e tabelas — Space Mono compacto.
+   .num-read   leitura de apoio dentro do painel — monoespaçada ~1.4rem.
+   .num-dense  séries e tabelas — monoespaçada compacta.
    Unidade e sinal são membros da mesma linha de base — nunca notas
    de rodapé nem spans flutuantes. */
 .num-hero {
@@ -2750,7 +2722,7 @@ h3 {
 }
 .leitura-valor {
   margin-top: 0.3rem;
-  /* número herói = Archivo tabular (S1-02): em Space Mono a vírgula
+  /* número herói = Archivo tabular (S1-02): na monoespaçada a vírgula
      ocupa uma célula inteira e «3,55» lê-se «3 , 55»; tnum medido na
      fonte real — «11111.11» e «88888.88» têm a mesma largura */
   font-family: var(--font-archivo), "Arial Black", sans-serif;
@@ -4314,11 +4286,11 @@ html:has(.rt5) {
   --elev-overlay: var(--sombra-dura);
   --recess: none;
   --raio-instrumento: var(--raio-cartao);
-  /* tipografia: Archivo para tudo (o mono V4 fica — os meta/breadcrumb
-     e a numeração tabular guardam a cadência do instrumento; decisão
-     registada no NOTAS-V5 para o dono rever) */
-  --font-sans: var(--font-archivo), "Arial", sans-serif;
-  --font-editorial: var(--font-archivo), "Arial", sans-serif;
+  /* tipografia: herda da :root, já em Archivo (P3c). O grupo 1 da P3b
+     remapeava aqui o sans e o editorial e deixava o mono V4 para os
+     meta/breadcrumbs, «decisão registada para o dono rever» — revisto
+     em P3c contra o PACK §3: também o mono é a monoespaçada do
+     sistema, e nada é remapeado dentro do .rt5. */
 }
 html[data-theme="dark"] .rt5 {
   --linha: #2f3760;
