@@ -1,7 +1,7 @@
 # NOTAS — sessões D do PACK DADOS V5
 
 > Estado de execução das sessões D-01 a D-07 do
-> [`docs/PACK-DADOS-V5.md`](docs/PACK-DADOS-V5.md). Escrito a **2026-09-30**
+> [`docs/PACK-DADOS-V5.md`](../PACK-DADOS-V5.md). Escrito a **2026-09-30**
 > para que uma sessão nova apanhe o fio sem repetir a pesquisa.
 >
 > Regra de cada sessão, do pack: branch própria a partir de `origin/main`,
