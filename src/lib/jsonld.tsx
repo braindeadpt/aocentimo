@@ -14,8 +14,63 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
   );
 }
 
-const ORG = { "@type": "Organization", name: "AO CÊNTIMO" } as const;
+const ORG_ID = `${SITE_URL}/#organizacao`;
+const ORG = { "@type": "Organization", "@id": ORG_ID, name: "AO CÊNTIMO" } as const;
 const BASE = SITE_URL;
+
+/**
+ * A casa e o site, num GRAFO só — a home (P4 · SEO).
+ *
+ * A home já trazia um `WebSite` solto. O que faltava era a
+ * `Organization`: um site que publica dados e simula nada é, para os
+ * crawlers, uma página sem quem a assine. Sai aqui, no mesmo `<script>`,
+ * ligado por `@id` — não um segundo bloco: duplicar o `WebSite` seria
+ * dizer ao crawler que o site tem duas identidades.
+ *
+ * `description` é a mesma frase do `WebSite`: a casa não tem uma
+ * descrição própria e separada, e inventar uma seria inventar.
+ */
+export function casaESite(descricao: string) {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      { ...ORG, url: BASE, description: descricao },
+      {
+        "@type": "WebSite",
+        "@id": `${BASE}/#website`,
+        name: ORG.name,
+        url: BASE,
+        description: descricao,
+        inLanguage: "pt-PT",
+        publisher: { "@id": ORG_ID },
+      },
+    ],
+  };
+}
+
+/**
+ * O caminho de migalhas de uma página.
+ *
+ * Só é emitido nas páginas que têm «Voltar ao bairro» (`Pagina` exige o
+ * `edificio`), porque é aí que existe uma hierarquia real: a casa, a
+ * secção e a folha. `/metodologia`, `/sobre` e `/estilo` não têm
+ * edifício e por isso não ganham migalhas — uma migalha que não se
+ * pode seguir não é migalha.
+ */
+export function breadcrumb(
+  tracos: readonly { nome: string; rota: string }[]
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: tracos.map((t, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: t.nome,
+      item: `${BASE}${t.rota}`,
+    })),
+  };
+}
 
 /** Simuladores — rotas com ferramenta interativa. */
 export function webApplication(nome: string, rota: string, descricao: string) {

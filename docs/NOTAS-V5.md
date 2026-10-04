@@ -1216,6 +1216,99 @@ Copy PROPOSTA nova (em `cenas/textos.ts`, para o dono rever):
 Medido (`scripts/_dieta-html.mjs`, home): payload RSC 17 184 →
 **9 088 B gzip**; home 78 246 → **70 099 B gzip**.
 
+### P4 — metadados e partilha em todas as rotas (ramo `v5/p4-seo`)
+
+**O que entrou.**
+
+O `og:image` que o site anunciava não existia. O `head` dizia
+`https://aocentimo.pt/opengraph-image?222b691790b2fa33` — e com
+`output: "export"` essa rota vira um ficheiro **sem extensão**
+(`out/<rota>/opengraph-image`, 45 KB). O GitHub Pages serve-o como
+`application/octet-stream`, e nenhum crawler de partilha abre um
+`octet-stream`: as metas eram perfeitas e a imagem era inacessível.
+Havia catorze desses cartões (a raiz mais treze por rota), **632 KB no
+`out/`**, todos do mesmo desenho de palavra-marca e nenhum deles aberto
+por quem fosse partilhar a página.
+
+| | antes | depois |
+| --- | --- | --- |
+| `og:image` | `/opengraph-image?hash` (sem extensão) | `/og-bairro.png` (PNG servido) |
+| cartões no `out/` | 14 ficheiros, 632 KB | 1 ficheiro, 74,2 KB |
+| `manifest.webmanifest` | não existia | `src/app/manifest.ts` |
+| `Organization` na home | não existia | no mesmo `@graph` do `WebSite` |
+| `BreadcrumbList` | não existia | 34 páginas com «Voltar ao bairro» |
+| home (gate de 80 KB gzip) | 72,1 KB | **72,4 KB** |
+
+**Decisões tomadas (a rever).**
+
+1. **Um cartão só, tirado do mapa.** `public/og-bairro.png`, 1200×630,
+   gerado por `scripts/_og-bairro.mjs` (Playwright sobre o `out/`, tema
+   claro, hora «Dia», com os treze marcadores à vista). As catorze metas
+   de `opengraph-image.tsx` saíram com ele, e `src/lib/og.tsx` ficou sem
+   consumidores — 95 linhas apagadas. *O que se perde:* cada rota tinha o
+   seu cartão com o nome da secção escrito. *O que se ganha:* o único
+   cartão que o GitHub Pages consegue servir.
+
+   O `og:title`/`og:description` **continuam por rota** — é o texto que
+   distingue a partilha, e esse é barato. Não são escritos à mão no
+   bloco: o Next herda-os do `title` já com o template aplicado, para
+   que o separador e o feed não possam divergir.
+
+2. **A copy saiu dos componentes para `messages/pt.json`.** Chave nova
+   `seo`, com `titulo` e `descricao` das catorze rotas. Treze eram
+   verbatim o que já lá estava; **uma é nova**:
+   - `seo.rotas.sobre.descricao` — «O que é o AO CÊNTIMO, porquê existe
+     e quem o faz: um projeto pessoal, sem publicidade nem
+     rastreamento, com o código e os dados abertos.» (PROPOSTA — as
+     treze outras já estavam publicadas no site.)
+
+   O `layout.tsx` deixa de escrever o título e a descrição à mão: lê
+   `m.meta.title` / `m.meta.description`, que já lá estavam no `pt.json`
+   desde sempre e **não eram lidos por ninguém** — as strings estavam
+   duplicadas dentro do componente.
+
+3. **As âncoras da cena partilham o cartão do site.** `/#banco` é o mesmo
+   documento que `/`: mesmo `canonical`, mesma imagem, nenhuma rota nova.
+   Um cartão por cena seria uma imagem por URL, e o mapa não muda de
+   figura quando o `_hash` muda.
+
+4. **As migalhas seguem a «Voltar ao bairro».** O `BreadcrumbList` é
+   emitido pelo próprio `Pagina`, condicionado ao `edificio` — que é o
+   mesmo campo que desenha o «Voltar ao bairro». São **34 páginas** — as
+   11 rotas com edifício mais os 23 termos (`/aprender` conta uma vez, o
+   seu índice). `/metodologia`, `/sobre` e `/estilo` não têm edifício e
+   por isso não têm degraus: uma migalha sem caminho não é migalha. Os
+   nomes dos degraus saem de `m.nav`, que já rotula cada secção — nada de
+   escrever «Salário» outra vez.
+
+5. **`/sobre` ganhou descrição.** Tinha 37 caracteres; o tecto da casa é
+   50. Era a única das catorze fora da medida.
+
+**Prova.**
+
+`e2e/seo.spec.ts`, oito testes: as catorze rotas com título único,
+descrição entre 50 e 160, canonical absoluto igual à rota e `og:image`
+absoluto **que responde 200 e vem como `image/png`**; os 23 termos com o
+seu canonical e a mesma imagem; o PNG com a assinatura, a medida lida do
+IHDR (1200×630) e o peso abaixo de 250 KB; o sitemap com as 15 rotas e os
+23 termos, **cada URL pedida e respondida**, e sem qualquer `#` na lista;
+`robots.txt`, `manifest.webmanifest` e os ícones que ele aponta; as
+âncoras a partilhar o cartão da home; a home com **um só** bloco de
+dados estruturados e um `WebSite` e uma `Organization` que não sejam
+duplicados; e as migalhas presentes nas páginas com «Voltar ao bairro» e
+ausentes nas outras.
+
+Os 386 e2e e os 734 unitários verdes, e o `audit` com zero falhas AA.
+
+**Uma divergência com o pedido, para o dono decidir.** O pedido dizia
+«as 14 rotas e as 23 páginas». O sitemap tem **15** rotas: a lista do
+AGENTS também tem catorze, mas a home conta. Ficam as catorze de
+conteúdo mais a home, e `/estilo` lá está — é indexável de propósito
+(«peça de portefólio, ligada do rodapé», está escrito no código). Tirá-la
+do sitemap para chegar às catorze seria decidir contra uma nota do
+próprio ficheiro; por isso ficou, e o teste conta o que há, não um número
+mágico.
+
 **A lista final de textos PROPOSTA saiu deste ficheiro.** Vive em
 **`docs/REVISAO-COPY-V5.md`** — uma tabela só, gerada por
 `node scripts/_revisao-copy.mjs` a partir de `cenas/textos.ts`,

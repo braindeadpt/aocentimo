@@ -39,6 +39,69 @@
     "title": "AO CÊNTIMO — literacia financeira para Portugal",
     "description": "Simuladores e dados de literacia financeira para Portugal — salário líquido, IRS, crédito habitação, poupança e inflação. Cada número com fonte e data."
   },
+  "seo": {
+    "imagem": "/og-bairro.png",
+    "altImagem": "O bairro AO CÊNTIMO visto de cima, com o número de hoje em cada edifício",
+    "card": "AO CÊNTIMO — literacia financeira para Portugal",
+    "rotas": {
+      "salario": {
+        "titulo": "Do bruto ao líquido — salário e IRS",
+        "descricao": "Calculadora de salário líquido em Portugal: Segurança Social, IRS por escalões, deduções e o custo real para a empresa."
+      },
+      "irs": {
+        "titulo": "IRS — escalões, retenção e IRS Jovem",
+        "descricao": "Os escalões de IRS em Portugal, a retenção na fonte mensal e o simulador de IRS Jovem: quanto poupas em cada um dos 10 anos."
+      },
+      "impostos": {
+        "titulo": "Impostos — o imposto dentro do preço",
+        "descricao": "IVA por produto em Portugal e a decomposição do preço dos combustíveis: ISP, taxa de carbono e a cascata do IVA sobre impostos."
+      },
+      "poupanca": {
+        "titulo": "Poupança — Certificados de Aforro, depósitos e inflação",
+        "descricao": "Como funcionam os Certificados de Aforro, a tributação de 28 % sobre juros, e porque a taxa que importa é a real, não a nominal."
+      },
+      "credito": {
+        "titulo": "Crédito — Euribor, spread e prestação",
+        "descricao": "O que é a Euribor, como o spread forma a TAN, e simulador de prestação de crédito habitação com custo total do empréstimo."
+      },
+      "casa": {
+        "titulo": "Comprar casa — IMT, Imposto de Selo e prestação",
+        "descricao": "O custo real de comprar casa em Portugal: IMT, Imposto de Selo, registos e a prestação com a Euribor atual do Banco de Portugal."
+      },
+      "inflacao": {
+        "titulo": "Inflação — quanto mais caro está o que compras",
+        "descricao": "IHPC em Portugal por categoria ECOICOP: alimentação, energia, habitação, transportes. Variação homóloga mensal com dados Eurostat."
+      },
+      "precos": {
+        "titulo": "Preços — combustíveis dia a dia",
+        "descricao": "Preços dos combustíveis em Portugal em euros por litro, com variações diária, semanal, mensal e anual — dados DGEG."
+      },
+      "trabalho": {
+        "titulo": "Subsídio de desemprego — quanto e por quanto tempo",
+        "descricao": "Simulador do subsídio de desemprego em Portugal: 65 % da remuneração de referência, limites do IAS, duração por idade e descontos."
+      },
+      "dados": {
+        "titulo": "Dados — painéis vivos de fontes oficiais",
+        "descricao": "Euribor, TAEG do crédito ao consumo vs teto legal de usura, taxa base dos Certificados de Aforro e o calendário fiscal — direto das fontes oficiais."
+      },
+      "aprender": {
+        "titulo": "Aprender — glossário de dinheiro",
+        "descricao": "Euribor, spread, TAN, TAEG, MTIC, escalões, retenção na fonte: os termos do dinheiro em Portugal explicados em português simples, com exemplos."
+      },
+      "metodologia": {
+        "titulo": "Metodologia e fontes",
+        "descricao": "De onde vêm os números do AO CÊNTIMO: fontes oficiais, frequência de atualização e limitações dos simuladores."
+      },
+      "estilo": {
+        "titulo": "Sistema de design",
+        "descricao": "Referência viva do design system do AO CÊNTIMO — tokens, tipografia e componentes."
+      },
+      "sobre": {
+        "titulo": "Sobre",
+        "descricao": "O que é o AO CÊNTIMO, porquê existe e quem o faz: um projeto pessoal, sem publicidade nem rastreamento, com o código e os dados abertos."
+      }
+    }
+  },
   "common": {
     "fonte": "Fonte",
     "calculaOTeu": "Calcula o teu"

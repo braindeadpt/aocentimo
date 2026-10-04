@@ -24,6 +24,8 @@
 
 **cenas P2a** (98)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 1 | `src/app/_bairro/cenas/textos.ts:fechar` | Voltar ao bairro | sem número |  |
 | 2 | `src/app/_bairro/cenas/textos.ts:saltar` | Saltar para o fim | sem número |  |
 | 3 | `src/app/_bairro/cenas/textos.ts:aCarregar` | A ir buscar os números… | sem número |  |
@@ -124,6 +126,8 @@
 | 98 | `src/app/_bairro/cenas/textos.ts:fabBtnSimulador` | Fazer com o meu salário | sem número |  |
 **cenas P2b** (96)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 99 | `src/app/_bairro/cenas/textos-p2b.ts:corQuem` | Correios · senha A · a poupança | sem número |  |
 | 100 | `src/app/_bairro/cenas/textos-p2b.ts:corRotuloArte` | Dentro dos Correios: a parede de cacifos, o painel da senha, o guiché A com a funcionária atrás do vidro, o balcão com duas pilhas de notas e a Dona Arminda com a caderneta. | sem número |  |
 | 101 | `src/app/_bairro/cenas/textos-p2b.ts:corFala1` | Bom dia! A **poupança** é no balcão A. A Dona Arminda está à espera com a caderneta. | sem número |  |
@@ -222,6 +226,8 @@
 | 194 | `src/app/_bairro/cenas/textos-p2b.ts:ssSemDados` | Os dados do salário não estão disponíveis agora. | sem número |  |
 **cenas P2c** (114)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 195 | `src/app/_bairro/cenas/textos-p2c.ts:casaQuem` | Casa da Inês · o preço das casas | sem número |  |
 | 196 | `src/app/_bairro/cenas/textos-p2c.ts:casaPlaca` | CASA DA INÊS | sem número |  |
 | 197 | `src/app/_bairro/cenas/textos-p2c.ts:casaPilhaLeg` | meses de trabalho | sem número |  |
@@ -338,6 +344,8 @@
 | 308 | `src/app/_bairro/cenas/textos-p2c.ts:escLinkAprender` | Ver o glossário todo → | sem número |  |
 **home · bairro** (87)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 309 | `messages/pt.json:bairro.selo.independente1` | Independente e gratuito. | sem número |  |
 | 310 | `messages/pt.json:bairro.selo.independente2` | Aqui ninguém te quer vender nada. | sem número |  |
 | 311 | `messages/pt.json:bairro.h1a` | O dinheiro explicado | sem número |  |
@@ -427,6 +435,8 @@
 | 395 | `messages/pt.json:bairro.extra.quiosque` | Inflação: {inflacao} num ano. Desemprego: {desemprego}. | sem número |  |
 **`/estilo` (P3c)** (23)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 396 | `messages/pt.json:estilo.titulo` | Contrato visual «O Bairro» | sem número |  |
 | 397 | `messages/pt.json:estilo.nota` | O que o protótipo mostra é o que vai para produção. Onde esta página e o protótipo divergirem, ganha o protótipo; onde a página e as regras da casa divergirem, ganha a casa. | sem número |  |
 | 398 | `messages/pt.json:estilo.cor` | Cor | sem número |  |
@@ -452,15 +462,21 @@
 | 418 | `messages/pt.json:estilo.noiteNota` | O tema escuro não é um inverso: é o céu (#141a33) sobre o papel das janelas (#1d2442). O mesmo azul, verde e vermelho, medidos para passarem em AA sobre a noite. | sem número |  |
 **tema** (4)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 419 | `messages/pt.json:tema.mudarParaClaro` | Mudar para tema claro | sem número |  |
 | 420 | `messages/pt.json:tema.mudarParaEscuro` | Mudar para tema escuro | sem número |  |
 | 421 | `messages/pt.json:tema.claro` | claro | sem número |  |
 | 422 | `messages/pt.json:tema.escuro` | escuro | sem número |  |
 **volta ao bairro (P3b)** (1)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 423 | `messages/pt.json:pagina.voltarBairro` | Voltar ao bairro | sem número |  |
 **edifícios (aria-label)** (11)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 424 | `Bairro.tsx:edificio.fabrica` | Fábrica — para onde vai o teu salário? | sem número |  |
 | 425 | `Bairro.tsx:edificio.segsocial` | Segurança Social — os descontos | sem número |  |
 | 426 | `Bairro.tsx:edificio.financas` | Finanças — os escalões do IRS | sem número |  |
@@ -474,6 +490,8 @@
 | 434 | `Bairro.tsx:edificio.escola` | Escola — as palavras do dinheiro | sem número |  |
 **marcadores do mapa** (13)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 435 | `src/lib/bairro/planta.ts:rótulo` | Salário bruto | sem número |  |
 | 436 | `src/lib/bairro/planta.ts:rótulo` | TSU da empresa | sem número |  |
 | 437 | `src/lib/bairro/planta.ts:rótulo` | IRS retido / mês | sem número |  |
@@ -489,6 +507,8 @@
 | 447 | `src/lib/bairro/planta.ts:rótulo` | Pergunta do dia | sem número |  |
 **letreiros desenhados** (22)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 448 | `src/lib/bairro/planta.ts:letreiro` | FÁBRICA | sem número |  |
 | 449 | `src/lib/bairro/planta.ts:letreiro` | FIAÇÃO DO DOURO | sem número |  |
 | 450 | `src/lib/bairro/planta.ts:letreiro` | SEGURANÇA SOCIAL | sem número |  |
@@ -513,6 +533,8 @@
 | 469 | `src/lib/bairro/planta.ts:letreiro` | 24 | sem número |  |
 **cartas · nome** (9)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 470 | `messages/pt.json:bairro.elenco.cartas.*.nome` | Nome | sem número |  |
 | 471 | `messages/pt.json:bairro.elenco.cartas.*.nome` | --- | sem número |  |
 | 472 | `messages/pt.json:bairro.elenco.cartas.*.nome` | Inês | sem número |  |
@@ -524,6 +546,8 @@
 | 478 | `messages/pt.json:bairro.elenco.cartas.*.nome` | Rui e Marta | sem número |  |
 **cartas · papel** (9)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 479 | `messages/pt.json:bairro.elenco.cartas.*.papel` | Papel | sem número |  |
 | 480 | `messages/pt.json:bairro.elenco.cartas.*.papel` | --- | sem número |  |
 | 481 | `messages/pt.json:bairro.elenco.cartas.*.papel` | Operária da fábrica | sem número |  |
@@ -535,6 +559,8 @@
 | 487 | `messages/pt.json:bairro.elenco.cartas.*.papel` | Casal com crédito | sem número |  |
 **cartas · perfil** (9)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 488 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | Perfil | sem número |  |
 | 489 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | --- | sem número |  |
 | 490 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | Conta de outrem · setor privado | sem número |  |
@@ -546,6 +572,8 @@
 | 496 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | Crédito à habitação | sem número |  |
 **cartas · aprende** (9)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 497 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | O que aprende | sem número |  |
 | 498 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | --- | sem número |  |
 | 499 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | Porque é que 1 500 € brutos viram 1 167 €. ⚠️ ver dúvida 1 | ⚠️ número escrito na frase: 1 500 · 1 167 · 1 |  |
@@ -557,6 +585,8 @@
 | 505 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | A prestação, a Euribor e quanto do salário ela come. | sem número |  |
 **controlos da home** (6)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 506 | `messages/pt.json:bairro.*` | Dia | sem número |  |
 | 507 | `messages/pt.json:bairro.*` | Fim de tarde | sem número |  |
 | 508 | `messages/pt.json:bairro.*` | Noite | sem número |  |
@@ -565,33 +595,53 @@
 | 511 | `messages/pt.json:bairro.*` | Em breve | sem número |  |
 **home · Selo** (1)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 512 | `messages/pt.json:bairro.*` | Independente e gratuito. Aqui ninguém te quer vender nada. | sem número |  |
 **home · Título (h1)** (1)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 513 | `messages/pt.json:bairro.*` | O dinheiro explicado ao cêntimo. | sem número |  |
 **home · Introdução** (1)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 514 | `messages/pt.json:bairro.*` | Este é o bairro. Cada edifício responde a uma pergunta sobre dinheiro — com os números de hoje. Toca num para entrar. | sem número |  |
 **home · Selo de secção** (1)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 515 | `messages/pt.json:bairro.*` | Quem vive no bairro | sem número |  |
 **home · Título de secção** (1)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 516 | `messages/pt.json:bairro.*` | Escolhe a tua personagem. | sem número |  |
 **home · Entrada de secção** (1)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 517 | `messages/pt.json:bairro.*` | O mesmo trabalho, pago de maneiras diferentes: por conta de outrem, na função pública, a recibos verdes ou com empresa própria. Cada pessoa do bairro mostra um caminho diferente do dinheiro. Toca numa para a encontrares no mapa. | sem número |  |
 **home · Dica do mapa** (1)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 518 | `messages/pt.json:bairro.*` | Arrasta para passear · roda para aproximar · toca na Fábrica! | sem número |  |
 **proposta de alteração (P1)** (1)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 519 | `docs/AUDITORIA-CENAS-V5.md §2.2` | `textos-p2c.ts:40-41` — «quase o dobro» hardcoded. | proposta — não aplicada; a copy é do dono |  |
 **proposta de alteração (P2)** (1)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 520 | `docs/AUDITORIA-CENAS-V5.md §2.2` | Bomba, 50 litros sem «exemplo». | proposta — não aplicada; a copy é do dono |  |
 **proposta de alteração (P3)** (1)
 
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
 | 521 | `docs/AUDITORIA-CENAS-V5.md §2.2` | `irs-2026.json` fonte. | proposta — não aplicada; a copy é do dono |  |
 
 ---

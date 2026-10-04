@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ALT_FEED } from "@/lib/meta";
+import { metaDeRota } from "@/lib/seo";
 import { Pagina, PaginaDetalhe } from "@/components/Pagina";
 import { Cartao } from "@/components/Cartao";
 import { Delta } from "@/components/Delta";
@@ -27,12 +27,7 @@ import {
 import { m } from "@/lib/messages";
 import eventos from "@data/fiscal/eventos.json";
 
-export const metadata: Metadata = {
-  title: "Inflação — quanto mais caro está o que compras",
-  description:
-    "IHPC em Portugal por categoria ECOICOP: alimentação, energia, habitação, transportes. Variação homóloga mensal com dados Eurostat.",
-  alternates: { canonical: "/inflacao", types: ALT_FEED },
-};
+export const metadata: Metadata = metaDeRota("/inflacao");
 
 /** as 12 divisões ECOICOP 2018 que a ingestão traz (CP01–CP12) —
     rótulo completo + curto para o haltere em coluna estreita */

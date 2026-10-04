@@ -11,7 +11,7 @@ import {
   TERRENO,
 } from "@/lib/bairro/planta";
 import { m, t } from "@/lib/messages";
-import { SITE_URL } from "@/lib/site";
+import { JsonLd, casaESite } from "@/lib/jsonld";
 import { Bairro, type Hora, type InfoEdificio } from "./Bairro";
 import { Cartas, type CartaDados, type CartasComum } from "./Cartas";
 
@@ -71,22 +71,17 @@ export default function HomeBairro() {
   // Inês nunca se escreve à mão
   const { cartas, comum: cartasComum } = cartasDoElenco(linhaSalario());
 
-  const ld = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "AO CÊNTIMO",
-    url: SITE_URL,
-    inLanguage: "pt-PT",
-    description:
-      "Literacia financeira para Portugal — cada edifício do bairro responde a uma pergunta sobre dinheiro, com os números de hoje, cada um com fonte e data.",
-  };
+  /* O `WebSite` da home — e a `Organization` que faltava, no mesmo
+     grafo e no mesmo <script> (P4 · SEO). A casa não tem descrição
+     própria: se tivesse, seria uma segunda verdade sobre quem
+     publica. Ver `casaESite` em `@/lib/jsonld`. */
+  const ld = casaESite(
+    "Literacia financeira para Portugal — cada edifício do bairro responde a uma pergunta sobre dinheiro, com os números de hoje, cada um com fonte e data."
+  );
 
   return (
     <div data-pele="v5" className="b5 mx-auto max-w-[1240px] px-5">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
-      />
+      <JsonLd data={ld} />
 
       {/* O logótipo e a navegação NÃO são repetidos aqui: o cabeçalho do
           site (layout.tsx) já os traz, com o tema e a data de edição. O

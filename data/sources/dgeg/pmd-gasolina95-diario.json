@@ -5,7 +5,7 @@
     "dataset": "PMD Gasolina simples 95 (3201)",
     "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=3201&dataIni=2017-01-01&dataFim=2026-10-04",
     "unidade": "eur_litro_media_nacional",
-    "recolhidoEm": "2026-10-04T01:30:58.699Z",
+    "recolhidoEm": "2026-10-04T12:01:11.290Z",
     "serieAte": "2026-10-03"
   },
   "series": [

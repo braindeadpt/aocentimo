@@ -323,6 +323,19 @@ for (const l of bloco(auditoria, "### 2.2 Propostas de copy")) {
 /* ——————————————————————————— escrita ——————————————————————————— */
 
 const grupos = [...new Set(linhas.map((l) => l.grupo))];
+
+/**
+ * A linha de cabeçalho e a de separação, repetidas em CADA grupo.
+ * Uma tabela interrompida por um parágrafo (`**grupo**`) é uma tabela
+ * nova para quem a lê: sem cabeçalho, «Onde» e «Fonte do número» ficam
+ * sem nome, e a coluna da direita — a que o dono escreve — deixa de se
+ * ver. Repetir o cabeçalho é o que mantém cada grupo legível sozinho,
+ * em qualquer visualizador.
+ */
+const CAB_TABELA =
+  "| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |\n" +
+  "|---|---|---|---|---|\n";
+
 const cab =
   `# REVISÃO DE COPY V5 — o que o dono tem de aprovar antes do lançamento
 
@@ -345,9 +358,7 @@ const cab =
 > Nada entra sem a coluna da direita preenchida (P4 do
 > \`docs/PACK-V5-PRODUCAO.md\` §P4.4).
 
-| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
-|---|---|---|---|---|
-`;
+${CAB_TABELA}`;
 
 let n = 0;
 const corpo = grupos
@@ -355,6 +366,7 @@ const corpo = grupos
     const dentro = linhas.filter((l) => l.grupo === g);
     return (
       `\n**${g}** (${dentro.length})\n\n` +
+      CAB_TABELA +
       dentro
         .map((l) => {
           n += 1;

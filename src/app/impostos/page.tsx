@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ALT_FEED } from "@/lib/meta";
+import { metaDeRota } from "@/lib/seo";
 import { Pagina, PaginaDetalhe } from "@/components/Pagina";
 import { Cartao } from "@/components/Cartao";
 import { EstadoVazio } from "@/components/EstadoVazio";
@@ -21,12 +21,7 @@ import { CampoCabaz } from "./CampoCabaz";
 import { LitroFuel, type LitroFuelItem } from "./LitroFuel";
 import { TalaoCompras } from "./TalaoCompras";
 
-export const metadata: Metadata = {
-  title: "Impostos — o imposto dentro do preço",
-  description:
-    "IVA por produto em Portugal e a decomposição do preço dos combustíveis: ISP, taxa de carbono e a cascata do IVA sobre impostos.",
-  alternates: { canonical: "/impostos", types: ALT_FEED },
-};
+export const metadata: Metadata = metaDeRota("/impostos");
 
 /** os dois combustíveis com PMD DGEG + taxas ISP versionadas */
 const FUELS: { id: "gasoleo" | "gasolina95"; pmd: string }[] = [

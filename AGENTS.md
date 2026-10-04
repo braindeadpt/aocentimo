@@ -6,7 +6,7 @@
 
 Site público de literacia financeira para Portugal. **A home é um mapa:** o
 bairro do Porto visto de cima, com onze edifícios que são onze cenas por
-ânncora. Documento canónico: `docs/PRODUTO.md` — direção **V5 «O Bairro»**
+âncora. Documento canónico: `docs/PRODUTO.md` — direção **V5 «O Bairro»**
 (§2 e §6b), sistema visual e regras de produto; ler antes de qualquer
 trabalho. Decisões datadas: `docs/DECISOES.md`. Registo de trabalho:
 `docs/NOTAS-V5.md`. A direcção V3 «Ledger» e a V4 «o cêntimo como
