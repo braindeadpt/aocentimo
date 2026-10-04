@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ALT_FEED } from "@/lib/meta";
+import { metaDeRota } from "@/lib/seo";
 import { GLOSSARIO } from "@/content/glossario";
 import { JsonLd, faqPage } from "@/lib/jsonld";
 import { Pagina, PaginaDetalhe } from "@/components/Pagina";
@@ -12,12 +12,7 @@ import {
 } from "./conteudo";
 import { PesquisaGlossario } from "./PesquisaGlossario";
 
-export const metadata: Metadata = {
-  title: "Aprender — glossário de dinheiro",
-  description:
-    "Euribor, spread, TAN, TAEG, MTIC, escalões, retenção na fonte: os termos do dinheiro em Portugal explicados em português simples, com exemplos.",
-  alternates: { canonical: "/aprender", types: ALT_FEED },
-};
+export const metadata: Metadata = metaDeRota("/aprender");
 
 /** as páginas de cada pergunta — os mesmos grupos da navegação do site,
  *  para o glossário e a nav contarem a mesma história */

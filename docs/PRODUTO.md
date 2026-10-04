@@ -394,8 +394,10 @@ Sub-escalas fora do cromado mas dentro do sistema: `--text-svg-*`
 (texto dentro de viewBox — unidades do desenho, escalam com o svg) e
 `--text-talao-*` (o talão é um documento de impressora térmica —
 typesetting próprio). Impressão usa `--text-impressao` (pt de papel,
-não rem). As imagens OG são raster — a sua escala (`OG_TIPO` em
-`src/lib/og.tsx`) é tipografia de imagem 1200×630, não da página.
+não rem). O cartão de partilha (`og:image`) deixou de ser raster gerado
+em runtime: é `public/og-bairro.png`, 1200×630, tirado do mapa da home
+em «Dia» com os marcadores à vista (`scripts/_og-bairro.mjs`). A escala
+tipográfica do cartão deixou de ser código — passa a ser o desenho.
 
 ### Lettering — número, sinal e unidade (1B-02)
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ALT_FEED } from "@/lib/meta";
+import { metaDeRota } from "@/lib/seo";
 import { Pagina, PaginaDetalhe } from "@/components/Pagina";
 import { Cartao } from "@/components/Cartao";
 import { EstadoVazio } from "@/components/EstadoVazio";
@@ -15,12 +15,7 @@ import isp from "@data/fiscal/isp.json";
 import eventos from "@data/fiscal/eventos.json";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 
-export const metadata: Metadata = {
-  title: "Preços — combustíveis dia a dia",
-  description:
-    "Preços dos combustíveis em Portugal em euros por litro, com variações diária, semanal, mensal e anual — dados DGEG.",
-  alternates: { canonical: "/precos", types: ALT_FEED },
-};
+export const metadata: Metadata = metaDeRota("/precos");
 
 const COMBUSTIVEIS: {
   id: string;

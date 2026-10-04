@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { ALT_FEED } from "@/lib/meta";
+import { metaDeRota } from "@/lib/seo";
 import { Source } from "@/components/Source";
 import { JsonLd, dataset } from "@/lib/jsonld";
 import { EstadoVazio } from "@/components/EstadoVazio";
@@ -27,12 +27,7 @@ import usura from "@data/fiscal/usura-2026.json";
 import calendario from "@data/fiscal/calendario-2026.json";
 import eventos from "@data/fiscal/eventos.json";
 
-export const metadata: Metadata = {
-  title: "Dados — painéis vivos de fontes oficiais",
-  description:
-    "Euribor, TAEG do crédito ao consumo vs teto legal de usura, taxa base dos Certificados de Aforro e o calendário fiscal — direto das fontes oficiais.",
-  alternates: { canonical: "/dados", types: ALT_FEED },
-};
+export const metadata: Metadata = metaDeRota("/dados");
 
 interface CaBase {
   meta: { oficialPct: number; vigenciaOficial: string; serieAte: string; url?: string };

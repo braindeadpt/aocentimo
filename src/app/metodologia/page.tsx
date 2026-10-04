@@ -1,17 +1,12 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
-import { ALT_FEED } from "@/lib/meta";
+import { metaDeRota } from "@/lib/seo";
 import { loadFontes, loadFreshness } from "@/lib/data";
 import { comUnidade, fmtData } from "@/lib/format";
 import { OrbeEstado, type EstadoOrbe } from "@/components/OrbeEstado";
 import { TituloPagina } from "@/components/Voo";
 
-export const metadata: Metadata = {
-  title: "Metodologia e fontes",
-  description:
-    "De onde vêm os números do AO CÊNTIMO: fontes oficiais, frequência de atualização e limitações dos simuladores.",
-  alternates: { canonical: "/metodologia", types: ALT_FEED },
-};
+export const metadata: Metadata = metaDeRota("/metodologia");
 
 const FONTES_FIXAS = [
   {

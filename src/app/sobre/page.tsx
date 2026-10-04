@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
-import { ALT_FEED } from "@/lib/meta";
+import { metaDeRota } from "@/lib/seo";
 import { TituloPagina } from "@/components/Voo";
 
-export const metadata: Metadata = {
-  title: "Sobre",
-  description: "O que é o AO CÊNTIMO e porquê existe.",
-  alternates: { canonical: "/sobre", types: ALT_FEED },
-};
+export const metadata: Metadata = metaDeRota("/sobre");
 
 export default function SobrePage() {
   /* M-19: a sobriedade aqui é a decisão, não a falta dela — uma página
