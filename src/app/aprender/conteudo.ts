@@ -11,7 +11,7 @@
  * escritas de memória.
  *
  * NOTA para o dono: `FRASE`, `EXEMPLO` e as descrições de grupo são
- * copy novo a rever — registado em NOTAS-V4-sessao-3d.md. Se fizerem
+ * copy novo a rever — registado em docs/historico/NOTAS-V4-sessao-3d.md. Se fizerem
  * sentido como campos do `Termo`, mudam-se para `src/content/glossario.ts`
  * sem custo (a página consome-os pelas funções abaixo).
  */

@@ -49,7 +49,7 @@ Derivados honestos (só razões entre séries oficiais, nunca estimativas):
 
 > **Estado: Fases A–E concluídas (2026-09-21).** Cada milestone tem o hash do commit.
 
-Cada milestone: gates verdes (`lint typecheck test:unit validate:data build test:e2e`) → commit → próximo. Notas em `NOTAS-OBSERVATORIO.md`.
+Cada milestone: gates verdes (`lint typecheck test:unit validate:data build test:e2e`) → commit → próximo. Notas em `docs/historico/NOTAS-OBSERVATORIO.md`.
 
 ### Fase A — Fundações de dados (robustez primeiro)
 
