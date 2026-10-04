@@ -252,6 +252,30 @@ add(
   "sem número"
 );
 
+// SEO: o que cada rota mostra ao ser partilhada. São duas strings por
+// rota, e a maior parte já estava publicada no metadata de
+// src/app/<rota>/page.tsx antes do P4-SEO — o P4-SEO moveu-as para o
+// pt.json. Só três descrições são copy nova a sério (poupanca, sobre e
+// trabalho). Estar publicado não é o mesmo que estar aprovado, por isso
+// entram todas.
+//
+// `seo.card` e `seo.altImagem` ficam de fora de propósito: são valores de
+// sistema (o texto do cartão e o alt da imagem), não a copy de uma página.
+// Se um dia passarem a ser escrita à mão, deservecem grupo próprio.
+for (const [rota, v] of Object.entries(pt.seo?.rotas ?? {})) {
+  for (const campo of ["titulo", "descricao"]) {
+    const texto = v[campo];
+    add(
+      "SEO (títulos e descrições)",
+      `messages/pt.json:seo.rotas.${rota}.${campo}`,
+      texto,
+      temNumero(texto)
+        ? `⚠️ número escrito na frase: ${temNumero(texto)}`
+        : "sem número"
+    );
+  }
+}
+
 // NOTAS-V5: os blocos PROPOSTA que não vivem em pt.json (nomes
 // acessíveis, rótulos de marcadores, placas desenhadas no mapa).
 for (const l of bloco(

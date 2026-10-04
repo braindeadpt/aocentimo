@@ -473,180 +473,212 @@
 | # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
 |---|---|---|---|---|
 | 423 | `messages/pt.json:pagina.voltarBairro` | Voltar ao bairro | sem número |  |
+**SEO (títulos e descrições)** (28)
+
+| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
+|---|---|---|---|---|
+| 424 | `messages/pt.json:seo.rotas.salario.titulo` | Do bruto ao líquido — salário e IRS | sem número |  |
+| 425 | `messages/pt.json:seo.rotas.salario.descricao` | Calculadora de salário líquido em Portugal: Segurança Social, IRS por escalões, deduções e o custo real para a empresa. | sem número |  |
+| 426 | `messages/pt.json:seo.rotas.irs.titulo` | IRS — escalões, retenção e IRS Jovem | sem número |  |
+| 427 | `messages/pt.json:seo.rotas.irs.descricao` | Os escalões de IRS em Portugal, a retenção na fonte mensal e o simulador de IRS Jovem: quanto poupas em cada um dos 10 anos. | ⚠️ número escrito na frase: 10 anos |  |
+| 428 | `messages/pt.json:seo.rotas.impostos.titulo` | Impostos — o imposto dentro do preço | sem número |  |
+| 429 | `messages/pt.json:seo.rotas.impostos.descricao` | IVA por produto em Portugal e a decomposição do preço dos combustíveis: ISP, taxa de carbono e a cascata do IVA sobre impostos. | sem número |  |
+| 430 | `messages/pt.json:seo.rotas.poupanca.titulo` | Poupança — Certificados de Aforro, depósitos e inflação | sem número |  |
+| 431 | `messages/pt.json:seo.rotas.poupanca.descricao` | Como funcionam os Certificados de Aforro, a tributação de 28 % sobre juros, e porque a taxa que importa é a real, não a nominal. | ⚠️ número escrito na frase: 28 |  |
+| 432 | `messages/pt.json:seo.rotas.credito.titulo` | Crédito — Euribor, spread e prestação | sem número |  |
+| 433 | `messages/pt.json:seo.rotas.credito.descricao` | O que é a Euribor, como o spread forma a TAN, e simulador de prestação de crédito habitação com custo total do empréstimo. | sem número |  |
+| 434 | `messages/pt.json:seo.rotas.casa.titulo` | Comprar casa — IMT, Imposto de Selo e prestação | sem número |  |
+| 435 | `messages/pt.json:seo.rotas.casa.descricao` | O custo real de comprar casa em Portugal: IMT, Imposto de Selo, registos e a prestação com a Euribor atual do Banco de Portugal. | sem número |  |
+| 436 | `messages/pt.json:seo.rotas.inflacao.titulo` | Inflação — quanto mais caro está o que compras | sem número |  |
+| 437 | `messages/pt.json:seo.rotas.inflacao.descricao` | IHPC em Portugal por categoria ECOICOP: alimentação, energia, habitação, transportes. Variação homóloga mensal com dados Eurostat. | sem número |  |
+| 438 | `messages/pt.json:seo.rotas.precos.titulo` | Preços — combustíveis dia a dia | sem número |  |
+| 439 | `messages/pt.json:seo.rotas.precos.descricao` | Preços dos combustíveis em Portugal em euros por litro, com variações diária, semanal, mensal e anual — dados DGEG. | sem número |  |
+| 440 | `messages/pt.json:seo.rotas.trabalho.titulo` | Subsídio de desemprego — quanto e por quanto tempo | sem número |  |
+| 441 | `messages/pt.json:seo.rotas.trabalho.descricao` | Simulador do subsídio de desemprego em Portugal: 65 % da remuneração de referência, limites do IAS, duração por idade e descontos. | ⚠️ número escrito na frase: 65 |  |
+| 442 | `messages/pt.json:seo.rotas.dados.titulo` | Dados — painéis vivos de fontes oficiais | sem número |  |
+| 443 | `messages/pt.json:seo.rotas.dados.descricao` | Euribor, TAEG do crédito ao consumo vs teto legal de usura, taxa base dos Certificados de Aforro e o calendário fiscal — direto das fontes oficiais. | sem número |  |
+| 444 | `messages/pt.json:seo.rotas.aprender.titulo` | Aprender — glossário de dinheiro | sem número |  |
+| 445 | `messages/pt.json:seo.rotas.aprender.descricao` | Euribor, spread, TAN, TAEG, MTIC, escalões, retenção na fonte: os termos do dinheiro em Portugal explicados em português simples, com exemplos. | sem número |  |
+| 446 | `messages/pt.json:seo.rotas.metodologia.titulo` | Metodologia e fontes | sem número |  |
+| 447 | `messages/pt.json:seo.rotas.metodologia.descricao` | De onde vêm os números do AO CÊNTIMO: fontes oficiais, frequência de atualização e limitações dos simuladores. | sem número |  |
+| 448 | `messages/pt.json:seo.rotas.estilo.titulo` | Sistema de design | sem número |  |
+| 449 | `messages/pt.json:seo.rotas.estilo.descricao` | Referência viva do design system do AO CÊNTIMO — tokens, tipografia e componentes. | sem número |  |
+| 450 | `messages/pt.json:seo.rotas.sobre.titulo` | Sobre | sem número |  |
+| 451 | `messages/pt.json:seo.rotas.sobre.descricao` | O que é o AO CÊNTIMO, porquê existe e quem o faz: um projeto pessoal, sem publicidade nem rastreamento, com o código e os dados abertos. | sem número |  |
 **edifícios (aria-label)** (11)
 
 | # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
 |---|---|---|---|---|
-| 424 | `Bairro.tsx:edificio.fabrica` | Fábrica — para onde vai o teu salário? | sem número |  |
-| 425 | `Bairro.tsx:edificio.segsocial` | Segurança Social — os descontos | sem número |  |
-| 426 | `Bairro.tsx:edificio.financas` | Finanças — os escalões do IRS | sem número |  |
-| 427 | `Bairro.tsx:edificio.banco` | Banco — crédito, juros e a Euribor | sem número |  |
-| 428 | `Bairro.tsx:edificio.correios` | Correios — os certificados de aforro | sem número |  |
-| 429 | `Bairro.tsx:edificio.bomba` | Bomba de gasolina — quanto do litro é imposto? | sem número |  |
-| 430 | `Bairro.tsx:edificio.mercearia` | Mercearia — porque está tudo mais caro? | sem número |  |
-| 431 | `Bairro.tsx:edificio.pastelaria` | Pastelaria — o café e o pastel | sem número |  |
-| 432 | `Bairro.tsx:edificio.casa` | Casa da Inês — o que chega ao fim do mês | sem número |  |
-| 433 | `Bairro.tsx:edificio.quiosque` | Quiosque — os números do país hoje | sem número |  |
-| 434 | `Bairro.tsx:edificio.escola` | Escola — as palavras do dinheiro | sem número |  |
+| 452 | `Bairro.tsx:edificio.fabrica` | Fábrica — para onde vai o teu salário? | sem número |  |
+| 453 | `Bairro.tsx:edificio.segsocial` | Segurança Social — os descontos | sem número |  |
+| 454 | `Bairro.tsx:edificio.financas` | Finanças — os escalões do IRS | sem número |  |
+| 455 | `Bairro.tsx:edificio.banco` | Banco — crédito, juros e a Euribor | sem número |  |
+| 456 | `Bairro.tsx:edificio.correios` | Correios — os certificados de aforro | sem número |  |
+| 457 | `Bairro.tsx:edificio.bomba` | Bomba de gasolina — quanto do litro é imposto? | sem número |  |
+| 458 | `Bairro.tsx:edificio.mercearia` | Mercearia — porque está tudo mais caro? | sem número |  |
+| 459 | `Bairro.tsx:edificio.pastelaria` | Pastelaria — o café e o pastel | sem número |  |
+| 460 | `Bairro.tsx:edificio.casa` | Casa da Inês — o que chega ao fim do mês | sem número |  |
+| 461 | `Bairro.tsx:edificio.quiosque` | Quiosque — os números do país hoje | sem número |  |
+| 462 | `Bairro.tsx:edificio.escola` | Escola — as palavras do dinheiro | sem número |  |
 **marcadores do mapa** (13)
 
 | # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
 |---|---|---|---|---|
-| 435 | `src/lib/bairro/planta.ts:rótulo` | Salário bruto | sem número |  |
-| 436 | `src/lib/bairro/planta.ts:rótulo` | TSU da empresa | sem número |  |
-| 437 | `src/lib/bairro/planta.ts:rótulo` | IRS retido / mês | sem número |  |
-| 438 | `src/lib/bairro/planta.ts:rótulo` | Euribor 12 meses | sem número |  |
-| 439 | `src/lib/bairro/planta.ts:rótulo` | Cert. de Aforro | sem número |  |
-| 440 | `src/lib/bairro/planta.ts:rótulo` | Gasóleo · hoje | sem número |  |
-| 441 | `src/lib/bairro/planta.ts:rótulo` | Gasolina 95 | sem número |  |
-| 442 | `src/lib/bairro/planta.ts:rótulo` | Cabaz desde 2020 | sem número |  |
-| 443 | `src/lib/bairro/planta.ts:rótulo` | Cafés desde 2020 | sem número |  |
-| 444 | `src/lib/bairro/planta.ts:rótulo` | Chega à conta | sem número |  |
-| 445 | `src/lib/bairro/planta.ts:rótulo` | Inflação · 12 meses | sem número |  |
-| 446 | `src/lib/bairro/planta.ts:rótulo` | Desemprego | sem número |  |
-| 447 | `src/lib/bairro/planta.ts:rótulo` | Pergunta do dia | sem número |  |
+| 463 | `src/lib/bairro/planta.ts:rótulo` | Salário bruto | sem número |  |
+| 464 | `src/lib/bairro/planta.ts:rótulo` | TSU da empresa | sem número |  |
+| 465 | `src/lib/bairro/planta.ts:rótulo` | IRS retido / mês | sem número |  |
+| 466 | `src/lib/bairro/planta.ts:rótulo` | Euribor 12 meses | sem número |  |
+| 467 | `src/lib/bairro/planta.ts:rótulo` | Cert. de Aforro | sem número |  |
+| 468 | `src/lib/bairro/planta.ts:rótulo` | Gasóleo · hoje | sem número |  |
+| 469 | `src/lib/bairro/planta.ts:rótulo` | Gasolina 95 | sem número |  |
+| 470 | `src/lib/bairro/planta.ts:rótulo` | Cabaz desde 2020 | sem número |  |
+| 471 | `src/lib/bairro/planta.ts:rótulo` | Cafés desde 2020 | sem número |  |
+| 472 | `src/lib/bairro/planta.ts:rótulo` | Chega à conta | sem número |  |
+| 473 | `src/lib/bairro/planta.ts:rótulo` | Inflação · 12 meses | sem número |  |
+| 474 | `src/lib/bairro/planta.ts:rótulo` | Desemprego | sem número |  |
+| 475 | `src/lib/bairro/planta.ts:rótulo` | Pergunta do dia | sem número |  |
 **letreiros desenhados** (22)
 
 | # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
 |---|---|---|---|---|
-| 448 | `src/lib/bairro/planta.ts:letreiro` | FÁBRICA | sem número |  |
-| 449 | `src/lib/bairro/planta.ts:letreiro` | FIAÇÃO DO DOURO | sem número |  |
-| 450 | `src/lib/bairro/planta.ts:letreiro` | SEGURANÇA SOCIAL | sem número |  |
-| 451 | `src/lib/bairro/planta.ts:letreiro` | FINANÇAS | sem número |  |
-| 452 | `src/lib/bairro/planta.ts:letreiro` | BANCO | sem número |  |
-| 453 | `src/lib/bairro/planta.ts:letreiro` | CORREIOS | sem número |  |
-| 454 | `src/lib/bairro/planta.ts:letreiro` | MERCEARIA | sem número |  |
-| 455 | `src/lib/bairro/planta.ts:letreiro` | PASTELARIA | sem número |  |
-| 456 | `src/lib/bairro/planta.ts:letreiro` | ESCOLA | sem número |  |
-| 457 | `src/lib/bairro/planta.ts:letreiro` | JORNAIS | sem número |  |
-| 458 | `src/lib/bairro/planta.ts:letreiro` | COMBUSTÍVEIS | sem número |  |
-| 459 | `src/lib/bairro/planta.ts:letreiro` | LOJA | sem número |  |
-| 460 | `src/lib/bairro/planta.ts:letreiro` | CAFÉ | sem número |  |
-| 461 | `src/lib/bairro/planta.ts:letreiro` | VINHO DO PORTO | sem número |  |
-| 462 | `src/lib/bairro/planta.ts:letreiro` | CAVES | sem número |  |
-| 463 | `src/lib/bairro/planta.ts:letreiro` | GASÓLEO | sem número |  |
-| 464 | `src/lib/bairro/planta.ts:letreiro` | GASOLINA 95 | sem número |  |
-| 465 | `src/lib/bairro/planta.ts:letreiro` | € por litro | sem número |  |
-| 466 | `src/lib/bairro/planta.ts:letreiro` | 22 | sem número |  |
-| 467 | `src/lib/bairro/planta.ts:letreiro` | cafe | sem número |  |
-| 468 | `src/lib/bairro/planta.ts:letreiro` | o que é a inflação? | sem número |  |
-| 469 | `src/lib/bairro/planta.ts:letreiro` | 24 | sem número |  |
+| 476 | `src/lib/bairro/planta.ts:letreiro` | FÁBRICA | sem número |  |
+| 477 | `src/lib/bairro/planta.ts:letreiro` | FIAÇÃO DO DOURO | sem número |  |
+| 478 | `src/lib/bairro/planta.ts:letreiro` | SEGURANÇA SOCIAL | sem número |  |
+| 479 | `src/lib/bairro/planta.ts:letreiro` | FINANÇAS | sem número |  |
+| 480 | `src/lib/bairro/planta.ts:letreiro` | BANCO | sem número |  |
+| 481 | `src/lib/bairro/planta.ts:letreiro` | CORREIOS | sem número |  |
+| 482 | `src/lib/bairro/planta.ts:letreiro` | MERCEARIA | sem número |  |
+| 483 | `src/lib/bairro/planta.ts:letreiro` | PASTELARIA | sem número |  |
+| 484 | `src/lib/bairro/planta.ts:letreiro` | ESCOLA | sem número |  |
+| 485 | `src/lib/bairro/planta.ts:letreiro` | JORNAIS | sem número |  |
+| 486 | `src/lib/bairro/planta.ts:letreiro` | COMBUSTÍVEIS | sem número |  |
+| 487 | `src/lib/bairro/planta.ts:letreiro` | LOJA | sem número |  |
+| 488 | `src/lib/bairro/planta.ts:letreiro` | CAFÉ | sem número |  |
+| 489 | `src/lib/bairro/planta.ts:letreiro` | VINHO DO PORTO | sem número |  |
+| 490 | `src/lib/bairro/planta.ts:letreiro` | CAVES | sem número |  |
+| 491 | `src/lib/bairro/planta.ts:letreiro` | GASÓLEO | sem número |  |
+| 492 | `src/lib/bairro/planta.ts:letreiro` | GASOLINA 95 | sem número |  |
+| 493 | `src/lib/bairro/planta.ts:letreiro` | € por litro | sem número |  |
+| 494 | `src/lib/bairro/planta.ts:letreiro` | 22 | sem número |  |
+| 495 | `src/lib/bairro/planta.ts:letreiro` | cafe | sem número |  |
+| 496 | `src/lib/bairro/planta.ts:letreiro` | o que é a inflação? | sem número |  |
+| 497 | `src/lib/bairro/planta.ts:letreiro` | 24 | sem número |  |
 **cartas · nome** (9)
 
 | # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
 |---|---|---|---|---|
-| 470 | `messages/pt.json:bairro.elenco.cartas.*.nome` | Nome | sem número |  |
-| 471 | `messages/pt.json:bairro.elenco.cartas.*.nome` | --- | sem número |  |
-| 472 | `messages/pt.json:bairro.elenco.cartas.*.nome` | Inês | sem número |  |
-| 473 | `messages/pt.json:bairro.elenco.cartas.*.nome` | Diana | sem número |  |
-| 474 | `messages/pt.json:bairro.elenco.cartas.*.nome` | Pedro | sem número |  |
-| 475 | `messages/pt.json:bairro.elenco.cartas.*.nome` | Sr. Manuel | sem número |  |
-| 476 | `messages/pt.json:bairro.elenco.cartas.*.nome` | Dona Arminda | sem número |  |
-| 477 | `messages/pt.json:bairro.elenco.cartas.*.nome` | Gonçalo | sem número |  |
-| 478 | `messages/pt.json:bairro.elenco.cartas.*.nome` | Rui e Marta | sem número |  |
+| 498 | `messages/pt.json:bairro.elenco.cartas.*.nome` | Nome | sem número |  |
+| 499 | `messages/pt.json:bairro.elenco.cartas.*.nome` | --- | sem número |  |
+| 500 | `messages/pt.json:bairro.elenco.cartas.*.nome` | Inês | sem número |  |
+| 501 | `messages/pt.json:bairro.elenco.cartas.*.nome` | Diana | sem número |  |
+| 502 | `messages/pt.json:bairro.elenco.cartas.*.nome` | Pedro | sem número |  |
+| 503 | `messages/pt.json:bairro.elenco.cartas.*.nome` | Sr. Manuel | sem número |  |
+| 504 | `messages/pt.json:bairro.elenco.cartas.*.nome` | Dona Arminda | sem número |  |
+| 505 | `messages/pt.json:bairro.elenco.cartas.*.nome` | Gonçalo | sem número |  |
+| 506 | `messages/pt.json:bairro.elenco.cartas.*.nome` | Rui e Marta | sem número |  |
 **cartas · papel** (9)
 
 | # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
 |---|---|---|---|---|
-| 479 | `messages/pt.json:bairro.elenco.cartas.*.papel` | Papel | sem número |  |
-| 480 | `messages/pt.json:bairro.elenco.cartas.*.papel` | --- | sem número |  |
-| 481 | `messages/pt.json:bairro.elenco.cartas.*.papel` | Operária da fábrica | sem número |  |
-| 482 | `messages/pt.json:bairro.elenco.cartas.*.papel` | Professora | sem número |  |
-| 483 | `messages/pt.json:bairro.elenco.cartas.*.papel` | Freelancer | sem número |  |
-| 484 | `messages/pt.json:bairro.elenco.cartas.*.papel` | Dono da mercearia | sem número |  |
-| 485 | `messages/pt.json:bairro.elenco.cartas.*.papel` | Reformada | sem número |  |
-| 486 | `messages/pt.json:bairro.elenco.cartas.*.papel` | Estudante, 16 anos | sem número |  |
-| 487 | `messages/pt.json:bairro.elenco.cartas.*.papel` | Casal com crédito | sem número |  |
+| 507 | `messages/pt.json:bairro.elenco.cartas.*.papel` | Papel | sem número |  |
+| 508 | `messages/pt.json:bairro.elenco.cartas.*.papel` | --- | sem número |  |
+| 509 | `messages/pt.json:bairro.elenco.cartas.*.papel` | Operária da fábrica | sem número |  |
+| 510 | `messages/pt.json:bairro.elenco.cartas.*.papel` | Professora | sem número |  |
+| 511 | `messages/pt.json:bairro.elenco.cartas.*.papel` | Freelancer | sem número |  |
+| 512 | `messages/pt.json:bairro.elenco.cartas.*.papel` | Dono da mercearia | sem número |  |
+| 513 | `messages/pt.json:bairro.elenco.cartas.*.papel` | Reformada | sem número |  |
+| 514 | `messages/pt.json:bairro.elenco.cartas.*.papel` | Estudante, 16 anos | sem número |  |
+| 515 | `messages/pt.json:bairro.elenco.cartas.*.papel` | Casal com crédito | sem número |  |
 **cartas · perfil** (9)
 
 | # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
 |---|---|---|---|---|
-| 488 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | Perfil | sem número |  |
-| 489 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | --- | sem número |  |
-| 490 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | Conta de outrem · setor privado | sem número |  |
-| 491 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | Função pública | sem número |  |
-| 492 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | Independente · recibos verdes | sem número |  |
-| 493 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | Pequeno empresário | sem número |  |
-| 494 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | Pensão e poupança | sem número |  |
-| 495 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | Mesada e primeiro trabalho | sem número |  |
-| 496 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | Crédito à habitação | sem número |  |
+| 516 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | Perfil | sem número |  |
+| 517 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | --- | sem número |  |
+| 518 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | Conta de outrem · setor privado | sem número |  |
+| 519 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | Função pública | sem número |  |
+| 520 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | Independente · recibos verdes | sem número |  |
+| 521 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | Pequeno empresário | sem número |  |
+| 522 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | Pensão e poupança | sem número |  |
+| 523 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | Mesada e primeiro trabalho | sem número |  |
+| 524 | `messages/pt.json:bairro.elenco.cartas.*.perfil` | Crédito à habitação | sem número |  |
 **cartas · aprende** (9)
 
 | # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
 |---|---|---|---|---|
-| 497 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | O que aprende | sem número |  |
-| 498 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | --- | sem número |  |
-| 499 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | Porque é que 1 500 € brutos viram 1 167 €. ⚠️ ver dúvida 1 | ⚠️ número escrito na frase: 1 500 · 1 167 · 1 |  |
-| 500 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | Descontos diferentes para o mesmo salário. | sem número |  |
-| 501 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | Segurança Social trimestral e IRS da categoria B. | sem número |  |
-| 502 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | O IVA que cobra, a TSU que paga, o lucro da empresa. | sem número |  |
-| 503 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | Quanto rende a poupança e o IRS sobre a pensão. | sem número |  |
-| 504 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | O primeiro recibo, o IRS Jovem, a primeira conta. | sem número |  |
-| 505 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | A prestação, a Euribor e quanto do salário ela come. | sem número |  |
+| 525 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | O que aprende | sem número |  |
+| 526 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | --- | sem número |  |
+| 527 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | Porque é que 1 500 € brutos viram 1 167 €. ⚠️ ver dúvida 1 | ⚠️ número escrito na frase: 1 500 · 1 167 · 1 |  |
+| 528 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | Descontos diferentes para o mesmo salário. | sem número |  |
+| 529 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | Segurança Social trimestral e IRS da categoria B. | sem número |  |
+| 530 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | O IVA que cobra, a TSU que paga, o lucro da empresa. | sem número |  |
+| 531 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | Quanto rende a poupança e o IRS sobre a pensão. | sem número |  |
+| 532 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | O primeiro recibo, o IRS Jovem, a primeira conta. | sem número |  |
+| 533 | `messages/pt.json:bairro.elenco.cartas.*.aprende` | A prestação, a Euribor e quanto do salário ela come. | sem número |  |
 **controlos da home** (6)
 
 | # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
 |---|---|---|---|---|
-| 506 | `messages/pt.json:bairro.*` | Dia | sem número |  |
-| 507 | `messages/pt.json:bairro.*` | Fim de tarde | sem número |  |
-| 508 | `messages/pt.json:bairro.*` | Noite | sem número |  |
-| 509 | `messages/pt.json:bairro.*` | Ver a tabela dos escalões | sem número |  |
-| 510 | `messages/pt.json:bairro.*` | Fechar | sem número |  |
-| 511 | `messages/pt.json:bairro.*` | Em breve | sem número |  |
+| 534 | `messages/pt.json:bairro.*` | Dia | sem número |  |
+| 535 | `messages/pt.json:bairro.*` | Fim de tarde | sem número |  |
+| 536 | `messages/pt.json:bairro.*` | Noite | sem número |  |
+| 537 | `messages/pt.json:bairro.*` | Ver a tabela dos escalões | sem número |  |
+| 538 | `messages/pt.json:bairro.*` | Fechar | sem número |  |
+| 539 | `messages/pt.json:bairro.*` | Em breve | sem número |  |
 **home · Selo** (1)
 
 | # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
 |---|---|---|---|---|
-| 512 | `messages/pt.json:bairro.*` | Independente e gratuito. Aqui ninguém te quer vender nada. | sem número |  |
+| 540 | `messages/pt.json:bairro.*` | Independente e gratuito. Aqui ninguém te quer vender nada. | sem número |  |
 **home · Título (h1)** (1)
 
 | # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
 |---|---|---|---|---|
-| 513 | `messages/pt.json:bairro.*` | O dinheiro explicado ao cêntimo. | sem número |  |
+| 541 | `messages/pt.json:bairro.*` | O dinheiro explicado ao cêntimo. | sem número |  |
 **home · Introdução** (1)
 
 | # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
 |---|---|---|---|---|
-| 514 | `messages/pt.json:bairro.*` | Este é o bairro. Cada edifício responde a uma pergunta sobre dinheiro — com os números de hoje. Toca num para entrar. | sem número |  |
+| 542 | `messages/pt.json:bairro.*` | Este é o bairro. Cada edifício responde a uma pergunta sobre dinheiro — com os números de hoje. Toca num para entrar. | sem número |  |
 **home · Selo de secção** (1)
 
 | # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
 |---|---|---|---|---|
-| 515 | `messages/pt.json:bairro.*` | Quem vive no bairro | sem número |  |
+| 543 | `messages/pt.json:bairro.*` | Quem vive no bairro | sem número |  |
 **home · Título de secção** (1)
 
 | # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
 |---|---|---|---|---|
-| 516 | `messages/pt.json:bairro.*` | Escolhe a tua personagem. | sem número |  |
+| 544 | `messages/pt.json:bairro.*` | Escolhe a tua personagem. | sem número |  |
 **home · Entrada de secção** (1)
 
 | # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
 |---|---|---|---|---|
-| 517 | `messages/pt.json:bairro.*` | O mesmo trabalho, pago de maneiras diferentes: por conta de outrem, na função pública, a recibos verdes ou com empresa própria. Cada pessoa do bairro mostra um caminho diferente do dinheiro. Toca numa para a encontrares no mapa. | sem número |  |
+| 545 | `messages/pt.json:bairro.*` | O mesmo trabalho, pago de maneiras diferentes: por conta de outrem, na função pública, a recibos verdes ou com empresa própria. Cada pessoa do bairro mostra um caminho diferente do dinheiro. Toca numa para a encontrares no mapa. | sem número |  |
 **home · Dica do mapa** (1)
 
 | # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
 |---|---|---|---|---|
-| 518 | `messages/pt.json:bairro.*` | Arrasta para passear · roda para aproximar · toca na Fábrica! | sem número |  |
+| 546 | `messages/pt.json:bairro.*` | Arrasta para passear · roda para aproximar · toca na Fábrica! | sem número |  |
 **proposta de alteração (P1)** (1)
 
 | # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
 |---|---|---|---|---|
-| 519 | `docs/AUDITORIA-CENAS-V5.md §2.2` | `textos-p2c.ts:40-41` — «quase o dobro» hardcoded. | proposta — não aplicada; a copy é do dono |  |
+| 547 | `docs/AUDITORIA-CENAS-V5.md §2.2` | `textos-p2c.ts:40-41` — «quase o dobro» hardcoded. | proposta — não aplicada; a copy é do dono |  |
 **proposta de alteração (P2)** (1)
 
 | # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
 |---|---|---|---|---|
-| 520 | `docs/AUDITORIA-CENAS-V5.md §2.2` | Bomba, 50 litros sem «exemplo». | proposta — não aplicada; a copy é do dono |  |
+| 548 | `docs/AUDITORIA-CENAS-V5.md §2.2` | Bomba, 50 litros sem «exemplo». | proposta — não aplicada; a copy é do dono |  |
 **proposta de alteração (P3)** (1)
 
 | # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
 |---|---|---|---|---|
-| 521 | `docs/AUDITORIA-CENAS-V5.md §2.2` | `irs-2026.json` fonte. | proposta — não aplicada; a copy é do dono |  |
+| 549 | `docs/AUDITORIA-CENAS-V5.md §2.2` | `irs-2026.json` fonte. | proposta — não aplicada; a copy é do dono |  |
 
 ---
 
-**Total: 521 frases.** As marcadas com ⚠️ têm um número escrito à mão
+**Total: 549 frases.** As marcadas com ⚠️ têm um número escrito à mão
 dentro do texto — se a lei, a série ou a portaria mudar, a frase mente em
 silêncio. As que têm `{parametro}` recebem o valor do servidor e
 mostram a fonte no rodapé da cena; as restantes são palavras.

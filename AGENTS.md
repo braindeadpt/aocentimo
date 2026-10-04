@@ -53,7 +53,7 @@ npm run lint && npm run typecheck
 npm run test:unit      # vitest
 npm run build          # export estático → out/
 npm run serve:out      # serve o out/ em http://localhost:3100
-npm run test:e2e       # playwright (faz build e serve sozinho)
+npm run test:e2e       # playwright (faz build e serve sozinho; NÃO corre o derive)
 npm run audit          # _mega-audit + _overflow-sweep + _sweep (precisa de :3100)
                        # + _lettering (fino U+202F, menos U+2212, «», «…» no out/)
 npm run ingest:daily   # scripts/ingest --daily (local mirror do Actions)
@@ -66,6 +66,15 @@ node scripts/_js-por-rota.mjs      # JS inicial/total por rota (precisa de :3100
 node scripts/_bundle-top.mjs [chunks] # top de módulos por chunk (build com productionBrowserSourceMaps)
 node scripts/_revisao-copy.mjs      # regenera docs/REVISAO-COPY-V5.md (--check não escreve)
 ```
+
+**Antes do e2e à mão, `npm run derive`.** O `test:e2e` faz o build e
+serve sozinho, mas não corre o derive — e os `data/derived/`
+submetidos estão sempre um passo atrás das fontes. O build sai com
+números velhos e aparecem **falhas fantasma** em `bairro.spec.ts` (o
+teste fixa «2,95 %» no Euribor) e em `pele-rotas.spec.ts`: não são
+regressos, são dados. O CI corre o derive antes do build (`npm run
+derive`, passo próprio), por isso nunca as vê — uma falha destas vinda
+da CI é sempre outra coisa.
 
 `_gate-html.mjs` e `_dieta-html.mjs` lêem `out/index.html`: **correr
 depois de `npm run build`.** O `_gate-html` está no CI logo a seguir ao
