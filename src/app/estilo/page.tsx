@@ -259,7 +259,7 @@ export default function EstiloPage() {
               className="text-[1.7rem] leading-tight"
               style={{ fontFamily: "var(--mao)" }}
             >
-              e foi assim que a Inês juntou o shortness
+              e foi assim que a Inês juntou o primeiro euro
             </p>
             <p className="footnote mt-1">{E.maoNota}</p>
           </div>
