@@ -55,9 +55,32 @@ const Pt = Pcom(TERRENO);
 /** Reexportado do `iso.ts` — ver o porquê lá. */
 export { MUNDO };
 
-/** Uma camada do cenário: um SVG grande, do tamanho do mundo inteiro. */
-const camada = (id: string, html: string): string =>
-  `<svg class="b-camada" id="${id}" viewBox="${MUNDO.x} ${MUNDO.y} ${MUNDO.w} ${MUNDO.h}" width="${MUNDO.w}" height="${MUNDO.h}" aria-hidden="true">${html}</svg>`;
+/**
+ * Os nomes das duas camadas que TÊM EDIFÍCIOS dentro (a da avenida e a
+ * da Ribeira). Vêm de `messages/pt.json` como o resto da copy.
+ */
+export interface RotulosCamada {
+  /** A camada de trás: fábrica, Segurança Social, Finanças, banco, correios e bomba. */
+  avenida: string;
+  /** A camada da frente: mercearia, pastelaria, a casa da Inês, o quiosque e a escola. */
+  ribeira: string;
+}
+
+/**
+ * Uma camada do cenário: um SVG grande, do tamanho do mundo inteiro.
+ *
+ * COM `rotulo` a camada é conteúdo: deixa de estar escondida e ganha
+ * nome — é o caso das duas que têm os edifícios focáveis dentro.
+ * Esconder um subtree com `tabindex="0"` dentro é a violação
+ * `aria-hidden-focus` do axe: os onze botões ficam fora da árvore de
+ * acessibilidade enquanto continuam na ordem de tabulação. As
+ * camadas só de desenho (nuvens, chão, gente, água, céu, estrelas) e
+ * as peças soltas continuam `aria-hidden`, que é o que elas são.
+ */
+const camada = (id: string, html: string, rotulo?: string): string =>
+  `<svg class="b-camada" id="${id}" viewBox="${MUNDO.x} ${MUNDO.y} ${MUNDO.w} ${MUNDO.h}" width="${MUNDO.w}" height="${MUNDO.h}"${
+    rotulo ? ` role="group" aria-label="${rotulo}"` : ` aria-hidden="true"`
+  }>${html}</svg>`;
 
 /** Uma peça solta, posicionada em píxeis dentro do mundo. */
 const solto = (
@@ -329,16 +352,20 @@ export const ORDEM_CAMADAS = [
  * do código (`iso.ts`, `planta.ts`) e os números de `data/`, já
  * formatados pelo servidor. `mundo.test.ts` vigia essa promessa.
  */
-export function mundoBairro(m: MapaBairro): { html: string; css: string } {
+export function mundoBairro(
+  m: MapaBairro,
+  rotulos: RotulosCamada
+): { html: string; css: string } {
   const { svg: soltas, css } = viagensSoltas();
   const html =
     nuvensSoltas() +
     camada(
       "b-cFundo",
       `<defs>${padroes()}</defs>` +
-        `<g id="b-gNuvens"><g class="sol">${SOL}</g></g>` +
-        `<g id="b-gChao">${m.chao}</g>` +
-        `<g id="b-gTras">${m.tras}</g>`
+        `<g id="b-gNuvens" aria-hidden="true"><g class="sol">${SOL}</g></g>` +
+        `<g id="b-gChao" aria-hidden="true">${m.chao}</g>` +
+        `<g id="b-gTras">${m.tras}</g>`,
+      rotulos.avenida
     ) +
     camada(
       "b-cA",
@@ -347,7 +374,7 @@ export function mundoBairro(m: MapaBairro): { html: string; css: string } {
       // fica parado na Avenida, que já é melhor do que não estar
       `<g id="b-movA">${m.gente.avenida}<g id="b-eletrico">${eletricoIso()}</g></g>`
     ) +
-    camada("b-cFrente", `<g id="b-gFrente">${m.frente}</g>`) +
+    camada("b-cFrente", `<g id="b-gFrente">${m.frente}</g>`, rotulos.ribeira) +
     camada("b-cB", `<g id="b-movB">${m.gente.cais}</g><g id="b-gVida">${m.vida}</g><g id="b-gAgua">${m.agua}</g>`) +
     soltas +
     camada("b-cRio", `<g id="b-gGaia">${m.gaia}</g><g id="b-gRio">${m.ponte.tras}</g>`) +

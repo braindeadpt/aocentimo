@@ -1,7 +1,8 @@
 import { readFileSync } from "fs";
 import { join } from "path";
 import { describe, it, expect } from "vitest";
-import { mundoBairro } from "@/lib/bairro/mundo";
+import { mundoBairro, type RotulosCamada } from "@/lib/bairro/mundo";
+import pt from "../../../messages/pt.json";
 import { montarMapa, type MarcadoresBairro } from "@/lib/bairro/planta";
 
 /**
@@ -55,6 +56,12 @@ const FUTURO_P1 = new Set([
   // o logótipo do protótipo — sem lar ainda (a casa não repete o cabeçalho)
   "b-logo",
 ]);
+/** Os nomes reais das duas camadas com edifícios — `messages/pt.json`. */
+const ROTULOS: RotulosCamada = {
+  avenida: pt.bairro.mapa.rotuloAvenida,
+  ribeira: pt.bairro.mapa.rotuloRibeira,
+};
+
 /** O HTML completo que o servidor gera, com marcadores de mentira. */
 function htmlGerado(): string {
   const D: MarcadoresBairro = {
@@ -64,7 +71,7 @@ function htmlGerado(): string {
     gasoleoUn: "2,181\u202F€/L", gasolinaUn: "2,097\u202F€/L",
     inflacao: "+3,6 %", desemprego: "5,7 %",
   } as unknown as MarcadoresBairro;
-  const { html, css } = mundoBairro(montarMapa(D));
+  const { html, css } = mundoBairro(montarMapa(D), ROTULOS);
   return html + css;
 }
 

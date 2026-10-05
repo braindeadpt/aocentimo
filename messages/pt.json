@@ -505,7 +505,9 @@
     },
     "mapa": {
       "descricao": "Mapa ilustrado de um bairro português visto de cima: fábrica, Segurança Social, Finanças, banco, correios e bomba de gasolina na avenida do elétrico; mercearia, pastelaria, a casa da Inês, a praça com o quiosque e a escola cá em baixo, no Cais da Ribeira, ligados à avenida por umas escadinhas; a Torre dos Clérigos lá atrás; à frente o Douro, os barcos rabelos e a Ponte D. Luís I. Cada edifício tem por cima um número real de hoje.",
-      "rotuloHora": "Hora do dia"
+      "rotuloHora": "Hora do dia",
+      "rotuloAvenida": "Os edifícios da avenida",
+      "rotuloRibeira": "Os edifícios do Cais da Ribeira"
     },
     "hora": {
       "dia": "Dia",

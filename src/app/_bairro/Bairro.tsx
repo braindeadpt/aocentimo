@@ -32,7 +32,7 @@ import { EVT_PERSONAGEM, type EscolhaPersonagem } from "./personagem";
 import { drenarEscolhas, janela } from "./ponte-cartas";
 import { Camera, arrumarPinos, type Enquadramentos, type MarcadorVivo, type PinoPlanta } from "./camara";
 import { ligarAmbiente } from "./ambiente";
-import { mundoBairro, reflexos } from "@/lib/bairro/mundo";
+import { mundoBairro, reflexos, type RotulosCamada } from "@/lib/bairro/mundo";
 import { montarMapa, type MarcadoresBairro } from "@/lib/bairro/planta";
 import { CENAS } from "./cenas/registry";
 import { temCena } from "./cenas/com-cena";
@@ -87,6 +87,13 @@ export interface PropsBairro {
   descricao: string;
   /** Rótulo do grupo dos botões da hora do dia. */
   rotuloHora: string;
+  /**
+   * Os nomes das DUAS camadas do mapa que têm edifícios dentro (a da
+   * avenida e a da Ribeira). Uma camada com controlos não pode estar
+   * escondida ao leitor de ecrã — e um SVG exposto sem nome também não
+   * pode estar: precisa de um rótulo, como qualquer outro grupo.
+   */
+  rotulosCamada: RotulosCamada;
   /** Onde a câmara enquadra ao arrancar: perto da fábrica, ou o bairro todo. */
   enquadramentos: Enquadramentos;
   /**
@@ -147,6 +154,7 @@ export function Bairro({
   dica,
   descricao,
   rotuloHora,
+  rotulosCamada,
   enquadramentos,
   pinos,
   horaInicial,
@@ -177,7 +185,7 @@ export function Bairro({
   // o mapa calcula-se UMA vez: montarMapa alimenta o mundo e o reflexo
   // (a nit da revisão do #27 — a mesma conta não corre duas vezes)
   const mapa = useMemo(() => montarMapa(marcadores), [marcadores]);
-  const { html, css } = useMemo(() => mundoBairro(mapa), [mapa]);
+  const { html, css } = useMemo(() => mundoBairro(mapa, rotulosCamada), [mapa, rotulosCamada]);
   const reflexo = useMemo(() => reflexos(mapa), [mapa]);
 
 
@@ -499,10 +507,16 @@ export function Bairro({
             dentro do componente que as calcula, e não no servidor. */}
         <style dangerouslySetInnerHTML={{ __html: css }} />
         <div className="b-janela" ref={janelaRef}>
+          {/* `role="group"`, NÃO `role="img"`: o mapa é uma imagem só
+              para os olhos, mas para o teclado é um conjunto de onze
+              botões (os edifícios). Com `img` o axe aponta
+              nested-interactive — um papel de imagem com controlos
+              dentro. A descrição longa é o NOME do grupo; cada edifício
+              tem o seu, e as camadas com botões saem do `aria-hidden`. */}
           <div
             ref={mundoRef}
             className="b-mundo"
-            role="img"
+            role="group"
             aria-label={descricao}
             dangerouslySetInnerHTML={{ __html: html }}
           />
