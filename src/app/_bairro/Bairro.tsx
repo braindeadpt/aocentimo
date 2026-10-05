@@ -36,6 +36,12 @@ import { mundoBairro, reflexos, type RotulosCamada } from "@/lib/bairro/mundo";
 import { montarMapa, type MarcadoresBairro } from "@/lib/bairro/planta";
 import { CENAS } from "./cenas/registry";
 import { temCena } from "./cenas/com-cena";
+import {
+  cancelarEspeculativo,
+  pedirCena,
+  prefetearCena,
+  prefetearEmOciosidade,
+} from "./cenas/prefetch";
 import type { CenasDados } from "./cenas/dados";
 import CenaDePerto from "./cenas/CenaDePerto";
 import { aCarregar, falhaAoCarregar } from "./cenas/textos";
@@ -345,18 +351,93 @@ export function Bairro({
    * `hashchange` — um link dentro da página para /#banco abre a cena
    * sem recarregar. O fechar (replaceState) e o entrar (pushState) não
    * disparam `hashchange`, por isso não há eco.
+   *
+   * O `prefetearCena()` vem ANTES do `setCenaAberta()`: o JSON passa a
+   * voar enquanto o chunk da cena ainda vai a caminho, em vez de esperar
+   * que o React monte a cena para só depois ir buscar os dados. (O módulo
+   * `prefetch` já tratou desta âncora no arranque do browser; aqui
+   * fica o `hashchange` e a garantia para quem chega por outro caminho.)
    */
   useEffect(() => {
     const ler = () => {
       const id = window.location.hash.replace("#", "");
-      if (id && temCena(id)) setCenaAberta(id);
+      if (id && temCena(id)) {
+        prefetearCena(id);
+        setCenaAberta(id);
+      }
     };
     ler();
     window.addEventListener("hashchange", ler);
     return () => window.removeEventListener("hashchange", ler);
   }, []);
 
-  useEdificios(mundoRef, porId, entrar, mostrarCartao, esconderCartao);
+  /*
+   * O prefetch em intenção: ao pairar, ao focar pelo teclado ou ao
+   * tocar num edifício, o JSON e o chunk desse edifício já vão a
+   * caminho. Custa zero ao utilizador que nunca pairar — e à primeira
+   * intenção de verdade a fila de ociosidade sai (o que interessa é o
+   * edifício que se está a mirar, não aquele que estava à vista).
+   */
+  const pretender = useCallback((id: string) => {
+    // o que interessa é o edifício que se está a mirar: a fila de
+    // ociosidade sai, e o que dela estiver a meio de voar também — mas
+    // NÃO o pedido deste mesmo edifício, que já nos serve
+    cancelarEspeculativo(id);
+    prefetearCena(id);
+  }, []);
+
+  useEdificios(mundoRef, porId, entrar, mostrarCartao, esconderCartao, pretender);
+
+  /*
+   * E, se ninguém fizer nada, os edifícios QUE ESTÃO À VISTA entram um
+   * a um quando a página fica ociosa — nunca os onze de uma vez, e
+   * nunca antes do `load` mais alguns segundos (a regra do #38: a home
+   * em repouso não pede nada a nenhuma cena).
+   */
+  useEffect(() => {
+    const janelaEl = janelaRef.current;
+    const mundo = mundoRef.current;
+    if (!janelaEl || !mundo) return;
+    let vivo = true;
+
+    const medir = () => {
+      if (!vivo) return;
+      const r = janelaEl.getBoundingClientRect();
+      // o edifício mais «à vista» primeiro: quantos pixels seus caem
+      // dentro da janela do mapa
+      const visiveis = [...mundo.querySelectorAll<SVGGElement>(".ed")]
+        .map((g) => {
+          const b = g.getBoundingClientRect();
+          const dx = Math.max(0, Math.min(b.right, r.right) - Math.max(b.left, r.left));
+          const dy = Math.max(0, Math.min(b.bottom, r.bottom) - Math.max(b.top, r.top));
+          return { id: g.getAttribute("data-id"), dentro: dx * dy };
+        })
+        .filter((e) => e.id && e.dentro > 0)
+        .sort((a, b) => b.dentro - a.dentro)
+        .map((e) => e.id as string);
+      prefetearEmOciosidade(visiveis);
+    };
+
+    const quandoIdle = () => {
+      if (!vivo) return;
+      const ric = (
+        window as unknown as {
+          requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number;
+        }
+      ).requestIdleCallback;
+      if (ric) ric(medir, { timeout: 4000 });
+      else window.setTimeout(medir, 4000);
+    };
+
+    // só depois do load: o `requestIdleCallback` sem espera encontra
+    // folga no meio do arranque e dispararia o prefetch cedo demais
+    if (document.readyState === "complete") window.setTimeout(quandoIdle, 4000);
+    else window.addEventListener("load", () => window.setTimeout(quandoIdle, 4000), { once: true });
+    return () => {
+      vivo = false;
+      cancelarEspeculativo();
+    };
+  }, []);
 
   /* ————— as cartas: «Escolhe a tua personagem» (P1-4) —————
      A secção vive fora do palco, no <main> do servidor — não pode
@@ -605,27 +686,6 @@ export function Bairro({
 }
 
 /**
- * Os dados de cada cena moram em `/cenas/<id>.json` — ficheiros estáticos
- * escritos no derive pela mesma `dadosCenas()` que antes alimentava a
- * prop. O cache é por id: voltar a entrar na mesma cena não repete o
- * pedido; uma falha NÃO fica em cache, para a próxima tentar de verdade.
- */
-const pedidosCena = new Map<string, Promise<unknown>>();
-
-function pedirDadosCena(id: string): Promise<unknown> {
-  let p = pedidosCena.get(id);
-  if (!p) {
-    p = fetch(`/cenas/${id}.json`).then((r) => {
-      if (!r.ok) throw new Error(`cenas/${id}: HTTP ${r.status}`);
-      return r.json() as Promise<unknown>;
-    });
-    p.catch(() => pedidosCena.delete(id));
-    pedidosCena.set(id, p);
-  }
-  return p;
-}
-
-/**
  * O despachante das cenas: vai buscar o json, escolhe o componente certo
  * e passa-lhe os dados. Enquanto o json não chega — ou se falhar — a
  * moldura abre na mesma, com o título do edifício, o Escape e o × a
@@ -651,7 +711,7 @@ function CenaViva({
   // sempre «a carregar», sem resets síncronos dentro do efeito
   useEffect(() => {
     let vivo = true;
-    pedirDadosCena(id).then(
+    pedirCena(id).then(
       (v) => vivo && setDados(v),
       () => vivo && setFalhou(true)
     );
@@ -783,11 +843,13 @@ export function useEdificios(
   porId: Map<string, InfoEdificio>,
   aoEntrar: (id: string) => void,
   aoMostrar: (id: string) => void,
-  aoEsconder: () => void
+  aoEsconder: () => void,
+  aoPretender: (id: string) => void
 ): void {
   const mostrar = useRef(aoMostrar);
   const esconder = useRef(aoEsconder);
   const entrar = useRef(aoEntrar);
+  const pretender = useRef(aoPretender);
   // os callbacks mudam muitas vezes por segundo enquanto o rato passeia o
   // mapa; escrever a ref num efeito (e não no render) é o que a regra
   // `react-hooks/refs` da casa pede — o valor chega ao ouvinte no
@@ -796,6 +858,7 @@ export function useEdificios(
     mostrar.current = aoMostrar;
     esconder.current = aoEsconder;
     entrar.current = aoEntrar;
+    pretender.current = aoPretender;
   });
 
   useEffect(() => {
@@ -811,12 +874,25 @@ export function useEdificios(
 
     const aoClicar = (e: Event) => {
       const id = idDe(edDe(e.target));
-      if (id) entrar.current(id);
+      if (id) {
+        pretender.current(id);
+        entrar.current(id);
+      }
     };
     const aoPassar = (e: Event) => {
       const id = idDe(edDe(e.target));
-      if (id) mostrar.current(id);
-      else esconder.current();
+      if (id) {
+        // a intenção mais barata que há: o rato JÁ está no edifício
+        mostrar.current(id);
+        pretender.current(id);
+      } else esconder.current();
+    };
+    // o toque vem antes do clique (e antes de qualquer `pointerover`
+    //fiável num ecrã táctil): aquecer já aqui dá ao JSON e ao chunk a
+    // distância do gesto
+    const aoTocar = (e: Event) => {
+      const id = idDe(edDe(e.target));
+      if (id) pretender.current(id);
     };
     const aoSair = (e: Event) => {
       // só esconde quando o rato sai mesmo do edifício, não de um filho
@@ -827,7 +903,10 @@ export function useEdificios(
     };
     const aoFocar = (e: Event) => {
       const id = idDe(edDe(e.target));
-      if (id) mostrar.current(id);
+      if (id) {
+        mostrar.current(id);
+        pretender.current(id);
+      }
     };
     const aoPerderFoco = (e: Event) => {
       const related = (e as FocusEvent).relatedTarget;
@@ -848,6 +927,7 @@ export function useEdificios(
     raiz.addEventListener("pointerout", aoSair);
     raiz.addEventListener("focusin", aoFocar);
     raiz.addEventListener("focusout", aoPerderFoco);
+    raiz.addEventListener("touchstart", aoTocar, { passive: true });
     raiz.addEventListener("keydown", aoTeclar);
     return () => {
       raiz.removeEventListener("click", aoClicar);
@@ -855,6 +935,7 @@ export function useEdificios(
       raiz.removeEventListener("pointerout", aoSair);
       raiz.removeEventListener("focusin", aoFocar);
       raiz.removeEventListener("focusout", aoPerderFoco);
+      raiz.removeEventListener("touchstart", aoTocar);
       raiz.removeEventListener("keydown", aoTeclar);
     };
   }, [mundo, porId]);
