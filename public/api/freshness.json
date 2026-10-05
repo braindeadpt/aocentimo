@@ -1,5 +1,5 @@
 {
-  "verificadoEm": "2026-10-04T12:01:12.265Z",
+  "verificadoEm": "2026-10-05T14:03:35.940Z",
   "estado": "ok",
   "series": [
     {
@@ -275,8 +275,8 @@
     {
       "id": "pmd-gasoleo-diario",
       "fonte": "DGEG — Preços dos Combustíveis",
-      "serieAte": "2026-10-03",
-      "esperadoAte": "2026-10-01",
+      "serieAte": "2026-10-04",
+      "esperadoAte": "2026-10-02",
       "frequencia": "diaria",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -284,8 +284,8 @@
     {
       "id": "pmd-gasolina95-diario",
       "fonte": "DGEG — Preços dos Combustíveis",
-      "serieAte": "2026-10-03",
-      "esperadoAte": "2026-10-01",
+      "serieAte": "2026-10-04",
+      "esperadoAte": "2026-10-02",
       "frequencia": "diaria",
       "estado": "em-dia",
       "atrasoPeriodos": 0
@@ -293,8 +293,8 @@
     {
       "id": "pmd-gpl-diario",
       "fonte": "DGEG — Preços dos Combustíveis",
-      "serieAte": "2026-10-03",
-      "esperadoAte": "2026-10-01",
+      "serieAte": "2026-10-04",
+      "esperadoAte": "2026-10-02",
       "frequencia": "diaria",
       "estado": "em-dia",
       "atrasoPeriodos": 0
