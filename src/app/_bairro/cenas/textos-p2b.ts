@@ -56,7 +56,7 @@ export const corSemDados =
 export const corExplica = (variacao: string, mesT1: string) =>
   `<p>O dinheiro não desapareceu: <b>encolheu</b>. Os preços subiram ${variacao} desde então e cada euro compra menos. Chama-se perder <b>poder de compra</b>: a linha vermelha no monte de notas marca o que ele ainda compra em ${mesT1}.</p>`;
 export const corExplicaCA = (taxa: string, imposto: string) =>
-  `<p>E nos <b>Certificados de Aforro</b>, a poupança do Estado que se faz nos Correios? Hoje rendem <b>${taxa}</b> por ano, mais um prémio a partir do 2.º ano, e ${imposto} dos juros ficam para o IRS.</p>`;
+  `<p>E nos <b>Certificados de Aforro</b>, a poupança do Estado que se faz nos Correios? Hoje rendem <b>${taxa}</b> por ano, mais um prémio a partir do 2.º ano, e ${imposto} dos juros ficam retidos como imposto.</p>`;
 
 export const corBtnCertificados = "E se fosse para os certificados? →";
 
@@ -145,9 +145,9 @@ export const bmbBtnGrafico = "Aprender a ler o gráfico →";
 export const bmbFala3 = (inicio: string) =>
   `E o preço de cada dia? Aqui está desde ${inicio}. Um ponto por semana, a <b>média do país</b>.`;
 export const bmbGraficoTexto =
-  `A linha vermelha é a gasolina 95; a preta, o gasóleo. O ISP e a taxa de carbono são valores fixos por litro; só o IVA acompanha o preço. Por isso, quando o preço sobe, a parte do imposto <b>pesa menos</b> em percentagem; quando desce, pesa mais.`;
+  `A linha vermelha é a gasolina 95; a preta, o gasóleo. Em cada semana, o ISP e a taxa de carbono são valores fixos por litro (o ISP muda por portaria); só o IVA acompanha o preço. Por isso, na mesma semana, quando o preço sobe, a parte do imposto <b>pesa menos</b> em percentagem; quando desce, pesa mais.`;
 export const bmbNotaGrafico =
-  `Este gráfico mostra o preço, não a parte de imposto de cada dia: o repositório só tem o ISP em vigor hoje.`;
+  `Este gráfico mostra o preço, não a parte de imposto de cada dia: só temos o ISP em vigor hoje.`;
 export const bmbSemSerie =
   "A série de preços da DGEG não está disponível agora.";
 
