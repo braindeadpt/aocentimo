@@ -142,7 +142,7 @@
 | 110 | `src/app/_bairro/cenas/textos-p2b.ts:corResposta` | **{juizo}** Compram o mesmo que «{real}» compravam em {mesCurto}. | parâmetro — de onde vem: CenaCorreios.tsx: juizo, fmtEUR0(real0), mesCurto(D.mesT0) |  |
 | 111 | `src/app/_bairro/cenas/textos-p2b.ts:corSemDados` | Os dados de inflação não estão disponíveis agora — sem eles não se mede o poder de compra. | sem número |  |
 | 112 | `src/app/_bairro/cenas/textos-p2b.ts:corExplica` | O dinheiro não desapareceu: **encolheu**. Os preços subiram {variacao} desde então e cada euro compra menos. Chama-se perder **poder de compra**: a linha vermelha no monte de notas marca o que ele ainda compra em {mesT1}. | parâmetro — de onde vem: CenaCorreios.tsx: D.razaoTotal === null ? "—" : pctVarTxt(D.razaoTotal), mesCurto(D.mesT1 ?? D.mesT0) |  |
-| 113 | `src/app/_bairro/cenas/textos-p2b.ts:corExplicaCA` | E nos **Certificados de Aforro**, a poupança do Estado que se faz nos Correios? Hoje rendem **{taxa}** por ano, mais um prémio a partir do 2.º ano, e {imposto} dos juros ficam para o IRS. | ⚠️ número escrito na frase: 2 |  |
+| 113 | `src/app/_bairro/cenas/textos-p2b.ts:corExplicaCA` | E nos **Certificados de Aforro**, a poupança do Estado que se faz nos Correios? Hoje rendem **{taxa}** por ano, mais um prémio a partir do 2.º ano, e {imposto} dos juros ficam retidos como imposto. | ⚠️ número escrito na frase: 2 |  |
 | 114 | `src/app/_bairro/cenas/textos-p2b.ts:corBtnCertificados` | E se fosse para os certificados? → | sem número |  |
 | 115 | `src/app/_bairro/cenas/textos-p2b.ts:corFala4` | Os {cap} crescem nos certificados. Mas crescem **mais depressa do que os preços?** | parâmetro — de onde vem: CenaCorreios.tsx: fmtEUR0(cap0) |  |
 | 116 | `src/app/_bairro/cenas/textos-p2b.ts:corExplicaLiq` | No 1.º ano, a taxa de {taxa} fica em **{liq}** depois do imposto. Se a inflação for maior do que isso, os euros aumentam mas compram menos; se for menor, ganha-se poder de compra. Experimenta: | ⚠️ número escrito na frase: 1 |  |
@@ -183,8 +183,8 @@
 | 151 | `src/app/_bairro/cenas/textos-p2b.ts:bmbNotaIsp` | O ISP muda por portaria, às vezes todas as semanas. Valores em vigor desde {vigencia}: {notaIsp}. Preço: média nacional da DGEG de {data}. | parâmetro — de onde vem: CenaBomba.tsx: fmtData(D.ispVigencia), c.notaIsp, fmtData(c.data ?? "") |  |
 | 152 | `src/app/_bairro/cenas/textos-p2b.ts:bmbBtnGrafico` | Aprender a ler o gráfico → | sem número |  |
 | 153 | `src/app/_bairro/cenas/textos-p2b.ts:bmbFala3` | E o preço de cada dia? Aqui está desde {inicio}. Um ponto por semana, a **média do país**. | parâmetro — de onde vem: CenaBomba.tsx: inicioSerie |  |
-| 154 | `src/app/_bairro/cenas/textos-p2b.ts:bmbGraficoTexto` | A linha vermelha é a gasolina 95; a preta, o gasóleo. O ISP e a taxa de carbono são valores fixos por litro; só o IVA acompanha o preço. Por isso, quando o preço sobe, a parte do imposto **pesa menos** em percentagem; quando desce, pesa mais. | ⚠️ número escrito na frase: 95 |  |
-| 155 | `src/app/_bairro/cenas/textos-p2b.ts:bmbNotaGrafico` | Este gráfico mostra o preço, não a parte de imposto de cada dia: o repositório só tem o ISP em vigor hoje. | sem número |  |
+| 154 | `src/app/_bairro/cenas/textos-p2b.ts:bmbGraficoTexto` | A linha vermelha é a gasolina 95; a preta, o gasóleo. Em cada semana, o ISP e a taxa de carbono são valores fixos por litro (o ISP muda por portaria); só o IVA acompanha o preço. Por isso, na mesma semana, quando o preço sobe, a parte do imposto **pesa menos** em percentagem; quando desce, pesa mais. | ⚠️ número escrito na frase: 95 |  |
+| 155 | `src/app/_bairro/cenas/textos-p2b.ts:bmbNotaGrafico` | Este gráfico mostra o preço, não a parte de imposto de cada dia: só temos o ISP em vigor hoje. | sem número |  |
 | 156 | `src/app/_bairro/cenas/textos-p2b.ts:bmbSemSerie` | A série de preços da DGEG não está disponível agora. | sem número |  |
 | 157 | `src/app/_bairro/cenas/textos-p2b.ts:bmbGraficoAria` | Preço médio por litro desde {inicio}: a gasolina 95 teve o pico de {pico} em {mesPico} e o valor mais baixo de {baixo} em {mesBaixo}. | ⚠️ número escrito na frase: 95 |  |
 | 158 | `src/app/_bairro/cenas/textos-p2b.ts:bmbBtnVoltar` | Voltar ao bairro | sem número |  |
@@ -237,8 +237,8 @@
 | 201 | `src/app/_bairro/cenas/textos-p2c.ts:casaPalpiteAria` | O teu palpite em meses | sem número |  |
 | 202 | `src/app/_bairro/cenas/textos-p2c.ts:casaPalpiteFmt` | {v} meses | parâmetro — de onde vem: CenaCasa.tsx: palpite |  |
 | 203 | `src/app/_bairro/cenas/textos-p2c.ts:casaBtnResposta` | Mostrar a resposta | sem número |  |
-| 204 | `src/app/_bairro/cenas/textos-p2c.ts:casaFala2` | **{juizo}** Hoje custa «{meses} meses»: quase o dobro. | parâmetro — de onde vem: CenaCasa.tsx: T.juizoPalpite(palpite, meses ?? 0, 5, 20), hoje |  |
-| 205 | `src/app/_bairro/cenas/textos-p2c.ts:casaExplica` | Desde 2015, os preços das casas subiram «{subHpi}». O custo do trabalho, o que as empresas pagam por cada hora trabalhada, subiu **{subLci}**. As casas correram muito mais depressa do que o custo do trabalho. | ⚠️ número escrito na frase: 2015, |  |
+| 204 | `src/app/_bairro/cenas/textos-p2c.ts:casaFala2` | **{juizo}** Hoje custa «{meses} meses». | parâmetro — de onde vem: CenaCasa.tsx: T.juizoPalpite(palpite, meses ?? 0, 5, 20), hoje |  |
+| 205 | `src/app/_bairro/cenas/textos-p2c.ts:casaExplica` | Desde 2015, os preços das casas subiram «{subHpi}». O custo do trabalho, o que as empresas pagam por cada hora trabalhada, subiu **{subLci}**. | ⚠️ número escrito na frase: 2015, |  |
 | 206 | `src/app/_bairro/cenas/textos-p2c.ts:casaNota` | «Meses de trabalho» é uma forma de ler a razão entre dois índices oficiais (preços da habitação ÷ custo do trabalho, 2015 = 100). Não é o salário líquido de ninguém. Último dado: {ultimo}. | ⚠️ número escrito na frase: 100 |  |
 | 207 | `src/app/_bairro/cenas/textos-p2c.ts:casaBtnGrafico` | Aprender a ler o gráfico → | sem número |  |
 | 208 | `src/app/_bairro/cenas/textos-p2c.ts:casaFala3` | Duas linhas que partem do **mesmo 100**. A distância entre elas é o que mudou. | ⚠️ número escrito na frase: 100 |  |
@@ -267,7 +267,7 @@
 | 231 | `src/app/_bairro/cenas/textos-p2c.ts:pastGraficoAria` | Com 100 em {mes}, comer fora vale hoje {fora} e comer em casa {casa}. | ⚠️ número escrito na frase: 100 |  |
 | 232 | `src/app/_bairro/cenas/textos-p2c.ts:pastNotaIndice` | «Comer fora» é o índice europeu de restaurantes e alojamento, onde entram os cafés e também os hotéis. | sem número |  |
 | 233 | `src/app/_bairro/cenas/textos-p2c.ts:pastBtnIva` | E o IVA do café? → | sem número |  |
-| 234 | `src/app/_bairro/cenas/textos-p2c.ts:pastFala3` | No café, o IVA é de «{taxa}»: mais do dobro do pão da mercearia. | parâmetro — de onde vem: CenaPastelaria.tsx: taxaOuFalha(D.ivaCafe) |  |
+| 234 | `src/app/_bairro/cenas/textos-p2c.ts:pastFala3` | No café, o IVA é de «{taxa}». | parâmetro — de onde vem: CenaPastelaria.tsx: taxaOuFalha(D.ivaCafe) |  |
 | 235 | `src/app/_bairro/cenas/textos-p2c.ts:pastIvaTexto` | Dos **{hoje}** do café e do pastel, «{iva}» são IVA. A restauração paga a taxa intermédia, {taxaCafe}. Se fosse a taxa do pão, {taxaPao}, seriam {ivaPao}. | parâmetro — de onde vem: CenaPastelaria.tsx: fmtOuFalha(hoje), fmtOuFalha(ivaCafe), taxaOuFalha(D.ivaCafe), taxaOuFalha(D.ivaMercearia), fmtOuFalha(ivaPao) |  |
 | 236 | `src/app/_bairro/cenas/textos-p2c.ts:pastNotaIva` | Taxas do continente, do Código do IVA. | sem número |  |
 | 237 | `src/app/_bairro/cenas/textos-p2c.ts:pastBtnVoltar` | Voltar ao bairro | sem número |  |
@@ -353,7 +353,7 @@
 | 313 | `messages/pt.json:bairro.intro` | Este é o bairro. Cada edifício responde a uma pergunta sobre dinheiro — com os números de hoje. Toca num para entrar. | sem número |  |
 | 314 | `messages/pt.json:bairro.dica.arrasta` | Arrasta para passear · roda para aproximar · | sem número |  |
 | 315 | `messages/pt.json:bairro.dica.fabrica` | toca na Fábrica! | sem número |  |
-| 316 | `messages/pt.json:bairro.mapa.descricao` | Mapa ilustrado de um bairro português visto de cima: fábrica, Segurança Social, Finanças, banco, correios e bomba de gasolina na avenida do elétrico; mercearia, pastelaria, a casa da Inês, a praça com o quiosque e a escola cá em baixo, no Cais da Ribeira, ligados à avenida por umas escadinhas; a Torre dos Clérigos lá atrás; à frente o Douro, os barcos rabelos e a Ponte D. Luís I à frente. Cada edifício tem por cima um número real de hoje. | sem número |  |
+| 316 | `messages/pt.json:bairro.mapa.descricao` | Mapa ilustrado de um bairro português visto de cima: fábrica, Segurança Social, Finanças, banco, correios e bomba de gasolina na avenida do elétrico; mercearia, pastelaria, a casa da Inês, a praça com o quiosque e a escola cá em baixo, no Cais da Ribeira, ligados à avenida por umas escadinhas; a Torre dos Clérigos lá atrás; à frente o Douro, os barcos rabelos e a Ponte D. Luís I. Cada edifício tem por cima um número real de hoje. | sem número |  |
 | 317 | `messages/pt.json:bairro.mapa.rotuloHora` | Hora do dia | sem número |  |
 | 318 | `messages/pt.json:bairro.hora.dia` | Dia | sem número |  |
 | 319 | `messages/pt.json:bairro.hora.tarde` | Fim de tarde | sem número |  |
@@ -438,7 +438,7 @@
 | # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |
 |---|---|---|---|---|
 | 396 | `messages/pt.json:estilo.titulo` | Contrato visual «O Bairro» | sem número |  |
-| 397 | `messages/pt.json:estilo.nota` | O que o protótipo mostra é o que vai para produção. Onde esta página e o protótipo divergirem, ganha o protótipo; onde a página e as regras da casa divergirem, ganha a casa. | sem número |  |
+| 397 | `messages/pt.json:estilo.nota` | Esta página é a referência do aspecto do site: as cores, a tipografia e as formas que se repetem em todas as páginas. Onde ela e as regras da casa divergirem, ganham as regras da casa. | sem número |  |
 | 398 | `messages/pt.json:estilo.cor` | Cor | sem número |  |
 | 399 | `messages/pt.json:estilo.corNota` | Cada cor tem um nome e um sítio. O verde é o que fica contigo, o vermelho é o que sai, o azul é neutro e informa. Nenhuma cor decora. | sem número |  |
 | 400 | `messages/pt.json:estilo.tipografia` | Tipografia | sem número |  |
@@ -455,7 +455,7 @@
 | 411 | `messages/pt.json:estilo.cartao` | Cartão | sem número |  |
 | 412 | `messages/pt.json:estilo.cartaoNota` | Raio de 22 px, traço de tinta, a mesma sombra dura. Nada de vidro, nada de gradiente, nada de sombra difusa. | sem número |  |
 | 413 | `messages/pt.json:estilo.grafico` | Gráfico | sem número |  |
-| 414 | `messages/pt.json:estilo.graficoNota` | Toda a figura tem um equivalente textual e é legível nos dois temas. As séries que recuam de contexto usam a família de tinta, não cor. | sem número |  |
+| 414 | `messages/pt.json:estilo.graficoNota` | Toda a figura tem um equivalente textual e é legível nos dois temas. As séries de fundo, que dão contexto, usam tons de tinta e não cor. | sem número |  |
 | 415 | `messages/pt.json:estilo.papel` | O papel | sem número |  |
 | 416 | `messages/pt.json:estilo.papelNota` | O talão é um objecto físico: não muda de cor quando se apaga a luz. O verde é o papel do que fica contigo, o vermelho o do que sai. | sem número |  |
 | 417 | `messages/pt.json:estilo.noite` | A noite do bairro | sem número |  |
