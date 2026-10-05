@@ -251,8 +251,16 @@ export function porta2(x: number, w: number, h: number, cor: string, arco = fals
 }
 
 export function placa2(x: number, y: number, w: number, txt: string, fundo: string, cor: string): string {
-  const tam = Math.min(15, (w - 10) / (txt.length * 0.74));
-  return `<rect x="${x}" y="${y}" width="${w}" height="${f1(tam + 10)}" rx="4" fill="${fundo}" stroke="${K}" stroke-width="2.2"/><text x="${x + w / 2}" y="${f1(y + tam + 3)}" text-anchor="middle" font-family="Archivo" font-weight="900" font-stretch="112%" font-size="${f1(tam)}" fill="${cor}">${txt}</text>`;
+  // O <text> usava font-stretch a 112%, e o @font-face do Google
+  // declarava o intervalo 62% a 125% — por isso o atributo aplicava-se.
+  // Sem o eixo wdth essa largura deixou de existir; a placa passa a usar
+  // a instância larga (125%). Medido no browser a 100px, peso 900: o
+  // glifo ocupa 0,8137 do corpo a 112% e 0,8918 na instância larga.
+  // Para a letra ocupar a MESMA largura renderizada o corpo tem de ser
+  // menor — a razão é a segunda sobre a primeira, não o inverso.
+  const RAZAO = 0.8137 / 0.8918;
+  const tam = Math.min(15, ((w - 10) / (txt.length * 0.74)) * RAZAO);
+  return `<rect x="${x}" y="${y}" width="${w}" height="${f1(tam + 10)}" rx="4" fill="${fundo}" stroke="${K}" stroke-width="2.2"/><text x="${x + w / 2}" y="${f1(y + tam + 3)}" text-anchor="middle" font-family="ArchivoLargo" font-weight="900" font-size="${f1(tam)}" fill="${cor}">${txt}</text>`;
 }
 
 export function toldo2(x: number, y: number, w: number, c1: string, c2 = "#fff"): string {

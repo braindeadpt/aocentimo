@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postbuild": "node scripts/_postbuild-prefetch.mjs",
+    "postbuild": "node scripts/_postbuild-prefetch.mjs && node scripts/_preload-intro.mjs",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",

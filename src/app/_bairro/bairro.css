@@ -131,6 +131,23 @@
    referência para os 910,2 que cabem nos marcadores essenciais (Salário
    bruto, Chega à conta, Inflação, Euribor) com as folgas do dono —
    mesma conta de `vistaInicial()`, referencial 375×(0,74·812). */
+/* A instância de 116% do Archivo — a do título da intro e a do
+   cabeçalho do elenco. Declarada aqui e não no globals.css porque a
+   folha do bairro é a única que a usa, e a única que a home carrega:
+   com a regra no CSS comum, o browser acabava por pedir os 27,1 KB
+   também nas rotas onde não há título nenhum (medido em /estilo). O
+   preload está escrito à mão em src/app/page.tsx. */
+@font-face {
+  font-family: "ArchivoMeio";
+  src: url("/fonts/Archivo-intro.woff2") format("woff2");
+  font-weight: 400 900;
+  font-style: normal;
+  /* swap, e não optional: em optional a face que chega depois da janela
+     de 100 ms é descartada, e o título ficava pelo fallback métrico —
+     medido a 624,28 px contra os 713,77 px do ficheiro. */
+  font-display: swap;
+}
+
 @media (max-width: 700px) {
   [data-pele="v5"] .b-mundo {
     transform: translate(-138.8999cqw, -43.4161cqw) scale(0.412);
@@ -710,7 +727,10 @@
 }
 [data-pele="v5"] .b-elenco h2 {
   font-weight: 850;
-  font-stretch: 115%;
+  /* era font-stretch: 115%. A instância de 116% é a mais próxima que o
+     CSS já pede (o título da intro), e as duas rotas onde este cabeçalho
+     existe são a home — que pede as duas. O erro é de 1% de largura. */
+  font-family: var(--font-meio);
   font-size: clamp(28px, 3.6vw, 46px);
   line-height: 1;
   margin: 14px 0 6px;
@@ -836,7 +856,7 @@
 [data-pele="v5"] .b-intro h1 {
   margin: 0;
   font-weight: 880;
-  font-stretch: 116%;
+  font-family: var(--font-meio);
   font-size: clamp(30px, 4.4vw, 60px);
   line-height: 0.95;
   letter-spacing: -0.015em;

@@ -253,13 +253,25 @@
   --radius-instrumento: var(--raio-instrumento);
   --radius-controlo: var(--raio-controlo);
 
-  --font-display: var(--font-archivo), "Arial Black", sans-serif;
+  /* Sem o eixo wdth, escolher a largura é escolher a família. As
+     três instâncias do Archivo são a mesma fonte com o eixo fixado em
+     100%, 125% e 116% — ver src/app/layout.tsx. O @font-face chama-se
+     "ArchivoLargo" (maiúsculas, pelo declarations) enquanto a variável
+     do next/font é --font-archivo-largo; daí os dois nomes.
+
+    instância  quando
+     125 %      títulos, número-herói, cabeçalhos de página
+     116 %      o título da intro da home (era font-stretch: 116%)
+     100 %      o resto do site */
+  --font-largo: "ArchivoLargo", "ArchivoLargo Fallback", "Arial Black", sans-serif;
+  --font-meio: "ArchivoMeio", "ArchivoMeio Fallback", "Arial Black", sans-serif;
+  --font-display: var(--font-largo);
   /* Tipografia V5 (P3c, contrato PACK §3): Archivo para tudo — o eixo da
      largura faz o trabalho que fazia a famiglia editorial. A monoespaçada
      é a DO SISTEMA (o talão e o recibo), não uma fonte descargada.
      Source Serif, Space Grotesk e Space Mono saíram do layout em P3c. */
-  --font-sans: var(--font-archivo), "Arial", sans-serif;
-  --font-editorial: var(--font-archivo), "Arial", sans-serif;
+  --font-sans: "Archivo", "Archivo Fallback", "Arial", sans-serif;
+  --font-editorial: "Archivo", "Archivo Fallback", "Arial", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
 
@@ -360,24 +372,24 @@
   --tracking-documento: 0.3em;       /* cabeçalho do talão */
 }
 
-/* display = Archivo expandido */
+/* display = Archivo expandido (era wdth 125; hoje é a família larga) */
 .font-display {
-  font-variation-settings: "wdth" 125;
+  font-family: "ArchivoLargo", "ArchivoLargo Fallback", "Arial Black", sans-serif;
 }
 
-/* ————— títulos — só dois estilos; o eixo wdth do Archivo é o
+/* ————— títulos — só dois estilos; a largura do Archivo é o
    instrumento expressivo que os separa —————
-   página = expandido (wdth 125): a manchete institucional, caixa-alta
-   herói  = condensado (wdth 75): o monumento da home — a mesma fonte,
-            apertada, para a frase grande caber e pesar */
+   página = expandido (125%): a manchete institucional, caixa-alta
+   herói  = largo (125%): o monumento da home. Era wdth 75, apertado para
+            a frase grande caber; como não há eixo, usa a instância
+            larga — a frase continua a caber, medido no browser. */
 .titulo-pagina,
 .titulo-hero {
-  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-family: "ArchivoLargo", "ArchivoLargo Fallback", "Arial Black", sans-serif;
   font-weight: 700;
   color: var(--ink);
 }
 .titulo-pagina {
-  font-variation-settings: "wdth" 125;
   font-size: var(--text-display-md);
   line-height: 1.1;
   letter-spacing: var(--tracking-manchete-xl);
@@ -388,7 +400,6 @@
   margin-top: 0.5rem;
 }
 .titulo-hero {
-  font-variation-settings: "wdth" 75;
   font-size: var(--text-display-lg);
   line-height: 0.95;
   letter-spacing: var(--tracking-manchete);
@@ -572,8 +583,7 @@ html[data-theme="dark"] .tema-ponto {
    Unidade e sinal são membros da mesma linha de base — nunca notas
    de rodapé nem spans flutuantes. */
 .num-hero {
-  font-family: var(--font-archivo), "Arial Black", sans-serif;
-  font-variation-settings: "wdth" 125;
+  font-family: "ArchivoLargo", "ArchivoLargo Fallback", "Arial Black", sans-serif;
   font-weight: 650;
   font-size: var(--text-hero);
   line-height: 0.95;
@@ -1512,7 +1522,7 @@ h3 {
   border-radius: var(--raio-controlo);
   background: var(--ink);
   color: var(--floor);
-  font-family: var(--font-display);
+  font-family: "ArchivoLargo", "ArchivoLargo Fallback", "Arial Black", sans-serif;
   font-size: var(--text-moeda);
   transform-origin: center;
   transition: transform var(--dur-longa) var(--ease-entra);
@@ -2725,7 +2735,7 @@ h3 {
   /* número herói = Archivo tabular (S1-02): na monoespaçada a vírgula
      ocupa uma célula inteira e «3,55» lê-se «3 , 55»; tnum medido na
      fonte real — «11111.11» e «88888.88» têm a mesma largura */
-  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-family: "Archivo", "Archivo Fallback", "Arial Black", sans-serif;
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum" 1;
   font-weight: 650;
@@ -2916,8 +2926,7 @@ h3 {
   padding-bottom: 0.5rem;
   margin-bottom: var(--gap-fig);
   border-bottom: 2px solid var(--ink);
-  font-family: var(--font-display);
-  font-variation-settings: "wdth" 125;
+  font-family: "ArchivoLargo", "ArchivoLargo Fallback", "Arial Black", sans-serif;
   font-weight: 700;
   font-size: var(--text-display-sm);
   letter-spacing: var(--tracking-manchete-xl);
@@ -2995,8 +3004,7 @@ h3 {
 .pg-seguinte-lnk {
   display: inline-block;
   margin-top: 0.45rem;
-  font-family: var(--font-display);
-  font-variation-settings: "wdth" 125;
+  font-family: "ArchivoLargo", "ArchivoLargo Fallback", "Arial Black", sans-serif;
   font-weight: 700;
   font-size: var(--text-display-sm);
   letter-spacing: var(--tracking-micro);
@@ -3517,7 +3525,7 @@ h3 {
   pointer-events: none;
 }
 .ap-num {
-  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-family: "Archivo", "Archivo Fallback", "Arial Black", sans-serif;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   font-size: var(--text-display-md);
@@ -3629,7 +3637,7 @@ h3 {
 }
 .cc-rot-v {
   display: block;
-  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-family: "Archivo", "Archivo Fallback", "Arial Black", sans-serif;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   font-size: var(--text-numero);
@@ -3684,7 +3692,7 @@ h3 {
 }
 .cc-legenda b,
 .cc-legenda strong {
-  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-family: "Archivo", "Archivo Fallback", "Arial Black", sans-serif;
   font-style: normal;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
@@ -3918,9 +3926,13 @@ h3 {
   --fundo-mapa: #bfe3f7;
 
   /* tipografia: Archivo para tudo, Caveat só nas anotações à mão.
-     --font-mao vem do next/font em layout.tsx; o fallback do protótipo
+     O nome vem primeiro, à letra: o next/font põe em --font-mao o nome
+     interno que ele próprio gera («caveat», minúsculas), e a face que o
+     layout declara chama-se «Caveat» (ver as declarações em
+     layout.tsx). Pela ordem antiga a anotação à mão caía no fallback
+     métrico — e a largura mudava 6 px. O fallback do protótipo
      mantém-se para o texto nunca cair em Times. */
-  --mao: var(--font-mao), "Caveat", "Comic Sans MS", cursive;
+  --mao: "Caveat", "Caveat Fallback", "Comic Sans MS", cursive;
 
   /* forma — traço grosso, sombra dura, raio largo; sem gradientes,
      sem vidro, sem roxo, sem sombra difusa (contrato visual V5) */
@@ -4002,7 +4014,7 @@ h3 {
 .cab-fio {
   border-bottom: 1.5px solid var(--linha);
   color: var(--suave);
-  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-family: "Archivo", "Archivo Fallback", "Arial Black", sans-serif;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -4022,7 +4034,7 @@ h3 {
   gap: 0.4rem;
   min-height: 40px;
   padding: 0.4rem 0.95rem;
-  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-family: "Archivo", "Archivo Fallback", "Arial Black", sans-serif;
   font-weight: 700;
   font-size: 0.82rem;
   line-height: 1;
@@ -4074,7 +4086,7 @@ h3 {
 }
 .nav-menu-v5 a {
   padding: 0.6rem 1rem;
-  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-family: "Archivo", "Archivo Fallback", "Arial Black", sans-serif;
   font-weight: 600;
   font-size: 0.85rem;
   color: var(--tinta-2);
@@ -4109,7 +4121,7 @@ h3 {
 /* rótulo pequeno da pele — caixa-alta Archivo em tinta suave; serve a
    folha de navegação e os títulos do rodapé */
 .folha-titulo {
-  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-family: "Archivo", "Archivo Fallback", "Arial Black", sans-serif;
   font-weight: 800;
   font-size: 0.72rem;
   letter-spacing: 0.08em;
@@ -4118,7 +4130,7 @@ h3 {
 }
 .nav-sheet-v5 a,
 .nav-sheet-v5 button {
-  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-family: "Archivo", "Archivo Fallback", "Arial Black", sans-serif;
   font-weight: 600;
   font-size: 0.95rem;
   color: var(--tinta-2);
@@ -4147,7 +4159,7 @@ h3 {
   border: var(--traco-fino) solid var(--tinta);
   border-radius: var(--raio-pilula);
   box-shadow: var(--sombra-dura);
-  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-family: "Archivo", "Archivo Fallback", "Arial Black", sans-serif;
   font-weight: 800;
 }
 
@@ -4159,7 +4171,7 @@ h3 {
   gap: 0.45rem;
   min-height: 34px;
   padding: 0.3rem 0.8rem;
-  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-family: "Archivo", "Archivo Fallback", "Arial Black", sans-serif;
   font-weight: 700;
   font-size: 0.72rem;
   letter-spacing: 0.06em;
@@ -4331,7 +4343,7 @@ html[data-theme="dark"] .rt5 {
   gap: 0.55rem;
   margin: 0.3rem 0;
   padding: 0.5rem 1rem;
-  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-family: "Archivo", "Archivo Fallback", "Arial Black", sans-serif;
   font-weight: 700;
   letter-spacing: 0.04em;
   color: var(--tinta);
@@ -4395,7 +4407,7 @@ html[data-theme="dark"] .rt5 {
   gap: 0.35rem;
   min-height: 40px;
   padding: 0.4rem 0.95rem;
-  font-family: var(--font-archivo), "Arial Black", sans-serif;
+  font-family: "Archivo", "Archivo Fallback", "Arial Black", sans-serif;
   font-weight: 700;
   font-size: 0.82rem;
   line-height: 1;
@@ -4420,4 +4432,50 @@ html[data-theme="dark"] .rt5 {
 .lnk-edificio-a:focus-visible {
   outline: 3px solid var(--azul);
   outline-offset: 2px;
+}
+
+/* Fallback de métricas de cada webfont — medidos no browser (canvas a
+   100px, peso 400, sobre a métrica do Arial), não calculados.
+
+   O `adjustFontFallback` do next/font deriva o size-adjust do nome do
+   ficheiro e erra: a instância a 125% dava 131,98% em vez dos 126,45%
+   reais. Com `display: optional` um fallback mal ajustado chega a
+   ganhar à fonte real — e aí o texto deixava de ser da fonte. O nome
+   que ele gera também é minúsculo, e o contrato V5 só admite famílias
+   que comecem por «Archivo» ou «Caveat».
+
+   São três larguras do Archivo e dois pesos do Caveat; cada um com a
+   métrica que tem, porque uma instância a 125% é 26% mais larga que
+   a base e um Arial ajustado pela métrica errada encolhe tudo. */
+@font-face {
+  font-family: "Archivo Fallback";
+  src: local(Arial);
+  ascent-override: 100.41%;
+  descent-override: 86.48%;
+  line-gap-override: 0%;
+  size-adjust: 101.39%;
+}
+@font-face {
+  font-family: "ArchivoLargo Fallback";
+  src: local(Arial);
+  ascent-override: 100.68%;
+  descent-override: 90.76%;
+  line-gap-override: 0%;
+  size-adjust: 126.45%;
+}
+@font-face {
+  font-family: "ArchivoMeio Fallback";
+  src: local(Arial);
+  ascent-override: 100.68%;
+  descent-override: 89.33%;
+  line-gap-override: 0%;
+  size-adjust: 117.42%;
+}
+@font-face {
+  font-family: "Caveat Fallback";
+  src: local(Arial);
+  ascent-override: 127.1%;
+  descent-override: 39.72%;
+  line-gap-override: 0%;
+  size-adjust: 75.53%;
 }

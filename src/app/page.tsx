@@ -14,6 +14,12 @@ import HomeBairro from "./_bairro/HomeBairro";
  *
  * Tudo o que a home precisa é montado no servidor e chega ao
  * `<Bairro>` por props. Ver `_bairro/HomeBairro.tsx`.
+ *
+ * O preload da instância de 116% do Archivo não está aqui — é injectado
+ * no `out/index.html` depois do export (scripts/_preload-intro.mjs).
+ * No JSX não resultava: o `<Link href="/">` da barra dispara o prefetch
+ * da home e o `<link>` vinha junto, para as 35 rotas que não têm o
+ * título. Ver o comentário do script.
  */
 export default function Home() {
   return <HomeBairro />;
