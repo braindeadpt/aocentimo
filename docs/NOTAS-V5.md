@@ -1,8 +1,9 @@
 # NOTAS V5 — registo de trabalho da «O Bairro»
 
-> Documento de trabalho local da V5 (sessões do plano em
+> Documento de trabalho da V5 (sessões do plano em
 > `docs/PACK-V5-PRODUCAO.md`). Dúvidas, hipóteses conservadoras e copy a
-> rever, por tarefa. Não é contrato — o contrato é `docs/PRODUTO.md` §6b.
+> rever, por tarefa. **Não é contrato** — o contrato é `docs/PRODUTO.md` §2
+> e §6b.
 
 **Regra desta secção:** todo o texto que veio do protótipo é **PROPOSTA**
 até o dono o rever. Nada de cenas nem de cartas publicam sem essa revisão
@@ -10,7 +11,42 @@ até o dono o rever. Nada de cenas nem de cartas publicam sem essa revisão
 
 ---
 
-## P0 · Fundação
+## Índice
+
+| Fase | O que era | Estado |
+|---|---|---|
+| [P0](#p0--fundação) · Fundação | tokens V5, kit `src/lib/bairro/`, `dadosBairro()`, PRODUTO §6b | ✅ **CONCLUÍDO** — em `main` |
+| [P1](#p1--a-home-é-o-bairro) · A home é o bairro | o mapa no servidor, a câmara, a animação ambiente, as sete cartas | ✅ **CONCLUÍDO** — em `main` |
+| [Hotfix P1](#hotfix-p1--o-veredicto-do-design-e-o-mapa-publicado-estava-partido) | as camadas empilhavam em fluxo; o CSS escrevia classes que não existem no HTML | ✅ **CONCLUÍDO** — em `main` |
+| [P4 (conserto do flight)](#p4--o-conserto-do-flight-a-home-deixou-de-ser-o-mapa-duas-vezes) | o mapa viajava duas vezes (DOM + payload RSC) | ✅ **CONCLUÍDO** — em `main` |
+| [P1-gente](#p1-gente--a-gente-do-bairro-no-mapa) | as personagens paradas no mapa | ✅ **CONCLUÍDO** — em `main` |
+| [P2a](#p2a--as-quatro-primeiras-cenas-fábrica-finan%C3%A7as-banco-mercearia) · Fábrica, Finanças, Banco, Mercearia | as primeiras quatro cenas | ✅ **CONCLUÍDO** — em `main` |
+| [P2b](#p2b--correios-bomba-segurança-social) · Correios, Bomba, Segurança Social | mais três cenas | ✅ **CONCLUÍDO** — em `main` |
+| [P2c](#p2c--casa-da-in%C3%AAs-pastelaria-quiosque-escola) · Casa, Pastelaria, Quiosque, Escola | as quatro últimas cenas + `grafico-linhas` | ✅ **CONCLUÍDO** — em `main` |
+| [P3a](#p3a--tokens--cabe%C3%A7alho navega%C3%A7%C3%A3o-rodap%C3%A9 ramo-v5p3-pele-a) · chrome | `data-pele="v5"` no `<html>`, cabeçalho/nav/rodapé | ✅ **CONCLUÍDO** — em `main` |
+| [P3b g1](#p3b--grupo-1--as-rotas-de-dinheiro-ramo-v5p3-pele-b1) · dinheiro | `/salario` `/irs` `/impostos` `/poupanca` `/credito` `/casa` | ✅ **CONCLUÍDO** — em `main` |
+| [P3b g2](#p3b--grupo-2--pre%C3%A7os-e-trabalho-ramo-v5p3-pele-b2) · preços e trabalho | `/inflacao` `/precos` `/trabalho` `/dados` | ✅ **CONCLUÍDO** — em `main` |
+| [P3b g3](#p3b--grupo-3--aprender-meta-e-estilo-ramo-v5p3-pele-b3) · aprender, meta, `/estilo` | `/aprender` `/metodologia` `/sobre` `/estilo` | ✅ **CONCLUÍDO** — em `main` |
+| [P3c](#p3c--as-fontes-os-tokens-mortos-e-a-estilo-escrita-ramo-v5p3-pele-c) · fontes e `/estilo` | das cinco fontes a duas; tokens mortos; `/estilo` reescrita na linguagem do bairro | ✅ **CONCLUÍDO** — em `main` |
+| [P4 · dados das cenas](#p4--os-dados-das-cenas-saem-do-payload-da-home) | `public/cenas/*.json` em vez do flight | ✅ **CONCLUÍDO** — em `main` |
+| **P4 · revisão de copy** | — | ⬜ **ABERTO** — `docs/REVISAO-COPY-V5.md` |
+| **P4 · lançamento** | — | ⬜ **ABERTO** — merge para `main`; o dono faz |
+
+### Textos PROPOSTA
+
+A lista que o dono revê antes do lançamento **não está mais neste
+ficheiro**: saiu para **`docs/REVISAO-COPY-V5.md`**, uma tabela só,
+**gerada por script** (`node scripts/_revisao-copy.mjs`) a partir das
+fontes de verdade. Escrevê-la à mão era o mesmo defeito que a Regra nº1
+proíbe — um texto que muda no código e uma lista que não muda.
+
+O bloco [«Textos PROPOSTA (revisão do dono)»](#textos-proposta-revis%C3%A3o-do-dono)
+abaixo fica como registo do que o protótipo propunha na altura da P0/P1;
+onde diverge do que está no site hoje, quem manda é a tabela.
+
+---
+
+## P0 · Fundação — ✅ CONCLUÍDO (em `main`)
 
 ### O que ficou escrito
 
@@ -81,7 +117,11 @@ constante.
 
 ---
 
-## Textos PROPOSTA (revisão do dono)
+## Textos PROPOSTA (revisão do dono) — registo da P0/P1
+
+> **Superado por `docs/REVISAO-COPY-V5.md`**, que é a lista viva e a
+> única que o dono revê antes do lançamento. Isto é o que o protótipo
+> propunha na altura da P0/P1, com os textos que a P2/P3 já mudaram.
 
 Vêm do protótipo. **Nenhum foi aprovado ainda.**
 
@@ -151,7 +191,7 @@ A saudação ao tocar numa carta («Olá! Sou a Inês. …») e a frase de
 
 ---
 
-## P1 · A home é o bairro
+## P1 · A home é o bairro — ✅ CONCLUÍDO (em `main`)
 
 ### P1-1 — o mapa, sem uma linha de JavaScript
 
@@ -626,7 +666,7 @@ Corrigido o selector; `ambiente.test.ts` já esperava a classe acentuada.
 **Peso:** home 67,8 → **72,5 KB gzip** (+4,7; limite 80). A deduplicação
 `<symbol>/<use>` não foi precisa — nenhuma figura foi cortada.
 
-## P2a–P2c · As cenas
+## P2a–P2c · As cenas — ✅ CONCLUÍDO (em `main`)
 
 ### P2a — as quatro primeiras cenas: Fábrica, Finanças, Banco, Mercearia
 
@@ -818,7 +858,7 @@ dono a ler.
    porque cada LINHA já leva a sua data; fonte por linha no rodapé
    seria ilegível. Se preferir fonte por linha, diz.
 
-## P3 · A pele V5 nas 13 rotas
+## P3 · A pele V5 nas 13 rotas — ✅ CONCLUÍDO (em `main`)
 
 ### P3a — tokens + cabeçalho/navegação/rodapé (ramo `v5/p3-pele-a`)
 
@@ -1137,9 +1177,18 @@ por rever:
 | fontes (`.woff2`) | 588,7 KB / 22 ficheiros | 424,3 KB / 7 ficheiros | **−164,4 KB** |
 | CSS | 132,1 KB | 125,8 KB | **−6,3 KB** |
 
-## P4 · Qualidade e lançamento
+## P4 · Qualidade e lançamento — 🟡 PARCIALMENTE FEITO
 
-### P4 — os dados das cenas saem do payload da home
+**Feito e em `main`:** os dados das cenas fora do flight
+(`public/cenas/*.json`, abaixo), o `_gate-html.mjs` no CI, o `audit` no CI,
+a medição em `docs/MEDICAO-V5.md`, a revisão de copy gerada em
+`docs/REVISAO-COPY-V5.md`.
+
+**Falta:** (1) o dono rever a copy; (2) o PR de lançamento e o merge, que
+é decisão dele; (3) a decisão sobre os componentes V4 que sobraram
+(`_home/HeroMoeda*`, `hero-moeda.css`) — a lista está no fim da P3c.
+
+### P4 — os dados das cenas saem do payload da home — ✅ CONCLUÍDO
 
 Os dados das cenas viajavam na prop `cenas` do `<Bairro>`: o Next
 embarcava-os no flight (`self.__next_f`) da home — ~19 KB raw de séries
@@ -1166,9 +1215,6 @@ Copy PROPOSTA nova (em `cenas/textos.ts`, para o dono rever):
 
 Medido (`scripts/_dieta-html.mjs`, home): payload RSC 17 184 →
 **9 088 B gzip**; home 78 246 → **70 099 B gzip**.
-
-_(por preencher — a lista final de textos PROPOSTA é a que o dono revê
-antes do lançamento. Não lançar sem essa revisão.)_
 
 ### P4 — metadados e partilha em todas as rotas (ramo `v5/p4-seo`)
 
@@ -1247,7 +1293,7 @@ seu canonical e a mesma imagem; o PNG com a assinatura, a medida lida do
 IHDR (1200×630) e o peso abaixo de 250 KB; o sitemap com as 15 rotas e os
 23 termos, **cada URL pedida e respondida**, e sem qualquer `#` na lista;
 `robots.txt`, `manifest.webmanifest` e os ícones que ele aponta; as
-ânncoras a partilhar o cartão da home; a home com **um só** bloco de
+âncoras a partilhar o cartão da home; a home com **um só** bloco de
 dados estruturados e um `WebSite` e uma `Organization` que não sejam
 duplicados; e as migalhas presentes nas páginas com «Voltar ao bairro» e
 ausentes nas outras.
@@ -1262,3 +1308,11 @@ conteúdo mais a home, e `/estilo` lá está — é indexável de propósito
 do sitemap para chegar às catorze seria decidir contra uma nota do
 próprio ficheiro; por isso ficou, e o teste conta o que há, não um número
 mágico.
+
+**A lista final de textos PROPOSTA saiu deste ficheiro.** Vive em
+**`docs/REVISAO-COPY-V5.md`** — uma tabela só, gerada por
+`node scripts/_revisao-copy.mjs` a partir de `cenas/textos.ts`,
+`textos-p2b.ts`, `textos-p2c.ts`, `messages/pt.json` e deste registo, com
+as 3 propostas de `docs/AUDITORIA-CENAS-V5.md` §2.2 no fim. As frases com
+um número escrito à mão dentro do texto vêm marcadas com ⚠️: é o ponto que
+mais merece atenção na revisão. Não lançar sem ela.

@@ -1,151 +1,37 @@
-# AO CÊNTIMO — produto e sistema
+# PRODUTO V3/V4 — «o Ledger» e «o cêntimo como unidade» (arquivado)
 
-> **Estado: VIGENTE — este documento é a verdade única do produto.**
-> Criado em 2026-09-18. Direction V3 «Ledger» (2026-09-21), actualizada em
-> 2026-09-22 para integrar a direcção V4 «o cêntimo como unidade».
-> **Reescrito a 2026-10-04 para a V5 «O Bairro»**, que é o que está em
-> produção: a §2 passou a descrever a direcção vigente e as §3–§6 (V3 e V4)
-> foram **arquivadas em `docs/historico/PRODUTO-V3-V4.md`** com nota de
-> leitura. O que da V3/V4 sobreviveu — Regra nº1, a unidade, os três níveis,
-> a letra — está marcado aqui como **[subsiste]** e manda igual.
-> Onde este texto e o código divergirem, **o código manda** e o texto
-> corrige-se — a verdade vive em `src/app/globals.css` e em `/estilo`.
+> **Estado: ARQUIVADO. Isto é registo, não contrato.**
+> Foi o sistema de direcção do site entre **2026-09-18 e 2026-09-30**,
+> quando o dono decidiu (V5, `docs/DECISOES.md` 2026-09-30) que a home
+> passaria a ser o mapa do bairro. O texto que se segue saiu do
+> `docs/PRODUTO.md` a **2026-10-04**, quando o PRODUTO foi reescrito
+> para descrever o que está em produção.
 >
-> Substitui, como contrato, os três planos históricos:
-> `PLANO-LITERACIA-FINANCEIRA.md`, `PLANO-REDESIGN-BRUTO.md` e
-> `PLANO-DESIGN-V2.md` — ficam como registo do que foi planeado e do que
-> sobreviveu. O porquê de cada mudança está datado em `DECISOES.md`.
+> **Por que fica aqui e não se apaga.** Estas secções explicam o *porquê*
+> de muita coisa que ainda funciona: porque `1 ponto = 1 cêntimo` é a
+> unidade do `CampoCentimos`, porque o `--linha` precisou de uma
+> fronteira, porque o fino U+202F é uma personagem e não uma
+> convenção. Uma decisão futura que contradiga isto tem de encontrar
+> primeiro a razão escrita aqui.
 >
-> **Regra de leitura deste ficheiro.** §1 (o que é), §2 (a direcção
-> vigente), §6b (o bairro), §7 (intocável), §8 (regras de produto) e
-> §10–§11 (rotas, stack, referência viva) são **contrato**. As secções
-> marcadas **[arquivada]** são registo do que se planeou: dizem o que se
-> pensou na altura, não o que o site faz. Nenhuma delas pode ser usada
-> para justificar uma decisão nova.
+> **O que ainda manda** está resumido em `docs/PRODUTO.md` §2.5
+> («O que sobrevive da V3/V4 — [subsiste]») e em §8. Em resumo: a Regra
+> nº1, fonte + data, PT-PT, a cor com significado, o cêntimo como
+> unidade, isométrico = estrutura, o lettering fino e o
+> `prefers-reduced-motion` como estado final imediato.
+>
+> **O que já não vale:** o escuro por omissão (a V5 é **claro** por
+> omissão, §2.2), o Space Grotesk / Source Serif / Space Mono (saíram na
+> P3c — só ficam Archivo e Caveat), a navegação por quatro perguntas (é o
+> mapa), a elevação em quatro níveis, o catálogo de codificações e o
+> inventário de motion da V4 como contrato. Onde este texto e o código
+> divergirem, **o código e o `docs/PRODUTO.md` §2 mandam**.
+>
+> Contrato vigente: `docs/PRODUTO.md` · `AGENTS.md` · `docs/DECISOES.md`.
 
 ---
 
-## 1. O que é
-
-Site público e gratuito de literacia financeira para Portugal. Responde,
-com dados oficiais e simuladores rigorosos, às perguntas que nenhum site
-português cruza num só lugar: para onde vai o salário (bruto → líquido,
-SS, IRS, custo para a empresa), quanto subiu o que se compra (inflação
-por categoria), quanto do preço é imposto (IVA, ISP, cascata), o que é a
-Euribor e porque subiu a prestação, onde rende a poupança.
-
-Não é agregador de notícias, não é comparador comercial, não dá conselhos.
-Read-only: sem contas, sem tracking, sem cookies, sem input pessoal.
-
-**Público: dos 12 anos aos profissionais.** O nível 1 de cada página
-lê-se sem saber nada; o nível 3 satisfaz um jornalista (ver §5).
-
-## 2. Direcção vigente — «O Bairro» (V5)
-
-Decisão do dono de **2026-09-30** (ver `docs/DECISOES.md`), depois do veredicto
-de design sobre a P1: a home deixou de ser uma página de perguntas e passou
-a ser **um mapa**. É o bairro do Porto visto de cima, desenhado a cartoon,
-em que cada edifício é uma das perguntas que o site já fazia.
-
-O que a V5 **não** muda: o que o site ensina, os dados, os motores, as
-regras fiscais, a PT-PT, a read-only. Muda **por onde se entra** e **como
-se apresenta**.
-
-### 2.1 Por onde se entra
-
-- **A home é o mapa.** `/` não é uma lista de cartões nem um hero: é o
-  bairro. Os valores dos marcadores chegam no HTML do servidor — sem
-  JavaScript vê-se o bairro inteiro e os números.
-- **Onze edifícios = onze cenas.** Cada edifício é uma cena curta por
-  **âncora** (`/#financas`), nunca uma rota nova. As cenas vivem em
-  `next/dynamic` e só descem ao entrar no edifício — o bundle inicial da
-  home não traz nenhuma.
-- **As personagens são perfis económicos, não mascotes.** Sete cartas
-  (Inês, Diana, Pedro, Sr. Manuel, Dona Arminda, Gonçalo, Rui e Marta)
-  cada uma com uma relação diferente com o dinheiro: conta de outrem,
-  função pública, recibos verdes, pequeno empresário, reformada,
-  primeiro trabalho, crédito à habitação. Tocar numa carta leva a câmara
-  até à personagem no mapa.
-- **Cada rota VOLTA ao bairro.** De `/salario` vê-se «← Voltar ao bairro:
-  Fábrica» (`/#fabrica`). A navegação é um ciclo, não uma escada.
-
-O mapa completo dos onze edifícios — cada `data-id`, a cena que abre e a
-rota onde se aprofunda — está em **§6b.1**.
-
-### 2.2 Claro por omissão; o escuro é «a noite do bairro»
-
-O tema vive em `<html data-theme>`, inicializado pelo script inlinede `src/app/layout.tsx`: **escolha guardada → claro**. Omissão: claro,
-desde
-o veredicto de design sobre a P1: a home do bairro é uma página de papel e
-não tem tema — estranho era o site nascer escuro e a home clarear sozinha.
-Quem prefere escuro usa o toggle (persistido, visível em todo o site).
-
-O escuro **não é um inverso**: é a noite do bairro. Fundo `#141a33` (o céu
-sobre o Porto), papel `#1d2442`, tinta `#f4efe4`, azul `#8da2ff`, verde
-`#3fc48a`, vermelho `#ff7a5c`, amarelo igual. Todos medidos para passarem
-em AA sobre a noite (ver `docs/AUDITORIA-CENAS-V5.md` e o `--verde-fundo`
-que nasceu de uma falha real).
-
-Uma excepção deliberada, escrita no código: **na home, o mapa nunca
-escurece.** O chrome anoitece, o mapa fica a papel — é uma folha de mapa
-em cima da mesa, não um ecrã.
-
-### 2.3 Tipografia — duas fontes
-
-**Archivo** (com o eixo de largura) para tudo. **Caveat** só nas anotações
-à mão nos gráficos e no quadro da escola. O talão e o recibo em
-**monoespaçada do sistema** (`ui-monospace`, `SFMono-Regular`, Menlo,
-Monaco, Consolas, `Liberation Mono`, `Courier New`) — não descarrega nada
-e o talão fica monoespaçado em qualquer máquina.
-
-As três fontes da V4 (**Space Grotesk**, **Source Serif**, **Space
-Mono**) saíram do `layout.tsx` na P3c. O `--font-editorial` dobrou para o
-Archivo por decisão editorial: só era lido em `src/lib/pontos/tela.ts`
-para medir a altura de um texto, e com ele a desenhar em Archivo a medição
-bate certo com o que se vê.
-
-### 2.4 Forma
-
-Traço de 2,5 a 3,5 px em `--tinta`; botões em pílula com sombra dura
-`3px 4px 0 var(--tinta)`; cartões com raio 18–24 px e a mesma sombra.
-Nada de gradientes de fundo, vidro, roxo ou sombras difusas.
-
-### 2.5 O que sobrevive da V3/V4 — [subsiste]
-
-Estas regras não foram revogadas pela V5. Continuam a mandar, e o bairro
-foi construído por cima delas:
-
-- **[subsiste] Regra nº1** — nunca inventar dados (§8.1).
-- **[subsiste] Fonte + data visíveis** em cada número (§8.2).
-- **[subsiste] PT-PT europeu**, sem «usuário/você» (§8.3).
-- **[subsiste] Cor com significado** — verde = o que fica contigo,
-  vermelho = o que sai, azul = neutro/informa; ▲/▼ nas variações. Nunca
-  decoração.
-- **[subsiste] Um equivalente textual por figura** e AA nos dois temas.
-- **[subsiste] O cêntimo como unidade** — 1 ponto = 1 cêntimo onde há
-  partes de um todo em dinheiro (`CampoCentimos`, que sobreviveu como
-  herói de `/salario`, `/trabalho`, `/impostos`, `/poupanca` e do
-  `e2e/campo-centimos.spec.ts`).
-- **[subsiste] Isométrico = estrutura, pontos = quantidade.** Nunca o
-  contrário.
-- **[subsiste] Letra fina** — o fino U+202F entre número e unidade, o
-  menos U+2212, aspas «…», reticências «…» (§6, [arquivada] mas o
-  `_lettering` continua a correr no CI).
-- **[subsiste] Copy curto e afirmativo**, uma ideia por peça.
-
-O texto **completo** da V3 (as dez regras «Ledger») e da V4 (a unidade, os
-três níveis, o catálogo de codificações, o sistema visual, a coreografia,
-o inventário de motion) foi para **`docs/historico/PRODUTO-V3-V4.md`**, com
-nota de leitura. Está lá porque explica o porquê de muita coisa que
-funciona; não se actualiza e não se cumpre.
-
-## 3. ~~A linguagem V3 «Ledger» — dez regras~~ [arquivada]
-
-> **Esta secção e as §4–§6 são registo, não contrato.** Foram o sistema
-> visual da V3/V4, entre 2026-09-18 e 2026-09-30. O texto íntegro, com
-> tabelas e inventários, está em **`docs/historico/PRODUTO-V3-V4.md`**.
-> Fica aqui um sumário porque explica decisões que ainda mandam; **onde
-> este texto e o código divergirem, ganha o código e ganha a §2.**
+## 3. A linguagem V3 «Ledger» — dez regras (resumo)
 
 Adoptada em 2026-09-21 a partir das referências do dono; o texto completo
 e as decisões extraídas ficam em `docs/DIRECAO-V3.md` (documento de
@@ -181,7 +67,7 @@ ausência não se note. Verificação de movimento: nenhuma animação se
 aprova por screenshot — grava-se vídeo (`scripts/_video.mjs`) e revêem-se
 os fotogramas antes do commit.
 
-## 4. ~~A direcção V4 — «o cêntimo como unidade»~~ [arquivada]
+## 4. A direcção V4 — «o cêntimo como unidade»
 
 Do relatório `referencias/V4/00-RELATORIO.md` (2026-09-22).
 **V4 = V3 «Ledger» + a unidade + a arquitectura.** Não substitui a V3:
@@ -281,7 +167,7 @@ hoje a nav é uma lista plana — o alvo é):
 | **O país** | Dados |
 | **Aprender** | glossário e micro-demonstrações |
 
-## 5. ~~O catálogo de codificações~~ [arquivada]
+## 5. O catálogo de codificações
 
 Conjunto fechado: cada tipo de dado tem a sua forma, e cada gráfico é
 diferente por razão — não por acaso. Componentes marcados *(a construir)*
@@ -305,18 +191,9 @@ frescura tornado objecto: pequeno desenho de pontos cuja **forma** diz o
 estado (em dia = calmo e cheio; a recolher = em rotação; atrasado =
 esburacado). O estado existe sempre também em texto.
 
-## 6. ~~Sistema visual (V4)~~ [arquivada]
+## 6. Sistema visual
 
 Lido do código (`src/app/globals.css`, `src/app/estilo`) — não de planos.
-
-> **[arquivada] Esta secção descreve o sistema visual da V4.** O que está
-> em produção é a §2 (contrato visual «O Bairro») e a §6b. Duas coisas da
-> §6 continuam a valer porque têm implementação viva: a **letra** (§6
-> «Lettering», com o `_lettering` a correr no CI) e o **campo de cêntimos**
-> (o `CampoCentimos` como herói das rotas de dinheiro). O resto — elevação
-> em quatro níveis, tokens `--accent`/`--keep`/`--mark`, a escala
-> `--text-*`, o `Leitura`/`Cartao`/`OrbeEstado` da V4, o inventário de
-> motion — é registo.
 
 ### Elevação — quatro níveis, um instrumento
 
@@ -495,10 +372,8 @@ Sub-escalas fora do cromado mas dentro do sistema: `--text-svg-*`
 (texto dentro de viewBox — unidades do desenho, escalam com o svg) e
 `--text-talao-*` (o talão é um documento de impressora térmica —
 typesetting próprio). Impressão usa `--text-impressao` (pt de papel,
-não rem). O cartão de partilha (`og:image`) deixou de ser raster gerado
-em runtime: é `public/og-bairro.png`, 1200×630, tirado do mapa da home
-em «Dia» com os marcadores à vista (`scripts/_og-bairro.mjs`). A escala
-tipográfica do cartão deixou de ser código — passa a ser o desenho.
+não rem). As imagens OG são raster — a sua escala (`OG_TIPO` em
+`src/lib/og.tsx`) é tipografia de imagem 1200×630, não da página.
 
 ### Lettering — número, sinal e unidade (1B-02)
 
@@ -852,397 +727,3 @@ sempre como `var(--seq-N)` directo — os aliases `--color-*` de
 `@theme inline` só existem quando há utilidade Tailwind correspondente.
 A rampa candidata `seqb` (âmbar escurecido) está desenhada em `/estilo`
 à espera da decisão do dono (ver DECISOES.md — pergunta em aberto).
-
-## 6b. A V5 — «O Bairro» (em produção)
-
-> **Decisão do dono (2026-09-30):** o protótipo V5 «O Bairro» passa a
-> produção. Plano de execução em `docs/PACK-V5-PRODUCAO.md`; registo de
-> trabalho em `docs/NOTAS-V5.md`. **Estado: P0, P1, P2a–c, P3a–c e P4
-> (dados das cenas) estão CONCLUÍDOS e em `main`** — a §6b é contrato
-> vivo, não plano. O que sobra é a revisão de copy do dono
-> (`docs/REVISAO-COPY-V5.md`) e o lançamento.
-
-A V5 não troca o que o site ensina: troca **por onde se entra**. Em vez de
-uma página de perguntas, a home é o bairro do Porto visto de cima, e cada
-edifício é uma das perguntas de sempre. O conteúdo, os simuladores e as
-regras de dado não mudam — muda a sala.
-
-O protótipo em `design/prototipos/` é o contrato visual. Onde este produto
-e o protótipo divergirem, ganha o protótipo; as regras da casa (Regra nº1,
-acessibilidade, PT-PT) ganham sempre.
-
-### 6b.1 Onde mora cada tema
-
-Cada edifício tem um `data-id` que o liga à cena e ao e2e, e uma porta que
-a câmara foca ao abrir.
-
-| Edifício | `data-id` | Cena | Aprofunda em |
-|---|---|---|---|
-| Fábrica | `fabrica` | o salário da Inês, moedas pelas ruas | `/salario` |
-| Segurança Social | `segsocial` | o recibo, a TSU, o Pedro a recibos verdes | `/salario` |
-| Finanças | `financas` | o IRS em gavetas | `/irs` |
-| Banco | `banco` | a prestação e a Euribor | `/credito` |
-| Mercearia | `mercearia` | os essenciais e o IVA no talão | `/inflacao` |
-| Correios | `correios` | a poupança e o poder de compra | `/poupanca` |
-| Bomba | `bomba` | o litro por dentro | `/precos` |
-| Casa da Inês | `casa` | meses de trabalho por uma casa | `/casa` |
-| Pastelaria | `pastelaria` | comer fora e o IVA do café | `/inflacao` |
-| Quiosque | `quiosque` | o país hoje | `/trabalho`, `/dados` |
-| Escola | `escola` | ler gráficos e o glossário | `/aprender` |
-
-As cenas abrem **por âncora** (`/#financas`), nunca por rota nova. Cada
-página de conteúdo ganhou no topo a ligação de volta ao seu edifício
-(«← Voltar ao bairro: Fábrica»), com os títulos dos edifícios em
-`messages/pt.json` (`bairro.edificios.<chave>.titulo`). `/metodologia`,
-`/sobre` e `/estilo` não têm edifício e ficam sem ligação — decisão do
-dono.
-
-### 6b.1b As sete personagens — perfis económicos
-
-As cartas (`src/app/_bairro/Cartas.tsx`, dados em
-`messages/pt.json:bairro.elenco.cartas.*`) não são mascotes: cada uma é um
-regime de 수집 de dinheiro diferente, e é isso que a carta ensina.
-
-| Personagem | Papel | Perfil económico | O que a carta ensina |
-|---|---|---|---|
-| Inês | Operária da fábrica | Conta de outrem · setor privado | Porque é que 1 500 € brutos viram 1 166,83 € |
-| Diana | Professora | Função pública | Descontos diferentes para o mesmo salário |
-| Pedro | Freelancer | Independente · recibos verdes | Segurança Social trimestral e IRS da categoria B |
-| Sr. Manuel | Dono da mercearia | Pequeno empresário | O IVA que cobra, a TSU que paga, o lucro |
-| Dona Arminda | Reformada | Pensão e poupança | Quanto rende a poupança e o IRS sobre a pensão |
-| Gonçalo | Estudante, 16 anos | Mesada e primeiro trabalho | O primeiro recibo, o IRS Jovem, a primeira conta |
-| Rui e Marta | Casal com crédito | Crédito à habitação | A prestação, a Euribor e quanto do salário ela come |
-
-O número da Inês **não está escrito à mão**: compõe-se em `HomeBairro` com
-`linhaSalario()` (a linha de `brutoRef` de `cenarios-salario.json`) e
-`fmtEUR0`. O e2e lê o mesmo JSON e compara com o texto da página.
-
-A ponte carta→mapa é um `CustomEvent` (`b:escolhe-personagem`) — as cartas
-vivem no `<main>` do servidor e não podem receber uma função do `<Bairro>`
-(cliente).
-
-### 6b.2 O kit de desenho
-
-TypeScript puro que devolve SVG em texto, em `src/lib/bairro/`:
-`iso.ts` (motor isométrico e peças), `planta.ts` (a planta e o terreno),
-`personagens.ts` (o esqueleto, o elenco e os passantes), `dados.ts`
-(`dadosBairro()` — os números, lidos de `data/` no servidor).
-
-Três invariantes do kit, que os testes fixam:
-
-1. **Funções puras.** O terreno é um argumento, nunca um global. No
-   protótipo, `definirTerreno()` e `lencoAtual` eram variáveis de módulo
-   escritas e nunca limpas; em produção o mapa não pode depender da ordem
-   de chamada.
-2. **Os ids de padrões SVG levam `b-`**, para não colidirem com o resto do
-   site.
-3. **Nenhum desenho escreve `undefined` nem `NaN`.** O protótipo emitia
-   `fill="undefined"` numa parede sem cor — o browser pintava-a a preto, sem
-   erro na consola. Onde um valor falta, o que se escreve é a falha
-   declarada («—»), nunca um zero.
-
-O SVG entra na página com `dangerouslySetInnerHTML`. É seguro porque não
-entra texto de utilizador: tudo vem do código e de `data/`, e há teste que
-falha se algum valor não for número ou texto da casa.
-
-### 6b.3 O contrato visual V5
-
-Direção: o bairro do Porto em cartoon, claro, traço preto grosso, cores
-chapadas, para dos 11 aos 50 anos. Mantêm-se da V4 a Regra nº1, a cor com
-significado (verde = o que fica contigo · vermelho = o que sai · azul =
-neutro) e ▲/▼ nas variações.
-
-Tokens (claro, por omissão), copiados do protótipo:
-
-| Token | Valor | Uso |
-|---|---|---|
-| `--papel` | `#ffffff` | fundo de cartões e cenas |
-| `--chao` | `#f6f2ea` | fundo das páginas |
-| `--tinta` | `#16130f` | texto e traço |
-| `--tinta-2` | `#4a4540` | texto secundário |
-| `--suave` | `#6e675e` | fontes, notas |
-| `--linha` | `#e4e1da` | divisões |
-| `--amarelo` / `--amarelo-2` | `#ffc62b` / `#fff1c2` | destaque, marcadores |
-| `--azul` / `--azul-2` | `#2445d6` / `#dfe5ff` | informação, botões |
-| `--verde` / `--verde-2` | `#0c8f5c` / `#d3f2e3` | o que fica |
-| `--vermelho` / `--vermelho-2` | `#e2412a` / `#ffe1d9` | o que sai |
-
-**Os tokens vivem em `[data-pele="v5"]`, não em `:root`.** Não é estilo: é
-uma correcção. `--linha` já existia no sistema V4 com outro significado — é o
-contador de escalonamento que `/salario`, `/impostos`, `/casa`, `/poupanca`
-e `/trabalho` escrevem no elemento e que o escalonamento consome em `calc()`
-com o fallback `var(--linha, 0)`. Declará-lo como cor em `:root`
-invalidaria esses quatro `calc()` e pararia a animação de entrada dessas
-rotas. Na P3a o atributo subiu para o `<html>` e a pele vale no site inteiro;
-a fronteira que faltava ficou escrita como `#conteudo { --linha: initial }`.
-
-**Tema escuro = a noite do bairro** (§2.2): fundo `#141a33`, papel
-`#1d2442`, tinta `#f4efe4`, azul `#8da2ff`, verde `#3fc48a`, vermelho
-`#ff7a5c`, amarelo igual — já medidos em AA pelo audit, não proposta.
-
-**Cores semânticas: a casa ganhou ao protótipo.** `#e2412a` mede 4,18:1 e
-`#0c8f5c` 4,1:1 sobre papel — reprovam AA em texto pequeno. Nas rotas com
-a pele os tokens de texto passam por variantes `-txt`, a mesma família
-escurecida até 4,5+ (`#c73a1d`, `#0a7a4f` no claro; em escuro voltam aos
-valores do protótipo, que lá passam). **A regra da casa ganha sempre ao
-protótipo** — se o dono quiser o vermelho do protótipo, só a partir de
-18 px ou negrito.
-
-Tipografia e forma: §2.3 e §2.4.
-
-### 6b.4 A regra de motion do bairro
-
-A regra da V4 («nada entra com animação acima da dobra») **continua a
-mandar**, mas no bairro há uma excepção deliberate e escrita:
-
-> **A animação ambiente é permitida no bairro** — é a home. Onde a V4 só
-> tinha o herói da home, na V5 o mapa inteiro respira: o elétrico sobe e
-> desce a Avenida, as gaivotas traçam órbitas sobre o rio, o nadador dá
-> braçadas debaixo da ponte, os pombos ajeitam-se na Ribeira, o fumo sobe
-> da fábrica, o brilho desliza sobre o Douro.
-
-As regras que continuam, todas:
-
-1. **Nas cenas anima-se o que ensina** — moedas, gavetas, camadas do
-   litro, o quadro da Euribor. Nunca animação decorativa.
-2. **O número certo está sempre no HTML do servidor.** A animação explica
-   a transformação; não é o que traz o número.
-3. **`prefers-reduced-motion` = estado final imediato**, nunca animação
-   atenuada. Em `reduced-motion` a cena escreve **direto** o estado final
-   (a Fábrica escreve CÊNTIMOS exatos, 1 166,83 €, e não o 1 167
-   arredondado) e o chunk do GSAP **não é descarregado** — há e2e que o
-   prova.
-4. **GSAP só via `carregarGsap()`** (regra B-01). Nada importa `gsap`
-   estaticamente.
-5. **Pausa fora da vista.** Tudo o que é contínuo pára fora do ecrã e com
-   o separador escondido (`PausaAmbiente`, IO + `visibilitychange`).
-6. **O mapa nunca mexe no `viewBox`.** O mundo desenha-se uma vez em
-   camadas SVG grandes; a câmara só as desloca e escala com `transform`
-   CSS, e enquadra-se com `ResizeObserver`. Regras de desempenho
-   obrigatórias em `design/prototipos/README.md`.
-
-### 6b.5 O contrato de dados — cenas com JSON em `public/cenas`
-
-Cada cena tem **um ficheiro de dados próprio**: `public/cenas/<id>.json`
-(`fabrica`, `financas`, `banco`, `mercearia`, `correios`, `bomba`,
-`segsocial`, `casa`, `pastelaria`, `quiosque`, `escola`).
-
-**Quem escreve.** O `npm run derive`, pelo passo `scripts/derive/cenas.ts`,
-que chama a MESMA `dadosCenas()` do servidor — nenhuma lógica está
-duplicada. O gerador falha alto se uma série trouxer um buraco (nunca
-escreve `null`, que a aritmética leria como 0) e o `CenasDados` não usa
-`undefined` em campo nenhum.
-
-**Quem lê.** O cliente (`CenaViva`, em `Bairro.tsx`) faz
-`fetch("/cenas/<id>.json")` ao abrir, com cache por id. **Nenhum JSON de
-`data/` chega ao cliente** — só números crus e fontes, via props.
-
-**Porquê.** Antes os dados das cenas viajavam na prop `cenas` do `<Bairro>`:
-o Next embarcava-os no flight (`self.__next_f`) da home — ~19 KB raw de
-séries e tabelas pagos por quem nunca abre um edifício. Medido com
-`scripts/_dieta-html.mjs`: payload RSC 17 184 → **9 088 B gzip**.
-
-**Enquanto o JSON não chega (ou se falhar)** a moldura `CenaDePerto` abre
-na mesma, sem desenho, com Escape/× a funcionar e a falha honesta em vez
-de zeros.
-
-**Os ficheiros são committados.** A ingestão diária faz
-`git add data/ public/api/ public/cenas/` — o mesmo gesto que os dados, o
-mesmo commit. Um `public/cenas` não committado é um bug de dado, não um
-detalhe de higiene.
-
-### 6b.6 As regras de qualidade que o bairro ensinou
-
-Aprendidas na P1 e nas cenas, todas já no CI:
-
-1. **Testes de geometria, não só de DOM.** O hotfix da P1 existiu porque
-   os e2e antigos passavam todos sobre uma página de 20 000 px de altura
-   sem ver um pixel do mapa. Agora `src/lib/bairro/*.test.ts` fixa a
-   geometria (a projeção `P()`, a contagem de edifícios, cada edifício com
-   `data-id`, os valores dos marcadores iguais aos de `data/`, o
-   enquadramento do CSS amarrado à constante da câmara) e
-   `e2e/bairro.spec.ts` mede em `getBoundingClientRect` a 1440/1024/768/375.
-   **Uma asserção que não mede nada é uma asserção que não falha.**
-2. **O `audit` corre no CI.** `_mega-audit` + `_overflow-sweep` + `_sweep` +
-   `_lettering`, na mesma ordem do deploy, contra o `out/` que o `webServer`
-   do Playwright já construiu. Foi o audit que chumbou `/inflacao` e
-   `/precos` em `dark` (ticks do `LineChart` a 4,31:1) e que apanhou a
-   amostra amarela da `/estilo` a 1,37:1. Nenhum dos dois era visível a olho.
-3. **`_gate-html.mjs` é um gate, não um script.** Fica no CI depois do
-   `build`: mede o HTML da home contra o tecto de 80 KB gzip **e verifica
-   a promessa arquitectural** que tornou isso possível — o payload RSC não
-   contém o SVG do mapa. Se alguém voltar a passar o mapa por prop, o gate
-   aponta-lhe o dedo em vez de o deixar passar calado.
-4. **A ingestão commita `public/cenas`.** §6b.5 — dado sem commit é dado
-   que o próximo build não tem.
-5. **O build é o portão, não o typecheck.** Uma função passada por prop a
-   um client component passa o `tsc` limpo e é recusada pelo `next build`
-   (*«Functions cannot be passed directly to Client Components»*). Os
-   pontos viajam como **dados**, nunca como funções.
-6. **A cópia é do dono.** Toda a copy vinda do protótipo é PROPOSTA e está
-   em `docs/REVISAO-COPY-V5.md`, gerada por `node scripts/_revisao-copy.mjs`
-   a partir das fontes de verdade — não escrita à mão, para não poder
-   ficar desactualizada.
-
-## 7. Intocável
-
-- **O ¢** — o C do wordmark é o sinal de cêntimo desenhado (arco à
-  cap-height + haste verde-keep); `LogoMark` é o ¢ sozinho. Fora do
-  logótipo só onde a casa assina e no selo «1 ponto = 1 cêntimo» —
-  regras completas em §6 «O ¢ como símbolo da casa».
-- **O bairro** — o mapa é a home. Nenhuma rota nova sem entrada em §6b.1 e
-  no `AGENTS.md`; as cenas abrem por âncora, nunca por URL nova.
-- **O papel** — os documentos fiscais são peças físicas (recibo, talão,
-  escritura, declaração, caderneta, nota de liquidação); o talão de
-  `/salario` tem escala tipográfica própria (`talao-*`) porque é um
-  documento, não chrome. Na V5 é o talão e o recibo, em monoespaçada do
-  sistema.
-- **A semântica das cores** — verde = fica contigo, vermelhão = sai,
-  azul = neutro; ▲/▼ nas variações. Nunca decoração.
-- **O raio com significado** — na V5: papel cortado (0), cartão do bairro
-  (18–24 px), controlo em pílula com sombra dura.
-- **A unidade** — 1 ponto = 1 cêntimo; isométrico = estrutura, pontos =
-  quantidade.
-- **A noite** — o tema não é uma inversão: é «a noite do bairro» (§2.2), e o
-  mapa nunca escurece.
-
-## 8. Regras de produto — não mudaram
-
-1. **Regra nº1: nunca inventar dados.** Fonte falha → mostra a falha
-   (`—`, `EmptyState`, badge de série atrasada) — nunca um número
-   plausível.
-2. **Cada número tem fonte + data visíveis** (`Source` sob cada figura;
-   `data/meta/sources.json` alimenta o selo de frescura).
-3. **PT-PT europeu.** Proibido: usuário, tela, você, portfólio
-   (portefólio), «descobre/potencia». Segunda pessoa do singular.
-4. **Regras fiscais em `data/fiscal/*.json` por ano** com fonte e
-   vigência — nunca hardcoded, entram por PR manual com fonte legislativa.
-5. **Motores em `src/lib/engines/`** são funções puras testadas, sem UI;
-   o motor fiscal não entra no bundle do cliente — os cenários chegam
-   pré-calculados por props. As cenas do bairro usam **os mesmos motores**
-   (`impostoPorEscaloes`, `simularPrestacao`, `decomporCombustivel`,
-   `simularIndependente`, `trajetoriaColchao`): nada está reimplementado
-   dentro de um componente, e há testes golden que comparam a cena com o
-   resultado do motor.
-6. **Sem aconselhamento financeiro** — disclaimer permanente.
-7. **Copy é do dono.** Agentes propõem estrutura; não publicam texto sem
-   revisão.
-
-## 9. Lista negra
-
-Gradientes de herói · roxo/violeta · glassmorphism · emoji como ícone ·
-ilustração stock · sombra difusa grossa em tudo · paleta categórica em
-séries ordinais · grelhas de cartões idênticos · scroll-jacking / secções
-presas longas · fade-up genérico · mostradores de agulha · qualquer
-animação que atrase a leitura de um número.
-
-## 10. Stack, dados e rotas
-
-Next.js App Router + TypeScript strict, Tailwind 4, `output:"export"`
-(estático — serve-se `out/`, `next start` não funciona). Sem base de
-dados: «dados como código» — `scripts/ingest` (Actions cron) →
-`data/sources` + `data/derived`, validação zod, watchdog de frescura.
-Gráficos SVG/Canvas à medida. Deploy: GitHub Pages, domínio
-`aocentimo.pt`.
-
-Gates antes de merge: `lint && typecheck && test:unit && validate:data &&
-build && test:e2e`.
-
-### Rotas (as que existem em `src/app/`)
-
-`/` (home) · `/salario` `/irs` `/impostos` `/poupanca` `/credito`
-`/casa` (dinheiro) · `/inflacao` `/precos` (preços) · `/trabalho`
-`/dados` (país) · `/aprender` + `/aprender/[slug]` · `/metodologia`
-`/estilo` `/sobre`.
-
-### Instrumentos → uso → contrato a11y
-
-| Componente | Uso | Contrato |
-|---|---|---|
-| `LineChart`/`Spark` | séries temporais | svg `aria-hidden` + equivalente (tabela sr-only); animam só abaixo da dobra ou em interacção |
-| `Cartao` | anatomia Ledger de qualquer cartão | cabeçalho/corpo/controlos/rodapé; selo de estado sempre com texto; inversão para papel |
-| `OrbeEstado` | selo de frescura — a forma diz o estado | disco cheio/anel oco/esburacado/anel em rotação; SVG aria-hidden + texto ao lado; rotação pára fora do ecrã |
-| `Icone`/`IconeEmblema` | símbolos — páginas, acções, estado | conjunto fechado 20×20, traço 1,5; `aria-hidden` por omissão; acções sempre em controlo nomeado; desenham-se uma vez ao foco/passo |
-| `Pagina`/`PaginaDetalhe` | template de três níveis das rotas de conteúdo | níveis = `section aria-labelledby`; confirma em `<details>` fechado |
-| `Leitura` | cartão Ledger de leitura | insight escrito, anotação com chamada, fonte+estado no rodapé |
-| `EuroBar`/`JuroCapital`/`CampoCentimos`/`Isometrico` | comparações e decomposições | equivalente textual único; SSR no estado final; `CampoCentimos` expõe `data-pronto` (entrega SSR→canvas) e `data-assentou` (montes assentados) |
-| `PecaPapel`/`Papel` | documentos | paleta fixa de papel; rasgo determinista |
-| `Regua` | input numérico | range nativo único (teclado/AT); traços + marcador «agora» + presets `Chip`; snap à grelha com ressalto contido |
-| `Botao` | acção/ligação | 4 variantes (primário·secundário·terciário·ícone); `aria-disabled`+razão no nome; `aCarregar` = mini-orbe + `aria-busy` |
-| `Interruptor` | on/off | `role="switch"` + `aria-checked`; estado na posição do nó, trilho e nota — nunca só cor |
-| `Chip` | preset/escolha | `aria-pressed` + pílula cheia + marca (três canais) |
-| `Segmentado` | escolha exclusiva | `radiogroup`; tabindex itinerante; setas seleccionam; desactivado salta-se com razão |
-| `BotaoCopiar` | copiar URL/JSON | `role="status"` anuncia «Copiado»/«Não copiado»; relativo → URL absoluta |
-| `Odometer`/`TweenNum`/`NumHero` | números | valor final no SSR; `aria-live` num só readout |
-| `Delta` | variações | ▲/▼ + cor semântica; estado neutro existe |
-
-Regra transversal: um equivalente por figura, `fmtPeriodo` para todos
-os períodos (`2026-Q1`→«1.º trim. 2026»), fonte+data sempre visíveis,
-container queries nos cartões (o cartão adapta-se ao seu espaço, não ao
-ecrã — nunca dois rótulos sobrepostos).
-
-### Séries e SLAs
-
-Eurostat (mensal, watchdog em `scripts/derive/freshness.ts`):
-IHPC CP00 + 12 divisões ECOICOP + agregados, desemprego
-PT/UE27/jovem, HPI, LCI, PIB homólogo, confiança, electricidade.
-BPstat (mensal): Euribor 1/3/6/12M + 8 TAEG. DGEG (diário):
-PMD gasóleo/gasolina/GPL + electricidade doméstica. Derivados
-(sem SLA próprio — herdam o pior estado dos inputs): `ca-base`,
-`casa-em-salarios`, `desemprego-gap`, `hicp-resumo`, `painel`.
-Estados: `em-dia` / `atrasada` / `sem-sla` — a falha mostra-se.
-
-### Arquitectura de motion
-
-Nada importa `gsap` estaticamente. `carregarGsap()` é um dynamic
-import memoizado chamado só quando `motionActiva()` (não
-reduced-motion) E há movimento legítimo (interacção, ou a animação
-ambiente do bairro — que é a excepção documentada em §6b.4).
-Durações/curvas lidas dos tokens CSS (`dur()`, `ease()`). Em
-reduced-motion o chunk do GSAP **não é descarregado** — tem teste e2e
-que percorre todas as rotas e intercepta os pedidos.
-
-### Orçamento de performance (medido, `_js-por-rota` + `_sweep` + `_gate-html`)
-
-- **HTML da home: tecto de 80 KB gzip** (`scripts/_gate-html.mjs`, gate
-  do CI depois do build). Estado actual: **72,1 KB gzip** medido
-  (2026-10-04), depois de o conserto do flight ter eliminado a segunda
-  viagem do mapa — o payload RSC caiu de 17 184 para 9 088 B.
-  `_dieta-html.mjs` mede o mesmo por blocos (o mapa são ~81 % do raw) e
-  corre experimentos sobre uma cópia em memória, sem escrever nada.
-- **JS inicial por rota: tecto de 350 KB gzip** na home, do pack §P1
-  (`_js-por-rota.mjs` imprime KB *wire*; o tecto é gzip). Medido em
-  2026-10-04: a home carrega **223,7 KB gzip** em 11 ficheiros
-  (~608 KB wire) — dentro do tecto, mas o número subiu desde os 185,7 KB
-  registados na P1 (o registry das cenas e o browser chrome das 11 cenas
-  entraram depois). O registry **fica** dentro do inicial; **as onze cenas
-  não** — viajam por `next/dynamic` e só descem ao entrar no edifício, e o
-  e2e prova que nenhum pedido de cena acontece no load.
-- **O mapa é HTML renderizado, não carga de hidratação.** É a promessa
-  arquitectural que sustenta o tecto acima, e o `_gate-html` verifica-a:
-  o SVG não pode aparecer no `self.__next_f`.
-- **A planta não vai para o bundle do cliente.** Os pontos de
-  enquadramento chegam prontos do servidor, em coordenadas de ecrã, por
-  prop (`Enquadramentos { perto, longe }`). Verificado por `grep` nos
-  chunks: zero vestígios.
-- **A câmara mede o alvo em unidades do mundo, nunca `getCTM()`** —
-  `getCTM()` devolve px do viewport da camada SVG e metia a personagem
-  fora do mundo (defeito medido no build integrado).
-- Fontes: **duas** (Archivo + Caveat), 424 KB / 7 ficheiros `.woff2`
-  depois da P3c (eram 588,7 KB / 22 com as três da V4).
-- Detalhe das últimas medições em `docs/MEDICAO-V5.md`.
-
-## 11. Referência viva
-
-`/estilo` — a referência viva do sistema. **Escrita na linguagem do bairro**
-desde a P3c: a intro diz «o contrato visual «O Bairro», claro por omissão»,
-os rótulos que diziam «Source Serif 4» e «Space Grotesk» dizem agora
-«Archivo» e «monoespaçada do sistema», e há uma secção nova
-(`data-contrato-v5`) com os dez tokens de cor lidos por `var(--token)`, a
-tipografia, a forma, dois gráficos com `aria-label`, o talão e **a noite do
-bairro com um toggle a sério**.
-
-Uma página que **é** a especificação tem de ser exemplar no lettering: os
-números passam por `comUnidade()` de `@/lib/format` (o fino U+202F), como
-qualquer outra página. Quando o sistema mudar, `/estilo` e este documento
-mudam juntos.
