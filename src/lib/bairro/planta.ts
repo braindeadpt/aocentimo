@@ -683,8 +683,22 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
   return {
     chao: chaoSvg,
     gente: { avenida: movA, cais: movB, ceu: gCeu },
-    tras: arvoresTras + candTras + ed.fabrica + ed.segsocial + ed.financas + torre + ed.banco + ed.correios + ed.bomba + miradouro,
-    frente: `<g id="gRibeira">${ribeira}</g>` + jardim + cais,
+    // As duas camadas com edifícios dentro NÃO podem estar escondidas ao
+    // leitor de ecrã (os `.ed` são focáveis). Em troca, o que é só
+    // desenho — árvores, candeeiros, o Clérigos, o miradouro, o jardim e
+    // o cais — volta a ser `aria-hidden`: nenhum dos tem nome, e o
+    // anúncio do desenho só ia fazer ruído à volta dos botões.
+    tras:
+      `<g aria-hidden="true">${arvoresTras}${candTras}</g>` +
+      ed.fabrica +
+      ed.segsocial +
+      ed.financas +
+      `<g aria-hidden="true">${torre}</g>` +
+      ed.banco +
+      ed.correios +
+      ed.bomba +
+      `<g aria-hidden="true">${miradouro}</g>`,
+    frente: `<g id="gRibeira">${ribeira}</g>` + `<g aria-hidden="true">${jardim}${cais}</g>`,
     ribeira,
     vida,
     agua: atracados,

@@ -1,7 +1,16 @@
 import { readFileSync } from "fs";
 import { join } from "path";
 import { describe, it, expect } from "vitest";
-import { MUNDO, ORDEM_CAMADAS, marcadoresSvg, mundoBairro, reflexos, viagensSoltas } from "./mundo";
+import {
+  MUNDO,
+  ORDEM_CAMADAS,
+  marcadoresSvg,
+  mundoBairro,
+  reflexos,
+  viagensSoltas,
+  type RotulosCamada,
+} from "./mundo";
+import pt from "../../../messages/pt.json";
 
 /** A vista que a câmara escreve no `transform` do mundo. */
 interface Vista {
@@ -38,8 +47,17 @@ const D: MarcadoresBairro = {
 
 const M = montarMapa(D);
 
+/** As duas camadas que TÊM edifícios dentro — não podem estar escondidas. */
+const CAMADAS_CONTEUDO = ["b-cFundo", "b-cFrente"] as const;
+
+/** Os nomes reais das duas camadas com edifícios — `messages/pt.json`. */
+const ROTULOS: RotulosCamada = {
+  avenida: pt.bairro.mapa.rotuloAvenida,
+  ribeira: pt.bairro.mapa.rotuloRibeira,
+};
+
 describe("mundoBairro — a ordem das camadas", () => {
-  const { html } = mundoBairro(M);
+  const { html } = mundoBairro(M, ROTULOS);
 
   it("pinta as oito camadas pela ordem do protótipo", () => {
     const pos = ORDEM_CAMADAS.map((id) => html.indexOf(`id="${id}"`));
@@ -82,16 +100,50 @@ describe("mundoBairro — a ordem das camadas", () => {
     expect(html).toContain('class="luz" cx="0" cy="-60" r="46" fill="url(#b-brilho)" opacity="0"');
   });
 
-  it("cada camada é do tamanho do mundo e escondida ao leitor de ecrã", () => {
+  it("cada camada é do tamanho do mundo; só as de conteúdo ficam expostas", () => {
     for (const id of ORDEM_CAMADAS) {
       expect(html).toContain(
         `id="${id}" viewBox="${MUNDO.x} ${MUNDO.y} ${MUNDO.w} ${MUNDO.h}"`
       );
     }
-    // as camadas não se anunciam: quem descreve o mapa é o texto longo
-    expect((html.match(/class="b-camada"[^>]*aria-hidden="true"/g) ?? []).length).toBe(
-      ORDEM_CAMADAS.length
+    // As DUAS camadas com edifícios não podem estar escondidas: os `.ed`
+    // são focáveis, e um `aria-hidden` por cima deles tira-os da árvore
+    // de acessibilidade sem os tirar da tabulação (axe: aria-hidden-focus).
+    // Todas as outras são só desenho e continuam escondidas — quem
+    // descreve o mapa por inteiro é o texto longo do pt.json.
+    const escondidas = [
+      ...html.matchAll(/class="b-camada" id="([^"]+)"[^>]*aria-hidden="true"/g),
+    ].map((c) => c[1]);
+    const conteudo = ORDEM_CAMADAS.filter(
+      (id) => !(CAMADAS_CONTEUDO as readonly string[]).includes(id)
     );
+    expect(escondidas).toEqual([...conteudo]);
+    // e cada uma das duas é um grupo COM NOME (uma camada exposta sem
+    // nome é um grupo mudo — o contrato M-05 do smoke)
+    for (const id of CAMADAS_CONTEUDO) {
+      expect(html).toMatch(
+        new RegExp(
+          `id="${id}" viewBox="${MUNDO.x} ${MUNDO.y} ${MUNDO.w} ${MUNDO.h}"[^>]*role="group" aria-label="`
+        )
+      );
+    }
+    expect(html).toContain(`aria-label="${ROTULOS.avenida}"`);
+    expect(html).toContain(`aria-label="${ROTULOS.ribeira}"`);
+  });
+
+  it("o desenho de dentro das camadas de conteúdo também não se anuncia", () => {
+    // árvores, candeeiros, o Clérigos, o miradouro, o chão e as nuvens:
+    // pintam-se, não se focam — escondê-los dentro da camada deixa o
+    // anúncio só para os onze botões
+    for (const g of ['id="b-gNuvens"', 'id="b-gChao"']) {
+      expect(html).toContain(`<g ${g} aria-hidden="true">`);
+    }
+    for (const desenho of ['class="arvore"', 'class="candeeiro"', 'class="clerigos"']) {
+      expect(M.tras).toContain(desenho);
+    }
+    // a fila da Ribeira é entrelaçada com os edifícios (a ordem de
+    // pintura é a do protótipo) — o que se esconde é o jardim e o cais
+    expect(M.frente).toContain('<g aria-hidden="true">');
   });
 
   it("as peças soltas ficam FORA das camadas (para animarem sem repintar)", () => {
@@ -109,11 +161,11 @@ describe("mundoBairro — determinismo", () => {
   it("duas chamadas dão exactamente o mesmo HTML", () => {
     // sem isto, cada build desenha as estrelas noutro sítio e a
     // hidratação queixa-se de HTML diferente do servidor
-    expect(mundoBairro(M).html).toBe(mundoBairro(M).html);
+    expect(mundoBairro(M, ROTULOS).html).toBe(mundoBairro(M, ROTULOS).html);
   });
 
   it("as estrelas são sempre 70", () => {
-    expect((mundoBairro(M).html.match(/class="estrela"/g) ?? []).length).toBe(70);
+    expect((mundoBairro(M, ROTULOS).html.match(/class="estrela"/g) ?? []).length).toBe(70);
   });
 });
 
@@ -176,7 +228,7 @@ describe("reflexos", () => {
 });
 
 describe("a promessa do dangerouslySetInnerHTML", () => {
-  const { html } = mundoBairro(M);
+  const { html } = mundoBairro(M, ROTULOS);
 
   it("não há texto de utilizador no mapa: só o que o código desenhou", () => {
     // o mapa entra no HTML por dangerouslySetInnerHTML. Isto só é seguro

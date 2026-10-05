@@ -33,7 +33,9 @@ async function percorre(page: Page, id: string) {
   await expect(page.locator(".b-cena")).toBeVisible();
 
   const entra = async (nome: RegExp) => {
-    const b = page.getByRole("button", { name: nome }).first();
+    // LIMITADO À CENA: o mapa também é feito de botões (os onze
+    // edifícios) e o nome acessível do Correios menciona «certificados»
+    const b = page.locator(".b-cena").getByRole("button", { name: nome }).first();
     await b.focus();
     await page.keyboard.press("Enter");
   };
@@ -136,7 +138,8 @@ test.describe("as cenas P2b — geometria do desenho e do gráfico", () => {
     ] as const) {
       await page.goto(`/#${id}`);
       await expect(page.locator(".b-cena")).toBeVisible();
-      for (const nome of passos) await page.getByRole("button", { name: nome }).first().click();
+      for (const nome of passos)
+        await page.locator(".b-cena").getByRole("button", { name: nome }).first().click();
       await expect(page.locator(".b-cena-texto .grafico-irs")).toBeVisible();
       await expect(page.locator(".b-cena-arte .grafico-irs")).toHaveCount(0);
       await esperaDesenho(page);
@@ -200,7 +203,7 @@ test.describe("as cenas P2b — os números certos", () => {
     await expect(page.locator(".b-cena")).toBeVisible();
     await page.getByRole("button", { name: /chamar a senha/i }).click();
     await page.getByRole("button", { name: /mostrar a resposta/i }).click();
-    await page.getByRole("button", { name: /certificados/i }).click();
+    await page.locator(".b-cena").getByRole("button", { name: /certificados/i }).click();
 
     // a pilha dos certificados aparece e cresce; as alturas FIXAM.
     // Espera-se estabilidade (duas amostras iguais a 800 ms de

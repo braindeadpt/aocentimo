@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { casca, cruz, dentro, silParaCascas, type Ponto } from "./ambiente";
-import { mundoBairro } from "../../lib/bairro/mundo";
+import { mundoBairro, type RotulosCamada } from "../../lib/bairro/mundo";
+import pt from "../../../messages/pt.json";
 import { montarMapa, type MarcadoresBairro } from "../../lib/bairro/planta";
 
 /** Marcadores de mentira: só interessa o desenho, não os números. */
@@ -13,6 +14,12 @@ const D = {
 } as unknown as MarcadoresBairro;
 
 const M = montarMapa(D);
+
+/** Os nomes reais das duas camadas com edifícios — `messages/pt.json`. */
+const ROTULOS: RotulosCamada = {
+  avenida: pt.bairro.mapa.rotuloAvenida,
+  ribeira: pt.bairro.mapa.rotuloRibeira,
+};
 
 /**
  * A animação ambiente (P1-2).
@@ -108,7 +115,7 @@ describe("silParaCascas — a data-sil da planta", () => {
 });
 
 describe("o mapa servido já traz as peças que a animação procura", () => {
-  const { html } = mundoBairro(M);
+  const { html } = mundoBairro(M, ROTULOS);
 
   it("o elétrico está montado, para a animação o poder mover", () => {
     // sem isto o effect procuraria #b-eletrico e não encontraria nada —

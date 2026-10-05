@@ -118,6 +118,10 @@ export default function HomeBairro() {
         }
         descricao={m.bairro.mapa.descricao}
         rotuloHora={m.bairro.mapa.rotuloHora}
+        rotulosCamada={{
+          avenida: m.bairro.mapa.rotuloAvenida,
+          ribeira: m.bairro.mapa.rotuloRibeira,
+        }}
         enquadramentos={{ perto: [px, py], longe: [lx, ly] }}
         pinos={pinosDaCamera(d.mapa)}
         coordenadas={PONTOS_ANIMACAO}
@@ -126,7 +130,11 @@ export default function HomeBairro() {
         horaInicial={horaInicial}
       />
 
-      <main id="conteudo-bairro">
+      {/* NÃO é um <main>: o <main> da página é o do layout (#conteudo),
+          que involve o mapa e este elenco. Um segundo <main> fazia três
+          violações de landmark na home (no-duplicate-main, unique e
+          main-is-top-level) e dois pontos de entrada para o conteúdo. */}
+      <div id="conteudo-bairro">
         <section className="b-elenco" aria-labelledby="tElenco">
           <span className="b-etiqueta">{m.bairro.elenco.etiqueta}</span>
           <h2 id="tElenco">{m.bairro.elenco.h2}</h2>
@@ -136,7 +144,7 @@ export default function HomeBairro() {
         <p className="b-notas">
           <b>{m.bairro.elenco.notas}</b> {d.fontes.join(" · ")}
         </p>
-      </main>
+      </div>
     </div>
   );
 }
