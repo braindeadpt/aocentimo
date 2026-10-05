@@ -58,8 +58,14 @@ const ROTAS = ["/", "/estilo", "/salario", "/dados"] as const;
  * por exemplo, é o que obriga a instância de 116%, e não a de 125%:
  * a 125% a frase quebrava em duas linhas.
  *
- * Tolerância de 1 px: a diferença medida contra o `main` vai de 0,00 px
- * (o título de página, exacto) a 0,12 px (o título da intro).
+ * A tolerância é de 2 %, com um mínimo de 2 px. Contra o `main` a
+ * diferença medida é de 0,00 px (o título de página, exacto) a 0,12 px
+ * (o título da intro) — mas o número não é portátil ao milésimo: no
+ * runner da CI o mesmo título mede 715,02 px contra os 713,89 px medidos
+ * aqui, e a diferença é do rasterizador, não do ficheiro. 2 % é largo
+ * para o que é ruído e estreito para o que é um erro: com a instância
+ * errada (125 % em vez de 116 %) o título da intro erra 7,7 %, e com a
+ * base erraria 12 %.
  */
 const LARGURAS = [
   { rota: "/", sel: ".b-intro h1", texto: "O dinheiro explicado", w1440: 713.89, w390: 176.91 },
@@ -261,10 +267,11 @@ test("os títulos medem a largura do contrato, com a fonte carregada", async ({
         medida,
         `${caso.rota} a ${vp.largura}: não encontrei «${caso.texto}»`,
       ).not.toBeNull();
+      const tolerancia = Math.max(2, esperado * 0.02);
       expect(
         Math.abs((medida ?? 0) - esperado),
-        `${caso.rota} a ${vp.largura}: «${caso.texto}» mede ${medida?.toFixed(2)} px, o contrato diz ${esperado} px`,
-      ).toBeLessThan(1);
+        `${caso.rota} a ${vp.largura}: «${caso.texto}» mede ${medida?.toFixed(2)} px, o contrato diz ${esperado} px (tolerância ${tolerancia.toFixed(2)} px)`,
+      ).toBeLessThan(tolerancia);
     }
   }
 });
