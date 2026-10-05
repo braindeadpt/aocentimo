@@ -1,17 +1,17 @@
 {
-  "vigencia": "2026-09-28",
-  "fonte": "Portaria n.º 437-B/2026/1, de 25 de setembro (taxas efetivas com desconto extraordinário); taxa de carbono: Ofício-Circulado AT n.º 25086/2025, em vigor 01-01-2026 — adicionamento 70,0405 €/tCO2 = 15,911 cênt/L na gasolina e 17,334 cênt/L no gasóleo (Quadro E-2 do estudo ERSE «Formação e evolução dos preços dos combustíveis», jul 2026; acesso 2026-10-02)",
-  "fonteUrl": "https://diariodarepublica.pt/dr/detalhe/portaria/437-b-2026-1174266088",
-  "nota": "O ISP é revisto por portaria, por vezes semanalmente (mecanismo de desconto extraordinário em vigor desde 2026). Valores indicativos — confirmar a portaria da semana. Cadeia recente: 270-A jun → 294-A jul → 345-C 14 ago → 372-A 21 ago → 432-A 18 set → 437-B 25 set.",
+  "vigencia": "2026-10-05",
+  "fonte": "Portaria n.º 448-A/2026/1, de 2 de outubro (taxas efetivas com desconto extraordinário); taxa de carbono: Ofício-Circulado AT n.º 25086/2025, em vigor 01-01-2026 — adicionamento 70,0405 €/tCO2 = 15,911 cênt/L na gasolina e 17,334 cênt/L no gasóleo (Quadro E-2 do estudo ERSE «Formação e evolução dos preços dos combustíveis», jul 2026; acesso 2026-10-02)",
+  "fonteUrl": "https://diariodarepublica.pt/dr/detalhe/portaria/448-a-2026-1177060617",
+  "nota": "O ISP é revisto por portaria, por vezes semanalmente (mecanismo de desconto extraordinário em vigor desde 2026). Valores indicativos — confirmar a portaria da semana. Cadeia recente: 270-A jun → 294-A jul → 345-C 14 ago → 372-A 21 ago → 432-A 18 set → 437-B 25 set → 448-A 2 out.",
   "iva": "Taxa normal — ver data/fiscal/iva.json",
   "gasolina95": {
-    "ispELitro": 0.42409,
+    "ispELitro": 0.42815,
     "carbonoELitro": 0.159,
-    "nota": "Portaria 437-B/2026/1 fixou ISP em 424,09 €/1000 L, já com desconto de 73,43 €/1000 L (art. 2.º n.º 1; em vigor 28 set 2026)"
+    "nota": "Portaria 448-A/2026/1 fixou ISP em 428,15 €/1000 L, já com desconto de 69,37 €/1000 L (art. 2.º n.º 1; em vigor 5 out 2026)"
   },
   "gasoleo": {
-    "ispELitro": 0.26131,
+    "ispELitro": 0.2644,
     "carbonoELitro": 0.173,
-    "nota": "Portaria 437-B/2026/1 fixou ISP em 261,31 €/1000 L, já com desconto de 100,29 €/1000 L (art. 2.º n.º 3; em vigor 28 set 2026). O valor anterior (0,298) era referência de maio/2026, não o da portaria citada"
+    "nota": "Portaria 448-A/2026/1 fixou ISP em 264,40 €/1000 L, já com desconto de 97,20 €/1000 L (art. 2.º n.º 3; em vigor 5 out 2026)"
   }
 }

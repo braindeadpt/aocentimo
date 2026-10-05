@@ -504,7 +504,7 @@
       "fabrica": "toca na Fábrica!"
     },
     "mapa": {
-      "descricao": "Mapa ilustrado de um bairro português visto de cima: fábrica, Segurança Social, Finanças, banco, correios e bomba de gasolina na avenida do elétrico; mercearia, pastelaria, a casa da Inês, a praça com o quiosque e a escola cá em baixo, no Cais da Ribeira, ligados à avenida por umas escadinhas; a Torre dos Clérigos lá atrás; à frente o Douro, os barcos rabelos e a Ponte D. Luís I à frente. Cada edifício tem por cima um número real de hoje.",
+      "descricao": "Mapa ilustrado de um bairro português visto de cima: fábrica, Segurança Social, Finanças, banco, correios e bomba de gasolina na avenida do elétrico; mercearia, pastelaria, a casa da Inês, a praça com o quiosque e a escola cá em baixo, no Cais da Ribeira, ligados à avenida por umas escadinhas; a Torre dos Clérigos lá atrás; à frente o Douro, os barcos rabelos e a Ponte D. Luís I. Cada edifício tem por cima um número real de hoje.",
       "rotuloHora": "Hora do dia",
       "rotuloAvenida": "Os edifícios da avenida",
       "rotuloRibeira": "Os edifícios do Cais da Ribeira"
@@ -642,7 +642,7 @@
   },
   "estilo": {
     "titulo": "Contrato visual «O Bairro»",
-    "nota": "O que o protótipo mostra é o que vai para produção. Onde esta página e o protótipo divergirem, ganha o protótipo; onde a página e as regras da casa divergirem, ganha a casa.",
+    "nota": "Esta página é a referência do aspecto do site: as cores, a tipografia e as formas que se repetem em todas as páginas. Onde ela e as regras da casa divergirem, ganham as regras da casa.",
     "cor": "Cor",
     "corNota": "Cada cor tem um nome e um sítio. O verde é o que fica contigo, o vermelho é o que sai, o azul é neutro e informa. Nenhuma cor decora.",
     "tipografia": "Tipografia",
@@ -659,7 +659,7 @@
     "cartao": "Cartão",
     "cartaoNota": "Raio de 22 px, traço de tinta, a mesma sombra dura. Nada de vidro, nada de gradiente, nada de sombra difusa.",
     "grafico": "Gráfico",
-    "graficoNota": "Toda a figura tem um equivalente textual e é legível nos dois temas. As séries que recuam de contexto usam a família de tinta, não cor.",
+    "graficoNota": "Toda a figura tem um equivalente textual e é legível nos dois temas. As séries de fundo, que dão contexto, usam tons de tinta e não cor.",
     "papel": "O papel",
     "papelNota": "O talão é um objecto físico: não muda de cor quando se apaga a luz. O verde é o papel do que fica contigo, o vermelho o do que sai.",
     "noite": "A noite do bairro",

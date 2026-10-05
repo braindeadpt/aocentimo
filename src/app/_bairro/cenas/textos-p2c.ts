@@ -38,9 +38,9 @@ export const casaPalpiteAria = "O teu palpite em meses";
 export const casaPalpiteFmt = (v: number) => `${v} meses`;
 export const casaBtnResposta = "Mostrar a resposta";
 export const casaFala2 = (juizo: string, meses: string) =>
-  `<b>${juizo}</b> Hoje custa <span class="r">${meses} meses</span>: quase o dobro.`;
+  `<b>${juizo}</b> Hoje custa <span class="r">${meses} meses</span>.`;
 export const casaExplica = (subHpi: string, subLci: string) =>
-  `Desde 2015, os preços das casas subiram <span class="r">${subHpi}</span>. O custo do trabalho, o que as empresas pagam por cada hora trabalhada, subiu <b>${subLci}</b>. As casas correram muito mais depressa do que o custo do trabalho.`;
+  `Desde 2015, os preços das casas subiram <span class="r">${subHpi}</span>. O custo do trabalho, o que as empresas pagam por cada hora trabalhada, subiu <b>${subLci}</b>.`;
 export const casaNota = (ultimo: string) =>
   `«Meses de trabalho» é uma forma de ler a razão entre dois índices oficiais (preços da habitação ÷ custo do trabalho, 2015 = 100). Não é o salário líquido de ninguém. Último dado: ${ultimo}.`;
 export const casaBtnGrafico = "Aprender a ler o gráfico →";
@@ -86,7 +86,7 @@ export const pastNotaIndice =
   "«Comer fora» é o índice europeu de restaurantes e alojamento, onde entram os cafés e também os hotéis.";
 export const pastBtnIva = "E o IVA do café? →";
 export const pastFala3 = (taxa: string) =>
-  `No café, o IVA é de <span class="r">${taxa}</span>: mais do dobro do pão da mercearia.`;
+  `No café, o IVA é de <span class="r">${taxa}</span>.`;
 export const pastIvaTexto = (
   hoje: string,
   iva: string,

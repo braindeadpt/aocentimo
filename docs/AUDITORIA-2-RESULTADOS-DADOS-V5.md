@@ -2,7 +2,7 @@
 
 > Feita a **2026-09-30** (21:00–23:00, hora de Lisboa, WEST) por auditor
 > independente — LLM com browser — sobre `main` = `1996890`. Item a item do
-> [`docs/PROMPT-AUDITORIA-2-DADOS-V5.md`](docs/PROMPT-AUDITORIA-2-DADOS-V5.md)
+> [`docs/PROMPT-AUDITORIA-2-DADOS-V5.md`](PROMPT-AUDITORIA-2-DADOS-V5.md)
 > (secções **C**, **D**, **E** e **F**), nas fontes, com veredicto e prova
 > literal. Corrigiu-se **só** o que o quadro marcou ERRADO e que foi provado
 > com o artigo ou a fonte oficial aberta e citada.
@@ -225,7 +225,7 @@ sem ele, mostrar ao utilizador que a simulação não fecha.Golden tests novos n
 
 > **Anexo arquivado:** a prova física desta leitura (PDF original, as 3
 > páginas rasterizadas e o transcript integral do OCR) está em
-> [`docs/ANEXO-OCR-IMI-FAMILIAR-PORTO/`](docs/ANEXO-OCR-IMI-FAMILIAR-PORTO/README.md),
+> [`docs/ANEXO-OCR-IMI-FAMILIAR-PORTO/`](ANEXO-OCR-IMI-FAMILIAR-PORTO/README.md),
 > com proveniência, método e hashes SHA-256.
 
 O PDF digitalizado do município (3 páginas, zero texto embutido) foi lido com

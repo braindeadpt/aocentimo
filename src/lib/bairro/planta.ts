@@ -539,7 +539,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
         return `<g class="gato" transform="translate(${f1(g[0])} ${f1(g[1])})"><path d="M0 0 q-1 -13 7 -14 q8 1 7 14 z" fill="${K}"/><path d="M1.5 -12 l1.5 -5 l3 4 M12.5 -12 l-1.5 -5 l-3 4" fill="${K}"/><path class="cauda" d="M13 -1 q9 -2 8 -12" fill="none" stroke="${K}" stroke-width="2.6" stroke-linecap="round"/></g>`;
       },
     });
-    ed.casa = edificioIso("casa", "Casa da Inês — o que chega ao fim do mês", svg);
+    ed.casa = edificioIso("casa", "Casa da Inês — quantos meses de trabalho custa uma casa?", svg);
     rib.push(ed.casa);
     portas.casa = naFachada(i, J, DJ, (wi * LAD) / 2);
     pinos.push(["casa", Pt(i + wi / 2, J + DJ / 2), h + 50, "Chega à conta", D.liquido]);
@@ -581,7 +581,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
         return `<rect x="${f1(m[0] - 10)}" y="${f1(m[1] - 18)}" width="20" height="20" fill="${C.ocre}" stroke="${K}" stroke-width="2.2"/><path d="M${f1(m[0] - 12)} ${f1(m[1] - 18)} l12 -12 l12 12 z" fill="#b8543a" stroke="${K}" stroke-width="2"/><path d="M${f1(m[0] - 5)} ${f1(m[1] - 2)} q0 -10 5 -11 q5 1 5 11 z" fill="${C.amarelo}" stroke="${K}" stroke-width="1.5"/>`;
       },
     });
-    ed.escola = edificioIso("escola", "Escola — as palavras do dinheiro", svg);
+    ed.escola = edificioIso("escola", "Escola — ler gráficos e as palavras do dinheiro", svg);
     rib.push(ed.escola);
     portas.escola = naFachada(i, J, DJ, wi * LAD - 29);
     pinos.push(["escola", Pt(i + wi / 2, J + DJ / 2), h + 48, "Pergunta do dia", "inflação?"]);
