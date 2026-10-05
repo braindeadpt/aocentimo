@@ -51,29 +51,46 @@ interface PropsComuns {
   aoFechar: () => void;
 }
 
-const CenaFabrica = dynamic(() => import("./CenaFabrica"));
-const CenaFinancas = dynamic(() => import("./CenaFinancas"));
-const CenaBanco = dynamic(() => import("./CenaBanco"));
-const CenaMercearia = dynamic(() => import("./CenaMercearia"));
-const CenaCorreios = dynamic(() => import("./CenaCorreios"));
-const CenaBomba = dynamic(() => import("./CenaBomba"));
-const CenaSegSocial = dynamic(() => import("./CenaSegSocial"));
-const CenaCasa = dynamic(() => import("./CenaCasa"));
-const CenaPastelaria = dynamic(() => import("./CenaPastelaria"));
-const CenaQuiosque = dynamic(() => import("./CenaQuiosque"));
-const CenaEscola = dynamic(() => import("./CenaEscola"));
+/**
+ * O mapa edificio → importador. É a FONTE ÚNICA: o `dynamic()` de cada
+ * cena e o prefetch (`importarCena()`) chamam a MESMA função, para que o
+ * prefetch e a cena acabem no mesmo chunk — duas funções `import()`
+ * diferentes para o mesmo módulo é o caminho para o chunk ser pedido
+ * duas vezes.
+ */
+/** A forma de um importador de cena: o `dynamic()` só quer o `default`. */
+type ModuloCena = { default: ComponentType<PropsComuns> };
+type Importador = () => Promise<ModuloCena>;
+/** O mesmo `import()` nos dois lados: o do `dynamic()` e o do prefetch. */
+const cena = (imp: () => Promise<unknown>) => imp as unknown as Importador;
+
+const IMPORTADORES: Record<string, Importador> = {
+  fabrica: cena(() => import("./CenaFabrica")),
+  financas: cena(() => import("./CenaFinancas")),
+  banco: cena(() => import("./CenaBanco")),
+  mercearia: cena(() => import("./CenaMercearia")),
+  correios: cena(() => import("./CenaCorreios")),
+  bomba: cena(() => import("./CenaBomba")),
+  segsocial: cena(() => import("./CenaSegSocial")),
+  casa: cena(() => import("./CenaCasa")),
+  pastelaria: cena(() => import("./CenaPastelaria")),
+  quiosque: cena(() => import("./CenaQuiosque")),
+  escola: cena(() => import("./CenaEscola")),
+};
 
 /** O edifício → o componente da cena. */
-export const CENAS: Record<string, ComponentType<PropsComuns>> = {
-  fabrica: CenaFabrica as ComponentType<PropsComuns>,
-  financas: CenaFinancas as ComponentType<PropsComuns>,
-  banco: CenaBanco as ComponentType<PropsComuns>,
-  mercearia: CenaMercearia as ComponentType<PropsComuns>,
-  correios: CenaCorreios as ComponentType<PropsComuns>,
-  bomba: CenaBomba as ComponentType<PropsComuns>,
-  segsocial: CenaSegSocial as ComponentType<PropsComuns>,
-  casa: CenaCasa as ComponentType<PropsComuns>,
-  pastelaria: CenaPastelaria as ComponentType<PropsComuns>,
-  quiosque: CenaQuiosque as ComponentType<PropsComuns>,
-  escola: CenaEscola as ComponentType<PropsComuns>,
-};
+export const CENAS: Record<string, ComponentType<PropsComuns>> = Object.fromEntries(
+  Object.entries(IMPORTADORES).map(([id, imp]) => [id, dynamic(imp)])
+);
+
+/**
+ * Aquece o chunk de uma cena sem a montar. É isto que faz o prefetch do
+ * CÓDIGO: o `import()` descarrega e avalia o módulo, e quando a cena
+ * abrir o `dynamic()` já o tem — sem segunda ida à rede. Não guarda
+ * nada: o browser é que faz cache do chunk.
+ */
+export function importarCena(id: string): Promise<unknown> | null {
+  const imp = IMPORTADORES[id];
+  if (!imp) return null;
+  return imp().then(() => undefined);
+}
