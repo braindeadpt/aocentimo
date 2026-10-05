@@ -25,8 +25,14 @@
  *            do que está em disco (para o CI não ficar a mentir).
  */
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
-const RAIZ = new URL("..", import.meta.url).pathname;
+// `new URL("..", import.meta.url).pathname` não é um caminho de ficheiro:
+// no Windows devolve «/C:/Users/…» (a barra à frente da letra de disco
+// entra no caminho) e o script passa a pedir ficheiros a partir desse
+// prefixo — ENOENT em tudo. `fileURLToPath` devolve o caminho do sistema.
+// A barra final é a de sempre: o script concatena («${RAIZ}docs/…»).
+const RAIZ = fileURLToPath(new URL("..", import.meta.url));
 const DESTINO = `${RAIZ}docs/REVISAO-COPY-V5.md`;
 
 /* ——————————————————————————— utilidades ——————————————————————————— *//** Números escritos dentro da própria frase (o risco da Regra nº1). */
@@ -97,7 +103,9 @@ function argumentosDeChave(chave) {
     const pasta = caminho.slice(0, caminho.lastIndexOf("/") + 1);
     for (const comp of listar(`${RAIZ}${pasta}`)) {
       if (!comp.endsWith(".tsx")) continue;
-      const src = readFileSync(`${pasta}${comp}`, "utf8");
+      // a lista vem de `${RAIZ}${pasta}`; ler de `${pasta}${comp}` só
+      // batia certo se o script fosse corrido da raiz do repo
+      const src = readFileSync(`${RAIZ}${pasta}${comp}`, "utf8");
       // o prefixo `T.` é o que importa: uma chamada solta com o mesmo
       // nome seria outra chave
       let i = src.indexOf(`T.${chave}(`);

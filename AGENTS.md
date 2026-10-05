@@ -134,7 +134,14 @@ estas regras divergirem, **ganha o protótipo**, excepto nas regras da casa
   `prefers-reduced-motion`, e o número certo está sempre no HTML.
 - **As cenas abrem por âncora** (`/#financas`), não por rota. `next/dynamic`
   só quando se entra no edifício: o bundle inicial da home não traz nenhuma
-  cena. `_js-por-rota.mjs` não pode passar de 350 KB **gzip** na home
+  cena. **Mas a home em repouso pode pré-carregar até 3 cenas à vista**: 4 s
+  depois do `load`, uma por passo em `requestIdleCallback`, e só os
+  edifícios que estão à vista no ecrã. **Nunca antes do `load`** (um bundle
+  que ainda está a chegar disputa-lhe a banda) e **nunca com Save-Data**
+  ligado (`navigator.connection.saveData`); com
+  `prefers-reduced-motion` também não, porque adivinhar rede antes de
+  alguém pedir é gastar dados sem o utilizador ter dito que pode (#73).
+  `_js-por-rota.mjs` não pode passar de 350 KB **gzip** na home
   (medido 2026-10-04: 223,7 KB gzip / ~608 KB wire).
 - **Os valores dos marcadores chegam prontos.** A planta recebe texto já
   formatado por `src/lib/format.ts`; nunca escreve `€/L`, `+n %` ou um
