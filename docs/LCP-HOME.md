@@ -91,7 +91,10 @@ O que isto diz:
    depois do primeiro ocioso, mantendo a câmara imediata. *Risco: médio.*
 
 3. **Eliminar a penalização do swap da fonte da intro** — ganho ~1,5 s no
-   elemento exacto do LCP. É decisão de **contrato visual**: o repo escolheu
+   elemento exacto do LCP. É a **mesma face** que faz o CLS de 0,0438 no
+   browser real ([`CLS-HOME.md`](./CLS-HOME.md)): o `Archivo-intro.woff2`
+   entra tarde e volta a quebrar o `<h1>` de 2 para 3 linhas. Um só arranjo
+   fecha as duas contas. É decisão de **contrato visual**: o repo escolheu
    `font-display: swap` de propósito (`layout.tsx`), e passar a `optional` na
    intro arrisca mostrar a fonte de recurso a quem chega de rede fria. A
    levar ao dono antes de mexer. *Risco: baixo–médio.*
