@@ -52,6 +52,22 @@
 [data-pele="v5"] .b-janela.b-arrasto {
   cursor: grabbing;
 }
+/* O ARRASTO SEM REPINTAR (auditoria 2026-10-06, Item B). Enquanto se
+   arrasta, o mundo pára (aqui as animações CSS; em ambiente.ts as do
+   GSAP) e ganha camada própria só durante o gesto: o compositor desliza
+   a imagem já pintada em vez de repintar o bairro a cada fotograma.
+   Medido no Chromium a 390×664, DPR 3, CPU 4×, três arrastos: pinturas
+   2 595 → ~300, tempo de pintura 6,5 s → 0,8 s, fotograma mediano
+   58 → 21 ms (p90 86 → 38). A camada é UMA, só durante o gesto, e
+   recortada pela janela — no WebKit (DPR 3, 4 e 8 zooms + arrastos) o
+   pico fica nos ~810 MB, longe do crash dos ~1 450 MB; promover as oito
+   `.b-camada` em permanência é que não (ver em baixo). */
+[data-pele="v5"] .b-janela.b-arrasto .b-mundo {
+  will-change: transform;
+}
+[data-pele="v5"] .b-janela.b-arrasto .b-mundo * {
+  animation-play-state: paused !important;
+}
 
 /* O mundo: um contentor com `transform`. A câmara escreve aqui e em mais
    lado nenhum — mexer no viewBox obrigaria o browser a repintar o mapa
@@ -398,6 +414,15 @@
 [data-pele="v5"] .ed:focus-visible > *,
 [data-pele="v5"] .ed.b-ativo > * {
   transform: translateY(-7px);
+}
+/* No telemóvel, o marcador que não cabe inteiro esbate-se e volta quando
+   entra na vista (camara.ts, `esconderCortados`). */
+[data-pele="v5"] .pin {
+  transition: opacity 0.2s;
+}
+[data-pele="v5"] .pin.b-fora {
+  opacity: 0;
+  pointer-events: none;
 }
 [data-pele="v5"] .pin .pin-corpo {
   transition: transform 0.25s cubic-bezier(0.3, 1.6, 0.5, 1);

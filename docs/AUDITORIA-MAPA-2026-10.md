@@ -147,24 +147,63 @@ mismatch de hidratação (`hora.test.ts` confere o script contra a regra às
 
 ---
 
-## 5. O que fica em aberto (decisão do dono)
+## 5. Marcadores cortados no telemóvel — CORRIGIDO (decisão do dono)
 
-- **Telemóvel: marcadores cortados nas pontas.** Por desenho (`vistaInicial`,
-  «os outros marcadores ficam a um arrasto»), no ecrã estreito só os quatro
-  essenciais têm de caber; «Cabaz desde 2020» e «Cert. de Aforro» nascem
-  meio fora. Alternativas: esconder os não essenciais no arranque, ou
-  aceitar a fonte mais pequena e mostrá-los todos.
-- **Arrastar repinta o mapa.** A maqueta punha `will-change` nas oito
-  camadas (arrasto só no compositor, ~35 fps) à custa da memória que matava
-  o iPhone. A produção escolheu a memória; a classe `b-repinta` da câmara
-  ficou sem regra CSS (código morto inofensivo). O caminho para ganhar os
-  fps de volta sem o custo é o Item 3 do `MAPA-HOME.md` (menos nós).
+No ecrã estreito (< 700 px) a vista é mais pequena do que o bairro, e
+«Cabaz desde 2020» e «Cert. de Aforro» nasciam meio cortados nas pontas. O dono
+escolheu: **o marcador que não cabe inteiro esconde-se e volta quando entra
+na vista**. `esconderCortados()` em `camara.ts` põe `b-fora` (opacidade 0,
+sem cliques, transição de 0,2 s) com a mesma caixa do enquadramento
+(`marcadorCabe()`, testado em `camara.test.ts`). No computador nunca se
+esconde nada; sem JavaScript também não.
+
+## 6. O arrasto repintava o mapa — CORRIGIDO
+
+### Causa (medida)
+
+Não era só o `transform`: o bairro **anima a cada fotograma** (gente, elétrico,
+barcos), por isso o browser repintava a área visível do mapa em cada fotograma
+do arrasto, e a câmara reescrevia ainda os 13 `transform` dos marcadores, mesmo
+quando nada mudava. Promover as camadas não ajudava sozinho, porque o
+conteúdo continuava a mudar por baixo (medido: `will-change` no `.b-mundo`
+sem pausa → fotograma mediano 62 ms, pior p90).
+
+### Correcção
+
+- Durante o gesto (`.b-arrasto`, que a câmara já punha) o mundo **pára**:
+  `animation-play-state: paused` nas animações CSS e `pause()`/`resume()` nas
+  do GSAP (`ambiente.ts`, `MutationObserver` à classe). Retomam onde estavam.
+- Só durante o gesto o `.b-mundo` ganha `will-change: transform`: **uma**
+  camada, recortada pela `.b-janela`; o compositor desliza a imagem.
+- `arrumarPinos()` só reescreve os marcadores quando a largura da janela muda.
+
+### Depois (Chromium 390×664, DPR 3, CPU 4×, três arrastos)
+
+| | antes | depois |
+|---|---|---|
+| pinturas | 2 595 | ~300 |
+| tempo de pintura | 6,5 s | 0,8 s |
+| fotograma mediano | 58 ms | 21 ms |
+| fotograma p90 | 86 ms | 38 ms |
+
+WebKit (DPR 3, 0/4/8 zooms + seis arrastos): pico 546 / 808 / 803 MB, sem
+crash — a camada temporária custa ~100 MB e fica longe dos ~1 450 MB que
+matavam o iPhone. Promover as oito `.b-camada` em permanência continua
+proibido.
+
+## 7. O que fica em aberto
+
+- **Item 3 do `MAPA-HOME.md` (menos nós)** continua a ser o ganho no
+  primeiro carregamento (~1,3 s de pintura); o arrasto já não depende dele.
+- **Modo escuro ≠ noite do bairro.** O tema muda o cabeçalho, as cartas e o
+  rodapé; o mapa segue a hora local e ignora o tema, apesar de o
+  `globals.css` dizer «Tema escuro = a noite do bairro». Por ligar.
 - **`#b-noite` usa `mix-blend-mode: multiply`** sobre o mundo inteiro. Não
   é causa de crash (bissecção acima), mas é a pintura mais cara da noite.
 
 ---
 
-## 6. Instrumentos
+## 8. Instrumentos
 
 - `scripts/_sonda-mapa.mjs [movel|desktop] [dia|noite]` — enquadramento
   medido (margens dos edifícios e dos marcadores dentro da janela), erros de
