@@ -38,6 +38,16 @@
   height: clamp(460px, 74vh, 760px);
   touch-action: none;
   cursor: grab;
+  /* A janela é UMA superfície do tamanho do ecrã, recortada. Sem isto o
+     mapa pintava-se na camada da página e, com zoom, cada animação
+     repintava o mundo à escala do zoom × Retina: medido no WebKit a DPR 3,
+     4 cliques de «+» levavam o processo de ~550 MB a ~1 450 MB. Com a
+     janela composta e `contain: strict` o pico fica nos ~670 MB, e a
+     superfície custa só largura × altura do ecrã (≈7 MB num iPhone).
+     NÃO se promovem as camadas de 3600×2500 (ver .b-camada). */
+  overflow: hidden;
+  contain: strict;
+  will-change: transform;
 }
 [data-pele="v5"] .b-janela.b-arrasto {
   cursor: grabbing;
@@ -84,11 +94,12 @@
   transform-origin: 0 0;
   /* Enquadramento de referência a 1440×900: TODOS os 13 marcadores
      inteiros, com 12 px de folga em cima e 2 nos outros lados (o critério
-     do dono). É a MESMA conta da câmara — `vistaInicial()` em camara.ts,
+     do dono), e CENTRADOS na horizontal (auditoria 2026-10-06: antes a
+     vista deslocava-se «o mínimo» e o bairro abria encostado à direita). É a MESMA conta da câmara — `vistaInicial()` em camara.ts,
      com a cadeia de arrumação dos marcadores incluída; o teste em
      mundo.test.ts confere os dois. A 1280 e a 1920 a câmara refaz o
      enquadramento ao arrancar (a razão de ecrã muda a vista). */
-  transform: translate(-28.2088cqw, -23.9083cqw) scale(0.58421);
+  transform: translate(-33.3983cqw, -23.9083cqw) scale(0.58421);
 }
 /* AS CAMADAS EMPILHAM-SE AQUI, e não em fluxo. Cada `.b-camada` é um SVG
    do tamanho do mundo inteiro (3600×2500): em `position: static` — o
@@ -122,12 +133,26 @@
 [data-pele="v5"] #b-cFrente > * {
   pointer-events: visiblePainted;
 }
-/* o mesmo para as peças soltas (barcos, metro, nuvens): têm `left/top`
-   inline a posicioná-las no mundo — em static isso empilhava-as também */
-[data-pele="v5"] .b-solto {
-  position: absolute;
-  overflow: visible;
+/* As peças que viajam (nuvens, metro, rabelos) são `<g class="b-viagem">`
+   dentro das camadas, animadas por CSS. Já NÃO são SVG soltos em
+   `position: absolute`: um elemento HTML com `translate` animado obriga o
+   compositor a promover as camadas de 3600×2500 que lhe ficam por cima, e
+   no iPhone isso esgotava a memória da página (ver mundo.ts, `viajante`).
+   A deriva das nuvens é a `nuvemAnda` do protótipo, que se tinha perdido
+   na passagem para produção. */
+[data-pele="v5"] .b-viagem {
   pointer-events: none;
+}
+[data-pele="v5"] .nuvem-sp {
+  animation: b-nuvem-anda var(--dur) ease-in-out infinite alternate;
+}
+@keyframes b-nuvem-anda {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: var(--dx) 0;
+  }
 }
 /* No telemóvel o protótipo começa perto da fábrica e da avenida, não no
    bairro inteiro: muda o centro e a escala. A vista alarga-se do 820 de
@@ -205,7 +230,7 @@
     opacity: 0.35;
   }
 }
-[data-pele="v5"] .b-noite .b-solto {
+[data-pele="v5"] .b-noite .b-viagem {
   opacity: 0.9;
 }
 

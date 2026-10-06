@@ -121,9 +121,14 @@ estas regras divergirem, **ganha o protótipo**, excepto nas regras da casa
   resto do site; `azAzul` ou `granito` sem prefixo colidiriam.
 - **A câmara nunca mexe no `viewBox`.** O mundo desenha-se uma vez em
   camadas SVG grandes e a câmara só as desloca e escala com `transform`
-  CSS. Regras de desempenho obrigatórias em `design/prototipos/README.md`:
-  nuvens, barcos e metro são SVG solto animado por CSS; reflexos são cópias
-  paradas; a câmara enquadra-se com `ResizeObserver`.
+  CSS. Regras de desempenho obrigatórias em `design/prototipos/README.md`,
+  com UMA excepção medida: nuvens, barcos e metro são `<g class="b-viagem">`
+  animados por CSS **dentro** das camadas, nunca HTML solto entre elas — um
+  elemento HTML animado promove as camadas de 3600×2500 por cima dele e o
+  iPhone mata a página por memória (`docs/AUDITORIA-MAPA-2026-10.md`).
+  Nunca `will-change` nas camadas; a `.b-janela` é a única superfície
+  composta. Reflexos são cópias paradas; a câmara enquadra-se com
+  `ResizeObserver`. A hora do dia é a LOCAL (`hora.ts`), nunca a do build.
 - **A câmara mede o alvo em unidades do mundo, nunca `getCTM()`** — que
   devolve px do viewport da camada e punha a personagem fora do mapa.
 - **Animações relativas:** em GSAP, deslocações de balanço usam `"+=n"`,

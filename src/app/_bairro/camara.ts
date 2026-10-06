@@ -446,7 +446,14 @@ function encaixaCaixas(
     r.h = r.w * razao;
     const fm = folgaLado / (L / r.w);
     r.x = minEsq - fm;
+  } else if (precisoX <= r.w) {
+    // cabe: CENTRA-SE no conteúdo. Deslocar «o mínimo» deixava o bairro
+    // encostado a um lado — a 1440×900 eram 255 px de margem à esquerda e
+    // 124 à direita (medido no browser): o «mapa descentrado ao abrir».
+    r.x = (minEsq + maxDir) / 2 - r.w / 2;
   } else {
+    // não cabe e não pode alargar: desloca-se o mínimo, o resto fica ao
+    // alcance do arrasto
     const fm = folgaLado / (L / r.w);
     if (minEsq < r.x + fm) r.x = minEsq - fm;
     else if (maxDir > r.x + r.w - fm) r.x = maxDir + fm - r.w;

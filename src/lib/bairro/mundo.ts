@@ -11,20 +11,20 @@
  * A ORDEM DAS CAMADAS É CONTRATO. Vem do protótipo e não se mexe sem o
  * dono voltar a ver o mesmo desenho:
  *
- *   nuvens → b-cFundo (padrões, sol, chão, fila de cima)
+ *   b-cFundo (padrões, nuvens a passar, sol, chão, fila de cima)
  *   → b-cA (quem anda na avenida) → b-cFrente (a Ribeira)
  *   → b-cB (quem anda cá em baixo, pombos, barcos atracados)
- *   → barcos e metro soltos a passar
- *   → b-cRio (Gaia e o tabuleiro da ponte) → metro solto
+ *   → b-cRio (rabelos e metro a passar, Gaia e o tabuleiro da ponte)
  *   → b-cPonte (a treliça da frente) → b-cCeu (nadador e miúdos)
  *   → o véu da noite → b-cTopo (estrelas, lua, luzes, marcadores)
  *
  * A animação do eléctrico e das personagens corre dentro dos SVG: ao
  * contrário das peças isoladas, segue a transformação da sua camada.
  *
- * O que anda sempre — nuvens, barcos, metro — é SVG solto animado por CSS,
- * FORA das camadas, como manda `design/prototipos/README.md`: uma peça
- * solta anima-se no compositor sem obrigar a pintar o mapa.
+ * O que anda sempre — nuvens, barcos, metro — é um `<g>` animado por CSS
+ * DENTRO da sua camada (ver `viajante()`). O protótipo punha-os em SVG
+ * solto, no compositor; em produção isso promovia as camadas gigantes por
+ * cima deles e matava a página no iPhone (auditoria de 2026-10-06).
  *
  * NADA É INVENTADO AQUI. Este ficheiro só embrulha o que a planta e o
  * `iso.ts` desenham. Os números dos marcadores já chegaram formatados
@@ -93,16 +93,26 @@ const camada = (id: string, html: string, rotulo?: string): string =>
     rotulo ? ` role="group" aria-label="${rotulo}"` : ` aria-hidden="true"`
   }>${html}</svg>`;
 
-/** Uma peça solta, posicionada em píxeis dentro do mundo. */
-const solto = (
-  cls: string,
-  vb: readonly [number, number, number, number],
-  html: string,
-  estilo = ""
-): string => {
-  const [x, y, w, h] = vb;
-  return `<svg class="b-solto ${cls}" viewBox="${x} ${y} ${w} ${h}" width="${w}" height="${h}" style="left:${x - MUNDO.x}px;top:${y - MUNDO.y}px;${estilo}" aria-hidden="true">${html}</svg>`;
-};
+/**
+ * Uma peça que viaja (nuvem, metro, rabelo): um `<g>` DENTRO de uma camada,
+ * animado por CSS (`translate`).
+ *
+ * Antes era um `<svg class="b-solto">` solto, em `position: absolute`, entre
+ * as camadas. Um elemento HTML com `translate` animado ganha camada própria
+ * no compositor — e TODAS as camadas de 3600×2500 pintadas por cima dele, que
+ * se sobrepõem, são promovidas também (a regra de sobreposição). No WebKit
+ * (Safari e Chrome do iPhone) isso são quatro superfícies gigantes mais o
+ * véu da noite à escala do ecrã Retina: o processo da página esgota a
+ * memória e o iOS recarrega a página — o «crash ao chegar ao mapa».
+ * Reproduzido no WebKit a DPR 2 e 3 e confirmado por bissecção (docs/
+ * AUDITORIA-MAPA-2026-10.md). Um filho de SVG nunca ganha camada própria:
+ * a mesma animação passa a repintar só o rectângulo da peça.
+ *
+ * O desenho já vem em coordenadas do mundo (o viewBox do antigo solto era
+ * a própria caixa da peça), por isso a passagem é exacta, ao píxel.
+ */
+const viajante = (cls: string, html: string, id?: string, estilo = ""): string =>
+  `<g class="b-viagem ${cls}"${id ? ` id="${id}"` : ""}${estilo ? ` style="${estilo}"` : ""}>${html}</g>`;
 
 /* ——————————————————————————————— o céu ——————————————————————————————— */
 
@@ -116,13 +126,9 @@ const NUVENS: readonly (readonly [number, number, number])[] = [
 ];
 
 function nuvensSoltas(): string {
+  // o vão e o tempo de cada nuvem são os do protótipo (`nuvemAnda`)
   return NUVENS.map(([x, y, e], k) =>
-    solto(
-      "nuvem-sp",
-      [x - 10, y - 50 * e, 120 * e, 56 * e],
-      nuvem(x, y, e),
-      `--dx:${180 + k * 40}px;--dur:${60 + k * 12}s`
-    )
+    viajante("nuvem-sp", nuvem(x, y, e), undefined, `--dx:${180 + k * 40}px;--dur:${60 + k * 12}s`)
   ).join("");
 }
 
@@ -155,17 +161,8 @@ const LUA = `<g transform="translate(60 40)"><circle r="34" fill="#fff4c4" strok
 
 /* ———————————————————— os barcos e o metro ———————————————————— */
 
-/** A caixa de um rabelo que desce o Douro. */
-const BARCO: readonly [number, number, number, number] = [585, 130, 295, 225];
-
 /** Onde o metro da ponte passa: entre o tabuleiro e a treliça da frente. */
 const PM = { iA: 14.3, iB: 14.78, j0: JM + 0.1, j1: 18.7 } as const;
-
-/** A caixa do metro na sua posição `i`. */
-const METRO = (i: number): readonly [number, number, number, number] => {
-  const [x, y] = Pt(i, 0, HP);
-  return [Math.round(x - 15), Math.round(y - 92), 128, 102];
-};
 
 /**
  * As duas viagens do metro e as duas dos rabelos. Cada uma devolve o CSS
@@ -198,12 +195,7 @@ export function viagensSoltas(): { css: string; svg: string } {
     );
   }).join("\n");
 
-  const svgMetro = METROS.map(({ i }, k) =>
-    solto("metro-sp", METRO(i), metroIso(i, HP)).replace(
-      'class="b-solto metro-sp"',
-      `class="b-solto metro-sp" id="b-metro${k}"`
-    )
-  ).join("");
+  const svgMetro = METROS.map(({ i }, k) => viajante("metro-sp", metroIso(i, HP), `b-metro${k}`)).join("");
 
   // `j` = o ponto de partida de cada viagem: o rabelo anda ao longo de j
   // (a coordenada da profundidade), e i avança com a velocidade
@@ -225,12 +217,7 @@ export function viagensSoltas(): { css: string; svg: string } {
     );
   }).join("\n");
 
-  const svgBarco = BARCOS.map((_, k) =>
-    solto("barco-sp", BARCO, rabelo(true)).replace(
-      'class="b-solto barco-sp"',
-      `class="b-solto barco-sp" id="b-barco${k}"`
-    )
-  ).join("");
+  const svgBarco = BARCOS.map((_, k) => viajante("barco-sp", rabelo(true), `b-barco${k}`)).join("");
 
   return {
     css: `${cssMetro}\n${cssBarco}\n@keyframes b-balouca { from { transform: translateY(0); } to { transform: translateY(2.5px); } }`,
@@ -369,10 +356,11 @@ export function mundoBairro(
 ): { html: string; css: string } {
   const { svg: soltas, css } = viagensSoltas();
   const html =
-    nuvensSoltas() +
     camada(
       "b-cFundo",
+      // as nuvens são o céu: as primeiras a pintar, logo a seguir às defs
       `<defs>${padroes()}</defs>` +
+        `<g id="b-gNuvensSoltas" aria-hidden="true">${nuvensSoltas()}</g>` +
         `<g id="b-gNuvens" aria-hidden="true"><g class="sol">${SOL}</g></g>` +
         `<g id="b-gChao" aria-hidden="true">${m.chao}</g>` +
         `<g id="b-gTras">${m.tras}</g>`,
@@ -387,8 +375,9 @@ export function mundoBairro(
     ) +
     camada("b-cFrente", `<g id="b-gFrente">${m.frente}</g>`, rotulos.ribeira) +
     camada("b-cB", `<g id="b-movB">${m.gente.cais}</g><g id="b-gVida">${m.vida}</g><g id="b-gAgua">${m.agua}</g>`) +
-    soltas +
-    camada("b-cRio", `<g id="b-gGaia">${m.gaia}</g><g id="b-gRio">${m.ponte.tras}</g>`) +
+    // os rabelos e o metro pintam-se logo antes de Gaia e da ponte — a
+    // mesma ordem de quando eram soltos, agora dentro da camada do rio
+    camada("b-cRio", `<g id="b-gViagens" aria-hidden="true">${soltas}</g><g id="b-gGaia">${m.gaia}</g><g id="b-gRio">${m.ponte.tras}</g>`) +
     camada("b-cPonte", m.ponte.frente) +
     camada("b-cCeu", `<g id="b-gCeu">${m.gente.ceu}${nadador()}${salpicosSvg()}</g>`) +
     `<div id="b-noite" style="width:${MUNDO.w}px;height:${MUNDO.h}px"></div>` +

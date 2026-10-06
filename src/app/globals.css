@@ -3710,7 +3710,7 @@ h3 {
    toggle após a transição e o bloco inteiro desliga-se em reduced-motion */
 @media (prefers-reduced-motion: no-preference) {
   html[data-theme-anim] body,
-  html[data-theme-anim] body * {
+  html[data-theme-anim] body *:not(svg, svg *) {
     transition: background-color var(--dur-curta) var(--ease-entra),
       color var(--dur-curta) var(--ease-entra),
       border-color var(--dur-curta) var(--ease-entra) !important;
