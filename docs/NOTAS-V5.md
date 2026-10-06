@@ -1321,3 +1321,7 @@ mágico.
 as 3 propostas de `docs/AUDITORIA-CENAS-V5.md` §2.2 no fim. As frases com
 um número escrito à mão dentro do texto vêm marcadas com ⚠️: é o ponto que
 mais merece atenção na revisão. Não lançar sem ela.
+
+## Revisão final da copy — fechada a 2026-10-06
+
+O dono aprovou a copy PROPOSTA em bloco, depois da triagem (os 9 pontos aplicados no #68). A decisão vive no gerador, `scripts/_revisao-copy.mjs` (a tabela é gerada, uma aprovação escrita à mão perdia-se na regeneração), e a tabela passa a dizer «aprovado 2026-10-06» em cada frase. Das três propostas da auditoria: P1 («quase o dobro») foi retirada no #68; P2 (os 50 litros da Bomba como exemplo) aplica-se agora («Imagina que o Pedro vai atestar…»); P3 (a fonte do `irs-2026.json`) fica em aberto, por ser metadado e não copy do site. Copy nova daqui em diante volta a ser PROPOSTA até o dono a rever.
