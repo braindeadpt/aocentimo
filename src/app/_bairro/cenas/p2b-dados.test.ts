@@ -106,10 +106,18 @@ describe("Bomba — o litro por dentro é decomporCombustivel do motor", () => {
     // a série diária começa em 2017-01-01; a semanal começa nesse dia
     expect(D.gasolina.serie!.inicio).toBe("2017-01-01");
     expect(D.gasoleo.serie!.inicio).toBe("2017-01-01");
-    // um ponto por semana + o último ponto real no fim
-    const diarios = 3560;
+    // um ponto por semana + o último ponto real no fim. O intervalo de dias
+    // lê-se da FONTE (do primeiro ao último PMD reais), nunca de um literal:
+    // um literal aqui é uma data a passar de prazo, e foi isso que aconteceu
+    // a 2026-10-06 — o `3560` gravado deixou de chegar no dia em que o
+    // ingest cruzou a semana (a série semanal tinha 511 pontos, o limite 510).
+    const fonte = loadFonte("dgeg", "pmd-gasolina95-diario")!.series;
+    const dias =
+      (Date.parse(`${fonte.at(-1)!.t}T00:00:00Z`) -
+        Date.parse(`${fonte[0]!.t}T00:00:00Z`)) /
+      86_400_000;
     expect(D.gasolina.serie!.v.length).toBeGreaterThan(400);
-    expect(D.gasolina.serie!.v.length).toBeLessThanOrEqual(Math.ceil(diarios / 7) + 1);
+    expect(D.gasolina.serie!.v.length).toBeLessThanOrEqual(Math.ceil(dias / 7) + 1);
     // o último ponto do gráfico é o último PMD real da fonte — lê-se
     // da série, nunca um literal (a DGEG publica todos os dias úteis)
     expect(D.gasolina.serie!.v.at(-1)).toBe(
