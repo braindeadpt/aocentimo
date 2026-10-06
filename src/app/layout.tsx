@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ViewTransition } from "react";
-import { Archivo, Caveat } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -12,25 +12,74 @@ import { m } from "@/lib/messages";
 import { urlOg } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
-// font-display: optional (4B-03) — com swap, a troca tardia de fonte
-// reembrulhava o texto (a frase serifada de /casa media CLS 0,115).
-// As fontes são pré-carregadas: chegam dentro da janela pequena do
-// optional quase sempre; quando não chegam, fica o fallback métrico —
-// nunca há reflow de texto a meio do paint.
-const archivo = Archivo({
-  subsets: ["latin"],
-  axes: ["wdth"],
+// Subconjunto próprio em vez de next/font/google. O Google servia o
+// Archivo variable com o eixo wdth inteiro (62%–125%) e o latin
+// completo: 160,8 KB em todas as rotas, pagos por 1000+ glifos e por
+// larguras que o site nunca usa. Aqui entram 223 glifos — os que o
+// browser pinta, mais a folga do português — e as larguras que o CSS
+// pede mesmo, medidas com scripts/_medir-uso-fonte.mjs.
+//
+// Várias chamadas, e não uma com vários `src`: o next/font/local junta
+// vários src num @font-face só, e o que se quer é o contrário — uma
+// família por largura, para o CSS escolher a largura pelo nome. O eixo
+// wdth deixa de existir; escolher a largura passou a ser escolher a
+// variável CSS.
+//
+// font-display: swap em todas as cinco faces, e não optional (que era
+// o do 4B-03). optional tem uma janela de ~100 ms: a fonte que chega
+// depois é descarregada e nunca usada, para a vida toda da página. Com
+// o Google passava porque havia uma só face por família, pré-carregada.
+// Aqui há cinco, e só uma cabe no preload sem pesar 80 KB em todas as
+// rotas — o resultado medido era o título da home e os cabeçalhos de
+// página pintados pelo fallback métrico, a 624,28 px contra os 713,77 px
+// do ficheiro. A troca atrasada deixou de custar CLS porque os
+// fallbacks medidos abaixo cobrem as métricas de cada face.
+const archivo = localFont({
+  src: [{ path: "./fonts/Archivo-base.woff2", weight: "400 900", style: "normal" }],
   variable: "--font-archivo",
-  display: "optional",
+  declarations: [{ prop: "font-family", value: "Archivo" }],
+  display: "swap",
+  fallback: ["Archivo Fallback", "Arial", "sans-serif"],
+  adjustFontFallback: false,
+  // Pré-carregam-se as duas faces do primeiro ecrã: a base (o corpo) e
+  // a larga (os títulos, o número-herói). São as duas que, em swap,
+  // trocariam a meio do primeiro paint se não chegassem antes — medido:
+  // sem o preload da larga o CLS era 0,011 em /salario. A terceira
+  // instância (116%) vive no módulo da home, onde só é usada. O Caveat
+  // fica fora: está no rodapé das cenas, muito abaixo da dobra.
+  preload: true,
+});
+// A instância larga é a mesma fonte com wdth fixo em 125 — a dos títulos
+// e do número-herói.
+const archivoLargo = localFont({
+  src: [{ path: "./fonts/Archivo-larga.woff2", weight: "400 900", style: "normal" }],
+  variable: "--font-archivo-largo",
+  declarations: [{ prop: "font-family", value: "ArchivoLargo" }],
+  display: "swap",
+  fallback: ["ArchivoLargo Fallback", "Arial Black", "sans-serif"],
+  adjustFontFallback: false,
+  preload: true,
 });
 // Caveat — a mão que escreve (P0, contrato visual V5). Só entra em vigor
 // dentro de [data-pele="v5"] (ver globals.css); carregada na V5, não vale
-// para as rotas V4. display: optional pela mesma razão das outras (4B-03).
-const caveat = Caveat({
-  subsets: ["latin"],
-  weight: ["600", "700"],
+// para as rotas V4. Também em swap, pelo mesmo motivo das do Archivo: em
+// optional a face que chega depois da janela é descartada, e as
+// anotações à mão ficavam pelo fallback métrico.
+const caveat = localFont({
+  src: [
+    { path: "./fonts/Caveat-600.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/Caveat-700.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-mao",
-  display: "optional",
+  declarations: [{ prop: "font-family", value: "Caveat" }],
+  // O fallback de métricas do Caveat está no globals.css, medido: o
+  // automático do next/font chama-lhe "caveat Fallback" (minúsculas) e
+  // o contrato V5 só admite famílias que comecem por «Archivo» ou
+  // «Caveat» — ver e2e/fontes-v4.spec.ts.
+  adjustFontFallback: false,
+  display: "swap",
+  fallback: ["Caveat Fallback", "Comic Sans MS", "cursive"],
+  preload: false,
 });
 
 /* O que a home tem em `<head>`, e que todas as rotas herdam. O texto vem
@@ -95,7 +144,7 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
       data-theme="light"
       data-pele="v5"
-      className={`${archivo.variable} ${caveat.variable}`}
+      className={`${archivo.variable} ${archivoLargo.variable} ${caveat.variable}`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
