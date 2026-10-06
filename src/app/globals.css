@@ -4469,7 +4469,11 @@ html[data-theme="dark"] .rt5 {
   ascent-override: 100.68%;
   descent-override: 89.33%;
   line-gap-override: 0%;
-  size-adjust: 117.42%;
+  /* 134,25% = 117,42% × 713,77/624,28 — o ajuste que faz o fallback medir
+     o mesmo avanço que o ficheiro. Sem isto o título media 624,28 px com o
+     fallback e 713,77 px com o ArchivoMeio, quebrava de 2 para 3 linhas no
+     swap e empurrava a página 29 px (CLS 0,0438, medido). */
+  size-adjust: 134.25%;
 }
 @font-face {
   font-family: "Caveat Fallback";
