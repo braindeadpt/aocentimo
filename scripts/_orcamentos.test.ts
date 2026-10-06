@@ -42,6 +42,7 @@ describe("os medidores não repetem os números", () => {
     "scripts/_dieta-html.mjs",
     "scripts/_js-por-rota.mjs",
     "scripts/_sweep.mjs",
+    "scripts/_verifica-cdn.mjs",
     "src/app/_bairro/gate-html.test.ts",
   ];
   for (const f of medidores) {

@@ -60,3 +60,12 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+      # O orçamento verificada SOBRE o que o CDN serve, já não sobre a
+      # calibração local do gate: busca a home publicada e conta o gzip
+      # real. Falha aqui desfaz a ilusão de «passou no build».
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verificar o orçamento da home publicada (gzip do CDN)
+        run: node scripts/_verifica-cdn.mjs "${{ steps.deployment.outputs.page_url }}"
