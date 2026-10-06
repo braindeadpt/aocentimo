@@ -474,5 +474,13 @@ test("o motor fiscal de /salario chega lazy — nunca no first-load", async ({
   await page.getByRole("button", { name: "Dependentes — mais" }).click();
   // enquanto carrega nunca fica em branco; depois recalcula de verdade
   await expect(hero).not.toHaveText(antes, { timeout: 10_000 });
-  expect(pedidos.length).toBeGreaterThan(nInicial);
+  // O array `pedidos` enche-se num listener alimentado pelo CDP: o evento
+  // pode chegar DEPOIS de o herói já ter mudado. Ler o array no instante
+  // seguinte é uma corrida (a mesma do Save-Data) — lê-se por polling.
+  await expect
+    .poll(() => pedidos.length, {
+      message: "o motor fiscal não chegou num chunk novo",
+      timeout: 10_000,
+    })
+    .toBeGreaterThan(nInicial);
 });

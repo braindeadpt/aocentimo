@@ -158,8 +158,16 @@ test.describe("o prefetch das cenas (rede e CPU estranguladas)", () => {
     // e abrir é normal: a cena abre na mesma
     await page.mouse.click(pt.x, pt.y);
     await expect(page.locator(".b-cena")).toBeVisible();
-    // o JSON não foi pedido duas vezes (o prefetch aquece o cache)
-    expect(pedidos.filter((p) => p.json === "banco")).toHaveLength(1);
+    // o JSON não foi pedido duas vezes (o prefetch aquece o cache). Lido
+    // por polling: o array enche-se pelo CDP e o evento pode chegar depois
+    // do DOM (era a corrida do Save-Data) — e exigir exactamente um é o
+    // que denuncia um segundo pedido.
+    await expect
+      .poll(() => pedidos.filter((p) => p.json === "banco").length, {
+        message: "o JSON da cena devia ser pedido uma só vez",
+        timeout: 15_000,
+      })
+      .toBe(1);
   });
 
   test("por âncora, o JSON é pedido antes de o chunk da cena terminar de executar", async ({
@@ -174,14 +182,31 @@ test.describe("o prefetch das cenas (rede e CPU estranguladas)", () => {
     await expect(page.locator(".b-cena")).toBeVisible();
     const tCena = await page.evaluate(() => performance.now());
 
-    const json = pedidos.find((p) => p.json === "banco");
-    expect(json, "o JSON da cena não foi pedido").toBeTruthy();
+    // O array enche-se num listener alimentado pelo CDP: o evento pode
+    // chegar DEPOIS de a cena já estar no DOM, por isso espera-se por ele
+    // em vez de o ler num instante fixo (era a corrida do Save-Data).
+    // Exige-se `t > 0` — o relógio do pedido é lido por um evaluate à
+    // parte e sem ele a comparação abaixo passaria à custa de um zero.
+    await expect
+      .poll(() => pedidos.filter((p) => p.json === "banco" && p.t > 0).length, {
+        message: "o JSON da cena não foi pedido (ou o relógio não foi lido)",
+        timeout: 15_000,
+      })
+      .toBe(1);
+    await expect
+      .poll(() => cargaDo(pedidos, 0).filter((p) => p.js && p.t > 0).length, {
+        message: "o chunk da cena não foi pedido",
+        timeout: 15_000,
+      })
+      .toBeGreaterThan(0);
+
+    const json = pedidos.find((p) => p.json === "banco" && p.t > 0)!;
+    const chunk = cargaDo(pedidos, 0).filter((p) => p.js && p.t > 0).at(-1)!;
     // o JSON sai antes de a cena ter conteúdo — ou seja, antes de o
     // chunk ter executado (é o chunk que desenha)
-    expect(json!.t, "o JSON só saiu depois da cena estar desenhada").toBeLessThan(tCena);
+    expect(json.t, "o JSON só saiu depois de a cena estar desenhada").toBeLessThan(tCena);
     // e sai antes do próprio pedido do chunk
-    const chunk = cargaDo(pedidos, 0).filter((p) => p.js).at(-1);
-    if (chunk) expect(json!.t).toBeLessThanOrEqual(chunk.t);
+    expect(json.t, "o JSON só saiu depois do chunk").toBeLessThanOrEqual(chunk.t);
   });
 
   test("a home em repouso não pede nada a nenhuma cena (regra do #38)", async ({ page }) => {
