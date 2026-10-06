@@ -1,7 +1,7 @@
 {
-  "consultadoEm": "2026-09-30T22:47:00Z",
-  "fonteUrl": "https://eur-lex.europa.eu/legal-content/PT/NIM/?uri=CELEX:32023L2225",
-  "nota": "Estado semente: Portugal com 0 medidas, lido na página NIM do EUR-Lex numa captura via curl a 2026-09-30 (~23:47 de Lisboa (WEST)). Desde 2026-10-06 o sinal primário é a consulta SPARQL ao Cellar (publications.europa.eu), que é a mesma fonte das medidas nacionais e não está atrás do desafio do AWS WAF; a página NIM fica só para conferência humana. As re-consultas semanais sobrepõem este estado.",
+  "consultadoEm": "2026-10-06T10:55:58.037Z",
+  "fonteUrl": "https://publications.europa.eu/webapi/rdf/sparql",
+  "nota": "Cellar: work http://publications.europa.eu/resource/cellar/12d92010-76c8-11ee-99ba-01aa75ed71a1 · filtro de país PRT · a mesma fonte que alimenta a página NIM do EUR-Lex (que está atrás de um AWS WAF).",
   "transposto": false,
   "medidas": 0,
   "prazos": [],
