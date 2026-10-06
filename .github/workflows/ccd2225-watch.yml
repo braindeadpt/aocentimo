@@ -27,7 +27,7 @@ jobs:
       - run: npm ci
 
       # CLI sai: 0 = ok · 2 = ALARME (transposição apareceu) · 1 = falha honesta
-      - name: Consultar o NIM do EUR-Lex
+      - name: Consultar o Cellar (SPARQL, publications.europa.eu)
         id: vigilia
         run: |
           set +e
@@ -53,12 +53,13 @@ jobs:
         with:
           script: |
             const { owner, repo } = context.repo;
-            const titulo = "CC2 (Dir. 2023/2225): transposição detetada no EUR-Lex";
+            const titulo = "CC2 (Dir. 2023/2225): transposição detetada (Cellar/EUR-Lex)";
             const { data: abertas } = await github.rest.issues.listForRepo({
               owner, repo, state: "open", labels: "dados",
             });
             const corpo = [
-              "O NIM do EUR-Lex passou a listar medidas de transposição de Portugal.",
+              "O Cellar (publications.europa.eu, a fonte do NIM do EUR-Lex) passou a listar",
+              "medidas de transposição de Portugal para a Dir. (UE) 2023/2225.",
               "",
               "Abrir `docs/VIGILANCIA-CCD2225-2026.md` e fazer a checklist completa:",
               "rever `data/fiscal/cartoes.json` e o motor do cartão **antes de 2026-11-20**.",
@@ -78,11 +79,11 @@ jobs:
         with:
           script: |
             const { owner, repo } = context.repo;
-            const titulo = "Vigilância CC2 falhou — EUR-Lex indisponível";
+            const titulo = "Vigilância CC2 falhou — Cellar/EUR-Lex indisponível";
             const { data: abertas } = await github.rest.issues.listForRepo({
               owner, repo, state: "open", labels: "dados",
             });
-            const corpo = "A consulta ao NIM do EUR-Lex falhou por indisponibilidade (fila 202). É falha honesta: NÃO significa que Portugal não tenha transposto. Repetir a consulta `npx tsx scripts/ingest/ccd2225-cli.ts` mais tarde ou verificar à mão em https://eur-lex.europa.eu/legal-content/PT/NIM/?uri=CELEX:32023L2225 .";
+            const corpo = "A consulta SPARQL ao Cellar (publications.europa.eu) falhou: o endpoint não devolveu SPARQL JSON em 4 leituras (erro de rede/HTTP, bloqueio do CDN ou resposta ilegível). É falha honesta: NÃO significa que Portugal não tenha transposto. Repetir `npx tsx scripts/ingest/ccd2225-cli.ts` mais tarde, ou conferir à mão o NIM do EUR-Lex em https://eur-lex.europa.eu/legal-content/PT/NIM/?uri=CELEX:32023L2225 (essa página está atrás de um AWS WAF e pode voltar a pedir browser).";
             const existente = abertas.find((i) => i.title.startsWith("Vigilância CC2 falhou"));
             if (existente) {
               await github.rest.issues.createComment({ owner, repo, issue_number: existente.number, body: corpo });
@@ -102,7 +103,7 @@ jobs:
             for (const i of abertas.filter((i) => i.title.startsWith("Vigilância CC2 falhou"))) {
               await github.rest.issues.createComment({
                 owner, repo, issue_number: i.number,
-                body: "Consulta ao EUR-Lex voltou a correr bem — fecho automático.",
+                body: "A consulta ao Cellar voltou a correr bem — fecho automático.",
               });
               await github.rest.issues.update({ owner, repo, issue_number: i.number, state: "closed" });
             }

@@ -1,0 +1,2 @@
+{ "head": { "link": [], "vars": ["medida", "titulo", "notificacao", "jornal", "tipo", "ref", "celexNac"] },
+  "results": { "distinct": false, "ordered": true, "bindings": [ ] } }

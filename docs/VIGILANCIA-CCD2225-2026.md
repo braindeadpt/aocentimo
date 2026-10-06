@@ -21,31 +21,46 @@ re-verificar — é para isso que serve esta vigilância).
 
 ## Como a vigilância corre (já montada neste PR)
 
-- **Sinal primário**: a página «National transposition» do EUR-Lex
-  (`https://eur-lex.europa.eu/legal-content/PT/NIM/?uri=CELEX:32023L2225`),
-  que é HTML server-side — ao contrário do DR consolidado, que só abre com
-  JavaScript. O bloco de Portugal tem ids estáveis (`PRT_numOfNims`,
-  `PRT_transposition`); «Number of measures: 0» = sem transposição publicada;
-  ≥ 1 = há diploma, com data e ligação, no mesmo bloco.
+- **Sinal primário**: a **consulta SPARQL ao Cellar**
+  (`https://publications.europa.eu/webapi/rdf/sparql`), o repositório do
+  Serviço das Publicações da UE onde vivem as medidas nacionais de
+  transposição (works `cdm:measure_national_implementing`) — a **mesma fonte**
+  que alimenta a tabela «National transposition» do EUR-Lex, mas acessível a um
+  cliente simples (sem browser, sem cookies): a página NIM do EUR-Lex está
+  atrás de um **AWS WAF** e responde 202/503 (ver «Riscos conhecidos» e a
+  [auditoria](AUDITORIA-VIGILANCIA-V5.md)). A consulta resolve o work da
+  diretiva a partir do CELEX (o `resource/celex/32023L2225` redireciona para o
+  `cellar/<uuid>` — o UUID não está fixo no código) e filtra as medidas por
+  país (`…/authority/country/PRT`): 0 medidas = sem transposição publicada;
+  ≥ 1 = há diploma, com tipo de ato, referência nacional, datas e ligação.
 - **Detetor**: `scripts/ingest/ccd2225.ts` + `ccd2225-cli.ts`. Guarda o estado
   em `data/meta/ccd2225-vigilia.json` e distingue três fins:
   `0` ok sem medidas · `2` **ALARME** (0 → n medidas) · `1` falha honesta.
-  O EUR-Lex responde por vezes «202» com corpo vazio (documento em preparação)
-  — isso é indisponibilidade, **nunca** «0 medidas»; o detetor repete 4× e
-  falha alto se persistir.
+  A política de leitura deste e dos outros monitores está em
+  [`AUDITORIA-VIGILANCIA-V5.md`](AUDITORIA-VIGILANCIA-V5.md): 4 leituras com
+  20 s de intervalo, cobrindo erros de rede/HTTP **e** respostas que não sejam
+  SPARQL JSON (página de bloqueio, erro do endpoint) — e uma resposta válida
+  com **zero resultados é resposta**: é assim que se lê «Portugal sem
+  medidas». Nunca se lê «0 medidas» de um corpo que não veio.
 - **Agenda**: `.github/workflows/ccd2225-watch.yml` — segundas, 07:23 UTC
   (`workflow_dispatch` para correr à mão). Com medida nova, abre/comenta issue
   «CC2 (Dir. 2023/2225): transposição detetada» e comita o estado novo.
-- **Estado semente**: captura real do NIM a 2026-09-30 (Portugal a 0 medidas),
-  guardada como fixture de teste `scripts/ingest/ccd2225.fixture.html`.
+- **Estado semente**: Portugal com 0 medidas, lido na página NIM do EUR-Lex a
+  2026-09-30 (antes da mudança de fonte). A resposta real do Cellar à consulta
+  de Portugal (0 medidas, capturada a 2026-10-06) é a fixture de teste
+  `scripts/ingest/ccd2225.fixture-sparql.json`; o caso de Portugal transposto
+  (sintético, com a forma real das linhas do Cellar) é
+  `scripts/ingest/ccd2225.fixture-sparql-pt.json`.
 
 ## Checklist quando o alarme disparar (ou a 01-11-2026, o que chegar primeiro)
 
-1. **Identificar o diploma.** No NIM, abrir a ligação da medida de Portugal;
-   confirmar no DR (diploma original ou alteração ao DL 133/2009) e citar o
-   artigo que transpõe cada preceito. Guardar URL + trecho + data (regra da
-   casa). O consolidado do DL 133/2009 passa a ter modificações datadas de
-   2026 — é aí que se lê o texto novo.
+1. **Identificar o diploma.** O `data/meta/ccd2225-vigilia.json` (campo
+   `ligacoes`) traz o tipo de ato, a referência nacional e o link EUR-Lex do
+   CELEX nacional de cada medida de Portugal; confirmar no DR (diploma
+   original ou alteração ao DL 133/2009) e citar o artigo que transpõe cada
+   preceito. Guardar URL + trecho + data (regra da casa). O consolidado do
+   DL 133/2009 passa a ter modificações datadas de 2026 — é aí que se lê o
+   texto novo.
 2. **`data/fiscal/cartoes.json` — rever campo a campo:**
    - `prestacaoMinima.haRegraLegal` — a CC2 continua a **não fixar** reembolso
      mínimo (única referência: art. 24.º, alínea h) — informar, não fixar).
@@ -90,9 +105,26 @@ re-verificar — é para isso que serve esta vigilância).
 
 ## Riscos conhecidos do sinal
 
-- **EUR-Lex em fila (202 com corpo vazio)** — aconteceu a 2026-09-30 em PT e
-  EN durante vários minutos. O detetor trata-o como falha honesta (exit 1) e o
-  workflow abre issue de falha sem nunca inferir «não transposto».
+- **O desafio do AWS WAF do EUR-Lex deixou de afetar o monitor.** A página NIM
+  devolve às consultas sem browser «202 Accepted» + `x-amzn-waf-action:
+  challenge` (corpo vazio ou página de desafio JS) e, com a origem em baixo,
+  «503» ou timeout — medido a 2026-10-06 às 01:21 UTC, e já a responder 200 às
+  04:05 UTC do mesmo dia: o bloqueio é intermitente (issue #75). Desde
+  2026-10-06 o sinal primário é o SPARQL do Cellar, que respondeu 200 a todas
+  as sondagens; a página NIM ficou só para conferência humana, no link da
+  checklist.
+- **Atraso do Cellar em relação ao EUR-Lex** — a fonte é a mesma, mas o
+  registo da medida nacional pode aparecer no Cellar depois de a página NIM a
+  mostrar (ou antes, se a indexação for ao contrário). O alarme dispara com
+  ≥ 1 medida; a confirmação final é sempre humana, no NIM e no DR, como a
+  checklist manda — nunca se escreve no pack a partir do JSON sozinho.
+- **O Cellar arquiva medidas antigas sob esta diretiva** — a consulta de
+  2026-10-06 devolveu 143 medidas de vários Estados-Membros, muitas delas atos
+  de 2004–2018 (ex.: um `Zákon` checo de 2004 e um eslovaco de 2004), que o
+  registo associa à diretiva de 2023. Ou seja: o alarme diz que **apareceu uma
+  medida de Portugal**, não que seja a transposição de 2026. A checklist manda
+  confirmar a data e o diploma no DR antes de escrever seja o que for no pack
+  — e Portugal estava a 0 medidas nas duas fontes a 2026-10-06.
 - **O NIM pode atrasar** a publicação das medidas nacionais. Contra-pondos: o
   alerta dispara em segundas; a checklist manda confirmar no DR antes de
   escrever qualquer coisa no pack.

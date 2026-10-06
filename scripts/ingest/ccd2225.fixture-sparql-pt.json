@@ -1,0 +1,74 @@
+{
+  "head": {
+    "link": [],
+    "vars": ["medida", "titulo", "notificacao", "jornal", "tipo", "ref", "celexNac"]
+  },
+  "results": {
+    "distinct": false,
+    "ordered": true,
+    "bindings": [
+      {
+        "medida": {
+          "type": "uri",
+          "value": "http://publications.europa.eu/resource/cellar/1ad2d8e3-8dc3-4588-876c-8c36e4f8d761"
+        },
+        "titulo": {
+          "type": "literal",
+          "xml:lang": "en",
+          "value": "Directive (EU) 2023/2225 of the European Parliament and of the Council of 18 October 2023 on credit agreements for consumers and repealing Directive 2008/48/EC"
+        },
+        "notificacao": {
+          "type": "literal",
+          "datatype": "http://www.w3.org/2001/XMLSchema#date",
+          "value": "2026-11-10"
+        },
+        "jornal": {
+          "type": "literal",
+          "datatype": "http://www.w3.org/2001/XMLSchema#date",
+          "value": "2026-11-12"
+        },
+        "tipo": {
+          "type": "literal",
+          "datatype": "http://www.w3.org/2001/XMLSchema#string",
+          "value": "Decreto-Lei"
+        },
+        "celexNac": {
+          "type": "literal",
+          "datatype": "http://www.w3.org/2001/XMLSchema#string",
+          "value": "72023L2225PRT_202603456"
+        }
+      },
+      {
+        "medida": {
+          "type": "uri",
+          "value": "http://publications.europa.eu/resource/cellar/54255c21-b361-4bc2-a08e-25fe8af12201"
+        },
+        "titulo": {
+          "type": "literal",
+          "xml:lang": "en",
+          "value": "Directive (EU) 2023/2225 of the European Parliament and of the Council of 18 October 2023 on credit agreements for consumers and repealing Directive 2008/48/EC"
+        },
+        "notificacao": {
+          "type": "literal",
+          "datatype": "http://www.w3.org/2001/XMLSchema#date",
+          "value": "2026-11-10"
+        },
+        "tipo": {
+          "type": "literal",
+          "datatype": "http://www.w3.org/2001/XMLSchema#string",
+          "value": "Portaria"
+        },
+        "ref": {
+          "type": "literal",
+          "datatype": "http://www.w3.org/2001/XMLSchema#string",
+          "value": "1234/2026"
+        },
+        "celexNac": {
+          "type": "literal",
+          "datatype": "http://www.w3.org/2001/XMLSchema#string",
+          "value": "72023L2225PRT_202603457"
+        }
+      }
+    ]
+  }
+}

@@ -5,7 +5,10 @@ import { lerEstadoAnterior, runCcd2225 } from "./ccd2225";
  * Entrada CLI da vigilância CC2 (Diretiva 2023/2225). Códigos de saída:
  *   0 — consulta ok, sem medidas de transposição (ou já conhecidas);
  *   2 — ALARME: medidas apareceram no EUR-Lex (0 → n) — abrir a checklist;
- *   1 — falha honesta (rede/EUR-Lex em fila) — repetir mais tarde.
+ *   1 — falha honesta (rede/endpoint SPARQL do Cellar indisponível) — repetir mais tarde.
+ *
+ * A fonte é o Cellar via SPARQL (publications.europa.eu), não a página NIM do
+ * EUR-Lex — essa está atrás de um desafio do AWS WAF (issue #75).
  */
 
 const ROOT = path.resolve(__dirname, "..", "..");
