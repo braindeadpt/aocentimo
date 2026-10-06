@@ -21,9 +21,12 @@ jobs:
       - run: npm run derive
       - run: npm run validate:data
       - run: npm run build
-      # o orçamento do HTML da home (≤80 KB gzip; o mapa fora do flight):
-      # unitários (gate-html.test.ts) não correm sem build — o script é o
-      # mesmo gate em linha, com a mensagem para quem quebrou
+      # os orçamentos de performance num sítio só (HTML da home, JS por rota):
+      # imprimem-se aqui para a CI os mostrar ao lado do gate, sem os repetir
+      - run: node scripts/_orcamentos.mjs
+      # o mesmo gate do HTML da home em linha (o mapa fora do flight): os
+      # unitários (gate-html.test.ts) não correm sem build — o script dá a
+      # mensagem para quem quebrou
       - run: node scripts/_gate-html.mjs
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e

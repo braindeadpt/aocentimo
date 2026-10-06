@@ -221,6 +221,9 @@ Ramo `v5/prod-p1-home`. Depende de P0.
 Aceitação: /scripts/_js-por-rota.mjs — a home não passa os 350 KB de JS inicial
 (o medidor imprime gzip ao nível do CDN, a mesma unidade do tecto — desde
 2026-10-06; antes somava bytes raw de um servidor local que não comprime).
+Os tectos (350 KB de JS por rota e 80 KB de HTML na home) estão definidos num
+sítio só, `scripts/_orcamentos.mjs`, que cita este §P1 como fonte; o gate, os
+medidores e a CI leem daí e nenhum repete o número.
 ```
 
 ### P2a · Cenas: Fábrica, Finanças, Banco, Mercearia

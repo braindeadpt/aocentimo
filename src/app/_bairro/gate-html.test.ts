@@ -1,7 +1,9 @@
 /**
  * O gate do HTML da home, como TESTE (falha no `vitest run` do CI).
  *
- * O §4 do pack impõe 80 KB gzip ao HTML da home. Antes do conserto do
+ * O §4 do pack impõe um tecto ao HTML da home — o valor vive num sítio só
+ * (`scripts/_orcamentos.mjs`) e a medida é a do CDN (`scripts/_medida-cdn.mjs`).
+ * Antes do conserto do
  * flight o mapa viajava DUAS vezes — no DOM e outra vez dentro do
  * payload RSC (o prop `html` do `<Bairro>`) — e o ficheiro pesava
  * ~128 KB gzip. O conserto fez o cliente calcular o mapa
@@ -13,17 +15,18 @@
  * os unitários.
  */
 import { readFileSync, existsSync, statSync } from "node:fs";
-import { gzipSync } from "node:zlib";
 import { describe, it, expect } from "vitest";
+import { medirGzipCdn } from "../../../scripts/_medida-cdn.mjs";
+import { ORCAMENTOS } from "../../../scripts/_orcamentos.mjs";
 
 const OUT = "out/index.html";
-const LIMITE = 80 * 1024;
+const LIMITE = ORCAMENTOS.htmlHomeGzipBytes;
 
 describe("o gate do HTML da home (§4 do pack)", () => {
   const existe = existsSync(OUT) && statSync(OUT).mtimeMs > 0;
-  it.skipIf(!existe)("o HTML da home pesa ≤ 80 KB gzip", () => {
+  it.skipIf(!existe)("o HTML da home dentro do orçamento (gzip ao nível do CDN)", () => {
     const html = readFileSync(OUT, "utf8");
-    const gz = gzipSync(Buffer.from(html, "utf8")).length;
+    const gz = medirGzipCdn(html);
     expect(
       gz,
       `a home pesa ${(gz / 1024).toFixed(1)} KB gzip (limite ${(LIMITE / 1024).toFixed(0)} KB) — o mapa voltou a viajar duas vezes?`

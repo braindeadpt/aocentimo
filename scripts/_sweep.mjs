@@ -4,9 +4,16 @@
 // O JS é medido ao nível do CDN (`_medida-cdn.mjs`), não em bytes raw do
 // servidor local: o servidor estático não comprime e o orçamento do pack é em
 // gzip. Recolhem-se os caminhos dos ficheiros pedidos e mede-se cada um.
+//
+// O orçamento de JS inicial por rota não vive aqui: vem de `_orcamentos.mjs`
+// (um sítio só). A coluna separa «inicial» (até ao load) de «total» (até
+// networkidle) e o varrimento chumba na rota inicial que exceda o tecto.
 import { chromium } from "playwright";
 import { readFileSync } from "node:fs";
 import { pesoDeUrls } from "./_medida-cdn.mjs";
+import { ORCAMENTOS } from "./_orcamentos.mjs";
+
+const LIMITE_JS = ORCAMENTOS.jsInicialRotaGzipBytes;
 
 const rotas = [...readFileSync("out/sitemap.xml", "utf8").matchAll(/<loc>([^<]+)<\/loc>/g)]
   .map((m) => new URL(m[1]).pathname)
@@ -84,8 +91,12 @@ const PERF_EVAL = `(async () => {
   po.observe({ type: "layout-shift", buffered: true });
   await new Promise((r) => setTimeout(r, 400));
   po.disconnect();
-  const jsUrls = performance.getEntriesByType("resource").filter(r => r.name.endsWith(".js")).map(r => new URL(r.name).pathname);
-  return { lcp: Math.round(lcp), cls: +cls.toFixed(3), jsUrls, domKB: Math.round((nav?.encodedBodySize||0)/1024) };
+  const js = performance.getEntriesByType("resource").filter(r => r.name.endsWith(".js"));
+  const urls = js.map(r => new URL(r.name).pathname);
+  // «inicial» = pedidos de .js começados até ao fim do load; «total» = todos.
+  const fimLoad = nav?.loadEventEnd || Infinity;
+  const urlsIni = js.filter(r => r.startTime <= fimLoad).map(r => new URL(r.name).pathname);
+  return { lcp: Math.round(lcp), cls: +cls.toFixed(3), urlsIni, urls, domKB: Math.round((nav?.encodedBodySize||0)/1024) };
 })()`;
 
 const b = await chromium.launch();
@@ -100,7 +111,11 @@ for (const rota of rotas) {
   });
   await p.waitForTimeout(400);
   const perf = await p.evaluate(PERF_EVAL);
-  perf.jsKB = Math.round(pesoDeUrls(perf.jsUrls).bytes / 1024);
+  const jsIniB = pesoDeUrls(perf.urlsIni).bytes;
+  const jsTotB = pesoDeUrls(perf.urls).bytes;
+  perf.jsKB = Math.round(jsIniB / 1024);
+  perf.jsTotalKB = Math.round(jsTotB / 1024);
+  perf.jsAcimaB = jsIniB - LIMITE_JS;
   // gráficos: svg aria-hidden + exactamente um equivalente alcançável
   const graf = await p.evaluate(`(() => {
     const wraps = [...document.querySelectorAll("figure, .lc-wrap, [class*='chart']")].filter(w => w.querySelector("svg"));
@@ -122,7 +137,8 @@ for (const rota of rotas) {
   await p.close();
   console.log(
     rota.padEnd(38),
-    `LCP ${perf.lcp}ms CLS ${perf.cls} JS ${perf.jsKB}KB gzip (nível do CDN)`,
+    `LCP ${perf.lcp}ms CLS ${perf.cls} JS ${perf.jsKB}KB inicial / ${perf.jsTotalKB}KB total gzip (nível do CDN)` +
+      (perf.jsAcimaB > 0 ? ` ✗ +${Math.round(perf.jsAcimaB / 1024)}KB no orçamento` : ""),
     graf.length ? "SVG:" + graf[0] : ""
   );
 }
@@ -133,4 +149,15 @@ await b.close();
 // CI gate: chumba em falhas AA (e SVG exposto sem equivalente)
 const svgExposto = res.flatMap((r) => r.graf.map((g) => `${r.rota}: ${g}`));
 if (svgExposto.length) console.log("SVG sem equivalente:\n" + svgExposto.join("\n"));
-if (Object.keys(aaFalhas).length || svgExposto.length) process.exitCode = 1;
+// Orçamento de JS inicial por rota (scripts/_orcamentos.mjs).
+const jsAcima = res.filter((r) => r.jsAcimaB > 0);
+console.log(
+  `\norçamento de JS inicial por rota: ${(LIMITE_JS / 1024).toFixed(0)} KB gzip (scripts/_orcamentos.mjs)`
+);
+if (jsAcima.length)
+  console.log(
+    "JS acima do orçamento:\n" +
+      jsAcima.map((r) => `${r.rota}: ${r.jsKB}KB inicial (+${Math.round(r.jsAcimaB / 1024)}KB)`).join("\n")
+  );
+else console.log("(nenhuma rota acima)");
+if (Object.keys(aaFalhas).length || svgExposto.length || jsAcima.length) process.exitCode = 1;

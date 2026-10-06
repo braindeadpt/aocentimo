@@ -1204,6 +1204,14 @@ que percorre todas as rotas e intercepta os pedidos.
 
 ### Orçamento de performance (medido, `_js-por-rota` + `_sweep` + `_gate-html`)
 
+Os dois tectos vivem num sítio só — **`scripts/_orcamentos.mjs`** (`ORCAMENTOS`),
+com a fonte do pack ao lado (`FONTE`) e quem aplica cada um (`APLICADO_POR`). O
+gate do HTML, os medidores de JS por rota e o varrimento leem daí; nenhum repete
+o número. A CI imprime a tabela (`node scripts/_orcamentos.mjs`) antes de correr
+o gate, e `scripts/_orcamentos.test.ts` fixa os valores e recusa cópias literais
+nos medidores — um orçamento com várias cópias acaba sempre com a cópia errada a
+mandar.
+
 - **HTML da home: tecto de 80 KB gzip** (`scripts/_gate-html.mjs`, gate
   do CI depois do build). O gate mede **no mesmo nível do CDN** (gzip 5,
   corrigida a diferença de zlib entre o Node 1.3.1 e o CDN 1.2.x), por isso

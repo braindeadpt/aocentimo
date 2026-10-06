@@ -17,6 +17,7 @@
  */
 import { readFileSync } from "node:fs";
 import { medirGzipCdn } from "./_medida-cdn.mjs";
+import { ORCAMENTOS } from "./_orcamentos.mjs";
 
 const ficheiro = process.argv[2] ?? "out/index.html";
 const html = readFileSync(ficheiro, "utf8");
@@ -78,8 +79,17 @@ const linha = (nome, raw, nota = "") => {
   );
 };
 
+const totalGz = gz(html);
+const tecto = ORCAMENTOS.htmlHomeGzipBytes;
+
 console.log(`\n=== ORÇAMENTO: ${ficheiro} ===`);
-console.log(`TOTAL                             raw ${fmt(total).padStart(9)}  gzip ${fmt(gz(html)).padStart(8)}`);
+console.log(`TOTAL                             raw ${fmt(total).padStart(9)}  gzip ${fmt(totalGz).padStart(8)}`);
+console.log(
+  `tecto da home                    ${(tecto / 1024).toFixed(0)} KB gzip — ` +
+    (totalGz > tecto
+      ? `⚠ excedente de ${(fmt(totalGz - tecto))} B (scripts/_orcamentos.mjs)`
+      : `folga de ${(fmt(tecto - totalGz))} B (scripts/_orcamentos.mjs)`)
+);
 console.log("─".repeat(78));
 linha(".b-mundo (o mapa inteiro)", mundo, `${((mundo.length / total) * 100).toFixed(1)}% do raw`);
 linha("  payload RSC (3 scripts)", rsc, `${((rsc.length / total) * 100).toFixed(1)}%`);

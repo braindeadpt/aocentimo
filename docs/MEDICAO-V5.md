@@ -725,6 +725,15 @@ medem cada um com a mesma função do gate; verificação de que a correção nu
 função devolve 6 332 B (e na home, 76 733 B contra 76 734 B — arredondamento
 para cima incluído).
 
+**E os orçamentos passaram a ser um só, também (2026-10-06).** Os tectos de
+**80 KB** (HTML da home) e **350 KB** (JS inicial por rota) vivem agora em
+`scripts/_orcamentos.mjs` (`ORCAMENTOS`), com a fonte do pack ao lado (`FONTE`)
+e quem os aplica (`APLICADO_POR`). O `_gate-html.mjs`, o `_dieta-html.mjs`, o
+`_js-por-rota.mjs` (que passou a ser **gate**: sai com código ≠ 0 na rota que
+exceda) e o `_sweep.mjs` leem daí, e a CI imprime a tabela antes de correr o
+gate. `scripts/_orcamentos.test.ts` fixa os valores e recusa cópias literais
+nos medidores.
+
 ## (4) axe na home, numa cena aberta e nas rotas migradas
 
 axe-core 4.13.0, WCAG 2.0/2.1 A+AA (`wcag2a`, `wcag2aa`, `wcag21a`,

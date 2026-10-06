@@ -1,9 +1,10 @@
 /**
  * _gate-html.mjs — O ORÇAMENTO DO HTML DA HOME, como gate.
  *
- * O pack impõe 80 KB gzip ao HTML da home (§4). Chegámos lá no conserto
- * do flight (PR v5/p4-flight): o mapa deixou de viajar duas vezes (DOM +
- * payload RSC) e passa a viajar uma só — no DOM.
+ * O pack impõe um tecto ao HTML da home (§4) — o valor vive em
+ * `_orcamentos.mjs`, não aqui. Chegámos lá no conserto do flight
+ * (PR v5/p4-flight): o mapa deixou de viajar duas vezes (DOM + payload
+ * RSC) e passa a viajar uma só — no DOM.
  *
  * Verifica também a PROMESSA ARQUITECTURAL que tornou isso possível: o
  * payload RSC (`self.__next_f`) não contém o SVG do mapa — o mapa é
@@ -19,9 +20,12 @@ import { readFileSync } from "node:fs";
 // fator de zlib, arredondado para cima). Sem isso o gzipSync por omissão
 // (nível 6) media 72,4 KB onde o CDN servia 74,9 KB — folga falsa de 2,5 KB.
 import { kb, medirGzipCdn } from "./_medida-cdn.mjs";
+// O tecto da home vive num sítio só — scripts/_orcamentos.mjs (com a fonte do
+// pack ao lado). Aqui não se repete o número.
+import { ORCAMENTOS } from "./_orcamentos.mjs";
 
 const ficheiro = process.argv[2] ?? "out/index.html";
-const LIMITE = 80 * 1024; // o §4 do pack: 80 KB gzip para a home
+const LIMITE = ORCAMENTOS.htmlHomeGzipBytes;
 
 const html = readFileSync(ficheiro, "utf8");
 const gz = medirGzipCdn(html);
@@ -60,7 +64,7 @@ if (!noDom) {
 if (gz > LIMITE) {
   console.error(
     `FALHA: o HTML da home pesa ${kb(gz)} KB gzip — ` +
-      ` ${(gz - LIMITE > 0 ? "+" : "")}${kb(gz - LIMITE)} KB acima do limite de 80 KB (§4 do pack).`
+      ` ${(gz - LIMITE > 0 ? "+" : "")}${kb(gz - LIMITE)} KB acima do limite de ${(LIMITE / 1024).toFixed(0)} KB (scripts/_orcamentos.mjs).`
   );
   process.exit(1);
 }
