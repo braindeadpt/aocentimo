@@ -90,14 +90,13 @@ O que isto diz:
    hidratação do que não é o mapa (ambiente, GSAP, prefetch, cartas) para
    depois do primeiro ocioso, mantendo a câmara imediata. *Risco: médio.*
 
-3. **Eliminar a penalização do swap da fonte da intro** — ganho ~1,5 s no
-   elemento exacto do LCP. É a **mesma face** que faz o CLS de 0,0438 no
-   browser real ([`CLS-HOME.md`](./CLS-HOME.md)): o `Archivo-intro.woff2`
-   entra tarde e volta a quebrar o `<h1>` de 2 para 3 linhas. Um só arranjo
-   fecha as duas contas. É decisão de **contrato visual**: o repo escolheu
-   `font-display: swap` de propósito (`layout.tsx`), e passar a `optional` na
-   intro arrisca mostrar a fonte de recurso a quem chega de rede fria. A
-   levar ao dono antes de mexer. *Risco: baixo–médio.*
+3. **Eliminar a penalização do swap da fonte da intro** — ✅ **feito**.
+   O `ArchivoMeio Fallback` passa de `size-adjust: 117,42%` para **134,25%**
+   (`globals.css`), o valor que faz o fallback medir o mesmo avanço que o
+   ficheiro: o `<h1>` deixa de voltar a quebrar de 2 para 3 linhas no swap.
+   Medido no `out/` local, **LCP 3 984 → 2 752 ms** e **CLS 0,04378 →
+   0,00848** — as duas contas na mesma mudança ([`CLS-HOME.md`](./CLS-HOME.md)).
+   Mantém-se `font-display: swap`, sem `optional`. *Risco: baixo.*
 
 4. **Enxugar a `globals.css`** — 132 KB que bloqueiam a renderização em todas
    as rotas, e a razão do piso de FCP (~0,9 s sem JS). Ainda assim é um

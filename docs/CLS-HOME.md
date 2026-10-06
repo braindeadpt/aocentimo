@@ -87,9 +87,40 @@ garantir que o `Archivo-intro.woff2` está no primeiro passo, ou travar a
 métrica de recurso para o título não mudar de linha — fecha as duas contas ao
 mesmo tempo. É por isso que esta face é a prioridade nº1 das duas listas.
 
+## A correcção (implementada)
+
+O `ArchivoMeio Fallback` (`globals.css`) media 117,42 % — 624,28 px para o
+o título contra os 713,77 px do ficheiro. A fonte real é 14,33 % mais larga, e é
+por isso que o título quebrava de 2 para 3 linhas no swap. O `size-adjust`
+passa a **134,25 %** (117,42 % × 713,77/624,28), o valor que faz o fallback
+medir o mesmo avanço que o ficheiro: o título quebra o mesmo número de linhas
+com e sem a fonte, e deixa de haver *relayout* depois da primeira pintura.
+Mantém-se `font-display: swap` — a decisão do dono.
+
+Antes/depois no `out/` local, com a fonte atrasada 3 s para reproduzir o swap
+tardio (CPU 1×):
+
+| | antes | depois |
+|---|---|---|
+| LCP (o `P` da intro) | 3 984 ms | **2 752 ms** (−1 232) |
+| CLS | 0,04378 | **0,00848** (−81 %) |
+| altura do `<h1>` | 57 → 86 px | **86 → 86 px** |
+
+No **site publicado**, com o CSS da correcção injectado: CLS **0 em 5/5**
+corridas, contra 0,04378 em 9/9 sem ela. O que resta (0,00523 local) é o `SPAN`
+do cabeçalho do site — outra face, outro assunto.
+
+A mesma correcção fecha também o LCP ([LCP-HOME.md](./LCP-HOME.md)): o `<h1>`
+já não cresce no swap, por isso o LCP fica na primeira pintura e não na troca.
+
 ## Como reproduzir
 
 ```bash
+# no site publicado
 node scripts/_perfil-cls.mjs --url https://aocentimo.pt/ --corridas 4
 node scripts/_perfil-cls.mjs --url https://aocentimo.pt/ --corridas 3 --so bloq-fonte-intro
+
+# local, a reproduzir o swap tardio sem depender da rede do CDN
+PORTA=3123 node scripts/_serve-static.mjs &
+ATRASO_FONTE=3000 node scripts/_perfil-cls.mjs --url http://localhost:3123/ --corridas 3
 ```

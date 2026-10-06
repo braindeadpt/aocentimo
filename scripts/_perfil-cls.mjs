@@ -49,6 +49,10 @@ const VARIANTES = {
   'bloq-fonte-intro': { bloquear: '**/Archivo-intro.woff2' },
   'bloq-fonte-base': { bloquear: '**/Archivo_base*.woff2' },
   'sem-transicoes': { css: '*,*::before,*::after{transition:none !important;animation:none !important}' },
+  // correcções candidatas (o @font-face mais tarde substitui o original)
+  'fix-134': { css: '@font-face{font-family:"ArchivoMeio Fallback";src:local(Arial);ascent-override:100.68%;descent-override:89.33%;line-gap-override:0%;size-adjust:134.25%}' },
+  'fd-block': { css: '@font-face{font-family:"ArchivoMeio";src:url("/fonts/Archivo-intro.woff2") format("woff2");font-weight:400 900;font-style:normal;font-display:block}' },
+  'fd-optional': { css: '@font-face{font-family:"ArchivoMeio";src:url("/fonts/Archivo-intro.woff2") format("woff2");font-weight:400 900;font-style:normal;font-display:optional}' },
 }
 
 // A sonda: guarda cada layout-shift com as fontes; amostra as rects dos
@@ -120,6 +124,15 @@ async function umaCorrida(browser, v) {
   }
   if (v.bloquearFontes) await page.route('**/*.woff2', (route) => route.abort())
   if (v.bloquear) await page.route(v.bloquear, (route) => route.abort())
+  // atrasa a chegada das fontes: reproduz localmente o swap tardio que só
+  // aparece no site publicado sob rede lenta (ATRASO_FONTE em ms)
+  if (process.env.ATRASO_FONTE) {
+    const ms = Number(process.env.ATRASO_FONTE)
+    await page.route('**/*.woff2', async (route) => {
+      await new Promise((r) => setTimeout(r, ms))
+      await route.continue()
+    })
+  }
   try {
     await page.goto(URL, { waitUntil: 'commit', timeout: 30_000 })
   } catch (e) {
