@@ -218,7 +218,9 @@ Ramo `v5/prod-p1-home`. Depende de P0.
    marcadores mostram os valores de data/; sem JS o bairro e os números aparecem;
    reduced-motion não descarrega o GSAP; 0 erros de consola; sem transbordo a 375 px;
    a câmara mexe ao arrastar.
-Aceitação: /scripts/_js-por-rota.mjs — a home não passa os 350 KB de JS inicial.
+Aceitação: /scripts/_js-por-rota.mjs — a home não passa os 350 KB de JS inicial
+(o medidor imprime gzip ao nível do CDN, a mesma unidade do tecto — desde
+2026-10-06; antes somava bytes raw de um servidor local que não comprime).
 ```
 
 ### P2a · Cenas: Fábrica, Finanças, Banco, Mercearia

@@ -1205,19 +1205,31 @@ que percorre todas as rotas e intercepta os pedidos.
 ### Orçamento de performance (medido, `_js-por-rota` + `_sweep` + `_gate-html`)
 
 - **HTML da home: tecto de 80 KB gzip** (`scripts/_gate-html.mjs`, gate
-  do CI depois do build). Estado actual: **72,1 KB gzip** medido
-  (2026-10-04), depois de o conserto do flight ter eliminado a segunda
-  viagem do mapa — o payload RSC caiu de 17 184 para 9 088 B.
-  `_dieta-html.mjs` mede o mesmo por blocos (o mapa são ~81 % do raw) e
-  corre experimentos sobre uma cópia em memória, sem escrever nada.
-- **JS inicial por rota: tecto de 350 KB gzip** na home, do pack §P1
-  (`_js-por-rota.mjs` imprime KB *wire*; o tecto é gzip). Medido em
-  2026-10-04: a home carrega **223,7 KB gzip** em 11 ficheiros
-  (~608 KB wire) — dentro do tecto, mas o número subiu desde os 185,7 KB
-  registados na P1 (o registry das cenas e o browser chrome das 11 cenas
-  entraram depois). O registry **fica** dentro do inicial; **as onze cenas
-  não** — viajam por `next/dynamic` e só descem ao entrar no edifício, e o
-  e2e prova que nenhum pedido de cena acontece no load.
+  do CI depois do build). O gate mede **no mesmo nível do CDN** (gzip 5,
+  corrigida a diferença de zlib entre o Node 1.3.1 e o CDN 1.2.x), por isso
+  o número local coincide com o que é servido e não fica abaixo dele.
+  Estado actual: **74,9 KB gzip** medido (2026-10-06), depois de o conserto
+  do flight ter eliminado a segunda viagem do mapa — o payload RSC caiu de
+  17 184 para 9 088 B.
+  `_dieta-html.mjs` mede o mesmo por blocos, com a mesma `_medida-cdn.mjs`
+  (o mapa são ~81 % do raw), e corre experimentos sobre uma cópia em memória,
+  sem escrever nada.
+- **JS inicial por rota: tecto de 350 KB gzip** na home, do pack §P1. O
+  medidor (`_js-por-rota.mjs`) passou a imprimir **gzip ao nível do CDN** — a
+  mesma `_medida-cdn.mjs` do gate do HTML. Antes somava o `transferSize` do
+  browser contra um servidor estático que **não comprime**: media raw (a home
+  dava ~608 KB) e punha-o na mesma linha de um tecto em gzip, ou seja, duas
+  unidades a comparar. Medido a 2026-10-06 no `out/` local: a home carrega
+  **189,6 KB gzip até ao load (10 ficheiros)** e **249,2 KB gzip até
+  networkidle (16)** — dentro do tecto, e alinhado com os **249 KB** que o
+  `MEDICAO-V5` registou na rede. O `_sweep` usa a mesma medida na sua coluna
+  de JS por rota.
+  Histórico: a 2026-10-04 a rede dava **223,7 KB gzip** em 11 ficheiros — o
+  número subiu desde os 185,7 KB registados na P1, quando entraram o registry
+  das cenas e o browser chrome das 11 cenas. O registry **fica** dentro do
+  inicial; **as onze cenas não** — viajam por `next/dynamic` e só descem ao
+  entrar no edifício, e o e2e prova que nenhum pedido de cena acontece no
+  load.
 - **O mapa é HTML renderizado, não carga de hidratação.** É a promessa
   arquitectural que sustenta o tecto acima, e o `_gate-html` verifica-a:
   o SVG não pode aparecer no `self.__next_f`.

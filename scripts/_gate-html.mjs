@@ -15,15 +15,20 @@
  * diferença se o tecto for ultrapassado.
  */
 import { readFileSync } from "node:fs";
-import { gzipSync } from "node:zlib";
+// A medida é a do CDN, num sítio só: scripts/_medida-cdn.mjs (nível 5 + o
+// fator de zlib, arredondado para cima). Sem isso o gzipSync por omissão
+// (nível 6) media 72,4 KB onde o CDN servia 74,9 KB — folga falsa de 2,5 KB.
+import { kb, medirGzipCdn } from "./_medida-cdn.mjs";
 
 const ficheiro = process.argv[2] ?? "out/index.html";
 const LIMITE = 80 * 1024; // o §4 do pack: 80 KB gzip para a home
 
 const html = readFileSync(ficheiro, "utf8");
-const gz = gzipSync(Buffer.from(html, "utf8")).length;
+const gz = medirGzipCdn(html);
 
-console.log(`home: ${(gz / 1024).toFixed(1)} KB gzip (limite ${(LIMITE / 1024).toFixed(0)} KB)`);
+console.log(
+  `home: ${kb(gz)} KB gzip (limite ${(LIMITE / 1024).toFixed(0)} KB · medida igual à do CDN)`
+);
 
 // — a promessa: o mapa no DOM, não no flight —
 const noDom = html.includes("b-camada");
@@ -54,8 +59,8 @@ if (!noDom) {
 }
 if (gz > LIMITE) {
   console.error(
-    `FALHA: o HTML da home pesa ${(gz / 1024).toFixed(1)} KB gzip — ` +
-      ` ${(gz - LIMITE > 0 ? "+" : "")}${((gz - LIMITE) / 1024).toFixed(1)} KB acima do limite de 80 KB (§4 do pack).`
+    `FALHA: o HTML da home pesa ${kb(gz)} KB gzip — ` +
+      ` ${(gz - LIMITE > 0 ? "+" : "")}${kb(gz - LIMITE)} KB acima do limite de 80 KB (§4 do pack).`
   );
   process.exit(1);
 }

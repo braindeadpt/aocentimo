@@ -8,14 +8,19 @@
  * peças soltas — e mede o gzip de cada hipótese. Nada é escrito; só
  * lê e imprime.
  *
+ * Todos os números «gzip» são a **medida do CDN** (`_medida-cdn.mjs`): nível
+ * 5, correção de zlib e arredondamento para cima. Sem isso o `gzipSync` por
+ * omissão (nível 6) mostrava cada hipótese ~2,5 KB mais leve do que o CDN a
+ * serviria — uma folga que não existe.
+ *
  * Uso: node scripts/_dieta-html.mjs [out/index.html]
  */
 import { readFileSync } from "node:fs";
-import { gzipSync } from "node:zlib";
+import { medirGzipCdn } from "./_medida-cdn.mjs";
 
 const ficheiro = process.argv[2] ?? "out/index.html";
 const html = readFileSync(ficheiro, "utf8");
-const gz = (s) => gzipSync(Buffer.from(s, "utf8")).length;
+const gz = (s) => medirGzipCdn(s);
 const fmt = (n) => n.toLocaleString("pt-PT", { maximumFractionDigits: 0 });
 
 /** [início, fim) de um bloco <tag …> … </tag> a partir de `ini`. */

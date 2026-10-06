@@ -1,7 +1,12 @@
 // M-20 varrimento: AA nos dois temas em todas as rotas, LCP/CLS/JS por
 // rota, e cada gráfico com exactamente um equivalente textual.
+//
+// O JS é medido ao nível do CDN (`_medida-cdn.mjs`), não em bytes raw do
+// servidor local: o servidor estático não comprime e o orçamento do pack é em
+// gzip. Recolhem-se os caminhos dos ficheiros pedidos e mede-se cada um.
 import { chromium } from "playwright";
 import { readFileSync } from "node:fs";
+import { pesoDeUrls } from "./_medida-cdn.mjs";
 
 const rotas = [...readFileSync("out/sitemap.xml", "utf8").matchAll(/<loc>([^<]+)<\/loc>/g)]
   .map((m) => new URL(m[1]).pathname)
@@ -79,8 +84,8 @@ const PERF_EVAL = `(async () => {
   po.observe({ type: "layout-shift", buffered: true });
   await new Promise((r) => setTimeout(r, 400));
   po.disconnect();
-  const js = performance.getEntriesByType("resource").filter(r => r.name.endsWith(".js")).reduce((a,r) => a + (r.transferSize||r.encodedBodySize||0), 0);
-  return { lcp: Math.round(lcp), cls: +cls.toFixed(3), jsKB: Math.round(js/1024), domKB: Math.round((nav?.encodedBodySize||0)/1024) };
+  const jsUrls = performance.getEntriesByType("resource").filter(r => r.name.endsWith(".js")).map(r => new URL(r.name).pathname);
+  return { lcp: Math.round(lcp), cls: +cls.toFixed(3), jsUrls, domKB: Math.round((nav?.encodedBodySize||0)/1024) };
 })()`;
 
 const b = await chromium.launch();
@@ -95,6 +100,7 @@ for (const rota of rotas) {
   });
   await p.waitForTimeout(400);
   const perf = await p.evaluate(PERF_EVAL);
+  perf.jsKB = Math.round(pesoDeUrls(perf.jsUrls).bytes / 1024);
   // gráficos: svg aria-hidden + exactamente um equivalente alcançável
   const graf = await p.evaluate(`(() => {
     const wraps = [...document.querySelectorAll("figure, .lc-wrap, [class*='chart']")].filter(w => w.querySelector("svg"));
@@ -114,7 +120,11 @@ for (const rota of rotas) {
     if (falhas.length) aaFalhas[`${rota} [${tema}]`] = falhas.slice(0, 4);
   }
   await p.close();
-  console.log(rota.padEnd(38), `LCP ${perf.lcp}ms CLS ${perf.cls} JS ${perf.jsKB}KB`, graf.length ? "SVG:" + graf[0] : "");
+  console.log(
+    rota.padEnd(38),
+    `LCP ${perf.lcp}ms CLS ${perf.cls} JS ${perf.jsKB}KB gzip (nível do CDN)`,
+    graf.length ? "SVG:" + graf[0] : ""
+  );
 }
 console.log("\n=== FALHAS AA ===");
 for (const [k, v] of Object.entries(aaFalhas)) console.log(k, "\n  " + v.join("\n  "));

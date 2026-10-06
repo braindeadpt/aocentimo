@@ -588,6 +588,13 @@ mesma conta determinística — zero avisos de hidratação (e2e novo).
 | payload RSC (gzip) | ≈53 KB com o mapa | **8,6 KB, sem o mapa** |
 | JS inicial da home | 187,9 KB | 211,0 KB (+23,1; limite 350) |
 | construção do mapa | 0 ms (não corria) | 4,89 ms ×4 CPU ≈ **19,6 ms** (≤30: sem idle) |
+
+> **Nota (2026-10-06):** os gzip desta tabela foram medidos com o
+> `_dieta-html.mjs` da altura, que usava o default do `gzipSync` (nível 6).
+> Ao nível do CDN (nível 5 + correção de zlib) cada número é ~2–3 % maior —
+> são folgas de dezenas de KB, não de bytes. A medida passou a ser uma só,
+> em `scripts/_medida-cdn.mjs`, usada pelo gate e por todos os medidores de
+> peso; ver `MEDICAO-V5.md`.
 | load→pintura estável (CPU 4×) | — | 942 ms, zero avisos |
 
 O custo do JS (+23 KB gzip) são os builders a entrar no cliente —

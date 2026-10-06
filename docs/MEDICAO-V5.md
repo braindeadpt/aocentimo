@@ -684,7 +684,7 @@ O `scripts/_gate-html.mjs` mede o **build local** (`out/index.html`),
 não a rede. Corri-o em `origin/main` (`d7a2152`), `npm run build` EXIT 0:
 
 ```
-home: 72.1 KB gzip (limite 80 KB)
+home: 72.1 KB gzip (limite 80 KB)   ← o gate ANTIGO (nível 6, folga falsa); ver actualização abaixo
 ok: mapa no DOM, flight limpo, dentro do orçamento.
 ```
 
@@ -701,6 +701,29 @@ deploy de ~40 minutos antes. Não é uma falha do gate (é um gate de
 regressão, e para isso serve), mas significa que **o gate não é uma
 medição do que os utilizadores recebem**. As duas perguntas são distintas e
 convém não trocar uma pela outra.
+
+**Actualização (2026-10-06) — a causa era o compressor, não o desfasamento.**
+Os 72,1 KB do gate não vinham só de medir um deploy mais recente: vinham
+sobretudo do compressor. O CDN serve gzip **nível 5** — um `gzip -5` da home
+publicada dá **exactamente** o `content-length` que o CDN envia (76 734 B a
+2026-10-06) — enquanto o gate usava o default do `gzipSync` (nível 6) e o
+zlib 1.3.1 do Node, que comprime ~0,6 % melhor que o zlib 1.2.x do CDN. O
+`_gate-html.mjs` passou a medir no nível do CDN e a corrigir essa diferença,
+pelo que o **número local e o publicado passam a coincidir** (74,9 KB nos
+dois, sobre o mesmo par build/rede de hoje).
+
+**E a medida passou a ser uma só, para todos os medidores de peso
+(2026-10-06).** A regra ficou num módulo partilhado,
+`scripts/_medida-cdn.mjs` (nível 5 + correção de zlib, arredondado **para
+cima**), e o `_gate-html.mjs`, o `_dieta-html.mjs`, o `_js-por-rota.mjs` e o
+`_sweep.mjs` passaram a usá-lo. Os dois últimos mediam o `transferSize` do
+browser contra o servidor estático local — que não comprime — e imprimiam
+**raw** ao lado de um tecto em gzip: a home dava ~608 KB de JS no arranque
+onde o CDN serve 189,6 KB. Agora recolhem os caminhos dos ficheiros pedidos e
+medem cada um com a mesma função do gate; verificação de que a correção nunca
+é optimista: num chunk `.js` publicado de 16 802 B o CDN serve 6 283 B e a
+função devolve 6 332 B (e na home, 76 733 B contra 76 734 B — arredondamento
+para cima incluído).
 
 ## (4) axe na home, numa cena aberta e nas rotas migradas
 
