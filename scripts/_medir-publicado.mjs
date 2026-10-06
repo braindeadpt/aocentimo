@@ -9,6 +9,8 @@
  *   node scripts/_medir-publicado.mjs cenas   --saida /tmp/cenas.json
  *   node scripts/_medir-publicado.mjs html    --saida /tmp/html.json
  *   node scripts/_medir-publicado.mjs axe     --saida /tmp/axe.json
+ *   node scripts/_medir-publicado.mjs axe     --larguras 390,1440
+ *   node scripts/_medir-publicado.mjs real    --saida /tmp/real.json
  *
  * Notas de portabilidade (medidas nesta máquina, macOS):
  *  - `lighthouse` e `axe-core` são ferramentas, NÃO dependências do
@@ -172,6 +174,7 @@ function resume(ficheiro) {
     fontes: Math.round(bytes('Font') / 1024),
     imagens: Math.round(bytes('Image') / 1024),
     nFontes: itens.filter((i) => i.resourceType === 'Font').length,
+    fontesUrls: itens.filter((i) => i.resourceType === 'Font').map((i) => i.url.replace(BASE, '')),
     pedidos: itens.length,
     lcpFases: fases,
     lcpEl: bd.find((i) => i.type === 'node')?.nodeLabel ?? null,
@@ -236,22 +239,44 @@ async function cenas(navegador) {
       let carateres = 0
       let tDesenho = -1
       let onde = null
+      let tTexto = -1
+      let filhosArte = 0
       while (Date.now() - t0 < 60000) {
-        // A fábrica desenha o painel dela em `.b-painel`; as outras 10
-        // cenas usam a moldura `.b-cena` da CenaDePerto. Medir só uma
-        // delas dá «a cena não abre» numa cena que abre.
+        // Dois instantes, e os dois interessam:
+        //   - `tDesenho`: o DESENHO chegou. Enquanto o JSON não chega, a
+        //     moldura abre com `semDesenho` e NÃO tem `<svg>`; quando os
+        //     dados entram, as dez cenas da CenaDePerto desenham em
+        //     `div.b-cena-arte > svg` e a Fábrica no `.b-painel` dela.
+        //   - `tTexto`: o critério de 2026-10-04 (o painel passa de 80
+        //     caracteres), para a medida nova continuar comparável à velha.
         const st = await page.evaluate(() => {
+          const svg = document.querySelector('div.b-cena-arte > svg')
+          const painel = document.querySelector('.b-painel')
+          const desenho = svg
+            ? { sel: 'div.b-cena-arte > svg', filhos: svg.childElementCount }
+            : painel
+              ? { sel: '.b-painel', filhos: 0 }
+              : null
+          let texto = 0
           for (const sel of ['div.b-cena', '.b-painel']) {
-            const el = document.querySelector(sel)
-            const n = el?.innerText?.trim().length ?? 0
-            if (n > 80) return { n, sel }
+            const n = document.querySelector(sel)?.innerText?.trim().length ?? 0
+            if (n > texto) texto = n
           }
-          return { n: 0, sel: null }
+          return { desenho, texto }
         })
-        if (st.n > 80) { carateres = st.n; onde = st.sel; tDesenho = Date.now() - t0; break }
+        const agora = Date.now() - t0
+        if (tDesenho === -1 && st.desenho) {
+          tDesenho = agora
+          onde = st.desenho.sel
+          filhosArte = st.desenho.filhos
+        }
+        if (tTexto === -1 && st.texto > 80) tTexto = agora
+        if (st.texto > carateres) carateres = st.texto
+        if (tDesenho !== -1 && tTexto !== -1) break
         await page.waitForTimeout(250)
       }
       if (tDesenho === -1) tDesenho = Date.now() - t0
+      if (tTexto === -1) tTexto = Date.now() - t0
       await page.waitForLoadState('load').catch(() => {})
 
       const fps = await page.evaluate(() => {
@@ -263,21 +288,89 @@ async function cenas(navegador) {
       medidas.push({
         n,
         tDesenho,
+        tTexto,
         carateres,
         onde,
+        filhosArte,
         fcp: fps.fcp,
         lcpReal: fps.lcp,
         cls: Number(cls.toFixed(5)),
         pedidos: pedidos.map((p) => ({ ...p, ms: p.t - t0 })),
         eventos: paints.map((p) => ({ ...p, ms: p.t - t0 })),
       })
-      console.error(`cena ${id} #${n}: ${tDesenho} ms (${carateres} car.)`)
+      console.error(`cena ${id} #${n}: desenho ${tDesenho} ms · texto ${tTexto} ms (${carateres} car.)`)
       await page.close()
       await ctx.close()
     }
     saida.push({ id, medidas })
   }
   return { quando: new Date().toISOString(), cenas: saida }
+}
+
+/* ------------------------------------------------------------- (2b) real */
+
+/**
+ * A home no **Chrome instalado** (não o Chromium do Playwright), com a
+ * rede estrangulada a 1,6 Mbps / 150 ms mas **sem** estrangular o CPU —
+ * a pergunta é «o que vê um Mac», e o CPU faz parte disso. LCP e FCP
+ * lidos por `PerformanceObserver` na própria página.
+ */
+async function real(navegador) {
+  const medidas = []
+  for (let n = 1; n <= CORRIDAS; n++) {
+    const ctx = await navegador.newContext({ viewport: { width: 390, height: 844 } })
+    const page = await ctx.newPage()
+    const cdp = await ctx.newCDPSession(page)
+    await cdp.send('Network.enable')
+    await cdp.send('Network.emulateNetworkConditions', { ...LENTO, connectionType: 'cellular4g' })
+    // SEM `Emulation.setCPUThrottlingRate` — é isso que distingue este bloco.
+
+    const recebidas = []
+    await page.exposeFunction('__marca', (v) => recebidas.push(v))
+    await page.addInitScript(() => {
+      let lcp = null
+      let fcp = null
+      new PerformanceObserver((l) => {
+        for (const e of l.getEntries()) lcp = e
+      }).observe({ type: 'largest-contentful-paint', buffered: true })
+      new PerformanceObserver((l) => {
+        for (const e of l.getEntries()) if (e.name === 'first-contentful-paint') fcp = e
+      }).observe({ type: 'paint', buffered: true })
+      const reporta = () => {
+        const nav = performance.getEntriesByType('navigation')[0]
+        const el = lcp?.element
+        window.__marca({
+          lcp: Math.round(lcp?.startTime ?? -1),
+          fcp: Math.round(fcp?.startTime ?? -1),
+          ttfb: Math.round(nav?.responseStart ?? -1),
+          lcpRenderTime: Math.round(lcp?.renderTime ?? -1),
+          lcpLoadTime: Math.round(lcp?.loadTime ?? -1),
+          lcpUrl: lcp?.url ?? null,
+          lcpByte: lcp?.size ?? null,
+          lcpEl: el
+            ? `${el.tagName.toLowerCase()}${el.className ? '.' + String(el.className).trim().replace(/\s+/g, '.') : ''}: ${(el.textContent ?? '').trim().slice(0, 48)}`
+            : null,
+          dcl: Math.round(nav?.domContentLoadedEventEnd ?? -1),
+          load: Math.round(nav?.loadEventEnd ?? -1),
+        })
+      }
+      window.addEventListener('load', () => {
+        reporta()
+        // O LCP pode fechar depois do `load`; uma segunda leitura às 2,5 s
+        // apanha o valor final (o Node guarda sempre a última).
+        setTimeout(reporta, 2500)
+      })
+    })
+
+    await page.goto(`${BASE}/`, { waitUntil: 'load' })
+    await page.waitForTimeout(3200)
+    const final = recebidas.at(-1) ?? null
+    medidas.push({ n, ...final })
+    console.error(`real #${n}: LCP ${final?.lcp} ms · FCP ${final?.fcp} ms`)
+    await page.close()
+    await ctx.close()
+  }
+  return { quando: new Date().toISOString(), rotas: ['/'], medidas }
 }
 
 /* ------------------------------------------------------------------ (3) */
@@ -321,54 +414,61 @@ async function axe(navegador) {
   const versao = JSON.parse(
     await fs.readFile(require_.resolve('axe-core/package.json', { paths: [dirname(axePath)] }), 'utf8'),
   ).version
+  // As catorze rotas de conteúdo (tudo o que não é a home): são as doze
+  // migradas de 2026-10-04 mais `/estilo` e `/sobre`.
   const alvos = [
     { nome: 'home', url: '/' },
     { nome: 'cena-aberta', url: '/#bomba' },
-    ...['/salario', '/irs', '/impostos', '/poupanca', '/credito', '/casa', '/inflacao', '/precos', '/trabalho', '/dados', '/aprender', '/metodologia']
-      .map((u) => ({ nome: u, url: u })),
+    ...['/salario', '/irs', '/impostos', '/poupanca', '/credito', '/casa',
+      '/inflacao', '/precos', '/trabalho', '/dados', '/aprender',
+      '/metodologia', '/estilo', '/sobre'].map((u) => ({ nome: u, url: u })),
   ]
-  const ctx = await navegador.newContext({ viewport: { width: 390, height: 844 } })
+  const LARGURAS = arg('larguras', '390,1440').split(',').map(Number)
   const out = []
-  for (const alvo of alvos) {
-    const page = await ctx.newPage()
-    await page.goto(`${BASE}${alvo.url}`, { waitUntil: 'load' })
-    if (alvo.url.includes('#')) {
-      await page.evaluate(() => new Promise((r) => {
-        const el = document.querySelector('div.b-cena')
-        if (!el) return r(null)
-        const obs = new MutationObserver(() => {
-          if (el.innerText.trim().length > 80) { obs.disconnect(); r(1) }
-        })
-        obs.observe(el, { childList: true, subtree: true, characterData: true })
-        setTimeout(() => { obs.disconnect(); r(0) }, 8000)
-      }))
-    }
-    await page.addScriptTag({ content: fonte })
-    const r = await page.evaluate(async () => {
-      const res = await window.axe.run(document, { runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] })
-      return {
-        violacoes: res.violations.map((v) => ({
-          id: v.id,
-          impacto: v.impact,
-          ajuda: v.help,
-          nodos: v.nodes.length,
-          alvos: v.nodes.slice(0, 3).map((n) => n.target.join(' ')),
-        })),
-        passes: res.passes.length,
-        incompletos: res.incomplete.length,
+  for (const largura of LARGURAS) {
+    const ctx = await navegador.newContext({ viewport: { width: largura, height: largura >= 1000 ? 900 : 844 } })
+    for (const alvo of alvos) {
+      const page = await ctx.newPage()
+      await page.goto(`${BASE}${alvo.url}`, { waitUntil: 'load' })
+      if (alvo.url.includes('#')) {
+        await page.evaluate(() => new Promise((r) => {
+          const el = document.querySelector('div.b-cena')
+          if (!el) return r(null)
+          const obs = new MutationObserver(() => {
+            if (el.innerText.trim().length > 80) { obs.disconnect(); r(1) }
+          })
+          obs.observe(el, { childList: true, subtree: true, characterData: true })
+          setTimeout(() => { obs.disconnect(); r(0) }, 8000)
+        }))
       }
-    })
-    out.push({ ...alvo, ...r })
-    console.error(`axe ${alvo.nome}: ${r.violacoes.length} violações`)
-    await page.close()
+      await page.addScriptTag({ content: fonte })
+      const r = await page.evaluate(async () => {
+        const res = await window.axe.run(document, { runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] })
+        return {
+          violacoes: res.violations.map((v) => ({
+            id: v.id,
+            impacto: v.impact,
+            ajuda: v.help,
+            nodos: v.nodes.length,
+            alvos: v.nodes.slice(0, 3).map((n) => n.target.join(' ')),
+          })),
+          passes: res.passes.length,
+          incompletos: res.incomplete.length,
+        }
+      })
+      out.push({ largura, ...alvo, ...r })
+      console.error(`axe ${largura}px ${alvo.nome}: ${r.violacoes.length} violações`)
+      await page.close()
+    }
+    await ctx.close()
   }
-  await ctx.close()
-  return { quando: new Date().toISOString(), axeCore: versao, alvos: out }
+  return { quando: new Date().toISOString(), axeCore: versao, larguras: LARGURAS, alvos: out }
 }
 
 /* ------------------------------------------------------------------ main */
 
 const cmd = process.argv[2]
+const cargaAntes = execFileSync('sysctl', ['-n', 'vm.loadavg'], { encoding: 'utf8' }).trim()
 let relatorio
 if (cmd === 'lh') {
   relatorio = await lh()
@@ -376,16 +476,26 @@ if (cmd === 'lh') {
   relatorio = await lhCenas()
 } else if (cmd === 'html') {
   relatorio = html()
-} else if (cmd === 'cenas' || cmd === 'axe') {
+} else if (cmd === 'cenas' || cmd === 'axe' || cmd === 'real') {
   const exe = arg('chrome', process.env.CHROME_PATH ?? undefined)
-  const navegador = await chromium.launch(exe ? { executablePath: exe } : {})
-  relatorio = cmd === 'cenas' ? await cenas(navegador) : await axe(navegador)
-  relatorio.carga = execFileSync('sysctl', ['-n', 'vm.loadavg'], { encoding: 'utf8' }).trim()
+  const navegador = await chromium.launch(
+    exe ? { executablePath: exe } : cmd === 'real' ? { channel: 'chrome' } : {},
+  )
+  relatorio =
+    cmd === 'cenas' ? await cenas(navegador)
+    : cmd === 'axe' ? await axe(navegador)
+    : await real(navegador)
   await navegador.close()
 } else {
-  console.error('uso: _medir-publicado.mjs lh|lh-cenas|cenas|html|axe [--saida f] [--corridas n] [--chrome bin] [--rotas a,b] [--cenas a,b]')
+  console.error('uso: _medir-publicado.mjs lh|lh-cenas|cenas|axe|real|html [--saida f] [--corridas n] [--chrome bin] [--rotas a,b] [--cenas a,b] [--larguras 390,1440]')
   process.exit(1)
 }
+
+// A carga antes e depois de cada bloco, para se poder rejeitar a corrida ou
+// o bloco inteiro. `1,5 por núcleo` = 12 no total dos 8 núcleos.
+relatorio.cargaAntes = cargaAntes
+relatorio.cargaDepois = execFileSync('sysctl', ['-n', 'vm.loadavg'], { encoding: 'utf8' }).trim()
+relatorio.cpus = Number(execFileSync('sysctl', ['-n', 'hw.ncpu'], { encoding: 'utf8' }).trim())
 
 writeFileSync(SAIDA, JSON.stringify(relatorio, null, 2))
 console.error(`escrito: ${SAIDA}`)
