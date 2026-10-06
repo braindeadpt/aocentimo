@@ -122,21 +122,16 @@ export const GAIVOTAS: readonly (readonly [number, number, number, number, numbe
 ];
 
 /**
- * Os pontos da planta de que a animação ambiente precisa, por ordem: as
- * duas pontas da avenida (por onde o elétrico sobe e desce) e os oito
- * sítios onde o brilho da água desliza sobre o Douro.
- *
- * Vêm como `[i, j, z]` e o servidor converte cada um em coordenadas de
- * ecrã (`PontosDeEcran()`). Não pode ser uma função `P()` a atravessar
- * para o cliente: uma função de servidor não passa a fronteira, e o
- * cliente também não pode importar `planta.ts` — arrastaria o desenho
- * inteiro para o browser por causa de duas dezenas de números.
+ * Os pontos necessários ao movimento, serializados na fronteira
+ * servidor/cliente. Cada triplo [i, j, z] é projectado pelo servidor;
+ * o cliente não reimplementa a projeção nem importa a planta.
  */
 export const PONTOS_ANIMACAO: readonly (readonly [number, number, number])[] = [
-  // as duas pontas da avenida, para o elétrico
-  [-3.4, 4.25, 0],
-  [13.4, 4.25, 0],
-  // o brilho da água: oito traços espalhados pelo rio
+  // as duas pontas da avenida e a origem do elétrico, todos à cota 110
+  [-3.4, 4.25, 110],
+  [13.4, 4.25, 110],
+  [0, 4.25, 110],
+  // oito brilhos do rio
   [-0.5, 11.3, -22],
   [-0.5, 11.55, -22],
   [0.14, 12.6, -22],
@@ -145,11 +140,25 @@ export const PONTOS_ANIMACAO: readonly (readonly [number, number, number])[] = [
   [4.75, 11.35, -22],
   [6.39, 12.94, -22],
   [7.79, 11.87, -22],
-  [10.28, 12.51, -22],
-  [11.96, 11.62, -22],
+  // Pedro: início e os dois extremos do passeio pela Avenida
+  [5, 3.85, 110],
+  [14, 3.85, 110],
+  [1, 3.85, 110],
+  // Arminda: praça, subida pelas escadas, Correios e regresso
+  [3.3, 8.85, 0],
+  [7.5, 8.8, 0],
+  [7.5, 8.4, 0],
+  [7.5, 5.4, 110],
+  [7.5, 3.8, 110],
+  [11.7, 3.8, 110],
+  // miúdos: guarda da ponte e pontos de entrada na água
+  [14.8, 12.55, 20],
+  [14.8, 13.35, 20],
+  [15.18, 12.55, -22],
+  [15.18, 13.35, -22],
 ];
 
-/** `PONTOS_ANIMACAO` já em coordenadas de ecrã, na mesma ordem. */
+/** `PONTOS_ANIMACAO` projectados pelo servidor, na mesma ordem. */
 export function PontosDeEcran(): (readonly [number, number])[] {
   return PONTOS_ANIMACAO.map(([i, j, z]) => Pt(i, j, z));
 }
@@ -624,17 +633,20 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
   /* ——— a gente do bairro (P1-gente) ———
      O `colocar()` do protótipo (mapa.tpl.html, «quem anda no bairro»),
      em texto: cada figura leva os pés a Pt(i, j) e a escala ESC. `dir`
-     negativo vira a personagem. O movimento é o do CSS/ambiente já
-     existente — não há JavaScript por pessoa. */
+     negativo vira a personagem. O ambiente anima as personagens
+     assinaladas por data-b-andador; as restantes mantêm-se estáticas. */
   const ESC_GENTE = 0.36;
   const figura = (fig: Personagem, i: number, j: number, dir = 1, extra = ""): string => {
     const [x, y] = Pt(i, j);
     return `<g transform="translate(${f1(x)} ${f1(y)}) scale(${f1(ESC_GENTE * dir)} ${ESC_GENTE})">${pessoa(fig)}${extra}</g>`;
   };
   /** O elenco — o `data-pessoa` é o contrato com a sessão das cartas. */
-  const elenco = (chave: ChaveElenco, i: number, j: number, dir = 1): string => {
+  const elenco = (chave: ChaveElenco, i: number, j: number, dir = 1, andador?: string): string => {
     const [x, y] = Pt(i, j);
-    return `<g transform="translate(${f1(x)} ${f1(y)}) scale(${f1(ESC_GENTE * dir)} ${ESC_GENTE})">${pessoa(ELENCO[chave], chave)}</g>`;
+    const movimento = andador
+      ? ` data-b-andador="${andador}" data-b-i="${i}" data-b-j="${j}" data-b-z="${TERRENO(i, j)}" data-b-dir="${dir}"`
+      : "";
+    return `<g${movimento} transform="translate(${f1(x)} ${f1(y)}) scale(${f1(ESC_GENTE * dir)} ${ESC_GENTE})">${pessoa(ELENCO[chave], chave)}</g>`;
   };
 
   /* a cana do pescador, com a linha e a boia — no protótipo entra no
@@ -652,22 +664,20 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     elenco("ines", 1.79, 3.78) +
     elenco("rui", 9.15, 3.8) +
     elenco("marta", 9.5, 3.82, -1) +
-    elenco("pedro", 5, 3.85);
+    elenco("pedro", 5, 3.85, 1, "pedro");
 
   /* j > 8,7 → movB: cá em baixo. O Sr. Manuel à porta da mercearia, a
-     Dona Arminda na praça (é onde nasce; o protótipo depois leva-a aos
-     correios), o Gonçalo e a Diana à porta da escola, e o pescador na
-     beira do cais, virado para o rio. */
+     Dona Arminda na praça (daqui parte para os Correios), o Gonçalo e a
+     Diana à porta da escola, e o pescador na beira do cais. */
   const movB =
     elenco("manuel", 0.67, 8.78, -1) +
-    elenco("arminda", 3.3, 8.85) +
+    elenco("arminda", 3.3, 8.85, 1, "arminda") +
     elenco("goncalo", 9.49, 8.8) +
     elenco("diana", 10.09, 8.78, -1) +
     figura(PESCADOR, 4.35, 10.52, -1, CANA);
 
-  /* os dois miúdos na guarda da ponte (i = 14,8, a 20 acima do rio) —
-     no protótipo saltam para o Douro em loop; aqui nascem parados na
-     posição inicial, e a classe `miudo` é a que o CSS esconde à noite */
+  /* Os dois miúdos nascem na guarda; `data-b-*` permite ao ambiente
+     animar o salto e repor exactamente a posição inicial na pausa. */
   const gCeu = (
     [
       [{ pele: "d", cabelo: "curto", corCabelo: "#1d1410", roupa: "#b97a52", calcas: "#e2412a", sapato: "#b97a52", escala: 0.82 }, 12.55],
@@ -676,7 +686,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
   )
     .map(([fig, j]) => {
       const [x, y] = Pt(14.8, j, 20);
-      return `<g class="miudo" transform="translate(${f1(x)} ${f1(y)}) scale(${ESC_GENTE})">${pessoa(fig)}</g>`;
+      return `<g class="miudo" data-b-jumper="${j}" data-b-i="14.8" data-b-j="${j}" data-b-z="20" transform="translate(${f1(x)} ${f1(y)}) scale(${ESC_GENTE})">${pessoa(fig)}</g>`;
     })
     .join("");
 

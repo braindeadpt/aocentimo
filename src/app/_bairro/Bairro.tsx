@@ -110,20 +110,10 @@ export interface PropsBairro {
    * quem sabe onde os edifícios estão.
    */
   pinos: readonly PinoPlanta[];
-  /**
-   * `P(i, j, z)` da planta em coordenadas de ecrã, por TABELA e não por
-   * função: uma função de servidor não pode atravessar a fronteira para
-   * um componente de cliente (o Next recusa o build), e o cliente também
-   * não pode importar `planta.ts` — arrastaria o desenho inteiro para o
-   * browser por causa de duas coordenadas.
-   *
-   * É uma lista de triplos `[i, j, z]`; o ponto correspondente está na
-   * mesma posição da prop `pontos`.
-   */
+  /** Triplos [i,j,z] e projeções do servidor necessários à animação; a planta não entra no bundle cliente. */
   coordenadas: readonly (readonly [number, number, number])[];
-  /** Os pontos de ecrã correspondentes, na mesma ordem de `coordenadas`. */
   pontos: readonly (readonly [number, number])[];
-  /** As três gaivotas: centro, raio em x, raio em y e período. */
+  /** As três órbitas das gaivotas: centro, raios e período, já em pixels do mundo. */
   gaivotas: readonly (readonly [readonly [number, number], number, number, number])[];
   /**
    * A hora do dia com que o mapa nasce, já escolhida pelo servidor.
@@ -252,15 +242,72 @@ export function Bairro({
     // mundo que já não é este.
     let vivo = true;
     let limpar: (() => void) | undefined;
+    let carregando = false;
+    let novaLigacaoPendente = false;
+    let geracao = 0;
+    let intersecta = false;
+    let visivel = !document.hidden;
 
-    ligarAmbiente(mundo, { coordenadas, pontos, gaivotas }).then((f) => {
-      if (vivo) limpar = f;
-      else f();
+    const janelaEl = janelaRef.current;
+    if (!janelaEl) return;
+    // Até chegar a primeira amostra do observer, mantém tudo parado.
+    janelaEl.classList.add("amb-off");
+
+    // Observa a janela do mapa, não o wrapper que também contém o título:
+    // caso contrário a animação continuava ligada durante o scroll para as
+    // cartas, mesmo com o mapa completamente fora do ecrã.
+    const pausar = () => {
+      janelaEl.classList.add("amb-off");
+      geracao++;
+      limpar?.();
+      limpar = undefined;
+      // Se o GSAP ainda está a carregar, adia a nova ligação até a antiga
+      // resolver e limpar os efeitos criados fora do ecrã.
+      if (carregando) novaLigacaoPendente = true;
+    };
+    const ligar = async () => {
+      if (!vivo || carregando || limpar || !intersecta || !visivel) return;
+      carregando = true;
+      const minhaGeracao = geracao;
+      try {
+        const f = await ligarAmbiente(mundo, { coordenadas, pontos, gaivotas });
+        if (!vivo || minhaGeracao !== geracao || !intersecta || !visivel) {
+          f();
+          return;
+        }
+        limpar = f;
+      } catch {
+        // sem rede ou sem GSAP, o mapa estático continua completo
+      } finally {
+        carregando = false;
+        const religar = novaLigacaoPendente && minhaGeracao !== geracao;
+        novaLigacaoPendente = false;
+        if (vivo && religar && intersecta && visivel) void ligar();
+      }
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      intersecta = entry.isIntersecting;
+      if (intersecta && visivel) {
+        janelaEl.classList.remove("amb-off");
+        void ligar();
+      } else pausar();
     });
+    observer.observe(janelaEl);
+    const aoVisibilidade = () => {
+      visivel = !document.hidden;
+      if (visivel && intersecta) {
+        janelaEl.classList.remove("amb-off");
+        void ligar();
+      } else pausar();
+    };
+    document.addEventListener("visibilitychange", aoVisibilidade);
 
     return () => {
       vivo = false;
-      limpar?.();
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", aoVisibilidade);
+      pausar();
+      janelaEl.classList.remove("amb-off");
     };
   }, [coordenadas, pontos, gaivotas]);
 

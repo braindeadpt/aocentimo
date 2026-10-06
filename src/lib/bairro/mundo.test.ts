@@ -59,6 +59,14 @@ const ROTULOS: RotulosCamada = {
 describe("mundoBairro — a ordem das camadas", () => {
   const { html } = mundoBairro(M, ROTULOS);
 
+  it("serves os salpicos na camada do céu e junto aos dois miúdos", () => {
+    expect(html.match(/data-b-jumper=/g)).toHaveLength(2);
+    expect(html.match(/data-b-salpico=/g)).toHaveLength(2);
+    expect(html).toContain('id="b-gCeu"><g class="miudo"');
+    expect(html).toMatch(/data-b-salpico="0"[^>]*translate\(/);
+    expect(html).toMatch(/data-b-salpico="1"[^>]*translate\(/);
+  });
+
   it("pinta as oito camadas pela ordem do protótipo", () => {
     const pos = ORDEM_CAMADAS.map((id) => html.indexOf(`id="${id}"`));
     expect(pos.every((p) => p >= 0)).toBe(true);

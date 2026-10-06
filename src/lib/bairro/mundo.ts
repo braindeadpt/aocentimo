@@ -16,8 +16,11 @@
  *   → b-cB (quem anda cá em baixo, pombos, barcos atracados)
  *   → barcos e metro soltos a passar
  *   → b-cRio (Gaia e o tabuleiro da ponte) → metro solto
- *   → b-cPonte (a treliça da frente) → b-cCeu
+ *   → b-cPonte (a treliça da frente) → b-cCeu (nadador e miúdos)
  *   → o véu da noite → b-cTopo (estrelas, lua, luzes, marcadores)
+ *
+ * A animação do eléctrico e das personagens corre dentro dos SVG: ao
+ * contrário das peças isoladas, segue a transformação da sua camada.
  *
  * O que anda sempre — nuvens, barcos, metro — é SVG solto animado por CSS,
  * FORA das camadas, como manda `design/prototipos/README.md`: uma peça
@@ -51,6 +54,14 @@ import {
 
 /** `P()` já com o terreno do bairro — o `P()` do protótipo. */
 const Pt = Pcom(TERRENO);
+
+const PONTOS_SALPICOS = [Pt(15.18, 12.55, -22), Pt(15.18, 13.35, -22)];
+
+function salpicosSvg(): string {
+  return PONTOS_SALPICOS.map(([x, y], k) =>
+    `<g class="miudo b-salpicos" data-b-salpico="${k}" opacity="0" transform="translate(${f1(x)} ${f1(y)})"><ellipse rx="16" ry="6" fill="none" stroke="#fff" stroke-width="2.6"/><path d="M-8 -4 l-4 -12 M0 -6 v-16 M8 -4 l4 -12" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></g>`
+  ).join("");
+}
 
 /** Reexportado do `iso.ts` — ver o porquê lá. */
 export { MUNDO };
@@ -379,7 +390,7 @@ export function mundoBairro(
     soltas +
     camada("b-cRio", `<g id="b-gGaia">${m.gaia}</g><g id="b-gRio">${m.ponte.tras}</g>`) +
     camada("b-cPonte", m.ponte.frente) +
-    camada("b-cCeu", `<g id="b-gCeu">${m.gente.ceu}${nadador()}</g>`) +
+    camada("b-cCeu", `<g id="b-gCeu">${m.gente.ceu}${nadador()}${salpicosSvg()}</g>`) +
     `<div id="b-noite" style="width:${MUNDO.w}px;height:${MUNDO.h}px"></div>` +
     camada("b-cTopo", topo(m));
   return { html, css };

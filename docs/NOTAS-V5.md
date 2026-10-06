@@ -656,15 +656,13 @@ protótipo ao nível do mapa (as figuras das cenas ficam nas cenas).
 
 **Contrato cumprido:** cada personagem do ELENCO sai com
 `data-pessoa="<chave>"` dentro de `.pessoa`; passantes, pescador e
-miúdos levam `.pessoa` sem `data-pessoa`. Nenhum JavaScript novo por
-pessoa; o movimento é o CSS que já existia.
-
-**Duas divergências deliberadas (estáticas):** no protótipo o Pedro e
-a D. Arminda são PASSEADOS por código (ele anda o passeio, ela vai aos
-correios) e os miúdos saltam da ponte em loop — aqui nascem e ficam nas
-posições iniciais, porque «o movimento é só o que o protótipo já faz em
-CSS» e andar gente por JS era fora de âmbito. Se o dono quiser o passeio
-animado, é trabalho do ambiente, não do mapa.
+miúdos levam `.pessoa` sem `data-pessoa`. O Pedro percorre a Avenida e
+regressa; a D. Arminda sobe às escadas, segue aos Correios e volta; os
+miúdos saltam da ponte, mergulham e regressam, com salpicos. Estas
+animações seguem a mesma pausa por visibilidade/interseção do ambiente e
+são restauradas no cleanup. O e2e verifica as figuras e a geometria
+inicial; a fidelidade temporal continua a exigir validação visual no
+browser.
 
 **Conserto apanhado de raspão:** `ambiente.ts` procurava `.b-brazo-n`
 mas `mundo.ts` emite `.b-braço-n` — o braço do nadador nunca animava.

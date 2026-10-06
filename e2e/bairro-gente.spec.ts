@@ -74,7 +74,7 @@ test.describe("a gente do bairro", () => {
 
   test("de noite os miúdos não são visíveis", async ({ page }) => {
     await page.goto("/");
-    const miudos = page.locator(".b-mundo .miudo");
+    const miudos = page.locator(".b-mundo [data-b-jumper]");
     await expect(miudos).toHaveCount(2);
 
     // a hora é a do relógio: de dia vêem-se, de noite o CSS apaga-os
@@ -83,6 +83,41 @@ test.describe("a gente do bairro", () => {
 
     await page.getByRole("button", { name: "Noite", exact: true }).click();
     for (let i = 0; i < 2; i++) await expect(miudos.nth(i)).toBeHidden();
+  });
+
+  test("o passeio do Pedro pausa fora da janela e retoma ao voltar", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    const janela = page.locator(".b-janela");
+    const pedro = page.locator('[data-b-andador="pedro"]');
+    const transformInicial = await pedro.getAttribute("transform");
+    const contarAves = () => page.locator(".b-mundo .b-gaivota").count();
+    const contarBrilhos = () => page.locator(".b-mundo .b-brilho-agua").count();
+    await expect.poll(contarAves).toBe(3);
+    await expect.poll(contarBrilhos).toBe(8);
+
+    // O primeiro percurso começa após 1,2 s; prova movimento real, não só
+    // que o HTML tem os ganchos de animação.
+    await page.waitForFunction(
+      () => Number(document.querySelector<SVGGElement>('[data-b-andador="pedro"]')?.dataset.bI) !== 5,
+      { timeout: 8_000 }
+    );
+
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await expect.poll(() => janela.evaluate((el) => el.classList.contains("amb-off"))).toBe(true);
+    await expect.poll(() => pedro.getAttribute("transform")).toBe(transformInicial);
+    await expect.poll(() => pedro.getAttribute("data-b-i")).toBe("5");
+    await expect.poll(contarAves).toBe(0);
+    await expect.poll(contarBrilhos).toBe(0);
+
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect.poll(() => janela.evaluate((el) => el.classList.contains("amb-off"))).toBe(false);
+    await expect.poll(contarAves).toBe(3);
+    await expect.poll(contarBrilhos).toBe(8);
+    await page.waitForFunction(
+      () => Number(document.querySelector<SVGGElement>('[data-b-andador="pedro"]')?.dataset.bI) !== 5,
+      { timeout: 8_000 }
+    );
   });
 
   test("sem erros de consola nem transbordo a 375 px", async ({ page }) => {
