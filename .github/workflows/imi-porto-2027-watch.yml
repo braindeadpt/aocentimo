@@ -94,7 +94,7 @@ jobs:
             const { data: abertas } = await github.rest.issues.listForRepo({
               owner, repo, state: "open", labels: "dados",
             });
-            const corpo = "A consulta às páginas de deliberações da CM Porto falhou por indisponibilidade ou mudança de estrutura. É falha honesta: NÃO significa que não haja deliberação. Repetir `npx tsx scripts/ingest/imi-porto-2027-cli.ts` mais tarde ou verificar à mão em https://www.cm-porto.pt/deliberacoes-minutas e https://www.cm-porto.pt/deliberacoes-propostas .";
+            const corpo = "A consulta às páginas de deliberações da CM Porto falhou por indisponibilidade, bloqueio do CDN ou mudança de estrutura (3 leituras por fonte, 10 s de intervalo). É falha honesta: NÃO significa que não haja deliberação. Repetir `npx tsx scripts/ingest/imi-porto-2027-cli.ts` mais tarde ou verificar à mão em https://www.cm-porto.pt/deliberacoes-minutas e https://www.cm-porto.pt/deliberacoes-propostas .";
             const existente = abertas.find((i) => i.title.startsWith("Vigilância IMI Porto 2027 falhou"));
             if (existente) {
               await github.rest.issues.createComment({ owner, repo, issue_number: existente.number, body: corpo });

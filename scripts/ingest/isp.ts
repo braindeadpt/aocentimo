@@ -1,6 +1,6 @@
 import path from "path";
 import { readFileSync, writeFileSync } from "fs";
-import { fetchTexto } from "./_http";
+import { lerComRetentativas } from "./_http";
 
 /**
  * Vigilância das portarias do ISP dos combustíveis rodoviários.
@@ -209,6 +209,29 @@ export function parseRssPortarias(xml: string): {
 }
 
 /**
+ * Motivo pelo qual um corpo do feed não serve; null quando `parseRssPortarias`
+ * o consegue ler. É o que faz uma resposta ilegível (feed vazio, sem itens do
+ * DR, ou uma página de bloqueio em vez de XML) contar como falha retentável,
+ * em vez de a tratar como «nada de novo».
+ */
+export function validarFeed(xml: string): string | null {
+  try {
+    parseRssPortarias(xml);
+    return null;
+  } catch (e) {
+    return e instanceof Error ? e.message : String(e);
+  }
+}
+
+/**
+ * Política deste monitor: 3 leituras com 2 s de intervalo — mais conservadora
+ * que os outros monitores, de propósito: o feed é do Google, que responde 429
+ * a bots insistentes. A segunda protecção (alarme de idade) cobre o resto.
+ */
+const LEITURAS_FEED = 3;
+const ESPERA_FEED_MS = 2_000;
+
+/**
  * Dias completos entre a vigência do isp.json e o dia da corrida (ambos
  * YYYY-MM-DD). NaN se a vigência não for data — e NaN nunca alarma: sem
  * idade legível, resta o sinal do feed.
@@ -252,10 +275,19 @@ export async function runIsp(dataDir: string, deps: DependenciasRunIsp = {}): Pr
   const idadeDias = idadeDiasVigencia(isp.vigencia, hoje);
   const alarmeIdade = precisaAlarmeIdade(idadeDias);
 
-  // Um único fetch por corrida (o Google responde 429 a bots insistentes) —
-  // o retry com backoff vive no fetchTexto; se esgotar e a vigência estiver
-  // recente, falha honesta. Velha, segue-se sem feed, só com a idade.
-  const lerFeed = deps.lerFeed ?? ((url: string) => fetchTexto(url, { timeoutMs: 30_000, tentativas: 3 }));
+  // Uma única leitura do feed por corrida (o Google responde 429 a bots
+  // insistentes): a política comum dos monitores (lerComRetentativas) aqui é
+  // conservadora — 3 leituras com 2 s, cobrindo erros de rede/HTTP e respostas
+  // ilegíveis. Se esgotar e a vigência estiver recente, falha honesta. Velha,
+  // segue-se sem feed, só com a idade.
+  const lerFeed =
+    deps.lerFeed ??
+    ((url: string) =>
+      lerComRetentativas(url, validarFeed, {
+        leituras: LEITURAS_FEED,
+        esperaMs: ESPERA_FEED_MS,
+        rotulo: "feed ISP (Google/DR)",
+      }));
   let portarias: PortariaIsp[] = [];
   let aConferir: { titulo: string; data: string }[] = [];
   let ultimaPortariaFeed: PortariaIsp | null = anterior?.ultimaPortariaFeed ?? null;

@@ -38,7 +38,14 @@ si, não deduz nada a ninguém.
   Extrai os documentos listados (blocos JSON embutidos + âncoras /files/),
   guarda o estado em `data/meta/imi-porto-2027-vigilia.json` e distingue três
   fins: `0` nada de novo · `2` **ALARME** (documento novo em qualquer página)
-  · `1` falha honesta (rede/estrutura mudou).
+  · `1` falha honesta (rede/página bloqueada ou estrutura mudou).
+  A leitura usa a política comum dos monitores (ver
+  [`AUDITORIA-VIGILANCIA-V5.md`](AUDITORIA-VIGILANCIA-V5.md), `lerComRetentativas`):
+  3 leituras por fonte, com 10 s de intervalo, cobrindo erros de rede/HTTP
+  **e** respostas que não sejam a listagem. Uma resposta curta (abaixo de
+  20 KB — as páginas reais têm 265–335 KB, medido a 2026-10-06) é registada
+  como página bloqueada ou em erro, **não** como «a estrutura mudou»: são
+  causas diferentes e mandam fazer coisas diferentes.
 - **O alarme é um despertador, não é dado.** O título das minutas é genérico
   («Minuta da Ata, N.ª Reunião…») — a fixação das taxas está DENTRO do PDF. O
   detetor destacou em `destacados` os novos cujo título menciona IMI/taxas

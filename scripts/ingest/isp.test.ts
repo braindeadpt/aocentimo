@@ -8,6 +8,7 @@ import {
   parseRssPortarias,
   precisaAlarmeIdade,
   runIsp,
+  validarFeed,
 } from "./isp";
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
@@ -64,6 +65,23 @@ describe("parseRssPortarias — o feed real restrito ao DR", () => {
         `<rss><channel><item><title>x</title><link>https://exemplo.pt/y</link><source url="https://exemplo.pt">Exemplo</source></item></channel></rss>`
       )
     ).toThrow(/nenhum item do DR/);
+  });
+});
+
+describe("validarFeed — feed ilegível conta como falha, não como «nada de novo»", () => {
+  it("aceita o feed real", () => {
+    expect(validarFeed(FIXTURE)).toBeNull();
+  });
+
+  it("recusa uma página de bloqueio em vez de RSS (sem itens)", () => {
+    expect(validarFeed("<html><body>Access denied</body></html>")).toMatch(/sem itens/);
+  });
+
+  it("recusa um feed sem nenhum item do DR", () => {
+    const semDr =
+      '<?xml version="1.0"?><rss><channel><item><title>Outra coisa</title>' +
+      '<link>https://exemplo.pt/x</link></item></channel></rss>';
+    expect(validarFeed(semDr)).toMatch(/nenhum item do DR/);
   });
 });
 

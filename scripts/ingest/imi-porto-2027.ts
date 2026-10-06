@@ -1,6 +1,6 @@
 import path from "path";
 import { readFileSync, writeFileSync } from "fs";
-import { fetchTexto } from "./_http";
+import { ErroVigilancia, lerComRetentativas } from "./_http";
 
 /**
  * Vigilância do IMI Familiar do Porto para 2027 — o gatilho que manda criar
@@ -173,6 +173,32 @@ function ancorasDe(pedaco: string): Documento[] {
 }
 
 /**
+ * A listagem real da CM Porto tem 265–335 KB (medido a 2026-10-06 por curl:
+ * 334 557 B nas minutas, 264 994 B nas propostas, 273 612 B nas recomendações).
+ * Abaixo deste tamanho não é a listagem — é uma resposta curta de bloqueio ou
+ * de erro do CDN. Chamar-lhe «a estrutura mudou» era mentir sobre a causa e
+ * mandava alguém caçar uma mudança de HTML que nunca existiu.
+ */
+export const TAMANHO_MINIMO_PAGINA = 20_000;
+
+/** Motivo pelo qual um corpo não serve de listagem; null quando tem documentos. */
+export function validarListagem(html: string): string | null {
+  if (documentosDeHtml(html).length > 0) return null;
+  const kb = Math.round(html.length / 1024);
+  return html.length < TAMANHO_MINIMO_PAGINA
+    ? `resposta curta (${kb} KB) sem documentos — página bloqueada ou em erro, não a listagem`
+    : `página de ${kb} KB sem documentos reconhecíveis — a estrutura mudou`;
+}
+
+/**
+ * Política deste monitor: 3 leituras com 10 s de intervalo, por fonte. Menos
+ * que as 4×20 s da CC2 porque há três fontes independentes — uma fonte em
+ * baixo não cega o sinal enquanto as outras responderem.
+ */
+const LEITURAS_POR_FONTE = 3;
+const ESPERA_POR_LEITURA_MS = 10_000;
+
+/**
  * Extrai, deduplica e devolve os documentos listados na página: âncoras
  * /files/ do HTML simples e dos blocos JSON decodificados (fields `body`).
  */
@@ -222,25 +248,29 @@ export async function runImiPorto2027(dataDir: string): Promise<EstadoVigilia> {
   const falhas: string[] = [];
   for (const fonte of FONTES) {
     try {
-      const html = await fetchTexto(fonte.url, { timeoutMs: 30_000 });
+      // 3 leituras por fonte, cobrindo erros de rede/HTTP e corpos que não
+      // sejam a listagem — nunca tratar uma resposta ilegível como «nada de
+      // novo» nem como «a estrutura mudou» (ver validarListagem).
+      const html = await lerComRetentativas(fonte.url, validarListagem, {
+        leituras: LEITURAS_POR_FONTE,
+        esperaMs: ESPERA_POR_LEITURA_MS,
+        rotulo: fonte.rotulo,
+      });
       const docs = documentosDeHtml(html);
-      if (docs.length === 0) {
-        // A página respondeu mas já não tem a estrutura conhecida — o sinal
-        // deixou de poder ser lido; nunca tratar como «nada de novo».
-        throw new Error(
-          "página sem documentos reconhecíveis — a estrutura mudou; confirmar à mão"
-        );
-      }
       console.log(`  ✓ ${fonte.rotulo}: ${docs.length} documento(s) listados`);
       vistosNestaCorrida = unir(vistosNestaCorrida, docs);
     } catch (e) {
-      falhas.push(`${fonte.rotulo}: ${e instanceof Error ? e.message : String(e)}`);
+      falhas.push(
+        e instanceof ErroVigilancia
+          ? e.message
+          : `${fonte.rotulo}: ${e instanceof Error ? e.message : String(e)}`
+      );
     }
   }
 
   if (vistosNestaCorrida.length === 0) {
     throw new Error(
-      `Nenhuma fonte respondeu com estrutura conhecida (${falhas.join(" · ")}) — ` +
+      `Nenhuma fonte respondeu com uma listagem legível (${falhas.join(" · ")}) — ` +
         "repetir mais tarde; NÃO interpretar como ausência de deliberação"
     );
   }

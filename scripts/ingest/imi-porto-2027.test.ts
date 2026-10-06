@@ -6,6 +6,8 @@ import {
   decodificarBlocos,
   documentosDeHtml,
   avaliamNovos,
+  validarListagem,
+  TAMANHO_MINIMO_PAGINA,
   FONTES,
   type Documento,
 } from "./imi-porto-2027";
@@ -40,6 +42,23 @@ describe("decodificarBlocos", () => {
 
   it("ignora string literals curtas e sem codificação", () => {
     expect(decodificarBlocos('<script>let x = "olá mundo";</script>')).toEqual([]);
+  });
+});
+
+describe("validarListagem — página ilegível não é «estrutura mudou»", () => {
+  it("aceita a captura real da listagem", () => {
+    expect(validarListagem(readFileSync(FIXTURE, "utf8"))).toBeNull();
+  });
+
+  it("resposta curta (bloqueio/erro do CDN) é diagnosticada como bloqueada, não como estrutura nova", () => {
+    const motivo = validarListagem("<html><body>Access denied</body></html>");
+    expect(motivo).toMatch(/página bloqueada ou em erro/);
+    expect(motivo).not.toMatch(/estrutura mudou/);
+  });
+
+  it("página grande mas sem documentos é diagnosticada como mudança de estrutura", () => {
+    const grande = `<html><body>${"x".repeat(TAMANHO_MINIMO_PAGINA + 1)}</body></html>`;
+    expect(validarListagem(grande)).toMatch(/a estrutura mudou/);
   });
 });
 
