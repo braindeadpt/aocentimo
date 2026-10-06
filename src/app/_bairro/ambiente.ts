@@ -30,6 +30,8 @@
 type Limpeza = () => void;
 type Animacao = {
   kill: () => void;
+  pause: () => unknown;
+  resume: () => unknown;
   eventCallback: (evento: "onComplete", callback?: () => void) => unknown;
 };
 
@@ -280,6 +282,24 @@ export async function ligarAmbiente(
   } catch (erro) {
     limparTudo();
     throw erro;
+  }
+
+  // Enquanto o dedo arrasta o mapa, a gente, o elétrico e os barcos param
+  // (a câmara põe `b-arrasto` na janela; o CSS pára as animações CSS e
+  // aqui param as do GSAP). Com o mundo quieto, a janela só se desloca:
+  // o compositor move a imagem já pintada em vez de repintar o bairro a
+  // cada fotograma. Retomam exactamente onde estavam ao largar.
+  const janelaEl = mundo.closest(".b-janela");
+  if (janelaEl) {
+    let parado = false;
+    const mo = new MutationObserver(() => {
+      const arrasta = janelaEl.classList.contains("b-arrasto");
+      if (arrasta === parado) return;
+      parado = arrasta;
+      animacoes.forEach((a) => (arrasta ? a.pause() : a.resume()));
+    });
+    mo.observe(janelaEl, { attributes: true, attributeFilter: ["class"] });
+    feito.push(() => mo.disconnect());
   }
 
   try {

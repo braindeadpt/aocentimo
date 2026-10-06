@@ -72,6 +72,12 @@ export interface OpcoesCamera {
   aoEnquadrar?: () => void;
 }
 
+/** A última arrumação escrita, pelo primeiro marcador (muda se o DOM mudar). */
+const arrumacoes = new WeakMap<SVGGElement, { largura: number; n: number; ys: number[] }>();
+
+/** A vista que a câmara escreveu por último em cada janela. */
+const vistaDaJanela = new WeakMap<HTMLElement, Vista>();
+
 export class Camera {
   private janela: HTMLElement;
   private mundo: HTMLElement;
@@ -141,6 +147,7 @@ export class Camera {
       `translate(${(-(this.vista.x - MUNDO.x) * s).toFixed(2)}px, ` +
       `${(-(this.vista.y - MUNDO.y) * s).toFixed(2)}px) ` +
       `scale(${s.toFixed(5)})`;
+    vistaDaJanela.set(this.janela, { ...this.vista });
     // uma pintura nova à escala certa, quando a escala mudou e a câmara parou
     if (Math.abs(s - this.escalaPintada) / s > 0.03) {
       if (this.temporizadorRepinta) clearTimeout(this.temporizadorRepinta);
@@ -359,24 +366,81 @@ export interface MarcadorVivo {
  */
 export function arrumarPinos(janela: HTMLElement, pinos: readonly MarcadorVivo[]): void {
   const largura = janela.clientWidth;
-  if (!largura) return;
-  const k = pinos.length
-    ? Math.min(1.7, Math.max(0.55, pinos[0].g.ownerSVGElement?.viewBox.baseVal.width ?? 1000) / largura)
-    : 1;
-
-  // fase 2: escrever — os y já vieram da mesma conta que o enquadramento usou
-  const ys = repartirPinos(
-    pinos.map((p) => ({ id: "", x: p.x, y: p.y, w: p.w })),
-    largura
+  if (!largura || !pinos.length) return;
+  const k = Math.min(
+    1.7,
+    Math.max(0.55, pinos[0].g.ownerSVGElement?.viewBox.baseVal.width ?? 1000) / largura
   );
-  pinos.forEach((p, i) => {
-    const y = ys[i];
-    p.g.setAttribute(
-      "transform",
-      `translate(${p.x.toFixed(1)} ${y.toFixed(1)}) scale(${k.toFixed(3)})`
+
+  // A arrumação só depende da largura da janela: arrastar não a muda.
+  // Reescrever 13 `transform` a cada fotograma do arrasto invalidava a
+  // camada de topo sem mudar um píxel (auditoria 2026-10-06, Item B).
+  const feita = arrumacoes.get(pinos[0].g);
+  let ys: number[];
+  if (feita && feita.largura === largura && feita.n === pinos.length) {
+    ys = feita.ys;
+  } else {
+    // fase 2: escrever — os y já vieram da mesma conta que o enquadramento usou
+    ys = repartirPinos(
+      pinos.map((p) => ({ id: "", x: p.x, y: p.y, w: p.w })),
+      largura
     );
-    // a guia estica-se para o edifício, que fica onde estava
-    if (p.guia) p.guia.setAttribute("d", `M0 0 V${((p.y - y) / k).toFixed(1)}`);
+    pinos.forEach((p, i) => {
+      const y = ys[i];
+      p.g.setAttribute(
+        "transform",
+        `translate(${p.x.toFixed(1)} ${y.toFixed(1)}) scale(${k.toFixed(3)})`
+      );
+      // a guia estica-se para o edifício, que fica onde estava
+      if (p.guia) p.guia.setAttribute("d", `M0 0 V${((p.y - y) / k).toFixed(1)}`);
+    });
+    arrumacoes.set(pinos[0].g, { largura, n: pinos.length, ys });
+  }
+
+  esconderCortados(janela, pinos, ys, k);
+}
+
+/** A largura abaixo da qual a vista é «de telemóvel» — a mesma de `vistaInicial`. */
+export const LARGURA_ESTREITA = 700;
+
+/**
+ * No telemóvel, um marcador que não cabe INTEIRO na janela esconde-se
+ * (classe `b-fora`, o CSS esbate-o) e volta quando entra na vista. A
+ * vista estreita é mais pequena do que o bairro: «Cabaz desde 2020» e
+ * «Cert. de Aforro» nasciam cortados ao meio nas pontas — meia placa
+ * lê-se mal e parece um defeito. No computador nunca se esconde nada.
+ * A conta é a mesma das caixas do enquadramento (`caixasAposCadeia`).
+ */
+export function marcadorCabe(
+  p: { x: number; w: number },
+  y: number,
+  k: number,
+  v: Vista,
+  L: number,
+  A: number
+): boolean {
+  const s = L / v.w;
+  const esq = (p.x - (p.w / 2) * k - v.x) * s;
+  const dir = (p.x + (p.w / 2) * k - v.x) * s;
+  const topo = (y - 64 * k - v.y) * s;
+  const fundo = (y - v.y) * s;
+  return esq >= 0 && dir <= L && topo >= 0 && fundo <= A;
+}
+
+function esconderCortados(
+  janela: HTMLElement,
+  pinos: readonly MarcadorVivo[],
+  ys: readonly number[],
+  k: number
+): void {
+  const L = janela.clientWidth;
+  const A = janela.clientHeight;
+  const v = vistaDaJanela.get(janela);
+  const estreita = L < LARGURA_ESTREITA && !!v && A > 0;
+  pinos.forEach((p, i) => {
+    const fora = estreita && !marcadorCabe(p, ys[i], k, v!, L, A);
+    // só escreve quando muda: uma classe igual não deve custar nada
+    if (p.g.classList.contains("b-fora") !== fora) p.g.classList.toggle("b-fora", fora);
   });
 }
 
