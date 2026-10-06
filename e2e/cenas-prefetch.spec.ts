@@ -20,7 +20,8 @@ import { test, expect, type Page } from "@playwright/test";
  *      terminar de executar (é o 1,3 s da medição);
  *   3. a home em repouso não pede nada a nenhuma cena (regra do #38) —
  *      nem no arranque, nem nos primeiros segundos de ociosidade;
- *   4. com Save-Data não se pré-carrega nada, nem sequer por âncora;
+ *   4. com Save-Data não se pré-carrega nada — a fila de ociosidade não
+ *      dispara — e abrir por âncora continua a abrir a cena, com um pedido;
  *   5. o prefetch não muda o que a cena mostra: os dados chegam do
  *      mesmo cache e a falha honesta («—») continua honesta.
  */
@@ -212,7 +213,31 @@ test.describe("o prefetch das cenas (rede e CPU estranguladas)", () => {
     expect(pedidos.filter((p) => p.json).length).toBeLessThanOrEqual(3);
   });
 
-  test("com Save-Data não se pré-carrega nada — nem por âncora", async ({ page }) => {
+  // A guarda do Save-Data é a fila de ociosidade: ela é a única que pede
+  // cenas sem ninguém as pedir. Prova-se onde ela seria apanhada — em
+  // repouso, depois de o prazo dela ter passado.
+  test("com Save-Data a fila de ociosidade não dispara", async ({ page }) => {
+    test.setTimeout(60_000);
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, "connection", {
+        configurable: true,
+        value: { saveData: true, effectiveType: "2g" },
+      });
+    });
+    const pedidos = await registar(page);
+    await page.goto("/");
+    await expect(page.locator('.b-mundo[data-vivo="1"]')).toBeAttached();
+
+    // a fila só entra 4 s depois do load: 7 s dão-lhe tempo de sobra para
+    // que «não disparou» seja uma afirmação e não uma corrida
+    await page.waitForTimeout(7000);
+    expect(
+      pedidos.filter((p) => p.json),
+      "Save-Data ligado: nenhuma cena se pode pré-carregar em repouso"
+    ).toEqual([]);
+  });
+
+  test("com Save-Data abrir por âncora abre a cena, com um pedido só", async ({ page }) => {
     test.setTimeout(60_000);
     await page.addInitScript(() => {
       Object.defineProperty(navigator, "connection", {
@@ -224,8 +249,17 @@ test.describe("o prefetch das cenas (rede e CPU estranguladas)", () => {
     await page.goto("/#banco");
     // a cena ABRE na mesma (o pedido só acontece ao abrir, como sempre)
     await expect(page.locator(".b-cena")).toBeVisible();
-    const json = pedidos.filter((p) => p.json === "banco");
-    expect(json, "Save-Data: o JSON só pode ser pedido ao abrir").toHaveLength(1);
+    // O array `pedidos` enche-se no listener do Node, alimentado pelo CDP:
+    // o evento pode chegar DEPOIS de a cena já estar no DOM. Ler o array no
+    // instante seguinte ao `toBeVisible()` é uma corrida — em CI deu «cena
+    // visível, zero pedidos». Lê-se por polling, e exige-se exactamente um:
+    // um segundo pedido seria pré-carga, o que o Save-Data impede.
+    await expect
+      .poll(() => pedidos.filter((p) => p.json === "banco").length, {
+        message: "Save-Data: o JSON só pode ser pedido ao abrir",
+        timeout: 15_000,
+      })
+      .toBe(1);
   });
 
   test("o prefetch não inventa dados: se o JSON falhar, a cena mostra «—»", async ({ page }) => {
