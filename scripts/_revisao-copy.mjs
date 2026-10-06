@@ -348,7 +348,7 @@ for (const l of bloco(auditoria, "### 2.2 Propostas de copy")) {
     `proposta de alteração (${m[1]})`,
     "docs/AUDITORIA-CENAS-V5.md §2.2",
     m[2].replace(/\*\*$/u, ""),
-    "proposta — não aplicada; a copy é do dono"
+    "proposta da auditoria"
   );
 }
 
@@ -364,12 +364,31 @@ const grupos = [...new Set(linhas.map((l) => l.grupo))];
  * ver. Repetir o cabeçalho é o que mantém cada grupo legível sozinho,
  * em qualquer visualizador.
  */
+/**
+ * A decisão do dono, escrita aqui e não à mão no Markdown: o ficheiro é
+ * gerado, e uma aprovação digitada na tabela desaparecia na primeira
+ * regeneração. O dono aprovou a tabela em bloco a 2026-10-06 (os pontos
+ * 1 a 9 da triagem foram aplicados no #68); as três propostas da
+ * auditoria têm cada uma o seu destino.
+ */
+const DATA_APROVACAO = "2026-10-06";
+const DESTINO_PROPOSTA = {
+  P1: "aplicada no #68 (a comparação «quase o dobro» foi retirada)",
+  P2: "aplicada: «Imagina que o Pedro vai atestar 50 litros»",
+  P3: "em aberto: é metadado do irs-2026.json, não copy do site",
+};
+function decisao(l) {
+  const m = /^proposta de alteração \((P\d)\)/u.exec(l.grupo);
+  if (m) return DESTINO_PROPOSTA[m[1]] ?? "em aberto";
+  return `aprovado ${DATA_APROVACAO}`;
+}
+
 const CAB_TABELA =
   "| # | Onde (ficheiro:chave) | Texto tal como está no site | Fonte do número | aprovado / alterar |\n" +
   "|---|---|---|---|---|\n";
 
 const cab =
-  `# REVISÃO DE COPY V5 — o que o dono tem de aprovar antes do lançamento
+  `# REVISÃO DE COPY V5 — aprovada pelo dono a 2026-10-06
 
 > **Uma tabela só.** Todas as frases que o site mostra e que ainda não
 > foram aprovadas pelo dono, extraídas por \`node scripts/_revisao-copy.mjs\`
@@ -402,7 +421,7 @@ const corpo = grupos
       dentro
         .map((l) => {
           n += 1;
-          return `| ${n} | \`${l.onde}\` | ${l.texto} | ${l.fonte} |  |`;
+          return `| ${n} | \`${l.onde}\` | ${l.texto} | ${l.fonte} | ${decisao(l)} |`;
         })
         .join("\n")
     );

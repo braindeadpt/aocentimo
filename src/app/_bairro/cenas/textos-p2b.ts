@@ -102,7 +102,7 @@ export const bmbRotuloArte =
   "Na bomba de gasolina: a pala, a bomba com o mostrador, o carro do Pedro com a prancha no tejadilho e um garrafão de um litro que se enche por camadas — o combustível e os três impostos.";
 
 export const bmbFala1 = (litros: number, nome: string, preco: string) =>
-  `O Pedro vai atestar: <b>${litros} litros</b> de ${nome.toLowerCase()}, ao preço médio de hoje, <b>${preco}</b> por litro.`;
+  `Imagina que o Pedro vai atestar <b>${litros} litros</b> de ${nome.toLowerCase()}, ao preço médio de hoje, <b>${preco}</b> por litro.`;
 export const bmbPalpite = (total: string) =>
   `Vai pagar <b>${total}</b>. Quanto desse dinheiro é imposto?`;
 export const bmbPalpiteAria = "O teu palpite em euros";
