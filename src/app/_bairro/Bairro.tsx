@@ -25,7 +25,7 @@
  * A cena de cada edifício entra em P1-3; aqui, em P1-1, o mapa já está,
  * com os números, a passar-se e a deixar-se passear.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { PausaAmbiente } from "@/components/PausaAmbiente";
 import { motionActiva, carregarGsap, type MotorGsap } from "@/lib/motion/gsap";
 import { EVT_PERSONAGEM, type EscolhaPersonagem } from "./personagem";
@@ -47,8 +47,8 @@ import CenaDePerto from "./cenas/CenaDePerto";
 import { aCarregar, falhaAoCarregar } from "./cenas/textos";
 import "./bairro.css";
 
-/** As três horas do dia. */
-export type Hora = "dia" | "tarde" | "noite";
+import { CLASSE_HORA, SCRIPT_HORA, horaDe, type Hora } from "./hora";
+export type { Hora } from "./hora";
 
 /** Um edifício, do ponto de vista de quem o quer abrir. */
 export interface InfoEdificio {
@@ -134,12 +134,8 @@ export interface PropsBairro {
   aoEntrar?: (id: string) => void;
 }
 
-/** A classe de hora que o palco recebe. */
-const CLASSE_HORA: Record<Hora, string> = {
-  dia: "",
-  tarde: "b-fim-tarde",
-  noite: "b-noite",
-};
+/** A hora local não emite eventos: lê-se ao montar e fica. */
+const semSubscricao = (): (() => void) => () => {};
 
 export function Bairro({
   marcadores,
@@ -166,7 +162,17 @@ export function Bairro({
   const camaraRef = useRef<Camera | null>(null);
   const cartaoRef = useRef<HTMLDivElement>(null);
 
-  const [hora, setHora] = useState<Hora>(horaInicial);
+  // O HTML traz a hora do BUILD (export estático). O script em linha do
+  // palco já acertou a classe pela hora local antes de pintar; aqui o
+  // React alcança-o: na hidratação usa a hora do servidor (sem mismatch)
+  // e logo a seguir a do browser. Um clique nos botões passa a mandar.
+  const [escolha, setHora] = useState<Hora | null>(null);
+  const horaLocal = useSyncExternalStore(
+    semSubscricao,
+    () => horaDe(new Date().getHours()),
+    () => horaInicial
+  );
+  const hora: Hora = escolha ?? horaLocal;
   const [cartaoAberto, setCartaoAberto] = useState<string | null>(null);
   /** A cena aberta (P2a): o id do edifício, ou `null`. */
   const [cenaAberta, setCenaAberta] = useState<string | null>(null);
@@ -629,7 +635,13 @@ export function Bairro({
 
   return (
     <PausaAmbiente>
-      <section ref={palcoRef} className={`b-palco ${CLASSE_HORA[hora]}`}>
+      <section
+        ref={palcoRef}
+        className={`b-palco ${CLASSE_HORA[hora]}`}
+        // a classe pode diferir do HTML do build: o script abaixo acerta-a
+        suppressHydrationWarning
+      >
+        <script dangerouslySetInnerHTML={{ __html: SCRIPT_HORA }} />
         {/* As animações do elétrico/barcos/metro têm coordenadas
             calculadas (nascem com o mapa) — por isso o <style> vive aqui,
             dentro do componente que as calcula, e não no servidor. */}

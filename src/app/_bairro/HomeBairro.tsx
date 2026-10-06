@@ -12,7 +12,8 @@ import {
 } from "@/lib/bairro/planta";
 import { m, t } from "@/lib/messages";
 import { JsonLd, casaESite } from "@/lib/jsonld";
-import { Bairro, type Hora, type InfoEdificio } from "./Bairro";
+import { Bairro, type InfoEdificio } from "./Bairro";
+import { horaDe, type Hora } from "./hora";
 import { Cartas, type CartaDados, type CartasComum } from "./Cartas";
 
 /**
@@ -48,8 +49,9 @@ export default function HomeBairro() {
 
   // a hora do dia com que o mapa nasce. No build é sempre a do servidor —
   // uma página estática não sabe a hora de quem a abre. Por isso o
-  // primeiro efeito do `<Bairro>` (P1-2) passa a hora a que for quando a
-  // página carrega no browser; ver `horaDoServidor()`.
+  // `<Bairro>` traz um script em linha que acerta o céu pela hora local
+  // antes da primeira pintura, e um layout effect que acerta o estado
+  // depois de hidratar (ver `hora.ts`).
   const horaInicial = horaDoServidor();
 
   const edificios: InfoEdificio[] = Object.entries(m.bairro.edificios).map(
@@ -154,8 +156,7 @@ export default function HomeBairro() {
  * tarde das 18 às 20, dia o resto. Mesma regra do protótipo.
  */
 export function horaDoServidor(h: number = new Date().getHours()): Hora {
-  if (h >= 20 || h < 7) return "noite";
-  return h >= 18 ? "tarde" : "dia";
+  return horaDe(h);
 }
 
 /**

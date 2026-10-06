@@ -343,7 +343,10 @@ export async function ligarAmbiente(
             el.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
             // aparece e desaparece nas pontas, senão teleporta à frente
             // de quem está a ler o mapa
-            el.style.opacity = String(Math.max(0, Math.min(1, t / 0.05, (1 - t) / 0.05)));
+            // o protótipo esbate ao longo de 1,4 ladrilhos em cada ponta
+            // (de −3,4 a 13,4 são 16,8): 1,4/16,8 da viagem, não 5 %
+            const borda = 1.4 / (13.4 - -3.4);
+            el.style.opacity = String(Math.max(0, Math.min(1, t / borda, (1 - t) / borda)));
           },
         }
       );
@@ -382,6 +385,42 @@ export async function ligarAmbiente(
       delay: k * 0.1,
     }));
   });
+
+  /* ——— a gente está viva: pestaneja e respira (o `pessoa()` do protótipo) ———
+     Perdera-se na passagem para produção (auditoria 2026-10-06). O
+     protótipo usava `Math.random`; aqui o sorteio é o LCG de sempre, com
+     semente fixa, para o mapa se comportar igual em todas as máquinas. */
+  {
+    let semente = 7;
+    const sorte = (): number =>
+      ((semente = (semente * 9301 + 49297) % 233280), semente / 233280);
+    mundo.querySelectorAll<SVGGElement>(".pessoa").forEach((p) => {
+      const olhos = p.querySelector<SVGGraphicsElement>(".olhos");
+      if (olhos) {
+        const estilo = olhos.getAttribute("style");
+        aoRestaurar(olhos, () => {
+          if (estilo === null) olhos.removeAttribute("style");
+          else olhos.setAttribute("style", estilo);
+        });
+        const pisca = (): void => {
+          acompanhar(gsap.to(olhos, { scaleY: 0.1, transformOrigin: "50% 50%", duration: 0.07, yoyo: true, repeat: 1 }));
+          agendar(2.2 + sorte() * 3, pisca);
+        };
+        agendar(sorte() * 2.5, pisca);
+      }
+      // quem anda já balança o tronco no passo (`caminhar`): respirar por
+      // cima disso eram dois tweens a escrever no mesmo transform
+      if (p.closest("[data-b-andador]")) return;
+      const tronco = p.querySelector<SVGGraphicsElement>(".tronco");
+      if (!tronco) return;
+      const estilo = tronco.getAttribute("style");
+      aoRestaurar(tronco, () => {
+        if (estilo === null) tronco.removeAttribute("style");
+        else tronco.setAttribute("style", estilo);
+      });
+      acompanhar(gsap.to(tronco, { y: -1.6, duration: 1.2 + sorte(), yoyo: true, repeat: -1, ease: "sine.inOut" }));
+    });
+  }
 
   /* ——— gente: o Pedro atravessa a Avenida e a Arminda vai aos Correios ——— */
   const caminhar = (
@@ -689,14 +728,14 @@ export async function ligarAmbiente(
 
   /* ——— os pombos da Ribeira: ajeitam-se e voltam ——— */
   {
-    const tws = [...mundo.querySelectorAll<SVGGElement>(".b-corpo-pombo")].map(
+    [...mundo.querySelectorAll<SVGGElement>(".b-corpo-pombo")].forEach(
       (c, k) => {
         const estiloInicial = c.getAttribute("style");
         aoRestaurar(c, () => {
           if (estiloInicial === null) c.removeAttribute("style");
           else c.setAttribute("style", estiloInicial);
         });
-        return acompanhar(
+        acompanhar(
           gsap
             .timeline({ repeat: -1, repeatDelay: 1.2 + (k % 3) * 0.9, delay: k * 0.4 })
             .to(c, { rotation: 32, transformOrigin: "40% 90%", duration: 0.14 })

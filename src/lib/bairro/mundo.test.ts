@@ -74,10 +74,11 @@ describe("mundoBairro — a ordem das camadas", () => {
     expect([...pos].sort((a, b) => a - b)).toEqual(pos);
   });
 
-  it("as nuvens vêm antes de tudo — são o céu", () => {
+  it("as nuvens vêm antes de tudo o que se desenha — são o céu", () => {
     const iNuvem = html.indexOf("nuvem-sp");
-    expect(iNuvem).toBeGreaterThanOrEqual(0);
-    expect(iNuvem).toBeLessThan(html.indexOf(`id="${ORDEM_CAMADAS[0]}"`));
+    expect(iNuvem).toBeGreaterThan(html.indexOf(`id="${ORDEM_CAMADAS[0]}"`));
+    expect(iNuvem).toBeLessThan(html.indexOf('id="b-gChao"'));
+    expect(html.match(/class="b-viagem nuvem-sp"/g)).toHaveLength(5);
   });
 
   it("o véu da noite vem entre o céu e o topo", () => {
@@ -154,14 +155,17 @@ describe("mundoBairro — a ordem das camadas", () => {
     expect(M.frente).toContain('<g aria-hidden="true">');
   });
 
-  it("as peças soltas ficam FORA das camadas (para animarem sem repintar)", () => {
-    // barcos e metro são svg soltos; o cenário é que está em camadas
-    expect(html).toContain("b-solto barco-sp");
-    expect(html).toContain("b-solto metro-sp");
-    // nenhum svg solto dentro de uma camada
-    const inicioCamada = html.indexOf(`id="${ORDEM_CAMADAS[0]}"`);
-    expect(html.indexOf("b-solto barco-sp")).toBeGreaterThan(inicioCamada);
-    expect(html).toContain('id="b-cRio"');
+  it("nenhuma peça animada é HTML solto entre as camadas (o crash do iPhone)", () => {
+    // um <svg> absoluto com `translate` animado ganhava camada no
+    // compositor e promovia as camadas gigantes por cima dele
+    expect(html).not.toContain("b-solto");
+    // rabelos e metro pintam-se no início de b-cRio — a ordem de antes
+    const rio = html.indexOf('id="b-cRio"');
+    const viagens = html.indexOf('id="b-gViagens"');
+    expect(viagens).toBeGreaterThan(rio);
+    expect(viagens).toBeLessThan(html.indexOf('id="b-gGaia"'));
+    expect(html.indexOf('class="b-viagem barco-sp"')).toBeGreaterThan(viagens);
+    expect(html.indexOf('class="b-viagem metro-sp"')).toBeGreaterThan(viagens);
   });
 });
 

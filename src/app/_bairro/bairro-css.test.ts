@@ -145,7 +145,10 @@ describe("o posicionamento das camadas (o outro defeito do hotfix)", () => {
     expect(CSS).toMatch(/\.b-camada\s*\{[^}]*position:\s*absolute/);
   });
 
-  it("e o .b-solto também — as peças soltas têm left/top inline", () => {
-    expect(CSS).toMatch(/\.b-solto\s*\{[^}]*position:\s*absolute/);
+  it("nenhuma peça animada é HTML posicionado entre as camadas (o crash do iPhone)", () => {
+    // um .b-solto absoluto com `translate` animado promovia as camadas de
+    // 3600×2500 por cima dele no WebKit e a página morria por memória
+    expect(CSS).not.toMatch(/\.b-solto\s*\{/);
+    expect(CSS).toMatch(/\.nuvem-sp\s*\{[^}]*animation:\s*b-nuvem-anda/);
   });
 });

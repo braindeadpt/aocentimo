@@ -132,7 +132,7 @@ export const viewport = {
  *  escuro era apagado na hidratação e o site ficava claro depois de
  *  hidratar (M-16 fix). */
 const themeInit = `(function(){try{var r=document.documentElement;var t=localStorage.getItem("aocentimo-theme");if(!t){t=localStorage.getItem("bruto-theme");if(t)localStorage.setItem("aocentimo-theme",t);}if(!t)t="light";r.dataset.theme=t;}catch(e){r.dataset.theme="light";}
-document.addEventListener("click",function(e){var b=e.target&&e.target.closest?e.target.closest("[data-theme-toggle]"):null;if(!b)return;var root=document.documentElement;var next=root.dataset.theme==="dark"?"light":"dark";if(!matchMedia("(prefers-reduced-motion: reduce)").matches){root.setAttribute("data-theme-anim","");setTimeout(function(){root.removeAttribute("data-theme-anim")},400);}root.dataset.theme=next;try{localStorage.setItem("aocentimo-theme",next);}catch(x){}});})()`;
+document.addEventListener("click",function(e){var b=e.target&&e.target.closest?e.target.closest("[data-theme-toggle]"):null;if(!b)return;var root=document.documentElement;var next=root.dataset.theme==="dark"?"light":"dark";if(!document.querySelector(".b5")&&!matchMedia("(prefers-reduced-motion: reduce)").matches){root.setAttribute("data-theme-anim","");setTimeout(function(){root.removeAttribute("data-theme-anim")},400);}root.dataset.theme=next;try{localStorage.setItem("aocentimo-theme",next);}catch(x){}});})()`;
 
 export default function RootLayout({
   children,
