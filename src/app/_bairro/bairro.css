@@ -932,7 +932,7 @@
 [data-pele="v5"] .b-intro h1 span {
   /* o realce é sempre amarelo; o texto sobre ele tem de ser o escuro do
      mapa, ou no tema escuro ficava claro sobre amarelo (1,33:1, medido) */
-  color: var(--tinta);
+  color: #16130f;
   background: var(--amarelo);
   padding: 0 0.12em;
   border-radius: 4px;

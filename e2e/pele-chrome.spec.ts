@@ -74,18 +74,32 @@ test.describe("o chrome leva a pele V5", () => {
     const cab = page.locator("body > header");
     await expect(cab).toHaveCSS("background-color", "rgb(29, 36, 66)"); // --papel noite
     await expect(cab).toHaveCSS("color", "rgb(244, 239, 228)"); // --tinta noite
-    // …mas o bairro continua uma página de papel mesmo em escuro:
-    // os tokens do .b5 ficam claros e a superfície da página também
+    // a home SEGUE o tema (o dono pediu a 2026-10-07: «devia mudar o tema
+    // todo»): a superfície, o título e as cartas anoitecem; só o PALCO
+    // (mapa, controlos, painel, cenas) fica claro, porque é ilustração
     await page.goto("/");
-    const papel = await page.evaluate(() => {
-      const b5 = document.querySelector(".b5");
+    await page.waitForFunction(() =>
+      document.querySelector(".b-palco")?.classList.contains("b-noite"),
+    );
+    const noite = await page.evaluate(() => {
+      const b5 = document.querySelector(".b5")!;
+      const palco = document.querySelector(".b-palco")!;
       return {
-        tinta: getComputedStyle(b5!).getPropertyValue("--tinta").trim(),
+        tinta: getComputedStyle(b5).getPropertyValue("--tinta").trim(),
         fundo: getComputedStyle(document.body).backgroundColor,
+        carta: getComputedStyle(document.querySelector(".b-carta")!)
+          .backgroundColor,
+        tintaPalco: getComputedStyle(palco).getPropertyValue("--tinta").trim(),
+        noiteNoMapa: palco.classList.contains("b-noite"),
       };
     });
-    expect(papel.tinta).toBe("#16130f"); // o desenho do mapa nunca escurece
-    expect(papel.fundo).toBe("rgb(244, 243, 236)"); // --floor forçado claro na home
+    expect(noite.tinta).toBe("#f4efe4"); // a tinta da noite, na página
+    expect(noite.fundo).toBe("rgb(20, 26, 51)"); // o azul-noite das outras rotas
+    expect(noite.carta).toBe("rgb(29, 36, 66)"); // cartas de papel da noite
+    expect(noite.tintaPalco).toBe("#16130f"); // o palco continua claro
+    // o céu já não é o de dia: em escuro o mapa abre em «Noite» (#88);
+    // o pormenor da hora vive em bairro-hora-tema.spec.ts
+    expect(noite.noiteNoMapa).toBe(true);
   });
 });
 
