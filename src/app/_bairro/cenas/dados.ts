@@ -132,7 +132,7 @@ export function dadosFinancas(): DadosFinancas {
     dedEsp: r.deducaoEspecificaFixa,
     ssTaxa: s.trabalhador.taxa,
     motorIrsAnual: linha?.ano14.irsAnual ?? null,
-    fonte: `IRS — escalões de ${r.ano} (art. 68.º do CIRS, Orçamento do Estado para ${r.ano}) · solteiro, sem dependentes, rendimentos de trabalho por conta de outrem`,
+    fonte: `IRS — escalões de ${r.ano} (art. 68.º do CIRS, Orçamento do Estado) · solteiro, sem dependentes, trabalho por conta de outrem`,
   };
 }
 
@@ -210,8 +210,8 @@ export function dadosMercearia(): DadosMercearia {
     total: serie("cp00"),
     comida: serie("cp01"),
     iva: { taxas: iva.taxas, regiao: iva.regiao },
-    fonte: `Eurostat · índice harmonizado de preços no consumidor, Portugal, por produto (ECOICOP 01.1.1 a 01.1.8) · ${mesExtenso(T0_MERC)} → ${mesExtenso(t1)}`,
-    fonteIva: `Código do IVA — Listas I e II anexas e art. 18.º · taxas do continente em vigor em ${String(iva.vigencia ?? "").slice(0, 4) || "—"}`,
+    fonte: `Eurostat · índice harmonizado de preços no consumidor, Portugal, por produto (ECOICOP 01.1.1 a 01.1.8) · ${T0_MERC} → ${t1}`,
+    fonteIva: `Código do IVA — Listas I e II anexas e art. 18.º · taxas do continente em vigor`,
   };
 }
 

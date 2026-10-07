@@ -17,7 +17,7 @@
  */
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { fmtNum, FINO } from "@/lib/format";
+import { fmtNum, fmtPeriodo, FINO } from "@/lib/format";
 import type { DadosEscola } from "./dados-p2c";
 import { interiorEscola, mini } from "./escola-arte";
 import { mesCurto, mesLongo } from "./mercearia-arte";
@@ -133,17 +133,28 @@ export default function CenaEscola({
               </div>
             </div>
             <p dangerouslySetInnerHTML={{ __html: T.escExplica3b }} />
+            <p className="nota-fin">
+              {T.escNotaIndices(mes ? fmtPeriodo(mes) : "—")}
+            </p>
           </>
         )}
         {passo === 4 && (
           <div className="b-glossario">
-            {T.escPalavras.map((p) => (
-              <a key={p.termo} className="b-palavra" href={`/#${p.ed}`}>
-                <b>{p.termo}</b>
-                <span>{p.def}</span>
-                <em>{T.escVerEm(p.onde)}</em>
-              </a>
-            ))}
+            {/* os termos e as definições são os do glossário real do site
+                (NOTAS-V5 P2c, divergência 1: sem «homólogo» inventado) */}
+            {D.gloss.map((g) => {
+              const onde = T.escOnde[g.slug];
+              return (
+                <div key={g.slug} className="b-gloss-card">
+                  <b>{g.termo}</b>
+                  <p>{g.def}</p>
+                  <div className="b-gloss-links">
+                    {onde && <a href={onde.href}>{T.escVerEm(onde.titulo)}</a>}
+                    <Link href={`/aprender/${g.slug}`}>{T.escVerGlossario}</Link>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

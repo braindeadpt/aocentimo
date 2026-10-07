@@ -1325,3 +1325,26 @@ mais merece atenção na revisão. Não lançar sem ela.
 ## Revisão final da copy — fechada a 2026-10-06
 
 O dono aprovou a copy PROPOSTA em bloco, depois da triagem (os 9 pontos aplicados no #68). A decisão vive no gerador, `scripts/_revisao-copy.mjs` (a tabela é gerada, uma aprovação escrita à mão perdia-se na regeneração), e a tabela passa a dizer «aprovado 2026-10-06» em cada frase. Das três propostas da auditoria: P1 («quase o dobro») foi retirada no #68; P2 (os 50 litros da Bomba como exemplo) aplica-se agora («Imagina que o Pedro vai atestar…»); P3 (a fonte do `irs-2026.json`) fica em aberto, por ser metadado e não copy do site. Copy nova daqui em diante volta a ser PROPOSTA até o dono a rever.
+
+## 2026-10-07 · a paridade das cenas volta à copy aprovada
+
+A passagem de paridade com a maquete (156bed7) mexeu em frases já
+aprovadas a 2026-10-06 (`c8cc7a5`). Foram repostas palavra por palavra:
+`finQuem`, `banQuem`, `mercQuem`, `finNotaRodape` (volta a frase do
+adiantamento), `finBtnGrafico`, `mercBtnIva`, `mercIvaTexto` (volta a
+«lista I do Código do IVA»), `casaFala2` (sem «quase o dobro», retirado no
+#68), `casaExplica`, `pastFala3`, `escPerguntaCurta`, `escNotaIndices`, e as
+fontes das cenas. A Escola volta aos cinco termos do glossário real (P2c,
+divergência 1: sem definição de «homólogo» inventada).
+
+Fica da paridade o que não é copy: animações, destaques (`<b>`, `.b-r`,
+`.b-a`) sobre as mesmas palavras, formatos dos números, e duas correções
+de dados (a subida da Pastelaria mede-se desde ago 2020, como a frase diz;
+a inflação dos Correios a 0,1 pp). A comparação das frases geradas pelo
+`_revisao-copy.mjs` contra `c8cc7a5` dá zero diferenças.
+
+**PROPOSTA (falta aprovação do dono):** a tabela dos escalões nas
+Finanças, da maquete — `finTabelaResumo` «Ver a tabela dos escalões»,
+`finTabelaEscalao` «Escalão», `finTabelaRendimento` «Rendimento
+coletável», `finTabelaTaxa` «Taxa», `finTabelaFaixa` «{de} a {ate}»,
+`finTabelaAcima` «acima de {de}».

@@ -130,9 +130,12 @@ test.describe("Casa da Inês — os meses de trabalho", () => {
     await page.keyboard.press("Enter");
 
     // passo 2: a pilha do desenho mostra os meses e a nota obrigatória está lá
-    await expect(page.locator("#casaPilha .pilha-txt")).not.toHaveText(/^\s*$/);
-    const meses = Number(await page.locator("#casaPilha .pilha-txt").textContent());
-    expect(meses).toBeGreaterThan(100); // «quase o dobro» — a série decide o número
+    // a pilha cresce dos 100 de 2015 até à resposta (GSAP, 1,4 s): espera
+    // que chegue lá em vez de ler o primeiro fotograma
+    const pilha = page.locator("#casaPilha .pilha-txt");
+    await expect
+      .poll(async () => Number(await pilha.textContent()), { timeout: 5000 })
+      .toBeGreaterThan(100); // «quase o dobro» — a série decide o número
     await expect(page.locator(".b-cena-texto")).toContainText(/não é o salário/i);
 
     // passo 3: o gráfico na coluna do TEXTO, nunca na arte
@@ -205,6 +208,8 @@ test.describe("Pastelaria — comer fora contra em casa", () => {
     await entraPorTeclado(page, "pastelaria");
 
     // passo 1: palpite em euros por teclado
+    // os 2 € dizem-se exemplo logo no passo 1, como na maquete
+    await expect(page.locator(".b-cena-texto")).toContainText(/exemplo/i);
     await page.locator("#pastPal").focus();
     await page.keyboard.press("ArrowUp");
     await page.getByRole("button", { name: /mostrar a resposta/i }).click();
@@ -213,7 +218,6 @@ test.describe("Pastelaria — comer fora contra em casa", () => {
     await expect(page.locator("#pastHoje")).toContainText(/hoje:/);
     await expect(page.locator(".b-cena-texto .grafico-irs")).toBeVisible();
     await expect(page.locator(".b-cena-arte .grafico-irs")).toHaveCount(0);
-    await expect(page.locator(".b-cena-texto")).toContainText(/exemplo/i); // os 2 € dizem-se exemplo
     await page.getByRole("button", { name: /iva do café/i }).click();
 
     // passo 3: IVA intermédio (13 %) contra reduzido (6 %) — de iva.json
@@ -313,7 +317,7 @@ test.describe("Escola — ler gráficos e as palavras", () => {
     await page.getByRole("button", { name: /subiram o mesmo/i }).click();
     await page.getByRole("button", { name: /segunda lição/i }).click();
     await page.getByRole("button", { name: /terceira lição/i }).click();
-    expect(await page.getByRole("link", { name: /aprender/i }).last().getAttribute("href")).toBe(
+    expect(await page.getByRole("link", { name: /glossário todo/i }).getAttribute("href")).toBe(
       "/aprender"
     );
   });
