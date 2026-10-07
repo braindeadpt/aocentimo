@@ -104,6 +104,11 @@ export class Camera {
   private toques = new Map<number, PointerEvent>();
   private arrasto: { x: number; y: number; vx: number; vy: number; mov: boolean } | null = null;
   private pinca: { d: number; w: number } | null = null;
+  /** O último `pointermove` por aplicar: aplica-se UM por fotograma. */
+  private pendente: PointerEvent | null = null;
+  private quadro = 0;
+  private fimRoda: ReturnType<typeof setTimeout> | null = null;
+  private cacheTudo: { L: number; A: number; n: number; w: number } | null = null;
   private mexeu = false;
   private enquadrado = false;
   private gsap: { to: (alvo: object, vars: object) => unknown } | null = null;
@@ -151,7 +156,12 @@ export class Camera {
     const L = this.janela.clientWidth;
     const A = this.janela.clientHeight;
     if (!e || !this.pinos.length || !L || !A) return Math.max(LIMITES.w, LIMITES.h / this.razao());
-    return vistaInicial(e, L, A, this.pinos).w;
+    // a pinça pergunta isto a cada fotograma; só muda com o tamanho da janela
+    const c = this.cacheTudo;
+    if (c && c.L === L && c.A === A && c.n === this.pinos.length) return c.w;
+    const w = vistaInicial(e, L, A, this.pinos).w;
+    this.cacheTudo = { L, A, n: this.pinos.length, w };
+    return w;
   }
 
   /**
@@ -234,8 +244,19 @@ export class Camera {
   ligar(): () => void {
     const janela = this.janela;
 
+    // O GESTO SEM REPINTAR também na pinça e na roda (iPad, 2026-10-07):
+    // só o arrasto de um dedo punha `b-arrasto`, e a pinça fazia o WebKit
+    // repintar o bairro inteiro, com as animações a correr, a cada passo.
+    const emGesto = (sim: boolean) => janela.classList.toggle("b-arrasto", sim);
+
     const aoRodar = (e: WheelEvent) => {
       e.preventDefault();
+      emGesto(true);
+      if (this.fimRoda) clearTimeout(this.fimRoda);
+      this.fimRoda = setTimeout(() => {
+        this.fimRoda = null;
+        if (!this.toques.size) emGesto(false);
+      }, 220);
       const r = janela.getBoundingClientRect();
       this.zoom(
         e.deltaY < 0 ? 1.15 : 1 / 1.15,
@@ -252,12 +273,25 @@ export class Camera {
         const [a, b] = [...this.toques.values()];
         this.pinca = { d: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY), w: this.vista.w };
         this.arrasto = null;
+        emGesto(true);
       }
     };
 
+    // O iPad entrega `pointermove` a 120 Hz, e cada um lia o tamanho da
+    // janela e escrevia o transform: guardamos o último e aplicamos UM
+    // por fotograma.
     const aoMover = (e: PointerEvent) => {
       if (!this.toques.has(e.pointerId)) return;
       this.toques.set(e.pointerId, e);
+      this.pendente = e;
+      if (!this.quadro) this.quadro = requestAnimationFrame(passo);
+    };
+
+    const passo = () => {
+      this.quadro = 0;
+      const e = this.pendente;
+      this.pendente = null;
+      if (!e) return;
       if (this.pinca && this.toques.size === 2) {
         const [a, b] = [...this.toques.values()];
         const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
@@ -275,7 +309,7 @@ export class Camera {
       const dy = e.clientY - this.arrasto.y;
       if (Math.hypot(dx, dy) > 5) {
         this.arrasto.mov = true;
-        janela.classList.add("b-arrasto");
+        emGesto(true);
       }
       if (this.arrasto.mov) {
         this.vista.x = this.arrasto.vx - dx * k;
@@ -287,7 +321,14 @@ export class Camera {
     const aoLevantar = (e: PointerEvent) => {
       this.toques.delete(e.pointerId);
       if (this.toques.size < 2) this.pinca = null;
-      janela.classList.remove("b-arrasto");
+      if (!this.toques.size) {
+        // o último movimento ainda por aplicar fica aplicado já
+        if (this.quadro) {
+          cancelAnimationFrame(this.quadro);
+          passo();
+        }
+        emGesto(false);
+      }
       // um instante para o click do rato não valer como arrasto
       setTimeout(() => {
         if (!this.toques.size) this.arrasto = null;
@@ -323,6 +364,8 @@ export class Camera {
       janela.removeEventListener("wheel", aoMexer);
       ro.disconnect();
       if (this.temporizadorRepinta) clearTimeout(this.temporizadorRepinta);
+      if (this.fimRoda) clearTimeout(this.fimRoda);
+      if (this.quadro) cancelAnimationFrame(this.quadro);
     };
   }
 
