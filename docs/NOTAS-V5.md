@@ -1343,7 +1343,7 @@ de dados (a subida da Pastelaria mede-se desde ago 2020, como a frase diz;
 a inflação dos Correios a 0,1 pp). A comparação das frases geradas pelo
 `_revisao-copy.mjs` contra `c8cc7a5` dá zero diferenças.
 
-**PROPOSTA (falta aprovação do dono):** a tabela dos escalões nas
+**Aprovado pelo dono a 2026-10-07:** a tabela dos escalões nas
 Finanças, da maquete — `finTabelaResumo` «Ver a tabela dos escalões»,
 `finTabelaEscalao` «Escalão», `finTabelaRendimento` «Rendimento
 coletável», `finTabelaTaxa` «Taxa», `finTabelaFaixa` «{de} a {ate}»,
