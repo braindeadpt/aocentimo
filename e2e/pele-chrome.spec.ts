@@ -78,6 +78,9 @@ test.describe("o chrome leva a pele V5", () => {
     // todo»): a superfície, o título e as cartas anoitecem; só o PALCO
     // (mapa, controlos, painel, cenas) fica claro, porque é ilustração
     await page.goto("/");
+    await page.waitForFunction(() =>
+      document.querySelector(".b-palco")?.classList.contains("b-noite"),
+    );
     const noite = await page.evaluate(() => {
       const b5 = document.querySelector(".b5")!;
       const palco = document.querySelector(".b-palco")!;
@@ -87,14 +90,16 @@ test.describe("o chrome leva a pele V5", () => {
         carta: getComputedStyle(document.querySelector(".b-carta")!)
           .backgroundColor,
         tintaPalco: getComputedStyle(palco).getPropertyValue("--tinta").trim(),
-        ceu: getComputedStyle(palco).backgroundColor,
+        noiteNoMapa: palco.classList.contains("b-noite"),
       };
     });
     expect(noite.tinta).toBe("#f4efe4"); // a tinta da noite, na página
     expect(noite.fundo).toBe("rgb(20, 26, 51)"); // o azul-noite das outras rotas
     expect(noite.carta).toBe("rgb(29, 36, 66)"); // cartas de papel da noite
     expect(noite.tintaPalco).toBe("#16130f"); // o palco continua claro
-    expect(noite.ceu).toBe("rgb(191, 227, 247)"); // o céu do mapa de dia
+    // o céu já não é o de dia: em escuro o mapa abre em «Noite» (#88);
+    // o pormenor da hora vive em bairro-hora-tema.spec.ts
+    expect(noite.noiteNoMapa).toBe(true);
   });
 });
 
