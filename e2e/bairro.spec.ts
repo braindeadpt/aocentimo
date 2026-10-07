@@ -362,40 +362,42 @@ test.describe("o bairro — a geometria do enquadramento inicial (P1, acabamento
     });
   }
 
-  for (const [largura, altura] of [[390, 844], [375, 812]] as const) {
-    test(`no telemóvel (${largura}×${altura}) os marcadores essenciais estão na vista inicial`, async ({ page }) => {
+  /**
+   * Decisão do dono, 2026-10-07: o mapa abre TOTALMENTE VISÍVEL no
+   * computador e no telemóvel — a laje do tabuleiro inteira (as duas faces
+   * de terra) e os 13 marcadores inteiros. Substitui o arranque «perto da
+   * fábrica» do telemóvel e o piso de 11 px que o acompanhava.
+   */
+  for (const [largura, altura] of [[1920, 1080], [1440, 900], [1280, 800], [390, 844], [375, 812]] as const) {
+    test(`(${largura}×${altura}) o tabuleiro e os 13 marcadores abrem inteiros`, async ({ page }) => {
       await page.setViewportSize({ width: largura, height: altura });
       await page.goto("/");
       await page.waitForSelector(".b-mundo .pin");
+      // a câmara escreve o transform inline quando enquadra: antes disso
+      // vale o do CSS, apurado para 1240×666 (noutra razão de ecrã difere)
+      await page.waitForFunction(() => !!document.querySelector<HTMLElement>(".b-mundo")?.style.transform);
 
       const res = await page.evaluate(() => {
-        const janela = document.querySelector(".b-janela")!.getBoundingClientRect();
-        const dentro = (pin: Element) => {
-          const r = pin.getBoundingClientRect();
-          return r.top >= janela.top && r.bottom <= janela.bottom &&
-                 r.left >= janela.left && r.right <= janela.right;
+        const j = document.querySelector(".b-janela")!.getBoundingClientRect();
+        const dentro = (r: DOMRect) =>
+          r.top >= j.top && r.bottom <= j.bottom && r.left >= j.left && r.right <= j.right;
+        const faces = [...document.querySelectorAll<SVGPolygonElement>(
+          '#b-gChao > polygon[fill="#a48f72"], #b-gChao > polygon[fill="#b39e80"]'
+        )];
+        const pins = [...document.querySelectorAll<SVGGElement>(".b-mundo .pin")];
+        return {
+          nFaces: faces.length,
+          facesFora: faces.filter((f) => !dentro(f.getBoundingClientRect())).length,
+          nPins: pins.length,
+          pinsFora: pins.filter((p) => !dentro(p.getBoundingClientRect())).map((p) => p.getAttribute("data-id") ?? "?"),
         };
-        // «Salário bruto», «Chega à conta», «Inflação 12 meses» e
-        // «Euribor 12 meses» — os data-id reais do HTML
-        const essenciais = ["fabrica", "casa", "quiosque", "banco"];
-        const visiveis = [...document.querySelectorAll<SVGGElement>(".b-mundo .pin")]
-          .filter((p) => dentro(p))
-          .map((p) => p.getAttribute("data-id") ?? "?");
-        // a fonte do valor tem de continuar legível (o pin compensa a
-        // escala do mundo com scale(k); 19*1.7*k/s — medimos o texto)
-        const valor = document.querySelector<SVGTextElement>('.b-mundo .pin[data-id="fabrica"] text[font-size="19"]');
-        const alturaFonte = valor ? valor.getBoundingClientRect().height : 0;
-        return { essenciais, visiveis, alturaFonte };
       });
 
-      for (const id of res.essenciais) {
-        expect(
-          res.visiveis,
-          `o marcador essencial "${id}" ficou fora da vista inicial (visíveis: ${res.visiveis.join(", ")})`
-        ).toContain(id);
-      }
-      // legibilidade: o valor tem de ter ≥11 px efectivos
-      expect(res.alturaFonte).toBeGreaterThanOrEqual(11);
+      expect(res.nFaces).toBe(2);
+      expect(res.facesFora, "a laje do tabuleiro sai da janela").toBe(0);
+      expect(res.nPins).toBe(13);
+      expect(res.pinsFora, `marcadores fora: ${res.pinsFora.join(", ")}`).toEqual([]);
     });
   }
+
 });
