@@ -21,10 +21,12 @@ import { coletavel, gavetaMaisAlta, irsPorEscaloes } from "./irs-gavetas";
 import {
   graficoIrs,
   interiorFinancas,
+  moeda,
   pctTaxa,
   pontoGrafico,
 } from "./financas-arte";
 import CenaDePerto from "./CenaDePerto";
+import { chamarSenha, reporSenha } from "./senha";
 import * as T from "./textos";
 
 const ordinal = (n: number) => `${n}.º`;
@@ -84,6 +86,8 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
   // o rendimento que as gavetas e o gráfico mostram (os botões antes/depois)
   const [visto, setVisto] = useState(1500);
   const arteRef = useRef<HTMLDivElement>(null);
+  const vivo = useRef(true);
+  useEffect(() => () => { vivo.current = false; }, []);
 
   const c0 = coletavel(1500, D.dedEsp, D.ssTaxa);
   const g0 = gavetaMaisAlta(D.escaloes, c0)!;
@@ -109,7 +113,8 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
   useEffect(() => {
     const raiz = arteRef.current?.closest(".b-cena");
     if (!raiz) return;
-    const c = coletavel(visto, D.dedEsp, D.ssTaxa);
+    // como no protótipo, a cómoda está VAZIA até à resposta (passo 3)
+    const c = passo >= 3 ? coletavel(visto, D.dedEsp, D.ssTaxa) : 0;
     const W = 246; // GV.w - 4, dentro do desenho
     const topo = gavetaMaisAlta(D.escaloes, c);
     let de = 0;
@@ -187,7 +192,17 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
       />
       <div className="b-corpo">
         {passo === 1 && (
-          <button className="b-btn" type="button" onClick={() => setPasso(2)}>
+          <button
+            className="b-btn"
+            type="button"
+            onClick={() =>
+              chamarSenha(
+                arteRef.current,
+                { painel: "#finPainel", nova: "A 023", talao: "#finTalao", braco: "#finFunc .braco-d", atrasoBraco: 0.5 },
+                () => vivo.current && setPasso(2)
+              )
+            }
+          >
             {T.finBtnSenha}
           </button>
         )}
@@ -250,6 +265,7 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
               className="b-btn b-claro"
               type="button"
               onClick={() => {
+                reporSenha(arteRef.current, "#finPainel", "A 022", "#finTalao");
                 setPasso(1);
                 setVisto(1500);
                 setSalario(1650);
@@ -260,6 +276,28 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
           </>
         )}
       </div>
+      {/* a tabela oficial, para quem quer confirmar (como no protótipo) */}
+      <details className="b-confirma">
+        <summary>{T.finTabelaResumo}</summary>
+        <table>
+          <thead>
+            <tr>
+              <th>{T.finTabelaEscalao}</th>
+              <th>{T.finTabelaRendimento}</th>
+              <th>{T.finTabelaTaxa}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {D.escaloes.map((e, k) => (
+              <tr key={k}>
+                <td>{ordinal(k + 1)}</td>
+                <td>{e.ate != null ? T.finTabelaFaixa(moeda(e.de, 0), moeda(e.ate, 0)) : T.finTabelaAcima(moeda(e.de, 0))}</td>
+                <td>{pctTaxa(e.taxa)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </details>
     </CenaDePerto>
   );
 

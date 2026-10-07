@@ -539,3 +539,22 @@
   font-weight: 600;
   color: var(--suave);
 }
+
+/* Finanças — «Ver a tabela dos escalões» (o `.confirma` do protótipo) */
+[data-pele="v5"] .b-confirma summary {
+  cursor: pointer;
+  font-weight: 800;
+}
+[data-pele="v5"] .b-confirma table {
+  border-collapse: collapse;
+  font-size: 14px;
+  margin-top: 8px;
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+}
+[data-pele="v5"] .b-confirma th,
+[data-pele="v5"] .b-confirma td {
+  text-align: left;
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--linha);
+}

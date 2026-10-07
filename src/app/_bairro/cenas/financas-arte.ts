@@ -8,6 +8,7 @@
  * Os ids (`finPainel`, `gav0`…, `grMarg`…) são os que a cena manipula.
  */
 import { FINO, fmtNum } from "@/lib/format";
+import { pessoa, ELENCO } from "@/lib/bairro/personagens";
 
 /** O traço do mapa: o mesmo preto do resto do bairro. */
 const K = "#16130f";
@@ -153,36 +154,7 @@ export function pontoGrafico(escaloes: { de: number; ate: number | null; taxa: n
   return { x: gx(c), yDegrau: gy(taxaTopo), yMedia: gy(c ? total / c : 0) };
 }
 
-/* ————— pessoas do interior (mini-porta de personagens.ts, em pé, de frente) ————— */
-
-function pessoaBase(pele: string, cabeloSvg: string, roupa: string, calcas: string, extra = ""): string {
-  return `<g stroke="${K}" stroke-width="2.2">
-    <ellipse cx="0" cy="2" rx="20" ry="6" fill="rgba(22,19,15,.18)" stroke="none"/>
-    <rect x="-13" y="-26" width="26" height="30" rx="8" fill="${roupa}"/>
-    <rect x="-12" y="2" width="10" height="26" fill="${calcas}"/><rect x="2" y="2" width="10" height="26" fill="${calcas}"/>
-    <circle cx="0" cy="-38" r="13" fill="${pele}"/>
-    ${cabeloSvg}
-    <path d="M-13 -12 q-8 2 -6 12 M13 -12 q8 2 6 12" fill="none" stroke-linecap="round"/>
-    ${extra}
-    <path d="M-4 -35 q4 4 8 0" fill="none"/>
-  </g>`;
-}
-
-function funcionario(): string {
-  return pessoaBase(
-    "#e8b98a",
-    `<circle cx="0" cy="-40" r="13" fill="#8d8d8d"/>`,
-    "#dfe5ff",
-    "#2b3a55",
-    `<path d="M-4 -26 l4 6 l4 -6" fill="#2445d6" stroke-width="1.6"/>`
-  );
-}
-
-function ines(): string {
-  return pessoaBase(
-    "#e8b98a",
-    `<path d="M-13 -40 a13 13 0 0 1 26 0 v8 q-4 -6 -13 -6 t-13 6 z" fill="#5a3d27"/>`,
-    "#e2412a",
-    "#3b342c"
-  );
-}
+/* ————— pessoas do interior: a MESMA personagem do mapa (`pessoa()`), com
+   as especificações do protótipo — nada de mini-figuras ————— */
+const funcionario = (): string => pessoa({ pele: "b", cabelo: "careca", corCabelo: "#8d8d8d", roupa: "#dfe5ff", calcas: "#2b3a55", gravata: "#2445d6", gola: "#fff", oculos: "quadrados", bigode: true });
+const ines = (): string => pessoa(ELENCO.ines);

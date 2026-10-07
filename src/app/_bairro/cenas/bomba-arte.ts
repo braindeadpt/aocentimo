@@ -16,6 +16,7 @@ import { fmtLitro, fmtNum } from "@/lib/format";
 import type { CombCena } from "./dados-p2b";
 import { pontosDeDias } from "./utils";
 import { mesCurto } from "./mercearia-arte";
+import { pessoa, ELENCO } from "@/lib/bairro/personagens";
 
 const K = "#16130f";
 
@@ -162,20 +163,6 @@ export function graficoComb(gasolina: NonNullable<CombCena["serie"]>, gasoleo: N
   return `<svg class="grafico-irs" viewBox="0 0 520 280" role="img" aria-label="${aria}" font-family="Archivo">${s}</svg>`;
 }
 
-/* ————— pessoas do interior (mini-porta de personagens.ts, como nas P2a) ————— */
-
-/** O Pedro (pele c, cabelo surf, t-shirt de ondas, calções amarelos — sem a prancha, que vai no tejadilho do carro). */
-function pedro(): string {
-  const K2 = K;
-  return `<g stroke="${K2}" stroke-width="2.2">
-    <ellipse cx="0" cy="2" rx="20" ry="6" fill="rgba(22,19,15,.18)" stroke="none"/>
-    <rect x="-13" y="-26" width="26" height="30" rx="8" fill="#1f8fb3"/>
-    <path d="M-11 -18 q3 -3 6 0 t6 0 t6 0 M-11 -11 q3 -3 6 0 t6 0 t6 0" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".9"/>
-    <rect x="-12" y="2" width="10" height="18" fill="#f0b429"/><rect x="2" y="2" width="10" height="18" fill="#f0b429"/>
-    <rect x="-12" y="18" width="10" height="10" fill="#d49a72"/><rect x="2" y="18" width="10" height="10" fill="#d49a72"/>
-    <circle cx="0" cy="-38" r="13" fill="#d49a72"/>
-    <path d="M-13 -42 q-3 -14 4 -19 q7 -6 16 -4 q10 -1 14 6 q4 7 -1 17 q-3 -7 -7 -9 q-8 1 -13 -2 q-4 4 -5 7 q-5 4 -8 4z" fill="#a8742c"/>
-    <path d="M-13 -12 q-8 2 -6 12 M13 -12 q8 2 6 12" fill="none" stroke-linecap="round"/>
-    <path d="M-4 -35 q4 4 8 0" fill="none"/>
-  </g>`;
-}
+/* ————— pessoas do interior: a MESMA personagem do mapa (`pessoa()`), com
+   as especificações do protótipo — nada de mini-figuras ————— */
+const pedro = (): string => pessoa({ ...ELENCO.pedro, prancha: undefined });
