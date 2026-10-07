@@ -54,6 +54,21 @@ export interface PinoPlanta {
 export const FOLGA_TOPO = 12;
 export const FOLGA_LADO = 2;
 
+/**
+ * A caixa do tabuleiro — a laje do bairro com as duas faces de terra, em
+ * coordenadas do mundo, medida no SVG (as faces `#a48f72` e `#b39e80` da
+ * planta vão de x −560 a 1744 e acabam em y 1427). O enquadramento
+ * inicial mostra-a INTEIRA (pedido do dono a 2026-10-07: «o mapa, tanto
+ * em desktop como mobile, devia estar assim logo no início, totalmente
+ * visível»). O topo do tabuleiro é a torre, e acima dela só há
+ * marcadores, por isso o topo vem dos marcadores. O e2e confere os
+ * cantos da laje no ecrã (`bairro.spec.ts`).
+ */
+export const TABULEIRO = { esq: -560, dir: 1744, topo: -150, fundo: 1427 } as const;
+
+/** A folga do tabuleiro inteiro nos lados e em baixo, em px de ecrã. */
+export const FOLGA_TABULEIRO = 16;
+
 /** Os marcadores que a vista estreita tem de mostrar sempre. */
 export const ESSENCIAIS = new Set(["fabrica", "casa", "quiosque", "banco"]);
 
@@ -130,9 +145,13 @@ export class Camera {
     return this.janela.clientWidth ? this.janela.clientHeight / this.janela.clientWidth : 0.6;
   }
 
-  /** A largura que mostra o bairro todo à altura que o ecrã tem. */
+  /** A largura que mostra o bairro todo (o tabuleiro e os marcadores inteiros). */
   larguraTudo(): number {
-    return Math.max(LIMITES.w, LIMITES.h / this.razao());
+    const e = this.enquadramentos;
+    const L = this.janela.clientWidth;
+    const A = this.janela.clientHeight;
+    if (!e || !this.pinos.length || !L || !A) return Math.max(LIMITES.w, LIMITES.h / this.razao());
+    return vistaInicial(e, L, A, this.pinos).w;
   }
 
   /**
@@ -185,10 +204,12 @@ export class Camera {
     }
   }
 
-  /** Ver o bairro inteiro. */
+  /** Ver o bairro inteiro — a mesma vista do arranque. */
   tudo(dur = 1): void {
-    const w = this.larguraTudo();
-    this.ir(LIMITES.x + LIMITES.w / 2, LIMITES.y + LIMITES.h / 2, w, dur);
+    const e = this.enquadramentos;
+    if (!e || !this.pinos.length) return;
+    const v = vistaInicial(e, this.janela.clientWidth, this.janela.clientHeight, this.pinos);
+    this.ir(v.x + v.w / 2, v.y + v.h / 2, v.w, dur);
   }
 
   /** Aproxima (f > 1) ou afasta, à volta de um ponto da janela. */
@@ -306,8 +327,8 @@ export class Camera {
   }
 
   /**
-   * O enquadramento inicial: no telemóvel começa perto da fábrica e da
-   * avenida, no computador vê-se o bairro todo. Enquanto ninguém mexeu,
+   * O enquadramento inicial: o bairro todo, no telemóvel e no computador
+   * (pedido do dono a 2026-10-07). Enquanto ninguém mexeu,
    * um `resize` volta a enquadrar; depois disso mantém o centro (o
    * utilizador escolheu onde estava, não se lhe tira a escolha).
    */
@@ -481,70 +502,21 @@ function repartirPinos(pinos: readonly PinoPlanta[], largura: number): number[] 
 }
 
 /**
- * O encaixe puro: parte de uma vista candidata e ajusta-a (no x, e a
- * subir no y) até que todas as caixas fiquem inteiras com as folgas do
- * dono. Devolve a vista final — sem tocar em nada. Com `podeAlargar` a
- * falso, a largura fica: desloca-se só o necessário e o que não couber
- * nos lados fica de fora (o arrasto vai buscá-lo) — é o que se quer
- * quando alargar derrubaria a fonte abaixo da legibilidade.
- */
-function encaixaCaixas(
-  v: { x: number; y: number; w: number; h: number },
-  L: number,
-  caixas: { id: string; esq: number; dir: number; topo: number; fundo: number }[],
-  folgaTopo: number,
-  folgaLado: number,
-  podeAlargar = true
-): { x: number; y: number; w: number; h: number } {
-  const r = { ...v };
-  const razao = r.h / r.w;
-  const minEsq = Math.min(...caixas.map((c) => c.esq));
-  const maxDir = Math.max(...caixas.map((c) => c.dir));
-  const minTopo = Math.min(...caixas.map((c) => c.topo));
-  const maxFundo = Math.max(...caixas.map((c) => c.fundo));
-
-  // X: se o conteúdo não cabe, a vista alarga; senão, desloca-se o mínimo
-  const precisoX = (maxDir - minEsq) / (1 - (2 * folgaLado) / L);
-  if (podeAlargar && precisoX > r.w) {
-    r.w = precisoX;
-    r.h = r.w * razao;
-    const fm = folgaLado / (L / r.w);
-    r.x = minEsq - fm;
-  } else if (precisoX <= r.w) {
-    // cabe: CENTRA-SE no conteúdo. Deslocar «o mínimo» deixava o bairro
-    // encostado a um lado — a 1440×900 eram 255 px de margem à esquerda e
-    // 124 à direita (medido no browser): o «mapa descentrado ao abrir».
-    r.x = (minEsq + maxDir) / 2 - r.w / 2;
-  } else {
-    // não cabe e não pode alargar: desloca-se o mínimo, o resto fica ao
-    // alcance do arrasto
-    const fm = folgaLado / (L / r.w);
-    if (minEsq < r.x + fm) r.x = minEsq - fm;
-    else if (maxDir > r.x + r.w - fm) r.x = maxDir + fm - r.w;
-  }
-
-  // Y: sobe a vista até o marcador mais alto ter a folga do topo
-  const s = L / r.w;
-  const ft = folgaTopo / s;
-  const ff = folgaLado / s;
-  if (minTopo < r.y + ft) r.y = minTopo - ft;
-  else if (maxFundo > r.y + r.h - ff) r.y = maxFundo + ff - r.h;
-  return r;
-}
-
-/**
  * A vista do arranque, EM PURA — e é esta função que o teste do CSS usa
  * para conferir o enquadramento por omissão: o `bairro.css` e a câmara
  * saem daqui, não de duas contas gémeas que um dia divergem.
  *
- * No computador mostram-se TODOS os marcadores com as folgas do dono; a
- * vista parte do enquadramento de referência do protótipo e estica só o
- * que faltar. No telemóvel começa-se perto da fábrica e da avenida (o
- * protótipo), mas a vista tem de conter os marcadores essenciais: se não
- * couberem, alarga-se ATÉ couberem — medido, não adivinhado. A fonte dos
- * valores desce com a escala (19×k×s); nos ecrãs estreitos fica
- * ~13,7–14,2 px, acima dos 11 px de legibilidade que o dono fixou; os
- * outros marcadores ficam a um arrasto de distância.
+ * DECISÃO DO DONO, 2026-10-07: no computador E no telemóvel o mapa abre
+ * TOTALMENTE VISÍVEL — o tabuleiro inteiro (`TABULEIRO`) e os 13
+ * marcadores inteiros, centrados na janela. Substitui o arranque do
+ * protótipo no telemóvel («perto da fábrica e da avenida») e o piso de
+ * 11 px de legibilidade que o acompanhava: no telemóvel os valores ficam
+ * pequenos, e quem quiser lê-los aproxima com a pinça ou com o «+».
+ *
+ * Folgas: 12 px em cima (é por cima que a cadeia empurra os marcadores),
+ * 16 px nos lados e em baixo; o que sobrar reparte-se ao meio.
+ * `e` fica na assinatura: os pontos de enquadramento continuam a servir
+ * as cenas e o OG.
  */
 export function vistaInicial(
   e: Enquadramentos,
@@ -552,33 +524,24 @@ export function vistaInicial(
   A: number,
   pinos: readonly PinoPlanta[]
 ): Vista {
-  const razao = A / L;
+  void e;
   const caixas = caixasAposCadeia(pinos, L);
-  if (L < 700) {
-    const [x, y] = e.perto;
-    const ess = caixas.filter((c) => ESSENCIAIS.has(c.id));
-    const larguraConteudo = Math.max(...ess.map((c) => c.dir)) - Math.min(...ess.map((c) => c.esq));
-    const w = Math.max(820, larguraConteudo / (1 - (2 * FOLGA_LADO) / L));
-    const v = encaixaCaixas(
-      { x: x - w / 2, y: y - 10 - (w * razao) / 2, w, h: w * razao },
-      L, ess, FOLGA_TOPO, FOLGA_LADO
-    );
-    return v;
-  }
-  const [x, y] = e.longe;
-  const w0 = Math.max(1500, 1140 / razao);
-  const base = { x: x - w0 / 2, y: y - (w0 * razao) / 2, w: w0, h: w0 * razao };
-  const v = encaixaCaixas(base, L, caixas, FOLGA_TOPO, FOLGA_LADO, true);
-  // Piso de legibilidade: mostrar os 13 alarga a vista; se a fonte dos
-  // valores (19 unidades × compensação k × escala s) baixar de 11 px
-  // efectivos, mantém-se a largura do protótipo — encaixa-se só o topo
-  // (o defeito que o dono apanhou) e o que ficar nos lados fica ao
-  // alcance do arrasto. Nos ecrãs do dono (1280+) sobra folga.
-  const k = Math.min(1.7, Math.max(0.55, MUNDO.w / L));
-  if (19 * k * (L / v.w) < 11) {
-    return encaixaCaixas(base, L, caixas, FOLGA_TOPO, FOLGA_LADO, false);
-  }
-  return v;
+  const esq = Math.min(TABULEIRO.esq, ...caixas.map((c) => c.esq));
+  const dir = Math.max(TABULEIRO.dir, ...caixas.map((c) => c.dir));
+  const topo = Math.min(TABULEIRO.topo, ...caixas.map((c) => c.topo));
+  const fundo = Math.max(TABULEIRO.fundo, ...caixas.map((c) => c.fundo));
+  const fl = FOLGA_TABULEIRO;
+  // a largura que faz caber o conteúdo nas duas direcções, com as folgas
+  const wX = (dir - esq) / Math.max(0.1, 1 - (2 * fl) / L);
+  const wY = (L * (fundo - topo)) / Math.max(1, A - FOLGA_TOPO - fl);
+  const w = Math.max(wX, wY);
+  const s = L / w;
+  const h = w * (A / L);
+  // centrado: o que sobra na horizontal e na vertical reparte-se ao meio
+  const x = (esq + dir) / 2 - w / 2;
+  const sobraY = h - (fundo - topo) - (FOLGA_TOPO + fl) / s;
+  const y = topo - FOLGA_TOPO / s - sobraY / 2;
+  return { x, y, w, h };
 }
 
 /**

@@ -1343,8 +1343,12 @@ de dados (a subida da Pastelaria mede-se desde ago 2020, como a frase diz;
 a inflação dos Correios a 0,1 pp). A comparação das frases geradas pelo
 `_revisao-copy.mjs` contra `c8cc7a5` dá zero diferenças.
 
-**PROPOSTA (falta aprovação do dono):** a tabela dos escalões nas
+**Aprovado pelo dono a 2026-10-07:** a tabela dos escalões nas
 Finanças, da maquete — `finTabelaResumo` «Ver a tabela dos escalões»,
 `finTabelaEscalao` «Escalão», `finTabelaRendimento` «Rendimento
 coletável», `finTabelaTaxa` «Taxa», `finTabelaFaixa` «{de} a {ate}»,
 `finTabelaAcima` «acima de {de}».
+
+## O mapa segue o tema — 2026-10-07
+
+Decisão do dono: o tema escuro é «a noite do bairro», por isso o mapa abre em **Noite** quando o tema é escuro. A regra «o mapa nunca escurece» passa a «o palco não escurece (o desenho e as cenas ficam claros), mas o céu segue o tema». Prioridade da hora: o que a pessoa clicou (Dia / Fim de tarde / Noite) > o tema escuro > a hora do relógio. Trocar o tema esquece o clique. Vive em `hora.ts` (`horaEfetiva`) e no script em linha do palco, que lê o tema antes da primeira pintura (sem fotograma de dia em escuro). Teste: `e2e/bairro-hora-tema.spec.ts`.

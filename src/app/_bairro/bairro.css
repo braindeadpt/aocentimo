@@ -108,14 +108,14 @@
   left: 0;
   top: 0;
   transform-origin: 0 0;
-  /* Enquadramento de referência a 1440×900: TODOS os 13 marcadores
-     inteiros, com 12 px de folga em cima e 2 nos outros lados (o critério
-     do dono), e CENTRADOS na horizontal (auditoria 2026-10-06: antes a
-     vista deslocava-se «o mínimo» e o bairro abria encostado à direita). É a MESMA conta da câmara — `vistaInicial()` em camara.ts,
-     com a cadeia de arrumação dos marcadores incluída; o teste em
-     mundo.test.ts confere os dois. A 1280 e a 1920 a câmara refaz o
-     enquadramento ao arrancar (a razão de ecrã muda a vista). */
-  transform: translate(-33.3983cqw, -23.9083cqw) scale(0.58421);
+  /* Enquadramento de referência a 1440×900 (contentor 1240×666): o
+     bairro TOTALMENTE VISÍVEL — o tabuleiro inteiro e os 13 marcadores,
+     centrados (decisão do dono, 2026-10-07). É a MESMA conta da câmara —
+     `vistaInicial()` em camara.ts, com a cadeia de arrumação dos
+     marcadores incluída; o teste em mundo.test.ts confere os dois. A 1280
+     e a 1920 a câmara refaz o enquadramento ao arrancar (a razão de ecrã
+     muda a vista). */
+  transform: translate(1.9914cqw, -16.0219cqw) scale(0.399);
 }
 /* AS CAMADAS EMPILHAM-SE AQUI, e não em fluxo. Cada `.b-camada` é um SVG
    do tamanho do mundo inteiro (3600×2500): em `position: static` — o
@@ -171,11 +171,9 @@
     transform: translate(var(--dx), 0);
   }
 }
-/* No telemóvel o protótipo começa perto da fábrica e da avenida, não no
-   bairro inteiro: muda o centro e a escala. A vista alarga-se do 820 de
-   referência para os 910,2 que cabem nos marcadores essenciais (Salário
-   bruto, Chega à conta, Inflação, Euribor) com as folgas do dono —
-   mesma conta de `vistaInicial()`, referencial 375×(0,74·812). */
+/* No telemóvel o bairro também abre TOTALMENTE VISÍVEL (decisão do dono,
+   2026-10-07, em vez do «perto da fábrica» do protótipo) — mesma conta de
+   `vistaInicial()`, referencial 375×(0,74·812). */
 /* A instância de 116% do Archivo — a do título da intro e a do
    cabeçalho do elenco. Declarada aqui e não no globals.css porque a
    folha do bairro é a única que a usa, e a única que a home carrega:
@@ -195,7 +193,7 @@
 
 @media (max-width: 700px) {
   [data-pele="v5"] .b-mundo {
-    transform: translate(-138.8999cqw, -43.4161cqw) scale(0.412);
+    transform: translate(-9.231cqw, 26.8835cqw) scale(0.14887);
   }
 }
 
