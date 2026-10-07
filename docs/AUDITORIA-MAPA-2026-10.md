@@ -216,3 +216,17 @@ proibido.
 
 Verde antes do PR: `lint`, `typecheck`, `test:unit`, `build`,
 `_gate-html`.
+
+## Interiores (cenas) vs maquete — 2026-10-07
+
+Comparação lado a lado (Chromium 1440×900, maquete `design/prototipos/mapa/mapa.html` × `out/#<edifício>`) das 11 cenas.
+
+**Causa principal:** Banco, Bomba, Correios, Finanças, Mercearia e Segurança Social desenhavam as pessoas com uma «mini-porta» (`pessoaBase`, ~metade do tamanho, sem roupa/acessórios). Resultado: o gerente do Banco, o Sr. Manuel e a funcionária dos Correios ficavam escondidos atrás do balcão; Rui, Marta, Inês, Arminda e Pedro apareciam como bonecos minúsculos. Agora usam a MESMA `pessoa()`/`ELENCO` do mapa, com as especificações exatas do protótipo (posições e escalas já eram iguais). Casa, Escola, Pastelaria e Quiosque já estavam certas.
+
+**Também corrigido:**
+- Falas P2a (Finanças, Banco, Mercearia) sem os destaques da maquete (`<b>`, `.b-r`) — repostos; as palavras não mudaram.
+- Finanças: a cómoda aparecia já cheia no passo 1; na maquete só enche na resposta (passo 3).
+- Finanças e Banco: «Tirar senha»/«Chamar a senha» não animava — agora o painel pisca e muda, o funcionário acena e (Finanças) o talão cai (`cenas/senha.ts`; reduced-motion vê o estado final).
+- Finanças: faltava «Ver a tabela dos escalões» (o `<details class="confirma">` da maquete).
+
+**Por fazer (não incluído):** as restantes animações P2a da maquete — palhetas do quadro da Euribor no Banco, etiquetas da Mercearia a virar, contador do saco e aceno do Sr. Manuel, enchimento animado das gavetas.

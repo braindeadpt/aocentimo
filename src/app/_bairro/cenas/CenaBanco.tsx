@@ -23,6 +23,7 @@ import {
   prestacaoDe,
 } from "./banco-arte";
 import CenaDePerto from "./CenaDePerto";
+import { chamarSenha } from "./senha";
 import { pontosDaSerie } from "./utils";
 import * as T from "./textos";
 
@@ -36,6 +37,8 @@ export default function CenaBanco({ D, aoFechar }: { D: DadosBanco; aoFechar: ()
   const [kEscolhido, setKEscolhido] = useState<number | null>(null);
   const [palpite, setPalpite] = useState(0);
   const arteRef = useRef<HTMLDivElement>(null);
+  const vivo = useRef(true);
+  useEffect(() => () => { vivo.current = false; }, []);
 
   // a série compacta do servidor reconstrói-se aqui, no cliente
   const eur = useMemo(() => pontosDaSerie(D.serie), [D.serie]);
@@ -119,7 +122,13 @@ export default function CenaBanco({ D, aoFechar }: { D: DadosBanco; aoFechar: ()
       />
       <div className="b-corpo">
         {passo === 1 && (
-          <button className="b-btn" type="button" onClick={() => setPasso(2)}>
+          <button
+            className="b-btn"
+            type="button"
+            onClick={() =>
+              chamarSenha(arteRef.current, { painel: "#banPainel", nova: "A 041", braco: "#banGer .braco-d" }, () => vivo.current && setPasso(2))
+            }
+          >
             {T.banBtnSenha}
           </button>
         )}

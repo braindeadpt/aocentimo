@@ -7,6 +7,7 @@
 import { FINO, fmtNum } from "@/lib/format";
 import type { DadosMercearia, ItemMerc, SerieCena } from "./dados";
 import { pontosDaSerie } from "./utils";
+import { pessoa, ELENCO } from "@/lib/bairro/personagens";
 
 const K = "#16130f";
 
@@ -184,27 +185,6 @@ export function talaoIva(D: DadosMercearia): { html: string; aria: string } {
   return { html, aria };
 }
 
-/* ————— o Sr. Manuel (mesma mini-porta das outras cenas) ————— */
-
-function pessoaBase(pele: string, cabeloSvg: string, roupa: string, calcas: string, extra = ""): string {
-  return `<g stroke="${K}" stroke-width="2.2">
-    <ellipse cx="0" cy="2" rx="20" ry="6" fill="rgba(22,19,15,.18)" stroke="none"/>
-    <rect x="-13" y="-26" width="26" height="30" rx="8" fill="${roupa}"/>
-    <rect x="-12" y="2" width="10" height="26" fill="${calcas}"/><rect x="2" y="2" width="10" height="26" fill="${calcas}"/>
-    <circle cx="0" cy="-38" r="13" fill="${pele}"/>
-    ${cabeloSvg}
-    <path d="M-13 -12 q-8 2 -6 12 M13 -12 q8 2 6 12" fill="none" stroke-linecap="round"/>
-    ${extra}
-    <path d="M-4 -35 q4 4 8 0" fill="none"/>
-  </g>`;
-}
-
-function manuel(): string {
-  return pessoaBase(
-    "#c98850",
-    `<path d="M-14 -40 a14 14 0 0 1 28 0 v3 q-14 -6 -28 0 z" fill="#9aa3ad"/>`,
-    "#fff",
-    "#6b4226",
-    `<path d="M-8 -32 q8 5 16 0" fill="none" stroke-width="2.6"/>`
-  );
-}
+/* ————— pessoas do interior: a MESMA personagem do mapa (`pessoa()`), com
+   as especificações do protótipo — nada de mini-figuras ————— */
+const manuel = (): string => pessoa(ELENCO.manuel);

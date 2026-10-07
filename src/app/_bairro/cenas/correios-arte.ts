@@ -14,6 +14,7 @@
  */
 import { fmtEUR0 } from "@/lib/format";
 import type { PontoPoupanca } from "@/lib/engines/poupanca";
+import { pessoa, ELENCO } from "@/lib/bairro/personagens";
 
 const K = "#16130f";
 
@@ -133,39 +134,7 @@ export function graficoAforro(
   return `<svg class="grafico-irs" viewBox="0 0 520 280" role="img" aria-label="${aria}" font-family="Archivo">${s}</svg>`;
 }
 
-/* ————— pessoas do interior (mini-porta de personagens.ts, como nas P2a) ————— */
-
-function pessoaBase(pele: string, cabeloSvg: string, roupa: string, calcas: string, extra = ""): string {
-  return `<g stroke="${K}" stroke-width="2.2">
-    <ellipse cx="0" cy="2" rx="20" ry="6" fill="rgba(22,19,15,.18)" stroke="none"/>
-    <rect x="-13" y="-26" width="26" height="30" rx="8" fill="${roupa}"/>
-    <rect x="-12" y="2" width="10" height="26" fill="${calcas}"/><rect x="2" y="2" width="10" height="26" fill="${calcas}"/>
-    <circle cx="0" cy="-38" r="13" fill="${pele}"/>
-    ${cabeloSvg}
-    <path class="braco-e" d="M-13 -12 q-8 2 -6 12" fill="none" stroke-linecap="round"/><path class="braco-d" d="M13 -12 q8 2 6 12" fill="none" stroke-linecap="round"/>
-    ${extra}
-    <path d="M-4 -35 q4 4 8 0" fill="none"/>
-  </g>`;
-}
-
-/** A funcionária dos Correios (coque escuro, roupa vermelha, óculos). */
-function funcionaria(): string {
-  return pessoaBase(
-    "#d49a72",
-    `<path d="M-13 -40 a13 13 0 0 1 26 0 v4 q-13 -7 -26 0z" fill="#2b1d14"/><circle cx="0" cy="-52" r="6.5" fill="#2b1d14"/>`,
-    "#e2412a",
-    "#2b3a55",
-    `<circle cx="-6.5" cy="-38" r="4.8" fill="none"/><circle cx="6.5" cy="-38" r="4.8" fill="none"/><path d="M-1.7 -38 h3.4" fill="none"/>`
-  );
-}
-
-/** A Dona Arminda (carrapito grisalho, roupa bordeaux, saia, óculos). */
-function arminda(): string {
-  return pessoaBase(
-    "#f3cba8",
-    `<path d="M-13 -40 a13 13 0 0 1 26 0 v4 q-13 -7 -26 0z" fill="#cfc9c1"/><circle cx="0" cy="-52" r="7" fill="#cfc9c1"/>`,
-    "#9e2f45",
-    "#3d3a4f",
-    `<circle cx="-6.5" cy="-38" r="4.8" fill="none"/><circle cx="6.5" cy="-38" r="4.8" fill="none"/><path d="M-1.7 -38 h3.4" fill="none"/>`
-  );
-}
+/* ————— pessoas do interior: a MESMA personagem do mapa (`pessoa()`), com
+   as especificações do protótipo — nada de mini-figuras ————— */
+const funcionaria = (): string => pessoa({ pele: "c", cabelo: "coque", corCabelo: "#2b1d14", roupa: "#e2412a", calcas: "#2b3a55", gola: "#fff", oculos: true });
+const arminda = (): string => pessoa(ELENCO.arminda);

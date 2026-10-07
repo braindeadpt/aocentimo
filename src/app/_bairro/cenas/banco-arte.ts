@@ -12,6 +12,7 @@
 import { FINO, fmtEUR, fmtNum } from "@/lib/format";
 import { simularPrestacao } from "@/lib/engines/prestacao";
 import type { Ponto } from "./dados";
+import { pessoa, ELENCO } from "@/lib/bairro/personagens";
 
 const K = "#16130f";
 
@@ -151,45 +152,8 @@ export function cursorGrafico(
   }
 }
 
-/* ————— pessoas do interior (mesma mini-porta das Finanças) ————— */
-
-function pessoaBase(pele: string, cabeloSvg: string, roupa: string, calcas: string, extra = ""): string {
-  return `<g stroke="${K}" stroke-width="2.2">
-    <ellipse cx="0" cy="2" rx="20" ry="6" fill="rgba(22,19,15,.18)" stroke="none"/>
-    <rect x="-13" y="-26" width="26" height="30" rx="8" fill="${roupa}"/>
-    <rect x="-12" y="2" width="10" height="26" fill="${calcas}"/><rect x="2" y="2" width="10" height="26" fill="${calcas}"/>
-    <circle cx="0" cy="-38" r="13" fill="${pele}"/>
-    ${cabeloSvg}
-    <path d="M-13 -12 q-8 2 -6 12 M13 -12 q8 2 6 12" fill="none" stroke-linecap="round"/>
-    ${extra}
-    <path d="M-4 -35 q4 4 8 0" fill="none"/>
-  </g>`;
-}
-
-function gerente(): string {
-  return pessoaBase(
-    "#c98850",
-    `<path d="M-13 -38 a13 13 0 0 1 26 0 v4 q-13 -6 -26 0 z" fill="#1d1410"/>`,
-    "#26282b",
-    "#26282b",
-    `<path d="M-4 -26 l4 6 l4 -6" fill="#e2412a" stroke-width="1.6"/>`
-  );
-}
-
-function rui(): string {
-  return pessoaBase(
-    "#e8b98a",
-    `<path d="M-13 -40 a13 13 0 0 1 26 0 v6 q-13 -8 -26 0 z" fill="#2b2118"/>`,
-    "#dfe5ff",
-    "#3b342c"
-  );
-}
-
-function marta(): string {
-  return pessoaBase(
-    "#d9a173",
-    `<path d="M-14 -40 a14 14 0 0 1 28 0 v14 q-5 -8 -14 -8 t-14 8 z" fill="#4a2f1d"/>`,
-    "#ff8fb7",
-    "#2b3a55"
-  );
-}
+/* ————— pessoas do interior: a MESMA personagem do mapa (`pessoa()`), com
+   as especificações do protótipo — nada de mini-figuras ————— */
+const gerente = (): string => pessoa({ pele: "d", cabelo: "curto", corCabelo: "#1d1410", roupa: "#26282b", calcas: "#26282b", gravata: "#e2412a", gola: "#fff" });
+const rui = (): string => pessoa(ELENCO.rui);
+const marta = (): string => pessoa(ELENCO.marta);

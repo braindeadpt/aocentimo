@@ -27,11 +27,17 @@ export const finQuem = "Finanças · balcão A · o IRS em gavetas";
 export const finRotuloArte =
   "Dentro das Finanças: o balcão A, a máquina das senhas, o funcionário, a Inês e a cómoda com uma gaveta por cada escalão do IRS.";
 
-export const finFala1 = "Bem-vindo às Finanças. Para o IRS é o balcão A: tira a tua senha.";
+export const finFala1 = "Bem-vindo às Finanças. Para o <b>IRS</b> é o balcão A: tira a tua senha.";
 export const finBtnSenha = "Tirar senha";
+export const finTabelaResumo = "Ver a tabela dos escalões";
+export const finTabelaEscalao = "Escalão";
+export const finTabelaRendimento = "Rendimento coletável";
+export const finTabelaTaxa = "Taxa";
+export const finTabelaFaixa = (de: string, ate: string) => `${de} a ${ate}`;
+export const finTabelaAcima = (de: string) => `acima de ${de}`;
 
 export const finFala2 = (senha: string) =>
-  `Senha ${senha}, faz favor! Antes de começarmos, um palpite:`;
+  `Senha <b>${senha}</b>, faz favor! Antes de começarmos, um palpite:`;
 
 export const finPalpite = (de: string, para: string, g0: string, g1: string) =>
   `A Inês foi aumentada de ${de} para ${para} brutos por mês e passou do ${g0} para o ${g1} escalão do IRS. No fim do ano, fica com…`;
@@ -62,7 +68,7 @@ export const finCalcMarg = "Taxa da gaveta mais alta";
 export const finCalcMed = "Taxa média (o que pagas mesmo)";
 
 export const finFala4 = (degrau: string) =>
-  `Quando ouvires «estou no escalão dos ${degrau}», isso é o degrau. O que pagas mesmo é a curva.`;
+  `Quando ouvires «estou no escalão dos ${degrau}», isso é o <span class="b-r">degrau</span>. O que pagas mesmo é a <b>curva</b>.`;
 
 export const finGraficoAria =
   "Gráfico: a taxa do escalão sobe aos degraus, a taxa média sobe devagar e fica sempre abaixo.";
@@ -84,11 +90,11 @@ export const banRotuloArte =
   "Dentro do banco: o quadro da Euribor com letras que viram, o cofre, o gerente atrás do balcão e o Rui com a Marta à frente.";
 
 export const banFala1 =
-  "Bom dia! O crédito à habitação é no balcão A. O Rui e a Marta já tiraram a senha.";
+  "Bom dia! O <b>crédito à habitação</b> é no balcão A. O Rui e a Marta já tiraram a senha.";
 export const banBtnSenha = "Chamar a senha A 041";
 
 export const banFala2 = (capital: string, anos: number) =>
-  `O Rui e a Marta querem pedir ${capital} a ${anos} anos para comprar casa. Um palpite antes:`;
+  `O Rui e a Marta querem pedir <b>${capital}</b> a ${anos} anos para comprar casa. Um palpite antes:`;
 
 export const banPalpite = (mesA: string, prestA: string, mesB: string) =>
   `Em ${mesA}, a prestação deste empréstimo seria de ${prestA} por mês. E se o pedissem em ${mesB}, pela mesma casa?`;
@@ -99,7 +105,7 @@ export const banNotaExemplo = (spread: string) =>
 export const banBtnResposta = "Mostrar a resposta";
 
 export const banResposta = (juizo: string, mesB: string, prestB: string, mesA: string, dif: string) =>
-  `${juizo} Em ${mesB} seria ${prestB} por mês: mais ${dif} do que em ${mesA}.`;
+  `<b>${juizo}</b> Em ${mesB} seria <span class="b-r">${prestB}</span> por mês: mais <span class="b-r">${dif}</span> do que em ${mesA}.`;
 
 export const banExplica = (eA: string, eB: string) =>
   [
@@ -111,7 +117,7 @@ export const banGraficoAria =
   "Dois gráficos com o mesmo tempo, de 2019 até hoje: em cima a Euribor a 12 meses e a taxa do empréstimo; em baixo a prestação, que sobe e desce com a Euribor.";
 
 export const banFala4 =
-  "Dois gráficos, o mesmo tempo. Quando a linha azul sobe, a vermelha sobe logo atrás.";
+  "Dois gráficos, o <b>mesmo tempo</b>. Quando a linha azul sobe, a vermelha sobe logo atrás.";
 
 export const banGraficoTexto = (hoje: string, eur: string, prest: string) =>
   `Em cima, a Euribor e, a tracejado, a taxa do empréstimo; a faixa amarela entre as duas é o spread. Em baixo, a prestação. Hoje (${hoje}), a Euribor está em ${eur} e a prestação do exemplo seria de ${prest}.`;
@@ -140,13 +146,13 @@ export const mercRotuloArte =
   "Dentro da mercearia: duas prateleiras com pão, leite, carne, peixe, fruta, legumes, azeite e açúcar, cada uma com a etiqueta «1 € em 2020», o balcão com a caixa registadora e o Sr. Manuel.";
 
 export const mercFala1 = (mes: string) =>
-  `Bom dia! Em ${mes}, este saco de compras custava 10 €. Quanto custa hoje o mesmo saco?`;
+  `Bom dia! Em ${mes}, este saco de compras custava <b>10 €</b>. Quanto custa hoje o mesmo saco?`;
 
 export const mercPalpiteAria = "O teu palpite em euros";
 export const mercBtnResposta = "Mostrar a resposta";
 
 export const mercResposta = (juizo: string, real: string) =>
-  `${juizo} Hoje o mesmo saco custa ${real}. Isto chama-se inflação.`;
+  `<b>${juizo}</b> Hoje o mesmo saco custa <span class="b-r">${real}</span>. Isto chama-se inflação.`;
 
 export const mercExplica = (comida: string, mes: string, total: string) =>
   `A comida subiu ${comida} desde ${mes}; tudo o que compramos, em média, subiu ${total}. Mas cada prateleira subiu à sua maneira: as etiquetas dizem quanto custa hoje o que custava 1 € em 2020.`;
@@ -158,7 +164,7 @@ export const mercSubidaLegenda = (total: string) =>
   `tudo o que compramos (inflação geral): ${total}`;
 
 export const mercFala3 = (mes: string) =>
-  `Um índice é uma régua de preços. Aqui, 100 é o preço em ${mes}.`;
+  `Um <b>índice</b> é uma régua de preços. Aqui, <b>100</b> é o preço em ${mes}.`;
 
 export const mercGraficoAria = (nome: string, mes: string, hoje: number, geral: number) =>
   `Índice de preços de ${nome}, com 100 no preço de ${mes}: hoje vale ${hoje}. A inflação geral, a tracejado, vale ${geral}.`;
@@ -173,7 +179,7 @@ export const mercEscolherAria = "Escolher o produto";
 export const mercBtnIva = "Ver o IVA no talão";
 
 export const mercFala4 =
-  "E há uma parte de cada compra que vai para o Estado: o IVA. Já vem dentro do preço.";
+  "E há uma parte de cada compra que vai para o Estado: o <b>IVA</b>. Já vem dentro do preço.";
 
 export const mercIvaTexto = (red: string, em10Red: string, inter: string, norm: string, em10Norm: string) =>
   `O IVA tem três taxas. Os alimentos básicos da lista I do Código do IVA, como o pão, o leite, a fruta e os legumes, pagam a reduzida, ${red}: em cada 10 € ficam ${em10Red} para o Estado. As conservas e o vinho pagam a intermédia, ${inter}. Tudo o que não está nas listas do Código do IVA paga a normal, ${norm}: ${em10Norm} em cada 10 €.`;
