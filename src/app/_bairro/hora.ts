@@ -16,6 +16,37 @@ export function horaDe(h: number): Hora {
   return h >= 18 ? "tarde" : "dia";
 }
 
+/**
+ * A hora que o mapa mostra, por ordem de prioridade:
+ *   1. o que a pessoa clicou (Dia / Fim de tarde / Noite);
+ *   2. senão, o tema escuro é «a noite do bairro» → noite;
+ *   3. senão, a hora do relógio de quem abre a página.
+ * Trocar o tema esquece o clique (o `<Bairro>` repõe `escolha` a null), porque
+ * quem carrega no botão do tema espera que o mundo mude com ele.
+ */
+export function horaEfetiva(o: {
+  escolha: Hora | null;
+  escuro: boolean;
+  horaLocal: Hora;
+}): Hora {
+  return o.escolha ?? (o.escuro ? "noite" : o.horaLocal);
+}
+
+/** O tema está escuro? Lê o atributo que o script do layout põe no <html>. */
+export function temaEscuro(): boolean {
+  return document.documentElement.dataset.theme === "dark";
+}
+
+/** Avisa quando o tema muda (o interruptor muda o atributo, não o React). */
+export function subscreverTema(avisar: () => void): () => void {
+  const o = new MutationObserver(avisar);
+  o.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["data-theme"],
+  });
+  return () => o.disconnect();
+}
+
 /** A classe que o palco recebe por hora. */
 export const CLASSE_HORA: Record<Hora, string> = {
   dia: "",
@@ -31,5 +62,6 @@ export const CLASSE_HORA: Record<Hora, string> = {
  */
 export const SCRIPT_HORA =
   '(function(){try{var s=document.currentScript&&document.currentScript.parentNode;if(!s)return;' +
-  'var h=new Date().getHours();var c=h>=20||h<7?"b-noite":h>=18?"b-fim-tarde":"";' +
+  'var h=new Date().getHours();var d=document.documentElement;var e=d&&d.dataset&&d.dataset.theme==="dark";' +
+  'var c=e||h>=20||h<7?"b-noite":h>=18?"b-fim-tarde":"";' +
   's.classList.remove("b-noite","b-fim-tarde");if(c)s.classList.add(c);}catch(e){}})()';

@@ -47,7 +47,15 @@ import CenaDePerto from "./cenas/CenaDePerto";
 import { aCarregar, falhaAoCarregar } from "./cenas/textos";
 import "./bairro.css";
 
-import { CLASSE_HORA, SCRIPT_HORA, horaDe, type Hora } from "./hora";
+import {
+  CLASSE_HORA,
+  SCRIPT_HORA,
+  horaDe,
+  horaEfetiva,
+  subscreverTema,
+  temaEscuro,
+  type Hora,
+} from "./hora";
 export type { Hora } from "./hora";
 
 /** Um edifício, do ponto de vista de quem o quer abrir. */
@@ -172,7 +180,20 @@ export function Bairro({
     () => horaDe(new Date().getHours()),
     () => horaInicial
   );
-  const hora: Hora = escolha ?? horaLocal;
+  // o tema escuro é a noite do bairro: o mapa abre em «Noite» por omissão,
+  // e trocar o tema esquece o clique (ver horaEfetiva em hora.ts). No
+  // servidor o tema é «claro»; o script em linha do palco já pôs a classe
+  // certa antes de pintar, por isso não há fotograma de dia em escuro.
+  const escuro = useSyncExternalStore(subscreverTema, temaEscuro, () => false);
+  const hora: Hora = horaEfetiva({ escolha, escuro, horaLocal });
+  const primeiroTema = useRef(true);
+  useEffect(() => {
+    if (primeiroTema.current) {
+      primeiroTema.current = false;
+      return;
+    }
+    setHora(null);
+  }, [escuro]);
   const [cartaoAberto, setCartaoAberto] = useState<string | null>(null);
   /** A cena aberta (P2a): o id do edifício, ou `null`. */
   const [cenaAberta, setCenaAberta] = useState<string | null>(null);
