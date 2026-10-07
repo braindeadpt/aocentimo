@@ -342,10 +342,10 @@ describe("o enquadramento por omissão do CSS", () => {
   });
 
   it("no computador é o enquadramento que a câmara escolhe ao arrancar", () => {
-    // A câmara agora MEDe os marcadores (`vistaInicial`): a janela de
-    // referência é a do contentor do mapa num ecrã de 1440×900 — com os
-    // 13 marcadores inteiros e as folgas do dono (12 px em cima, 2 nos
-    // lados). O CSS e a câmara saem da mesma função: um número, um sítio.
+    // A câmara MEDe o tabuleiro e os marcadores (`vistaInicial`): a janela
+    // de referência é a do contentor do mapa num ecrã de 1440×900 — o
+    // bairro inteiro à vista (decisão do dono, 2026-10-07). O CSS e a
+    // câmara saem da mesma função: um número, um sítio.
     const largura = 1240;
     const altura = 666;
     const v = vistaInicial(
