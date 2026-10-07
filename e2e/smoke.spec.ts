@@ -131,6 +131,30 @@ const AA_EVAL = `(() => {
   };
   const fundoDe = (el) => {
     if (el.namespaceURI?.includes("svg")) {
+      // os MARCADORES do mapa: medidos contra a própria carta
+      const svgP = el.closest(".pin") ? el.ownerSVGElement : null;
+      const ctmP = svgP ? el.getCTM?.() : null;
+      if (svgP && ctmP) {
+        // o centro do texto no espaço do <svg> (getCTM: sem os transforms
+        // CSS da câmara, que o getScreenCTM não traduz bem) e, para cada
+        // forma, no espaço DELA: isPointInFill mede nas coordenadas da
+        // própria forma, e os marcadores vivem dentro de translate().
+        const bb = el.getBBox();
+        const pt = new DOMPoint(bb.x + bb.width/2, bb.y + bb.height/2).matrixTransform(ctmP);
+        // de trás para a frente: pinta por cima o que vem depois no DOM,
+        // por isso a última forma que contém o ponto é a que está por baixo
+        // do texto (a carta do marcador, não o céu ou a sombra atrás dela)
+        for (const s of [...svgP.querySelectorAll("path,rect,circle,polygon")].reverse()) {
+          if (s.closest("defs,mask,clipPath")) continue;
+          const f = getComputedStyle(s).fill;
+          if (!f || f === "none" || f.startsWith("url(")) continue;
+          const am = f.match(/[\\d.]+/g);
+          if (am && am.length >= 4 && Number(am[3]) < 0.5) continue;
+          const sm = s.getCTM?.();
+          if (!sm) continue;
+          try { if (s.isPointInFill(pt.matrixTransform(sm.inverse()))) return parse(f); } catch {}
+        }
+      }
       const r = el.getBoundingClientRect();
       const svg = el.ownerSVGElement;
       const ctm = svg?.getScreenCTM();
