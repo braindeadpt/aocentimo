@@ -16,10 +16,11 @@
  */
 import { loadDerivado, loadFonte, loadSerie } from "@/lib/data";
 import { termoPorSlug } from "@/content/glossario";
+import { fmtPeriodo } from "@/lib/format";
 import smnJson from "@data/fiscal/smn.json";
 import ivaJson from "@data/fiscal/iva.json";
 import type { Ponto, SerieCena } from "./dados";
-import { T0_MERC, mesExtenso } from "./dados";
+import { T0_MERC } from "./dados";
 
 const INICIO = "2019-01";
 
@@ -78,7 +79,7 @@ export function dadosCasaP2c(): DadosCasa {
     lci,
     meses: ult ? Math.round(ult.v) : null,
     ate: der?.meta.rotuloAte ?? der?.meta.serieAte ?? ult?.t ?? null,
-    fonte: `Eurostat · índice de preços da habitação ÷ índice de custo do trabalho, Portugal, 2015 = 100 · até ${der?.meta.rotuloAte ?? ult?.t ?? "—"}`,
+    fonte: `Eurostat · índice de preços da habitação ÷ custo do trabalho (B-S), 2015 = 100 · último dado ${ult ? fmtPeriodo(ult.t) : "—"}`,
   };
 }
 
@@ -130,7 +131,7 @@ export function dadosPastelariaP2c(): DadosPastelaria {
     ivaMercearia: taxaDe(/^pão$|mercearia|leite/i) ?? iva.taxas.find((t) => t.nome === "Reduzida")?.taxa ?? null,
     ate: cp11?.meta.serieAte ?? cp01?.meta.serieAte ?? null,
     base: 2,
-    fonte: `Eurostat · índice harmonizado de preços, Portugal: restaurantes e alojamento (ECOICOP 11) e alimentação (01) · ${mesExtenso(T0_MERC)} → ${mesExtenso(cp11?.meta.serieAte)} · IVA: Código do IVA`,
+    fonte: `Eurostat · IHPC Portugal — restaurantes e alojamento (CP11) e alimentação (CP01), jan 2019 → ${cp11 ? fmtPeriodo(cp11.meta.serieAte) : "—"}`,
     fonteIva: `Código do IVA — Listas I e II anexas e art. 18.º · taxas do continente em vigor`,
   };
 }
@@ -204,7 +205,7 @@ export function dadosQuiosqueP2c(): DadosQuiosque {
       ? { ano: smn.serie[0].ano, valor: smn.serie[0].valor }
       : null,
     inflacao,
-    fonte: `Eurostat · desemprego (une_rt_m, dessazonalizado), PIB (variação homóloga), confiança dos consumidores · salário mínimo: ${String(smnJson.fonte ?? "—").replace(/^Decreto-Lei n\.º (\d+\/\d+).*/, "DL $1")}`,
+    fonte: `Eurostat · desemprego (une_rt_m), PIB e confiança; INE/DR · salário mínimo em vigor desde ${smnJson.vigencia ? fmtPeriodo(String(smnJson.vigencia).slice(0, 7)) : "—"}`,
   };
 }
 
@@ -253,6 +254,6 @@ export function dadosEscolaP2c(): DadosEscola {
     subidaComida: subida,
     varHomologa: hom,
     gloss,
-    fonte: `Eurostat · índice harmonizado de preços, Portugal (total e alimentação)`,
+    fonte: `Eurostat · IHPC Portugal — alimentação (CP01) e total (CP00) · último dado ${cp00 ? fmtPeriodo(cp00.meta.serieAte) : "—"}`,
   };
 }

@@ -23,7 +23,7 @@ export const falhaAoCarregar =
 
 /* ————— Finanças · o IRS em gavetas ————— */
 
-export const finQuem = "Finanças · senha A · IRS";
+export const finQuem = "Finanças · balcão A · o IRS em gavetas";
 export const finRotuloArte =
   "Dentro das Finanças: o balcão A, a máquina das senhas, o funcionário, a Inês e a cómoda com uma gaveta por cada escalão do IRS.";
 
@@ -77,15 +77,15 @@ export const finGraficoTexto = (degrau: string, media: string) =>
   `A Inês está no degrau dos <span class="b-r">${degrau}</span>, mas paga em média <b>${media}</b> do rendimento coletável. A curva está sempre abaixo do degrau e nunca dá saltos, porque cada gaveta nova só apanha o dinheiro a mais.`;
 
 export const finNotaRodape = (motor: string) =>
-  `Este é o IRS calculado só pelos escalões. Depois ainda se descontam as deduções à coleta: com as despesas gerais familiares, a Inês paga <b>${motor}</b> por ano, o mesmo que o simulador do AO CÊNTIMO calcula. Nos rendimentos mais baixos, o mínimo de existência ainda baixa o imposto.`;
+  `Este é o IRS calculado só pelos escalões. Depois ainda se descontam as deduções à coleta: com as despesas gerais familiares, a Inês paga ${motor} por ano, o mesmo que o simulador do AO CÊNTIMO calcula. Nos rendimentos mais baixos, o mínimo de existência ainda baixa o imposto. O que se retém todos os meses é um adiantamento: o valor final acerta-se na declaração anual.`;
 
-export const finBtnGrafico = "Aprender a ler o gráfico →";
+export const finBtnGrafico = "Aprender a ler o gráfico";
 export const finBtnVoltar = "Voltar ao bairro";
 export const finBtnOutra = "Ver outra vez";
 
 /* ————— Banco · a Euribor e a prestação ————— */
 
-export const banQuem = "Banco · senha A · crédito à habitação";
+export const banQuem = "Banco · balcão A · o crédito à habitação";
 export const banRotuloArte =
   "Dentro do banco: o quadro da Euribor com letras que viram, o cofre, o gerente atrás do balcão e o Rui com a Marta à frente.";
 
@@ -141,7 +141,7 @@ export const banExemploSpread = "Spread";
 
 /* ————— Mercearia · a inflação e o IVA no talão ————— */
 
-export const mercQuem = "Mercearia do Sr. Manuel · os preços";
+export const mercQuem = "Mercearia do Sr. Manuel · a inflação e o IVA";
 export const mercRotuloArte =
   "Dentro da mercearia: duas prateleiras com pão, leite, carne, peixe, fruta, legumes, azeite e açúcar, cada uma com a etiqueta «1 € em 2020», o balcão com a caixa registadora e o Sr. Manuel.";
 
@@ -176,13 +176,13 @@ export const mercNotaIndice =
   `São índices, não preços: dizem quanto subiu, não quanto custa um quilo. Cada produto é uma família do índice europeu de preços (por exemplo, «cereais e derivados» inclui pão, arroz e massa).`;
 
 export const mercEscolherAria = "Escolher o produto";
-export const mercBtnIva = "Ver o IVA no talão →";
+export const mercBtnIva = "Ver o IVA no talão";
 
 export const mercFala4 =
   "E há uma parte de cada compra que vai para o Estado: o <b>IVA</b>. Já vem dentro do preço.";
 
 export const mercIvaTexto = (red: string, em10Red: string, inter: string, norm: string, em10Norm: string) =>
-  `O IVA tem três taxas. O que é essencial, como o pão, o leite, a fruta e os legumes, paga a <b>reduzida</b>, ${red}: em cada 10 € ficam ${em10Red} para o Estado. As conservas e o vinho pagam a <b>intermédia</b>, ${inter}. Tudo o que não está nas listas do Código do IVA paga a <span class="b-r">normal</span>, ${norm}: ${em10Norm} em cada 10 €.`;
+  `O IVA tem três taxas. Os alimentos básicos da lista I do Código do IVA, como o pão, o leite, a fruta e os legumes, pagam a reduzida, ${red}: em cada 10 € ficam ${em10Red} para o Estado. As conservas e o vinho pagam a intermédia, ${inter}. Tudo o que não está nas listas do Código do IVA paga a normal, ${norm}: ${em10Norm} em cada 10 €.`;
 
 export const mercIvaNota = (regiao: string) =>
   `* Taxa normal: o que não está nas listas I e II do Código do IVA (art. 18.º). Os exemplos são indicativos; as listas definem o enquadramento exato de cada produto. ${regiao}.`;

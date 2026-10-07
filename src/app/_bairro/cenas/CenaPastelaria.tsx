@@ -159,7 +159,7 @@ export default function CenaPastelaria({
                     fmtOuFalha(hoje),
                     r11 !== null ? pctVar(r11) : "—"
                   )
-                : T.pastFala3(taxaOuFalha(D.ivaCafe), D.ivaCafe !== null && D.ivaMercearia !== null && D.ivaCafe > 2 * D.ivaMercearia),
+                : T.pastFala3(taxaOuFalha(D.ivaCafe)),
         }}
       />
       <div className="b-corpo">

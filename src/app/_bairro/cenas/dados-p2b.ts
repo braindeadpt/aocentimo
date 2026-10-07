@@ -94,7 +94,7 @@ export function dadosCorreios(): DadosCorreios {
       vigencia: caJson.vigencia,
       garantia: ca.garantia,
     },
-    fonte: `IGCP · Certificados de Aforro série F, taxa em vigor desde ${fmtData(caJson.vigencia)} e prémios de permanência · retenção de ${fmtPct(imposto, 0)} (art. 71.º do CIRS) · inflação: Eurostat, índice harmonizado de preços, Portugal`,
+    fonte: `IGCP · Certificados de Aforro série F, taxa em vigor desde ${fmtData(caJson.vigencia)} e prémios de permanência · retenção liberatória de ${fmtPct(imposto, 0)} sobre os juros (art. 71.º do CIRS) · inflação: Eurostat, índice harmonizado de preços, Portugal · ${T0_MERC} → ${b?.t ?? "—"}`,
   };
 }
 
@@ -189,7 +189,7 @@ export function dadosBomba(): DadosBomba {
     ispVigencia: ispJson.vigencia,
     gasolina,
     gasoleo,
-    fonte: `DGEG · preço médio de venda ao público, média nacional diária (${fmtData(gasoleo.data ?? "")}) · ISP e taxa de carbono: portaria em vigor desde ${fmtData(ispJson.vigencia)} · IVA: Código do IVA, taxa normal`,
+    fonte: `DGEG · preço médio de venda ao público, média nacional diária (${fmtData(gasolina.data ?? "")}) · ISP e taxa de carbono: portaria em vigor desde ${fmtData(ispJson.vigencia)} (${ispJson.fonte}) · IVA: Código do IVA, taxa normal`,
   };
 }
 

@@ -146,7 +146,7 @@ export default function CenaCasa({ D, aoFechar }: { D: DadosCasa; aoFechar: () =
             passo === 1
               ? T.casaFala1
               : passo === 2
-                ? T.casaFala2(T.juizoPalpite(palpite, meses ?? 0, 5, 20), hoje, meses !== null && meses >= 175 && meses < 200)
+                ? T.casaFala2(T.juizoPalpite(palpite, meses ?? 0, 5, 20), hoje)
                 : T.casaFala3,
         }}
       />
@@ -171,7 +171,7 @@ export default function CenaCasa({ D, aoFechar }: { D: DadosCasa; aoFechar: () =
         )}
         {passo === 2 && (
           <>
-            <p dangerouslySetInnerHTML={{ __html: T.casaExplica(subHpi, subLci, !!hpiU && !!lciU && hpiU.v - lciU.v > 50) }} />
+            <p dangerouslySetInnerHTML={{ __html: T.casaExplica(subHpi, subLci) }} />
             <p className="nota-fin">
               {T.casaNota(ultimo ? trimestre(ultimo.t) : "—")}
             </p>

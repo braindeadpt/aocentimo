@@ -127,10 +127,12 @@ test.describe("as cenas P2a — abrir, percorrer, fechar", () => {
     const prest = () => page.locator(".b-calc-linha").nth(2).locator("b");
     const antes = await prest().innerText();
 
-    // arrasta o tempo para o fim da série (a Euribor de hoje)
+    // o passo 4 abre em HOJE (como a maquete): arrasta o tempo para o
+    // início da série — outra Euribor, outra prestação
     const slider = page.locator("#banTempo");
+    await expect(slider).toHaveValue(String((await slider.getAttribute("max"))!));
     await slider.focus();
-    await slider.fill(String((await slider.getAttribute("max"))!));
+    await slider.fill("0");
     const depois = await prest().innerText();
     expect(depois).not.toBe(antes);
 
