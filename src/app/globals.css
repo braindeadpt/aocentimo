@@ -3877,16 +3877,11 @@ h3 {
    leva o bairro). Nessa página o chrome segue o tema (a noite do
    bairro é visível no cabeçalho/rodapé); só o mapa e a superfície
    ficam a papel — a decisão «o mapa nunca escurece» mantém-se. */
-:root:has(.b5) {
-  --floor: #f4f3ec;
-  --panel: #fbfaf6;
-  --raised: #fdfcf9;
-  --overlay: #ffffff;
-  --ink: #1b1811;
-  --ink2: #57534a;
-  --muted: #6f6a58;
-  --line: #e0dcc9;
-  --line2: #b7b19d;
+/* A superfície da home segue o tema (ver «A HOME SEGUE O TEMA» mais abaixo). O
+   fundo da página, em escuro, é o azul-noite das outras rotas e não o
+   `--floor` V4, mais escuro e acastanhado. */
+html[data-theme="dark"]:has(.b5) {
+  --floor: #141a33;
 }
 
 [data-pele="v5"] {
@@ -3957,7 +3952,8 @@ h3 {
 /* Tema escuro = a noite do bairro. PROPOSTA de partida (P0): a sessão P3
    verifica o contraste AA com _mega-audit e ajusta. O mapa à noite usa o
    véu e as janelas acesas do protótipo — ver src/lib/bairro/planta.ts. */
-[data-pele="v5"][data-theme="dark"] {
+[data-pele="v5"][data-theme="dark"],
+html[data-theme="dark"] .b5 {
   color-scheme: dark;
   --chao: #141a33;
   --papel: #1d2442;
@@ -3977,6 +3973,44 @@ h3 {
   --verde-fundo: #3fc48a;
   --vermelho: #ff7a5c;
   --vermelho-2: #47211a;
+  --vidro: #ffe066;
+  --fundo-mapa: #1b2656;
+}
+
+/* A HOME SEGUE O TEMA. O `.b5` tem `data-pele` próprio, por isso re-declarava
+   os valores CLAROS para a sua sub-árvore e, em escuro, só o cabeçalho e o
+   rodapé mudavam (a decisão do P3a, que o dono corrigiu a 2026-10-07: «devia
+   mudar o tema todo»). O bloco escuro acima já vale para `.b5`; o título, a
+   introdução, a secção das personagens e as fontes ficam a noite.
+
+   O PALCO é a exceção, de propósito: o mapa, os controlos, o painel e as
+   cenas são ilustração — os desenhos têm cores fixas e os gráficos das cenas
+   escrevem texto escuro. Fica com os valores claros, e a hora do dia
+   (dia/tarde/noite) continua a ser quem decide o céu. */
+html[data-theme="dark"] .b5 .b-palco {
+  color-scheme: light;
+  --chao: #f6f2ea;
+  --papel: #ffffff;
+  --tinta: #16130f;
+  --tinta-2: #4a4540;
+  --suave: #6e675e;
+  --linha: #e4e1da;
+  --amarelo-2: #fff1c2;
+  --azul: #2445d6;
+  --azul-2: #dfe5ff;
+  --verde: #0c8f5c;
+  --verde-2: #d3f2e3;
+  --verde-fundo: #096b44;
+  --vermelho: #e2412a;
+  --vermelho-2: #ffe1d9;
+  --vidro: #9fd0ff;
+  --fundo-mapa: #bfe3f7;
+}
+html[data-theme="dark"] .b5 .b-palco.fim-tarde {
+  --vidro: #ffd98a;
+  --fundo-mapa: #ffd9b0;
+}
+html[data-theme="dark"] .b5 .b-palco.noite {
   --vidro: #ffe066;
   --fundo-mapa: #1b2656;
 }
