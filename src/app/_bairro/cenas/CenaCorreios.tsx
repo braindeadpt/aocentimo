@@ -218,6 +218,7 @@ export default function CenaCorreios({ D, aoFechar }: { D: DadosCorreios; aoFech
         {passo === 2 && (
           <>
             <p className="pergunta-fin">{T.corPalpite(fmtEUR0(cap0), mesCurto(D.mesT0))}</p>
+            <p className="nota-fin">{T.corNotaExemplo(fmtEUR0(cap0))}</p>
             <div className="b-palpite">
               <output htmlFor="corPal">{fmtEUR0(palpite)}</output>
               <input
@@ -239,7 +240,7 @@ export default function CenaCorreios({ D, aoFechar }: { D: DadosCorreios; aoFech
         {passo === 3 && !ca && <div className="opcoes">{voltar}</div>}
         {passo === 3 && ca && (
           <>
-            <p dangerouslySetInnerHTML={{ __html: T.corExplica(D.razaoTotal === null ? "—" : pctVarTxt(D.razaoTotal)) }} />
+            <p dangerouslySetInnerHTML={{ __html: T.corExplica(D.razaoTotal === null ? "—" : pctVarTxt(D.razaoTotal), mesCurto(D.mesT1 ?? D.mesT0)) }} />
             <p dangerouslySetInnerHTML={{ __html: T.corExplicaCA(fmtPct(ca.taxa), fmtPct(ca.imposto, 0)) }} />
             <button className="b-btn" type="button" onClick={() => setPasso(4)}>
               {T.corBtnCertificados}

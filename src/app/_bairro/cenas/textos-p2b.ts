@@ -20,7 +20,7 @@
 
 /* ————— Correios · a poupança da Dona Arminda ————— */
 
-export const corQuem = "Correios · senha A · poupança";
+export const corQuem = "Correios · senha A · a poupança";
 export const corRotuloArte =
   "Dentro dos Correios: a parede de cacifos, o painel da senha, o guiché A com a funcionária atrás do vidro, o balcão com duas pilhas de notas e a Dona Arminda com a caderneta.";
 
@@ -33,6 +33,8 @@ export const corFala2 = (mes: string, cap: string) =>
   `Em ${mes}, a Dona Arminda guardou <b>${cap}</b> no colchão. Hoje ainda lá estão, todos. Um palpite:`;
 export const corPalpite = (cap: string, mesCurto: string) =>
   `Esses ${cap} compram hoje o mesmo que quanto dinheiro comprava em ${mesCurto}?`;
+export const corNotaExemplo = (cap: string) =>
+  `Os ${cap} são um exemplo — o que é real é quanto os preços subiram desde então.`;
 export const corPalpiteAria = "O teu palpite em euros";
 export const corBtnResposta = "Mostrar a resposta";
 
@@ -51,10 +53,10 @@ export const corResposta = (juizo: string, real: string, mesCurto: string) =>
 export const corSemDados =
   "Os dados de inflação não estão disponíveis agora — sem eles não se mede o poder de compra.";
 
-export const corExplica = (variacao: string) =>
-  `<p>O dinheiro não desapareceu: <b>encolheu</b>. Os preços subiram ${variacao} e cada euro compra menos. Chama-se perder <b>poder de compra</b>: a linha vermelha no monte de notas marca o que ele ainda compra.</p>`;
+export const corExplica = (variacao: string, mesT1: string) =>
+  `<p>O dinheiro não desapareceu: <b>encolheu</b>. Os preços subiram ${variacao} desde então e cada euro compra menos. Chama-se perder <b>poder de compra</b>: a linha vermelha no monte de notas marca o que ele ainda compra em ${mesT1}.</p>`;
 export const corExplicaCA = (taxa: string, imposto: string) =>
-  `<p>E nos <b>Certificados de Aforro</b>, a poupança do Estado que se faz nos Correios? Hoje rendem <b>${taxa}</b> por ano, mais um prémio a partir do 2.º ano, e ${imposto} dos juros ficam para o IRS.</p>`;
+  `<p>E nos <b>Certificados de Aforro</b>, a poupança do Estado que se faz nos Correios? Hoje rendem <b>${taxa}</b> por ano, mais um prémio a partir do 2.º ano, e ${imposto} dos juros ficam retidos como imposto.</p>`;
 
 export const corBtnCertificados = "E se fosse para os certificados? →";
 
@@ -100,7 +102,7 @@ export const bmbRotuloArte =
   "Na bomba de gasolina: a pala, a bomba com o mostrador, o carro do Pedro com a prancha no tejadilho e um garrafão de um litro que se enche por camadas — o combustível e os três impostos.";
 
 export const bmbFala1 = (litros: number, nome: string, preco: string) =>
-  `O Pedro vai atestar: <b>${litros} litros</b> de ${nome.toLowerCase()}, ao preço médio de hoje, <b>${preco}</b> por litro.`;
+  `Imagina que o Pedro vai atestar <b>${litros} litros</b> de ${nome.toLowerCase()}, ao preço médio de hoje, <b>${preco}</b> por litro.`;
 export const bmbPalpite = (total: string) =>
   `Vai pagar <b>${total}</b>. Quanto desse dinheiro é imposto?`;
 export const bmbPalpiteAria = "O teu palpite em euros";
@@ -143,9 +145,9 @@ export const bmbBtnGrafico = "Aprender a ler o gráfico →";
 export const bmbFala3 = (inicio: string) =>
   `E o preço de cada dia? Aqui está desde ${inicio}. Um ponto por semana, a <b>média do país</b>.`;
 export const bmbGraficoTexto =
-  `A linha vermelha é a gasolina 95; a preta, o gasóleo. O ISP e a taxa de carbono são valores fixos por litro; só o IVA acompanha o preço. Por isso, quando o preço sobe, a parte do imposto <b>pesa menos</b> em percentagem; quando desce, pesa mais.`;
+  `A linha vermelha é a gasolina 95; a preta, o gasóleo. Em cada semana, o ISP e a taxa de carbono são valores fixos por litro (o ISP muda por portaria); só o IVA acompanha o preço. Por isso, na mesma semana, quando o preço sobe, a parte do imposto <b>pesa menos</b> em percentagem; quando desce, pesa mais.`;
 export const bmbNotaGrafico =
-  `Este gráfico mostra o preço, não a parte de imposto de cada dia: o repositório só tem o ISP em vigor hoje.`;
+  `Este gráfico mostra o preço, não a parte de imposto de cada dia: só temos o ISP em vigor hoje.`;
 export const bmbSemSerie =
   "A série de preços da DGEG não está disponível agora.";
 
@@ -211,8 +213,8 @@ export const ssBtnPedro = "E o Pedro, a recibos verdes? →";
 
 export const ssFala4 =
   "O Pedro trabalha a <b>recibos verdes</b>. Não tem empresa: paga tudo sozinho.";
-export const ssPedroTexto = (fat: string, taxa: string, rr: string, ssMes: string) =>
-  `<p>Se o Pedro faturar os mesmos <b>${fat}</b> por mês, desconta ${taxa} sobre ${rr} do que fatura: <span class="b-a">${ssMes}</span> por mês, pagos por ele, de 3 em 3 meses. No primeiro ano de atividade está isento.</p>`;
+export const ssPedroTexto = (fat: string, taxa: string, rr: string, ssMes: string, isencao: number) =>
+  `<p>Se o Pedro faturar os mesmos <b>${fat}</b> por mês, desconta ${taxa} sobre ${rr} do que fatura: <span class="b-a">${ssMes}</span> por mês, pagos por ele, de 3 em 3 meses. No primeiro ano de atividade está isento (${isencao} meses).</p>`;
 export const ssBarrasAria = (inesEla: string, inesEmp: string, pedro: string) =>
   `Por cada 100 euros: a Inês desconta ${inesEla} e a empresa paga ${inesEmp}; o Pedro paga ${pedro} sozinho.`;
 export const ssBarrasLegenda = "em cada 100 € de salário ou de faturação";
@@ -224,8 +226,8 @@ export const ssEle = (v: string) => `ele ${v}`;
 
 export const ssCompara = (ines: string, pedro: string, sente: string) =>
   `<p>Por cada 100 €, entram mais na Segurança Social pela Inês (${ines}) do que pelo Pedro (${pedro}). Mas a Inês só sente os ${sente} que lhe descontam; o Pedro sente tudo, porque paga do próprio bolso.</p>`;
-export const ssNotaCatb = (rr: string, baseMinIas: string, baseMin: string, isencao: number) =>
-  `Recibos verdes: rendimento relevante de ${rr} do faturado em serviços, com base mínima de ${baseMinIas} × IAS (${baseMin}). Isenção nos primeiros ${isencao} meses.`;
+export const ssNotaCatb = (rr: string, baseMinIas: string, ias: string, baseMin: string, isencao: number, retencao: string) =>
+  `Recibos verdes: rendimento relevante de ${rr} do faturado em serviços, com base mínima de ${baseMinIas} × IAS (${baseMin}). Isenção nos primeiros ${isencao} meses; os clientes retêm ${retencao} na fonte (art. 151.º do CIRS). O apuramento da Segurança Social é trimestral — aqui mostra-se a média anual. IAS de ${ias}.`;
 
 export const ssBtnVoltar = "Voltar ao bairro";
 export const ssBtnOutra = "Ver outra vez";

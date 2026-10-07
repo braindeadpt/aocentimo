@@ -163,11 +163,12 @@
   animation: b-nuvem-anda var(--dur) ease-in-out infinite alternate;
 }
 @keyframes b-nuvem-anda {
+  /* `transform` e não `translate`: ver mundo.ts, viagensSoltas() */
   from {
-    translate: 0 0;
+    transform: translate(0, 0);
   }
   to {
-    translate: var(--dx) 0;
+    transform: translate(var(--dx), 0);
   }
 }
 /* No telemóvel o protótipo começa perto da fábrica e da avenida, não no

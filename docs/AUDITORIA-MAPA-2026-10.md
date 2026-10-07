@@ -246,3 +246,20 @@ Cada cena percorrida passo a passo na maquete e no site (texto de cada passo com
 **Visual:** Banco com a calculadora já no passo 3 (a viagem do quadro mexe-lhe o slider) e o passo 4 em «hoje»; recibo da Seg. Social com a caixa `.recibo` (sem serrilha); Jornal do Bairro com a folha da maquete (Georgia, filete duplo, valores com fundo); a Bomba mantém o litro cheio no passo do gráfico; «Ver outra vez» no Banco.
 
 **Mantido de propósito (a maquete não tem):** os botões para as páginas do site no último passo («Ver os preços todos», «Saber mais sobre poupança», «Fazer contas com o teu salário», «Ver a casa por dentro», «Ver a inflação por dentro», «Ver o trabalho», «Ver os dados do país», «Ver o glossário todo»).
+
+## 2026-10-07 · desktop: rabelo em cima dos prédios, metro ao lado dos carris
+
+- **Rabelo em cima da Segurança Social (Chrome de desktop).** As viagens
+  animavam a propriedade `translate` individual, com o balouço em
+  `transform` no mesmo `<g>`. O Chrome (154, 1440×900) passa a animação
+  para o compositor e pinta o filho do SVG sem a deslocação, embora
+  `getBoundingClientRect` dê o sítio certo; com a animação parada, ou com
+  `--disable-threaded-animation`, fica certo. Correção: `transform:
+  translate()` nas `@keyframes` do metro, dos rabelos e das nuvens, e o
+  balouço passa para o desenho (`.barco-sp > .rabelo`). Teste em
+  `mundo.test.ts` proíbe `translate:` nessas regras.
+- **Metro ao lado dos carris (iPhone e desktop).** O metro pintava-se no
+  início de `b-cRio`, ANTES do tabuleiro (`ponte.tras`, com os carris), e
+  o tabuleiro tapava-o — via-se só o tejadilho, deslocado. O protótipo
+  pinta-o depois de `cRio` e antes da treliça da frente. Agora vai em
+  `<g id="b-gMetro">` no fim de `b-cRio`; teste de ordem atualizado.

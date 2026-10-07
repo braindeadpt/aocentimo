@@ -268,7 +268,8 @@ export default function CenaSegSocial({ D, aoFechar }: { D: DadosSegSocial; aoFe
                   fmtEUR0(D.pedro.fatura),
                   fmtPct(tx.catbTaxa, 1),
                   fmtPct(tx.catbRr, 0),
-                  fmtEUR(D.pedro.ssMensal)
+                  fmtEUR(D.pedro.ssMensal),
+                  tx.isencao
                 ),
               }}
             />
@@ -282,8 +283,10 @@ export default function CenaSegSocial({ D, aoFechar }: { D: DadosSegSocial; aoFe
               {T.ssNotaCatb(
                 fmtPct(tx.catbRr, 0),
                 `${fmtNum(tx.baseMinIas, 1)}`,
+                fmtEUR(tx.ias),
                 fmtEUR(tx.baseMinIas * tx.ias),
-                tx.isencao
+                tx.isencao,
+                fmtPct(tx.retencao, 0)
               )}
             </p>
             <div className="opcoes">
