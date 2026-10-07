@@ -16,7 +16,8 @@
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { graficoLinhas } from "@/lib/viz/grafico-linhas";
-import { FINO, fmtEUR, fmtNum, fmtPeriodo } from "@/lib/format";
+import { FINO, fmtEUR0, fmtNum } from "@/lib/format";
+import { setaVar, trimestre } from "./p2c-arte-base";
 import type { DadosQuiosque } from "./dados-p2c";
 import { interiorQuiosque } from "./quiosque-arte";
 import { mesLongo } from "./mercearia-arte";
@@ -159,14 +160,14 @@ export default function CenaQuiosque({
             <LinhaJornal
               valor={
                 D.pib
-                  ? `${D.pib.v >= 0 ? "+" : "−"}${fmtNum(Math.abs(D.pib.v), 1)}${FINO}%`
+                  ? setaVar(D.pib.v, 1)
                   : "—"
               }
               cor={D.pib && D.pib.v >= 0 ? "g" : "r"}
               texto={
                 D.pib
                   ? T.quiJornalPib(
-                      fmtPeriodo(D.pib.t),
+                      trimestre(D.pib.t),
                       `${fmtNum(Math.abs(D.pib.v), 1)}${FINO}%`,
                       D.pib.v >= 0 ? T.quiJornalPibMais : T.quiJornalPibMenos
                     )
@@ -176,7 +177,7 @@ export default function CenaQuiosque({
             <LinhaJornal
               valor={
                 D.inflacao
-                  ? `+${fmtNum(D.inflacao.v * 100, 1)}${FINO}%`
+                  ? setaVar(D.inflacao.v * 100, 1)
                   : "—"
               }
               cor="r"
@@ -204,15 +205,15 @@ export default function CenaQuiosque({
               }
             />
             <LinhaJornal
-              valor={D.smn !== null ? fmtEUR(D.smn) : "—"}
+              valor={D.smn !== null ? fmtEUR0(D.smn) : "—"}
               cor=""
               texto={
                 D.smn !== null && D.smn0
                   ? T.quiJornalSmn(
                       "2026",
-                      fmtEUR(D.smn),
+                      fmtEUR0(D.smn),
                       String(D.smn0.ano),
-                      fmtEUR(D.smn0.valor)
+                      fmtEUR0(D.smn0.valor)
                     )
                   : T.quiJornalFalha
               }

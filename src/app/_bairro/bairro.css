@@ -163,11 +163,12 @@
   animation: b-nuvem-anda var(--dur) ease-in-out infinite alternate;
 }
 @keyframes b-nuvem-anda {
+  /* `transform` e não `translate`: ver mundo.ts, viagensSoltas() */
   from {
-    translate: 0 0;
+    transform: translate(0, 0);
   }
   to {
-    translate: var(--dx) 0;
+    transform: translate(var(--dx), 0);
   }
 }
 /* No telemóvel o protótipo começa perto da fábrica e da avenida, não no
@@ -656,6 +657,22 @@
 }
 [data-pele="v5"] .b-cena[hidden] {
   display: none;
+}
+/* a cena abre como no protótipo: `gsap.fromTo(cena, { opacity: 0,
+   scale: .96 }, { opacity: 1, scale: 1, duration: .35, ease: "power2.out" })` */
+@keyframes b-cena-abre {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+[data-pele="v5"] .b-cena {
+  animation: b-cena-abre 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-pele="v5"] .b-cena {
+    animation: none;
+  }
 }
 [data-pele="v5"] .b-cena-arte {
   background: #f1ebdf;

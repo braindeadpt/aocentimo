@@ -76,7 +76,9 @@ export function interiorMercearia(): string {
   s += `<rect x="24" y="70" width="412" height="300" fill="#8a5a2b" stroke="${K}" stroke-width="3"/><rect x="36" y="80" width="388" height="280" fill="#f3e6cf" stroke="${K}" stroke-width="2"/>`;
   for (const y of [150, 272]) s += `<rect x="30" y="${y}" width="400" height="12" fill="#b98552" stroke="${K}" stroke-width="2.4"/>`;
   for (const [id, x, y] of PRATELEIRA) {
-    s += `<g class="prod" data-id="${id}" transform="translate(${x} ${y})">${ICONE[id]}</g>`;
+    // o `.prod-i` interior é o que salta: o GSAP mexe no transform dele
+    // sem apagar o translate da prateleira
+    s += `<g class="prod" data-id="${id}" transform="translate(${x} ${y})"><g class="prod-i">${ICONE[id]}</g></g>`;
     s += `<g class="etiq" id="etq-${id}" transform="translate(${x} ${y + 14})"><path d="M-36 0 h72 v26 h-72z" fill="#fff" stroke="${K}" stroke-width="2"/><text class="etq-a" x="0" y="11" text-anchor="middle" font-family="Archivo" font-weight="700" font-size="8.5" fill="#6e675e">1 € em 2020</text><text class="etq-b" x="0" y="23" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="12" fill="${K}">?</text></g>`;
   }
   // o balcão: caixa registadora, o talão escondido, o saco, o Sr. Manuel
@@ -95,8 +97,25 @@ export function etiquetasDe(D: DadosMercearia, raiz: ParentNode): void {
     const g = raiz.querySelector(`#etq-${it.id}`);
     if (!g) continue;
     const b = g.querySelector(".etq-b");
-    if (b) b.textContent = it.r ? `${fmtNum(it.r, 2)} € hoje` : "—";
+    if (b) b.textContent = textoEtiqueta(it.r);
   }
+}
+
+/** O texto de baixo de uma etiqueta: o preço de hoje do que custava 1 €. */
+export const textoEtiqueta = (r: number): string => (r ? `${fmtNum(r, 2)} € hoje` : "—");
+
+/** «Ver outra vez»: a mercearia volta ao estado de abertura (o protótipo redesenhava o interior). */
+export function reporMercearia(raiz: ParentNode): void {
+  raiz.querySelectorAll(".etq-b").forEach((b) => (b.textContent = "?"));
+  const saco = raiz.querySelector("#mercSacoTxt");
+  if (saco) saco.textContent = "10 €";
+  const t = raiz.querySelector<SVGGElement>("#mercTalaoArte");
+  if (t) {
+    t.setAttribute("opacity", "0");
+    t.style.opacity = "";
+    t.style.transform = "";
+  }
+  raiz.querySelectorAll(".prod").forEach((g) => g.classList.remove("realce"));
 }
 
 /** As barras: quanto subiu cada produto desde T0, com a marca da inflação geral. */

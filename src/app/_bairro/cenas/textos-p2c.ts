@@ -37,10 +37,10 @@ export const casaPergunta =
 export const casaPalpiteAria = "O teu palpite em meses";
 export const casaPalpiteFmt = (v: number) => `${v} meses`;
 export const casaBtnResposta = "Mostrar a resposta";
-export const casaFala2 = (juizo: string, meses: string) =>
-  `<b>${juizo}</b> Hoje custa <span class="r">${meses} meses</span>.`;
-export const casaExplica = (subHpi: string, subLci: string) =>
-  `Desde 2015, os preços das casas subiram <span class="r">${subHpi}</span>. O custo do trabalho, o que as empresas pagam por cada hora trabalhada, subiu <b>${subLci}</b>.`;
+export const casaFala2 = (juizo: string, meses: string, quaseDobro: boolean) =>
+  `<b>${juizo}</b> Hoje custa <span class="b-r">${meses} meses</span>${quaseDobro ? ": quase o dobro" : ""}.`;
+export const casaExplica = (subHpi: string, subLci: string, casasMais: boolean) =>
+  `Desde 2015, os preços das casas subiram <span class="b-r">${subHpi}</span>. O custo do trabalho, o que as empresas pagam por cada hora trabalhada, subiu <b>${subLci}</b>.${casasMais ? " As casas correram muito mais depressa do que o custo do trabalho." : ""}`;
 export const casaNota = (ultimo: string) =>
   `«Meses de trabalho» é uma forma de ler a razão entre dois índices oficiais (preços da habitação ÷ custo do trabalho, 2015 = 100). Não é o salário líquido de ninguém. Último dado: ${ultimo}.`;
 export const casaBtnGrafico = "Aprender a ler o gráfico →";
@@ -51,7 +51,7 @@ export const casaGraficoRotB = "custo do trabalho";
 export const casaGraficoAria = (hpi: string, lci: string) =>
   `Desde 2015, o índice de preços das casas passou de 100 para ${hpi}; o custo do trabalho, de 100 para ${lci}.`;
 export const casaGraficoTexto = (hpi: string, lci: string) =>
-  `Em 2015 as duas linhas estavam juntas, em 100. Hoje o preço das casas vale <span class="r">${hpi}</span> e o custo do trabalho <b>${lci}</b>. A mancha entre as duas é a parte da subida das casas que o custo do trabalho não acompanhou.`;
+  `Em 2015 as duas linhas estavam juntas, em 100. Hoje o preço das casas vale <span class="b-r">${hpi}</span> e o custo do trabalho <b>${lci}</b>. A mancha entre as duas é a parte da subida das casas que o custo do trabalho não acompanhou.`;
 export const casaBtnVoltar = "Voltar ao bairro";
 export const casaBtnOutra = "Ver outra vez";
 export const casaLinkCasa = "Ver a casa por dentro →";
@@ -75,9 +75,9 @@ export const pastQuadroAntes = (mes: string, preco: string) =>
   `${mes}: ${preco}`;
 export const pastQuadroTitulo = "café + pastel";
 export const pastFala2 = (juizo: string, preco: string, varPct: string) =>
-  `<b>${juizo}</b> Hoje custam <span class="r">${preco}</span>: ${varPct}.`;
+  `<b>${juizo}</b> Hoje custam <span class="b-r">${preco}</span>: ${varPct}.`;
 export const pastExplica = (mes: string, varFora: string, varCasa: string) =>
-  `Comer fora subiu mais do que comer em casa. Desde ${mes}, os restaurantes e cafés subiram <span class="r">${varFora}</span>; a comida da mercearia, <b>${varCasa}</b>.`;
+  `Comer fora subiu mais do que comer em casa. Desde ${mes}, os restaurantes e cafés subiram <span class="b-r">${varFora}</span>; a comida da mercearia, <b>${varCasa}</b>.`;
 export const pastGraficoRotA = "comer fora";
 export const pastGraficoRotB = "comer em casa";
 export const pastGraficoAria = (mes: string, fora: string, casa: string) =>
@@ -85,8 +85,8 @@ export const pastGraficoAria = (mes: string, fora: string, casa: string) =>
 export const pastNotaIndice =
   "«Comer fora» é o índice europeu de restaurantes e alojamento, onde entram os cafés e também os hotéis.";
 export const pastBtnIva = "E o IVA do café? →";
-export const pastFala3 = (taxa: string) =>
-  `No café, o IVA é de <span class="r">${taxa}</span>.`;
+export const pastFala3 = (taxa: string, maisDoDobro: boolean) =>
+  `No café, o IVA é de <span class="b-r">${taxa}</span>${maisDoDobro ? ": mais do dobro do pão da mercearia" : ""}.`;
 export const pastIvaTexto = (
   hoje: string,
   iva: string,
@@ -94,7 +94,7 @@ export const pastIvaTexto = (
   taxaPao: string,
   ivaPao: string
 ) =>
-  `Dos <b>${hoje}</b> do café e do pastel, <span class="r">${iva}</span> são IVA. A restauração paga a taxa intermédia, ${taxaCafe}. Se fosse a taxa do pão, ${taxaPao}, seriam ${ivaPao}.`;
+  `Dos <b>${hoje}</b> do café e do pastel, <span class="b-r">${iva}</span> são IVA. A restauração paga a taxa intermédia, ${taxaCafe}. Se fosse a taxa do pão, ${taxaPao}, seriam ${ivaPao}.`;
 export const pastNotaIva = "Taxas do continente, do Código do IVA.";
 export const pastBtnVoltar = "Voltar ao bairro";
 export const pastBtnOutra = "Ver outra vez";
@@ -117,7 +117,7 @@ export const quiMancheteSub = "dos jovens sem emprego";
 export const quiJornalCab = "JORNAL DO BAIRRO";
 export const quiJornalTitulo = "o país em números";
 export const quiFala2 = (juizo: string, n: string, pct: string, mes: string) =>
-  `<b>${juizo}</b> São cerca de <span class="r">${n} em cada 100</span> (${pct}, ${mes}).`;
+  `<b>${juizo}</b> São cerca de <span class="b-r">${n} em cada 100</span> (${pct}, ${mes}).`;
 export const quiJornalDesemprego = (pt: string, mes: string, n: string, ue: string) =>
   `<b>Desemprego</b> · ${mes}. Em cada 100 pessoas que trabalham ou procuram trabalho, cerca de ${n} procuram sem encontrar. Na UE: ${ue}.`;
 export const quiJornalJovens = (razao: string) =>
@@ -137,7 +137,7 @@ export const quiJornalSmn = (ano: string, hoje: string, ano0: string, valor0: st
 export const quiJornalFalha = "Dado em falta — a fonte não respondeu.";
 export const quiBtnGrafico = "Aprender a ler o gráfico →";
 export const quiFala3 =
-  "Três linhas: os <span class=\"r\">jovens</span>, o <b>total</b> e a média da <span class=\"a\">UE</span>.";
+  "Três linhas: os <span class=\"b-r\">jovens</span>, o <b>total</b> e a média da <span class=\"b-a\">UE</span>.";
 export const quiGraficoRotA = "jovens";
 export const quiGraficoRotB = "Portugal";
 export const quiGraficoRotC = "UE";
@@ -160,7 +160,7 @@ export const escFala1 =
   "Bom dia, turma! Hoje a professora <b>Diana</b> ensina a ler gráficos. Primeira pergunta:";
 export const escPergunta =
   "Estes dois gráficos mostram o preço da comida no último ano. Em qual deles os preços subiram <b>mais</b>?";
-export const escPerguntaCurta = "em qual subiram mais?";
+export const escPerguntaCurta = "o que mostra o eixo?";
 export const escMiniA = "Gráfico A";
 export const escMiniB = "Gráfico B";
 export const escBtnA = "No A";
@@ -192,25 +192,22 @@ export const escHomologa = (mes: string) =>
   `Comparado com o <b>mesmo mês do ano passado</b> (${mes}): variação homóloga`;
 export const escExplica3b =
   "<b>Segunda regra: pergunta sempre «comparado com quando?».</b> A inflação que ouves nas notícias é quase sempre a homóloga, a de um ano inteiro.";
-export const escNotaIndices = (mes: string) =>
-  `Os dois números são do mesmo índice de preços (IHPC total), ${mes}: a variação em cadeia compara com o mês anterior; a homóloga, com o mesmo mês do ano anterior.`;
 export const escBtnLicao3 = "Terceira lição: as palavras →";
 export const escFala4 =
   "<b>Terceira regra: sabe o que as palavras querem dizer.</b> Toca numa palavra para ires ao sítio do bairro onde ela vive.";
 export const escVerEm = (titulo: string) => `ver em: ${titulo} →`;
-export const escVerGlossario = "glossário →";
 /**
- * Onde cada palavra da lição vive no bairro — a âncora abre a cena do
- * edifício. (PROPOSTA: os lugares são os do protótipo; o termo real do
- * glossário é que decide o título do cartão.)
+ * As palavras da terceira lição e o sítio do bairro onde cada uma vive
+ * (o `pal` de `cenaEscola()` do protótipo, tal e qual).
  */
-export const escOnde: Record<string, { titulo: string; href: string }> = {
-  "ipc-ihpc": { titulo: "a Pastelaria", href: "/#pastelaria" },
-  "taxa-real": { titulo: "os Correios", href: "/#correios" },
-  "escalao-irs": { titulo: "as Finanças", href: "/#financas" },
-  spread: { titulo: "o Banco", href: "/#banco" },
-  tsu: { titulo: "a Fábrica", href: "/#fabrica" },
-};
+export const escPalavras: { termo: string; def: string; ed: string; onde: string }[] = [
+  { termo: "Índice", def: "Uma régua de preços: 100 é o ponto de partida; 135 quer dizer 35 % mais caro.", ed: "mercearia", onde: "Mercearia do Manuel" },
+  { termo: "Homólogo", def: "Comparado com o mesmo mês (ou trimestre) do ano anterior.", ed: "quiosque", onde: "Quiosque da praça" },
+  { termo: "Nominal e real", def: "Nominal são os euros que vês; real é o que esses euros compram.", ed: "correios", onde: "Correios" },
+  { termo: "Escalão", def: "Uma gaveta do IRS: a taxa só se aplica ao que está lá dentro.", ed: "financas", onde: "Finanças" },
+  { termo: "Spread", def: "A parte fixa da taxa de um empréstimo, que o banco cobra por cima da Euribor.", ed: "banco", onde: "Banco" },
+  { termo: "TSU", def: "O que a empresa paga à Segurança Social por cima do teu salário, e que não vês no recibo.", ed: "segsocial", onde: "Segurança Social" },
+];
 export const escBtnVoltar = "Voltar ao bairro";
 export const escBtnOutra = "Ver outra vez";
 export const escLinkAprender = "Ver o glossário todo →";

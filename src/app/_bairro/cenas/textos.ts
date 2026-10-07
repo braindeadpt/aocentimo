@@ -23,7 +23,7 @@ export const falhaAoCarregar =
 
 /* ————— Finanças · o IRS em gavetas ————— */
 
-export const finQuem = "Finanças · balcão A · o IRS em gavetas";
+export const finQuem = "Finanças · senha A · IRS";
 export const finRotuloArte =
   "Dentro das Finanças: o balcão A, a máquina das senhas, o funcionário, a Inês e a cómoda com uma gaveta por cada escalão do IRS.";
 
@@ -40,7 +40,7 @@ export const finFala2 = (senha: string) =>
   `Senha <b>${senha}</b>, faz favor! Antes de começarmos, um palpite:`;
 
 export const finPalpite = (de: string, para: string, g0: string, g1: string) =>
-  `A Inês foi aumentada de ${de} para ${para} brutos por mês e passou do ${g0} para o ${g1} escalão do IRS. No fim do ano, fica com…`;
+  `A Inês foi aumentada de <b>${de}</b> para <b>${para}</b> brutos por mês e passou do ${g0} para o ${g1} escalão do IRS. No fim do ano, fica com…`;
 
 export const finBtnMenos = "menos dinheiro";
 export const finBtnIgual = "o mesmo";
@@ -54,8 +54,8 @@ export const finResposta = (ganho: string) =>
 
 export const finExplica = (gaveta: string, dentro: string, taxa: string, aum: string, irs: string, ss: string) =>
   [
-    `Os escalões são gavetas. O rendimento enche-as de baixo para cima, e a taxa de cada gaveta só se aplica ao que está lá dentro.`,
-    `Com o aumento, só ${dentro} entraram na ${gaveta} gaveta. Só esses pagam ${taxa}; tudo o que já estava nas gavetas de baixo paga o mesmo que antes. Dos ${aum} a mais por ano, ${irs} vão para o IRS e ${ss} para a Segurança Social.`,
+    `Os escalões são <b>gavetas</b>. O rendimento enche-as de baixo para cima, e a taxa de cada gaveta só se aplica ao que está <b>lá dentro</b>.`,
+    `Com o aumento, só <b>${dentro}</b> entraram na ${gaveta} gaveta. Só esses pagam <span class="b-r">${taxa}</span>; tudo o que já estava nas gavetas de baixo paga o mesmo que antes. Dos ${aum} a mais por ano, <span class="b-r">${irs}</span> vão para o IRS e <span class="b-a">${ss}</span> para a Segurança Social.`,
   ];
 
 export const finAntes = (v: string) => `Inês antes: ${v}`;
@@ -74,18 +74,18 @@ export const finGraficoAria =
   "Gráfico: a taxa do escalão sobe aos degraus, a taxa média sobe devagar e fica sempre abaixo.";
 
 export const finGraficoTexto = (degrau: string, media: string) =>
-  `A Inês está no degrau dos ${degrau}, mas paga em média ${media} do rendimento coletável. A curva está sempre abaixo do degrau e nunca dá saltos, porque cada gaveta nova só apanha o dinheiro a mais.`;
+  `A Inês está no degrau dos <span class="b-r">${degrau}</span>, mas paga em média <b>${media}</b> do rendimento coletável. A curva está sempre abaixo do degrau e nunca dá saltos, porque cada gaveta nova só apanha o dinheiro a mais.`;
 
 export const finNotaRodape = (motor: string) =>
-  `Este é o IRS calculado só pelos escalões. Depois ainda se descontam as deduções à coleta: com as despesas gerais familiares, a Inês paga ${motor} por ano, o mesmo que o simulador do AO CÊNTIMO calcula. Nos rendimentos mais baixos, o mínimo de existência ainda baixa o imposto. O que se retém todos os meses é um adiantamento: o valor final acerta-se na declaração anual.`;
+  `Este é o IRS calculado só pelos escalões. Depois ainda se descontam as deduções à coleta: com as despesas gerais familiares, a Inês paga <b>${motor}</b> por ano, o mesmo que o simulador do AO CÊNTIMO calcula. Nos rendimentos mais baixos, o mínimo de existência ainda baixa o imposto.`;
 
-export const finBtnGrafico = "Aprender a ler o gráfico";
+export const finBtnGrafico = "Aprender a ler o gráfico →";
 export const finBtnVoltar = "Voltar ao bairro";
 export const finBtnOutra = "Ver outra vez";
 
 /* ————— Banco · a Euribor e a prestação ————— */
 
-export const banQuem = "Banco · balcão A · o crédito à habitação";
+export const banQuem = "Banco · senha A · crédito à habitação";
 export const banRotuloArte =
   "Dentro do banco: o quadro da Euribor com letras que viram, o cofre, o gerente atrás do balcão e o Rui com a Marta à frente.";
 
@@ -97,7 +97,7 @@ export const banFala2 = (capital: string, anos: number) =>
   `O Rui e a Marta querem pedir <b>${capital}</b> a ${anos} anos para comprar casa. Um palpite antes:`;
 
 export const banPalpite = (mesA: string, prestA: string, mesB: string) =>
-  `Em ${mesA}, a prestação deste empréstimo seria de ${prestA} por mês. E se o pedissem em ${mesB}, pela mesma casa?`;
+  `Em <b>${mesA}</b>, a prestação deste empréstimo seria de <b>${prestA}</b> por mês. E se o pedissem em <b>${mesB}</b>, pela mesma casa?`;
 
 export const banPalpiteAria = "O teu palpite em euros por mês";
 export const banNotaExemplo = (spread: string) =>
@@ -109,7 +109,7 @@ export const banResposta = (juizo: string, mesB: string, prestB: string, mesA: s
 
 export const banExplica = (eA: string, eB: string) =>
   [
-    `A casa é a mesma, o dinheiro pedido é o mesmo e o banco não mudou nada. Mudou a Euribor: de ${eA} para ${eB}. A taxa do empréstimo é a Euribor mais o spread, a parte fixa que o banco cobra.`,
+    `A casa é a mesma, o dinheiro pedido é o mesmo e o banco não mudou nada. Mudou a <b>Euribor</b>: de <span class="b-a">${eA}</span> para <span class="b-a">${eB}</span>. A taxa do empréstimo é a Euribor mais o <b>spread</b>, a parte fixa que o banco cobra.`,
     `Arrasta pelo tempo e vê o quadro e a prestação a mudar. Repara também na barra: quando a taxa sobe, quase toda a primeira prestação vai para juros.`,
   ];
 
@@ -120,7 +120,7 @@ export const banFala4 =
   "Dois gráficos, o <b>mesmo tempo</b>. Quando a linha azul sobe, a vermelha sobe logo atrás.";
 
 export const banGraficoTexto = (hoje: string, eur: string, prest: string) =>
-  `Em cima, a Euribor e, a tracejado, a taxa do empréstimo; a faixa amarela entre as duas é o spread. Em baixo, a prestação. Hoje (${hoje}), a Euribor está em ${eur} e a prestação do exemplo seria de ${prest}.`;
+  `Em cima, a <span class="b-a">Euribor</span> e, a tracejado, a taxa do empréstimo; a faixa amarela entre as duas é o <b>spread</b>. Em baixo, a <span class="b-r">prestação</span>. Hoje (${hoje}), a Euribor está em ${eur} e a prestação do exemplo seria de <b>${prest}</b>.`;
 
 export const banNotaGrafico =
   `Para comparar, cada ponto é um empréstimo novo feito nesse mês. Num contrato a sério, a taxa revê-se de 3, 6 ou 12 em 12 meses sobre a dívida que falta pagar. Imposto do Selo, seguros e comissões não estão incluídos.`;
@@ -141,7 +141,7 @@ export const banExemploSpread = "Spread";
 
 /* ————— Mercearia · a inflação e o IVA no talão ————— */
 
-export const mercQuem = "Mercearia do Sr. Manuel · a inflação e o IVA";
+export const mercQuem = "Mercearia do Sr. Manuel · os preços";
 export const mercRotuloArte =
   "Dentro da mercearia: duas prateleiras com pão, leite, carne, peixe, fruta, legumes, azeite e açúcar, cada uma com a etiqueta «1 € em 2020», o balcão com a caixa registadora e o Sr. Manuel.";
 
@@ -155,7 +155,7 @@ export const mercResposta = (juizo: string, real: string) =>
   `<b>${juizo}</b> Hoje o mesmo saco custa <span class="b-r">${real}</span>. Isto chama-se inflação.`;
 
 export const mercExplica = (comida: string, mes: string, total: string) =>
-  `A comida subiu ${comida} desde ${mes}; tudo o que compramos, em média, subiu ${total}. Mas cada prateleira subiu à sua maneira: as etiquetas dizem quanto custa hoje o que custava 1 € em 2020.`;
+  `A comida subiu <span class="b-r">${comida}</span> desde ${mes}; tudo o que compramos, em média, subiu <b>${total}</b>. Mas cada prateleira subiu à sua maneira: as etiquetas dizem quanto custa hoje o que custava 1 € em 2020.`;
 
 export const mercEtiquetaHoje = (v: string) => `${v} hoje`;
 export const mercEtiquetaAntes = "1 € em 2020";
@@ -170,19 +170,19 @@ export const mercGraficoAria = (nome: string, mes: string, hoje: number, geral: 
   `Índice de preços de ${nome}, com 100 no preço de ${mes}: hoje vale ${hoje}. A inflação geral, a tracejado, vale ${geral}.`;
 
 export const mercGraficoTexto = (nome: string, hoje: number, variacao: string) =>
-  `A linha vermelha é ${nome.toLowerCase()}: começa em 100 e hoje vale ${hoje}, ou seja, está ${variacao} mais caro. A tracejado, a inflação geral. Quando a vermelha fica por cima, esse produto subiu mais do que o resto.`;
+  `A linha vermelha é <b>${nome.toLowerCase()}</b>: começa em 100 e hoje vale <span class="b-r">${hoje}</span>, ou seja, está <span class="b-r">${variacao}</span> mais caro. A tracejado, a inflação geral. Quando a vermelha fica por cima, esse produto subiu mais do que o resto.`;
 
 export const mercNotaIndice =
   `São índices, não preços: dizem quanto subiu, não quanto custa um quilo. Cada produto é uma família do índice europeu de preços (por exemplo, «cereais e derivados» inclui pão, arroz e massa).`;
 
 export const mercEscolherAria = "Escolher o produto";
-export const mercBtnIva = "Ver o IVA no talão";
+export const mercBtnIva = "Ver o IVA no talão →";
 
 export const mercFala4 =
   "E há uma parte de cada compra que vai para o Estado: o <b>IVA</b>. Já vem dentro do preço.";
 
 export const mercIvaTexto = (red: string, em10Red: string, inter: string, norm: string, em10Norm: string) =>
-  `O IVA tem três taxas. Os alimentos básicos da lista I do Código do IVA, como o pão, o leite, a fruta e os legumes, pagam a reduzida, ${red}: em cada 10 € ficam ${em10Red} para o Estado. As conservas e o vinho pagam a intermédia, ${inter}. Tudo o que não está nas listas do Código do IVA paga a normal, ${norm}: ${em10Norm} em cada 10 €.`;
+  `O IVA tem três taxas. O que é essencial, como o pão, o leite, a fruta e os legumes, paga a <b>reduzida</b>, ${red}: em cada 10 € ficam ${em10Red} para o Estado. As conservas e o vinho pagam a <b>intermédia</b>, ${inter}. Tudo o que não está nas listas do Código do IVA paga a <span class="b-r">normal</span>, ${norm}: ${em10Norm} em cada 10 €.`;
 
 export const mercIvaNota = (regiao: string) =>
   `* Taxa normal: o que não está nas listas I e II do Código do IVA (art. 18.º). Os exemplos são indicativos; as listas definem o enquadramento exato de cada produto. ${regiao}.`;

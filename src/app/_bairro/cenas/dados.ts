@@ -65,6 +65,11 @@ const INICIO = "2019-01";
  */
 export const T0_MERC = "2020-08";
 
+const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+/** «2020-08» → «agosto de 2020» (o `mes()` do montar.cjs da maquete). */
+export const mesExtenso = (t: string | null | undefined): string =>
+  t && /^\d{4}-\d{2}/.test(t) ? `${MESES[+t.slice(5, 7) - 1]} de ${t.slice(0, 4)}` : "—";
+
 function serie(codigo: string): SerieCena {
   const s = loadSerie(codigo);
   return {
@@ -127,7 +132,7 @@ export function dadosFinancas(): DadosFinancas {
     dedEsp: r.deducaoEspecificaFixa,
     ssTaxa: s.trabalhador.taxa,
     motorIrsAnual: linha?.ano14.irsAnual ?? null,
-    fonte: `IRS — escalões de ${r.ano} (art. 68.º do CIRS, Orçamento do Estado) · solteiro, sem dependentes, trabalho por conta de outrem`,
+    fonte: `IRS — escalões de ${r.ano} (art. 68.º do CIRS, Orçamento do Estado para ${r.ano}) · solteiro, sem dependentes, rendimentos de trabalho por conta de outrem`,
   };
 }
 
@@ -143,7 +148,7 @@ export function dadosBanco(): DadosBanco {
   const e = loadFonte("bpstat", "euribor-12m-mensal");
   const pontos = (e?.series ?? []).filter((p) => p.t >= INICIO).map((p) => p.v);
   const ultimo = e?.series[e.series.length - 1];
-  const mes = ultimo ? ultimo.t.slice(5, 7) + "/" + ultimo.t.slice(0, 4) : "—";
+  const mes = mesExtenso(ultimo?.t);
   return {
     serie: { inicio: INICIO, v: pontos },
     fonte: `Banco de Portugal (BPstat) · Euribor a 12 meses, média mensal, jan 2019 → ${mes} · prestação pelo método francês (motor do AO CÊNTIMO)`,
@@ -190,7 +195,7 @@ const FAMILIAS: [string, string, string, string][] = [
 ];
 
 export function dadosMercearia(): DadosMercearia {
-  const iva = ivaJson as { taxas: { nome: string; taxa: number }[]; regiao: string };
+  const iva = ivaJson as { taxas: { nome: string; taxa: number }[]; regiao: string; vigencia?: string };
   const cp00 = loadSerie("cp00");
   const t1 = cp00?.series[cp00.series.length - 1]?.t ?? "—";
   return {
@@ -205,8 +210,8 @@ export function dadosMercearia(): DadosMercearia {
     total: serie("cp00"),
     comida: serie("cp01"),
     iva: { taxas: iva.taxas, regiao: iva.regiao },
-    fonte: `Eurostat · índice harmonizado de preços no consumidor, Portugal, por produto (ECOICOP 01.1.1 a 01.1.8) · ${T0_MERC} → ${t1}`,
-    fonteIva: `Código do IVA — Listas I e II anexas e art. 18.º · taxas do continente em vigor`,
+    fonte: `Eurostat · índice harmonizado de preços no consumidor, Portugal, por produto (ECOICOP 01.1.1 a 01.1.8) · ${mesExtenso(T0_MERC)} → ${mesExtenso(t1)}`,
+    fonteIva: `Código do IVA — Listas I e II anexas e art. 18.º · taxas do continente em vigor em ${String(iva.vigencia ?? "").slice(0, 4) || "—"}`,
   };
 }
 

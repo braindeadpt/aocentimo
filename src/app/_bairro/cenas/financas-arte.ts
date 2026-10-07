@@ -26,7 +26,7 @@ export function pctTaxa(t: number): string {
 
 /** A moeda a N casas, com o fino do site. */
 export function moeda(v: number, casas = 0): string {
-  return fmtNum(v, casas) + FINO + " €";
+  return fmtNum(v, casas) + FINO + "€";
 }
 
 /** O interior: parede, lambrim de azulejo, chão, placa, relógio, senhas, balcão, a cómoda das gavetas. */
@@ -57,7 +57,7 @@ export function interiorFinancas(
   s += `<rect x="${GV.x - 12}" y="${GV.y - 12}" width="${GV.w + 24}" height="${altura}" rx="6" fill="#8a5a2b" stroke="${K}" stroke-width="3"/><rect x="${GV.x - 18}" y="${GV.y - 20}" width="${GV.w + 36}" height="12" rx="3" fill="#6b4226" stroke="${K}" stroke-width="2.6"/><path d="M${GV.x - 6} ${GV.y - 12 + altura} v26 M${GV.x + GV.w + 6} ${GV.y - 12 + altura} v26" stroke="${K}" stroke-width="5" stroke-linecap="round"/>`;
   escaloes.forEach((e, k) => {
     const y = GV.y + (n - 1 - k) * (GV.h + GV.gap);
-    const faixa = e.ate != null ? `${moeda(e.de, 0)} a ${moeda(e.ate, 0)}` : `acima de ${moeda(e.de, 0)}`;
+    const faixa = e.ate != null ? `${fmtNum(e.de, 0)} a ${moeda(e.ate, 0)}` : `acima de ${moeda(e.de, 0)}`;
     s += `<g class="gaveta" id="gav${k}"><rect x="${GV.x}" y="${y}" width="${GV.w}" height="${GV.h}" rx="4" fill="#fbf6ec" stroke="${K}" stroke-width="2.4"/>
       <rect class="g-fica" x="${GV.x + 2}" y="${y + 2}" width="0" height="${GV.h - 4}" fill="#bfe8d2"/><rect class="g-irs" x="${GV.x + 2}" y="${y + 2}" width="0" height="${GV.h - 4}" fill="#ffc2b3"/>
       <text x="${GV.x + 10}" y="${y + 17}" font-family="Archivo" font-weight="900" font-size="14" fill="${K}">${ordinal(k + 1)}</text><text x="${GV.x + 10}" y="${y + 31}" font-family="Archivo" font-weight="600" font-size="10" fill="#4a4540">${faixa}</text>

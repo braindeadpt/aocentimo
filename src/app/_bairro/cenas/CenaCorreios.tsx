@@ -18,7 +18,7 @@
  *     protótipo e vivem no string SVG — a árvore React não os conhece.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { fmtEUR0, fmtPct, fmtNum, fmtData } from "@/lib/format";
+import { fmtEUR0, fmtPct, fmtNum } from "@/lib/format";
 import { trajetoriaCA, trajetoriaColchao } from "@/lib/engines/poupanca";
 import type { DadosCorreios } from "./dados-p2b";
 import { escreverPilha, graficoAforro, interiorCorreios, PL } from "./correios-arte";
@@ -32,7 +32,9 @@ export default function CenaCorreios({ D, aoFechar }: { D: DadosCorreios; aoFech
   const [palpite, setPalpite] = useState(9500);
   const [anos, setAnos] = useState(5);
   /** A inflação da hipótese, em % — o arranque é a homóloga medida. */
-  const [inflPct, setInflPct] = useState(D.inflacaoAnual === null ? 0 : D.inflacaoAnual * 100);
+  // a homóloga arredondada a 0,1 pp, como o slider do protótipo (step 0,1)
+  const inflInicial = D.inflacaoAnual === null ? 0 : Math.round(D.inflacaoAnual * 1000) / 10;
+  const [inflPct, setInflPct] = useState(inflInicial);
   const [rodada, setRodada] = useState(0);
   const arteRef = useRef<HTMLDivElement>(null);
   const vivo = useRef(true);
@@ -196,7 +198,7 @@ export default function CenaCorreios({ D, aoFechar }: { D: DadosCorreios; aoFech
         setPasso(1);
         setPalpite(9500);
         setAnos(5);
-        setInflPct(D.inflacaoAnual === null ? 0 : D.inflacaoAnual * 100);
+        setInflPct(inflInicial);
         setRodada((r) => r + 1);
       }}
     >
@@ -306,7 +308,7 @@ export default function CenaCorreios({ D, aoFechar }: { D: DadosCorreios; aoFech
                 <p className="nota-fin">
                   {T.corNotaHipotese(
                     fmtPct(ca.taxa),
-                    fmtData(ca.vigencia),
+                    ca.vigencia.split("-").reverse().join("/"),
                     D.inflacaoAnual === null ? "—" : fmtPct(D.inflacaoAnual),
                     ca.garantia
                   )}
@@ -316,7 +318,7 @@ export default function CenaCorreios({ D, aoFechar }: { D: DadosCorreios; aoFech
                   type="button"
                   onClick={() => {
                     setAnos(15);
-                    setInflPct(D.inflacaoAnual === null ? 0 : D.inflacaoAnual * 100);
+                    setInflPct(inflInicial);
                     setPasso(5);
                   }}
                 >

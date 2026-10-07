@@ -6,7 +6,8 @@
  * A porta de `cenaMerc()` do protótipo: o palpite do saco, as etiquetas
  * que viram, as barras de subida, o gráfico do índice por produto e o
  * talão do IVA. Nenhum preço em euros inventado: tudo são razões entre
- * índices ECOICOP de data/ e taxas do Código do IVA. Sem GSAP.
+ * índices ECOICOP de data/ e taxas do Código do IVA. Com movimento, o
+ * GSAP de `anima.ts` faz o caminho; sem, o estado final entra logo.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { fmtNum } from "@/lib/format";
@@ -20,8 +21,11 @@ import {
   mesLongo,
   pctVar,
   razao,
+  reporMercearia,
   talaoIva,
+  textoEtiqueta,
 } from "./mercearia-arte";
+import { acenar, useGsap } from "./anima";
 import CenaDePerto from "./CenaDePerto";
 import { pontosDaSerie } from "./utils";
 import * as T from "./textos";
@@ -39,30 +43,100 @@ export default function CenaMercearia({ D, aoFechar }: { D: DadosMercearia; aoFe
   const produtoEscolhido = itens.find((i) => i.id === produto) ?? itens[0];
   const { html: talao } = useMemo(() => talaoIva(D), [D]);
 
-  // as etiquetas viram no passo 2; o realce do produto no passo 3
+  const gsapRef = useGsap();
+
+  // ao abrir: o Sr. Manuel acena (o `acena()` do protótipo)
+  useEffect(() => {
+    let vivo = true;
+    import("@/lib/motion/gsap").then(async ({ motionActiva, carregarGsap }) => {
+      if (!motionActiva()) return;
+      const { gsap } = await carregarGsap();
+      const braco = arteRef.current?.querySelectorAll("#mercManuel .braco-d");
+      if (vivo && braco) acenar(gsap, braco);
+    });
+    return () => {
+      vivo = false;
+    };
+  }, []);
+
+  // PASSO 2: o saco conta de 10 € até ao preço de hoje, as etiquetas
+  // viram uma a uma e o produto que mais subiu salta. Ao sair do passo
+  // (ou sem movimento) fica o estado final.
   useEffect(() => {
     const raiz = arteRef.current;
-    if (!raiz) return;
-    if (passo >= 2) etiquetasDe(D, raiz);
-    if (passo === 2) {
-      const saco = raiz.querySelector("#mercSacoTxt");
+    if (!raiz || passo !== 2) return;
+    const saco = raiz.querySelector("#mercSacoTxt");
+    const fim = () => {
+      etiquetasDe(D, raiz);
       if (saco) saco.textContent = `${fmtNum(realSaco, 2)} €`;
+    };
+    const gsap = gsapRef.current;
+    if (!gsap) {
+      fim();
+      return;
     }
-    if (passo === 3 && produtoEscolhido) {
-      for (const g of raiz.querySelectorAll(".prod")) {
-        g.classList.toggle("realce", g.getAttribute("data-id") === produtoEscolhido.id);
-      }
-    }
-    if (passo === 4) {
-      const t = raiz.querySelector("#mercTalaoArte");
-      if (t) t.setAttribute("opacity", "1");
-    }
-  }, [D, passo, produtoEscolhido, realSaco]);
+    const tweens: { kill: () => void; progress: (p: number) => unknown }[] = [];
+    const o = { v: 10 };
+    tweens.push(
+      gsap.to(o, {
+        v: realSaco,
+        duration: 1.3,
+        ease: "power2.out",
+        onUpdate: () => {
+          if (saco) saco.textContent = `${fmtNum(o.v, 2)} €`;
+        },
+      })
+    );
+    itens.forEach((it, k) => {
+      const g = raiz.querySelector(`#etq-${it.id}`);
+      const b = g?.querySelector(".etq-b");
+      if (!g || !b) return;
+      const txt = textoEtiqueta(it.r);
+      tweens.push(
+        gsap
+          .timeline({ delay: 0.15 * k })
+          .to(g, { scaleY: 0, transformOrigin: "50% 0%", duration: 0.12 })
+          .add(() => {
+            b.textContent = txt;
+          })
+          .to(g, { scaleY: 1, duration: 0.2, ease: "back.out(3)" })
+      );
+    });
+    const topo = itens[0] ? raiz.querySelector(`.prod[data-id="${itens[0].id}"] .prod-i`) : null;
+    if (topo)
+      tweens.push(
+        gsap.fromTo(topo, { y: 0 }, { y: -10, duration: 0.25, yoyo: true, repeat: 5, delay: 1.4, ease: "power1.inOut" })
+      );
+    return () => {
+      tweens.forEach((t) => {
+        t.progress(1);
+        t.kill();
+      });
+      fim();
+    };
+  }, [D, passo, itens, realSaco, gsapRef]);
 
-  const t1 = useMemo(() => {
-    const ps = pontosDaSerie(D.total);
-    return ps[ps.length - 1]?.t ?? D.t0;
-  }, [D.total, D.t0]);
+  // PASSO 3: o realce do produto escolhido
+  useEffect(() => {
+    const raiz = arteRef.current;
+    if (!raiz || passo !== 3 || !produtoEscolhido) return;
+    for (const g of raiz.querySelectorAll(".prod")) {
+      g.classList.toggle("realce", g.getAttribute("data-id") === produtoEscolhido.id);
+    }
+  }, [passo, produtoEscolhido]);
+
+  // PASSO 4: o realce sai e o talão sobe da caixa registadora
+  useEffect(() => {
+    const raiz = arteRef.current;
+    if (!raiz || passo !== 4) return;
+    raiz.querySelectorAll(".prod").forEach((g) => g.classList.remove("realce"));
+    const t = raiz.querySelector("#mercTalaoArte");
+    if (!t) return;
+    const gsap = gsapRef.current;
+    if (gsap) gsap.fromTo(t, { opacity: 1, y: 40 }, { y: 0, duration: 0.7, ease: "power2.out" });
+    else t.setAttribute("opacity", "1");
+  }, [passo, gsapRef]);
+
   const juizo =
     Math.abs(realSaco - palpite) <= 0.3
       ? "Acertaste em cheio!"
@@ -75,14 +149,14 @@ export default function CenaMercearia({ D, aoFechar }: { D: DadosMercearia; aoFe
   // as taxas do IVA vêm de data/fiscal/iva.json — se uma faltar, o texto
   // diz «—», nunca 0 % inventado (regra nº1)
   const ivaDe = (nome: string) => D.iva.taxas.find((x) => x.nome === nome)?.taxa ?? null;
-  const ivaPct = (t: number | null) => (t === null ? "—" : `${fmtNum(t * 100, 0)}%`);
-  const ivaEm10 = (t: number | null) => (t === null ? "—" : `${fmtNum((10 * t) / (1 + t), 2)} €`);
+  const ivaPct = (t: number | null) => (t === null ? "—" : `${fmtNum(t * 100, 0)}\u202f%`);
+  const ivaEm10 = (t: number | null) => (t === null ? "—" : `${fmtNum((10 * t) / (1 + t), 2)}\u202f€`);
   const ivaRed = ivaDe("Reduzida");
   const ivaInt = ivaDe("Intermédia");
   const ivaNor = ivaDe("Normal");
 
   return (
-    <CenaDePerto quem={T.mercQuem} fonte={D.fonte} aoFechar={aoFechar} arteHtml={interior} refArte={arteRef} rotuloArte={T.mercRotuloArte}>
+    <CenaDePerto quem={T.mercQuem} fonte={passo === 4 ? D.fonteIva : D.fonte} aoFechar={aoFechar} arteHtml={interior} refArte={arteRef} rotuloArte={T.mercRotuloArte}>
       <p
         className="b-fala"
         aria-live="polite"
@@ -120,7 +194,7 @@ export default function CenaMercearia({ D, aoFechar }: { D: DadosMercearia; aoFe
         )}
         {passo === 2 && (
           <>
-            <p>{T.mercExplica(pctVar(razao(D.comida, D.t0)), mesLongo(D.t0), pctVar(total))}</p>
+            <p dangerouslySetInnerHTML={{ __html: T.mercExplica(pctVar(razao(D.comida, D.t0)), mesLongo(D.t0), pctVar(total)) }} />
             <div dangerouslySetInnerHTML={{ __html: barras }} />
             <button className="b-btn" type="button" onClick={() => setPasso(3)}>
               {T.finBtnGrafico}
@@ -183,6 +257,7 @@ export default function CenaMercearia({ D, aoFechar }: { D: DadosMercearia; aoFe
                 className="b-btn b-claro"
                 type="button"
                 onClick={() => {
+                  reporMercearia(arteRef.current ?? document);
                   setPasso(1);
                   setPalpite(12);
                   setProduto(null);
@@ -191,7 +266,6 @@ export default function CenaMercearia({ D, aoFechar }: { D: DadosMercearia; aoFe
                 {T.finBtnOutra}
               </button>
             </div>
-            <p className="b-fonte-inline">{D.fonteIva} · dados até {t1}</p>
           </>
         )}
       </div>

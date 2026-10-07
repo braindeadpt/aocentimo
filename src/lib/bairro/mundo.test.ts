@@ -159,13 +159,17 @@ describe("mundoBairro — a ordem das camadas", () => {
     // um <svg> absoluto com `translate` animado ganhava camada no
     // compositor e promovia as camadas gigantes por cima dele
     expect(html).not.toContain("b-solto");
-    // rabelos e metro pintam-se no início de b-cRio — a ordem de antes
+    // a ordem do protótipo: rabelos no início de b-cRio, antes de Gaia;
+    // o metro depois do tabuleiro (b-gRio) e antes da treliça (b-cPonte)
     const rio = html.indexOf('id="b-cRio"');
     const viagens = html.indexOf('id="b-gViagens"');
     expect(viagens).toBeGreaterThan(rio);
     expect(viagens).toBeLessThan(html.indexOf('id="b-gGaia"'));
     expect(html.indexOf('class="b-viagem barco-sp"')).toBeGreaterThan(viagens);
-    expect(html.indexOf('class="b-viagem metro-sp"')).toBeGreaterThan(viagens);
+    expect(html.indexOf('class="b-viagem barco-sp"')).toBeLessThan(html.indexOf('id="b-gGaia"'));
+    const metro = html.indexOf('class="b-viagem metro-sp"');
+    expect(metro).toBeGreaterThan(html.indexOf('id="b-gRio"'));
+    expect(metro).toBeLessThan(html.indexOf('id="b-cPonte"'));
   });
 });
 
@@ -195,6 +199,10 @@ describe("viagensSoltas", () => {
     expect(css).toContain("#b-barco0");
     expect(css).toContain("#b-metro1");
     expect(css).toContain("@keyframes b-balouca");
+    // `transform: translate()` e nunca a propriedade `translate`: com ela,
+    // o Chrome de desktop pintava o rabelo e o metro fora do sítio
+    expect(css).not.toMatch(/(^|[\s{;])translate:/);
+    expect(css).toContain(".barco-sp > .rabelo { animation: b-balouca");
   });
 
   it("as peças soltas recebem id para a animação as apanhar", () => {
@@ -368,3 +376,4 @@ describe("o enquadramento por omissão do CSS", () => {
     expect(Math.abs(cssVista.ty / (-(v.y - MUNDO.y) * s) - 1)).toBeLessThan(0.005);
   });
 });
+

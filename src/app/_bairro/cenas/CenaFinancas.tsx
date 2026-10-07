@@ -11,11 +11,12 @@
  * As gavetas e o ponto do gráfico enchem por MANIPULAÇÃO DIRETA do SVG
  * (`useEffect` + `setAttribute`), como o protótipo fazia e como o
  * `<Bairro>` manipula os pins — a árvore React nunca vê o interior.
- * Sem GSAP: `prefers-reduced-motion` não muda nada aqui porque nada
- * anima; os valores finais estão sempre no SVG e no HTML.
+ * Com movimento as gavetas enchem animadas e a senha pisca (GSAP de
+ * `anima.ts`/`senha.ts`); com `prefers-reduced-motion` os valores finais
+ * entram logo — o estado final é sempre o mesmo.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { fmtEUR } from "@/lib/format";
+import { fmtEUR0 as fmtEUR } from "@/lib/format";
 import type { DadosFinancas } from "./dados";
 import { coletavel, gavetaMaisAlta, irsPorEscaloes } from "./irs-gavetas";
 import {
@@ -27,6 +28,7 @@ import {
 } from "./financas-arte";
 import CenaDePerto from "./CenaDePerto";
 import { chamarSenha, reporSenha } from "./senha";
+import { useGsap } from "./anima";
 import * as T from "./textos";
 
 const ordinal = (n: number) => `${n}.º`;
@@ -88,6 +90,10 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
   const arteRef = useRef<HTMLDivElement>(null);
   const vivo = useRef(true);
   useEffect(() => () => { vivo.current = false; }, []);
+  const gsapRef = useGsap();
+  // a próxima mudança das gavetas anima (botões e passos — como o
+  // `onchange` do protótipo); arrastar o slider escreve direto
+  const animarRef = useRef(false);
 
   const c0 = coletavel(1500, D.dedEsp, D.ssTaxa);
   const g0 = gavetaMaisAlta(D.escaloes, c0)!;
@@ -116,6 +122,8 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
     // como no protótipo, a cómoda está VAZIA até à resposta (passo 3)
     const c = passo >= 3 ? coletavel(visto, D.dedEsp, D.ssTaxa) : 0;
     const W = 246; // GV.w - 4, dentro do desenho
+    const gsap = gsapRef.current;
+    const anima = animarRef.current;
     const topo = gavetaMaisAlta(D.escaloes, c);
     let de = 0;
     D.escaloes.forEach((e, k) => {
@@ -130,12 +138,31 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
       const irsR = g.querySelector<SVGRectElement>(".g-irs");
       if (!fica || !irsR) return;
       const wf = W * fr * (1 - e.taxa);
-      fica.setAttribute("width", wf.toFixed(1));
-      irsR.setAttribute("x", (GVX + 2 + wf).toFixed(1));
-      irsR.setAttribute("width", (W * fr * e.taxa).toFixed(1));
+      const wi = W * fr * e.taxa;
+      gsap?.killTweensOf([fica, irsR]);
+      if (anima && gsap) {
+        gsap.to(fica, { attr: { width: wf }, duration: 0.55, delay: k * 0.07, ease: "power2.out" });
+        gsap.to(irsR, { attr: { width: wi, x: GVX + 2 + wf }, duration: 0.55, delay: k * 0.07, ease: "power2.out" });
+      } else {
+        fica.setAttribute("width", wf.toFixed(1));
+        irsR.setAttribute("x", (GVX + 2 + wf).toFixed(1));
+        irsR.setAttribute("width", wi.toFixed(1));
+      }
       g.classList.toggle("ativa", !!topo && topo.k === k);
     });
-  }, [D, visto, passo]);
+    animarRef.current = false;
+  }, [D, visto, passo, gsapRef]);
+
+  // PASSO 3, como no protótipo: a cómoda enche primeiro com os 1 500 € e,
+  // 1,5 s depois, sobe para os 1 650 € do aumento
+  useEffect(() => {
+    if (passo !== 3 || !gsapRef.current) return;
+    const t = setTimeout(() => {
+      animarRef.current = true;
+      setVisto(1650);
+    }, 1500);
+    return () => clearTimeout(t);
+  }, [passo, gsapRef]);
 
   // O PONTO DO GRÁFICO (passo 4): acompanha o `visto`
   useEffect(() => {
@@ -162,6 +189,15 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
       r.setAttribute("y", String(p.yMedia + 24));
     }
   }, [D, visto, passo]);
+
+  // o palpite: com movimento a cómoda enche com os 1 500 € e o efeito do
+  // passo 3 sobe-a para 1 650 €; sem movimento fica logo nos 1 650 €
+  const escolher = (p: "menos" | "igual" | "mais") => {
+    setPalpite(p);
+    animarRef.current = true;
+    setVisto(gsapRef.current ? 1500 : 1650);
+    setPasso(3);
+  };
 
   const ganho = fmtEUR(
     150 * 14 - 150 * 14 * D.ssTaxa - (irsPorEscaloes(D.escaloes, c1) - irsPorEscaloes(D.escaloes, c0))
@@ -208,13 +244,14 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
         )}
         {passo === 2 && (
           <>
-            <p className="pergunta-fin">
-              {T.finPalpite(fmtEUR(1500), fmtEUR(1650), ordinal(g0.k + 1), ordinal(g1.k + 1))}
-            </p>
+            <p
+              className="pergunta-fin"
+              dangerouslySetInnerHTML={{ __html: T.finPalpite(fmtEUR(1500), fmtEUR(1650), ordinal(g0.k + 1), ordinal(g1.k + 1)) }}
+            />
             <div className="opcoes" role="group" aria-label={T.finPalpiteAria}>
-              <button className="b-btn b-claro" type="button" onClick={() => { setPalpite("menos"); setVisto(1650); setPasso(3); }}>{T.finBtnMenos}</button>
-              <button className="b-btn b-claro" type="button" onClick={() => { setPalpite("igual"); setVisto(1650); setPasso(3); }}>{T.finBtnIgual}</button>
-              <button className="b-btn b-claro" type="button" onClick={() => { setPalpite("mais"); setVisto(1650); setPasso(3); }}>{T.finBtnMais}</button>
+              <button className="b-btn b-claro" type="button" onClick={() => escolher("menos")}>{T.finBtnMenos}</button>
+              <button className="b-btn b-claro" type="button" onClick={() => escolher("igual")}>{T.finBtnIgual}</button>
+              <button className="b-btn b-claro" type="button" onClick={() => escolher("mais")}>{T.finBtnMais}</button>
             </div>
           </>
         )}
@@ -231,8 +268,8 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
               <p key={k} dangerouslySetInnerHTML={{ __html: p }} />
             ))}
             <div className="opcoes" role="group" aria-label={T.finGavetasAria}>
-              <button className="b-btn b-claro" type="button" onClick={() => setVisto(1500)}>{T.finAntes(fmtEUR(1500))}</button>
-              <button className="b-btn b-claro" type="button" onClick={() => setVisto(1650)}>{T.finDepois(fmtEUR(1650))}</button>
+              <button className="b-btn b-claro" type="button" onClick={() => { animarRef.current = true; setVisto(1500); }}>{T.finAntes(fmtEUR(1500))}</button>
+              <button className="b-btn b-claro" type="button" onClick={() => { animarRef.current = true; setVisto(1650); }}>{T.finDepois(fmtEUR(1650))}</button>
             </div>
             <Calc D={D} valor={salario} aoMudar={setVistoEMarca} />
           </>
@@ -241,8 +278,8 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
           <>
             {/* o gráfico fica na coluna da conversa, como no protótipo */}
             <div dangerouslySetInnerHTML={{ __html: grafico }} />
-            <p>{T.finGraficoTexto(gV ? pctTaxa(gV.taxa) : "—", cV > 0 ? pctTaxa(medV) : "—")}</p>
-            <p className="nota-fin">{T.finNotaRodape(D.motorIrsAnual === null ? "—" : fmtEUR(D.motorIrsAnual))}</p>
+            <p dangerouslySetInnerHTML={{ __html: T.finGraficoTexto(gV ? pctTaxa(gV.taxa) : "—", cV > 0 ? pctTaxa(medV) : "—") }} />
+            <p className="nota-fin" dangerouslySetInnerHTML={{ __html: T.finNotaRodape(D.motorIrsAnual === null ? "—" : fmtEUR(D.motorIrsAnual)) }} />
             <Calc D={D} valor={salario} aoMudar={setVistoEMarca} />
           </>
         )}
@@ -252,7 +289,7 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
           // o protótipo recomeça em 1 500 € ao entrar no gráfico
           // (calcFinancas(1500)): senão a fala dizia o degrau dos 1 500 e
           // a gaveta acesa e o ponto mostravam os 1 650 do palpite
-          <button className="b-btn" type="button" onClick={() => { setVisto(1500); setSalario(1500); setPasso(4); }}>
+          <button className="b-btn" type="button" onClick={() => { animarRef.current = true; setVisto(1500); setSalario(1500); setPasso(4); }}>
             {T.finBtnGrafico}
           </button>
         )}

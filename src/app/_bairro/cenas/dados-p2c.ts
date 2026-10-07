@@ -16,11 +16,10 @@
  */
 import { loadDerivado, loadFonte, loadSerie } from "@/lib/data";
 import { termoPorSlug } from "@/content/glossario";
-import { fmtPeriodo } from "@/lib/format";
 import smnJson from "@data/fiscal/smn.json";
 import ivaJson from "@data/fiscal/iva.json";
 import type { Ponto, SerieCena } from "./dados";
-import { T0_MERC } from "./dados";
+import { T0_MERC, mesExtenso } from "./dados";
 
 const INICIO = "2019-01";
 
@@ -53,7 +52,7 @@ export interface DadosCasa {
   lci: Ponto[];
   /** A resposta da cena — o último ponto da razão, arredondado. */
   meses: number | null;
-  /** O último período («2026-Q1», a cena formata com fmtPeriodo). */
+  /** O último período («2026-Q1», a cena formata com trimestre()). */
   ate: string | null;
   fonte: string;
 }
@@ -79,7 +78,7 @@ export function dadosCasaP2c(): DadosCasa {
     lci,
     meses: ult ? Math.round(ult.v) : null,
     ate: der?.meta.rotuloAte ?? der?.meta.serieAte ?? ult?.t ?? null,
-    fonte: `Eurostat · índice de preços da habitação ÷ custo do trabalho (B-S), 2015 = 100 · último dado ${ult ? fmtPeriodo(ult.t) : "—"}`,
+    fonte: `Eurostat · índice de preços da habitação ÷ índice de custo do trabalho, Portugal, 2015 = 100 · até ${der?.meta.rotuloAte ?? ult?.t ?? "—"}`,
   };
 }
 
@@ -92,7 +91,7 @@ export interface DadosPastelaria {
   comida: SerieCena;
   /** O índice comum dos exemplos — o T0 da Mercearia (ago 2020). */
   t0: string;
-  /** A subida acumulada da série fora (último ÷ primeiro − 1). */
+  /** A subida acumulada da série fora desde T0 (último ÷ ago 2020 − 1). */
   subidaFora: number | null;
   /** IVA da restauração (intermédia) e da mercearia (reduzida), de iva.json. */
   ivaCafe: number | null;
@@ -112,9 +111,11 @@ export function dadosPastelariaP2c(): DadosPastelaria {
     taxas: { nome: string; taxa: number; exemplos?: string[] }[];
     regiao: string;
   };
-  const s = (cp11?.series ?? []).filter((p) => p.t >= INICIO);
-  const subida =
-    s.length >= 2 && s[0].v !== 0 ? s.at(-1)!.v / s[0].v - 1 : null;
+  // a subida desde T0 (ago 2020) — o `razaoIdx(cp11)` do protótipo. Antes
+  // media-se desde jan 2019 e a cena dizia «desde agosto de 2020».
+  const s = cp11?.series ?? [];
+  const v0 = s.find((p) => p.t === T0_MERC)?.v;
+  const subida = v0 && s.length ? s.at(-1)!.v / v0 - 1 : null;
   // o café entra na taxa que diz «restauração» nos exemplos — nunca
   // numa taxa escrita à mão (regra nº1 + a regra do IVA em data/fiscal)
   const taxaDe = (re: RegExp) =>
@@ -129,7 +130,7 @@ export function dadosPastelariaP2c(): DadosPastelaria {
     ivaMercearia: taxaDe(/^pão$|mercearia|leite/i) ?? iva.taxas.find((t) => t.nome === "Reduzida")?.taxa ?? null,
     ate: cp11?.meta.serieAte ?? cp01?.meta.serieAte ?? null,
     base: 2,
-    fonte: `Eurostat · IHPC Portugal — restaurantes e alojamento (CP11) e alimentação (CP01), jan 2019 → ${cp11 ? fmtPeriodo(cp11.meta.serieAte) : "—"}`,
+    fonte: `Eurostat · índice harmonizado de preços, Portugal: restaurantes e alojamento (ECOICOP 11) e alimentação (01) · ${mesExtenso(T0_MERC)} → ${mesExtenso(cp11?.meta.serieAte)} · IVA: Código do IVA`,
     fonteIva: `Código do IVA — Listas I e II anexas e art. 18.º · taxas do continente em vigor`,
   };
 }
@@ -203,7 +204,7 @@ export function dadosQuiosqueP2c(): DadosQuiosque {
       ? { ano: smn.serie[0].ano, valor: smn.serie[0].valor }
       : null,
     inflacao,
-    fonte: `Eurostat · desemprego (une_rt_m), PIB e confiança; INE/DR · salário mínimo em vigor desde ${smnJson.vigencia ? fmtPeriodo(String(smnJson.vigencia).slice(0, 7)) : "—"}`,
+    fonte: `Eurostat · desemprego (une_rt_m, dessazonalizado), PIB (variação homóloga), confiança dos consumidores · salário mínimo: ${String(smnJson.fonte ?? "—").replace(/^Decreto-Lei n\.º (\d+\/\d+).*/, "DL $1")}`,
   };
 }
 
@@ -252,6 +253,6 @@ export function dadosEscolaP2c(): DadosEscola {
     subidaComida: subida,
     varHomologa: hom,
     gloss,
-    fonte: `Eurostat · IHPC Portugal — alimentação (CP01) e total (CP00) · último dado ${cp00 ? fmtPeriodo(cp00.meta.serieAte) : "—"}`,
+    fonte: `Eurostat · índice harmonizado de preços, Portugal (total e alimentação)`,
   };
 }

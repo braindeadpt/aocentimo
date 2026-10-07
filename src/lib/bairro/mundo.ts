@@ -173,7 +173,7 @@ const PM = { iA: 14.3, iB: 14.78, j0: JM + 0.1, j1: 18.7 } as const;
  * `document.head` depois de carregar; aqui já vêm no HTML, o que faz os
  * barcos começar a descer sem esperar pelo JavaScript.
  */
-export function viagensSoltas(): { css: string; svg: string } {
+export function viagensSoltas(): { css: string; svg: string; barcos: string; metros: string } {
   // `i` = a posição na ponte · `volta` = o sentido · `dur` = o tempo da
   // viagem · `fase` = o atraso, para as duas composições não chegarem
   // juntas à mesma extremidade
@@ -189,14 +189,22 @@ export function viagensSoltas(): { css: string; svg: string } {
     const [xb, yb] = posMetro(volta ? PM.j0 + 1.45 : PM.j1);
     const [px, py] = posMetro(11);
     return (
-      `@keyframes b-metro${k} { 0% { translate: ${xa}px ${ya}px; opacity: 0; } 6% { opacity: 1; } 44% { opacity: 1; } ` +
-      `50% { translate: ${xb}px ${yb}px; opacity: 0; } 100% { translate: ${xb}px ${yb}px; opacity: 0; } }\n` +
-      `#b-metro${k} { translate: ${px}px ${py}px; animation: b-metro${k} ${dur}s linear -${fase}s infinite; }`
+      `@keyframes b-metro${k} { 0% { transform: translate(${xa}px, ${ya}px); opacity: 0; } 6% { opacity: 1; } 44% { opacity: 1; } ` +
+      `50% { transform: translate(${xb}px, ${yb}px); opacity: 0; } 100% { transform: translate(${xb}px, ${yb}px); opacity: 0; } }\n` +
+      `#b-metro${k} { transform: translate(${px}px, ${py}px); animation: b-metro${k} ${dur}s linear -${fase}s infinite; }`
     );
   }).join("\n");
 
   const svgMetro = METROS.map(({ i }, k) => viajante("metro-sp", metroIso(i, HP), `b-metro${k}`)).join("");
 
+  // As viagens animam `transform: translate()`, nunca a propriedade
+  // `translate` individual. Com `translate` (e o balouço em `transform`
+  // no mesmo `<g>`), o Chrome de desktop passa a animação para o
+  // compositor e pinta o filho do SVG sem a deslocação: o rabelo da 2.ª
+  // viagem aparecia em cima da Segurança Social e o metro fora do
+  // tabuleiro, embora getBoundingClientRect desse o sítio certo. Com a
+  // animação parada (ou --disable-threaded-animation) ficava certo.
+  // Reproduzido no Chromium 154, 1440×900 (docs/AUDITORIA-MAPA-2026-10.md).
   // `j` = o ponto de partida de cada viagem: o rabelo anda ao longo de j
   // (a coordenada da profundidade), e i avança com a velocidade
   const BARCOS: readonly { j: number; dur: number; fase: number }[] = [
@@ -211,17 +219,24 @@ export function viagensSoltas(): { css: string; svg: string } {
     const [x1, y1] = posBarco(12.4, j);
     const [xs, ys] = posBarco(k ? 8.5 : 3.5, j);
     return (
-      `@keyframes b-desce${k} { 0% { translate: ${x0}px ${y0}px; opacity: 0; } 9% { opacity: 1; } 91% { opacity: 1; } ` +
-      `100% { translate: ${x1}px ${y1}px; opacity: 0; } }\n` +
-      `#b-barco${k} { translate: ${xs}px ${ys}px; animation: b-desce${k} ${dur}s linear -${fase}s infinite, b-balouca 1.6s ease-in-out infinite alternate; }`
+      `@keyframes b-desce${k} { 0% { transform: translate(${x0}px, ${y0}px); opacity: 0; } 9% { opacity: 1; } 91% { opacity: 1; } ` +
+      `100% { transform: translate(${x1}px, ${y1}px); opacity: 0; } }\n` +
+      `#b-barco${k} { transform: translate(${xs}px, ${ys}px); animation: b-desce${k} ${dur}s linear -${fase}s infinite; }`
     );
   }).join("\n");
 
   const svgBarco = BARCOS.map((_, k) => viajante("barco-sp", rabelo(true), `b-barco${k}`)).join("");
 
   return {
-    css: `${cssMetro}\n${cssBarco}\n@keyframes b-balouca { from { transform: translateY(0); } to { transform: translateY(2.5px); } }`,
+    css:
+      `${cssMetro}\n${cssBarco}\n` +
+      // o balouço vai no desenho, dentro da viagem: um só `transform` por
+      // elemento (ver o comentário da viagem, acima)
+      `.barco-sp > .rabelo { animation: b-balouca 1.6s ease-in-out infinite alternate; }\n` +
+      `@keyframes b-balouca { from { transform: translateY(0); } to { transform: translateY(2.5px); } }`,
     svg: svgMetro + svgBarco,
+    barcos: svgBarco,
+    metros: svgMetro,
   };
 }
 
@@ -354,7 +369,7 @@ export function mundoBairro(
   m: MapaBairro,
   rotulos: RotulosCamada
 ): { html: string; css: string } {
-  const { svg: soltas, css } = viagensSoltas();
+  const { barcos, metros, css } = viagensSoltas();
   const html =
     camada(
       "b-cFundo",
@@ -375,9 +390,15 @@ export function mundoBairro(
     ) +
     camada("b-cFrente", `<g id="b-gFrente">${m.frente}</g>`, rotulos.ribeira) +
     camada("b-cB", `<g id="b-movB">${m.gente.cais}</g><g id="b-gVida">${m.vida}</g><g id="b-gAgua">${m.agua}</g>`) +
-    // os rabelos e o metro pintam-se logo antes de Gaia e da ponte — a
-    // mesma ordem de quando eram soltos, agora dentro da camada do rio
-    camada("b-cRio", `<g id="b-gViagens" aria-hidden="true">${soltas}</g><g id="b-gGaia">${m.gaia}</g><g id="b-gRio">${m.ponte.tras}</g>`) +
+    // a ordem do protótipo: os rabelos antes de Gaia e da ponte; o metro
+    // DEPOIS do tabuleiro (`ponte.tras`, com os carris) e antes da treliça
+    // da frente (`b-cPonte`). Com o metro antes do tabuleiro, o tabuleiro
+    // tapava-o e só se via o tejadilho, ao lado dos carris.
+    camada(
+      "b-cRio",
+      `<g id="b-gViagens" aria-hidden="true">${barcos}</g><g id="b-gGaia">${m.gaia}</g><g id="b-gRio">${m.ponte.tras}</g>` +
+        `<g id="b-gMetro" aria-hidden="true">${metros}</g>`
+    ) +
     camada("b-cPonte", m.ponte.frente) +
     camada("b-cCeu", `<g id="b-gCeu">${m.gente.ceu}${nadador()}${salpicosSvg()}</g>`) +
     `<div id="b-noite" style="width:${MUNDO.w}px;height:${MUNDO.h}px"></div>` +
