@@ -33,7 +33,8 @@
     "noticeTitle": "Aviso",
     "notice": "Simuladores indicativos — não constituem aconselhamento financeiro, fiscal ou de crédito. Para decisões fiscais consulta um contabilista certificado.",
     "madeIn": "feito em Portugal",
-    "sources": "eurostat · ine · bpstat · dgeg · at · igcp"
+    "sources": "eurostat · ine · bpstat · dgeg · at · igcp",
+    "direitos": "© AO CÊNTIMO — texto e código da casa; os números são das fontes citadas."
   },
   "meta": {
     "title": "AO CÊNTIMO — literacia financeira para Portugal",

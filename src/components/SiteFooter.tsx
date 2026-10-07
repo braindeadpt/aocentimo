@@ -36,6 +36,7 @@ export function SiteFooter() {
           <p className="folha-titulo">
             {m.footer.sources}
           </p>
+          <p className="footnote">{m.footer.direitos}</p>
         </div>
       </div>
     </footer>
