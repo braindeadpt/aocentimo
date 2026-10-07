@@ -12,7 +12,10 @@
  * `bmbJarra`, `bmbRot`, `cam-produto|isp|carbono|iva|ivaimp`,
  * `bmbPedro`.
  */
-import { fmtLitro, fmtNum } from "@/lib/format";
+import { fmtNum } from "@/lib/format";
+
+/** «2,113 €» — o `EURO(v, 3)` do protótipo. */
+const eur3 = (v: number) => `${fmtNum(v, 3)} €`;
 import type { CombCena } from "./dados-p2b";
 import { pontosDeDias } from "./utils";
 import { mesCurto } from "./mercearia-arte";
@@ -111,7 +114,7 @@ export function rotulosJarra(raiz: ParentNode, d: Dec): void {
     g.innerHTML = rot
       .map(
         ({ nome, v, meio, cor }) =>
-          `<path d="M${JR.x - 4} ${meio.toFixed(1)} H${JR.x - 20}" stroke="${K}" stroke-width="1.6"/><text x="${JR.x - 24}" y="${(meio - 2).toFixed(1)}" text-anchor="end" font-family="Archivo" font-weight="800" font-size="10.5" fill="${K}">${nome}</text><text x="${JR.x - 24}" y="${(meio + 11).toFixed(1)}" text-anchor="end" font-family="Archivo" font-weight="900" font-size="12" fill="${cor === "#e9c46a" ? K : "#a8321f"}">${fmtLitro(v)}</text>`
+          `<path d="M${JR.x - 4} ${meio.toFixed(1)} H${JR.x - 20}" stroke="${K}" stroke-width="1.6"/><text x="${JR.x - 24}" y="${(meio - 2).toFixed(1)}" text-anchor="end" font-family="Archivo" font-weight="800" font-size="10.5" fill="${K}">${nome}</text><text x="${JR.x - 24}" y="${(meio + 11).toFixed(1)}" text-anchor="end" font-family="Archivo" font-weight="900" font-size="12" fill="${cor === "#e9c46a" ? K : "#a8321f"}">${eur3(v)}</text>`
       )
       .join("");
 }
@@ -157,8 +160,8 @@ export function graficoComb(gasolina: NonNullable<CombCena["serie"]>, gasoleo: N
   s += `<path d="${lin(b)}" fill="none" stroke="#16130f" stroke-width="2.4"/><path d="${lin(a)}" fill="none" stroke="#e2412a" stroke-width="2.6"/><path d="M${GP.x0} ${GP.y0} H${GP.x1}" stroke="#16130f" stroke-width="2"/>`;
   const km = a.reduce((m, p, k) => (p.v > a[m].v ? k : m), 0);
   const kn = a.reduce((m, p, k) => (p.v < a[m].v ? k : m), 0);
-  s += `<circle cx="${x(km, a.length).toFixed(1)}" cy="${y(a[km].v).toFixed(1)}" r="5.5" fill="#e2412a" stroke="#16130f" stroke-width="2"/><text x="${(x(km, a.length) + 8).toFixed(1)}" y="${(y(a[km].v) + 4).toFixed(1)}" font-family="Caveat" font-weight="700" font-size="17" fill="#c7361f" stroke="#fff" stroke-width="4" paint-order="stroke">o pico: ${fmtLitro(a[km].v)} (${mesCurto(a[km].t)})</text>`;
-  s += `<circle cx="${x(kn, a.length).toFixed(1)}" cy="${y(a[kn].v).toFixed(1)}" r="5.5" fill="#fff" stroke="#16130f" stroke-width="2"/><text x="${x(kn, a.length).toFixed(1)}" y="${(y(a[kn].v) + 20).toFixed(1)}" text-anchor="middle" font-family="Caveat" font-weight="700" font-size="17" fill="#16130f" stroke="#fff" stroke-width="4" paint-order="stroke">o mais baixo: ${fmtLitro(a[kn].v)} (${mesCurto(a[kn].t)})</text>`;
+  s += `<circle cx="${x(km, a.length).toFixed(1)}" cy="${y(a[km].v).toFixed(1)}" r="5.5" fill="#e2412a" stroke="#16130f" stroke-width="2"/><text x="${(x(km, a.length) + 8).toFixed(1)}" y="${(y(a[km].v) + 4).toFixed(1)}" font-family="Caveat" font-weight="700" font-size="17" fill="#c7361f" stroke="#fff" stroke-width="4" paint-order="stroke">o pico: ${eur3(a[km].v)} (${mesCurto(a[km].t)})</text>`;
+  s += `<circle cx="${x(kn, a.length).toFixed(1)}" cy="${y(a[kn].v).toFixed(1)}" r="5.5" fill="#fff" stroke="#16130f" stroke-width="2"/><text x="${x(kn, a.length).toFixed(1)}" y="${(y(a[kn].v) + 20).toFixed(1)}" text-anchor="middle" font-family="Caveat" font-weight="700" font-size="17" fill="#16130f" stroke="#fff" stroke-width="4" paint-order="stroke">o mais baixo: ${eur3(a[kn].v)} (${mesCurto(a[kn].t)})</text>`;
   s += `<text x="${GP.x0 + 6}" y="${GP.y1 + 6}" font-family="Caveat" font-weight="700" font-size="18" fill="#c7361f">gasolina 95</text><text x="${GP.x0 + 96}" y="${GP.y1 + 6}" font-family="Caveat" font-weight="700" font-size="18" fill="#16130f">gasóleo</text>`;
   return `<svg class="grafico-irs" viewBox="0 0 520 280" role="img" aria-label="${aria}" font-family="Archivo">${s}</svg>`;
 }

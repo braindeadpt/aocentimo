@@ -6,11 +6,13 @@
  * A porta de `cenaBanco()` do protótipo: senha, o palpite entre o mês
  * mais barato e o mais caro da Euribor, o quadro de letras que vira e os
  * dois gráficos com o mesmo tempo. A prestação é SEMPRE
- * `simularPrestacao()` (o motor), via `banco-arte.ts`. Sem GSAP: as
- * letras mudam direto e o estado final é o mesmo com e sem animação.
+ * `simularPrestacao()` (o motor), via `banco-arte.ts`. Com movimento, a
+ * senha pisca, o gerente acena e o quadro viaja e vira as palhetas (o
+ * GSAP de `anima.ts`); sem movimento as letras mudam direto e o estado
+ * final é o mesmo.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { fmtEUR } from "@/lib/format";
+import { fmtEUR0 as fmtEUR } from "@/lib/format";
 import type { DadosBanco } from "./dados";
 import {
   cursorGrafico,
@@ -23,7 +25,9 @@ import {
   prestacaoDe,
 } from "./banco-arte";
 import CenaDePerto from "./CenaDePerto";
+import { pctTaxa } from "./financas-arte";
 import { chamarSenha } from "./senha";
+import { useGsap, virarPalheta } from "./anima";
 import { pontosDaSerie } from "./utils";
 import * as T from "./textos";
 
@@ -39,6 +43,10 @@ export default function CenaBanco({ D, aoFechar }: { D: DadosBanco; aoFechar: ()
   const arteRef = useRef<HTMLDivElement>(null);
   const vivo = useRef(true);
   useEffect(() => () => { vivo.current = false; }, []);
+  const gsapRef = useGsap();
+  // as palhetas viram só durante a viagem do passo 3 (como no protótipo);
+  // a arrastar o slider as letras mudam direto
+  const virarRef = useRef(false);
 
   // a série compacta do servidor reconstrói-se aqui, no cliente
   const eur = useMemo(() => pontosDaSerie(D.serie), [D.serie]);
@@ -68,9 +76,39 @@ export default function CenaBanco({ D, aoFechar }: { D: DadosBanco; aoFechar: ()
   useEffect(() => {
     const raiz = arteRef.current?.closest(".b-cena");
     if (!raiz || eur.length === 0) return;
-    mostrarMesSvg(raiz, eur, kVivo, exemplo);
+    const gsap = gsapRef.current;
+    mostrarMesSvg(
+      raiz,
+      eur,
+      kVivo,
+      exemplo,
+      virarRef.current && gsap ? (p, t, novo) => virarPalheta(gsap, p, t, novo) : undefined
+    );
     if (passo === 4) cursorGrafico(raiz, grafico, eur, kVivo);
-  }, [eur, kVivo, exemplo, passo, grafico]);
+  }, [eur, kVivo, exemplo, passo, grafico, gsapRef]);
+
+  // PASSO 3: o quadro viaja do mês mais barato ao mais caro em 2,4 s
+  // (o `gsap.to(st, { k: idxMax })` do protótipo). Sem movimento o clique
+  // já pôs o mês mais caro e nada anda.
+  useEffect(() => {
+    const gsap = gsapRef.current;
+    if (passo !== 3 || !gsap) return;
+    const st = { k: idxMin };
+    virarRef.current = true;
+    const tw = gsap.to(st, {
+      k: idxMax,
+      duration: 2.4,
+      ease: "power1.inOut",
+      onUpdate: () => setKEscolhido(Math.round(st.k)),
+      onComplete: () => {
+        virarRef.current = false;
+      },
+    });
+    return () => {
+      tw.kill();
+      virarRef.current = false;
+    };
+  }, [passo, idxMin, idxMax, gsapRef]);
 
   if (eur.length === 0) {
     return (
@@ -96,6 +134,87 @@ export default function CenaBanco({ D, aoFechar }: { D: DadosBanco; aoFechar: ()
   // o palpite arranca a 1,3× da prestação do mês mais barato
   const palpiteInicial = Math.round((pa * 1.3) / 10) * 10;
   const palpiteEfetivo = palpite || palpiteInicial;
+
+  // a calculadora do tempo: no passo 3 (a viagem) e no passo 4 (hoje)
+  const calc = (
+    <div className="b-calc">
+      <label htmlFor="banTempo">
+        <b>{T.banCalcTempo}</b> <output htmlFor="banTempo">{mesCurto(eur[kVivo].t)}</output>
+      </label>
+      <input
+        id="banTempo"
+        type="range"
+        min={0}
+        max={eur.length - 1}
+        step={1}
+        value={kVivo}
+        onChange={(e) => setKEscolhido(+e.target.value)}
+      />
+      <div className="b-calc-linha">
+        <span>{T.banCalcEur}</span>
+        <b>{pct2(eur[kVivo].v)}</b>
+      </div>
+      <div className="b-calc-linha">
+        <span>{T.banCalcTan}</span>
+        <b>{pct2(eur[kVivo].v + exemplo.spread)}</b>
+      </div>
+      <div className="b-calc-linha">
+        <span>{T.banCalcPrest}</span>
+        <b className="b-r">{fmtEUR(prK)}</b>
+      </div>
+      <div className="b-calc-linha">
+        <span>{T.banCalcJuros}</span>
+        <b>{T.banJurosDe(fmtEUR(Math.max(0, juro1a)), fmtEUR(prK))}</b>
+      </div>
+      <div className="b-barra-juros" aria-hidden="true">
+        <span className="b-bj" style={{ width: `${(frJuros * 100).toFixed(1)}%` }}>
+          {frJuros > 0.18 ? T.banRotJuros : ""}
+        </span>
+        <span className="b-bc" style={{ width: `${((1 - frJuros) * 100).toFixed(1)}%` }}>
+          {frJuros < 0.82 ? T.banRotCasa : ""}
+        </span>
+      </div>
+      <details className="b-exemplo">
+        <summary>{T.banExemplo(fmtEUR(exemplo.capital), exemplo.anos, pctTaxa(exemplo.spread / 100))}</summary>
+        <label htmlFor="banCap">
+          {T.banExemploCap} <output htmlFor="banCap">{fmtEUR(exemplo.capital)}</output>
+        </label>
+        <input
+          id="banCap"
+          type="range"
+          min={50000}
+          max={400000}
+          step={5000}
+          value={exemplo.capital}
+          onChange={(e) => setExemplo({ ...exemplo, capital: +e.target.value })}
+        />
+        <label htmlFor="banAnos">
+          {T.banExemploAnos(exemplo.anos)} <output htmlFor="banAnos">{exemplo.anos}</output>
+        </label>
+        <input
+          id="banAnos"
+          type="range"
+          min={10}
+          max={40}
+          step={1}
+          value={exemplo.anos}
+          onChange={(e) => setExemplo({ ...exemplo, anos: +e.target.value })}
+        />
+        <label htmlFor="banSpread">
+          {T.banExemploSpread} <output htmlFor="banSpread">{pct2(exemplo.spread)}</output>
+        </label>
+        <input
+          id="banSpread"
+          type="range"
+          min={0.3}
+          max={3}
+          step={0.05}
+          value={exemplo.spread}
+          onChange={(e) => setExemplo({ ...exemplo, spread: +e.target.value })}
+        />
+      </details>
+    </div>
+  );
 
   return (
     <CenaDePerto
@@ -134,7 +253,7 @@ export default function CenaBanco({ D, aoFechar }: { D: DadosBanco; aoFechar: ()
         )}
         {passo === 2 && (
           <>
-            <p className="pergunta-fin">{T.banPalpite(mesLongo(a.t), fmtEUR(pa), mesLongo(b.t))}</p>
+            <p className="pergunta-fin" dangerouslySetInnerHTML={{ __html: T.banPalpite(mesLongo(a.t), fmtEUR(pa), mesLongo(b.t)) }} />
             <div className="b-palpite">
               <output htmlFor="banPal">{fmtEUR(palpiteEfetivo)}</output>
               <input
@@ -148,8 +267,16 @@ export default function CenaBanco({ D, aoFechar }: { D: DadosBanco; aoFechar: ()
                 aria-label={T.banPalpiteAria}
               />
             </div>
-            <p className="nota-fin">{T.banNotaExemplo(pct2(exemplo.spread))}</p>
-            <button className="b-btn" type="button" onClick={() => setPasso(3)}>
+            <p className="nota-fin">{T.banNotaExemplo(pctTaxa(exemplo.spread / 100))}</p>
+            <button
+              className="b-btn"
+              type="button"
+              onClick={() => {
+                // com movimento a viagem parte do mais barato; sem, o quadro já mostra o mais caro
+                setKEscolhido(gsapRef.current ? idxMin : idxMax);
+                setPasso(3);
+              }}
+            >
               {T.banBtnResposta}
             </button>
           </>
@@ -159,10 +286,8 @@ export default function CenaBanco({ D, aoFechar }: { D: DadosBanco; aoFechar: ()
             {T.banExplica(pct2(a.v), pct2(b.v)).map((p, i) => (
               <p key={i} dangerouslySetInnerHTML={{ __html: p }} />
             ))}
-            <p>
-              Em {mesLongo(a.t)}: {fmtEUR(pa)}/mês · em {mesLongo(b.t)}: <b className="b-r">{fmtEUR(pb)}/mês</b>
-            </p>
-            <button className="b-btn" type="button" onClick={() => { setKEscolhido(idxMax); setPasso(4); }}>
+            {calc}
+            <button className="b-btn" type="button" onClick={() => { setKEscolhido(idxHoje); setPasso(4); }}>
               {T.finBtnGrafico}
             </button>
           </>
@@ -172,88 +297,28 @@ export default function CenaBanco({ D, aoFechar }: { D: DadosBanco; aoFechar: ()
             {/* o gráfico fica na coluna da conversa (`.b-corpo`), como no
                 protótipo — nunca dentro do desenho */}
             <div dangerouslySetInnerHTML={{ __html: grafico.svg }} />
-            <p>{T.banGraficoTexto(mesLongo(hoje.t), pct2(hoje.v), fmtEUR(ph))}</p>
+            <p dangerouslySetInnerHTML={{ __html: T.banGraficoTexto(mesLongo(hoje.t), pct2(hoje.v), fmtEUR(ph)) }} />
             <p className="nota-fin">{T.banNotaGrafico}</p>
-            <div className="b-calc">
-              <label htmlFor="banTempo">
-                <b>{T.banCalcTempo}</b> <output htmlFor="banTempo">{mesCurto(eur[kVivo].t)}</output>
-              </label>
-              <input
-                id="banTempo"
-                type="range"
-                min={0}
-                max={eur.length - 1}
-                step={1}
-                value={kVivo}
-                onChange={(e) => setKEscolhido(+e.target.value)}
-              />
-              <div className="b-calc-linha">
-                <span>{T.banCalcEur}</span>
-                <b>{pct2(eur[kVivo].v)}</b>
-              </div>
-              <div className="b-calc-linha">
-                <span>{T.banCalcTan}</span>
-                <b>{pct2(eur[kVivo].v + exemplo.spread)}</b>
-              </div>
-              <div className="b-calc-linha">
-                <span>{T.banCalcPrest}</span>
-                <b className="b-r">{fmtEUR(prK)}</b>
-              </div>
-              <div className="b-calc-linha">
-                <span>{T.banCalcJuros}</span>
-                <b>{T.banJurosDe(fmtEUR(Math.max(0, juro1a)), fmtEUR(prK))}</b>
-              </div>
-              <div className="b-barra-juros" aria-hidden="true">
-                <span className="b-bj" style={{ width: `${(frJuros * 100).toFixed(1)}%` }}>
-                  {frJuros > 0.18 ? T.banRotJuros : ""}
-                </span>
-                <span className="b-bc" style={{ width: `${((1 - frJuros) * 100).toFixed(1)}%` }}>
-                  {frJuros < 0.82 ? T.banRotCasa : ""}
-                </span>
-              </div>
-              <details className="b-exemplo">
-                <summary>{T.banExemplo(fmtEUR(exemplo.capital), exemplo.anos, pct2(exemplo.spread))}</summary>
-                <label htmlFor="banCap">
-                  {T.banExemploCap} <output htmlFor="banCap">{fmtEUR(exemplo.capital)}</output>
-                </label>
-                <input
-                  id="banCap"
-                  type="range"
-                  min={50000}
-                  max={400000}
-                  step={5000}
-                  value={exemplo.capital}
-                  onChange={(e) => setExemplo({ ...exemplo, capital: +e.target.value })}
-                />
-                <label htmlFor="banAnos">
-                  {T.banExemploAnos(exemplo.anos)} <output htmlFor="banAnos">{exemplo.anos}</output>
-                </label>
-                <input
-                  id="banAnos"
-                  type="range"
-                  min={10}
-                  max={40}
-                  step={1}
-                  value={exemplo.anos}
-                  onChange={(e) => setExemplo({ ...exemplo, anos: +e.target.value })}
-                />
-                <label htmlFor="banSpread">
-                  {T.banExemploSpread} <output htmlFor="banSpread">{pct2(exemplo.spread)}</output>
-                </label>
-                <input
-                  id="banSpread"
-                  type="range"
-                  min={0.3}
-                  max={3}
-                  step={0.05}
-                  value={exemplo.spread}
-                  onChange={(e) => setExemplo({ ...exemplo, spread: +e.target.value })}
-                />
-              </details>
+            {calc}
+            <div className="b-acoes">
+              <button className="b-btn b-claro" type="button" onClick={aoFechar}>
+                {T.finBtnVoltar}
+              </button>
+              <button
+                className="b-btn b-claro"
+                type="button"
+                onClick={() => {
+                  setExemplo(EX);
+                  setPalpite(0);
+                  setKEscolhido(null);
+                  const p = arteRef.current?.querySelector("#banPainel");
+                  if (p) p.textContent = "A 040";
+                  setPasso(1);
+                }}
+              >
+                {T.finBtnOutra}
+              </button>
             </div>
-            <button className="b-btn b-claro" type="button" onClick={aoFechar}>
-              {T.finBtnVoltar}
-            </button>
           </>
         )}
       </div>

@@ -20,10 +20,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { graficoLinhas } from "@/lib/viz/grafico-linhas";
 import type { DadosCasa } from "./dados-p2c";
 import { interiorCasa, PX_POR_MES } from "./casa-arte";
-import { pctVar } from "./mercearia-arte";
 import CenaDePerto from "./CenaDePerto";
 import * as T from "./textos-p2c";
-import { fmtPeriodo } from "@/lib/format";
+import { setaVar, trimestre } from "./p2c-arte-base";
 
 /** Escreve a pilha no SVG injectado: altura, riscas e o número. */
 function aplicaPilha(raiz: ParentNode, n: number, h: number) {
@@ -127,8 +126,8 @@ export default function CenaCasa({ D, aoFechar }: { D: DadosCasa; aoFechar: () =
   }, [passo, meses]);
 
   const hoje = meses !== null ? String(meses) : "—";
-  const subHpi = hpiU ? pctVar(hpiU.v / 100) : "—";
-  const subLci = lciU ? pctVar(lciU.v / 100) : "—";
+  const subHpi = hpiU ? setaVar(hpiU.v - 100) : "—";
+  const subLci = lciU ? setaVar(lciU.v - 100) : "—";
 
   return (
     <CenaDePerto
@@ -147,7 +146,7 @@ export default function CenaCasa({ D, aoFechar }: { D: DadosCasa; aoFechar: () =
             passo === 1
               ? T.casaFala1
               : passo === 2
-                ? T.casaFala2(T.juizoPalpite(palpite, meses ?? 0, 5, 20), hoje)
+                ? T.casaFala2(T.juizoPalpite(palpite, meses ?? 0, 5, 20), hoje, meses !== null && meses >= 175 && meses < 200)
                 : T.casaFala3,
         }}
       />
@@ -172,9 +171,9 @@ export default function CenaCasa({ D, aoFechar }: { D: DadosCasa; aoFechar: () =
         )}
         {passo === 2 && (
           <>
-            <p dangerouslySetInnerHTML={{ __html: T.casaExplica(subHpi, subLci) }} />
+            <p dangerouslySetInnerHTML={{ __html: T.casaExplica(subHpi, subLci, !!hpiU && !!lciU && hpiU.v - lciU.v > 50) }} />
             <p className="nota-fin">
-              {T.casaNota(ultimo ? fmtPeriodo(ultimo.t) : "—")}
+              {T.casaNota(ultimo ? trimestre(ultimo.t) : "—")}
             </p>
           </>
         )}

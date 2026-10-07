@@ -229,4 +229,20 @@ Comparação lado a lado (Chromium 1440×900, maquete `design/prototipos/mapa/ma
 - Finanças e Banco: «Tirar senha»/«Chamar a senha» não animava — agora o painel pisca e muda, o funcionário acena e (Finanças) o talão cai (`cenas/senha.ts`; reduced-motion vê o estado final).
 - Finanças: faltava «Ver a tabela dos escalões» (o `<details class="confirma">` da maquete).
 
-**Por fazer (não incluído):** as restantes animações P2a da maquete — palhetas do quadro da Euribor no Banco, etiquetas da Mercearia a virar, contador do saco e aceno do Sr. Manuel, enchimento animado das gavetas.
+**Animações P2a (feitas a seguir, `cenas/anima.ts`):** palhetas do quadro da Euribor a virar na viagem de 2,4 s do mês mais barato ao mais caro (Banco); aceno do Sr. Manuel, contador do saco de 10 € até ao preço de hoje, etiquetas a virar em sequência, o produto que mais subiu a saltar e o talão a subir (Mercearia); gavetas a encher com o tween do protótipo (`.55 s`, `k × .07 s`, `power2.out`) e a passagem 1 500 € → 1 650 € ao fim de 1,5 s (Finanças); a cena abre com `opacity 0 / scale .96 → 1` em .35 s (todas). Com `prefers-reduced-motion` o estado final entra logo.
+
+## Paridade passo a passo — 2026-10-07
+
+Cada cena percorrida passo a passo na maquete e no site (texto de cada passo comparado palavra a palavra + ecrãs lado a lado). A maquete foi remontada com os dados atuais (`node design/prototipos/mapa/montar.cjs`) para os números baterem.
+
+**Bugs de dados:**
+- Pastelaria: a subida dos cafés media-se desde jan 2019, mas a fala diz «desde agosto de 2020» → +60,9 % em vez de +47,4 % (e 3,22 € em vez de 2,95 €). Agora mede desde o T0 (ago 2020), como o `razaoIdx` da maquete.
+- Correios: o slider da inflação arrancava na homóloga sem arredondar; a maquete usa o valor a 0,1 pp (o `step` do slider) — daí 8 399 € vs 8 379 € na calculadora.
+
+**Copy/markup repostos como na maquete:** cabeçalhos das cenas («Finanças · senha A · IRS», «Banco · senha A · crédito à habitação», «Mercearia do Sr. Manuel · os preços», «Correios · senha A · poupança»); os destaques (`<b>`, vermelho, azul) que tinham caído das explicações de todas as cenas — nas P2c as classes `r`/`a`/`g` não tinham estilo nenhum; frases acrescentadas que a maquete não tem retiradas (Finanças, Correios, Seg. Social, Pastelaria, Escola) e as que faltavam repostas («quase o dobro», «As casas correram muito mais depressa…», «mais do dobro do pão da mercearia», ▲/▼ nas variações); o glossário da Escola volta às seis palavras da maquete, cada uma a abrir o seu edifício; «Bomba: O Pedro vai atestar:», preços em «2,113 €» (sem «/L»).
+
+**Formatos:** euros a 0 casas onde a maquete usa `EURO(v)` (prestações, salários, palpites) e a 2/3 onde usa `EURO(v, 2|3)`; tabela das gavetas «0 a 8 342 €» (sem o duplo espaço); fontes com «agosto de 2026»/«setembro de 2026» e o texto exato da maquete (regenerados em `public/cenas/*.json`).
+
+**Visual:** Banco com a calculadora já no passo 3 (a viagem do quadro mexe-lhe o slider) e o passo 4 em «hoje»; recibo da Seg. Social com a caixa `.recibo` (sem serrilha); Jornal do Bairro com a folha da maquete (Georgia, filete duplo, valores com fundo); a Bomba mantém o litro cheio no passo do gráfico; «Ver outra vez» no Banco.
+
+**Mantido de propósito (a maquete não tem):** os botões para as páginas do site no último passo («Ver os preços todos», «Saber mais sobre poupança», «Fazer contas com o teu salário», «Ver a casa por dentro», «Ver a inflação por dentro», «Ver o trabalho», «Ver os dados do país», «Ver o glossário todo»).

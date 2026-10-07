@@ -140,7 +140,7 @@ export default function CenaPastelaria({
   return (
     <CenaDePerto
       quem={T.pastQuem}
-      fonte={`${D.fonte} · ${D.fonteIva}`}
+      fonte={D.fonte}
       aoFechar={aoFechar}
       arteHtml={interior}
       refArte={arteRef}
@@ -159,13 +159,14 @@ export default function CenaPastelaria({
                     fmtOuFalha(hoje),
                     r11 !== null ? pctVar(r11) : "—"
                   )
-                : T.pastFala3(taxaOuFalha(D.ivaCafe)),
+                : T.pastFala3(taxaOuFalha(D.ivaCafe), D.ivaCafe !== null && D.ivaMercearia !== null && D.ivaCafe > 2 * D.ivaMercearia),
         }}
       />
       <div className="b-corpo">
         {passo === 1 && (
           <>
             <p className="pergunta-fin">{T.pastPergunta}</p>
+            <p className="nota-fin">{T.pastNotaExemplo(fmtEUR(D.base))}</p>
             <div className="b-palpite">
               <output htmlFor="pastPal">{fmtEUR(palpite)}</output>
               <input
@@ -179,7 +180,6 @@ export default function CenaPastelaria({
                 onChange={(e) => setPalpite(+e.target.value)}
               />
             </div>
-            <p className="nota-fin">{T.pastNotaExemplo(fmtEUR(D.base))}</p>
           </>
         )}
         {passo === 2 && (
@@ -205,7 +205,6 @@ export default function CenaPastelaria({
               </>
             )}
             <p className="nota-fin">{T.pastNotaIndice}</p>
-            <p className="nota-fin">{T.pastNotaExemplo(fmtEUR(D.base))}</p>
           </>
         )}
         {passo === 3 && (

@@ -17,7 +17,7 @@
  *     em reduced-motion escreve-se o estado final.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { fmtEUR, fmtLitro, fmtNum, fmtPct, fmtData } from "@/lib/format";
+import { fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
 import type { CombCena, DadosBomba } from "./dados-p2b";
 import { aplicarJarra, CAM, interiorBomba, JR, mostrador, graficoComb, rotulosJarra, type Dec } from "./bomba-arte";
 import { pontosDeDias } from "./utils";
@@ -133,6 +133,8 @@ export default function CenaBomba({ D, aoFechar }: { D: DadosBomba; aoFechar: ()
   };
 
   useEffect(() => {
+    // no passo 3 o litro fica cheio, como no protótipo
+    if (passo === 3) return;
     resetArte();
     if (passo === 1 && D.gasolina.preco !== null) {
       mostrador(arteRef.current!, D.gasolina.nome, 0, 0);
@@ -169,11 +171,11 @@ export default function CenaBomba({ D, aoFechar }: { D: DadosBomba; aoFechar: ()
     return graficoComb(
       D.gasolina.serie,
       D.gasoleo.serie,
-      T.bmbGraficoAria(mesCurto(a[0].t), fmtLitro(a[km].v), mesLongo(a[km].t), fmtLitro(a[kn].v), mesLongo(a[kn].t))
+      T.bmbGraficoAria(mesCurto(a[0].t), eur3(a[km].v), mesLongo(a[km].t), eur3(a[kn].v), mesLongo(a[kn].t))
     );
   }, [D]);
 
-  const inicioSerie = D.gasolina.serie ? mesCurto(D.gasolina.serie.inicio) : "—";
+  const inicioSerie = D.gasolina.serie ? D.gasolina.serie.inicio.slice(0, 4) : "—";
 
   const juizo =
     impostos === null ? "" : T.bmbJuizo(Math.abs(palpiteV - impostos), palpiteV, impostos);
@@ -181,7 +183,7 @@ export default function CenaBomba({ D, aoFechar }: { D: DadosBomba; aoFechar: ()
   const fala =
     passo === 1
       ? temPreco
-        ? T.bmbFala1(litros, D.gasolina.nome, fmtLitro(D.gasolina.preco!))
+        ? T.bmbFala1(litros, D.gasolina.nome, eur3(D.gasolina.preco!))
         : T.bmbSemDados
       : passo === 2
         ? impostos === null || total === null
@@ -221,7 +223,7 @@ export default function CenaBomba({ D, aoFechar }: { D: DadosBomba; aoFechar: ()
           <>
             <p className="pergunta-fin" dangerouslySetInnerHTML={{ __html: T.bmbPalpite(fmtEUR(total!)) }} />
             <div className="b-palpite">
-              <output htmlFor="bmbPal">{fmtEUR(palpiteV)}</output>
+              <output htmlFor="bmbPal">{fmtEUR0(palpiteV)}</output>
               <input
                 id="bmbPal"
                 type="range"
@@ -279,7 +281,7 @@ export default function CenaBomba({ D, aoFechar }: { D: DadosBomba; aoFechar: ()
             </div>
             <p dangerouslySetInnerHTML={{ __html: T.bmbIvaSobreImp(eur3(d.ivaSobreImp)) }} />
             <p className="nota-fin">
-              {T.bmbNotaIsp(fmtData(D.ispVigencia), c.notaIsp, fmtData(c.data ?? ""))}
+              {T.bmbNotaIsp(D.ispVigencia.split("-").reverse().join("/"), c.notaIsp, (c.data ?? "").split("-").reverse().join("/"))}
             </p>
             <button className="b-btn" type="button" onClick={() => setPasso(3)}>
               {T.bmbBtnGrafico}

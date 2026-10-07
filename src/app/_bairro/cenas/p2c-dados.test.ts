@@ -65,9 +65,9 @@ describe("Pastelaria — comer fora vs em casa", () => {
     expect(D.ate).toBe(hicpCp11.meta.serieAte);
   });
 
-  it("a subida «fora» é a razão da própria série cp11 — não um número do protótipo", () => {
-    const s = hicpCp11.series.filter((p) => p.t >= DESDE);
-    const esperado = s.at(-1)!.v / s[0].v - 1;
+  it("a subida «fora» é a razão da própria série cp11 desde ago 2020 (o T0 da fala) — não um número do protótipo", () => {
+    const s = hicpCp11.series;
+    const esperado = s.at(-1)!.v / s.find((p) => p.t === "2020-08")!.v - 1;
     expect(D.subidaFora).toBeCloseTo(esperado, 10);
   });
 

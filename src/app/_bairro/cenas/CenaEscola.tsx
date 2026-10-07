@@ -17,15 +17,17 @@
  */
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { fmtNum, fmtPeriodo, FINO } from "@/lib/format";
+import { fmtNum, FINO } from "@/lib/format";
 import type { DadosEscola } from "./dados-p2c";
 import { interiorEscola, mini } from "./escola-arte";
-import { mesCurto } from "./mercearia-arte";
+import { mesCurto, mesLongo } from "./mercearia-arte";
 import CenaDePerto from "./CenaDePerto";
 import { pontosDaSerie } from "./utils";
 import * as T from "./textos-p2c";
 
 const pct1 = (v: number) => `${fmtNum(v * 100, 1)}${FINO}%`;
+/** Com sinal, como no protótipo: «+0,3 %», «−0,2 %». */
+const pct1s = (v: number) => `${v >= 0 ? "+" : "−"}${fmtNum(Math.abs(v) * 100, 1)}${FINO}%`;
 
 export default function CenaEscola({
   D,
@@ -84,7 +86,7 @@ export default function CenaEscola({
                   )
                 : passo === 3
                   ? T.escFala3(
-                      mes ? mesCurto(mes) : "—",
+                      mes ? mesLongo(mes) : "—",
                       cadeia && cadeia.v < 0 ? T.escDesceram : T.escSubiram,
                       cadeia ? pct1(Math.abs(cadeia.v)) : "—",
                       homologa ? pct1(Math.abs(homologa.v)) : "—"
@@ -100,20 +102,16 @@ export default function CenaEscola({
             )}
             <div className="b-minis">
               <figure>
-                <b>{T.escMiniA}</b>
+                <figcaption>{passo === 1 ? T.escMiniA : T.escMiniALeg}</figcaption>
                 {miniA.svg && (
                   <div dangerouslySetInnerHTML={{ __html: miniA.svg }} />
                 )}
-                <figcaption>{T.escMiniALeg}</figcaption>
               </figure>
               <figure>
-                <b>{T.escMiniB}</b>
+                <figcaption>{passo === 1 ? T.escMiniB : T.escMiniBLeg(fmtNum(miniB.lo, 0))}</figcaption>
                 {miniB.svg && (
                   <div dangerouslySetInnerHTML={{ __html: miniB.svg }} />
                 )}
-                <figcaption>
-                  {T.escMiniBLeg(fmtNum(miniB.lo, 0))}
-                </figcaption>
               </figure>
             </div>
             {passo === 2 && (
@@ -123,40 +121,29 @@ export default function CenaEscola({
         )}
         {passo === 3 && (
           <>
-            <p>{T.escExplica3a}</p>
+            <p dangerouslySetInnerHTML={{ __html: T.escExplica3a }} />
             <div className="b-calc">
               <div className="b-calc-linha">
                 <span dangerouslySetInnerHTML={{ __html: T.escCadeia(cadeia ? mesCurto(cadeia.t) : "—") }} />
-                <b>{cadeia ? pct1(cadeia.v) : "—"}</b>
+                <b>{cadeia ? pct1s(cadeia.v) : "—"}</b>
               </div>
               <div className="b-calc-linha">
                 <span dangerouslySetInnerHTML={{ __html: T.escHomologa(homologa ? mesCurto(homologa.t) : "—") }} />
-                <b>{homologa ? pct1(homologa.v) : "—"}</b>
+                <b className="b-r">{homologa ? pct1s(homologa.v) : "—"}</b>
               </div>
             </div>
             <p dangerouslySetInnerHTML={{ __html: T.escExplica3b }} />
-            <p className="nota-fin">
-              {T.escNotaIndices(mes ? fmtPeriodo(mes) : "—")}
-            </p>
           </>
         )}
         {passo === 4 && (
           <div className="b-glossario">
-            {D.gloss.map((g) => {
-              const onde = T.escOnde[g.slug];
-              return (
-                <div key={g.slug} className="b-gloss-card">
-                  <b>{g.termo}</b>
-                  <p>{g.def}</p>
-                  <div className="b-gloss-links">
-                    {onde && (
-                      <a href={onde.href}>{T.escVerEm(onde.titulo)}</a>
-                    )}
-                    <Link href={`/aprender/${g.slug}`}>{T.escVerGlossario}</Link>
-                  </div>
-                </div>
-              );
-            })}
+            {T.escPalavras.map((p) => (
+              <a key={p.termo} className="b-palavra" href={`/#${p.ed}`}>
+                <b>{p.termo}</b>
+                <span>{p.def}</span>
+                <em>{T.escVerEm(p.onde)}</em>
+              </a>
+            ))}
           </div>
         )}
       </div>
@@ -169,7 +156,7 @@ export default function CenaEscola({
             <button className="b-btn b-claro" type="button" onClick={() => responde(false)}>
               {T.escBtnB}
             </button>
-            <button className="b-btn" type="button" onClick={() => responde(true)}>
+            <button className="b-btn b-claro" type="button" onClick={() => responde(true)}>
               {T.escBtnMesmo}
             </button>
           </>

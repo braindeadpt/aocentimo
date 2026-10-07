@@ -9,7 +9,7 @@
  * mesma, mas aqui quem assina a conta é o motor, com a taxa em FRAÇÃO
  * como o motor pede.
  */
-import { FINO, fmtEUR, fmtNum } from "@/lib/format";
+import { FINO, fmtEUR0, fmtNum } from "@/lib/format";
 import { simularPrestacao } from "@/lib/engines/prestacao";
 import type { Ponto } from "./dados";
 import { pessoa, ELENCO } from "@/lib/bairro/personagens";
@@ -106,25 +106,35 @@ export function graficoBanco(
   return { svg: `<svg class="grafico-irs" viewBox="0 0 520 285" role="img" aria-label="${aria}" font-family="Archivo">${s}</svg>`, x, ya, yb, prs };
 }
 
-/** Mostra o mês `k` no quadro, no papel e na taxa — sem GSAP, letras mudam direto. */
+/**
+ * Mostra o mês `k` no quadro, no papel e na taxa. Sem `virar` as letras
+ * mudam direto; com `virar` (GSAP, só com movimento) cada palheta que
+ * muda vira como no protótipo — a letra final é sempre a mesma.
+ */
 export function mostrarMesSvg(
   raiz: ParentNode,
   eur: readonly Ponto[],
   k: number,
-  o: { capital: number; anos: number; spread: number }
+  o: { capital: number; anos: number; spread: number },
+  virar?: (palheta: Element, texto: Element, novo: string) => void
 ): { tan: number; pr: number } {
   const p = eur[k];
   const tan = p.v + o.spread;
   const pr = prestacaoDe(o.capital, o.anos, p.v, o.spread);
   // o quadro: 7 palhetas
   const cel = quadroTexto(p.v);
-  raiz.querySelectorAll<SVGTextElement>(".palheta .pal-t").forEach((t, i) => {
-    t.textContent = cel[i] === " " ? "" : cel[i];
+  raiz.querySelectorAll<SVGGElement>(".palheta").forEach((p, i) => {
+    const t = p.querySelector<SVGTextElement>(".pal-t");
+    if (!t) return;
+    const novo = cel[i] === " " ? "" : cel[i];
+    if (t.textContent === novo) return;
+    if (virar) virar(p, t, novo);
+    else t.textContent = novo;
   });
   const mes = raiz.querySelector<SVGTextElement>("#banMes");
   if (mes) mes.textContent = mesLongo(p.t);
   const prest = raiz.querySelector<SVGTextElement>("#banPrest");
-  if (prest) prest.textContent = fmtEUR(pr);
+  if (prest) prest.textContent = fmtEUR0(pr);
   const tanP = raiz.querySelector<SVGTextElement>("#banTanP");
   if (tanP) tanP.textContent = `taxa ${pct2(tan)} = Euribor + spread`;
   return { tan, pr };

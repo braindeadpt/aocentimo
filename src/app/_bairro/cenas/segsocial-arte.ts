@@ -64,7 +64,7 @@ export function reciboInes(o: {
 }): string {
   const t = o.textos;
   return (
-    `<div class="b-talao" role="img" aria-label="${t.cab}: bruto ${o.linhas.bruto}, Segurança Social ${o.linhas.ss}, mais ${o.linhas.tsu} da empresa — ${o.linhas.total} no total.">` +
+    `<div class="b-talao b-recibo" role="img" aria-label="${t.cab}: bruto ${o.linhas.bruto}, Segurança Social ${o.linhas.ss}, mais ${o.linhas.tsu} da empresa — ${o.linhas.total} no total.">` +
     `<b class="t-cab">${t.cab}</b>` +
     `<span class="t-l"><span>${t.bruto}</span><span>${o.linhas.bruto}</span></span>` +
     `<span class="t-l"><span>${t.ss}</span><span>−${o.linhas.ss}</span></span>` +

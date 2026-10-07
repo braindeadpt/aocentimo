@@ -16,7 +16,7 @@
  *     protótipo e vivem no string SVG — a árvore React não os conhece.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { fmtEUR, fmtNum, fmtPct } from "@/lib/format";
+import { fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
 import type { DadosSegSocial } from "./dados-p2b";
 import { barrasQuem, interiorSegSocial, moedaSvg, nivel, reciboInes } from "./segsocial-arte";
 import CenaDePerto from "./CenaDePerto";
@@ -151,7 +151,7 @@ export default function CenaSegSocial({ D, aoFechar }: { D: DadosSegSocial; aoFe
       ? T.ssFala1
       : passo === 2
         ? ines
-          ? T.ssFala2(fmtEUR(ines.bruto))
+          ? T.ssFala2(fmtEUR0(ines.bruto))
           : T.ssSemDados
         : passo === 3
           ? total === null
@@ -187,13 +187,13 @@ export default function CenaSegSocial({ D, aoFechar }: { D: DadosSegSocial; aoFe
       inesEla,
       inesEmp,
       pedro: D.pedro.por100,
-      aria: T.ssBarrasAria(fmtEUR(inesEla), fmtEUR(inesEmp), fmtEUR(D.pedro.por100)),
+      aria: T.ssBarrasAria(fmtNum(inesEla, 2), fmtNum(inesEmp, 2), fmtNum(D.pedro.por100, 2)),
       textos: {
         ines: T.ssNomeInes,
         pedro: T.ssNomePedro,
-        ela: T.ssEla(fmtEUR(inesEla)),
-        empresa: T.ssEmpresa(fmtEUR(inesEmp)),
-        ele: T.ssEle(fmtEUR(D.pedro.por100)),
+        ela: T.ssEla(fmtNum(inesEla, 2)),
+        empresa: T.ssEmpresa(fmtNum(inesEmp, 2)),
+        ele: T.ssEle(fmtNum(D.pedro.por100, 2)),
         legenda: T.ssBarrasLegenda,
       },
     });
@@ -210,9 +210,9 @@ export default function CenaSegSocial({ D, aoFechar }: { D: DadosSegSocial; aoFe
         )}
         {passo === 2 && ines && (
           <>
-            <p className="pergunta-fin">{T.ssPalpite}</p>
+            <p className="pergunta-fin" dangerouslySetInnerHTML={{ __html: T.ssPalpite }} />
             <div className="b-palpite">
-              <output htmlFor="ssPal">{fmtEUR(palpite)}</output>
+              <output htmlFor="ssPal">{fmtEUR0(palpite)}</output>
               <input
                 id="ssPal"
                 type="range"
@@ -236,9 +236,9 @@ export default function CenaSegSocial({ D, aoFechar }: { D: DadosSegSocial; aoFe
               dangerouslySetInnerHTML={{
                 __html: reciboInes({
                   linhas: {
-                    bruto: fmtEUR(ines.bruto),
-                    ss: fmtEUR(ines.ss),
-                    tsu: fmtEUR(ines.tsu),
+                    bruto: fmtNum(ines.bruto, 2),
+                    ss: fmtNum(ines.ss, 2),
+                    tsu: fmtNum(ines.tsu, 2),
                     total: fmtEUR(total),
                   },
                   textos: {
@@ -252,7 +252,7 @@ export default function CenaSegSocial({ D, aoFechar }: { D: DadosSegSocial; aoFe
                 }),
               }}
             />
-            <p dangerouslySetInnerHTML={{ __html: T.ssExplica(fmtEUR(ines.ss), fmtEUR(ines.tsu), fmtEUR(ines.custo), fmtEUR(ines.bruto)) }} />
+            <p dangerouslySetInnerHTML={{ __html: T.ssExplica(fmtEUR(ines.ss), fmtEUR(ines.tsu), fmtEUR(ines.custo), fmtEUR0(ines.bruto)) }} />
             <p dangerouslySetInnerHTML={{ __html: T.ssBolo }} />
             <button className="b-btn" type="button" onClick={() => setPasso(4)}>
               {T.ssBtnPedro}
@@ -265,11 +265,10 @@ export default function CenaSegSocial({ D, aoFechar }: { D: DadosSegSocial; aoFe
             <p
               dangerouslySetInnerHTML={{
                 __html: T.ssPedroTexto(
-                  fmtEUR(D.pedro.fatura),
+                  fmtEUR0(D.pedro.fatura),
                   fmtPct(tx.catbTaxa, 1),
                   fmtPct(tx.catbRr, 0),
-                  fmtEUR(D.pedro.ssMensal),
-                  tx.isencao
+                  fmtEUR(D.pedro.ssMensal)
                 ),
               }}
             />
@@ -283,10 +282,8 @@ export default function CenaSegSocial({ D, aoFechar }: { D: DadosSegSocial; aoFe
               {T.ssNotaCatb(
                 fmtPct(tx.catbRr, 0),
                 `${fmtNum(tx.baseMinIas, 1)}`,
-                `IAS ${fmtEUR(tx.ias)}`,
                 fmtEUR(tx.baseMinIas * tx.ias),
-                tx.isencao,
-                fmtPct(tx.retencao, 0)
+                tx.isencao
               )}
             </p>
             <div className="opcoes">
