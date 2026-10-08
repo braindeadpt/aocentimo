@@ -9,8 +9,12 @@
  * `application/octet-stream`: nenhum crawler de partilha a abria. Um
  * PNG com nome é servido como `image/png` e é lido em qualquer lado.
  *
- * O ficheiro é um ASSET deliberado — fica no repo, versionado, e só se
- * regenera quando o mapa muda. Este script é a sua proveniência.
+ * O ficheiro em `public/` é o ASSET versionado — o fallback que serve
+ * se mais nada correr. Mas o cartão publicado é regenerado a cada
+ * deploy (job `build` do deploy-pages.yml, `OG_SAIDA=out/...`): assim
+ * os marcadores levam sempre os valores do dia que o deploy publica —
+ * o gasóleo muda todos os dias — sem commitar um binário novo por dia.
+ * Este script é a proveniência dos dois.
  *
  * Uso (precisa de `out/` construído e do servidor estático a correr):
  *   PORTA=3119 node scripts/_serve-static.mjs &
@@ -26,7 +30,11 @@ import { readFileSync, writeFileSync, existsSync, statSync } from "node:fs";
 import { chromium } from "@playwright/test";
 import sharp from "sharp";
 
-const SAIDA = "public/og-bairro.png";
+/* Onde escreve: `public/` em desenvolvimento (o asset versionado), mas
+   o deploy do Pages regenera para `out/` — o cartão fica atómico com
+   os dados que vão no deploy, e o PNG commitado fica só como fallback.
+   `OG_SAIDA` escolhe o destino. */
+const SAIDA = process.env.OG_SAIDA ?? "public/og-bairro.png";
 const LIMITE = 250 * 1024;
 const L = 1200;
 const A = 630;
