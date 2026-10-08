@@ -44,8 +44,23 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
       - run: npm ci
+      - run: npx playwright install chromium --with-deps
       - run: npm run build
+      # O cartão de partilha regenera-se por deploy: os marcadores levam
+      # os valores que o deploy leva (o gasóleo muda todos os dias). Se a
+      # captura falhar, o out/ já traz o PNG commitado — avisa mas não
+      # bloqueia a publicação.
+      - run: node scripts/_serve-static.mjs &
+      - name: Cartão de partilha com os valores deste deploy
+        run: |
+          sleep 1
+          OG_SAIDA=out/og-bairro.png node scripts/_og-bairro.mjs \
+            || echo "::warning::og-bairro falhou — publica-se o PNG commitado"
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
