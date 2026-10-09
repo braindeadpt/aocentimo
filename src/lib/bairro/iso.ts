@@ -821,6 +821,29 @@ export function ponteLuisI(o: OpcoesPonte): { tras: string; frente: string } {
       esq: (w) => `<path d="M${f1(w * 0.2)} -22 V-40 a${f1(w * 0.3)} ${f1(w * 0.3)} 0 0 1 ${f1(w * 0.6)} 0 V-22 Z" fill="#5b5147" stroke="${K}" stroke-width="1.8"/><path d="M${f1(w * 0.2)} -24 h${f1(w * 0.6)}" stroke="#8d8a84" stroke-width="4"/>`,
     });
   s += encontro(jA1 - 0.42) + encontro(jA2 - 0.18);
+
+  // AS LUZES DA PONTE (pedido do dono, 2026-10-09): candeeiros nos dois
+  // tabuleiros e um fio quente ao longo do arco. Nascem apagados
+  // (opacity 0) e o CSS acende-os com `.b-noite` — metade já no fim de
+  // tarde. Ficam no `#ponteF`, por isso o reflexo no Douro (`<use>` da
+  // ponte) acende-se sozinho.
+  const lampada = (i: number, j: number, z: number, r: number, cedo: boolean): string => {
+    const [x, y] = P(i, j, z);
+    return `<g class="ponte-luz${cedo ? " b-cedo" : ""}" opacity="0"><circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r * 3.2)}" fill="url(#b-brilho)"/><circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r)}" fill="#ffe9a0"/></g>`;
+  };
+  let luzes = "";
+  let n = 0;
+  for (let j = jPorto + 0.35; j < jGaia - 0.1; j += 0.9) {
+    for (const ii of [iA, iB]) luzes += lampada(ii, j, zCima + 9, ii === iB ? 2.4 : 1.8, n % 2 === 0);
+    n++;
+  }
+  for (let j = jB1 + 0.25; j < jB2 - 0.1; j += 0.7) {
+    luzes += lampada(iB, j, zBaixo + 13, 2, n % 2 === 0);
+    n++;
+  }
+  const arco = T.map((t) => P(iB, jArco(t), arcoTopo(t) + 1));
+  luzes += `<path class="ponte-luz ponte-arco" opacity="0" d="M${lista(arco)}" fill="none" stroke="#ffd86b" stroke-width="2.2" stroke-linecap="round"/>`;
+  s += `<g class="ponte-luzes" aria-hidden="true">${luzes}</g>`;
   return { tras: `<g class="ponte" id="ponteT">${tras}</g>`, frente: `<g class="ponte" id="ponteF">${s}</g>` };
 }
 

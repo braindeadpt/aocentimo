@@ -256,6 +256,17 @@ describe("as peças do Porto", () => {
     expect(tras).not.toBe(frente);
   });
 
+  it("a ponte traz candeeiros e o fio do arco, apagados de dia (o CSS acende-os à noite)", () => {
+    const { tras, frente } = ponteLuisI({ iA: 1, iB: 2, jPorto: 3, jGaia: 18, jA1: 5, jA2: 16, zCima: 40, pilares: [] });
+    const luzes = frente.match(/class="ponte-luz[^"]*"/g) ?? [];
+    expect(luzes.length).toBeGreaterThan(20);
+    expect(frente).toContain('class="ponte-luz ponte-arco" opacity="0"');
+    expect(frente).toMatch(/class="ponte-luz b-cedo" opacity="0"/);
+    // nada aceso de origem, e nada na camada de trás (o reflexo usa as duas)
+    expect(frente).not.toMatch(/class="ponte-luz[^"]*" opacity="(?!0")/);
+    expect(tras).not.toContain("ponte-luz");
+  });
+
   it("bandeiraFCP não traz o emblema do clube — só as riscas e «FCP»", () => {
     const s = bandeiraFCP(10, 20);
     expect(s).toContain("FCP");
