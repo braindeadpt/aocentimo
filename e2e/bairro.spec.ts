@@ -121,10 +121,10 @@ test.describe("o bairro — a geometria (veredicto do design, P1)", () => {
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
-    // o CSS levanta os FILHOS do .ed (`.ed > *`), não o grupo em si — o
-    // que sobe é a silhueta, e o rótulo `data-id` fica onde estava
+    // o CSS levanta o CORPO do .ed (`.ed > .ed-corpo`), não o grupo em si
+    // — o que sobe é a silhueta, e o rótulo `data-id` fica onde estava
     const filho = page.locator(
-      '.b-mundo .ed[data-id="fabrica"] > *'
+      '.b-mundo .ed[data-id="fabrica"] > .ed-corpo'
     ).first();
 
     const transformDe = () =>
@@ -146,6 +146,35 @@ test.describe("o bairro — a geometria (veredicto do design, P1)", () => {
       "o hover não mexeu o edifício — o seletor .ed não está a aplicar"
     ).not.toBe(antes);
   });
+  // Relato do dono (2026-10-09): no PC, passar o rato pela Segurança
+  // Social, Finanças ou Quiosque mandava a bandeira, as figuras e a árvore
+  // para o topo do mapa — o `transform` do CSS apagava o `translate` do SVG.
+  for (const id of ["segsocial", "financas", "quiosque"]) {
+    test(`(${id}) o hover levanta o edifício sem atirar peças para o topo`, async ({ page }) => {
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.goto("/");
+      await page.locator('.b-mundo[data-vivo="1"]').waitFor({ state: "attached" });
+      const ed = page.locator(`.b-mundo .ed[data-id="${id}"]`);
+      const caixas = () =>
+        ed.evaluate((g) =>
+          [...g.querySelectorAll("[transform]")].map((el) => {
+            const r = el.getBoundingClientRect();
+            return [r.x, r.y];
+          })
+        );
+      const antes = await caixas();
+      expect(antes.length).toBeGreaterThan(0);
+      // `.b-ativo` levanta como o hover (mesma regra), sem depender do rato
+      await ed.evaluate((g) => g.classList.add("b-ativo"));
+      await page.waitForTimeout(400);
+      const depois = await caixas();
+      antes.forEach(([x, y], i) => {
+        const [x2, y2] = depois[i];
+        expect(Math.abs(x2 - x), `peça ${i} saltou na horizontal`).toBeLessThan(15);
+        expect(Math.abs(y2 - y), `peça ${i} saltou na vertical`).toBeLessThan(20);
+      });
+    });
+  }
 });
 
 test.describe("o bairro — o que o mapa mostra", () => {
