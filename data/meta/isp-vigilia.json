@@ -1,19 +1,23 @@
 {
-  "consultadoEm": "2026-10-04T13:52:06.577Z",
+  "consultadoEm": "2026-10-09T21:08:24.898Z",
   "fonteUrl": "https://news.google.com/rss/search?q=ISP+site%3Adiariodarepublica.pt&hl=pt-PT&gl=PT&ceid=PT%3Apt",
   "nota": "Feed RSS do Google Notícias restrito ao DR; o DR não é legível por máquina (só shell JS).",
   "ultimaPortariaFeed": {
-    "numero": "448-A/2026/1",
-    "data": "2026-10-02",
-    "titulo": "Portaria n.º 448-A/2026/1, de 2 de outubro - Diário da República",
-    "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTFB0akUzZ0JxT2I4QTlEWEp5RDR5dWxmaTdiajI1RmN1MlBhN2lJa0xGYksxZktVZGZYUk1MeTNEWml6bW5MRTZMNW51MmR3Z0FPbjVJUHN1clJfZkhadUM3cGpjRHVSQUFXSzJtWml5cXFWUjV6T1JCS1pB?oc=5"
+    "numero": "451-A/2026/1",
+    "data": "2026-10-09",
+    "titulo": "Portaria n.º 451-A/2026/1, de 9 de outubro - Diário da República",
+    "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1PajZIZUpmNmt0aUVFbmNrNlFrYUh3MWx1WGdaTW5ZMTZTNXNCaER2azFReXJIU2Q4WnFSek5EdGUzckgyOUp6THJPMTMxX1dLZVB2dUd4aFc2YW14UEJJeXNXcHBScC1pQmZKNm10aS1SanRCakR4aFVB?oc=5"
   },
-  "ultimaReportada": "448-A/2026/1",
+  "ultimaReportada": "451-A/2026/1",
   "ispJson": {
-    "vigencia": "2026-09-28",
-    "portaria": "437-B/2026/1"
+    "vigencia": "2026-10-05",
+    "portaria": "448-A/2026/1"
   },
   "aConferir": [
+    {
+      "titulo": "Decreto-Lei n.º 199/2026, de 7 de outubro - Diário da República",
+      "data": "2026-10-07"
+    },
     {
       "titulo": "Revisão e fixação dos valores das taxas do imposto sobre os produtos petrolíferos e energéticos - Diário da República",
       "data": "2023-06-13"
@@ -31,16 +35,16 @@
       "data": "2023-06-13"
     },
     {
-      "titulo": "Fixa o valor das taxas unitárias do imposto sobre os produtos petrolíferos e energéticos (ISP) - Diário da República",
-      "data": "2023-06-08"
-    },
-    {
       "titulo": "Portaria n.º 1038/97, de 3 de outubro - Diário da República",
       "data": "2023-12-14"
     },
     {
       "titulo": "Decreto-Lei n.º 292/87, de 30 de julho - Diário da República",
       "data": "2023-07-10"
+    },
+    {
+      "titulo": "Resolução n.º 178/2024, de 16 de dezembro - Diário da República",
+      "data": "2024-12-20"
     },
     {
       "titulo": "Decreto-Lei n.º 289/2001, de 13 de novembro - Diário da República",
@@ -51,23 +55,23 @@
       "data": "2026-04-15"
     },
     {
-      "titulo": "Revisão e fixação dos valores das taxas do imposto sobre os produtos petrolíferos e energéticos - Diário da República",
-      "data": "2023-06-20"
-    },
-    {
       "titulo": "Decreto-Lei n.º 261-A/91, de 25 de julho - Diário da República",
       "data": "2023-07-04"
     },
     {
-      "titulo": "Fixa os valores das taxas do imposto sobre os produtos petrolíferos e energéticos - Diário da República",
-      "data": "2023-06-13"
+      "titulo": "Revisão e fixação dos valores das taxas do imposto sobre os produtos petrolíferos e energéticos - Diário da República",
+      "data": "2023-06-20"
+    },
+    {
+      "titulo": "Análise Jurídica - Decreto-Lei n.º 199/2026 - Diário da República",
+      "data": "2026-10-07"
     },
     {
       "titulo": "Deliberação n.º 1639/2012, de 16 de novembro - Diário da República",
       "data": "2026-08-01"
     },
     {
-      "titulo": "FINANÇAS E AMBIENTE E AÇÃO CLIMÁTICA - files.diariodarepublica.pt",
+      "titulo": "FINANÇAS E AMBIENTE E AÇÃO CLIMÁTICA - Diário da República",
       "data": "2022-03-11"
     },
     {
@@ -75,12 +79,12 @@
       "data": "2024-01-08"
     },
     {
-      "titulo": "Decreto-Lei n.º 123/94, de 18 de maio - Diário da República",
-      "data": "2023-06-14"
-    },
-    {
       "titulo": "Norma regulamentar do Instituto de Seguros de Portugal n.º 16/2007-R, de 29 de janeiro - Diário da República",
       "data": "2023-06-04"
+    },
+    {
+      "titulo": "Decreto-Lei n.º 123/94, de 18 de maio - Diário da República",
+      "data": "2023-06-14"
     },
     {
       "titulo": "Regulamento n.º 17/2001, de 18 de agosto - Diário da República",
@@ -91,16 +95,16 @@
       "data": "2023-06-07"
     },
     {
+      "titulo": "Portaria n.º 179-B/99, de 17 de março - Diário da República",
+      "data": "2023-07-04"
+    },
+    {
       "titulo": "Lei n.º 10-A/2022, de 28 de abril - Diário da República",
       "data": "2023-06-05"
     },
     {
       "titulo": "Decreto-Lei n.º 302/82, de 30 de julho - Diário da República",
       "data": "2023-06-06"
-    },
-    {
-      "titulo": "Código dos Impostos Especiais de Consumo - CIEC - Diário da República",
-      "data": "2023-06-03"
     },
     {
       "titulo": "Decreto-Lei n.º 124/94, de 18 de maio - Diário da República",
@@ -111,16 +115,12 @@
       "data": "2024-02-28"
     },
     {
-      "titulo": "SUPLEMENTO - files.diariodarepublica.pt",
+      "titulo": "SUPLEMENTO - Diário da República",
       "data": "1999-05-26"
     },
     {
-      "titulo": "SUPLEMENTO - files.diariodarepublica.pt",
+      "titulo": "SUPLEMENTO - Diário da República",
       "data": "1999-07-07"
-    },
-    {
-      "titulo": "Análise Jurídica - Diário da República",
-      "data": "2026-08-27"
     },
     {
       "titulo": "Irregularidades no reembolso de imposto sobre produtos petrolíferos e energéticos - Diário da República",
@@ -131,16 +131,12 @@
       "data": "2023-06-05"
     },
     {
-      "titulo": "Untitled - Diário da República",
-      "data": "2026-09-14"
+      "titulo": "Código dos Impostos Especiais de Consumo - CIEC - Diário da República",
+      "data": "2023-06-03"
     },
     {
       "titulo": "Decreto-Lei n.º 80-A/2026, de 31 de março - Diário da República",
       "data": "2026-03-31"
-    },
-    {
-      "titulo": "Untitled - Diário da República",
-      "data": "2026-10-01"
     },
     {
       "titulo": "Diário da República n.º 242/1992, Série II de 1992-10-20 | DR - Diário da República",
@@ -151,24 +147,16 @@
       "data": "2023-09-04"
     },
     {
-      "titulo": "2. SUPLEMENTO - files.diariodarepublica.pt",
+      "titulo": "2. SUPLEMENTO - Diário da República",
       "data": "1999-03-31"
     },
     {
-      "titulo": "2. SUPLEMENTO - files.diariodarepublica.pt",
+      "titulo": "2. SUPLEMENTO - Diário da República",
       "data": "1999-03-17"
-    },
-    {
-      "titulo": "N.º 39 — 23 de fevereiro de 2012 INSTITUTO DE SEGUROS DE PORTUGAL - Diário da República",
-      "data": "2012-02-23"
     },
     {
       "titulo": "Decreto-Lei n.º 71/2008, de 15 de abril - Diário da República",
       "data": "2023-06-06"
-    },
-    {
-      "titulo": "Diário da República n.º 189/1992, Série II de 1992-08-18 - Diário da República",
-      "data": "2023-08-22"
     },
     {
       "titulo": "PARTE E - Diário da República",
@@ -211,12 +199,12 @@
       "data": "2024-07-17"
     },
     {
-      "titulo": "SUPLEMENTO - files.diariodarepublica.pt",
-      "data": "1999-03-17"
+      "titulo": "DIÁRIO DA REPÚBLICA - Diário da República",
+      "data": "2024-01-19"
     },
     {
-      "titulo": "Decreto-Lei n.º 66/2006, de 22 de março - Diário da República",
-      "data": "2006-03-22"
+      "titulo": "SUPLEMENTO - Diário da República",
+      "data": "1999-03-17"
     },
     {
       "titulo": "Despacho n.º 6058/2011, de 7 de abril - Diário da República",
@@ -229,22 +217,18 @@
     {
       "titulo": "Despacho n.º 9974/2021, de 14 de outubro - Diário da República",
       "data": "2023-06-06"
-    },
-    {
-      "titulo": "17 239 MINISTÉRIO DAS FINANÇAS E DA ADMINISTRAÇÃO PÚBLICA - Diário da República",
-      "data": "2023-07-17"
     }
   ],
   "accao": "Há novas: abrir a issue, confirmar cada portaria no DR, ler o art. 2.º e atualizar data/fiscal/isp.json (vigencia, fonte, fonteUrl, ispELitro, nota) com os testes. O alarme nunca é dado.",
   "novas": [
     {
-      "numero": "448-A/2026/1",
-      "data": "2026-10-02",
-      "titulo": "Portaria n.º 448-A/2026/1, de 2 de outubro - Diário da República",
-      "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTFB0akUzZ0JxT2I4QTlEWEp5RDR5dWxmaTdiajI1RmN1MlBhN2lJa0xGYksxZktVZGZYUk1MeTNEWml6bW5MRTZMNW51MmR3Z0FPbjVJUHN1clJfZkhadUM3cGpjRHVSQUFXSzJtWml5cXFWUjV6T1JCS1pB?oc=5"
+      "numero": "451-A/2026/1",
+      "data": "2026-10-09",
+      "titulo": "Portaria n.º 451-A/2026/1, de 9 de outubro - Diário da República",
+      "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1PajZIZUpmNmt0aUVFbmNrNlFrYUh3MWx1WGdaTW5ZMTZTNXNCaER2azFReXJIU2Q4WnFSek5EdGUzckgyOUp6THJPMTMxX1dLZVB2dUd4aFc2YW14UEJJeXNXcHBScC1pQmZKNm10aS1SanRCakR4aFVB?oc=5"
     }
   ],
-  "idadeDias": 6,
+  "idadeDias": 4,
   "alarmeIdade": false,
   "alarme": true,
   "motivo": "feed",
