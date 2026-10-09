@@ -32,6 +32,7 @@ import { EVT_PERSONAGEM, type EscolhaPersonagem } from "./personagem";
 import { drenarEscolhas, janela } from "./ponte-cartas";
 import { Camera, arrumarPinos, type Enquadramentos, type MarcadorVivo, type PinoPlanta } from "./camara";
 import { ligarAmbiente } from "./ambiente";
+import { comecaLeve, medirFotogramas, podeMedir } from "./leve";
 import { mundoBairro, reflexos, type RotulosCamada } from "@/lib/bairro/mundo";
 import { montarMapa, type MarcadoresBairro } from "@/lib/bairro/planta";
 import { CENAS } from "./cenas/registry";
@@ -280,11 +281,22 @@ export function Bairro({
     // Até chegar a primeira amostra do observer, mantém tudo parado.
     janelaEl.classList.add("amb-off");
 
+    // Modo leve (leve.ts): aparelho fraco à partida, ou lento a meio.
+    let leve = comecaLeve();
+    let pararMedicao: (() => void) | undefined;
+    const ficarLeve = () => {
+      leve = true;
+      janelaEl.classList.add("b-leve");
+    };
+    if (leve) ficarLeve();
+
     // Observa a janela do mapa, não o wrapper que também contém o título:
     // caso contrário a animação continuava ligada durante o scroll para as
     // cartas, mesmo com o mapa completamente fora do ecrã.
     const pausar = () => {
       janelaEl.classList.add("amb-off");
+      pararMedicao?.();
+      pararMedicao = undefined;
       geracao++;
       limpar?.();
       limpar = undefined;
@@ -297,12 +309,28 @@ export function Bairro({
       carregando = true;
       const minhaGeracao = geracao;
       try {
-        const f = await ligarAmbiente(mundo, { coordenadas, pontos, gaivotas });
+        const f = await ligarAmbiente(mundo, {
+          coordenadas,
+          pontos,
+          gaivotas,
+          semMovimento: leve,
+        });
         if (!vivo || minhaGeracao !== geracao || !intersecta || !visivel) {
           f();
           return;
         }
         limpar = f;
+        // os primeiros segundos de animação dizem se o aparelho aguenta:
+        // se não, o bairro fica parado (como em reduced-motion) e leve
+        if (!leve && podeMedir()) {
+          pararMedicao = medirFotogramas(() => {
+            if (!vivo || minhaGeracao !== geracao) return;
+            ficarLeve();
+            pausar();
+            janelaEl.classList.remove("amb-off");
+            void ligar();
+          });
+        }
       } catch {
         // sem rede ou sem GSAP, o mapa estático continua completo
       } finally {

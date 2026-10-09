@@ -1034,6 +1034,15 @@
   }
 }
 
+/* O MODO LEVE (leve.ts): em aparelhos fracos o bairro fica parado como
+   em reduced-motion — o desenho todo, sem a gente, os barcos e as nuvens
+   a mexer. As transições curtas (hover, luzes) ficam. */
+[data-pele="v5"] .b-leve .b-mundo *,
+[data-pele="v5"] .b-leve .b-mundo *::before,
+[data-pele="v5"] .b-leve .b-mundo *::after {
+  animation: none !important;
+}
+
 /* O PAUSA AMBIENTE: `PausaAmbiente` põe `.amb-off` no embrulho quando o
    mapa sai do ecrã ou o separador fica escondido. O mapa pára de
    anunciar fotogramas que ninguém vê. */
