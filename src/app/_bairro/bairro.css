@@ -275,6 +275,20 @@
 [data-pele="v5"] .b-noite .luz {
   opacity: 1;
 }
+/* a ponte acende-se à noite: candeeiros nos tabuleiros e o fio do arco
+   (iso.ts, `ponteLuisI`); metade dos candeeiros já no fim de tarde */
+[data-pele="v5"] .ponte-luz {
+  transition: opacity 1.2s;
+}
+[data-pele="v5"] .b-noite .ponte-luz {
+  opacity: 1;
+}
+[data-pele="v5"] .b-noite .ponte-arco {
+  opacity: 0.9;
+}
+[data-pele="v5"] .b-fim-tarde .ponte-luz.b-cedo {
+  opacity: 0.6;
+}
 /* as janelas que se acendem à noite; as «cedo» acendem antes das outras */
 [data-pele="v5"] .b-acesa {
   fill: #ffd86b;
