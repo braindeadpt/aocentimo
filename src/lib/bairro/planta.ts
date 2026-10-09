@@ -213,7 +213,7 @@ export interface MapaBairro {
   frente: string;
   vida: string;
   agua: string;
-  ponte: { tras: string; frente: string };
+  ponte: { tras: string; frente: string; luzes: string };
   gaia: string;
   /**
    * A fila da Ribeira, SEM o embrulho `<g id="gRibeira">`. O reflexo no

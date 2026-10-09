@@ -135,7 +135,7 @@ export function padroes(): string {
   <mask id="b-mascOndas"><rect x="-3000" y="-3000" width="8000" height="8000" fill="url(#b-riscas)"/></mask>
   <linearGradient id="b-baseSombra" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16130f" stop-opacity="0"/><stop offset="1" stop-color="#16130f" stop-opacity=".22"/></linearGradient>
   <linearGradient id="b-aguaCorte" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4f9bc4"/><stop offset="1" stop-color="#1f5578"/></linearGradient>
-  <radialGradient id="b-brilho" r=".5"><stop offset="0" stop-color="#ffe9a0" stop-opacity=".85"/><stop offset="1" stop-color="#ffe9a0" stop-opacity="0"/></radialGradient>`;
+  <linearGradient id="b-ouroPonte" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ffb347"/><stop offset="1" stop-color="#ffe7a8"/></linearGradient><radialGradient id="b-brilho" r=".5"><stop offset="0" stop-color="#ffe9a0" stop-opacity=".85"/><stop offset="1" stop-color="#ffe9a0" stop-opacity="0"/></radialGradient>`;
 }
 
 /* ————————————————————————————— chão ————————————————————————————— */
@@ -260,7 +260,9 @@ export function placa2(x: number, y: number, w: number, txt: string, fundo: stri
   // menor — a razão é a segunda sobre a primeira, não o inverso.
   const RAZAO = 0.8137 / 0.8918;
   const tam = Math.min(15, ((w - 10) / (txt.length * 0.74)) * RAZAO);
-  return `<rect x="${x}" y="${y}" width="${w}" height="${f1(tam + 10)}" rx="4" fill="${fundo}" stroke="${K}" stroke-width="2.2"/><text x="${x + w / 2}" y="${f1(y + tam + 3)}" text-anchor="middle" font-family="ArchivoLargo" font-weight="900" font-size="${f1(tam)}" fill="${cor}">${txt}</text>`;
+  // `.placa`: à noite a ambiente copia-a para cima do véu (ver
+  // `calcularLuzes`) — o letreiro iluminado lê-se como de dia
+  return `<g class="placa"><rect x="${x}" y="${y}" width="${w}" height="${f1(tam + 10)}" rx="4" fill="${fundo}" stroke="${K}" stroke-width="2.2"/><text x="${x + w / 2}" y="${f1(y + tam + 3)}" text-anchor="middle" font-family="ArchivoLargo" font-weight="900" font-size="${f1(tam)}" fill="${cor}">${txt}</text></g>`;
 }
 
 export function toldo2(x: number, y: number, w: number, c1: string, c2 = "#fff"): string {
@@ -725,7 +727,7 @@ export interface OpcoesPonte {
  * Devolve duas camadas — `tras` (a treliça de trás) e `frente` (a da
  * frente) — porque a câmara as mexe a velocidades diferentes.
  */
-export function ponteLuisI(o: OpcoesPonte): { tras: string; frente: string } {
+export function ponteLuisI(o: OpcoesPonte): { tras: string; frente: string; luzes: string } {
   const { iA, iB, jPorto, jGaia, jA1, jA2, zCima } = o;
   const AG = -22;
   const VIGA = 16;
@@ -785,6 +787,15 @@ export function ponteLuisI(o: OpcoesPonte): { tras: string; frente: string } {
     return s;
   };
 
+  const Z_POSTE = 32;
+  const postes = (ii: number): string => {
+    let p = "";
+    for (let j = jPorto + 0.5; j < jGaia - 0.2; j += 1.3) {
+      p += linha(ii, [j, zCima], [j, zCima + Z_POSTE], ii === iB ? 1.8 : 1.4, acoEsc);
+      p += `<circle cx="${f1(P(ii, j, zCima + Z_POSTE)[0])}" cy="${f1(P(ii, j, zCima + Z_POSTE)[1])}" r="${ii === iB ? 2.4 : 2}" fill="${acoEsc}" stroke="${K}" stroke-width=".8"/>`;
+    }
+    return p;
+  };
   let s = plano(iA, false);
   for (let j = jPorto + 0.5; j < jGaia - 0.2; j += 1.3) {
     s += linha(iA, [j, zCima], [j, zCima + 30], 2, acoEsc) + `<path d="M${lista([P(iA, j, zCima + 27)])} L${lista([P(iA + (iB - iA) * 0.75, j, zCima + 27)])}" stroke="${acoEsc}" stroke-width="1.6"/>`;
@@ -802,6 +813,7 @@ export function ponteLuisI(o: OpcoesPonte): { tras: string; frente: string } {
     const ii = iA + (iB - iA) * f;
     s += `<path d="M${lista([P(ii, jPorto, zCima)])} L${lista([P(ii, jGaia, zCima)])}" stroke="#4a4744" stroke-width="1.6"/>`;
   }
+  s += postes(iA);
   const tras = s;
   s = "";
   s += plano(iB, true);
@@ -822,29 +834,47 @@ export function ponteLuisI(o: OpcoesPonte): { tras: string; frente: string } {
     });
   s += encontro(jA1 - 0.42) + encontro(jA2 - 0.18);
 
-  // AS LUZES DA PONTE (pedido do dono, 2026-10-09): candeeiros nos dois
-  // tabuleiros e um fio quente ao longo do arco. Nascem apagados
-  // (opacity 0) e o CSS acende-os com `.b-noite` — metade já no fim de
-  // tarde. Ficam no `#ponteF`, por isso o reflexo no Douro (`<use>` da
-  // ponte) acende-se sozinho.
-  const lampada = (i: number, j: number, z: number, r: number, cedo: boolean): string => {
-    const [x, y] = P(i, j, z);
-    return `<g class="ponte-luz${cedo ? " b-cedo" : ""}" opacity="0"><circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r * 5)}" fill="url(#b-brilho)"/><circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r)}" fill="#ffe9a0"/></g>`;
-  };
-  let luzes = "";
+  // AS LUZES DA PONTE (pedido do dono, 2026-10-09; refeitas no mesmo dia —
+  // «fracas e pouco realistas, o metro passa por elas»). À noite a Luís I
+  // real não tem bolinhas: o ferro do arco é iluminado por projectores e
+  // fica dourado, e o tabuleiro de cima tem candeeiros altos dos dois
+  // lados, acima do tejadilho do metro.
+  //   · os POSTES são estrutura: os do lado de trás (iA) vão no `#ponteT`
+  //     (o metro passa à frente deles), os da frente (iB) no `#ponteF`.
+  //   · o que BRILHA (arco dourado e as cabeças dos candeeiros) vai no
+  //     `luzes`, que o mundo pinta POR CIMA do véu da noite — debaixo dele
+  //     o multiply azul apagava-as. As cabeças ficam a zCima+32, acima do
+  //     tejadilho do metro (26), por isso ele passa por baixo delas.
+  let brilho = "";
+  // o arco: o ferro iluminado de baixo — um banho dourado entre as duas
+  // cordas e o traço de cima a acender, nos dois planos (o de trás mais fraco)
+  for (const [ii, forca] of [[iA, 0.4], [iB, 0.65]] as const) {
+    const cima = T.map((t) => P(ii, jArco(t), arcoTopo(t)));
+    const baixo = T.slice().reverse().map((t) => P(ii, jArco(t), arcoBase(t)));
+    brilho += `<g class="ponte-luz ponte-arco" opacity="0"><polygon points="${lista(cima)} ${lista(baixo)}" fill="url(#b-ouroPonte)" fill-opacity="${forca}"/><path d="M${lista(cima)}" fill="none" stroke="#ffcf6b" stroke-opacity="${forca * 0.35}" stroke-width="9" stroke-linecap="round"/><path d="M${lista(cima)}" fill="none" stroke="#ffe3a1" stroke-opacity="${forca}" stroke-width="2" stroke-linecap="round"/></g>`;
+  }
+  // os candeeiros do tabuleiro de cima: cabeça quente + halo pequeno
   let n = 0;
-  for (let j = jPorto + 0.35; j < jGaia - 0.1; j += 0.9) {
-    for (const ii of [iA, iB]) luzes += lampada(ii, j, zCima + 9, ii === iB ? 3.4 : 2.6, n % 2 === 0);
+  for (let j = jPorto + 0.5; j < jGaia - 0.2; j += 1.3) {
+    for (const ii of [iA, iB]) {
+      const [x, y] = P(ii, j, zCima + Z_POSTE);
+      const r = ii === iB ? 2.2 : 1.7;
+      brilho += `<g class="ponte-luz${n % 2 ? "" : " b-cedo"}" opacity="0"><circle cx="${f1(x)}" cy="${f1(y + 1)}" r="${f1(r * 4)}" fill="url(#b-brilho)"/><circle cx="${f1(x)}" cy="${f1(y + 1)}" r="${f1(r)}" fill="#fff4cc"/></g>`;
+    }
     n++;
   }
-  for (let j = jB1 + 0.25; j < jB2 - 0.1; j += 0.7) {
-    luzes += lampada(iB, j, zBaixo + 13, 3, n % 2 === 0);
+  // o tabuleiro de baixo: candeeiros baixos no guarda-corpo da frente
+  for (let j = jB1 + 0.3; j < jB2 - 0.1; j += 0.8) {
+    const [x, y] = P(iB, j, zBaixo + 12);
+    brilho += `<g class="ponte-luz${n % 2 ? "" : " b-cedo"}" opacity="0"><circle cx="${f1(x)}" cy="${f1(y)}" r="7" fill="url(#b-brilho)"/><circle cx="${f1(x)}" cy="${f1(y)}" r="1.8" fill="#fff4cc"/></g>`;
     n++;
   }
-  const arco = T.map((t) => P(iB, jArco(t), arcoTopo(t) + 1));
-  luzes += `<g class="ponte-luz ponte-arco" opacity="0"><path d="M${lista(arco)}" fill="none" stroke="#ffd86b" stroke-opacity=".3" stroke-width="10" stroke-linecap="round"/><path d="M${lista(arco)}" fill="none" stroke="#ffe9a0" stroke-width="3" stroke-linecap="round"/></g>`;
-  s += `<g class="ponte-luzes" aria-hidden="true">${luzes}</g>`;
-  return { tras: `<g class="ponte" id="ponteT">${tras}</g>`, frente: `<g class="ponte" id="ponteF">${s}</g>` };
+  s += postes(iB);
+  return {
+    tras: `<g class="ponte" id="ponteT">${tras}</g>`,
+    frente: `<g class="ponte" id="ponteF">${s}</g>`,
+    luzes: `<g class="ponte-luzes" id="ponteL" aria-hidden="true">${brilho}</g>`,
+  };
 }
 
 /** O metro do Porto (Eurotram), desenhado ao longo de j, em j = 0. */

@@ -287,6 +287,7 @@ export function reflexos(m: MapaBairro): string {
     `<g id="b-refRibeira" transform="matrix(1 1 0 -1 0 ${f1(F1)})">${semAcoes(m.ribeira)}</g>` +
     `<use href="#ponteT" transform="matrix(1 -1 0 -1 0 ${f1(F2)})"/>` +
     `<use href="#ponteF" transform="matrix(1 -1 0 -1 0 ${f1(F2)})"/>` +
+    `<use href="#ponteL" transform="matrix(1 -1 0 -1 0 ${f1(F2)})"/>` +
     `</g></g>`
   );
 }
@@ -338,6 +339,8 @@ const luz = (x: number, y: number): string =>
 function topo(m: MapaBairro): string {
   return (
     `<g id="b-gEstrelas">${estrelas()}${LUA}</g>` +
+    // as luzes da ponte por cima do véu da noite (o multiply apagava-as)
+    `<g id="b-gLuzesPonte">${m.ponte.luzes}</g>` +
     `<g id="b-gLuzes">${m.luzes.map(([x, y]) => luz(x, y)).join("")}</g>` +
     `<g id="b-gPinos">${marcadoresSvg(m.pinos)}</g>` +
     `<g id="b-gEtiq"></g>`

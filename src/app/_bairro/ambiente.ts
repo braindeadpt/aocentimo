@@ -159,7 +159,26 @@ export function calcularLuzes(mundo: Element): Limpeza {
   grupos.forEach((pol, id) => {
     html += `<g class="b-luzes-ed" data-ed="${id}">${pol}</g>`;
   });
-  mundo.querySelector("#b-gLuzes")?.insertAdjacentHTML("afterbegin", html);
+
+  // OS LETREIROS À NOITE (relato do dono, 2026-10-09: «a cor das letras
+  // do nome dos edifícios está tão clara, quase sem se ver»). O véu da
+  // noite multiplica tudo por azul escuro e os halos dos candeeiros, por
+  // cima, lavam o que sobra: as placas ficavam cinzentas. Cada `.placa`
+  // é copiada, com a mesma matriz, para cima do véu e dos halos — um
+  // letreiro iluminado, que o CSS só mostra à noite e ao fim da tarde.
+  let placas = "";
+  mundo.querySelectorAll<SVGGElement>(".ed .placa").forEach((p) => {
+    const matriz = p.getScreenCTM();
+    if (!matriz) return;
+    const m = inv.multiply(matriz);
+    const id = p.closest(".ed")?.getAttribute("data-id") ?? "";
+    const n = (v: number) => +v.toFixed(4);
+    placas += `<g class="b-luzes-ed b-placas" data-ed="${id}"><g class="b-placa-noite" transform="matrix(${n(m.a)} ${n(m.b)} ${n(m.c)} ${n(m.d)} ${n(m.e)} ${n(m.f)})">${p.innerHTML}</g></g>`;
+  });
+
+  const gLuzes = mundo.querySelector("#b-gLuzes");
+  gLuzes?.insertAdjacentHTML("afterbegin", html);
+  gLuzes?.insertAdjacentHTML("beforeend", placas);
   const criadas = [...mundo.querySelectorAll<SVGGElement>("#b-gLuzes > .b-luzes-ed")];
   const desligar: Limpeza[] = [];
 
@@ -167,12 +186,14 @@ export function calcularLuzes(mundo: Element): Limpeza {
   // aberto — o CSS faz a transição, aqui só se decide a classe
   mundo.querySelectorAll<SVGGElement>(".ed").forEach((g) => {
     const id = g.getAttribute("data-id");
-    const l = id
-      ? mundo.querySelector(`.b-luzes-ed[data-ed="${CSS.escape(id)}"]`)
-      : null;
-    if (!l) return;
+    // as janelas acesas e o letreiro sobem juntos com o edifício
+    const ls = id
+      ? [...mundo.querySelectorAll(`.b-luzes-ed[data-ed="${CSS.escape(id)}"]`)]
+      : [];
+    if (!ls.length) return;
     const sync = (): void => {
-      l.classList.toggle("b-sobe", g.matches(":hover, :focus-visible, .b-ativo"));
+      const sobe = g.matches(":hover, :focus-visible, .b-ativo");
+      ls.forEach((l) => l.classList.toggle("b-sobe", sobe));
     };
     // no próximo quadro, não já: o `:hover` chega ao DOM antes de o
     // browser ter pintado, e subir a luz um quadro antes vê-se a saltar
@@ -187,7 +208,7 @@ export function calcularLuzes(mundo: Element): Limpeza {
     mo.observe(g, { attributes: true, attributeFilter: ["class"] });
     desligar.push(() => {
       cancelAnimationFrame(frame);
-      l.classList.remove("b-sobe");
+      ls.forEach((l) => l.classList.remove("b-sobe"));
       for (const ev of ["pointerenter", "pointerleave", "focus", "blur"])
         g.removeEventListener(ev, aoMudar);
       mo.disconnect();
