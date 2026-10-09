@@ -260,7 +260,9 @@ export function placa2(x: number, y: number, w: number, txt: string, fundo: stri
   // menor — a razão é a segunda sobre a primeira, não o inverso.
   const RAZAO = 0.8137 / 0.8918;
   const tam = Math.min(15, ((w - 10) / (txt.length * 0.74)) * RAZAO);
-  return `<rect x="${x}" y="${y}" width="${w}" height="${f1(tam + 10)}" rx="4" fill="${fundo}" stroke="${K}" stroke-width="2.2"/><text x="${x + w / 2}" y="${f1(y + tam + 3)}" text-anchor="middle" font-family="ArchivoLargo" font-weight="900" font-size="${f1(tam)}" fill="${cor}">${txt}</text>`;
+  // `.placa`: à noite a ambiente copia-a para cima do véu (ver
+  // `calcularLuzes`) — o letreiro iluminado lê-se como de dia
+  return `<g class="placa"><rect x="${x}" y="${y}" width="${w}" height="${f1(tam + 10)}" rx="4" fill="${fundo}" stroke="${K}" stroke-width="2.2"/><text x="${x + w / 2}" y="${f1(y + tam + 3)}" text-anchor="middle" font-family="ArchivoLargo" font-weight="900" font-size="${f1(tam)}" fill="${cor}">${txt}</text></g>`;
 }
 
 export function toldo2(x: number, y: number, w: number, c1: string, c2 = "#fff"): string {
@@ -846,7 +848,7 @@ export function ponteLuisI(o: OpcoesPonte): { tras: string; frente: string; luze
   let brilho = "";
   // o arco: o ferro iluminado de baixo — um banho dourado entre as duas
   // cordas e o traço de cima a acender, nos dois planos (o de trás mais fraco)
-  for (const [ii, forca] of [[iA, 0.5], [iB, 0.8]] as const) {
+  for (const [ii, forca] of [[iA, 0.4], [iB, 0.65]] as const) {
     const cima = T.map((t) => P(ii, jArco(t), arcoTopo(t)));
     const baixo = T.slice().reverse().map((t) => P(ii, jArco(t), arcoBase(t)));
     brilho += `<g class="ponte-luz ponte-arco" opacity="0"><polygon points="${lista(cima)} ${lista(baixo)}" fill="url(#b-ouroPonte)" fill-opacity="${forca}"/><path d="M${lista(cima)}" fill="none" stroke="#ffcf6b" stroke-opacity="${forca * 0.35}" stroke-width="9" stroke-linecap="round"/><path d="M${lista(cima)}" fill="none" stroke="#ffe3a1" stroke-opacity="${forca}" stroke-width="2" stroke-linecap="round"/></g>`;

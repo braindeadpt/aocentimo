@@ -305,6 +305,20 @@
 [data-pele="v5"] .b-fim-tarde .b-acesa.b-cedo {
   opacity: 0.7;
 }
+/* os letreiros iluminados (ambiente.ts, `calcularLuzes`): cópias das
+   placas por cima do véu da noite e dos halos — sem elas, à noite as
+   letras ficavam cinzentas, quase sem se ver */
+[data-pele="v5"] .b-placa-noite {
+  opacity: 0;
+  transition: opacity 1.2s;
+  pointer-events: none;
+}
+[data-pele="v5"] .b-noite .b-placa-noite {
+  opacity: 1;
+}
+[data-pele="v5"] .b-fim-tarde .b-placa-noite {
+  opacity: 0.6;
+}
 /* as luzes do Candeeiro sobem com o edifício quando ele é focável */
 [data-pele="v5"] .b-luzes-ed {
   transition: transform 0.25s cubic-bezier(0.3, 1.6, 0.5, 1);
