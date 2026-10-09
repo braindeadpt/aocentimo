@@ -829,20 +829,20 @@ export function ponteLuisI(o: OpcoesPonte): { tras: string; frente: string } {
   // ponte) acende-se sozinho.
   const lampada = (i: number, j: number, z: number, r: number, cedo: boolean): string => {
     const [x, y] = P(i, j, z);
-    return `<g class="ponte-luz${cedo ? " b-cedo" : ""}" opacity="0"><circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r * 3.2)}" fill="url(#b-brilho)"/><circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r)}" fill="#ffe9a0"/></g>`;
+    return `<g class="ponte-luz${cedo ? " b-cedo" : ""}" opacity="0"><circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r * 5)}" fill="url(#b-brilho)"/><circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r)}" fill="#ffe9a0"/></g>`;
   };
   let luzes = "";
   let n = 0;
   for (let j = jPorto + 0.35; j < jGaia - 0.1; j += 0.9) {
-    for (const ii of [iA, iB]) luzes += lampada(ii, j, zCima + 9, ii === iB ? 2.4 : 1.8, n % 2 === 0);
+    for (const ii of [iA, iB]) luzes += lampada(ii, j, zCima + 9, ii === iB ? 3.4 : 2.6, n % 2 === 0);
     n++;
   }
   for (let j = jB1 + 0.25; j < jB2 - 0.1; j += 0.7) {
-    luzes += lampada(iB, j, zBaixo + 13, 2, n % 2 === 0);
+    luzes += lampada(iB, j, zBaixo + 13, 3, n % 2 === 0);
     n++;
   }
   const arco = T.map((t) => P(iB, jArco(t), arcoTopo(t) + 1));
-  luzes += `<path class="ponte-luz ponte-arco" opacity="0" d="M${lista(arco)}" fill="none" stroke="#ffd86b" stroke-width="2.2" stroke-linecap="round"/>`;
+  luzes += `<g class="ponte-luz ponte-arco" opacity="0"><path d="M${lista(arco)}" fill="none" stroke="#ffd86b" stroke-opacity=".3" stroke-width="10" stroke-linecap="round"/><path d="M${lista(arco)}" fill="none" stroke="#ffe9a0" stroke-width="3" stroke-linecap="round"/></g>`;
   s += `<g class="ponte-luzes" aria-hidden="true">${luzes}</g>`;
   return { tras: `<g class="ponte" id="ponteT">${tras}</g>`, frente: `<g class="ponte" id="ponteF">${s}</g>` };
 }
