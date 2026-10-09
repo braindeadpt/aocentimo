@@ -406,12 +406,12 @@
   cursor: pointer;
   outline: none;
 }
-[data-pele="v5"] .ed > * {
+[data-pele="v5"] .ed > .ed-corpo {
   transition: transform 0.25s cubic-bezier(0.3, 1.6, 0.5, 1);
 }
-[data-pele="v5"] .ed:hover > *,
-[data-pele="v5"] .ed:focus-visible > *,
-[data-pele="v5"] .ed.b-ativo > * {
+[data-pele="v5"] .ed:hover > .ed-corpo,
+[data-pele="v5"] .ed:focus-visible > .ed-corpo,
+[data-pele="v5"] .ed.b-ativo > .ed-corpo {
   transform: translateY(-7px);
 }
 /* No telemóvel, o marcador que não cabe inteiro esbate-se e volta quando

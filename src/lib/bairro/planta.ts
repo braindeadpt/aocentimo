@@ -235,9 +235,18 @@ export interface MapaBairro {
   luzes: Ponto[];
 }
 
-/** Um edifício focável: o `data-id` é o que liga o mapa à cena e ao e2e. */
+/**
+ * Um edifício focável: o `data-id` é o que liga o mapa à cena e ao e2e.
+ *
+ * O desenho vai num `<g class="ed-corpo">` e é SÓ esse que o hover levanta.
+ * Antes o CSS levantava os filhos directos (`.ed > *`), e um `transform`
+ * de CSS substitui o atributo `transform="translate(…)"` do SVG: a
+ * bandeira e as figuras da Segurança Social, a bandeira das Finanças e a
+ * árvore do Quiosque saltavam para o canto do mundo ao passar o rato
+ * (relato do dono, 2026-10-09).
+ */
 export function edificioIso(id: string, rotulo: string, svg: string): string {
-  return `<g class="ed" data-id="${id}" tabindex="0" role="button" aria-label="${rotulo}">${svg}</g>`;
+  return `<g class="ed" data-id="${id}" tabindex="0" role="button" aria-label="${rotulo}"><g class="ed-corpo">${svg}</g></g>`;
 }
 
 /** Um ponto no chão, na fachada (parede esquerda) de uma caixa, a `u` px do canto. */
