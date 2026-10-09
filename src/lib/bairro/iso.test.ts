@@ -256,15 +256,15 @@ describe("as peças do Porto", () => {
     expect(tras).not.toBe(frente);
   });
 
-  it("a ponte traz candeeiros e o fio do arco, apagados de dia (o CSS acende-os à noite)", () => {
-    const { tras, frente } = ponteLuisI({ iA: 1, iB: 2, jPorto: 3, jGaia: 18, jA1: 5, jA2: 16, zCima: 40, pilares: [] });
-    const luzes = frente.match(/class="ponte-luz[^"]*"/g) ?? [];
-    expect(luzes.length).toBeGreaterThan(20);
-    expect(frente).toContain('class="ponte-luz ponte-arco" opacity="0"');
-    expect(frente).toMatch(/class="ponte-luz b-cedo" opacity="0"/);
-    // nada aceso de origem, e nada na camada de trás (o reflexo usa as duas)
-    expect(frente).not.toMatch(/class="ponte-luz[^"]*" opacity="(?!0")/);
-    expect(tras).not.toContain("ponte-luz");
+  it("a ponte traz o arco dourado e os candeeiros, apagados de dia, numa camada à parte", () => {
+    const { tras, frente, luzes } = ponteLuisI({ iA: 1, iB: 2, jPorto: 3, jGaia: 18, jA1: 5, jA2: 16, zCima: 40, pilares: [] });
+    expect(luzes).toContain('id="ponteL"');
+    expect((luzes.match(/class="ponte-luz ponte-arco"/g) ?? []).length).toBe(2);
+    expect((luzes.match(/class="ponte-luz( b-cedo)?"/g) ?? []).length).toBeGreaterThan(20);
+    // nada aceso de origem; o CSS acende com .b-noite
+    expect(luzes).not.toMatch(/class="ponte-luz[^"]*" opacity="(?!0")/);
+    // o brilho não vive nas camadas da estrutura (essas ficam debaixo do véu)
+    expect(tras + frente).not.toContain("ponte-luz");
   });
 
   it("bandeiraFCP não traz o emblema do clube — só as riscas e «FCP»", () => {
