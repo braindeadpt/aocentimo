@@ -216,6 +216,8 @@ export async function ligarAmbiente(
     pontos: readonly Ponto[];
     /** As três gaivotas: centro, raio em x e em y, e o período. */
     gaivotas: readonly (readonly [Ponto, number, number, number])[];
+    /** Modo leve (`leve.ts`): só as janelas acesas, sem GSAP nem trajectórias. */
+    semMovimento?: boolean;
   }
 ): Promise<Limpeza> {
   const feito: Limpeza[] = [];
@@ -271,7 +273,7 @@ export async function ligarAmbiente(
   let carregarGsap: typeof import("@/lib/motion/gsap")["carregarGsap"];
   try {
     ({ motionActiva, carregarGsap } = await import("@/lib/motion/gsap"));
-    if (!motionActiva()) return limparTudo;
+    if (!motionActiva() || opcoes.semMovimento) return limparTudo;
   } catch (erro) {
     limparTudo();
     throw erro;
