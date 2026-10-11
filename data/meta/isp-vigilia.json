@@ -1,5 +1,5 @@
 {
-  "consultadoEm": "2026-10-09T21:08:24.898Z",
+  "consultadoEm": "2026-10-11T14:50:05.848Z",
   "fonteUrl": "https://news.google.com/rss/search?q=ISP+site%3Adiariodarepublica.pt&hl=pt-PT&gl=PT&ceid=PT%3Apt",
   "nota": "Feed RSS do Google Notícias restrito ao DR; o DR não é legível por máquina (só shell JS).",
   "ultimaPortariaFeed": {
@@ -33,6 +33,10 @@
     {
       "titulo": "Altera a taxa do imposto sobre os produtos petrolíferos e energéticos (ISP) aplicável ao gasóleo de aquecimento - Diário da República",
       "data": "2023-06-13"
+    },
+    {
+      "titulo": "Fixa o valor das taxas unitárias do imposto sobre os produtos petrolíferos e energéticos (ISP) - Diário da República",
+      "data": "2023-06-08"
     },
     {
       "titulo": "Portaria n.º 1038/97, de 3 de outubro - Diário da República",
@@ -83,6 +87,10 @@
       "data": "2023-06-04"
     },
     {
+      "titulo": "Atualiza o valor das taxas unitárias do imposto sobre os produtos petrolíferos e energéticos - Diário da República",
+      "data": "2023-06-13"
+    },
+    {
       "titulo": "Decreto-Lei n.º 123/94, de 18 de maio - Diário da República",
       "data": "2023-06-14"
     },
@@ -101,10 +109,6 @@
     {
       "titulo": "Lei n.º 10-A/2022, de 28 de abril - Diário da República",
       "data": "2023-06-05"
-    },
-    {
-      "titulo": "Decreto-Lei n.º 302/82, de 30 de julho - Diário da República",
-      "data": "2023-06-06"
     },
     {
       "titulo": "Decreto-Lei n.º 124/94, de 18 de maio - Diário da República",
@@ -127,16 +131,20 @@
       "data": "2023-12-17"
     },
     {
-      "titulo": "Altera a designação do Instituto de Seguros de Portugal para Autoridade de Supervisão de Seguros e Fundos de Pensões e aprova os estatutos desta entidade - Diário da República",
-      "data": "2023-06-05"
-    },
-    {
       "titulo": "Código dos Impostos Especiais de Consumo - CIEC - Diário da República",
       "data": "2023-06-03"
     },
     {
+      "titulo": "Altera a designação do Instituto de Seguros de Portugal para Autoridade de Supervisão de Seguros e Fundos de Pensões e aprova os estatutos desta entidade - Diário da República",
+      "data": "2023-06-05"
+    },
+    {
       "titulo": "Decreto-Lei n.º 80-A/2026, de 31 de março - Diário da República",
       "data": "2026-03-31"
+    },
+    {
+      "titulo": "Untitled - Diário da República",
+      "data": "2026-10-01"
     },
     {
       "titulo": "Diário da República n.º 242/1992, Série II de 1992-10-20 | DR - Diário da República",
@@ -148,15 +156,15 @@
     },
     {
       "titulo": "2. SUPLEMENTO - Diário da República",
-      "data": "1999-03-31"
-    },
-    {
-      "titulo": "2. SUPLEMENTO - Diário da República",
       "data": "1999-03-17"
     },
     {
       "titulo": "Decreto-Lei n.º 71/2008, de 15 de abril - Diário da República",
       "data": "2023-06-06"
+    },
+    {
+      "titulo": "Diário da República n.º 189/1992, Série II de 1992-08-18 - Diário da República",
+      "data": "2023-08-22"
     },
     {
       "titulo": "PARTE E - Diário da República",
@@ -203,20 +211,8 @@
       "data": "2024-01-19"
     },
     {
-      "titulo": "SUPLEMENTO - Diário da República",
-      "data": "1999-03-17"
-    },
-    {
-      "titulo": "Despacho n.º 6058/2011, de 7 de abril - Diário da República",
-      "data": "2023-07-05"
-    },
-    {
-      "titulo": "Decreto-Lei n.º 43-A/2022, de 6 de julho - Diário da República",
-      "data": "2022-07-06"
-    },
-    {
-      "titulo": "Despacho n.º 9974/2021, de 14 de outubro - Diário da República",
-      "data": "2023-06-06"
+      "titulo": "Decreto-Lei n.º 66/2006, de 22 de março - Diário da República",
+      "data": "2006-03-22"
     }
   ],
   "accao": "Há novas: abrir a issue, confirmar cada portaria no DR, ler o art. 2.º e atualizar data/fiscal/isp.json (vigencia, fonte, fonteUrl, ispELitro, nota) com os testes. O alarme nunca é dado.",
@@ -228,7 +224,7 @@
       "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1PajZIZUpmNmt0aUVFbmNrNlFrYUh3MWx1WGdaTW5ZMTZTNXNCaER2azFReXJIU2Q4WnFSek5EdGUzckgyOUp6THJPMTMxX1dLZVB2dUd4aFc2YW14UEJJeXNXcHBScC1pQmZKNm10aS1SanRCakR4aFVB?oc=5"
     }
   ],
-  "idadeDias": 4,
+  "idadeDias": 6,
   "alarmeIdade": false,
   "alarme": true,
   "motivo": "feed",
