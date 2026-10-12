@@ -597,19 +597,34 @@ export function nuvem(x: number, y: number, e = 1): string {
  * os marcadores sem se sobreporem (e para saber quanto mede a fila toda
  * ao enquadrar): um número em dois sítios é um número que um dia diverge.
  */
-export function larguraPin(rotulo: string, valor: string): number {
-  return Math.max(valor.length * 11.5 + 26, rotulo.length * 6.6 + 26);
+export function larguraPin(rotulo: string, valor: string, nome = ""): number {
+  return Math.max(valor.length * 11.5 + 26, rotulo.length * 6.2 + 26, nome.length * 7.6 + 26);
 }
 
-export function pin(x: number, y: number, rotulo: string, valor: string, cor = K, fundo = "#fff"): string {
-  const w = larguraPin(rotulo, valor);
+/**
+ * A altura do marcador acima da âncora (do bico ao topo da placa, com a
+ * linha do contorno), em unidades do mundo. A câmara usa-a para arrumar
+ * a cadeia e para saber se o marcador cabe na janela.
+ */
+export const ALTURA_PIN = 78;
+
+/**
+ * DECISÃO DO DONO, 2026-10-12 (ponto 3, opção A): o cabeçalho amarelo diz
+ * O SÍTIO — o mesmo nome da placa do edifício, em maiúsculas — a linha
+ * pequena diz a métrica e o valor fica grande. Antes o cabeçalho era a
+ * métrica e não se percebia a que edifício pertencia cada bolha.
+ */
+export function pin(x: number, y: number, rotulo: string, valor: string, nome = "", cor = K, fundo = "#fff"): string {
+  const w = larguraPin(rotulo, valor, nome);
+  const NOME = nome.toLocaleUpperCase("pt-PT");
   return `<g class="pin" data-x="${f1(x)}" data-y="${f1(y)}" data-w="${f1(w + 3)}" transform="translate(${f1(x)} ${f1(y)})"><path class="guia" d="M0 0 V0" stroke="${K}" stroke-width="2" stroke-dasharray="3 3"/><g class="pin-corpo">
-    <rect x="${f1(-w / 2 + 3)}" y="-58" width="${f1(w)}" height="48" rx="11" fill="${K}"/>
+    <rect x="${f1(-w / 2 + 3)}" y="-72" width="${f1(w)}" height="62" rx="11" fill="${K}"/>
     <path d="M-7 -16 L0 0 L7 -16 Z" fill="${fundo}" stroke="${K}" stroke-width="2.4" stroke-linejoin="round"/>
-    <rect x="${f1(-w / 2)}" y="-62" width="${f1(w)}" height="48" rx="11" fill="${fundo}" stroke="${K}" stroke-width="2.6"/>
-    <path d="M${f1(-w / 2)} -46 V-51 a11 11 0 0 1 11 -11 H${f1(w / 2 - 11)} a11 11 0 0 1 11 11 V-46 Z" fill="${C.amarelo}" stroke="${K}" stroke-width="2.6" stroke-linejoin="round"/>
-    <text x="0" y="-50.5" text-anchor="middle" font-family="Archivo" font-weight="800" font-size="10.5" fill="${K}">${rotulo}</text>
-    <text x="0" y="-22" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="19" fill="${cor}" font-variant-numeric="tabular-nums">${valor}</text></g></g>`;
+    <rect x="${f1(-w / 2)}" y="-76" width="${f1(w)}" height="62" rx="11" fill="${fundo}" stroke="${K}" stroke-width="2.6"/>
+    <path d="M${f1(-w / 2)} -58 V-65 a11 11 0 0 1 11 -11 H${f1(w / 2 - 11)} a11 11 0 0 1 11 11 V-58 Z" fill="${C.amarelo}" stroke="${K}" stroke-width="2.6" stroke-linejoin="round"/>
+    <text class="pin-nome" x="0" y="-63" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="10.5" letter-spacing=".06em" fill="${K}">${NOME}</text>
+    <text class="pin-metrica" x="0" y="-45.5" text-anchor="middle" font-family="Archivo" font-weight="700" font-size="9.5" fill="${K}" fill-opacity=".72">${rotulo}</text>
+    <text class="pin-valor" x="0" y="-22" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="19" fill="${cor}" font-variant-numeric="tabular-nums">${valor}</text></g></g>`;
 }
 
 /* ———————————————————————— peças do Porto ———————————————————————— */

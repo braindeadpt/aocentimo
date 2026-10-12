@@ -7,15 +7,19 @@
 //   · LCP, CLS e o bloqueio total (TBT) por observação de `longtask`;
 //   · nós no DOM, elementos SVG e animações CSS a correr;
 //   · heap de JavaScript (Chromium) no fim da carga;
-//   · a FLUIDEZ: durante 3 s de arrasto verdadeiro no mapa (o gesto que
-//     mais pinta), quantos quadros passam de 33 ms e de 50 ms — e o pior
-//     quadro. Uma quebra é um quadro de mais de 50 ms; um arrasto é o
-//     queixo a cair quando mais de 10 % deles passa dos 33 ms.
+//   · a FLUIDEZ: 3 s de arrasto verdadeiro no mapa (o gesto que mais
+//     pinta), com a mediana, o p95 e o pior quadro;
+//   · as TRÊS PEÇAS DO GESTO que fazem o arrasto deslizar (AUDITORIA-MAPA
+//     §6): durante o gesto a janela leva `b-arrasto`, o mundo leva
+//     `will-change: transform` e as animações do mundo estão PARADAS; ao
+//     largar, tudo volta atrás. É esta a invariante que o CI vigia: uma
+//     mediana depende da máquina, a pausa do gesto não.
 //
 // Não escreve nada. `PORTA` escolhe o servidor (por omissão 3100), como
 // nos outros scripts da casa.
 //
 // uso: node scripts/_fluidez.mjs [porta] [rotas separadas por vírgula]
+//      node scripts/_fluidez.mjs 3100 /        # no CI: só a home (o mapa)
 import { chromium, devices } from "@playwright/test";
 
 const PORTA = process.argv[2] ?? process.env.PORTA ?? "3100";
@@ -24,7 +28,10 @@ const rotas = process.argv[3]
   ? process.argv[3].split(",")
   : ["/", "/salario", "/inflacao", "/credito", "/dados"];
 
-const CPU = 4; // 4× mais lento — telemóvel de gama média
+// 4× mais lento — telemóvel de gama média. `CPU=1` mede SEM estrangulamento
+// (o portátil de quem está a olhar): é assim que se separa o que é o piso do
+// gesto na máquina do que é o custo em telemóvel fraco.
+const CPU = Number(process.env.CPU ?? 4);
 // A vista por omissão é a de um iPhone 12 Pro de pé; `VISTA=390x664`
 // reproduz a calibração da `AUDITORIA-MAPA-2026-10.md` (mediana 21 ms,
 // p90 38 ms depois da correcção do arrasto), para se comparar números
@@ -41,8 +48,13 @@ const VISTA = (process.env.VISTA ?? "390x844").split("x").map(Number);
 // gesto) e mediu 100 ms numa corrida e 550 ms na seguinte, com o MESMO
 // build — um gate no pior quadro falhava por causa do vizinho.
 const QUADRO_MAU = 200; // ms — 50 ms a 1×: uma travagem a sério, não o arranque do gesto
-const MEDIANA_MAU = 50; // ms — 2,4× a mediana medida depois da correcção (21 ms)
-const P95_MAU = 120; // ms — 30 ms a 1×
+// A mediana é o gate GROSSO, não o fino: no arrasto contínuo mede 17-50 ms cá,
+// e a máquina do CI não é esta — um limiar apertado falhava pelo ambiente, não
+// pelo código. Quem apanha a regressão do gesto são as invariantes (acima); a
+// mediana só apanha um arrasto 3× mais lento (ex.: uma peça nova e pesada no
+// mapa), e 150 ms é 37 ms a 1× — território de travagem, não de ruído.
+const MEDIANA_MAU = 150;
+const P95_MAU = 150; // ms — 37 ms a 1×
 
 const REGISTADOR = (ms) => `(() => {
   window.__q = [];
@@ -58,6 +70,40 @@ const REGISTADOR = (ms) => `(() => {
     requestAnimationFrame(passo);
   });
 })()`;
+
+/**
+ * As três peças do gesto (AUDITORIA-MAPA §6): `b-arrasto` na janela, o
+ * `will-change: transform` no mundo e as animações do mundo paradas — e,
+ * depois de largar, o contrário. São invariantes do CÓDIGO, não da
+ * máquina: um CI lento muda a mediana, não isto.
+ */
+const GESTO = `(() => {
+  const janela = document.querySelector(".b-janela");
+  const mundo = document.querySelector(".b-mundo");
+  if (!janela || !mundo) return null;
+  const animacoes = mundo.getAnimations({ subtree: true });
+  return {
+    arrasto: janela.classList.contains("b-arrasto"),
+    willChange: getComputedStyle(mundo).willChange,
+    animacoes: animacoes.length,
+    aCorrer: animacoes.filter((a) => a.playState === "running").length,
+  };
+})()`;
+
+/** As peças do gesto que estão partidas (vazio = o arrasto desliza). */
+function pecasPartidas(f) {
+  if (!f?.durante || !f?.depois) return ["o estado do gesto não foi lido"];
+  const partes = [];
+  if (!f.durante.arrasto) partes.push("a janela não levou `b-arrasto` durante o gesto");
+  if (!/transform/.test(f.durante.willChange))
+    partes.push(`o mundo não levou \`will-change: transform\` (viu-se «${f.durante.willChange}»)`);
+  if (f.durante.animacoes > 0 && f.durante.aCorrer > 0)
+    partes.push(`${f.durante.aCorrer} de ${f.durante.animacoes} animações do mundo a correr durante o gesto`);
+  if (f.depois.arrasto) partes.push("`b-arrasto` ficou na janela depois de largar");
+  if (f.depois.animacoes > 0 && f.depois.aCorrer === 0)
+    partes.push("as animações do mundo não voltaram a andar depois de largar");
+  return partes;
+}
 
 const CARGA = `(() => {
   const nav = performance.getEntriesByType("navigation")[0];
@@ -120,6 +166,13 @@ for (const rota of rotas) {
   await p.addInitScript(OBSERVADORES);
 
   await p.goto(BASE + rota, { waitUntil: "load", timeout: 60000 });
+  // auto-teste do gate: `QUEBRAR=pausa` desfaz a pausa do gesto de
+  // propósito — o sensor e a falha têm de a apanhar (senão não vigiam nada)
+  if (process.env.QUEBRAR === "pausa")
+    await p.addStyleTag({
+      content:
+        '[data-pele="v5"] .b-janela.b-arrasto .b-mundo * { animation-play-state: running !important; }',
+    });
   await p.waitForTimeout(1200);
   const carga = await p.evaluate(CARGA);
 
@@ -132,14 +185,27 @@ for (const rota of rotas) {
       const registador = p.evaluate(REGISTADOR(3000));
       await p.mouse.move(caixa.x + caixa.width * 0.7, caixa.y + caixa.height * 0.55);
       await p.mouse.down();
-      for (let k = 0; k < 40; k++) {
+      // O GESTO DURA OS 3 s MEDIDOS. Com 40 movimentos (~0,5 s) os outros
+      // 2,5 s eram fotogramas ociosos contados como arrasto e a mediana
+      // saía melhor do que o gesto é: media-se 17 ms de mediana a olhar
+      // para um mapa parado.
+      let durante = null;
+      const fim = Date.now() + 2900;
+      for (let k = 0; Date.now() < fim; k++) {
         await p.mouse.move(
           caixa.x + caixa.width * (0.7 - (k % 2 ? -0.09 : 0.09)),
           caixa.y + caixa.height * (0.55 + (k % 3 ? 0.02 : -0.02))
         );
+        // uma leitura a meio do gesto (não no 1.º fotograma, que é o da
+        // promoção da camada)
+        if (!durante && Date.now() > fim - 2400) durante = await p.evaluate(GESTO);
       }
       await p.mouse.up();
       const quadros = await registador;
+      // ao largar, a câmara tira `b-arrasto` e o `ambiente.ts` retoma o que
+      // tinha parado (MutationObserver): um instante para isso acontecer
+      await p.waitForTimeout(300);
+      const depois = await p.evaluate(GESTO);
       const lentos = quadros.filter((q) => q > 33).length;
       const maus = quadros.filter((q) => q > QUADRO_MAU).length;
       const ordenados = [...quadros].sort((a, b2) => a - b2);
@@ -154,6 +220,8 @@ for (const rota of rotas) {
         mediana: Math.round(ordenados[Math.floor(ordenados.length / 2)] ?? 0),
         p95: Math.round(ordenados[Math.floor(ordenados.length * 0.95)] ?? 0),
         pior: Math.round(ordenados.at(-1) ?? 0),
+        durante,
+        depois,
       };
     }
   }
@@ -163,14 +231,19 @@ for (const rota of rotas) {
     `${etiqueta} LCP ${String(carga.lcp).padStart(4)}ms · CLS ${carga.cls.toFixed(3)} · TBT ${Math.round(carga.tbt)}ms (${carga.longas} longas)` +
       ` · DOM ${carga.nos} (svg ${carga.svgs}/mundo ${carga.svgMundo}) · anim ${carga.animacoes} · heap ${carga.heapMB ?? "?"}MB` +
       (fluidez
-        ? ` · arrasto ${fluidez.fps}fps, mediana ${fluidez.mediana}ms p95 ${fluidez.p95}ms pior ${fluidez.pior}ms, ${fluidez.maus} > ${QUADRO_MAU}ms, ${fluidez.lentos} > 33ms`
+        ? ` · arrasto ${fluidez.fps}fps, mediana ${fluidez.mediana}ms p95 ${fluidez.p95}ms pior ${fluidez.pior}ms, ${fluidez.maus} > ${QUADRO_MAU}ms, ${fluidez.lentos} > 33ms` +
+          ` · gesto ${pecasPartidas(fluidez).length ? "PARTIDO" : "inteiro"}` +
+          (fluidez.durante ? ` (${fluidez.durante.animacoes - fluidez.durante.aCorrer}/${fluidez.durante.animacoes} animações paradas)` : "")
         : " · sem mapa")
   );
 
   if (fluidez && fluidez.maus / fluidez.quadros > 0.3)
     falhas.push(`${rota}: ${Math.round((fluidez.maus / fluidez.quadros) * 100)}% dos quadros do arrasto acima de ${QUADRO_MAU}ms (pior ${fluidez.pior}ms)`);
+  const partes = fluidez ? pecasPartidas(fluidez) : [];
+  if (partes.length)
+    falhas.push(`${rota}: a pausa do gesto não está inteira — ${partes.join("; ")}`);
   if (fluidez && fluidez.mediana > MEDIANA_MAU)
-    falhas.push(`${rota}: mediana do arrasto ${fluidez.mediana}ms (limite ${MEDIANA_MAU}ms) — a pausa do gesto deve ter deixado de apanhar as animações`);
+    falhas.push(`${rota}: mediana do arrasto ${fluidez.mediana}ms (limite ${MEDIANA_MAU}ms)`);
   if (fluidez && fluidez.p95 > P95_MAU)
     avisos.push(`${rota}: p95 do arrasto ${fluidez.p95}ms (limite ${P95_MAU}ms)`);
   if (fluidez && fluidez.pior > 250)
@@ -195,6 +268,6 @@ console.log(`\n=== AVISOS (${avisos.length}) ===`);
 for (const a of avisos) console.log(" ~ " + a);
 if (!avisos.length) console.log("(nenhum)");
 console.log(
-  `limiares: >30% dos quadros do arrasto acima de ${QUADRO_MAU}ms · mediana do arrasto > ${MEDIANA_MAU}ms · heap > 60MB · > 12 tarefas longas · CLS > 0,1`
+  `limiares: >30% dos quadros do arrasto acima de ${QUADRO_MAU}ms · mediana do arrasto > ${MEDIANA_MAU}ms (gate grosso) · as peças do gesto (o gate fino) · heap > 60MB · > 12 tarefas longas · CLS > 0,1`
 );
 if (falhas.length) process.exitCode = 1;

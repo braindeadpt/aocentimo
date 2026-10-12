@@ -211,7 +211,7 @@ export interface MarcadoresBairro {
 }
 
 /** Um marcador: a que edifício pertence, onde, a que altura e que diz. */
-export type Pino = readonly [id: string, ponto: Ponto, altura: number, rotulo: string, valor: string];
+export type Pino = readonly [id: string, ponto: Ponto, altura: number, rotulo: string, valor: string, nome: string];
 
 /** Onde é a porta de cada edifício — a câmara foca-a ao abrir a cena. */
 export type Portas = Record<string, Ponto>;
@@ -375,7 +375,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     }
     ed.fabrica = edificioIso("fabrica", "Fábrica — para onde vai o teu salário?", svg + carga);
     portas.fabrica = naFachada(i, j, dj, 155);
-    pinos.push(["fabrica", Pt(i + wi / 2, j + dj / 2), 128 + 48, "Salário bruto", D.salario]);
+    pinos.push(["fabrica", Pt(i + wi / 2, j + dj / 2), 128 + 48, "Salário bruto", D.salario, "Fábrica"]);
   }
 
   // Segurança Social
@@ -401,7 +401,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     const t = Pt(i + wi * 0.5, j + dj * 0.5);
     ed.segsocial = edificioIso("segsocial", "Segurança Social — os descontos", svg + bandeiraPT(t[0], t[1] - h, 0.9) + fila);
     portas.segsocial = naFachada(i, j, dj, wi * LAD - 24);
-    pinos.push(["segsocial", Pt(i + wi / 2, j + dj / 2), h + 70, "TSU da empresa", D.tsu]);
+    pinos.push(["segsocial", Pt(i + wi / 2, j + dj / 2), h + 70, "TSU da empresa", D.tsu, "Segurança Social"]);
   }
 
   // Finanças
@@ -417,7 +417,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     const t = Pt(i + wi * 0.7, j + dj * 0.4);
     ed.financas = edificioIso("financas", "Finanças — os escalões do IRS", svg + bandeiraPT(t[0], t[1] - h, 0.9));
     portas.financas = naFachada(i, j, dj, (wi * LAD) / 2);
-    pinos.push(["financas", Pt(i + wi / 2, j + dj / 2), h + 56, "IRS retido / mês", D.irs]);
+    pinos.push(["financas", Pt(i + wi / 2, j + dj / 2), h + 56, "IRS retido / mês", D.irs, "Finanças"]);
   }
 
   const torre = clerigos(7.55, 0.28, 1.22, TERRENO);
@@ -438,7 +438,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     });
     ed.banco = edificioIso("banco", "Banco — crédito, juros e a Euribor", svg);
     portas.banco = naFachada(i, j, dj, (wi * LAD) / 2);
-    pinos.push(["banco", Pt(i + wi / 2, j + dj / 2), h + 128, "Euribor 12 meses", D.euribor]);
+    pinos.push(["banco", Pt(i + wi / 2, j + dj / 2), h + 128, "Euribor 12 meses", D.euribor, "Banco"]);
   }
 
   // Correios
@@ -454,7 +454,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     const mc = Pt(i + 0.45, j + dj + 0.22);
     ed.correios = edificioIso("correios", "Correios — os certificados de aforro", svg + `<g class="marco"><rect x="${f1(mc[0] - 7)}" y="${f1(mc[1] - 30)}" width="14" height="30" rx="3" fill="${C.vermelho}" stroke="${K}" stroke-width="2.2"/><ellipse cx="${f1(mc[0])}" cy="${f1(mc[1] - 30)}" rx="7" ry="3.5" fill="${C.vermelho}" stroke="${K}" stroke-width="2"/></g>`);
     portas.correios = naFachada(i, j, dj, wi * LAD - 24);
-    pinos.push(["correios", Pt(i + wi / 2, j + dj / 2), h + 50, "Cert. de Aforro", D.ca]);
+    pinos.push(["correios", Pt(i + wi / 2, j + dj / 2), h + 50, "Cert. de Aforro", D.ca, "Correios"]);
   }
 
   // Posto de combustível
@@ -512,8 +512,8 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     ed.bomba = edificioIso("bomba", "Bomba de gasolina — quanto do litro é imposto?", t);
     portas.bomba = Pt(i + 1.2, j + dj);
     // a unidade vem feita do servidor (fmtLitro): a planta nunca escreve «€/L»
-    pinos.push(["bomba", Pt(i + 1.3, j + 1.2), alt + 70, "Gasóleo · hoje", D.gasoleoUn]);
-    pinos.push(["bomba2", Pt(i + 2.2, j + 1.1), alt + 70, "Gasolina 95", D.gasolinaUn]);
+    pinos.push(["bomba", Pt(i + 1.3, j + 1.2), alt + 70, "Gasóleo · hoje", D.gasoleoUn, "Bomba"]);
+    pinos.push(["bomba2", Pt(i + 2.2, j + 1.1), alt + 70, "Gasolina 95", D.gasolinaUn, "Bomba"]);
   }
 
   /* ——— a Ribeira: casas estreitas, coladas, de cores diferentes ——— */
@@ -533,7 +533,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     ed.mercearia = edificioIso("mercearia", "Mercearia — porque está tudo mais caro?", svg + `<g class="fruta">${cx(i + 0.2, J + DJ + 0.06, 0.34, 0.22, 10, { fundo: "#c99a5b", topo: "#c99a5b", semSombra: true })}${[0, 1, 2, 3].map((k) => `<circle cx="${f1(cx2[0] - 14 + k * 8)}" cy="${f1(cx2[1] - 16 + k * 3)}" r="4.5" fill="${k % 2 ? C.amarelo : C.vermelho}" stroke="${K}" stroke-width="1.5"/>`).join("")}</g>`);
     rib.push(ed.mercearia);
     portas.mercearia = naFachada(i, J, DJ, wi * LAD - 18);
-    pinos.push(["mercearia", Pt(i + wi / 2, J + DJ / 2), h + 52, "Cabaz desde 2020", D.cabaz]);
+    pinos.push(["mercearia", Pt(i + wi / 2, J + DJ / 2), h + 52, "Cabaz desde 2020", D.cabaz, "Mercearia"]);
   }
 
   rib.push(casa(0.92, 0.56, 150, { cor: "#b9463a", pisos: 3, varandas: "todas", semente: 3, telha: "#c96a45" }));
@@ -549,7 +549,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     ed.pastelaria = edificioIso("pastelaria", "Pastelaria — o café e o pastel", svg + `<g class="cavalete"><path d="M${f1(cv[0] - 9)} ${f1(cv[1])} l3 -26 M${f1(cv[0] + 9)} ${f1(cv[1])} l-3 -26" stroke="#7a4a2a" stroke-width="3"/><rect x="${f1(cv[0] - 12)}" y="${f1(cv[1] - 30)}" width="24" height="20" rx="2" fill="#26332c" stroke="${K}" stroke-width="2"/><text x="${f1(cv[0])}" y="${f1(cv[1] - 17)}" text-anchor="middle" font-family="Caveat" font-weight="700" font-size="9" fill="#fff">café</text></g>`);
     rib.push(ed.pastelaria);
     portas.pastelaria = naFachada(i, J, DJ, wi * LAD - 16);
-    pinos.push(["pastelaria", Pt(i + wi / 2, J + DJ / 2), h + 50, "Cafés desde 2020", D.cafes]);
+    pinos.push(["pastelaria", Pt(i + wi / 2, J + DJ / 2), h + 50, "Cafés desde 2020", D.cafes, "Pastelaria"]);
   }
 
   rib.push(casa(2.46, 0.52, 152, { cor: "#f2d27a", pisos: 3, varandas: "alternadas", semente: 5, rdc: arcada }));
@@ -569,7 +569,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     ed.casa = edificioIso("casa", "Casa da Inês — quantos meses de trabalho custa uma casa?", svg);
     rib.push(ed.casa);
     portas.casa = naFachada(i, J, DJ, (wi * LAD) / 2);
-    pinos.push(["casa", Pt(i + wi / 2, J + DJ / 2), h + 50, "Chega à conta", D.liquido]);
+    pinos.push(["casa", Pt(i + wi / 2, J + DJ / 2), h + 50, "Chega à conta", D.liquido, "Casa da Inês"]);
   }
 
   rib.push(casa(4.56, 0.6, 132, { cor: "#6f9d6a", pisos: 3, varandas: "cima", semente: 8, portadas: "#2f5d34" }));
@@ -589,8 +589,8 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     ed.quiosque = edificioIso("quiosque", "Quiosque — os números do país hoje", t);
     rib.push(ed.quiosque);
     portas.quiosque = Pt(6.02, 8.2);
-    pinos.push(["quiosque", Pt(6.02, 7.9), 104, "Inflação · 12 meses", D.inflacao]);
-    pinos.push(["quiosque2", Pt(6.3, 8.3), 44, "Desemprego", D.desemprego]);
+    pinos.push(["quiosque", Pt(6.02, 7.9), 104, "Inflação · 12 meses", D.inflacao, "Quiosque"]);
+    pinos.push(["quiosque2", Pt(6.3, 8.3), 44, "Desemprego", D.desemprego, "Quiosque"]);
   }
 
   // Escola
@@ -611,7 +611,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     ed.escola = edificioIso("escola", "Escola — ler gráficos e as palavras do dinheiro", svg);
     rib.push(ed.escola);
     portas.escola = naFachada(i, J, DJ, wi * LAD - 29);
-    pinos.push(["escola", Pt(i + wi / 2, J + DJ / 2), h + 48, "Pergunta do dia", "inflação?"]);
+    pinos.push(["escola", Pt(i + wi / 2, J + DJ / 2), h + 48, "Pergunta do dia", "inflação?", "Escola"]);
   }
 
   rib.push(casa(10.4, 0.7, 140, { cor: "#c9573a", pisos: 3, varandas: "todas", semente: 9, rdc: arcada, telha: "#e07a4f" }));

@@ -1420,3 +1420,23 @@ teste corre sozinho:
    a do arranque é a 1.ª) — e o teste espera por «pousada com n > n0». O
    contador não é enfeite: sem ele lê-se o «pousada» da vista anterior e
    volta-se a medir o meio do voo.
+
+### A fluidez passou a ter gate no CI — 2026-10-12
+
+O `_perfil-arrasto` e o `_fluidez` eram instrumentos de mão: o CI só via o
+`audit` e o `_dispositivos`. Agora o CI corre `node scripts/_fluidez.mjs 3100 /`
+(só a home, onde está o mapa) e o que lá vigia **não é a mediana** — essa
+depende da máquina, e num runner partilhado falhava pelo ambiente — mas as
+**três peças do gesto**: durante o arrasto a janela tem de levar `b-arrasto`,
+o mundo `will-change: transform` e as animações do mundo têm de estar
+paradas; ao largar, as três voltam atrás. É a invariante da correcção de
+2026-10 (AUDITORIA-MAPA §6) e é determinística.
+
+Provado por falsificação, não por confiança: com a pausa sabotada de
+propósito (`QUEBRAR=pausa`, uma folha de estilo a repor
+`animation-play-state: running`), o sensor lê **0 de 36** animações paradas e
+o script **falha** — e repara-se que a mediana ficou nos mesmos 50 ms da
+corrida boa, ou seja: um gate só na mediana teria deixado passar a
+regressão. O arrasto em si também ficou mais honesto: os 3 s medidos passam
+a ser 3 s de gesto contínuo (antes eram ~0,5 s de movimentos e 2,5 s de
+mapa parado contados como arrasto).
