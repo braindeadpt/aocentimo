@@ -1,0 +1,41 @@
+{
+  "regiao": "Norte (NUTS II)",
+  "nota": "Estatísticas anuais oficiais da região Norte para a cena da Torre dos Clérigos. Entrada só por PR manual, com a fonte de cada número. Copy aprovada pelo dono a 2026-10-12.",
+  "pib": {
+    "ano": 2024,
+    "provisorio": true,
+    "norteMilhoesEur": 85749,
+    "portugalMilhoesEur": 289428,
+    "pesoPct": 29.6,
+    "fonte": "INE, Contas Regionais (dados provisórios, 17 dez. 2025)",
+    "fonteUrl": "https://www.ine.pt/ngt_server/attachfileu.jsp?att_display=n&att_download=y&look_parentBoui=766741486",
+    "proximaAtualizacao": "2026-12"
+  },
+  "exportacoes": {
+    "ano": 2025,
+    "norteEur": 26637067393,
+    "portugalEur": 78967555231,
+    "fonte": "INE, Estatísticas do Comércio Internacional de Bens, 2025",
+    "fonteUrl": "https://www.ine.pt/ine/json_indicador/pindica.jsp?op=2&varcd=0013380&Dim1=S7A2025&lang=PT",
+    "atualizadoEm": "2026-08-07"
+  },
+  "industria": {
+    "ano": 2025,
+    "empregadosMilhares": 418.4,
+    "pesoEmpregoPct": 23.2,
+    "fonte": "INE, Inquérito ao Emprego (via CCDR-N, Norte Conjuntura 4.º T 2025)",
+    "fonteUrl": "https://www.ccdr-n.pt/storage/app/media/uploaded-files/NC_4%20Trimestre%20de%202025.pdf"
+  },
+  "texteis": {
+    "pesoEmpregoNacionalPct": 87.4,
+    "fonte": "CCDR-N",
+    "fonteUrl": "https://www.ccdr-n.pt/storage/app/media/uploaded-files/NC_4%20Trimestre%20de%202025.pdf"
+  },
+  "pibPorHabitante": {
+    "ano": 2024,
+    "norteEur": 23280,
+    "portugalEur": 27063,
+    "fonte": "INE, 2024",
+    "fonteUrl": "https://www.ccdr-n.pt/noticia/outros-destaques/norte-cresce-acima-da-media-nacional-e-deixa-de-ser-regiao-com-menor-pib-por-habitante"
+  }
+}

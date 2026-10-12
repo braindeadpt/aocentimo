@@ -12,7 +12,8 @@
  * mercearia → a inflação; correios → a poupança; bomba → o litro;
  * segsocial → os descontos (P2b); casa → os meses de trabalho;
  * pastelaria → o café e o IVA; quiosque → o Jornal do Bairro;
- * escola → ler gráficos (P2c). Os onze edifícios têm cena.
+ * escola → ler gráficos (P2c); clerigos → o Norte na economia (2026-10-12).
+ * Os doze edifícios têm cena.
  *
  * Os dados de cada cena chegam por `fetch("/cenas/<id>.json")` ao abrir
  * (P4 — gerados no derive pela `dadosCenas()` do servidor); nenhum
@@ -25,6 +26,7 @@ import type { ComponentType, MutableRefObject, RefObject } from "react";
 import type { DadosBanco, DadosFabrica, DadosFinancas, DadosMercearia } from "./dados";
 import type { DadosBomba, DadosCorreios, DadosSegSocial } from "./dados-p2b";
 import type { DadosCasa, DadosEscola, DadosPastelaria, DadosQuiosque } from "./dados-p2c";
+import type { DadosClerigos } from "./dados-norte";
 
 import "./../bairro-cenas.css";
 /**
@@ -45,7 +47,8 @@ interface PropsComuns {
     | DadosCasa
     | DadosPastelaria
     | DadosQuiosque
-    | DadosEscola;
+    | DadosEscola
+    | DadosClerigos;
   mundoRef?: RefObject<HTMLDivElement | null>;
   camaraRef?: MutableRefObject<{ ir: (cx: number, cy: number, w: number, dur?: number, desvio?: number) => void } | null>;
   aoFechar: () => void;
@@ -76,6 +79,7 @@ const IMPORTADORES: Record<string, Importador> = {
   pastelaria: cena(() => import("./CenaPastelaria")),
   quiosque: cena(() => import("./CenaQuiosque")),
   escola: cena(() => import("./CenaEscola")),
+  clerigos: cena(() => import("./CenaClerigos")),
 };
 
 /** O edifício → o componente da cena. */

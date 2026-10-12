@@ -411,7 +411,11 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     pinos.push(["financas", Pt(i + wi / 2, j + dj / 2), h + 56, "IRS retido / mês", D.irs, "Finanças"]);
   }
 
-  const torre = clerigos(7.55, 0.28, 1.22, TERRENO);
+  // DECISÃO DO DONO, 2026-10-12 (ponto 6): a Torre dos Clérigos passa a
+  // ser um edifício com cena — «O Norte na economia». Sem marcador (os 13
+  // continuam a ser os mesmos); a porta é a base da torre.
+  ed.clerigos = edificioIso("clerigos", "Torre dos Clérigos — o Norte na economia", clerigos(7.55, 0.28, 1.22, TERRENO));
+  portas.clerigos = Pt(7.55, 0.28);
 
   // Banco
   {
@@ -712,7 +716,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
       ed.fabrica +
       ed.segsocial +
       ed.financas +
-      `<g aria-hidden="true">${torre}</g>` +
+      ed.clerigos +
       ed.banco +
       ed.correios +
       ed.bomba +
