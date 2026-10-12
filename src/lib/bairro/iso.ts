@@ -516,7 +516,11 @@ export function clerigos(ci: number, cj: number, E = 1.22, t: Terreno = PLANO): 
   const z0 = t(ci, cj);
   const esc = (fn?: (w: number, hh: number) => string) =>
     fn && ((w: number, hh: number) => `<g transform="scale(${E})">${fn(w / E, hh / E)}</g>`);
-  let s = "";
+  // área de toque: a torre é estreita (23 px de largura a 320 px, abaixo
+  // dos 24×24 do WCAG 2.5.8); um losango transparente no chão, mais largo
+  // do que a base, alarga o alvo sem mudar o desenho
+  const rt = (1.4 * E) / 2;
+  let s = `<polygon class="ed-toque" points="${[P(ci - rt, cj - rt, z0), P(ci + rt, cj - rt, z0), P(ci + rt, cj + rt, z0), P(ci - rt, cj + rt, z0)].map(([x, y]) => `${f1(x)},${f1(y)}`).join(" ")}" fill="transparent"/>`;
   let z = z0;
   const pilastras = (w: number, hh: number): string =>
     `<rect x="0" y="${-hh}" width="6" height="${hh}" fill="${G2}" stroke="${K}" stroke-width="1.2"/><rect x="${f1(w - 6)}" y="${-hh}" width="6" height="${hh}" fill="${G2}" stroke="${K}" stroke-width="1.2"/>`;
