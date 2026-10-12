@@ -8,7 +8,7 @@ import { marcadores } from "../src/lib/bairro/dados";
  * painel e as portas saíram da página quando ela passou a ser o mapa).
  * O que fica aqui é o que o protótipo promete e o pack exige:
  *
- *   · o mapa tem os onze edifícios, focáveis e com nome;
+ *   · o mapa tem os doze edifícios, focáveis e com nome;
  *   · os marcadores mostram os valores reais de `data/`;
  *   · sem JavaScript vê-se o bairro e os números;
  *   · reduced-motion não descarrega o GSAP;
@@ -178,13 +178,13 @@ test.describe("o bairro — a geometria (veredicto do design, P1)", () => {
 });
 
 test.describe("o bairro — o que o mapa mostra", () => {
-  test("tem os onze edifícios, cada um focável e com nome", async ({ page }) => {
+  test("tem os doze edifícios, cada um focável e com nome", async ({ page }) => {
     await page.goto("/");
     const eds = page.locator(".b-mundo .ed");
-    await expect(eds).toHaveCount(11);
+    await expect(eds).toHaveCount(12);
 
     // focáveis: o teclado tem de chegar a cada um
-    for (let i = 0; i < 11; i++) {
+    for (let i = 0; i < 12; i++) {
       const ed = eds.nth(i);
       await expect(ed).toHaveAttribute("tabindex", "0");
       await expect(ed).toHaveAttribute("role", "button");
@@ -208,7 +208,7 @@ test.describe("o bairro — o que o mapa mostra", () => {
     }
   });
 
-  test("sem JavaScript: os 13 marcadores e os onze edifícios estão no HTML", async ({
+  test("sem JavaScript: os 13 marcadores e os doze edifícios estão no HTML", async ({
     browser,
   }) => {
     // um contexto sem scripts: é o que o pack exige («sem JS vê-se o
@@ -219,7 +219,7 @@ test.describe("o bairro — o que o mapa mostra", () => {
     const ctx = await browser.newContext({ javaScriptEnabled: false });
     const p = await ctx.newPage();
     await p.goto("/");
-    await expect(p.locator(".b-mundo .ed")).toHaveCount(11);
+    await expect(p.locator(".b-mundo .ed")).toHaveCount(12);
     await expect(p.locator(".b-mundo .pin")).toHaveCount(13);
     const texto = await p.locator(".b-mundo").innerText();
     // os mesmos valores do marcador, tirados do pack — e não «1 500» e
@@ -312,6 +312,11 @@ test.describe("o bairro — a câmara", () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
     await page.waitForSelector('.b-mundo .pin[data-id="fabrica"]');
+    // o marcador já vem no HTML estático só com translate(); a primeira
+    // arrumação (que lhe junta o scale) chega uns 100–300 ms depois da
+    // hidratação. Contar antes disso apanhava-a (13 escritas), que não é
+    // o arrasto: espera-se por ela
+    await expect(page.locator('.b-mundo .pin[data-id="fabrica"]')).toHaveAttribute("transform", /scale\(/);
 
     // só a arrumação conta: o `transform` do marcador e o `d` da guia.
     // A classe `on` fica de fora porque a passar por cima de um edifício

@@ -27,6 +27,7 @@ const CENAS = [
   "pastelaria",
   "quiosque",
   "escola",
+  "clerigos",
 ] as const;
 
 const PEDIDO_CENA = /\/cenas\/[a-z]+\.json$/;

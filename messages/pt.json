@@ -632,6 +632,10 @@
       "escola": {
         "titulo": "Escola",
         "pergunta": "Aprender a ler gráficos e as palavras do dinheiro"
+      },
+      "clerigos": {
+        "titulo": "Torre dos Clérigos",
+        "pergunta": "O Norte na economia"
       }
     },
     "extra": {

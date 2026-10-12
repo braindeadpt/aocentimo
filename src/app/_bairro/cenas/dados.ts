@@ -37,6 +37,7 @@ import {
   type DadosPastelaria,
   type DadosQuiosque,
 } from "./dados-p2c";
+import { dadosClerigos, type DadosClerigos } from "./dados-norte";
 
 /** Um ponto de uma série temporal (o `t` é `AAAA-MM`). */
 export interface Ponto {
@@ -358,6 +359,7 @@ export interface CenasDados {
   pastelaria: DadosPastelaria;
   quiosque: DadosQuiosque;
   escola: DadosEscola;
+  clerigos: DadosClerigos;
 }
 
 export function dadosCenas(): CenasDados {
@@ -373,5 +375,6 @@ export function dadosCenas(): CenasDados {
     pastelaria: dadosPastelariaP2c(),
     quiosque: dadosQuiosqueP2c(),
     escola: dadosEscolaP2c(),
+    clerigos: dadosClerigos(),
   };
 }

@@ -21,8 +21,8 @@ const D: MarcadoresBairro = {
   desemprego: "6,4 %",
 };
 
-/** Os onze edifícios com cena, pela ordem do quadro §2.3 do pack. */
-const EDIFICIOS = ["fabrica", "segsocial", "financas", "banco", "correios", "bomba", "mercearia", "pastelaria", "casa", "quiosque", "escola"] as const;
+/** Os doze edifícios com cena: os onze do quadro §2.3 do pack e a Torre dos Clérigos (2026-10-12). */
+const EDIFICIOS = ["fabrica", "segsocial", "financas", "clerigos", "banco", "correios", "bomba", "mercearia", "pastelaria", "casa", "quiosque", "escola"] as const;
 
 describe("TERRENO", () => {
   it("a Avenida está a 110", () => {

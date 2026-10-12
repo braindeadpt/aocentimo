@@ -52,9 +52,9 @@ describe("o gate do HTML da home (§4 do pack)", () => {
     expect(html.includes("b-camada"), "o mapa desapareceu do HTML renderizado").toBe(true);
   });
 
-  it.skipIf(!existe)("o mapa tem os 13 marcadores e os 11 edifícios no HTML estático", () => {
+  it.skipIf(!existe)("o mapa tem os 13 marcadores e os 12 edifícios no HTML estático", () => {
     const html = readFileSync(OUT, "utf8");
     expect([...html.matchAll(/<g class="pin"/g)]).toHaveLength(13);
-    expect([...html.matchAll(/class="ed"/g)]).toHaveLength(11);
+    expect([...html.matchAll(/class="ed"/g)]).toHaveLength(12);
   });
 });

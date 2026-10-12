@@ -13,11 +13,12 @@ import { test, expect, type Page } from "@playwright/test";
  * Os testes correm nos DOIS tamanhos: 1440×900 e 390×844.
  */
 
-/** Os onze edifícios do bairro, na ordem em que estão no DOM. */
+/** Os doze edifícios do bairro, na ordem em que estão no DOM. */
 const EDIFICIOS = [
   "fabrica",
   "segsocial",
   "financas",
+  "clerigos",
   "banco",
   "correios",
   "bomba",
