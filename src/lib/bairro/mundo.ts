@@ -46,6 +46,7 @@ import {
 import {
   HP,
   JM,
+  J_GAIA,
   TERRENO,
   eletricoIso,
   type MapaBairro,
@@ -162,7 +163,7 @@ const LUA = `<g transform="translate(60 40)"><circle r="34" fill="#fff4c4" strok
 /* ———————————————————— os barcos e o metro ———————————————————— */
 
 /** Onde o metro da ponte passa: entre o tabuleiro e a treliça da frente. */
-const PM = { iA: 14.3, iB: 14.78, j0: JM + 0.1, j1: 18.7 } as const;
+const PM = { iA: 14.3, iB: 14.78, j0: JM + 0.1, j1: J_GAIA - 0.3 } as const;
 
 /**
  * As duas viagens do metro e as duas dos rabelos. Cada uma devolve o CSS
