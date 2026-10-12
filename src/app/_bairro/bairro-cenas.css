@@ -420,6 +420,12 @@
   line-height: 1.35;
 }
 
+/* Clérigos: o número é uma frase («29,6 % do PIB») — fica por cima do texto */
+[data-pele="v5"] .b-jornal.b-nte .b-j-n {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2px;
+}
+
 [data-pele="v5"] .b-jornal .b-j-n:last-child {
   border-bottom: 0;
 }

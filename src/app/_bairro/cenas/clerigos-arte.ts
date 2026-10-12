@@ -42,7 +42,7 @@ export function interiorClerigos(placa: string, colunas: readonly ColunaNorte[])
     } else {
       s += `<text x="${x + 42}" y="${base - 12}" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="22" fill="${K}">—</text>`;
     }
-    s += `<rect x="${x - 23}" y="${base + 6}" width="130" height="22" rx="4" fill="#fff" stroke="${K}" stroke-width="2"/><text x="${x + 42}" y="${base + 21.5}" text-anchor="middle" font-family="Archivo" font-weight="800" font-size="11" fill="${K}">${c.rotulo}</text>`;
+    s += `<rect x="${x - 36}" y="${base + 6}" width="156" height="22" rx="4" fill="#fff" stroke="${K}" stroke-width="2"/><text x="${x + 42}" y="${base + 21.5}" text-anchor="middle" font-family="Archivo" font-weight="800" font-size="10.5" fill="${K}">${c.rotulo}</text>`;
   });
   // a arcada de granito do miradouro, à volta de tudo
   s += `<path d="M0 0 H640 V470 H600 V150 A280 130 0 0 0 40 150 V470 H0 Z" fill="#cfc6b6" stroke="${K}" stroke-width="3" stroke-linejoin="round"/>`;

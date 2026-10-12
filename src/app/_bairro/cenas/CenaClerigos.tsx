@@ -47,7 +47,7 @@ export default function CenaClerigos({ D, aoFechar }: { D: DadosClerigos; aoFech
       />
       <div className="b-corpo">
         {passo === 1 && (
-          <div className="b-jornal">
+          <div className="b-jornal b-nte">
             <Linha
               valor={D.pib ? T.ntePibValor(pct1(D.pib.pesoPct)) : "—"}
               texto={D.pib ? T.ntePibTexto(fmtNum(D.pib.milhoesEur, 0), String(D.pib.ano)) : T.nteFalha}

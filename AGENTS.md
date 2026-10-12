@@ -19,7 +19,7 @@ históricos — registo, não contrato.
 | Camada | Restrição |
 |---|---|
 | App | Next.js App Router + TypeScript strict, Tailwind 4 + tokens em `globals.css` |
-| Bairro | `src/lib/bairro/` = TypeScript puro que devolve SVG; 11 edifícios = 11 cenas por âncora (`/#financas`); cenas em `next/dynamic`; dados em `public/cenas/*.json` |
+| Bairro | `src/lib/bairro/` = TypeScript puro que devolve SVG; 12 edifícios = 12 cenas por âncora (a Torre dos Clérigos desde 2026-10-12) (`/#financas`); cenas em `next/dynamic`; dados em `public/cenas/*.json` |
 | Dados | "Dados como código": `scripts/ingest` (GitHub Actions) → `data/sources` + `data/derived` + `public/cenas/`. Sem base de dados |
 | Regras fiscais | JSON versionados por ano em `data/fiscal/` com fonte e vigência — nunca hardcoded |
 | Motores | `src/lib/engines/` = funções puras testadas (IRS, SS, prestação, TAEG, poupança, impostos) — as cenas usam os mesmos, nada reimplementado |
