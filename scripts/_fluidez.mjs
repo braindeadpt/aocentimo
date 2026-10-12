@@ -14,6 +14,10 @@
 //     `will-change: transform` e as animações do mundo estão PARADAS; ao
 //     largar, tudo volta atrás. É esta a invariante que o CI vigia: uma
 //     mediana depende da máquina, a pausa do gesto não.
+//   · a MESMA invariante na PINÇA (dois dedos, toque verdadeiro pelo CDP)
+//     e na RODA do rato: desde o #91 (iPad, 2026-10-07) as duas também
+//     põem `b-arrasto`, mas só o arrasto de um dedo estava vigiado — uma
+//     regressão na pinça passava o CI calada.
 //
 // Não escreve nada. `PORTA` escolhe o servidor (por omissão 3100), como
 // nos outros scripts da casa.
@@ -81,7 +85,11 @@ const GESTO = `(() => {
   const janela = document.querySelector(".b-janela");
   const mundo = document.querySelector(".b-mundo");
   if (!janela || !mundo) return null;
-  const animacoes = mundo.getAnimations({ subtree: true });
+  // só as ANIMAÇÕES (as do ambiente, que a pausa do gesto para): uma
+  // transição de CSS não é ambiente — na pinça os marcadores que saem ou
+  // entram na janela esvanecem (classe «b-fora», ~0,2 s) e isso é o zoom a
+  // funcionar, não uma animação esquecida a correr
+  const animacoes = mundo.getAnimations({ subtree: true }).filter((a) => a instanceof CSSAnimation);
   return {
     arrasto: janela.classList.contains("b-arrasto"),
     willChange: getComputedStyle(mundo).willChange,
@@ -139,6 +147,64 @@ const OBSERVADORES = `(() => {
   } catch {}
 })()`;
 
+/**
+ * A pinça: dois dedos a afastar-se no centro da janela durante ~1,2 s,
+ * por `Input.dispatchTouchEvent` (o Chromium entrega-os como pointer
+ * events de toque, os mesmos que o iPad dá à câmara). Lê o estado a meio
+ * do gesto e depois de levantar os dedos.
+ */
+async function pinca(p, cdp, caixa) {
+  const cx = caixa.x + caixa.width / 2;
+  const cy = caixa.y + caixa.height / 2;
+  const dedos = (d) => [
+    { x: cx - d, y: cy, id: 1 },
+    { x: cx + d, y: cy, id: 2 },
+  ];
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: dedos(30) });
+  let durante = null;
+  for (let k = 1; k <= 24; k++) {
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: dedos(30 + k * 4) });
+    await p.waitForTimeout(50);
+    if (k === 12) durante = await p.evaluate(GESTO);
+  }
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+  await p.waitForTimeout(300);
+  return { durante, depois: await p.evaluate(GESTO) };
+}
+
+/**
+ * A roda: 20 passos de roda sobre o mapa, um a cada 50 ms, como dá uma
+ * roda ou um trackpad. Disparados DENTRO da página: o `mouse.wheel` do
+ * Playwright espera que cada passo seja tratado e, a 4× menos CPU, isso
+ * espaça-os ~600 ms — mais do que os 220 ms em que a câmara mantém
+ * `b-arrasto` depois do último, e o sensor lia um mapa parado. A câmara
+ * não olha para `isTrusted`: o caminho é o mesmo do rato a sério.
+ */
+async function roda(p, caixa) {
+  const durante = await p.evaluate(
+    ([x, y, gesto]) =>
+      new Promise((res) => {
+        const janela = document.querySelector(".b-janela");
+        let k = 0;
+        let lido = null;
+        const id = setInterval(() => {
+          janela.dispatchEvent(
+            new WheelEvent("wheel", { deltaY: k % 2 ? 120 : -120, clientX: x, clientY: y, bubbles: true, cancelable: true })
+          );
+          k += 1;
+          if (k === 10) lido = (0, eval)(gesto);
+          if (k === 20) {
+            clearInterval(id);
+            res(lido);
+          }
+        }, 50);
+      }),
+    [caixa.x + caixa.width / 2, caixa.y + caixa.height / 2, GESTO]
+  );
+  await p.waitForTimeout(220 + 400);
+  return { durante, depois: await p.evaluate(GESTO) };
+}
+
 const b = await chromium.launch();
 const resultados = [];
 const falhas = [];
@@ -172,6 +238,19 @@ for (const rota of rotas) {
     await p.addStyleTag({
       content:
         '[data-pele="v5"] .b-janela.b-arrasto .b-mundo * { animation-play-state: running !important; }',
+    });
+  // `QUEBRAR=pinca` reproduz o defeito de antes do #91: a pinça sem
+  // `b-arrasto` (o arrasto de um dedo continua inteiro). Só a vigia da
+  // pinça pode apanhar isto
+  if (process.env.QUEBRAR === "pinca")
+    await p.evaluate(() => {
+      const janela = document.querySelector(".b-janela");
+      const dedos = new Set();
+      janela?.addEventListener("pointerdown", (e) => e.pointerType === "touch" && dedos.add(e.pointerId));
+      window.addEventListener("pointerup", (e) => dedos.delete(e.pointerId));
+      new MutationObserver(() => {
+        if (dedos.size === 2 && janela.classList.contains("b-arrasto")) janela.classList.remove("b-arrasto");
+      }).observe(janela, { attributes: true, attributeFilter: ["class"] });
     });
   await p.waitForTimeout(1200);
   const carga = await p.evaluate(CARGA);
@@ -223,6 +302,9 @@ for (const rota of rotas) {
         durante,
         depois,
       };
+      // os outros dois gestos, com o mapa já parado
+      fluidez.pinca = await pinca(p, cdp, caixa);
+      fluidez.roda = await roda(p, caixa);
     }
   }
 
@@ -233,6 +315,8 @@ for (const rota of rotas) {
       (fluidez
         ? ` · arrasto ${fluidez.fps}fps, mediana ${fluidez.mediana}ms p95 ${fluidez.p95}ms pior ${fluidez.pior}ms, ${fluidez.maus} > ${QUADRO_MAU}ms, ${fluidez.lentos} > 33ms` +
           ` · gesto ${pecasPartidas(fluidez).length ? "PARTIDO" : "inteiro"}` +
+          ` · pinça ${pecasPartidas(fluidez.pinca).length ? "PARTIDA" : "inteira"}` +
+          ` · roda ${pecasPartidas(fluidez.roda).length ? "PARTIDA" : "inteira"}` +
           (fluidez.durante ? ` (${fluidez.durante.animacoes - fluidez.durante.aCorrer}/${fluidez.durante.animacoes} animações paradas)` : "")
         : " · sem mapa")
   );
@@ -242,6 +326,11 @@ for (const rota of rotas) {
   const partes = fluidez ? pecasPartidas(fluidez) : [];
   if (partes.length)
     falhas.push(`${rota}: a pausa do gesto não está inteira — ${partes.join("; ")}`);
+  for (const [nome, g] of [["pinça", fluidez?.pinca], ["roda", fluidez?.roda]]) {
+    if (!fluidez) break;
+    const p2 = pecasPartidas(g);
+    if (p2.length) falhas.push(`${rota}: a pausa na ${nome} não está inteira — ${p2.join("; ")}`);
+  }
   if (fluidez && fluidez.mediana > MEDIANA_MAU)
     falhas.push(`${rota}: mediana do arrasto ${fluidez.mediana}ms (limite ${MEDIANA_MAU}ms)`);
   if (fluidez && fluidez.p95 > P95_MAU)
@@ -268,6 +357,6 @@ console.log(`\n=== AVISOS (${avisos.length}) ===`);
 for (const a of avisos) console.log(" ~ " + a);
 if (!avisos.length) console.log("(nenhum)");
 console.log(
-  `limiares: >30% dos quadros do arrasto acima de ${QUADRO_MAU}ms · mediana do arrasto > ${MEDIANA_MAU}ms (gate grosso) · as peças do gesto (o gate fino) · heap > 60MB · > 12 tarefas longas · CLS > 0,1`
+  `limiares: >30% dos quadros do arrasto acima de ${QUADRO_MAU}ms · mediana do arrasto > ${MEDIANA_MAU}ms (gate grosso) · as peças do gesto no arrasto, na pinça e na roda (o gate fino) · heap > 60MB · > 12 tarefas longas · CLS > 0,1`
 );
 if (falhas.length) process.exitCode = 1;

@@ -24,7 +24,7 @@ históricos — registo, não contrato.
 | Regras fiscais | JSON versionados por ano em `data/fiscal/` com fonte e vigência — nunca hardcoded |
 | Motores | `src/lib/engines/` = funções puras testadas (IRS, SS, prestação, TAEG, poupança, impostos) — as cenas usam os mesmos, nada reimplementado |
 | Voz | PT-PT europeu; strings em `messages/pt.json` e nos `textos*.ts` das cenas; nunca "usuário/você/portfólio" |
-| Qualidade | `lint && typecheck && test:unit && validate:data && build && _gate-html && test:e2e` + `audit` + `_dispositivos` + `_fluidez` verdes antes de merge |
+| Qualidade | `lint && typecheck && test:unit && validate:data && build && _gate-html && test:e2e` + `audit` + `_dispositivos` + `_fluidez` verdes antes de merge — tudo de uma vez, pela ordem do CI e a parar no primeiro vermelho: `npm run lancamento` |
 | Produto | Read-only, gratuito, sem aconselhamento financeiro; cada número tem fonte + data; **copy é do dono** |
 
 ## Regra nº1
