@@ -720,6 +720,8 @@ export interface OpcoesPonte {
   jA2: number;
   zCima: number;
   pilares: readonly (readonly [number, number])[];
+  /** Desenha o encontro (a parede escura) no fim do lado de Gaia. Por omissão, só quando o tabuleiro chega a j 18,9. */
+  encontro?: boolean;
 }
 
 /**
@@ -820,7 +822,7 @@ export function ponteLuisI(o: OpcoesPonte): { tras: string; frente: string; luze
   s += `<path d="M${lista([P(iB, jB1, zBaixo + 11)])} L${lista([P(iB, jB2, zBaixo + 11)])}" stroke="${K}" stroke-width="2.2"/>`;
   for (let j = jB1; j <= jB2 + 0.01; j += 0.12) s += linha(iB, [j, zBaixo], [j, zBaixo + 11], 1.2, K);
   for (const ii of [iA, iB]) s += `<path d="M${lista([P(ii, jPorto, zCima + 7)])} L${lista([P(ii, jGaia, zCima + 7)])}" stroke="${K}" stroke-width="1.4"/>`;
-  if (jGaia >= 18.9) s += `<polygon points="${lista([P(iA, jGaia, zViga), P(iB, jGaia, zViga), P(iB, jGaia, zCima), P(iA, jGaia, zCima)])}" fill="#46505a" stroke="${K}" stroke-width="2.2"/>`;
+  if (o.encontro ?? jGaia >= 18.9) s += `<polygon points="${lista([P(iA, jGaia, zViga), P(iB, jGaia, zViga), P(iB, jGaia, zCima), P(iA, jGaia, zCima)])}" fill="#46505a" stroke="${K}" stroke-width="2.2"/>`;
 
   const encontro = (j0: number): string =>
     caixa(iA - 0.16, j0, iB - iA + 0.32, 0.6, 38, {
