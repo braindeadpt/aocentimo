@@ -6,10 +6,11 @@
  *
  * Dois passos: do alto da torre, os três números do Norte no país (PIB,
  * exportações de bens, emprego na indústria) e, depois, o contraponto do
- * PIB por habitante. Os números vêm de `data/regional/norte.json` pelo
+ * PIB por habitante. As colunas sobem do rio uma a uma com o número a
+ * contar e um rabelo atravessa o Douro (CSS + rAF; nada em reduced-motion). Os números vêm de `data/regional/norte.json` pelo
  * `public/cenas/clerigos.json`; um em falta mostra «—», nunca 0.
  */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FINO, fmtEUR0, fmtNum } from "@/lib/format";
 import type { DadosClerigos } from "./dados-norte";
 import { interiorClerigos } from "./clerigos-arte";
@@ -21,18 +22,65 @@ const pct1 = (v: number | null | undefined) => (v == null ? "—" : `${fmtNum(v,
 export default function CenaClerigos({ D, aoFechar }: { D: DadosClerigos; aoFechar: () => void }) {
   const [passo, setPasso] = useState(1);
 
+  const arteRef = useRef<HTMLDivElement>(null);
+
+  // passo 1: as três colunas do peso do Norte; passo 2: o PIB por
+  // habitante, Norte ao lado do país (o país é a coluna inteira)
+  const colunas = useMemo(() => {
+    if (passo === 1)
+      return [
+        { rotulo: "PIB", v: D.pib?.pesoPct ?? null, pct: D.pib?.pesoPct ?? null, fmt: pct1, cor: "#ffc62b" },
+        { rotulo: "EXPORTAÇÕES", v: D.exportacoes?.pesoPct ?? null, pct: D.exportacoes?.pesoPct ?? null, fmt: pct1, cor: "#0c8f5c" },
+        { rotulo: "EMPREGO NA INDÚSTRIA", v: D.industria?.pesoPct ?? null, pct: D.industria?.pesoPct ?? null, fmt: pct1, cor: "#2445d6" },
+      ];
+    const h = D.porHabitante;
+    const eur = (v: number | null) => (v == null ? "—" : fmtEUR0(v));
+    return [
+      { rotulo: "NORTE", v: h?.norte ?? null, pct: h ? (h.norte / h.pais) * 100 : null, fmt: eur, cor: "#e2412a" },
+      { rotulo: "PORTUGAL", v: h?.pais ?? null, pct: h ? 100 : null, fmt: eur, cor: "#2445d6" },
+    ];
+  }, [passo, D]);
+
   const interior = useMemo(
     () =>
-      interiorClerigos(T.ntePlaca, [
-        { rotulo: "PIB", valor: pct1(D.pib?.pesoPct), pct: D.pib?.pesoPct ?? null, cor: "#ffc62b" },
-        { rotulo: "EXPORTAÇÕES", valor: pct1(D.exportacoes?.pesoPct), pct: D.exportacoes?.pesoPct ?? null, cor: "#0c8f5c" },
-        { rotulo: "EMPREGO NA INDÚSTRIA", valor: pct1(D.industria?.pesoPct), pct: D.industria?.pesoPct ?? null, cor: "#2445d6" },
-      ]),
-    [D]
+      interiorClerigos(
+        T.ntePlaca,
+        colunas.map((c) => ({ rotulo: c.rotulo, valor: c.fmt(c.v), pct: c.pct, cor: c.cor }))
+      ),
+    [colunas]
   );
 
+  // o número de cada coluna conta de 0 até ao valor enquanto ela sobe
+  // (o CSS faz a coluna; isto só o texto). Em reduced-motion não corre:
+  // o texto já está no valor final, que é o mesmo nos dois caminhos.
+  useEffect(() => {
+    if (typeof window === "undefined" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const raiz = arteRef.current;
+    if (!raiz) return;
+    let raf = 0;
+    const t0 = performance.now();
+    const DUR = 700;
+    const passo1 = () => {
+      const agora = performance.now();
+      let falta = false;
+      colunas.forEach((c, k) => {
+        const el = raiz.querySelector(`#nteV${k}`);
+        if (!el || c.v == null) return;
+        const t = Math.min(1, Math.max(0, (agora - t0 - (250 + k * 350)) / DUR));
+        const e = 1 - Math.pow(1 - t, 3);
+        const casas = Number.isInteger(c.v) ? 0 : 1;
+        const v = t >= 1 ? c.v : Math.round(c.v * e * 10 ** casas) / 10 ** casas;
+        el.textContent = c.fmt(v);
+        if (t < 1) falta = true;
+      });
+      if (falta) raf = requestAnimationFrame(passo1);
+    };
+    raf = requestAnimationFrame(passo1);
+    return () => cancelAnimationFrame(raf);
+  }, [colunas, interior]);
+
   return (
-    <CenaDePerto quem={T.nteQuem} fonte={D.fonte} aoFechar={aoFechar} arteHtml={interior} rotuloArte={T.nteRotuloArte}>
+    <CenaDePerto quem={T.nteQuem} fonte={D.fonte} aoFechar={aoFechar} arteHtml={interior} refArte={arteRef} rotuloArte={T.nteRotuloArte}>
       <p
         className="b-fala"
         aria-live="polite"
