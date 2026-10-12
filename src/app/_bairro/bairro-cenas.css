@@ -628,3 +628,33 @@
 @media (prefers-reduced-motion: reduce) {
   [data-pele="v5"] .b-palavra { transition: none; }
 }
+
+/* Torre dos Clérigos: as colunas sobem do rio uma a uma (o atraso vem no
+   style de cada uma), o número aparece com elas e um rabelo atravessa o
+   Douro. Em reduced-motion nada disto corre: as colunas estão inteiras e
+   o rabelo fica parado a meio do rio (o transform do próprio SVG). */
+@media (prefers-reduced-motion: no-preference) {
+  [data-pele="v5"] .b-cena .nte-col {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: nte-sobe 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
+  }
+  [data-pele="v5"] .b-cena .nte-val {
+    animation: nte-aparece 0.25s ease-out both;
+  }
+  [data-pele="v5"] .b-cena .nte-rabelo {
+    animation: nte-rabelo 26s linear infinite;
+  }
+}
+@keyframes nte-sobe {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+@keyframes nte-aparece {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes nte-rabelo {
+  from { transform: translateX(0); }
+  to { transform: translateX(800px); }
+}
