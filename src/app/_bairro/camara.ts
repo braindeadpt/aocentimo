@@ -57,15 +57,15 @@ export const FOLGA_LADO = 2;
 /**
  * A caixa do tabuleiro — a laje do bairro com as duas faces de terra, em
  * coordenadas do mundo, medida no SVG (as faces `#a48f72` e `#b39e80` da
- * planta vão de x −458 a 1744 e acabam em y 1376 — desde o ponto 5B,
- * 2026-10-12, a margem de Gaia acaba em `J_GAIA` = 17,4 e não em 19). O enquadramento
+ * planta vão de x −426 a 1744 e acabam em y 1360 — desde o ponto 5B,
+ * 2026-10-12, a margem de Gaia acaba em `J_GAIA` = 16,9 e não em 19). O enquadramento
  * inicial mostra-a INTEIRA (pedido do dono a 2026-10-07: «o mapa, tanto
  * em desktop como mobile, devia estar assim logo no início, totalmente
  * visível»). O topo do tabuleiro é a torre, e acima dela só há
  * marcadores, por isso o topo vem dos marcadores. O e2e confere os
  * cantos da laje no ecrã (`bairro.spec.ts`).
  */
-export const TABULEIRO = { esq: -458, dir: 1744, topo: -150, fundo: 1376 } as const;
+export const TABULEIRO = { esq: -426, dir: 1744, topo: -150, fundo: 1360 } as const;
 
 /** A folga do tabuleiro inteiro nos lados e em baixo, em px de ecrã. */
 export const FOLGA_TABULEIRO = 16;

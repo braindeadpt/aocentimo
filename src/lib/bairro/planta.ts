@@ -76,11 +76,11 @@ export const MAPA = { i0: -1, i1: 15.6, j0: -0.4, j1: 10.8 } as const;
 /**
  * A borda de fora da margem de Gaia (o fim da laje do lado de baixo).
  * DECISÃO DO DONO, 2026-10-12 (ponto 5, opção B): a faixa de Gaia
- * encolhe de 3,8 para 2,2 casas (era j 15,2 → 19) — fica o cais, as
+ * encolhe de 3,8 para 1,7 casas (era j 15,2 → 19) — fica o cais, as
  * árvores e uma fila de armazéns mais baixos, e o tabuleiro inteiro
  * ganha espaço no ecrã para a Ribeira e a Avenida.
  */
-export const J_GAIA = 17.4;
+export const J_GAIA = 16.9;
 
 const altEscada = (j: number): number => (HP * (ESCD.j1 - j)) / (ESCD.j1 - ESCD.j0);
 
@@ -730,7 +730,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     ribeira,
     vida,
     agua: atracados,
-    ponte: ponteLuisI({ iA: 14.3, iB: 14.78, jPorto: JM - 0.15, jGaia: J_GAIA, encontro: true, jA1: 10.8, jA2: 15.2, zCima: HP, pilares: [[8.75, 0], [10.55, 16], [15.45, 16], [16.55, 0]] }),
+    ponte: ponteLuisI({ iA: 14.3, iB: 14.78, jPorto: JM - 0.15, jGaia: J_GAIA, encontro: true, jA1: 10.8, jA2: 15.2, zCima: HP, pilares: [[8.75, 0], [10.55, 16], [15.45, 16], [16.3, 0]] }),
     gaia: margemGaia(),
     portas,
     pinos,
@@ -760,14 +760,14 @@ export function margemGaia(): string {
   const j0 = 15.2;
   let s = `<polygon points="${pts(P(-1, j0, 0), P(15.6, j0, 0), P(15.6, J_GAIA, 0), P(-1, J_GAIA, 0))}" fill="#e7dfcf" stroke="${K}" stroke-width="3"/>`;
   s += `<polygon points="${pts(P(-1, j0, 0), P(15.6, j0, 0), P(15.6, j0 + 0.5, 0), P(-1, j0 + 0.5, 0))}" fill="url(#b-calcadaIso)" opacity=".8"/>`;
-  s += [2.4, 6.8, 10.1, 13.2].map((i) => { const [x, y] = Pt(i, 15.7); return arvoreVerde(x, y, 0.6); }).join("");
+  s += [2.4, 6.8, 10.1, 13.2].map((i) => { const [x, y] = Pt(i, 15.6); return arvoreVerde(x, y, 0.5); }).join("");
   for (const i of [1.2, 4.1]) s += `<g transform="translate(${f1((i - (j0 - 0.7)) * 64)} ${f1((i + j0 - 0.7) * 32 + 22)})">${rabelo(false)}</g>`;
   const armazem = (i: number, j: number, wi: number, h: number, letreiro: string): string => {
-    const dj = 1.1;
+    const dj = 0.85;
     const svg = cx(i, j, wi, dj, h, {
       fundo: "#f6f1e6",
       telhado: "duas",
-      rh: 24,
+      rh: 18,
       corTelhado: "#c4623f",
       semCornija: true,
       esq: (w, hh) => `${Array.from({ length: Math.floor(w / 34) }, (_, k) => `<rect x="${14 + k * 34}" y="${-hh + 14}" width="12" height="16" rx="6" class="vidro" stroke="${K}" stroke-width="1.6"/>`).join("")}<rect x="0" y="${-hh}" width="${f1(w)}" height="6" fill="#c4623f" opacity=".5"/>`,
@@ -778,6 +778,6 @@ export function margemGaia(): string {
     const lw = wi * LAD * 0.7;
     return `${svg}<g transform="matrix(.8944 .4472 0 1 ${f1(m[0])} ${f1(m[1] - h - 24)})"><path d="M${f1(lw * 0.2)} 0 v-10 M${f1(lw * 0.8)} 0 v-10" stroke="${K}" stroke-width="2"/><rect x="0" y="-30" width="${f1(lw)}" height="20" fill="${K}"/><text x="${f1(lw / 2)}" y="-15.5" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="12" letter-spacing=".08em" fill="#f6f1e6">${letreiro}</text></g>`;
   };
-  s += armazem(3.2, 16.05, 3.4, 46, "VINHO DO PORTO") + armazem(7.3, 15.95, 2.6, 40, "CAVES") + armazem(10.6, 15.9, 2.2, 42, "");
+  s += armazem(3.2, 15.85, 3.4, 36, "VINHO DO PORTO") + armazem(7.3, 15.8, 2.6, 32, "CAVES") + armazem(10.6, 15.8, 2.2, 34, "");
   return `<g class="gaia">${s}</g>`;
 }
