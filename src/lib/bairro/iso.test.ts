@@ -215,6 +215,18 @@ describe("pin() — a placa com o número real", () => {
     expect(w(longo)).toBeGreaterThan(w(curto));
   });
 
+  it("o cabeçalho diz o sítio em maiúsculas e a métrica vai na linha pequena (ponto 3A)", () => {
+    const q = pin(0, 0, "Euribor 12 meses", "2,41 %", "Banco");
+    expect(q).toMatch(/class="pin-nome"[^>]*>BANCO</);
+    expect(q).toMatch(/class="pin-metrica"[^>]*>Euribor 12 meses</);
+    expect(q).toMatch(/class="pin-valor"[^>]*>2,41 %</);
+  });
+
+  it("alarga para um nome de sítio comprido", () => {
+    const w = (s: string) => Number(s.match(/data-w="([\d.]+)"/)![1]);
+    expect(w(pin(0, 0, "TSU", "23,75 %", "Segurança Social"))).toBeGreaterThan(w(pin(0, 0, "TSU", "23,75 %")));
+  });
+
   it("usa algarismos tabulares — as placas alinham entre si", () => {
     expect(p).toContain("font-variant-numeric=\"tabular-nums\"");
   });

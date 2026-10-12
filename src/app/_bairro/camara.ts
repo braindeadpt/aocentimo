@@ -24,7 +24,7 @@
 // câmara pode enquadrar chegam prontos do servidor, em coordenadas de
 // ecrã. Importar `planta.ts` aqui arrastaria o desenho inteiro do bairro
 // para o pacote do browser por causa de dois números.
-import { MUNDO } from "@/lib/bairro/iso";
+import { ALTURA_PIN, MUNDO } from "@/lib/bairro/iso";
 
 /** Onde a câmara pode enquadrar: perto da fábrica, ou o bairro todo. */
 export interface Enquadramentos {
@@ -578,7 +578,7 @@ export function marcadorCabe(
   const s = L / v.w;
   const esq = (p.x - (p.w / 2) * k - v.x) * s;
   const dir = (p.x + (p.w / 2) * k - v.x) * s;
-  const topo = (y - 64 * k - v.y) * s;
+  const topo = (y - ALTURA_PIN * k - v.y) * s;
   const fundo = (y - v.y) * s;
   return esq >= 0 && dir <= L && topo >= 0 && fundo <= A;
 }
@@ -611,7 +611,7 @@ function repartirPinos(pinos: readonly PinoPlanta[], largura: number): number[] 
   const k = pinos.length
     ? Math.min(1.7, Math.max(0.55, MUNDO.w / largura))
     : 1;
-  const alto = 64 * k;
+  const alto = ALTURA_PIN * k;
   const folga = 6 * k;
   const passo = 6 * k;
   const postos: { x: number; y: number; w: number }[] = [];
@@ -688,7 +688,7 @@ function caixasAposCadeia(
   largura: number
 ): { id: string; esq: number; dir: number; topo: number; fundo: number }[] {
   const k = Math.min(1.7, Math.max(0.55, MUNDO.w / largura));
-  const alto = 64 * k;
+  const alto = ALTURA_PIN * k;
   const ys = repartirPinos(pinos, largura);
   return pinos.map((p, i) => ({
     id: p.id,
