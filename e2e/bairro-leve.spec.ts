@@ -26,7 +26,7 @@ test.describe("o bairro — modo leve", () => {
     );
     expect(aCorrer, "há animações a correr no mundo em modo leve").toBe(0);
     // os marcadores e os edifícios continuam lá e clicáveis
-    await expect(page.locator(".b-mundo .ed")).toHaveCount(11);
+    await expect(page.locator(".b-mundo .ed")).toHaveCount(12);
   });
 
   test("?leve=0 desliga-o mesmo num aparelho fraco", async ({ page }) => {
