@@ -643,7 +643,7 @@
     animation: nte-aparece 0.25s ease-out both;
   }
   [data-pele="v5"] .b-cena .nte-rabelo {
-    animation: nte-rabelo 26s linear infinite;
+    animation: nte-rabelo 26s linear -5s infinite; /* já à vista ao abrir */
   }
 }
 @keyframes nte-sobe {
