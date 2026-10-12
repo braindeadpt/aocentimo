@@ -312,6 +312,11 @@ test.describe("o bairro — a câmara", () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
     await page.waitForSelector('.b-mundo .pin[data-id="fabrica"]');
+    // o marcador já vem no HTML estático só com translate(); a primeira
+    // arrumação (que lhe junta o scale) chega uns 100–300 ms depois da
+    // hidratação. Contar antes disso apanhava-a (13 escritas), que não é
+    // o arrasto: espera-se por ela
+    await expect(page.locator('.b-mundo .pin[data-id="fabrica"]')).toHaveAttribute("transform", /scale\(/);
 
     // só a arrumação conta: o `transform` do marcador e o `d` da guia.
     // A classe `on` fica de fora porque a passar por cima de um edifício
