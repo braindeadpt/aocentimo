@@ -24,7 +24,7 @@ históricos — registo, não contrato.
 | Regras fiscais | JSON versionados por ano em `data/fiscal/` com fonte e vigência — nunca hardcoded |
 | Motores | `src/lib/engines/` = funções puras testadas (IRS, SS, prestação, TAEG, poupança, impostos) — as cenas usam os mesmos, nada reimplementado |
 | Voz | PT-PT europeu; strings em `messages/pt.json` e nos `textos*.ts` das cenas; nunca "usuário/você/portfólio" |
-| Qualidade | `lint && typecheck && test:unit && validate:data && build && _gate-html && test:e2e` + `audit` + `_dispositivos` verdes antes de merge |
+| Qualidade | `lint && typecheck && test:unit && validate:data && build && _gate-html && test:e2e` + `audit` + `_dispositivos` + `_fluidez` verdes antes de merge |
 | Produto | Read-only, gratuito, sem aconselhamento financeiro; cada número tem fonte + data; **copy é do dono** |
 
 ## Regra nº1
@@ -66,11 +66,15 @@ node scripts/_js-por-rota.mjs      # JS inicial/total por rota (precisa de :3100
 node scripts/_dispositivos.mjs     # telemóveis (320–428), tablet e desktop: transbordo,
                                    #   alvo de toque AA (2.5.8), letra mínima, texto cortado
                                    #   — DISP=«390» restringe; precisa de :3100
-node scripts/_fluidez.mjs          # fluidez e memória no iPhone 12 Pro emulado, com 4×
-                                   #   menos CPU e rede 4G má; julga a MEDIANA e o p95
-                                   #   do arrasto, não o pior quadro, que é o arranque
-                                   #   do gesto (VISTA=390x664 calibra com a auditoria)
-                                   #   — precisa de :3100
+node scripts/_fluidez.mjs [porta] [rotas]  # fluidez e memória no iPhone 12 Pro
+                                   #   emulado, com 4× menos CPU e rede 4G má; julga a
+                                   #   MEDIANA do arrasto, não o pior quadro (o arranque
+                                   #   do gesto). No CI corre só a home: `_fluidez.mjs
+                                   #   3100 /`, e o que lá vigia são as TRÊS PEÇAS do
+                                   #   gesto (b-arrasto, will-change, animações
+                                   #   paradas) — invariantes do código, não da máquina.
+                                   #   Auto-teste: QUEBRAR=pausa tem de falhar.
+                                   #   VISTA=390x664 calibra com a auditoria — :3100
 node scripts/_perfil-arrasto.mjs   # diagnóstico: de que é feito o custo de arrastar o mapa
 node scripts/_bundle-top.mjs [chunks] # top de módulos por chunk (build com productionBrowserSourceMaps)
 node scripts/_revisao-copy.mjs      # regenera docs/REVISAO-COPY-V5.md (--check não escreve)
@@ -200,6 +204,14 @@ estas regras divergirem, **ganha o protótipo**, excepto nas regras da casa
   rotas é UMA linha, não 39). Na primeira corrida apanhou o «Fechar» do
   Índice a 48×23 px em todas as rotas e os campos do talão a 64×23 — e
   o `_overflow-sweep` a 768/1440 nunca os teria visto.
+- **A fluidez do arrasto tem invariantes, e é isso que o CI vigia.**
+  Durante o gesto a janela leva `b-arrasto`, o mundo leva
+  `will-change: transform` e as animações do mundo estão paradas; ao
+  largar, tudo volta. A `_fluidez.mjs` mede também a mediana — que
+  depende da máquina — mas o que a faz falhar são as invariantes:
+  medido a 2026-10-12, com a pausa SABOTADA de propósito
+  (`QUEBRAR=pausa`) a mediana ficava nos mesmos 50 ms da corrida boa e
+  só a invariante a apanhou (o CI corre `_fluidez.mjs 3100 /`).
 - **`_gate-html.mjs` está no CI** depois do build: mede o HTML da home
   contra o tecto de 80 KB gzip **e verifica que o mapa não está no
   payload RSC**. Se alguém passar o mapa por prop, o gate aponta-lhe o

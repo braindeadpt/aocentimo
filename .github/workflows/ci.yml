@@ -38,3 +38,8 @@ jobs:
       # alvo de toque AA (2.5.8), letra mínima e corte de texto. Foi ele que
       # apanhou o «Fechar» de 48×23 px do Índice em todas as rotas.
       - run: node scripts/_dispositivos.mjs
+      # a fluidez da home: as três peças do gesto (b-arrasto, will-change e
+      # as animações paradas) e a mediana do arrasto. A invariante do gesto
+      # não depende da máquina — foi ela que provou que uma mediana de 50 ms
+      # com a pausa SABOTADA passava despercebida (auto-teste: QUEBRAR=pausa).
+      - run: node scripts/_fluidez.mjs 3100 /
