@@ -74,7 +74,9 @@ node scripts/_fluidez.mjs [porta] [rotas]  # fluidez e memória no iPhone 12 Pro
                                    #   gesto (b-arrasto, will-change, animações
                                    #   paradas) — invariantes do código, não da máquina.
                                    #   Auto-teste: QUEBRAR=pausa tem de falhar.
-                                   #   VISTA=390x664 calibra com a auditoria — :3100
+                                   #   VISTA=390x664 calibra com a auditoria; CPU=1 mede
+                                   #   SEM estrangulamento (a máquina de quem olha)
+                                   #   — precisa de :3100
 node scripts/_perfil-arrasto.mjs   # diagnóstico: de que é feito o custo de arrastar o mapa
 node scripts/_bundle-top.mjs [chunks] # top de módulos por chunk (build com productionBrowserSourceMaps)
 node scripts/_revisao-copy.mjs      # regenera docs/REVISAO-COPY-V5.md (--check não escreve)

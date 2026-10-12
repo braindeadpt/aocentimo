@@ -28,7 +28,10 @@ const rotas = process.argv[3]
   ? process.argv[3].split(",")
   : ["/", "/salario", "/inflacao", "/credito", "/dados"];
 
-const CPU = 4; // 4× mais lento — telemóvel de gama média
+// 4× mais lento — telemóvel de gama média. `CPU=1` mede SEM estrangulamento
+// (o portátil de quem está a olhar): é assim que se separa o que é o piso do
+// gesto na máquina do que é o custo em telemóvel fraco.
+const CPU = Number(process.env.CPU ?? 4);
 // A vista por omissão é a de um iPhone 12 Pro de pé; `VISTA=390x664`
 // reproduz a calibração da `AUDITORIA-MAPA-2026-10.md` (mediana 21 ms,
 // p90 38 ms depois da correcção do arrasto), para se comparar números
