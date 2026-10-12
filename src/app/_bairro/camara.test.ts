@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { marcadorCabe } from "./camara";
+import { ALTURA_PIN } from "@/lib/bairro/iso";
 
 /* O critério de «cabe inteiro» que esconde, no telemóvel, os marcadores
    cortados nas pontas. A caixa é a mesma do enquadramento: placa de
@@ -25,7 +26,8 @@ describe("marcadorCabe", () => {
   });
 
   it("encostado à borda ainda cabe", () => {
-    expect(marcadorCabe({ x: 50, w: 100 }, 64, 1, v, L, A)).toBe(true);
+    // a placa mede ALTURA_PIN acima da âncora: encostada ao topo ainda cabe
+    expect(marcadorCabe({ x: 50, w: 100 }, ALTURA_PIN, 1, v, L, A)).toBe(true);
   });
 
   it("segue a escala da vista e o k do marcador", () => {
