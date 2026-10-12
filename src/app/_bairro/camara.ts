@@ -114,6 +114,8 @@ export class Camera {
   private gsap: { to: (alvo: object, vars: object) => unknown } | null = null;
   private enquadramentos: Enquadramentos | null = null;
   private pinos: PinoPlanta[] = [];
+  /** Quantas vistas pedidas já foram dadas (o `data-camara-n`). */
+  private ordens = 0;
 
   constructor(janela: HTMLElement, mundo: HTMLElement, opts: OpcoesCamera = {}) {
     this.janela = janela;
@@ -191,13 +193,38 @@ export class Camera {
     this.opts.aoMudar?.(this.atual);
   }
 
+  /**
+   * O sinal PÚBLICO da câmara, na própria janela: `data-camara` diz
+   * «a-mexer» enquanto a câmara vai a caminho de uma vista pedida e
+   * «pousada» quando lá chegou; `data-camara-n` conta as vistas pedidas
+   * (a vista do arranque é a 1.ª).
+   *
+   * Existe pelo mesmo motivo que o `data-vivo` do mapa: quem mede uma
+   * figura a POUSAR tem de saber QUANDO a câmara parou. «A transform não
+   * mudou nos últimos 200 ms» não é isso — sob carga o motor de render
+   * fica parado a meio do tween e o teste mede o meio do voo (defeito
+   * medido a 2026-10-12: «a figura fica dentro da janela» falhava com a
+   * câmara a caminho, em `bairro-cartas.spec.ts`).
+   *
+   * O contador não é enfeite: sem ele, um teste que esperasse por
+   * «pousada» podia lê-lo da vista ANTERIOR — a janela nasce pousada, e
+   * o clique que pede o voo só corre depois — e voltava a medir o meio
+   * do voo. Com o n, «pousada com n > n0» é a ordem nova que assentou.
+   */
+  private anunciar(estado: "a-mexer" | "pousada"): void {
+    this.janela.dataset.camara = estado;
+    this.janela.dataset.camaraN = String(this.ordens);
+  }
+
   /** Um salto brusco para uma vista. */
   irPara(cx: number, cy: number, w: number, desvio = 0): void {
     const h = w * this.razao();
     this.vista.x = cx - w / 2 - desvio;
     this.vista.y = cy - h / 2;
     this.vista.w = w;
+    this.ordens++;
     this.aplicar();
+    this.anunciar("pousada");
   }
 
   /**
@@ -207,11 +234,76 @@ export class Camera {
   ir(cx: number, cy: number, w: number, dur = 1, desvio = 0): void {
     const h = w * this.razao();
     const alvo = { x: cx - w / 2 - desvio, y: cy - h / 2, w };
-    if (this.gsap) {
-      this.gsap.to(this.vista, { ...alvo, duration: dur, ease: "power2.inOut", onUpdate: () => this.aplicar() });
+    if (this.gsap && dur > 0) {
+      this.ordens++;
+      this.anunciar("a-mexer");
+      this.gsap.to(this.vista, {
+        ...alvo,
+        duration: dur,
+        ease: "power2.inOut",
+        onUpdate: () => this.aplicar(),
+        onComplete: () => this.anunciar("pousada"),
+      });
     } else {
       this.irPara(cx, cy, w, desvio);
     }
+  }
+
+  /**
+   * Um voo para um ALVO QUE ANDA: o centro é perguntado a `centro()` a
+   * cada fotograma. Uma câmara que mira onde a figura estava chega onde
+   * ela já não está — o Pedro e a Arminda andam pelo bairro e entre o
+   * clique e a chegada (1,1 s) andam metros. O desvio aparecia como
+   * «a figura não fica dentro da janela» quando o painel já anunciava o
+   * nome dela (defeito medido a 2026-10-12, em Pedro/Arminda).
+   *
+   * Sem GSAP (ou em reduced-motion) salta para o alvo de agora: o estado
+   * final certo, sem voo.
+   */
+  seguir(centro: () => { x: number; y: number } | null, w: number, dur = 1.1): void {
+    const h = (l: number) => l * this.razao();
+    const inicio = {
+      x: this.vista.x + this.vista.w / 2,
+      y: this.vista.y + h(this.vista.w) / 2,
+      w: this.vista.w,
+    };
+    let ultimo: { x: number; y: number } | null = centro();
+    const irParaAlvo = () => {
+      const c = centro() ?? ultimo;
+      if (!c) return;
+      ultimo = c;
+      this.vista.x = c.x - w / 2;
+      this.vista.y = c.y - h(w) / 2;
+      this.vista.w = w;
+    };
+    if (!this.gsap || dur <= 0) {
+      if (!ultimo) return;
+      this.ordens++;
+      irParaAlvo();
+      this.aplicar();
+      this.anunciar("pousada");
+      return;
+    }
+    const passo = { v: 0 };
+    this.ordens++;
+    this.anunciar("a-mexer");
+    this.gsap.to(passo, {
+      v: 1,
+      duration: dur,
+      ease: "power2.inOut",
+      onUpdate: () => {
+        // o alvo de AGORA — a figura andou desde o fotograma anterior
+        const c = centro() ?? ultimo;
+        if (!c) return;
+        ultimo = c;
+        const e = passo.v;
+        this.vista.w = inicio.w + (w - inicio.w) * e;
+        this.vista.x = inicio.x + (c.x - inicio.x) * e - this.vista.w / 2;
+        this.vista.y = inicio.y + (c.y - inicio.y) * e - h(this.vista.w) / 2;
+        this.aplicar();
+      },
+      onComplete: () => this.anunciar("pousada"),
+    });
   }
 
   /** Ver o bairro inteiro — a mesma vista do arranque. */

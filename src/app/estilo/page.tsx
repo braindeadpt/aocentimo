@@ -1583,14 +1583,17 @@ export default function EstiloPage() {
               estadoRotulo="em dia"
               controlos={
                 <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1">
+                  {/* presets numa fila que passa a duas: cada um é um alvo a
+                      sério e 18 px de caixa não chegavam aos 24×24 do 2.5.8.
+                      O `py` cresce a área de toque, o `-my` devolve a linha. */}
                   <span className="num text-rotulo">presets:</span>
-                  <a href="/salario" className="lq-link num text-rotulo">
+                  <a href="/salario" className="lq-link num -my-1 py-1 text-rotulo">
                     mínimo
                   </a>
-                  <a href="/salario" className="lq-link num text-rotulo">
+                  <a href="/salario" className="lq-link num -my-1 py-1 text-rotulo">
                     1 500 €
                   </a>
-                  <a href="/salario" className="lq-link num text-rotulo">
+                  <a href="/salario" className="lq-link num -my-1 py-1 text-rotulo">
                     2 000 €
                   </a>
                 </div>

@@ -34,3 +34,7 @@ jobs:
       # construiu para o e2e: mesma ordem do deploy (servidor + auditorias)
       - run: node scripts/_serve-static.mjs &
       - run: sleep 1 && npm run audit
+      # os telemóveis a sério (320–428), o tablet e o desktop: transbordo,
+      # alvo de toque AA (2.5.8), letra mínima e corte de texto. Foi ele que
+      # apanhou o «Fechar» de 48×23 px do Índice em todas as rotas.
+      - run: node scripts/_dispositivos.mjs

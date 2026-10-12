@@ -634,9 +634,13 @@ export function LineChart({
           {evs.map((ev) => (
             <li key={ev.ms} className="flex items-baseline gap-1.5 text-kicker">
               <span aria-hidden className="inline-block h-2 w-2 self-center bg-mark" />
+              {/* a citação é um alvo a sério: 17 px de caixa não chegavam
+                  aos 24×24 do 2.5.8 quando a lista passa a duas filas
+                  (a folga é 4 px). O `py` cresce o alvo e o `-my` devolve
+                  a linha ao sítio — muda o alvo, não a tinta. */}
               <a
                 href={ev.url}
-                className="font-mono text-muted underline decoration-line2 underline-offset-2 transition-colors hover:text-ink"
+                className="-my-1 py-1 font-mono text-muted underline decoration-line2 underline-offset-2 transition-colors hover:text-ink"
               >
                 {ev.rotulo}
               </a>

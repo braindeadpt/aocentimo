@@ -207,26 +207,35 @@ test("o clique leva ao palco e — havendo personagem no mapa — mexe a câmara
           test.setTimeout(75_000);
           await page.setViewportSize({ width: vw, height: vh });
           await page.goto("/");
+          await expect(page.locator('.b-mundo[data-vivo="1"]')).toBeAttached();
+          // A câmara anuncia-se na própria janela: `data-camara` diz
+          // «a-mexer» ou «pousada» e `data-camara-n` conta as vistas
+          // pedidas (a do arranque é a 1.ª). O n lido ANTES do clique é o
+          // que impede de ler o «pousada» da vista do arranque — sem ele
+          // a espera passava a correr e a medida caía no meio do voo.
+          const janela = page.locator(".b-janela");
+          const nAgora = async (): Promise<number> =>
+            Number((await janela.getAttribute("data-camara-n")) ?? 0);
+          await expect
+            .poll(nAgora, { timeout: 15_000, message: "a vista do arranque nunca foi dada" })
+            .toBeGreaterThan(0);
+          const n0 = await nAgora();
           await carta(page, k).click();
           await expect(page.locator(".b-painel")).toBeVisible();
-          // o deslize acaba quando a câmara assenta — espera-se pelo
-          // ESTADO (a transform deixar de mexer), não por 4,5 s de
-          // relógio: sob carga os 4,5 s acabavam antes do fim
+          // O deslize acaba quando a câmara POUSA — pelo ESTADO que ela
+          // publica, e não por «a transform não mudou nos últimos
+          // 200 ms»: sob carga o motor de render fica parado a meio do
+          // tween, a espera dava-o por assentado e a figura era medida a
+          // caminho (defeito medido a 2026-10-12, em Pedro a 1440×900 e
+          // Arminda a 390×844)
           await expect
             .poll(
-              async () => {
-                const a = await page
-                  .locator(".b-mundo")
-                  .evaluate((el) => (el as HTMLElement).style.transform);
-                await page.waitForTimeout(200);
-                const b = await page
-                  .locator(".b-mundo")
-                  .evaluate((el) => (el as HTMLElement).style.transform);
-                return a === b;
-              },
+              async () =>
+                (await janela.getAttribute("data-camara")) === "pousada" &&
+                (await nAgora()) > n0,
               {
                 timeout: 30_000,
-                message: `a câmara não assentou em ${k} a ${vw}×${vh}`,
+                message: `a câmara não pousou em ${k} a ${vw}×${vh}`,
               }
             )
             .toBe(true);

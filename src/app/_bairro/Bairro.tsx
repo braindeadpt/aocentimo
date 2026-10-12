@@ -586,42 +586,52 @@ export function Bairro({
         if (!mundoRef.current) return;
       }
 
-      // o centro da figura em unidades do MUNDO, recuperado do ecrã:
-      // a vista actual diz que faixa do mundo a janela mostra e o rect
-      // da figura diz onde ela está em px — getCTM não serve, devolve
-      // px do viewport da camada SVG, não unidades do mundo
-      const jr = janela.getBoundingClientRect();
-      const fr = alvo.getBoundingClientRect();
-      const vista = camara.atual;
-      if (jr.width <= 0 || vista.w <= 0) return;
-      const sCur = jr.width / vista.w;
-      const ecx = vista.x + (fr.left + fr.width / 2 - jr.left) / sCur;
-      const ecy = vista.y + (fr.top + fr.height / 2 - jr.top) / sCur;
+      /*
+       * O alvo, em unidades do MUNDO, recuperado do ecrã — e lido de
+       * NOVO a cada fotograma do voo: a figura ANDA (o Pedro atravessa a
+       * Avenida, a Arminda vai aos Correios) e entre o clique e a
+       * chegada vão-se metros. A conta: a vista actual diz que faixa do
+       * mundo a janela mostra e o rect da figura diz onde ela está em px
+       * — `getCTM` não serve, devolve px do viewport da camada SVG.
+       */
+      const centro = (): { x: number; y: number } | null => {
+        const jr = janela.getBoundingClientRect();
+        const fr = alvo.getBoundingClientRect();
+        const vista = camara.atual;
+        if (jr.width <= 0 || vista.w <= 0) return null;
+        const sCur = jr.width / vista.w;
+        const ecx = vista.x + (fr.left + fr.width / 2 - jr.left) / sCur;
+        const ecy = vista.y + (fr.top + fr.height / 2 - jr.top) / sCur;
 
-      // a figura pousa na faixa que o painel não tapa — a conta da
-      // Fábrica: no telemóvel o painel fica em cima e o alvo desce; no
-      // desktop fica à esquerda e o alvo vai para a faixa da direita
-      const FOLGA = 14;
+        // a figura pousa na faixa que o painel não tapa — a conta da
+        // Fábrica: no telemóvel o painel fica em cima e o alvo desce; no
+        // desktop fica à esquerda e o alvo vai para a faixa da direita
+        const FOLGA = 14;
+        const razao = jr.height / jr.width;
+        const s = jr.width / w;
+        const pr = palcoRef.current
+          ?.querySelector(".b-painel")
+          ?.getBoundingClientRect();
+        let cx = ecx;
+        let cy = ecy;
+        if (pr && jr.width <= 700) {
+          const topo = pr.bottom - jr.top + FOLGA;
+          const livre = Math.max(80, jr.height - topo - FOLGA);
+          cy = ecy - (topo + livre / 2) / s + (w * razao) / 2;
+        } else if (pr) {
+          const livreE = pr.right - jr.left + FOLGA;
+          const livreW = Math.max(200, jr.width - livreE - FOLGA);
+          cx = ecx + w / 2 - (livreE + livreW / 2) / s;
+        } else if (jr.width > 700) {
+          cx = ecx + (560 * 0.2) / s;
+        }
+        return { x: cx, y: cy };
+      };
+
       const w = 560;
-      const razao = jr.height / jr.width;
-      const s = jr.width / w;
-      const pr = palcoRef.current
-        ?.querySelector(".b-painel")
-        ?.getBoundingClientRect();
-      let cx = ecx;
-      let cy = ecy;
-      if (pr && jr.width <= 700) {
-        const topo = pr.bottom - jr.top + FOLGA;
-        const livre = Math.max(80, jr.height - topo - FOLGA);
-        cy = ecy - (topo + livre / 2) / s + (w * razao) / 2;
-      } else if (pr) {
-        const livreE = pr.right - jr.left + FOLGA;
-        const livreW = Math.max(200, jr.width - livreE - FOLGA);
-        cx = ecx + w / 2 - (livreE + livreW / 2) / s;
-      } else if (jr.width > 700) {
-        cx = ecx + (560 * 0.2) / s;
-      }
-      camara.ir(cx, cy, w, 1.1);
+      if (!centro()) return;
+      camara.seguir(centro, w, 1.1);
+
       // o aceno quando a câmara lá chega — só com GSAP; sem ele o
       // estado final já está parado e certo
       if (gsap) {

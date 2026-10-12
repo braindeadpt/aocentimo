@@ -960,7 +960,11 @@ html[data-theme="dark"] .tema-ponto {
 }
 .copiar-lig {
   border: 0;
-  padding: 0;
+  /* a área de toque do «JSON»/«copiar» era o texto: 27×17 px, abaixo dos
+     24×24 do critério 2.5.8 (AA). O `padding` cresce o alvo e a margem
+     negativa devolve o desenho ao sítio — a linha não se mexe. */
+  padding: 4px 6px;
+  margin: -4px -6px;
   background: none;
   font: inherit;
   letter-spacing: inherit;
@@ -1563,6 +1567,10 @@ h3 {
   border-radius: var(--raio-papel);
   appearance: textfield;
   -moz-appearance: textfield;
+  /* a caixa media 64×23 px — 1 px abaixo do mínimo AA (2.5.8) e é o campo
+     que se edita com o dedo no meio de uma lista de dez. Sobe a altura da
+     caixa, não a tinta: o sublinhado tracejado não se mexe. */
+  min-height: 26px;
 }
 .talao-field::-webkit-outer-spin-button,
 .talao-field::-webkit-inner-spin-button {
@@ -2335,7 +2343,9 @@ h3 {
   margin-left: auto;
   width: 7rem;
   min-width: 4rem;
-  height: 1.15rem;
+  /* 1,5 rem = 24 px: o mínimo do 2.5.8 (AA). A pista (1 px) e o polegar
+     (9 px) ficam como estavam, centrados — cresce só a área de toque. */
+  height: 1.5rem;
   background: transparent;
   cursor: ew-resize;
   flex-shrink: 0;
@@ -2775,6 +2785,14 @@ h3 {
 .leitura-acoes {
   display: flex;
   gap: 1rem;
+}
+/* As acções do rodapé do cartão («página →», «JSON») são alvos a sério —
+   não texto dentro de uma frase — e mediam 53×17 px. O `padding` cresce
+   a área de toque para 27 px e a margem negativa devolve a fila à mesma
+   altura: muda o alvo, não a tinta. */
+.leitura-acoes .lq-link {
+  padding-block: 5px;
+  margin-block: -5px;
 }
 /* cartão sem fonte no rodapé — as acções encostam à direita na mesma */
 .leitura-acoes:only-child {

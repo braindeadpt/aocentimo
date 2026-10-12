@@ -225,9 +225,14 @@ export function SiteNav() {
           >
             <div className="flex items-baseline justify-between px-5 pb-1 pt-4">
               <p className="folha-titulo">{m.nav.index}</p>
+              {/* o «Fechar» da folha media 48×23 px em todas as rotas —
+                  abaixo dos 24×24 do critério 2.5.8 (AA) e longe dos 44
+                  de um alvo cómodo de dedo. O `padding` cresce a área de
+                  toque e a margem negativa devolve o desenho ao mesmo
+                  sítio: muda o alvo, não a tinta. */}
               <button
                 type="button"
-                className="cursor-pointer underline underline-offset-4"
+                className="-mx-3 -my-3 cursor-pointer px-3 py-3 underline underline-offset-4"
                 onClick={() => detalhes.current?.removeAttribute("open")}
               >
                 {m.nav.fechar}

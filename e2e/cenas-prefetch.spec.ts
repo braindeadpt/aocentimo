@@ -80,6 +80,74 @@ const cargaDo = (pedidos: Pedido[], antes: number) =>
   pedidos.filter((p) => p.t > antes);
 
 /**
+ * Um pedido com o instante lido no relógio do TESTE — para os testes que
+ * param o relógio da página (`page.clock`), em que `performance.now()`
+ * deixa de andar e o `t` do `registar()` seria sempre o mesmo número.
+ */
+interface Visto {
+  url: string;
+  json: string | null;
+  js: boolean;
+  t: number;
+}
+
+function registarNoRelogioDoTeste(page: Page): { vistos: Visto[]; t0: number } {
+  const vistos: Visto[] = [];
+  const t0 = Date.now();
+  page.on("request", (r) => {
+    const m = JSON_CENA.exec(r.url());
+    vistos.push({
+      url: r.url(),
+      json: m ? m[1] : null,
+      js: r.url().endsWith(".js"),
+      t: Date.now() - t0,
+    });
+  });
+  return { vistos, t0 };
+}
+
+/**
+ * A fila de ociosidade só é DEVIDA 4 s depois do `load` (é a regra do
+ * #38: «4 s depois do load, uma por passo»). Antes disso, um pedido de
+ * cena é cedo demais — e é isso que «em repouso» quer dizer.
+ *
+ * Comparar com o RELÓGIO DA PÁGINA é o que torna a asserção
+ * determinística. Uma janela de `waitForTimeout` contada a partir da
+ * hidratação não serve: sob carga a hidratação chega DEPOIS de a fila
+ * ter entrado, e o teste acusava a fila de ter entrado «em repouso» (a
+ * corrida medida a 2026-10-12 — o `banco` aos 12,9 s e aos 14,3 s de
+ * navegação, num sítio onde a hidratação só chegou aos 11 s). A fila
+ * chega tarde, nunca cedo: por isso o limite inferior é seguro.
+ *
+ * O instante do pedido é o `startTime` do Resource Timing — o número do
+ * próprio browser. O `t` do `registar()` é um `evaluate` a posteriori,
+ * que espera na fila do motor e já valeu 0; para decidir «cedo demais?»
+ * não serve.
+ */
+const DEVIDO_MS = 4000;
+const MARGEM_MS = 500;
+
+async function pedidosDeCena(page: Page): Promise<{ url: string; t: number }[]> {
+  return page.evaluate(() =>
+    performance
+      .getEntriesByType("resource")
+      .filter((e) => /\/cenas\/[a-z]+\.json$/.test(e.name))
+      .map((e) => ({ url: e.name, t: e.startTime }))
+  );
+}
+
+async function cenaCedoDemais(page: Page): Promise<{ url: string; t: number }[]> {
+  const load = await page.evaluate(() => {
+    const nav = performance.getEntriesByType("navigation")[0] as
+      | PerformanceNavigationTiming
+      | undefined;
+    return nav?.loadEventEnd ?? 0;
+  });
+  const limite = Math.max(DEVIDO_MS, load + DEVIDO_MS) - MARGEM_MS;
+  return (await pedidosDeCena(page)).filter((p) => p.t < limite);
+}
+
+/**
  * Pairar num edifício com um RATO A SÉRIO. O mapa respira (o clamp da
  * câmara, as nuvens), por isso o `.hover()` do Playwright fica à espera
  * de estabilidade e falha; e há edifícios que se sobrepõem no papel — o
@@ -126,30 +194,57 @@ test.describe("o prefetch das cenas (rede e CPU estranguladas)", () => {
   test("ao pairar, o JSON e o chunk da cena saem ANTES do clique", async ({ page }) => {
     test.setTimeout(90_000);
     await page.setViewportSize({ width: 390, height: 844 });
+    /*
+     * O RELÓGIO DA PÁGINA PARADO ANTES DA NAVEGAÇÃO, de propósito: a fila
+     * de ociosidade só é devida 4 s depois do `load` e, com o relógio
+     * parado, esse prazo nunca chega — por isso o ÚNICO autor possível do
+     * pedido é o pairar. Sem isto, «em repouso: nenhum pedido de cena» era
+     * uma corrida: sob carga a hidratação chegava depois de a fila ter
+     * entrado, e o `banco` é o 2.º edifício mais à vista a 390 px
+     * (medido: fábrica, banco, Segurança Social) — precisamente o que este
+     * teste pairou (falha de 2026-10-12, com a fila a sair aos 11,9 s e
+     * aos 12,1 s de navegação).
+     *
+     * `pauseAt` e não só `install`: o `install` sozinho deixa o relógio
+     * FALSO A ANDAR (medido: a fila saía na mesma); é a pausa que trava os
+     * `setTimeout` já marcados. E é o instante do relógio DA PÁGINA — o do
+     * teste é outro e dava «Cannot fast-forward to the past».
+     *
+     * A pausa não parte o que se mede (verificado com a rede e o CPU
+     * estrangulados): a hidratação corre, o `import()` do chunk e o
+     * `fetch` do JSON saem ao pairar e a cena abre. O que muda é o
+     * relógio — daí os instantes serem lidos no relógio do TESTE (com o
+     * relógio parado, o `t` do `registar()` seria sempre o mesmo número).
+     */
+    await page.clock.install();
+    await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 10);
     await estrangular(page);
-    const pedidos = await registar(page);
+    const { vistos, t0 } = registarNoRelogioDoTeste(page);
 
     await page.goto("/");
     await expect(page.locator('.b-mundo[data-vivo="1"]')).toBeAttached();
     // deixa o arranque assentar: nada aqui é culpa do carregamento
     await page.waitForTimeout(1500);
-    expect(pedidos.filter((p) => p.json), "repouso: nenhum pedido de cena").toEqual([]);
+    expect(
+      vistos.filter((v) => v.json),
+      "em repouso: nenhum pedido de cena"
+    ).toEqual([]);
 
-    const marca = await page.evaluate(() => performance.now());
+    const marca = Date.now() - t0;
     const pt = await pairarEm(page, "banco");
 
     // o pedido nasce do pairar, não do clique
     await expect
-      .poll(() => pedidos.filter((p) => p.json === "banco" && p.t > marca).length, {
+      .poll(() => vistos.filter((v) => v.json === "banco" && v.t > marca).length, {
         timeout: 20_000,
       })
       .toBeGreaterThan(0);
     await expect
-      .poll(() => cargaDo(pedidos, marca).filter((p) => p.js).length, { timeout: 20_000 })
+      .poll(() => vistos.filter((v) => v.js && v.t > marca).length, { timeout: 20_000 })
       .toBeGreaterThan(0);
 
-    const tClique = await page.evaluate(() => performance.now());
-    const antes = cargaDo(pedidos, marca);
+    const tClique = Date.now() - t0;
+    const antes = vistos.filter((v) => v.t > marca);
     expect(antes.filter((p) => p.json === "banco" && p.t < tClique).length,
       "o JSON foi pedido depois do clique").toBeGreaterThan(0);
     expect(antes.filter((p) => p.js && p.t < tClique).length,
@@ -163,7 +258,7 @@ test.describe("o prefetch das cenas (rede e CPU estranguladas)", () => {
     // do DOM (era a corrida do Save-Data) — e exigir exactamente um é o
     // que denuncia um segundo pedido.
     await expect
-      .poll(() => pedidos.filter((p) => p.json === "banco").length, {
+      .poll(() => vistos.filter((v) => v.json === "banco").length, {
         message: "o JSON da cena devia ser pedido uma só vez",
         timeout: 15_000,
       })
@@ -212,12 +307,12 @@ test.describe("o prefetch das cenas (rede e CPU estranguladas)", () => {
   test("a home em repouso não pede nada a nenhuma cena (regra do #38)", async ({ page }) => {
     test.setTimeout(60_000);
     await estrangular(page);
-    const pedidos = await registar(page);
     await page.goto("/");
     await expect(page.locator('.b-mundo[data-vivo="1"]')).toBeAttached();
-    // nem no arranque, nem com a página a ficar ociosa
+    // nem no arranque, nem com a página a ficar ociosa: até a fila de
+    // ociosidade ser devida, nenhuma cena pode ter sido pedida
     await page.waitForTimeout(2000);
-    expect(pedidos.filter((p) => p.json), "repouso: nenhum json de cena").toEqual([]);
+    expect(await cenaCedoDemais(page), "repouso: nenhum json de cena").toEqual([]);
   });
 
   test("depois de um tempo de ociosidade, UM edifício à vista é aquecido — e só um", async ({

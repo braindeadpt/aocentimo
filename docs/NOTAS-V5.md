@@ -1352,3 +1352,71 @@ coletável», `finTabelaTaxa` «Taxa», `finTabelaFaixa` «{de} a {ate}»,
 ## O mapa segue o tema — 2026-10-07
 
 Decisão do dono: o tema escuro é «a noite do bairro», por isso o mapa abre em **Noite** quando o tema é escuro. A regra «o mapa nunca escurece» passa a «o palco não escurece (o desenho e as cenas ficam claros), mas o céu segue o tema». Prioridade da hora: o que a pessoa clicou (Dia / Fim de tarde / Noite) > o tema escuro > a hora do relógio. Trocar o tema esquece o clique. Vive em `hora.ts` (`horaEfetiva`) e no script em linha do palco, que lê o tema antes da primeira pintura (sem fotograma de dia em escuro). Teste: `e2e/bairro-hora-tema.spec.ts`.
+
+## A auditoria de dispositivos, fluidez e arrasto — 2026-10-12
+
+Três instrumentos novos, todos em `scripts/` e todos no contrato
+(`AGENTS.md`), porque o que não se mede não se sabe:
+
+- **`_dispositivos.mjs`** — telemóveis a sério (320/390/428), tablet e
+  desktop, em 39 rotas: transbordo, **alvo de toque AA (2.5.8 — 24×24)**,
+  letra mínima e texto cortado, agregado por elemento (o mesmo «Fechar» em
+  39 rotas é UMA linha). Primeira corrida, primeira safra de defeitos
+  reais: o «Fechar» do Índice a **48×23 px em todas as rotas**; os campos
+  do talão a **64×23**; a régua dos gráficos a 1,15 rem (18 px); o «JSON»
+  e o «copiar» a **27×17**; as acções do rodapé do cartão («página →») a
+  **53×17**; os presets da `/estilo` a 18 px de caixa; as citações da
+  cronologia do `LineChart` a 17 px. Corrigidos no alvo, nunca na tinta:
+  `padding` cresce a área de toque e a margem negativa devolve o desenho à
+  mesma linha (`SiteNav.tsx`, `LineChart.tsx`, `globals.css`, `/estilo`).
+  Está no CI, a seguir ao `audit`.
+- **`_fluidez.mjs`** — fluidez e memória no iPhone 12 Pro emulado, com 4×
+  menos CPU e rede 4G má: fotogramas, memória e o arrasto do mapa.
+- **`_perfil-arrasto.mjs`** — diagnóstico: de que é feito o custo de
+  arrastar o mapa, por camada, para não se adivinhar um ganho.
+
+E uma quarta medição, que virou correcção de produto:
+
+- **A câmara mirava onde a figura ESTAVA.** O Pedro atravessa a Avenida e
+  a Arminda vai aos Correios (`ambiente.ts`), e entre o clique e a chegada
+  da câmara (1,1 s) elas andam metros. Medido: o Pedro andou de x=1105 a
+  x=1273 px de ecrã em 1,7 s (escala 2,21) — o mundo e a janela não se
+  mexeram um pixel, foi mesmo ele — e saiu pela borda direita da janela
+  com o painel aberto a dizer «Olá! Sou o Pedro». A câmara passou a
+  **perseguir** o alvo (`Camera.seguir()`: o centro é perguntado a cada
+  fotograma, a `Vista` interpola-se em direcção a ele), e o voo é o mesmo
+  de antes em tudo o resto — sem GSAP salta para o alvo de agora.
+
+## As quatro falhas do e2e não eram regressos — eram corridas dos testes
+
+Medido na base limpa (`aab46c7`, sem uma linha minha): **4 falhas em 443**
+numa corrida completa, todas da mesma família, todas invisíveis quando o
+teste corre sozinho:
+
+1. `bairro-cenas-fetch` «a home não pede nenhum json de cena no load» e
+   `cenas-prefetch` «em repouso não pede nada» — a fila de ociosidade é
+   devida **4 s depois do `load`** (#38), mas os testes contavam uma janela
+   de `waitForTimeout` a partir da hidratação. Sob carga a hidratação chega
+   DEPOIS de a fila ter entrado (medido: fila aos 11,9 s e 12,1 s; os três
+   primeiros edifícios que ela aquece a 390 px são fábrica, banco e
+   Segurança Social — medido por área visível: 5652, 3866 e 3242 px²).
+   Passaram a julgar **com o relógio da página**: o `startTime` do Resource
+   Timing de cada pedido contra `loadEventEnd + 4000` (margem 500 ms). A
+   fila chega tarde, nunca cedo — o limite inferior é uma afirmação.
+2. `cenas-prefetch` «ao pairar…» — mesma fila, agravada por pairar
+   precisamente o `banco`. O relógio da página é agora **parado antes da
+   navegação** (`page.clock.install()` + `pauseAt`), o que torna o pairar o
+   ÚNICO autor possível de um pedido. O `install()` sozinho não chega:
+   deixa o relógio falso A ANDAR, e a fila saía na mesma. Verificado com a
+   rede e o CPU estrangulados: hidratação corre, zero pedidos de cena em
+   21,5 s, o pairar pede o JSON e o chunk, a cena abre. Os instantes são
+   lidos no relógio do TESTE (com a página parada, `performance.now()` não
+   anda).
+3. `bairro-cartas` «a câmara pousa a figura na janela» — esperava «a
+   transform não mudou nos últimos 200 ms». Sob carga o motor de render
+   fica parado a meio do tween, a espera dava-o por assentado e a figura
+   era medida a caminho. A câmara passou a publicar o seu estado —
+   `data-camara` («a-mexer»/«pousada») e `data-camara-n` (as vistas pedidas,
+   a do arranque é a 1.ª) — e o teste espera por «pousada com n > n0». O
+   contador não é enfeite: sem ele lê-se o «pousada» da vista anterior e
+   volta-se a medir o meio do voo.

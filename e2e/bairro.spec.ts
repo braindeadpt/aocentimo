@@ -300,6 +300,52 @@ test.describe("o bairro — a câmara", () => {
     expect(antes, "arrastar não mexeu o mapa").not.toBe(depois);
   });
 
+  /**
+   * O arrasto NÃO pode re-arrumar os marcadores: o que o `arrumarPinos`
+   * escreve sai da largura da janela, nunca da vista da câmara (a
+   * arrumação está em cache e o protótipo já tinha este portão,
+   * `|k − kPinos| > .004`). Contam-se as ESCRITAS no DOM durante o gesto:
+   * zero é o valor certo. Sem a cache, cada `pointermove` reescrevia 13
+   * `transform` e 13 guias para não mudar um pixel.
+   */
+  test("arrastar não re-arruma os marcadores", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    await page.waitForSelector('.b-mundo .pin[data-id="fabrica"]');
+
+    // só a arrumação conta: o `transform` do marcador e o `d` da guia.
+    // A classe `on` fica de fora porque a passar por cima de um edifício
+    // ela muda — e isso não é arrumar, é acender.
+    await page.evaluate(() => {
+      const alvo = window as unknown as { __escritas: number };
+      alvo.__escritas = 0;
+      const conta = () => (alvo.__escritas += 1);
+      for (const p of document.querySelectorAll(".b-mundo .pin"))
+        new MutationObserver(conta).observe(p, {
+          attributes: true,
+          attributeFilter: ["transform", "d"],
+          subtree: true,
+        });
+    });
+
+    const r = await page.locator(".b-janela").boundingBox();
+    if (!r) throw new Error("a janela do mapa não tem caixa");
+    await page.mouse.move(r.x + r.width / 2, r.y + r.height / 2);
+    await page.mouse.down();
+    for (let i = 1; i <= 12; i++)
+      await page.mouse.move(r.x + r.width / 2 - i * 14, r.y + r.height / 2 - i * 5);
+    await page.mouse.up();
+
+    const escritas = await page.evaluate(
+      () => (window as unknown as { __escritas: number }).__escritas
+    );
+    expect(
+      escritas,
+      `arrastar o mapa escreveu ${escritas} vez(es) nos marcadores — o ` +
+        `que o arrumarPinos escreve não depende da câmara`
+    ).toBe(0);
+  });
+
   test("os três botões de zoom mexem na escala", async ({ page }) => {
     await page.goto("/");
     const mundo = page.locator(".b-mundo");

@@ -24,7 +24,7 @@ históricos — registo, não contrato.
 | Regras fiscais | JSON versionados por ano em `data/fiscal/` com fonte e vigência — nunca hardcoded |
 | Motores | `src/lib/engines/` = funções puras testadas (IRS, SS, prestação, TAEG, poupança, impostos) — as cenas usam os mesmos, nada reimplementado |
 | Voz | PT-PT europeu; strings em `messages/pt.json` e nos `textos*.ts` das cenas; nunca "usuário/você/portfólio" |
-| Qualidade | `lint && typecheck && test:unit && validate:data && build && _gate-html && test:e2e` + `audit` verdes antes de merge |
+| Qualidade | `lint && typecheck && test:unit && validate:data && build && _gate-html && test:e2e` + `audit` + `_dispositivos` verdes antes de merge |
 | Produto | Read-only, gratuito, sem aconselhamento financeiro; cada número tem fonte + data; **copy é do dono** |
 
 ## Regra nº1
@@ -63,6 +63,15 @@ npm run validate:data  # gate de frescura — falha se série oficial atrasar
 node scripts/_gate-html.mjs        # tecto de 80 KB gzip da home + o mapa não vai no flight (depois do build)
 node scripts/_dieta-html.mjs       # o mesmo HTML por blocos + experimentos; só lê e imprime
 node scripts/_js-por-rota.mjs      # JS inicial/total por rota (precisa de :3100)
+node scripts/_dispositivos.mjs     # telemóveis (320–428), tablet e desktop: transbordo,
+                                   #   alvo de toque AA (2.5.8), letra mínima, texto cortado
+                                   #   — DISP=«390» restringe; precisa de :3100
+node scripts/_fluidez.mjs          # fluidez e memória no iPhone 12 Pro emulado, com 4×
+                                   #   menos CPU e rede 4G má; julga a MEDIANA e o p95
+                                   #   do arrasto, não o pior quadro, que é o arranque
+                                   #   do gesto (VISTA=390x664 calibra com a auditoria)
+                                   #   — precisa de :3100
+node scripts/_perfil-arrasto.mjs   # diagnóstico: de que é feito o custo de arrastar o mapa
 node scripts/_bundle-top.mjs [chunks] # top de módulos por chunk (build com productionBrowserSourceMaps)
 node scripts/_revisao-copy.mjs      # regenera docs/REVISAO-COPY-V5.md (--check não escreve)
 ```
@@ -184,6 +193,13 @@ estas regras divergirem, **ganha o protótipo**, excepto nas regras da casa
   a projeção, a contagem de edifícios, os `data-id` e os valores dos
   marcadores; o e2e mede em `getBoundingClientRect` a 1440/1024/768/375.
   Uma asserção que não mede nada é uma asserção que não falha.
+- **A casa media o transbordo a 768/1440 — e mais nada.** O
+  `_dispositivos.mjs` passou a medir os telemóveis a sério (320/390/428),
+  o tablet e o desktop: transbordo, alvo de toque AA (2.5.8), letra
+  mínima e texto cortado, agregado por elemento (o mesmo «Fechar» em 39
+  rotas é UMA linha, não 39). Na primeira corrida apanhou o «Fechar» do
+  Índice a 48×23 px em todas as rotas e os campos do talão a 64×23 — e
+  o `_overflow-sweep` a 768/1440 nunca os teria visto.
 - **`_gate-html.mjs` está no CI** depois do build: mede o HTML da home
   contra o tecto de 80 KB gzip **e verifica que o mapa não está no
   payload RSC**. Se alguém passar o mapa por prop, o gate aponta-lhe o
