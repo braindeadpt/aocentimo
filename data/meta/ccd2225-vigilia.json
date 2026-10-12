@@ -1,5 +1,5 @@
 {
-  "consultadoEm": "2026-10-06T10:55:58.037Z",
+  "consultadoEm": "2026-10-12T16:49:44.728Z",
   "fonteUrl": "https://publications.europa.eu/webapi/rdf/sparql",
   "nota": "Cellar: work http://publications.europa.eu/resource/cellar/12d92010-76c8-11ee-99ba-01aa75ed71a1 · filtro de país PRT · a mesma fonte que alimenta a página NIM do EUR-Lex (que está atrás de um AWS WAF).",
   "transposto": false,
