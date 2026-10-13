@@ -62,12 +62,11 @@
    recortada pela janela — no WebKit (DPR 3, 4 e 8 zooms + arrastos) o
    pico fica nos ~810 MB, longe do crash dos ~1 450 MB; promover as oito
    `.b-camada` em permanência é que não (ver em baixo). */
-[data-pele="v5"] .b-janela.b-arrasto .b-mundo {
-  will-change: transform;
-}
-[data-pele="v5"] .b-janela.b-arrasto .b-mundo * {
-  animation-play-state: paused !important;
-}
+/* A pausa e a camada já NÃO vivem aqui (2026-10-13): um seletor
+   `.b-arrasto .b-mundo *` fazia o browser recalcular os ~7 300 nós do
+   mundo no arranque de cada gesto — meio segundo a um segundo antes de o
+   mapa mexer no telemóvel. A câmara (`emGesto` em camara.ts) pausa só os
+   elementos que animam e promove só o `.b-mundo`, por estilo inline. */
 
 /* O mundo: um contentor com `transform`. A câmara escreve aqui e em mais
    lado nenhum — mexer no viewBox obrigaria o browser a repintar o mapa
@@ -115,7 +114,7 @@
      marcadores incluída; o teste em mundo.test.ts confere os dois. A 1280
      e a 1920 a câmara refaz o enquadramento ao arrancar (a razão de ecrã
      muda a vista). */
-  transform: translate(-0.6524cqw, -14.5106cqw) scale(0.40288);
+  transform: translate(-1.5078cqw, -15.6410cqw) scale(0.40968);
 }
 /* AS CAMADAS EMPILHAM-SE AQUI, e não em fluxo. Cada `.b-camada` é um SVG
    do tamanho do mundo inteiro (3600×2500): em `position: static` — o
@@ -193,7 +192,7 @@
 
 @media (max-width: 700px) {
   [data-pele="v5"] .b-mundo {
-    transform: translate(-15.7127cqw, 26.1287cqw) scale(0.15806);
+    transform: translate(-15.7127cqw, 25.5744cqw) scale(0.15806);
   }
 }
 
@@ -275,20 +274,13 @@
 [data-pele="v5"] .b-noite .luz {
   opacity: 1;
 }
-/* a ponte acende-se à noite: o arco dourado pelos projectores e os
-   candeeiros altos do tabuleiro (iso.ts, `ponteLuisI`), pintados por cima
+/* a ponte acende-se à noite: os candeeiros altos do tabuleiro (iso.ts, `ponteLuisI`), pintados por cima
    do véu da noite; metade dos candeeiros já no fim de tarde */
 [data-pele="v5"] .ponte-luz {
   transition: opacity 1.2s;
 }
 [data-pele="v5"] .b-noite .ponte-luz {
   opacity: 1;
-}
-[data-pele="v5"] .b-noite .ponte-arco {
-  opacity: 1;
-}
-[data-pele="v5"] .b-fim-tarde .ponte-arco {
-  opacity: 0.35;
 }
 [data-pele="v5"] .b-fim-tarde .ponte-luz.b-cedo {
   opacity: 0.6;

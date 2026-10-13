@@ -208,7 +208,7 @@ test.describe("o bairro — o que o mapa mostra", () => {
     }
   });
 
-  test("sem JavaScript: os 13 marcadores e os doze edifícios estão no HTML", async ({
+  test("sem JavaScript: os 12 marcadores e os doze edifícios estão no HTML", async ({
     browser,
   }) => {
     // um contexto sem scripts: é o que o pack exige («sem JS vê-se o
@@ -220,7 +220,7 @@ test.describe("o bairro — o que o mapa mostra", () => {
     const p = await ctx.newPage();
     await p.goto("/");
     await expect(p.locator(".b-mundo .ed")).toHaveCount(12);
-    await expect(p.locator(".b-mundo .pin")).toHaveCount(13);
+    await expect(p.locator(".b-mundo .pin")).toHaveCount(12);
     const texto = await p.locator(".b-mundo").innerText();
     // os mesmos valores do marcador, tirados do pack — e não «1 500» e
     // «23,75» escritos à mão, que só aguentavam enquanto a lei não mexesse
@@ -412,8 +412,53 @@ test.describe("o bairro — a geometria do enquadramento inicial (P1, acabamento
    * A folga pedida vem do dono: ≥12 px em cima, ≥2 px nos outros lados.
    */
 
+  /**
+   * CADA BALÃO NO SEU EDIFÍCIO (dono, 2026-10-13: «os balões estão todos
+   * mal colocados… tem de ficar tudo devidamente colocado no seu
+   * edifício»). Com os balões escondidos, o que está logo por baixo do
+   * bico de cada um tem de ser o PRÓPRIO edifício; e nenhum balão pode
+   * tapar outro. No computador e no telemóvel.
+   */
+  for (const [largura, altura] of [[1440, 900], [390, 844]] as const) {
+    test(`(${largura}×${altura}) o bico de cada balão assenta no seu edifício, sem balões sobrepostos`, async ({ page }) => {
+      await page.setViewportSize({ width: largura, height: altura });
+      await page.goto("/?leve=1");
+      await page.waitForSelector('.b-mundo[data-vivo="1"] .pin', { state: "attached" });
+      await page.locator(".b-janela").scrollIntoViewIfNeeded();
+      await page.waitForTimeout(600);
+      const r = await page.evaluate(() => {
+        const pins = [...document.querySelectorAll<SVGGElement>(".b-mundo .pin")];
+        const caixas = pins.map((p) => ({ id: p.dataset.id ?? "?", r: p.querySelector(".pin-corpo")!.getBoundingClientRect() }));
+        const sobrepostos: string[] = [];
+        caixas.forEach((a, i) =>
+          caixas.slice(i + 1).forEach((b) => {
+            const x = Math.min(a.r.right, b.r.right) - Math.max(a.r.left, b.r.left);
+            const y = Math.min(a.r.bottom, b.r.bottom) - Math.max(a.r.top, b.r.top);
+            if (x > 1 && y > 1) sobrepostos.push(`${a.id}×${b.id}`);
+          })
+        );
+        const pontos = pins.map((p) => {
+          // o bico é a origem do balão; mede-se 4 unidades abaixo dele
+          const pt = new DOMPoint(0, 4).matrixTransform(p.getScreenCTM()!);
+          return { id: p.dataset.id ?? "?", x: pt.x, y: pt.y };
+        });
+        const camada = document.querySelector<SVGGElement>("#b-gPinos")!;
+        camada.style.display = "none";
+        const fora = pontos
+          .map(({ id, x, y }) => ({ id, em: document.elementFromPoint(x, y)?.closest(".ed")?.getAttribute("data-id") ?? "nada" }))
+          .filter((p) => p.em !== p.id)
+          .map((p) => `${p.id} está em cima de: ${p.em}`);
+        camada.style.display = "";
+        return { n: pins.length, sobrepostos, fora };
+      });
+      expect(r.n).toBe(12);
+      expect(r.fora, r.fora.join(" · ")).toEqual([]);
+      expect(r.sobrepostos, r.sobrepostos.join(" · ")).toEqual([]);
+    });
+  }
+
   for (const [largura, altura] of [[1920, 1080], [1440, 900], [1280, 800]] as const) {
-    test(`no computador (${largura}×${altura}) os 13 marcadores cabem inteiros`, async ({ page }) => {
+    test(`no computador (${largura}×${altura}) os 12 marcadores cabem inteiros`, async ({ page }) => {
       await page.setViewportSize({ width: largura, height: altura });
       await page.goto("/");
       await page.waitForSelector(".b-mundo .pin");
@@ -437,7 +482,7 @@ test.describe("o bairro — a geometria do enquadramento inicial (P1, acabamento
         return { nPins: pins.length, falhas };
       });
 
-      expect(fora.nPins).toBe(13);
+      expect(fora.nPins).toBe(12);
       expect(fora.falhas, `pins cortados: ${fora.falhas.join(" · ")}`).toEqual([]);
     });
   }
@@ -445,11 +490,11 @@ test.describe("o bairro — a geometria do enquadramento inicial (P1, acabamento
   /**
    * Decisão do dono, 2026-10-07: o mapa abre TOTALMENTE VISÍVEL no
    * computador e no telemóvel — a laje do tabuleiro inteira (as duas faces
-   * de terra) e os 13 marcadores inteiros. Substitui o arranque «perto da
+   * de terra) e os 12 marcadores inteiros. Substitui o arranque «perto da
    * fábrica» do telemóvel e o piso de 11 px que o acompanhava.
    */
   for (const [largura, altura] of [[1920, 1080], [1440, 900], [1280, 800], [390, 844], [375, 812]] as const) {
-    test(`(${largura}×${altura}) o tabuleiro e os 13 marcadores abrem inteiros`, async ({ page }) => {
+    test(`(${largura}×${altura}) o tabuleiro e os 12 marcadores abrem inteiros`, async ({ page }) => {
       await page.setViewportSize({ width: largura, height: altura });
       await page.goto("/");
       await page.waitForSelector(".b-mundo .pin");
@@ -475,7 +520,7 @@ test.describe("o bairro — a geometria do enquadramento inicial (P1, acabamento
 
       expect(res.nFaces).toBe(2);
       expect(res.facesFora, "a laje do tabuleiro sai da janela").toBe(0);
-      expect(res.nPins).toBe(13);
+      expect(res.nPins).toBe(12);
       expect(res.pinsFora, `marcadores fora: ${res.pinsFora.join(", ")}`).toEqual([]);
     });
   }

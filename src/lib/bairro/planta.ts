@@ -208,10 +208,56 @@ export interface MarcadoresBairro {
   gasolinaUn: string;
   inflacao: string;
   desemprego: string;
+  /** O peso do Norte no PIB do país (Torre dos Clérigos). Opcional: sem
+   * ele o marcador escreve «—», nunca um número inventado. */
+  nortePib?: string;
 }
 
 /** Um marcador: a que edifício pertence, onde, a que altura e que diz. */
+/**
+ * Um marcador com DOIS números (a bomba: gasóleo e gasolina; o quiosque:
+ * inflação e desemprego) leva-os no mesmo balão, separados por `|` no
+ * rótulo e no valor — um balão por edifício (dono, 2026-10-13: «os balões
+ * da bomba duplicados»).
+ */
 export type Pino = readonly [id: string, ponto: Ponto, altura: number, rotulo: string, valor: string, nome: string];
+
+/**
+ * ONDE FICA O BICO DE CADA BALÃO, em coordenadas do mundo (dono,
+ * 2026-10-13: «os balões estão todos mal colocados… tem de ficar tudo
+ * devidamente colocado no seu edifício»). Antes cada balão nascia por
+ * cima do centro do telhado e a cadeia de subidas empurrava os de trás
+ * para cima — a Fábrica, a Segurança Social, o Banco e os Correios
+ * acabavam a flutuar sobre outros edifícios (o do Banco em cima dos
+ * Clérigos). Agora cada bico assenta num ponto VISÍVEL do próprio
+ * edifício, escolhido para que nenhum balão se sobreponha a outro nem
+ * tape os vizinhos (os Clérigos sobretudo), com o balão à escala máxima
+ * `PIN_K_MAX` da câmara.
+ *
+ * Saem de `work/cmp/arrumar.py` (máscara dos edifícios tirada do próprio
+ * SVG, procura gulosa + melhoria local; o bico só
+ * cai num ponto com o próprio edifício também à volta e por baixo; o
+ * balão paga por tapar QUALQUER fachada, incluindo a do próprio edifício
+ * — dono, 2026-10-13: «algumas ficam a tapar os edifícios como no banco
+ * ou bomba». Banco, Correios e Bomba afinados à mão: no telhado, com a
+ * placa BANCO, a fachada dos Correios e a cobertura da bomba à vista); o e2e `bairro.spec.ts` confere
+ * que o bico de cada balão cai no seu edifício. Se um edifício mudar de
+ * sítio, refaz-se a tabela.
+ */
+export const BICO_PINO: Readonly<Record<string, Ponto>> = {
+  fabrica: [710, -56],
+  segsocial: [902, 196],
+  financas: [1022, 316],
+  clerigos: [1178, -92],
+  banco: [1226, 358],
+  correios: [1334, 476],
+  bomba: [1508, 600],
+  mercearia: [170, 388],
+  pastelaria: [362, 400],
+  casa: [566, 460],
+  quiosque: [614, 640],
+  escola: [866, 640],
+};
 
 /** Onde é a porta de cada edifício — a câmara foca-a ao abrir a cena. */
 export type Portas = Record<string, Ponto>;
@@ -425,6 +471,9 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
   // continuam a ser os mesmos); a porta é a base da torre.
   ed.clerigos = edificioIso("clerigos", "Torre dos Clérigos — o Norte na economia", clerigos(7.55, 0.28, 1.22, TERRENO));
   portas.clerigos = Pt(7.55, 0.28);
+  // a indicação de fora (dono, 2026-10-13: «os Clérigos não possuem
+  // indicação exterior de nada?»): o balão no alto da torre (BICO_PINO)
+  pinos.push(["clerigos", Pt(7.55, 0.28), 0, "Norte no PIB do país", D.nortePib ?? "—", "Clérigos"]);
 
   // Banco
   {
@@ -516,8 +565,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     ed.bomba = edificioIso("bomba", "Bomba de gasolina — quanto do litro é imposto?", t);
     portas.bomba = Pt(i + 1.2, j + dj);
     // a unidade vem feita do servidor (fmtLitro): a planta nunca escreve «€/L»
-    pinos.push(["bomba", Pt(i + 1.3, j + 1.2), alt + 70, "Gasóleo · hoje", D.gasoleoUn, "Bomba"]);
-    pinos.push(["bomba2", Pt(i + 2.2, j + 1.1), alt + 70, "Gasolina 95", D.gasolinaUn, "Bomba"]);
+    pinos.push(["bomba", Pt(i + 1.75, j + 1.15), alt + 70, "Gasóleo · hoje|Gasolina 95", `${D.gasoleoUn}|${D.gasolinaUn}`, "Bomba"]);
   }
 
   /* ——— a Ribeira: casas estreitas, coladas, de cores diferentes ——— */
@@ -593,8 +641,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     ed.quiosque = edificioIso("quiosque", "Quiosque — os números do país hoje", t);
     rib.push(ed.quiosque);
     portas.quiosque = Pt(6.02, 8.2);
-    pinos.push(["quiosque", Pt(6.02, 7.9), 104, "Inflação · 12 meses", D.inflacao, "Quiosque"]);
-    pinos.push(["quiosque2", Pt(6.3, 8.3), 44, "Desemprego", D.desemprego, "Quiosque"]);
+    pinos.push(["quiosque", Pt(6.02, 7.9), 104, "Inflação · 12 meses|Desemprego", `${D.inflacao}|${D.desemprego}`, "Quiosque"]);
   }
 
   // Escola
@@ -737,7 +784,12 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     ponte: ponteLuisI({ iA: 14.3, iB: 14.78, jPorto: JM - 0.15, jGaia: J_GAIA, encontro: true, jA1: 10.8, jA2: 15.2, zCima: HP, pilares: [[8.75, 0], [10.55, 16], [15.45, 16], [16.3, 0]] }),
     gaia: margemGaia(),
     portas,
-    pinos,
+    // o bico de cada balão vai para o seu sítio (BICO_PINO); um id sem
+    // entrada fica onde a planta o pôs
+    pinos: pinos.map((p): Pino => {
+      const b = BICO_PINO[p[0]];
+      return b ? [p[0], b, 0, p[3], p[4], p[5]] : p;
+    }),
     luzes,
   };
 }

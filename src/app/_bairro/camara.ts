@@ -52,6 +52,15 @@ export interface PinoPlanta {
  * lados. São critérios de teste também (`bairro.spec.ts`).
  */
 export const FOLGA_TOPO = 12;
+
+/**
+ * A escala máxima dos balões. Era 1,7: a essa escala os balões dos
+ * edifícios de trás (Fábrica, Segurança Social, Finanças, Banco, Correios,
+ * Bomba) não cabiam lado a lado e a cadeia empurrava-os para cima de
+ * outros edifícios. A 1,35 cada um assenta no seu (`BICO_PINO`, planta.ts;
+ * dono, 2026-10-13).
+ */
+export const PIN_K_MAX = 1.35;
 export const FOLGA_LADO = 2;
 
 /**
@@ -340,7 +349,42 @@ export class Camera {
     // O GESTO SEM REPINTAR também na pinça e na roda (iPad, 2026-10-07):
     // só o arrasto de um dedo punha `b-arrasto`, e a pinça fazia o WebKit
     // repintar o bairro inteiro, com as animações a correr, a cada passo.
-    const emGesto = (sim: boolean) => janela.classList.toggle("b-arrasto", sim);
+    //
+    // O ARRANQUE DO GESTO SEM RECALCULAR O BAIRRO (2026-10-13, «andar no
+    // mapa depois do toque demora 1 segundo»). A pausa vivia no CSS, em
+    // `.b-janela.b-arrasto .b-mundo *`: pôr a classe na janela obrigava o
+    // browser a recalcular o estilo dos ~7 300 nós do mundo ANTES do
+    // primeiro fotograma movido — medido no Chromium (iPhone 12 Pro, CPU
+    // 4×): 500–750 ms entre o primeiro `pointermove` e o mapa a mexer, e
+    // 13–94 ms sem esse recálculo. Agora a pausa vai só aos elementos que
+    // ANIMAM (~36), por estilo inline, e a camada só ao `.b-mundo`: o
+    // mesmo efeito, sem tocar nos outros 7 000. Inline, e não
+    // `Animation.pause()`: a pausa da API fica colada à animação e
+    // desligava para sempre o `animation-play-state` do CSS (o `.amb-off`
+    // que pára o mapa fora do ecrã). A classe `b-arrasto` fica: é o sinal
+    // para o GSAP do ambiente, para o cursor e para os testes.
+    let pausados: HTMLElement[] = [];
+    const emGesto = (sim: boolean) => {
+      if (sim === janela.classList.contains("b-arrasto")) return;
+      const mundo = this.mundo;
+      if (sim) {
+        pausados = [];
+        for (const a of mundo.getAnimations({ subtree: true })) {
+          const alvo = (a.effect as KeyframeEffect | null)?.target;
+          if (alvo instanceof HTMLElement || alvo instanceof SVGElement) {
+            const el = alvo as HTMLElement;
+            if (!pausados.includes(el)) pausados.push(el);
+          }
+        }
+        for (const el of pausados) el.style.animationPlayState = "paused";
+        mundo.style.willChange = "transform";
+      } else {
+        for (const el of pausados) el.style.removeProperty("animation-play-state");
+        pausados = [];
+        mundo.style.removeProperty("will-change");
+      }
+      janela.classList.toggle("b-arrasto", sim);
+    };
 
     const aoRodar = (e: WheelEvent) => {
       e.preventDefault();
@@ -525,7 +569,7 @@ export function arrumarPinos(janela: HTMLElement, pinos: readonly MarcadorVivo[]
   const largura = janela.clientWidth;
   if (!largura || !pinos.length) return;
   const k = Math.min(
-    1.7,
+    PIN_K_MAX,
     Math.max(0.55, pinos[0].g.ownerSVGElement?.viewBox.baseVal.width ?? 1000) / largura
   );
 
@@ -610,7 +654,7 @@ function esconderCortados(
  */
 function repartirPinos(pinos: readonly PinoPlanta[], largura: number): number[] {
   const k = pinos.length
-    ? Math.min(1.7, Math.max(0.55, MUNDO.w / largura))
+    ? Math.min(PIN_K_MAX, Math.max(0.55, MUNDO.w / largura))
     : 1;
   const alto = ALTURA_PIN * k;
   const folga = 6 * k;
@@ -688,7 +732,7 @@ function caixasAposCadeia(
   pinos: readonly PinoPlanta[],
   largura: number
 ): { id: string; esq: number; dir: number; topo: number; fundo: number }[] {
-  const k = Math.min(1.7, Math.max(0.55, MUNDO.w / largura));
+  const k = Math.min(PIN_K_MAX, Math.max(0.55, MUNDO.w / largura));
   const alto = ALTURA_PIN * k;
   const ys = repartirPinos(pinos, largura);
   return pinos.map((p, i) => ({
@@ -703,5 +747,5 @@ function caixasAposCadeia(
 /** O `k` (escala do marcador) que `arrumarPinos` está a usar, para testes. */
 export function escalaDoMarcador(janela: HTMLElement, larguraMundo: number): number {
   if (!janela.clientWidth) return 1;
-  return Math.min(1.7, Math.max(0.55, larguraMundo / janela.clientWidth));
+  return Math.min(PIN_K_MAX, Math.max(0.55, larguraMundo / janela.clientWidth));
 }

@@ -237,7 +237,9 @@ for (const rota of rotas) {
   if (process.env.QUEBRAR === "pausa")
     await p.addStyleTag({
       content:
-        '[data-pele="v5"] .b-janela.b-arrasto .b-mundo * { animation-play-state: running !important; }',
+        // a pausa é inline desde 2026-10-13 (camara.ts, `emGesto`): um
+        // !important de folha de estilo passa-lhe por cima
+        '[data-pele="v5"] .b-mundo * { animation-play-state: running !important; }',
     });
   // `QUEBRAR=pinca` reproduz o defeito de antes do #91: a pinça sem
   // `b-arrasto` (o arrasto de um dedo continua inteiro). Só a vigia da
@@ -338,7 +340,7 @@ for (const rota of rotas) {
   if (fluidez && fluidez.pior > 250)
     avisos.push(
       `${rota}: pior quadro do arrasto ${fluidez.pior}ms — 1 a 2 quadros pesados por gesto, ` +
-        `no ARRANQUE (a promoção da camada e a pausa das animações), medidos entre 100 e 750 ms no mesmo build`
+        `no ARRANQUE (a promoção da camada e a pausa das animações); antes de 2026-10-13 a pausa por seletor custava 500–1350 ms`
     );
   if (carga.heapMB !== null && carga.heapMB > 60) falhas.push(`${rota}: heap ${carga.heapMB}MB`);
   if (carga.longas > 12) falhas.push(`${rota}: ${carga.longas} tarefas longas na carga (TBT ${Math.round(carga.tbt)}ms)`);

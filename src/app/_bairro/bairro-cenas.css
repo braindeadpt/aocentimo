@@ -629,22 +629,74 @@
   [data-pele="v5"] .b-palavra { transition: none; }
 }
 
-/* Torre dos Clérigos: as colunas sobem do rio uma a uma (o atraso vem no
-   style de cada uma), o número aparece com elas e um rabelo atravessa o
-   Douro. Em reduced-motion nada disto corre: as colunas estão inteiras e
-   o rabelo fica parado a meio do rio (o transform do próprio SVG). */
+/* Torre dos Clérigos (refeita a 2026-10-13, «a animação é fraca»): a
+   vista sobe ao alto da torre e a arcada abre; o contorno do país inteiro
+   aparece por trás de cada coluna; as colunas sobem com ressalto, um
+   brilho passa e o número salta; nuvens, gaivotas, o rio a cintilar, dois
+   rabelos e a Inês a apontar. Em reduced-motion nada disto corre: o
+   desenho parado é o estado final (o transform de cada peça no SVG). */
 @media (prefers-reduced-motion: no-preference) {
+  [data-pele="v5"] .b-cena .nte-vista {
+    transform-origin: 320px 470px;
+    animation: nte-chega 1s cubic-bezier(0.2, 0.8, 0.25, 1) both;
+  }
+  [data-pele="v5"] .b-cena .nte-arco {
+    transform-origin: 320px 235px;
+    animation: nte-abre 1s cubic-bezier(0.2, 0.8, 0.25, 1) both;
+  }
+  [data-pele="v5"] .b-cena .nte-placa {
+    animation: nte-aparece 0.4s 0.7s ease-out both;
+  }
+  [data-pele="v5"] .b-cena .nte-todo {
+    animation: nte-aparece 0.4s ease-out both;
+  }
   [data-pele="v5"] .b-cena .nte-col {
     transform-box: fill-box;
     transform-origin: 50% 100%;
-    animation: nte-sobe 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
+    animation: nte-sobe 0.75s cubic-bezier(0.2, 0.9, 0.3, 1.25) both;
   }
-  [data-pele="v5"] .b-cena .nte-val {
-    animation: nte-aparece 0.25s ease-out both;
+  [data-pele="v5"] .b-cena .nte-brilho {
+    animation: nte-brilha 0.7s ease-in-out both;
+  }
+  [data-pele="v5"] .b-cena .nte-val-g {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: nte-salta 0.5s cubic-bezier(0.3, 1.6, 0.5, 1) both;
   }
   [data-pele="v5"] .b-cena .nte-rabelo {
     animation: nte-rabelo 26s linear -5s infinite; /* já à vista ao abrir */
   }
+  [data-pele="v5"] .b-cena .nte-rabelo2 {
+    animation-duration: 44s;
+    animation-delay: -30s;
+  }
+  [data-pele="v5"] .b-cena .nte-nuvem {
+    animation: nte-nuvem 24s ease-in-out infinite alternate;
+  }
+  [data-pele="v5"] .b-cena .nte-gaivota {
+    animation: nte-gaivota 16s linear infinite;
+  }
+  [data-pele="v5"] .b-cena .nte-asas {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: nte-asas 0.45s ease-in-out infinite alternate;
+  }
+  [data-pele="v5"] .b-cena .nte-cintila {
+    animation: nte-cintila 2.2s ease-in-out infinite alternate;
+  }
+  [data-pele="v5"] .b-cena .nte-ines .braco-d {
+    transform-box: fill-box;
+    transform-origin: 30% 4%;
+    animation: nte-aponta 0.6s 1.1s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+  }
+}
+@keyframes nte-chega {
+  from { transform: translateY(90px) scale(1.08); }
+  to { transform: none; }
+}
+@keyframes nte-abre {
+  from { transform: scale(1.22); }
+  to { transform: none; }
 }
 @keyframes nte-sobe {
   from { transform: scaleY(0); }
@@ -654,7 +706,37 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+@keyframes nte-brilha {
+  0% { opacity: 0; transform: translateX(0); }
+  30% { opacity: 0.7; }
+  100% { opacity: 0; transform: translateX(120px); }
+}
+@keyframes nte-salta {
+  from { transform: scale(0.3); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
 @keyframes nte-rabelo {
   from { transform: translateX(0); }
   to { transform: translateX(800px); }
+}
+@keyframes nte-nuvem {
+  from { transform: translateX(-30px); }
+  to { transform: translateX(50px); }
+}
+@keyframes nte-gaivota {
+  0% { transform: translate(-260px, 20px); }
+  50% { transform: translate(200px, -14px); }
+  100% { transform: translate(660px, 18px); }
+}
+@keyframes nte-asas {
+  from { transform: scaleY(1); }
+  to { transform: scaleY(-0.6); }
+}
+@keyframes nte-cintila {
+  from { opacity: 0.15; }
+  to { opacity: 0.85; }
+}
+@keyframes nte-aponta {
+  from { transform: none; }
+  to { transform: rotate(-135deg); }
 }

@@ -25,6 +25,7 @@ import { comUnidade, fmtEUR, fmtNum, fmtPct } from "@/lib/format";
 import caBase from "@data/derived/ca-base.json";
 import cenarios from "@data/derived/cenarios-salario.json";
 import ss from "@data/fiscal/ss.json";
+import norte from "@data/regional/norte.json";
 import { montarMapa, type MapaBairro, type MarcadoresBairro } from "./planta";
 
 /** O texto que o formatador escreve quando o número não existe. */
@@ -177,6 +178,8 @@ export function marcadores(): MarcadoresBairro & { gasoleoUn: string; gasolinaUn
     // arredondar a «+4 %» era um número que não é o número da fonte
     inflacao: sinalPct(inflacao === null ? null : inflacao * 100, 1),
     desemprego: fmtPct(comoFracao(desemprego?.v ?? null) ?? 0, 1),
+    // a Torre dos Clérigos: o peso do Norte no PIB (INE, Contas Regionais)
+    nortePib: typeof norte.pib?.pesoPct === "number" ? fmtPct(norte.pib.pesoPct / 100, 1) : FALHOU,
     gasoleoUn: gasoleo ? comUnidade(fmtNum(gasoleo.v, 3), "€/L") : FALHOU,
     gasolinaUn: gasolina ? comUnidade(fmtNum(gasolina.v, 3), "€/L") : FALHOU,
   };
@@ -192,6 +195,7 @@ export function fontes(): string[] {
 
   const euribor = ultimo(loadFonte("bpstat", "euribor-12m-mensal"));
   if (euribor) notas.push(`Euribor 12M — BPstat, ${euribor.t}`);
+  if (typeof norte.pib?.pesoPct === "number") notas.push(`Norte no PIB — ${norte.pib.fonte}`);
 
   const ca = (caBase as { meta?: { oficialPct?: number } }).meta;
   if (ca?.oficialPct !== undefined) notas.push(
