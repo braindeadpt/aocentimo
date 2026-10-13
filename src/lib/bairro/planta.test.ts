@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { MUNDO } from "./iso";
-import { ESCD, HP, JM, MAPA, TERRENO, edificioIso, eletricoIso, margemGaia, montarMapa, type MarcadoresBairro } from "./planta";
+import { BICO_PINO, ESCD, HP, JM, MAPA, TERRENO, edificioIso, eletricoIso, margemGaia, montarMapa, type MarcadoresBairro } from "./planta";
 
 /* Os valores que `dadosBairro()` entrega. São TEXTO JÁ FORMATADO: a planta
    não formata nada. Ver a nota no topo de planta.ts. */
@@ -136,14 +136,23 @@ describe("montarMapa", () => {
     expect(porId.banco).toBe(D.euribor);
     expect(porId.correios).toBe(D.ca);
     expect(porId.casa).toBe(D.liquido);
-    expect(porId.quiosque).toBe(D.inflacao);
-    expect(porId.quiosque2).toBe(D.desemprego);
+    expect(porId.quiosque).toBe(`${D.inflacao}|${D.desemprego}`);
   });
 
-  it("os dois marcadores da bomba levam o preço por litro, com a unidade feita pelo servidor", () => {
+  it("a bomba leva os dois preços por litro num só balão, com a unidade feita pelo servidor", () => {
     const porId = Object.fromEntries(m.pinos.map(([id, , , , v]) => [id, v]));
-    expect(porId.bomba).toBe(D.gasoleoUn);
-    expect(porId.bomba2).toBe(D.gasolinaUn);
+    expect(porId.bomba).toBe(`${D.gasoleoUn}|${D.gasolinaUn}`);
+    expect(porId.bomba2).toBeUndefined();
+  });
+
+  it("um balão por edifício, cada um com o bico no sítio da tabela", () => {
+    const ids = m.pinos.map(([id]) => id);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(ids).toHaveLength(12);
+    for (const [id, p, alt] of m.pinos) {
+      expect(BICO_PINO[id], id).toBeDefined();
+      expect([p[0], p[1] - alt]).toEqual(BICO_PINO[id]);
+    }
   });
 
   it("mudar um valor muda só o marcador desse edifício", () => {

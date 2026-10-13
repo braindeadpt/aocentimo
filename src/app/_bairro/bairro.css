@@ -114,7 +114,7 @@
      marcadores incluída; o teste em mundo.test.ts confere os dois. A 1280
      e a 1920 a câmara refaz o enquadramento ao arrancar (a razão de ecrã
      muda a vista). */
-  transform: translate(3.8486cqw, -8.5633cqw) scale(0.36708);
+  transform: translate(-1.5078cqw, -15.6410cqw) scale(0.40968);
 }
 /* AS CAMADAS EMPILHAM-SE AQUI, e não em fluxo. Cada `.b-camada` é um SVG
    do tamanho do mundo inteiro (3600×2500): em `position: static` — o
@@ -192,7 +192,7 @@
 
 @media (max-width: 700px) {
   [data-pele="v5"] .b-mundo {
-    transform: translate(-15.7127cqw, 29.3836cqw) scale(0.15806);
+    transform: translate(-15.7127cqw, 25.5744cqw) scale(0.15806);
   }
 }
 

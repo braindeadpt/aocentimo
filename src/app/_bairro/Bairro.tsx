@@ -234,7 +234,6 @@ export function Bairro({
           x: Number(g.dataset.x ?? 0),
           y: Number(g.dataset.y ?? 0),
           w: Number(g.dataset.w ?? 0),
-          ax: g.dataset.ax === undefined ? undefined : Number(g.dataset.ax),
           guia: g.querySelector<SVGPathElement>(".guia"),
         }));
         arrumarPinos(janela, pinos);

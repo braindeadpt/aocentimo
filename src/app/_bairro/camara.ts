@@ -52,6 +52,15 @@ export interface PinoPlanta {
  * lados. São critérios de teste também (`bairro.spec.ts`).
  */
 export const FOLGA_TOPO = 12;
+
+/**
+ * A escala máxima dos balões. Era 1,7: a essa escala os balões dos
+ * edifícios de trás (Fábrica, Segurança Social, Finanças, Banco, Correios,
+ * Bomba) não cabiam lado a lado e a cadeia empurrava-os para cima de
+ * outros edifícios. A 1,35 cada um assenta no seu (`BICO_PINO`, planta.ts;
+ * dono, 2026-10-13).
+ */
+export const PIN_K_MAX = 1.35;
 export const FOLGA_LADO = 2;
 
 /**
@@ -543,8 +552,6 @@ export interface MarcadorVivo {
   x: number;
   y: number;
   w: number;
-  /** O x do edifício, quando a placa está desviada para o lado (`data-ax`). */
-  ax?: number;
   guia: SVGPathElement | null;
 }
 
@@ -562,7 +569,7 @@ export function arrumarPinos(janela: HTMLElement, pinos: readonly MarcadorVivo[]
   const largura = janela.clientWidth;
   if (!largura || !pinos.length) return;
   const k = Math.min(
-    1.7,
+    PIN_K_MAX,
     Math.max(0.55, pinos[0].g.ownerSVGElement?.viewBox.baseVal.width ?? 1000) / largura
   );
 
@@ -586,11 +593,7 @@ export function arrumarPinos(janela: HTMLElement, pinos: readonly MarcadorVivo[]
         `translate(${p.x.toFixed(1)} ${y.toFixed(1)}) scale(${k.toFixed(3)})`
       );
       // a guia estica-se para o edifício, que fica onde estava
-      if (p.guia) {
-        const dy = ((p.y - y) / k).toFixed(1);
-        const dxg = p.ax === undefined ? 0 : (p.ax - p.x) / k;
-        p.guia.setAttribute("d", dxg ? `M0 0 L${dxg.toFixed(1)} ${dy}` : `M0 0 V${dy}`);
-      }
+      if (p.guia) p.guia.setAttribute("d", `M0 0 V${((p.y - y) / k).toFixed(1)}`);
     });
     arrumacoes.set(pinos[0].g, { largura, n: pinos.length, ys });
   }
@@ -651,7 +654,7 @@ function esconderCortados(
  */
 function repartirPinos(pinos: readonly PinoPlanta[], largura: number): number[] {
   const k = pinos.length
-    ? Math.min(1.7, Math.max(0.55, MUNDO.w / largura))
+    ? Math.min(PIN_K_MAX, Math.max(0.55, MUNDO.w / largura))
     : 1;
   const alto = ALTURA_PIN * k;
   const folga = 6 * k;
@@ -729,7 +732,7 @@ function caixasAposCadeia(
   pinos: readonly PinoPlanta[],
   largura: number
 ): { id: string; esq: number; dir: number; topo: number; fundo: number }[] {
-  const k = Math.min(1.7, Math.max(0.55, MUNDO.w / largura));
+  const k = Math.min(PIN_K_MAX, Math.max(0.55, MUNDO.w / largura));
   const alto = ALTURA_PIN * k;
   const ys = repartirPinos(pinos, largura);
   return pinos.map((p, i) => ({
@@ -744,5 +747,5 @@ function caixasAposCadeia(
 /** O `k` (escala do marcador) que `arrumarPinos` está a usar, para testes. */
 export function escalaDoMarcador(janela: HTMLElement, larguraMundo: number): number {
   if (!janela.clientWidth) return 1;
-  return Math.min(1.7, Math.max(0.55, larguraMundo / janela.clientWidth));
+  return Math.min(PIN_K_MAX, Math.max(0.55, larguraMundo / janela.clientWidth));
 }

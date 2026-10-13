@@ -215,12 +215,44 @@ export interface MarcadoresBairro {
 
 /** Um marcador: a que edifício pertence, onde, a que altura e que diz. */
 /**
- * `dx` (opcional) desvia a PLACA para o lado, em unidades do mundo; a guia
- * fica inclinada até ao edifício. Existe para a placa não tapar outro
- * edifício (dono, 2026-10-13: «a indicação do banco está por cima dos
- * Clérigos»).
+ * Um marcador com DOIS números (a bomba: gasóleo e gasolina; o quiosque:
+ * inflação e desemprego) leva-os no mesmo balão, separados por `|` no
+ * rótulo e no valor — um balão por edifício (dono, 2026-10-13: «os balões
+ * da bomba duplicados»).
  */
-export type Pino = readonly [id: string, ponto: Ponto, altura: number, rotulo: string, valor: string, nome: string, dx?: number];
+export type Pino = readonly [id: string, ponto: Ponto, altura: number, rotulo: string, valor: string, nome: string];
+
+/**
+ * ONDE FICA O BICO DE CADA BALÃO, em coordenadas do mundo (dono,
+ * 2026-10-13: «os balões estão todos mal colocados… tem de ficar tudo
+ * devidamente colocado no seu edifício»). Antes cada balão nascia por
+ * cima do centro do telhado e a cadeia de subidas empurrava os de trás
+ * para cima — a Fábrica, a Segurança Social, o Banco e os Correios
+ * acabavam a flutuar sobre outros edifícios (o do Banco em cima dos
+ * Clérigos). Agora cada bico assenta num ponto VISÍVEL do próprio
+ * edifício, escolhido para que nenhum balão se sobreponha a outro nem
+ * tape os vizinhos (os Clérigos sobretudo), com o balão à escala máxima
+ * `PIN_K_MAX` da câmara.
+ *
+ * Saem de `work/cmp/arrumar.py` (máscara dos edifícios tirada do próprio
+ * SVG, procura gulosa + melhoria local); o e2e `bairro.spec.ts` confere
+ * que o bico de cada balão cai no seu edifício. Se um edifício mudar de
+ * sítio, refaz-se a tabela.
+ */
+export const BICO_PINO: Readonly<Record<string, Ponto>> = {
+  fabrica: [638, 64],
+  segsocial: [926, 208],
+  financas: [1010, 328],
+  clerigos: [1202, -92],
+  banco: [1118, 448],
+  correios: [1358, 508],
+  bomba: [1538, 640],
+  mercearia: [170, 376],
+  pastelaria: [386, 400],
+  casa: [446, 520],
+  quiosque: [614, 640],
+  escola: [878, 640],
+};
 
 /** Onde é a porta de cada edifício — a câmara foca-a ao abrir a cena. */
 export type Portas = Record<string, Ponto>;
@@ -435,9 +467,8 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
   ed.clerigos = edificioIso("clerigos", "Torre dos Clérigos — o Norte na economia", clerigos(7.55, 0.28, 1.22, TERRENO));
   portas.clerigos = Pt(7.55, 0.28);
   // a indicação de fora (dono, 2026-10-13: «os Clérigos não possuem
-  // indicação exterior de nada?»): a placa no alto da torre, por cima da
-  // cruz (636 = do chão à cruz, com folga)
-  pinos.push(["clerigos", Pt(7.55, 0.28), 636, "Norte no PIB do país", D.nortePib ?? "—", "Clérigos"]);
+  // indicação exterior de nada?»): o balão no alto da torre (BICO_PINO)
+  pinos.push(["clerigos", Pt(7.55, 0.28), 0, "Norte no PIB do país", D.nortePib ?? "—", "Clérigos"]);
 
   // Banco
   {
@@ -455,9 +486,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     });
     ed.banco = edificioIso("banco", "Banco — crédito, juros e a Euribor", svg);
     portas.banco = naFachada(i, j, dj, (wi * LAD) / 2);
-    // a placa vai para a DIREITA da torre (dx 245): por cima da cúpula
-    // ficava à frente dos Clérigos e parecia ser deles (dono, 2026-10-13)
-    pinos.push(["banco", Pt(i + wi / 2, j + dj / 2), h + 128, "Euribor 12 meses", D.euribor, "Banco", 245]);
+    pinos.push(["banco", Pt(i + wi / 2, j + dj / 2), h + 128, "Euribor 12 meses", D.euribor, "Banco"]);
   }
 
   // Correios
@@ -473,8 +502,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     const mc = Pt(i + 0.45, j + dj + 0.22);
     ed.correios = edificioIso("correios", "Correios — os certificados de aforro", svg + `<g class="marco"><rect x="${f1(mc[0] - 7)}" y="${f1(mc[1] - 30)}" width="14" height="30" rx="3" fill="${C.vermelho}" stroke="${K}" stroke-width="2.2"/><ellipse cx="${f1(mc[0])}" cy="${f1(mc[1] - 30)}" rx="7" ry="3.5" fill="${C.vermelho}" stroke="${K}" stroke-width="2"/></g>`);
     portas.correios = naFachada(i, j, dj, wi * LAD - 24);
-    // ao lado da do banco, também à direita da torre
-    pinos.push(["correios", Pt(i + wi / 2, j + dj / 2), h + 50, "Cert. de Aforro", D.ca, "Correios", 215]);
+    pinos.push(["correios", Pt(i + wi / 2, j + dj / 2), h + 50, "Cert. de Aforro", D.ca, "Correios"]);
   }
 
   // Posto de combustível
@@ -532,8 +560,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     ed.bomba = edificioIso("bomba", "Bomba de gasolina — quanto do litro é imposto?", t);
     portas.bomba = Pt(i + 1.2, j + dj);
     // a unidade vem feita do servidor (fmtLitro): a planta nunca escreve «€/L»
-    pinos.push(["bomba", Pt(i + 1.3, j + 1.2), alt + 70, "Gasóleo · hoje", D.gasoleoUn, "Bomba"]);
-    pinos.push(["bomba2", Pt(i + 2.2, j + 1.1), alt + 70, "Gasolina 95", D.gasolinaUn, "Bomba"]);
+    pinos.push(["bomba", Pt(i + 1.75, j + 1.15), alt + 70, "Gasóleo · hoje|Gasolina 95", `${D.gasoleoUn}|${D.gasolinaUn}`, "Bomba"]);
   }
 
   /* ——— a Ribeira: casas estreitas, coladas, de cores diferentes ——— */
@@ -609,8 +636,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     ed.quiosque = edificioIso("quiosque", "Quiosque — os números do país hoje", t);
     rib.push(ed.quiosque);
     portas.quiosque = Pt(6.02, 8.2);
-    pinos.push(["quiosque", Pt(6.02, 7.9), 104, "Inflação · 12 meses", D.inflacao, "Quiosque"]);
-    pinos.push(["quiosque2", Pt(6.3, 8.3), 44, "Desemprego", D.desemprego, "Quiosque"]);
+    pinos.push(["quiosque", Pt(6.02, 7.9), 104, "Inflação · 12 meses|Desemprego", `${D.inflacao}|${D.desemprego}`, "Quiosque"]);
   }
 
   // Escola
@@ -753,7 +779,12 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     ponte: ponteLuisI({ iA: 14.3, iB: 14.78, jPorto: JM - 0.15, jGaia: J_GAIA, encontro: true, jA1: 10.8, jA2: 15.2, zCima: HP, pilares: [[8.75, 0], [10.55, 16], [15.45, 16], [16.3, 0]] }),
     gaia: margemGaia(),
     portas,
-    pinos,
+    // o bico de cada balão vai para o seu sítio (BICO_PINO); um id sem
+    // entrada fica onde a planta o pôs
+    pinos: pinos.map((p): Pino => {
+      const b = BICO_PINO[p[0]];
+      return b ? [p[0], b, 0, p[3], p[4], p[5]] : p;
+    }),
     luzes,
   };
 }

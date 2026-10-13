@@ -602,6 +602,13 @@ export function nuvem(x: number, y: number, e = 1): string {
  * ao enquadrar): um número em dois sítios é um número que um dia diverge.
  */
 export function larguraPin(rotulo: string, valor: string, nome = ""): number {
+  if (rotulo.includes("|")) {
+    // dois números lado a lado: cada coluna mede o maior dos dois textos
+    const r = rotulo.split("|");
+    const v = valor.split("|");
+    const col = (k: number) => Math.max((r[k] ?? "").length * 6.2, (v[k] ?? "").length * 10.2);
+    return Math.max(col(0) + col(1) + 14 + 26, nome.length * 7.6 + 26);
+  }
   return Math.max(valor.length * 11.5 + 26, rotulo.length * 6.2 + 26, nome.length * 7.6 + 26);
 }
 
@@ -618,19 +625,40 @@ export const ALTURA_PIN = 78;
  * pequena diz a métrica e o valor fica grande. Antes o cabeçalho era a
  * métrica e não se percebia a que edifício pertencia cada bolha.
  */
-export function pin(x: number, y: number, rotulo: string, valor: string, nome = "", cor = K, fundo = "#fff", dx = 0): string {
+export function pin(x: number, y: number, rotulo: string, valor: string, nome = "", cor = K, fundo = "#fff"): string {
   const w = larguraPin(rotulo, valor, nome);
   const NOME = nome.toLocaleUpperCase("pt-PT");
-  // com `dx` a placa (x + dx) sai de cima do edifício e a guia vai até ele (`data-ax`)
-  const ax = dx ? ` data-ax="${f1(x)}"` : "";
-  return `<g class="pin" data-x="${f1(x + dx)}" data-y="${f1(y)}" data-w="${f1(w + 3)}"${ax} transform="translate(${f1(x + dx)} ${f1(y)})"><path class="guia" d="M0 0 ${dx ? `L${f1(-dx)} 0` : "V0"}" stroke="${K}" stroke-width="2" stroke-dasharray="3 3"/><g class="pin-corpo">
+  let corpo: string;
+  if (rotulo.includes("|")) {
+    // dois números no mesmo balão, cada um com a sua linha pequena
+    const r = rotulo.split("|");
+    const v = valor.split("|");
+    const c0 = Math.max(r[0].length * 6.2, (v[0] ?? "").length * 10.2);
+    const c1 = Math.max((r[1] ?? "").length * 6.2, (v[1] ?? "").length * 10.2);
+    const x0 = -w / 2 + 13 + c0 / 2;
+    const x1 = w / 2 - 13 - c1 / 2;
+    const xm = -w / 2 + 13 + c0 + 7;
+    corpo =
+      `<path d="M${f1(xm)} -54 V-16" stroke="${K}" stroke-width="1.4" stroke-opacity=".35"/>` +
+      [[x0, r[0], v[0]], [x1, r[1], v[1]]]
+        .map(
+          ([cx, rr, vv]) =>
+            `<text class="pin-metrica" x="${f1(cx as number)}" y="-45.5" text-anchor="middle" font-family="Archivo" font-weight="700" font-size="9.5" fill="${K}" fill-opacity=".72">${rr ?? ""}</text>` +
+            `<text class="pin-valor" x="${f1(cx as number)}" y="-23" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="17" fill="${cor}" font-variant-numeric="tabular-nums">${vv ?? "—"}</text>`
+        )
+        .join("");
+  } else {
+    corpo =
+      `<text class="pin-metrica" x="0" y="-45.5" text-anchor="middle" font-family="Archivo" font-weight="700" font-size="9.5" fill="${K}" fill-opacity=".72">${rotulo}</text>` +
+      `<text class="pin-valor" x="0" y="-22" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="19" fill="${cor}" font-variant-numeric="tabular-nums">${valor}</text>`;
+  }
+  return `<g class="pin" data-x="${f1(x)}" data-y="${f1(y)}" data-w="${f1(w + 3)}" transform="translate(${f1(x)} ${f1(y)})"><path class="guia" d="M0 0 V0" stroke="${K}" stroke-width="2" stroke-dasharray="3 3"/><g class="pin-corpo">
     <rect x="${f1(-w / 2 + 3)}" y="-72" width="${f1(w)}" height="62" rx="11" fill="${K}"/>
     <path d="M-7 -16 L0 0 L7 -16 Z" fill="${fundo}" stroke="${K}" stroke-width="2.4" stroke-linejoin="round"/>
     <rect x="${f1(-w / 2)}" y="-76" width="${f1(w)}" height="62" rx="11" fill="${fundo}" stroke="${K}" stroke-width="2.6"/>
     <path d="M${f1(-w / 2)} -58 V-65 a11 11 0 0 1 11 -11 H${f1(w / 2 - 11)} a11 11 0 0 1 11 11 V-58 Z" fill="${C.amarelo}" stroke="${K}" stroke-width="2.6" stroke-linejoin="round"/>
     <text class="pin-nome" x="0" y="-63" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="10.5" letter-spacing=".06em" fill="${K}">${NOME}</text>
-    <text class="pin-metrica" x="0" y="-45.5" text-anchor="middle" font-family="Archivo" font-weight="700" font-size="9.5" fill="${K}" fill-opacity=".72">${rotulo}</text>
-    <text class="pin-valor" x="0" y="-22" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="19" fill="${cor}" font-variant-numeric="tabular-nums">${valor}</text></g></g>`;
+    ${corpo}</g></g>`;
 }
 
 /* ———————————————————————— peças do Porto ———————————————————————— */

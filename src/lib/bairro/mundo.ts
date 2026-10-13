@@ -307,9 +307,9 @@ const idDoPin = (id: string): string => id.replace(/\d$/, "");
  * janela, que o servidor não conhece.
  */
 export function pinosDaCamera(m: MapaBairro): { id: string; x: number; y: number; w: number }[] {
-  return m.pinos.map(([id, p, alt, rotulo, valor, nome, dx = 0]) => ({
+  return m.pinos.map(([id, p, alt, rotulo, valor, nome]) => ({
     id: idDoPin(id),
-    x: p[0] + dx,
+    x: p[0],
     y: p[1] - alt,
     w: larguraPin(rotulo, valor, nome) + 3,
   }));
@@ -321,8 +321,8 @@ export function pinosDaCamera(m: MapaBairro): { id: string; x: number; y: number
  */
 export function marcadoresSvg(pinos: readonly Pino[]): string {
   return pinos
-    .map(([id, p, alt, rotulo, valor, nome, dx = 0]) =>
-      pin(p[0], p[1] - alt, rotulo, valor, nome, undefined, undefined, dx).replace(
+    .map(([id, p, alt, rotulo, valor, nome]) =>
+      pin(p[0], p[1] - alt, rotulo, valor, nome).replace(
         'class="pin"',
         `class="pin" data-id="${idDoPin(id)}"`
       )
