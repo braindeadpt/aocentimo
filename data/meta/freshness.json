@@ -1,11 +1,11 @@
 {
-  "verificadoEm": "2026-10-13T13:51:37.972Z",
+  "verificadoEm": "2026-10-13T15:10:00.726Z",
   "estado": "ok",
   "series": [
     {
       "id": "hicp-pt-cp00",
       "fonte": "Eurostat",
-      "serieAte": "2026-08",
+      "serieAte": "2026-09",
       "esperadoAte": "2026-07-31",
       "frequencia": "mensal",
       "estado": "em-dia",
@@ -212,7 +212,7 @@
     {
       "id": "hicp-pt-nrg",
       "fonte": "Eurostat",
-      "serieAte": "2026-08",
+      "serieAte": "2026-09",
       "esperadoAte": "2026-07-31",
       "frequencia": "mensal",
       "estado": "em-dia",
@@ -221,7 +221,7 @@
     {
       "id": "hicp-pt-food",
       "fonte": "Eurostat",
-      "serieAte": "2026-08",
+      "serieAte": "2026-09",
       "esperadoAte": "2026-07-31",
       "frequencia": "mensal",
       "estado": "em-dia",
@@ -230,7 +230,7 @@
     {
       "id": "hicp-pt-tot_x_nrg_food",
       "fonte": "Eurostat",
-      "serieAte": "2026-08",
+      "serieAte": "2026-09",
       "esperadoAte": "2026-07-31",
       "frequencia": "mensal",
       "estado": "em-dia",
@@ -545,7 +545,7 @@
     {
       "id": "une-pt-total",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
+      "serieAte": "2026-08",
       "esperadoAte": "2026-07-31",
       "frequencia": "mensal",
       "estado": "em-dia",
@@ -554,7 +554,7 @@
     {
       "id": "une-pt-jovem",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
+      "serieAte": "2026-08",
       "esperadoAte": "2026-07-31",
       "frequencia": "mensal",
       "estado": "em-dia",
@@ -563,7 +563,7 @@
     {
       "id": "une-ue27-total",
       "fonte": "Eurostat",
-      "serieAte": "2026-07",
+      "serieAte": "2026-08",
       "esperadoAte": "2026-07-31",
       "frequencia": "mensal",
       "estado": "em-dia",
@@ -572,7 +572,7 @@
     {
       "id": "hpi-pt",
       "fonte": "Eurostat",
-      "serieAte": "2026-03-31",
+      "serieAte": "2026-06-30",
       "esperadoAte": "2026-03-31",
       "frequencia": "trimestral",
       "estado": "em-dia",
@@ -590,7 +590,7 @@
     {
       "id": "confianca-pt",
       "fonte": "Eurostat",
-      "serieAte": "2026-08",
+      "serieAte": "2026-09",
       "esperadoAte": "2026-07-31",
       "frequencia": "mensal",
       "estado": "em-dia",
@@ -608,7 +608,7 @@
     {
       "id": "elec-pt-domestico",
       "fonte": "Eurostat",
-      "serieAte": "2025-12-31",
+      "serieAte": "2026-06-30",
       "esperadoAte": "2025-06-30",
       "frequencia": "semestral",
       "estado": "em-dia",

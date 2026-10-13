@@ -5,10 +5,10 @@
     "dataset": "une_rt_m",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?format=JSON&geo=PT&s_adj=SA&age=TOTAL&unit=PC_ACT&sex=T&sinceTimePeriod=2000",
     "unidade": "percentagem_populacao_activa",
-    "recolhidoEm": "2026-09-20T19:43:33.757Z",
-    "serieAte": "2026-07",
+    "recolhidoEm": "2026-10-13T15:09:58.094Z",
+    "serieAte": "2026-08",
     "frequencia": "mensal",
-    "rotuloAte": "2026-07"
+    "rotuloAte": "2026-08"
   },
   "series": [
     {
@@ -593,7 +593,7 @@
     },
     {
       "t": "2012-02",
-      "v": 15.5
+      "v": 15.6
     },
     {
       "t": "2012-03",
@@ -773,7 +773,7 @@
     },
     {
       "t": "2015-11",
-      "v": 12.6
+      "v": 12.5
     },
     {
       "t": "2015-12",
@@ -973,7 +973,7 @@
     },
     {
       "t": "2020-01",
-      "v": 7
+      "v": 6.9
     },
     {
       "t": "2020-02",
@@ -1241,7 +1241,7 @@
     },
     {
       "t": "2025-08",
-      "v": 5.8
+      "v": 5.9
     },
     {
       "t": "2025-09",
@@ -1285,6 +1285,10 @@
     },
     {
       "t": "2026-07",
+      "v": 5.7
+    },
+    {
+      "t": "2026-08",
       "v": 5.7
     }
   ]

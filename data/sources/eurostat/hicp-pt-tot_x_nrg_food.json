@@ -5,8 +5,8 @@
     "dataset": "prc_hicp_minr",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=TOT_X_NRG_FOOD&unit=I25",
     "unidade": "Índice 2025=100",
-    "recolhidoEm": "2026-09-20T19:43:33.661Z",
-    "serieAte": "2026-08",
+    "recolhidoEm": "2026-10-13T15:09:57.914Z",
+    "serieAte": "2026-09",
     "frequencia": "mensal"
   },
   "series": [
@@ -1293,6 +1293,10 @@
     {
       "t": "2026-08",
       "v": 103.69
+    },
+    {
+      "t": "2026-09",
+      "v": 104.72
     }
   ]
 }

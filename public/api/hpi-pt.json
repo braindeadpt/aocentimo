@@ -5,10 +5,10 @@
     "dataset": "prc_hpi_q",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hpi_q?format=JSON&geo=PT&purchase=TOTAL&unit=I15_Q&sinceTimePeriod=2000",
     "unidade": "indice_2015_100",
-    "recolhidoEm": "2026-09-20T19:43:34.089Z",
-    "serieAte": "2026-03-31",
+    "recolhidoEm": "2026-10-13T15:09:58.929Z",
+    "serieAte": "2026-06-30",
     "frequencia": "trimestral",
-    "rotuloAte": "2026-Q1"
+    "rotuloAte": "2026-Q2"
   },
   "series": [
     {
@@ -302,6 +302,10 @@
     {
       "t": "2026-Q1",
       "v": 290.98
+    },
+    {
+      "t": "2026-Q2",
+      "v": 301.43
     }
   ]
 }

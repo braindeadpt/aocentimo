@@ -5,10 +5,10 @@
     "dataset": "nrg_pc_204",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nrg_pc_204?format=JSON&geo=PT&nrg_cons=KWH2500-4999&tax=I_TAX&currency=EUR&unit=KWH&sinceTimePeriod=2000",
     "unidade": "eur_kwh",
-    "recolhidoEm": "2026-09-20T19:43:34.509Z",
-    "serieAte": "2025-12-31",
+    "recolhidoEm": "2026-10-13T15:10:00.258Z",
+    "serieAte": "2026-06-30",
     "frequencia": "semestral",
-    "rotuloAte": "2025-S2"
+    "rotuloAte": "2026-S1"
   },
   "series": [
     {
@@ -158,6 +158,10 @@
     {
       "t": "2025-S2",
       "v": 0.2435
+    },
+    {
+      "t": "2026-S1",
+      "v": 0.2367
     }
   ]
 }

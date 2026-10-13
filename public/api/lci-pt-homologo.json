@@ -5,7 +5,7 @@
     "dataset": "ei_lmlc_q",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/ei_lmlc_q?format=JSON&geo=PT&indic=LM-LCI-TOT&nace_r2=B-S&s_adj=SCA&unit=PCH_SM&p_adj=NV&sinceTimePeriod=2000",
     "unidade": "percentagem_variacao_homologa",
-    "recolhidoEm": "2026-09-20T19:43:34.415Z",
+    "recolhidoEm": "2026-10-13T15:09:59.760Z",
     "serieAte": "2026-06-30",
     "frequencia": "trimestral",
     "rotuloAte": "2026-Q2"
