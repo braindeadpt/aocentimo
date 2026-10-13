@@ -235,23 +235,24 @@ export type Pino = readonly [id: string, ponto: Ponto, altura: number, rotulo: s
  * `PIN_K_MAX` da câmara.
  *
  * Saem de `work/cmp/arrumar.py` (máscara dos edifícios tirada do próprio
- * SVG, procura gulosa + melhoria local); o e2e `bairro.spec.ts` confere
+ * SVG, procura gulosa + melhoria local; o bico só
+ * cai num ponto com o próprio edifício também à volta e por baixo); o e2e `bairro.spec.ts` confere
  * que o bico de cada balão cai no seu edifício. Se um edifício mudar de
  * sítio, refaz-se a tabela.
  */
 export const BICO_PINO: Readonly<Record<string, Ponto>> = {
   fabrica: [638, 64],
-  segsocial: [926, 208],
-  financas: [1010, 328],
-  clerigos: [1202, -92],
+  segsocial: [902, 196],
+  financas: [1010, 316],
+  clerigos: [1154, -80],
   banco: [1118, 448],
   correios: [1358, 508],
   bomba: [1538, 640],
-  mercearia: [170, 376],
-  pastelaria: [386, 400],
-  casa: [446, 520],
+  mercearia: [170, 388],
+  pastelaria: [362, 400],
+  casa: [566, 460],
   quiosque: [614, 640],
-  escola: [878, 640],
+  escola: [866, 640],
 };
 
 /** Onde é a porta de cada edifício — a câmara foca-a ao abrir a cena. */
