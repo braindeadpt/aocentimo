@@ -340,7 +340,42 @@ export class Camera {
     // O GESTO SEM REPINTAR também na pinça e na roda (iPad, 2026-10-07):
     // só o arrasto de um dedo punha `b-arrasto`, e a pinça fazia o WebKit
     // repintar o bairro inteiro, com as animações a correr, a cada passo.
-    const emGesto = (sim: boolean) => janela.classList.toggle("b-arrasto", sim);
+    //
+    // O ARRANQUE DO GESTO SEM RECALCULAR O BAIRRO (2026-10-13, «andar no
+    // mapa depois do toque demora 1 segundo»). A pausa vivia no CSS, em
+    // `.b-janela.b-arrasto .b-mundo *`: pôr a classe na janela obrigava o
+    // browser a recalcular o estilo dos ~7 300 nós do mundo ANTES do
+    // primeiro fotograma movido — medido no Chromium (iPhone 12 Pro, CPU
+    // 4×): 500–750 ms entre o primeiro `pointermove` e o mapa a mexer, e
+    // 13–94 ms sem esse recálculo. Agora a pausa vai só aos elementos que
+    // ANIMAM (~36), por estilo inline, e a camada só ao `.b-mundo`: o
+    // mesmo efeito, sem tocar nos outros 7 000. Inline, e não
+    // `Animation.pause()`: a pausa da API fica colada à animação e
+    // desligava para sempre o `animation-play-state` do CSS (o `.amb-off`
+    // que pára o mapa fora do ecrã). A classe `b-arrasto` fica: é o sinal
+    // para o GSAP do ambiente, para o cursor e para os testes.
+    let pausados: HTMLElement[] = [];
+    const emGesto = (sim: boolean) => {
+      if (sim === janela.classList.contains("b-arrasto")) return;
+      const mundo = this.mundo;
+      if (sim) {
+        pausados = [];
+        for (const a of mundo.getAnimations({ subtree: true })) {
+          const alvo = (a.effect as KeyframeEffect | null)?.target;
+          if (alvo instanceof HTMLElement || alvo instanceof SVGElement) {
+            const el = alvo as HTMLElement;
+            if (!pausados.includes(el)) pausados.push(el);
+          }
+        }
+        for (const el of pausados) el.style.animationPlayState = "paused";
+        mundo.style.willChange = "transform";
+      } else {
+        for (const el of pausados) el.style.removeProperty("animation-play-state");
+        pausados = [];
+        mundo.style.removeProperty("will-change");
+      }
+      janela.classList.toggle("b-arrasto", sim);
+    };
 
     const aoRodar = (e: WheelEvent) => {
       e.preventDefault();
@@ -508,6 +543,8 @@ export interface MarcadorVivo {
   x: number;
   y: number;
   w: number;
+  /** O x do edifício, quando a placa está desviada para o lado (`data-ax`). */
+  ax?: number;
   guia: SVGPathElement | null;
 }
 
@@ -549,7 +586,11 @@ export function arrumarPinos(janela: HTMLElement, pinos: readonly MarcadorVivo[]
         `translate(${p.x.toFixed(1)} ${y.toFixed(1)}) scale(${k.toFixed(3)})`
       );
       // a guia estica-se para o edifício, que fica onde estava
-      if (p.guia) p.guia.setAttribute("d", `M0 0 V${((p.y - y) / k).toFixed(1)}`);
+      if (p.guia) {
+        const dy = ((p.y - y) / k).toFixed(1);
+        const dxg = p.ax === undefined ? 0 : (p.ax - p.x) / k;
+        p.guia.setAttribute("d", dxg ? `M0 0 L${dxg.toFixed(1)} ${dy}` : `M0 0 V${dy}`);
+      }
     });
     arrumacoes.set(pinos[0].g, { largura, n: pinos.length, ys });
   }

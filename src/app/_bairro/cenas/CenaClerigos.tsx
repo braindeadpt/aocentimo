@@ -6,14 +6,16 @@
  *
  * Dois passos: do alto da torre, os três números do Norte no país (PIB,
  * exportações de bens, emprego na indústria) e, depois, o contraponto do
- * PIB por habitante. As colunas sobem do rio uma a uma com o número a
- * contar e um rabelo atravessa o Douro (CSS + rAF; nada em reduced-motion). Os números vêm de `data/regional/norte.json` pelo
+ * PIB por habitante. A vista sobe ao alto da torre, as colunas sobem do
+ * rio uma a uma sobre o contorno do país inteiro, com o número a contar,
+ * e o Douro vive (rabelos, gaivotas, nuvens, a Inês a apontar) — CSS +
+ * rAF, nada em reduced-motion (clerigos-arte.ts). Os números vêm de `data/regional/norte.json` pelo
  * `public/cenas/clerigos.json`; um em falta mostra «—», nunca 0.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FINO, fmtEUR0, fmtNum } from "@/lib/format";
 import type { DadosClerigos } from "./dados-norte";
-import { interiorClerigos } from "./clerigos-arte";
+import { atrasoColuna, interiorClerigos } from "./clerigos-arte";
 import CenaDePerto from "./CenaDePerto";
 import * as T from "./textos-norte";
 
@@ -66,7 +68,7 @@ export default function CenaClerigos({ D, aoFechar }: { D: DadosClerigos; aoFech
       colunas.forEach((c, k) => {
         const el = raiz.querySelector(`#nteV${k}`);
         if (!el || c.v == null) return;
-        const t = Math.min(1, Math.max(0, (agora - t0 - (250 + k * 350)) / DUR));
+        const t = Math.min(1, Math.max(0, (agora - t0 - atrasoColuna(k) * 1000) / DUR));
         const e = 1 - Math.pow(1 - t, 3);
         const casas = Number.isInteger(c.v) ? 0 : 1;
         const v = t >= 1 ? c.v : Math.round(c.v * e * 10 ** casas) / 10 ** casas;

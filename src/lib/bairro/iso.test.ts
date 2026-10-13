@@ -268,10 +268,11 @@ describe("as peças do Porto", () => {
     expect(tras).not.toBe(frente);
   });
 
-  it("a ponte traz o arco dourado e os candeeiros, apagados de dia, numa camada à parte", () => {
+  it("a ponte traz os candeeiros (sem arco dourado), apagados de dia, numa camada à parte", () => {
     const { tras, frente, luzes } = ponteLuisI({ iA: 1, iB: 2, jPorto: 3, jGaia: 18, jA1: 5, jA2: 16, zCima: 40, pilares: [] });
     expect(luzes).toContain('id="ponteL"');
-    expect((luzes.match(/class="ponte-luz ponte-arco"/g) ?? []).length).toBe(2);
+    // sem arco iluminado (dono, 2026-10-13): não existe na Luís I real
+    expect(luzes).not.toContain("ponte-arco");
     expect((luzes.match(/class="ponte-luz( b-cedo)?"/g) ?? []).length).toBeGreaterThan(20);
     // nada aceso de origem; o CSS acende com .b-noite
     expect(luzes).not.toMatch(/class="ponte-luz[^"]*" opacity="(?!0")/);

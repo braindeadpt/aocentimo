@@ -208,7 +208,7 @@ test.describe("o bairro — o que o mapa mostra", () => {
     }
   });
 
-  test("sem JavaScript: os 13 marcadores e os doze edifícios estão no HTML", async ({
+  test("sem JavaScript: os 14 marcadores e os doze edifícios estão no HTML", async ({
     browser,
   }) => {
     // um contexto sem scripts: é o que o pack exige («sem JS vê-se o
@@ -220,7 +220,7 @@ test.describe("o bairro — o que o mapa mostra", () => {
     const p = await ctx.newPage();
     await p.goto("/");
     await expect(p.locator(".b-mundo .ed")).toHaveCount(12);
-    await expect(p.locator(".b-mundo .pin")).toHaveCount(13);
+    await expect(p.locator(".b-mundo .pin")).toHaveCount(14);
     const texto = await p.locator(".b-mundo").innerText();
     // os mesmos valores do marcador, tirados do pack — e não «1 500» e
     // «23,75» escritos à mão, que só aguentavam enquanto a lei não mexesse
@@ -413,7 +413,7 @@ test.describe("o bairro — a geometria do enquadramento inicial (P1, acabamento
    */
 
   for (const [largura, altura] of [[1920, 1080], [1440, 900], [1280, 800]] as const) {
-    test(`no computador (${largura}×${altura}) os 13 marcadores cabem inteiros`, async ({ page }) => {
+    test(`no computador (${largura}×${altura}) os 14 marcadores cabem inteiros`, async ({ page }) => {
       await page.setViewportSize({ width: largura, height: altura });
       await page.goto("/");
       await page.waitForSelector(".b-mundo .pin");
@@ -437,7 +437,7 @@ test.describe("o bairro — a geometria do enquadramento inicial (P1, acabamento
         return { nPins: pins.length, falhas };
       });
 
-      expect(fora.nPins).toBe(13);
+      expect(fora.nPins).toBe(14);
       expect(fora.falhas, `pins cortados: ${fora.falhas.join(" · ")}`).toEqual([]);
     });
   }
@@ -445,11 +445,11 @@ test.describe("o bairro — a geometria do enquadramento inicial (P1, acabamento
   /**
    * Decisão do dono, 2026-10-07: o mapa abre TOTALMENTE VISÍVEL no
    * computador e no telemóvel — a laje do tabuleiro inteira (as duas faces
-   * de terra) e os 13 marcadores inteiros. Substitui o arranque «perto da
+   * de terra) e os 14 marcadores inteiros. Substitui o arranque «perto da
    * fábrica» do telemóvel e o piso de 11 px que o acompanhava.
    */
   for (const [largura, altura] of [[1920, 1080], [1440, 900], [1280, 800], [390, 844], [375, 812]] as const) {
-    test(`(${largura}×${altura}) o tabuleiro e os 13 marcadores abrem inteiros`, async ({ page }) => {
+    test(`(${largura}×${altura}) o tabuleiro e os 14 marcadores abrem inteiros`, async ({ page }) => {
       await page.setViewportSize({ width: largura, height: altura });
       await page.goto("/");
       await page.waitForSelector(".b-mundo .pin");
@@ -475,7 +475,7 @@ test.describe("o bairro — a geometria do enquadramento inicial (P1, acabamento
 
       expect(res.nFaces).toBe(2);
       expect(res.facesFora, "a laje do tabuleiro sai da janela").toBe(0);
-      expect(res.nPins).toBe(13);
+      expect(res.nPins).toBe(14);
       expect(res.pinsFora, `marcadores fora: ${res.pinsFora.join(", ")}`).toEqual([]);
     });
   }

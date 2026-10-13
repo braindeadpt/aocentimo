@@ -62,12 +62,11 @@
    recortada pela janela — no WebKit (DPR 3, 4 e 8 zooms + arrastos) o
    pico fica nos ~810 MB, longe do crash dos ~1 450 MB; promover as oito
    `.b-camada` em permanência é que não (ver em baixo). */
-[data-pele="v5"] .b-janela.b-arrasto .b-mundo {
-  will-change: transform;
-}
-[data-pele="v5"] .b-janela.b-arrasto .b-mundo * {
-  animation-play-state: paused !important;
-}
+/* A pausa e a camada já NÃO vivem aqui (2026-10-13): um seletor
+   `.b-arrasto .b-mundo *` fazia o browser recalcular os ~7 300 nós do
+   mundo no arranque de cada gesto — meio segundo a um segundo antes de o
+   mapa mexer no telemóvel. A câmara (`emGesto` em camara.ts) pausa só os
+   elementos que animam e promove só o `.b-mundo`, por estilo inline. */
 
 /* O mundo: um contentor com `transform`. A câmara escreve aqui e em mais
    lado nenhum — mexer no viewBox obrigaria o browser a repintar o mapa
@@ -275,20 +274,13 @@
 [data-pele="v5"] .b-noite .luz {
   opacity: 1;
 }
-/* a ponte acende-se à noite: o arco dourado pelos projectores e os
-   candeeiros altos do tabuleiro (iso.ts, `ponteLuisI`), pintados por cima
+/* a ponte acende-se à noite: os candeeiros altos do tabuleiro (iso.ts, `ponteLuisI`), pintados por cima
    do véu da noite; metade dos candeeiros já no fim de tarde */
 [data-pele="v5"] .ponte-luz {
   transition: opacity 1.2s;
 }
 [data-pele="v5"] .b-noite .ponte-luz {
   opacity: 1;
-}
-[data-pele="v5"] .b-noite .ponte-arco {
-  opacity: 1;
-}
-[data-pele="v5"] .b-fim-tarde .ponte-arco {
-  opacity: 0.35;
 }
 [data-pele="v5"] .b-fim-tarde .ponte-luz.b-cedo {
   opacity: 0.6;

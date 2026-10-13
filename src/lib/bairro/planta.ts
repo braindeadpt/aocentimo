@@ -208,10 +208,19 @@ export interface MarcadoresBairro {
   gasolinaUn: string;
   inflacao: string;
   desemprego: string;
+  /** O peso do Norte no PIB do país (Torre dos Clérigos). Opcional: sem
+   * ele o marcador escreve «—», nunca um número inventado. */
+  nortePib?: string;
 }
 
 /** Um marcador: a que edifício pertence, onde, a que altura e que diz. */
-export type Pino = readonly [id: string, ponto: Ponto, altura: number, rotulo: string, valor: string, nome: string];
+/**
+ * `dx` (opcional) desvia a PLACA para o lado, em unidades do mundo; a guia
+ * fica inclinada até ao edifício. Existe para a placa não tapar outro
+ * edifício (dono, 2026-10-13: «a indicação do banco está por cima dos
+ * Clérigos»).
+ */
+export type Pino = readonly [id: string, ponto: Ponto, altura: number, rotulo: string, valor: string, nome: string, dx?: number];
 
 /** Onde é a porta de cada edifício — a câmara foca-a ao abrir a cena. */
 export type Portas = Record<string, Ponto>;
@@ -425,6 +434,10 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
   // continuam a ser os mesmos); a porta é a base da torre.
   ed.clerigos = edificioIso("clerigos", "Torre dos Clérigos — o Norte na economia", clerigos(7.55, 0.28, 1.22, TERRENO));
   portas.clerigos = Pt(7.55, 0.28);
+  // a indicação de fora (dono, 2026-10-13: «os Clérigos não possuem
+  // indicação exterior de nada?»): a placa no alto da torre, por cima da
+  // cruz (636 = do chão à cruz, com folga)
+  pinos.push(["clerigos", Pt(7.55, 0.28), 636, "Norte no PIB do país", D.nortePib ?? "—", "Clérigos"]);
 
   // Banco
   {
@@ -442,7 +455,9 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     });
     ed.banco = edificioIso("banco", "Banco — crédito, juros e a Euribor", svg);
     portas.banco = naFachada(i, j, dj, (wi * LAD) / 2);
-    pinos.push(["banco", Pt(i + wi / 2, j + dj / 2), h + 128, "Euribor 12 meses", D.euribor, "Banco"]);
+    // a placa vai para a DIREITA da torre (dx 245): por cima da cúpula
+    // ficava à frente dos Clérigos e parecia ser deles (dono, 2026-10-13)
+    pinos.push(["banco", Pt(i + wi / 2, j + dj / 2), h + 128, "Euribor 12 meses", D.euribor, "Banco", 245]);
   }
 
   // Correios
@@ -458,7 +473,8 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
     const mc = Pt(i + 0.45, j + dj + 0.22);
     ed.correios = edificioIso("correios", "Correios — os certificados de aforro", svg + `<g class="marco"><rect x="${f1(mc[0] - 7)}" y="${f1(mc[1] - 30)}" width="14" height="30" rx="3" fill="${C.vermelho}" stroke="${K}" stroke-width="2.2"/><ellipse cx="${f1(mc[0])}" cy="${f1(mc[1] - 30)}" rx="7" ry="3.5" fill="${C.vermelho}" stroke="${K}" stroke-width="2"/></g>`);
     portas.correios = naFachada(i, j, dj, wi * LAD - 24);
-    pinos.push(["correios", Pt(i + wi / 2, j + dj / 2), h + 50, "Cert. de Aforro", D.ca, "Correios"]);
+    // ao lado da do banco, também à direita da torre
+    pinos.push(["correios", Pt(i + wi / 2, j + dj / 2), h + 50, "Cert. de Aforro", D.ca, "Correios", 215]);
   }
 
   // Posto de combustível
