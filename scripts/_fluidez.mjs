@@ -304,9 +304,15 @@ for (const rota of rotas) {
         durante,
         depois,
       };
-      // os outros dois gestos, com o mapa já parado
-      fluidez.pinca = await pinca(p, cdp, caixa);
-      fluidez.roda = await roda(p, caixa);
+      // os outros dois gestos, com o mapa já parado. A caixa volta a
+      // medir-se: o arrasto do rato pode ter deslocado a página (no CI, com
+      // o cabeçalho em duas linhas, a selecção arrastou-a 377 px) e a pinça
+      // caía numa etiqueta fora da janela — via-se «pinça PARTIDA» sem
+      // nenhuma regressão na câmara.
+      await janela.scrollIntoViewIfNeeded();
+      const caixa2 = (await janela.boundingBox()) ?? caixa;
+      fluidez.pinca = await pinca(p, cdp, caixa2);
+      fluidez.roda = await roda(p, caixa2);
     }
   }
 
