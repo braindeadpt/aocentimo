@@ -43,3 +43,5 @@ jobs:
       # não depende da máquina — foi ela que provou que uma mediana de 50 ms
       # com a pausa SABOTADA passava despercebida (auto-teste: QUEBRAR=pausa).
       - run: node scripts/_fluidez.mjs 3100 /
+        env:
+          DIAG_PINCA: "1"

@@ -156,6 +156,14 @@ const OBSERVADORES = `(() => {
 async function pinca(p, cdp, caixa) {
   const cx = caixa.x + caixa.width / 2;
   const cy = caixa.y + caixa.height / 2;
+  if (process.env.DIAG_PINCA)
+    console.log("DIAG pinça", JSON.stringify(await p.evaluate(([x, y]) => {
+      const e = document.elementFromPoint(x, y);
+      const j = document.querySelector(".b-janela")?.getBoundingClientRect();
+      const h = document.querySelector("header")?.getBoundingClientRect();
+      return { x, y, vw: innerWidth, vh: innerHeight, scrollY, alvo: e ? e.tagName + "." + String(e.className?.baseVal ?? e.className).slice(0, 60) : null,
+        dentroDaJanela: !!e?.closest(".b-janela"), janelaAgora: j && [j.top, j.height], header: h && h.height };
+    }, [cx, cy])));
   const dedos = (d) => [
     { x: cx - d, y: cy, id: 1 },
     { x: cx + d, y: cy, id: 2 },
