@@ -26,7 +26,7 @@
 
     "taxasPorAno": [0.0235, 0.0245, 0.0245, 0.0265, 0.0265, 0.0275, 0.0275, 0.0285, 0.0285, 0.0335],
     "taxasPorAnoLegivel": {
-      "1.º ano": "2,35 %",
+      "1.º ano": "2,35 %",
       "2.º ano": "2,45 %",
       "3.º ano": "2,45 %",
       "4.º ano": "2,65 %",
@@ -35,7 +35,7 @@
       "7.º ano": "2,75 %",
       "8.º ano": "2,85 %",
       "9.º ano": "2,85 %",
-      "10.º ano": "3,35 %"
+      "10.º ano": "3,35 %"
     },
     "premio": null,
     "premioNota": "Não há prémio. A taxa é fixa por ano de vida da aplicação, já inscrita nas taxas acima — não há nada a calcular. (O prémio ligado ao PIB é só dos CTPC, ver ca.json → ctpc.)",
@@ -93,5 +93,5 @@
     }
   },
 
-  "leituraParaOPublico": "Em 2026 há uma série de Certificados do Tesouro à venda: a série 5, dez anos, taxa fixa que sobe de 2,35 % no primeiro ano para 3,35 % no décimo. As outras duas séries — Poupança Valor e Poupança Crescimento — estão fechadas à subscrição. Se alguém lhe vender um destes certificados a dizer que são «do tesouro», convém perguntar qual é a série e se ainda se pode subscrever."
+  "leituraParaOPublico": "Em 2026 há uma série de Certificados do Tesouro à venda: a série 5, dez anos, taxa fixa que sobe de 2,35 % no primeiro ano para 3,35 % no décimo. As outras duas séries — Poupança Valor e Poupança Crescimento — estão fechadas à subscrição. Se alguém lhe vender um destes certificados a dizer que são «do tesouro», convém perguntar qual é a série e se ainda se pode subscrever."
 }

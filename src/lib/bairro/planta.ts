@@ -111,8 +111,10 @@ const Pt = Pcom(TERRENO);
  * o componente passava, a câmara saltava no primeiro quadro. Um só
  * sítio, um só número.
  */
+const _perto = Pt(3.6, 5.6);
 export const ENQUADRAMENTOS = {
-  perto: Pt(3.6, 5.6),
+  // higiene do MAPA-HOME item 1: viaja na prop (payload RSC) já a 1 decimal
+  perto: [f1(_perto[0]), f1(_perto[1])] as const,
   longe: { x: 760, y: 470 },
 } as const;
 
@@ -169,7 +171,11 @@ export const PONTOS_ANIMACAO: readonly (readonly [number, number, number])[] = [
 
 /** `PONTOS_ANIMACAO` projectados pelo servidor, na mesma ordem. */
 export function PontosDeEcran(): (readonly [number, number])[] {
-  return PONTOS_ANIMACAO.map(([i, j, z]) => Pt(i, j, z));
+  // higiene do MAPA-HOME item 1: viajam na prop já a 1 decimal
+  return PONTOS_ANIMACAO.map(([i, j, z]) => {
+    const [x, y] = Pt(i, j, z);
+    return [f1(x), f1(y)] as const;
+  });
 }
 
 /* Atalhos locais: o protótipo escrevia `caixa(...)` e o terreno vinha do
@@ -333,7 +339,7 @@ export function montarMapa(D: MarcadoresBairro): MapaBairro {
   s += ch(5.2, JM, 1.8, 8.6 - JM, "url(#b-calcadaIso)", "", 0) + ch(8, JM, 0.45, 8.6 - JM, "url(#b-calcadaIso)", "", 0);
   s += ch(13.9, 6.8, I1 - 13.9, 1.8, C.relva, "", 0);
   const hera = (x: number, w: number): string => `<path d="M${x} -110 q${w * 0.2} 40 ${w * 0.1} 70 q${w * 0.3} -30 ${w * 0.5} -10 q${w * 0.2} -40 ${w * 0.4} -60 z" fill="#4f8f4a" stroke="${K}" stroke-width="1.6" opacity=".95"/>`;
-  const fonte = (x: number): string => `<rect x="${x}" y="-92" width="64" height="52" fill="url(#b-azAzul)" stroke="${K}" stroke-width="2.2"/><rect x="${x - 4}" y="-96" width="72" height="6" fill="${C.granito}" stroke="${K}" stroke-width="1.6"/><path d="M${x + 32} -60 v6" stroke="${K}" stroke-width="3"/><path class="jorro" d="M${x + 32} -54 q2 12 0 24" stroke="#9fd0ff" stroke-width="3" fill="none"/><rect x="${x + 12}" y="-30" width="40" height="30" fill="${C.granito}" stroke="${K}" stroke-width="2"/><rect x="${x + 14}" y="-30" width="36" height="5" fill="#6fb3dc"/>`;
+  const fonte = (x: number): string => `<rect x="${f1(x)}" y="-92" width="64" height="52" fill="url(#b-azAzul)" stroke="${K}" stroke-width="2.2"/><rect x="${f1(x - 4)}" y="-96" width="72" height="6" fill="${C.granito}" stroke="${K}" stroke-width="1.6"/><path d="M${f1(x + 32)} -60 v6" stroke="${K}" stroke-width="3"/><path class="jorro" d="M${f1(x + 32)} -54 q2 12 0 24" stroke="#9fd0ff" stroke-width="3" fill="none"/><rect x="${f1(x + 12)}" y="-30" width="40" height="30" fill="${C.granito}" stroke="${K}" stroke-width="2"/><rect x="${f1(x + 14)}" y="-30" width="36" height="5" fill="#6fb3dc"/>`;
   s += muroI(I0, 7, JM, 0, HP, "url(#b-granito)", hera(40, 90) + hera(250, 70) + fonte(6.3 * LAD) + `<path d="M${f1(1.2 * LAD)} 0 V-40 a16 16 0 0 1 32 0 V0 Z" fill="#3b2f26" stroke="${K}" stroke-width="2"/>`);
   s += muroI(8, I1, JM, 0, HP, "url(#b-granito)", hera(160, 110) + hera(380, 80) + `<path d="M${f1(6.2 * LAD)} 0 V-40 a16 16 0 0 1 32 0 V0 Z" fill="#3b2f26" stroke="${K}" stroke-width="2"/>`);
 
