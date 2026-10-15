@@ -149,7 +149,9 @@ export function SiteNav() {
   return (
     <>
       {/* desktop — grupos com menu ao passar/focar (CSS), JS só p/ aria-expanded */}
-      <nav aria-label="Principal" className="hidden items-center gap-3 lg:flex">
+      {/* flex-wrap: a 200 % de texto os grupos passam à linha em vez de
+          transbordarem a página (1.4.4); à dimensão normal nada muda. */}
+      <nav aria-label="Principal" className="hidden flex-wrap items-center gap-3 lg:flex">
         {GRUPOS.map((g) => (
           <div
             key={g.id}
@@ -209,8 +211,8 @@ export function SiteNav() {
         </Link>
       </nav>
 
-      {/* mobile — «Índice» abre a folha inferior */}
-      <div className="flex items-center gap-3 lg:hidden">
+      {/* mobile — «Índice» abre a folha inferior (wrap contém 200 % de texto) */}
+      <div className="flex flex-wrap items-center gap-3 lg:hidden">
         <details ref={detalhes}>
           <summary className="pil-nav list-none">
             {m.nav.index}

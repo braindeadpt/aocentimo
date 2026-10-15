@@ -29,8 +29,9 @@ export function SiteHeader() {
         </div>
       </div>
 
-      {/* nome + navegação */}
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-5 pb-3 pt-4">
+      {/* nome + navegação — o wrap só contém texto a 200 % (1.4.4);
+          à dimensão normal cabe tudo numa linha e nada muda. */}
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-5 pb-3 pt-4">
         <Link href="/" aria-label={m.brand.name} className="block shrink-0 transition-opacity hover:opacity-80">
           {/* capitular 20,6 px no telemóvel · 24,8 px no computador
               (a altura do SVG é a da haste; capitular = 63,95 %) */}
