@@ -190,9 +190,9 @@ export function viagensSoltas(): { css: string; svg: string; barcos: string; met
     const [xb, yb] = posMetro(volta ? PM.j0 + 1.45 : PM.j1);
     const [px, py] = posMetro(11);
     return (
-      `@keyframes b-metro${k} { 0% { transform: translate(${xa}px, ${ya}px); opacity: 0; } 6% { opacity: 1; } 44% { opacity: 1; } ` +
-      `50% { transform: translate(${xb}px, ${yb}px); opacity: 0; } 100% { transform: translate(${xb}px, ${yb}px); opacity: 0; } }\n` +
-      `#b-metro${k} { transform: translate(${px}px, ${py}px); animation: b-metro${k} ${dur}s linear -${fase}s infinite; }`
+      `@keyframes b-metro${k} { 0% { transform: translate(${f1(xa)}px, ${f1(ya)}px); opacity: 0; } 6% { opacity: 1; } 44% { opacity: 1; } ` +
+      `50% { transform: translate(${f1(xb)}px, ${f1(yb)}px); opacity: 0; } 100% { transform: translate(${f1(xb)}px, ${f1(yb)}px); opacity: 0; } }\n` +
+      `#b-metro${k} { transform: translate(${f1(px)}px, ${f1(py)}px); animation: b-metro${k} ${dur}s linear -${fase}s infinite; }`
     );
   }).join("\n");
 
@@ -220,9 +220,9 @@ export function viagensSoltas(): { css: string; svg: string; barcos: string; met
     const [x1, y1] = posBarco(12.4, j);
     const [xs, ys] = posBarco(k ? 8.5 : 3.5, j);
     return (
-      `@keyframes b-desce${k} { 0% { transform: translate(${x0}px, ${y0}px); opacity: 0; } 9% { opacity: 1; } 91% { opacity: 1; } ` +
-      `100% { transform: translate(${x1}px, ${y1}px); opacity: 0; } }\n` +
-      `#b-barco${k} { transform: translate(${xs}px, ${ys}px); animation: b-desce${k} ${dur}s linear -${fase}s infinite; }`
+      `@keyframes b-desce${k} { 0% { transform: translate(${f1(x0)}px, ${f1(y0)}px); opacity: 0; } 9% { opacity: 1; } 91% { opacity: 1; } ` +
+      `100% { transform: translate(${f1(x1)}px, ${f1(y1)}px); opacity: 0; } }\n` +
+      `#b-barco${k} { transform: translate(${f1(xs)}px, ${f1(ys)}px); animation: b-desce${k} ${dur}s linear -${fase}s infinite; }`
     );
   }).join("\n");
 
@@ -307,11 +307,13 @@ const idDoPin = (id: string): string => id.replace(/\d$/, "");
  * janela, que o servidor não conhece.
  */
 export function pinosDaCamera(m: MapaBairro): { id: string; x: number; y: number; w: number }[] {
+  // higiene do MAPA-HOME item 1: os números viajam na prop (payload RSC)
+  // já arredondados a 1 decimal — o HTML do servidor pinta-os com f1.
   return m.pinos.map(([id, p, alt, rotulo, valor, nome]) => ({
     id: idDoPin(id),
-    x: p[0],
-    y: p[1] - alt,
-    w: larguraPin(rotulo, valor, nome) + 3,
+    x: f1(p[0]),
+    y: f1(p[1] - alt),
+    w: f1(larguraPin(rotulo, valor, nome) + 3),
   }));
 }
 

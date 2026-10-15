@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { casca, cruz, dentro, silParaCascas, type Ponto } from "./ambiente";
-import { Pcom } from "../../lib/bairro/iso";
+import { f1, Pcom } from "../../lib/bairro/iso";
 import { PONTOS_ANIMACAO, PontosDeEcran, TERRENO } from "../../lib/bairro/planta";
 import { mundoBairro, type RotulosCamada } from "../../lib/bairro/mundo";
 import pt from "../../../messages/pt.json";
@@ -137,7 +137,12 @@ describe("o mapa servido já traz as peças que a animação procura", () => {
     expect(PONTOS_ANIMACAO.slice(0, 3)).toEqual([
       [-3.4, 4.25, 110], [13.4, 4.25, 110], [0, 4.25, 110],
     ]);
-    expect(PontosDeEcran()).toEqual(PONTOS_ANIMACAO.map(([i, j, z]) => Pt(i, j, z)));
+    expect(PontosDeEcran()).toEqual(
+      PONTOS_ANIMACAO.map(([i, j, z]) => {
+        const [x, y] = Pt(i, j, z);
+        return [f1(x), f1(y)];
+      }),
+    );
     expect(PontosDeEcran()).toHaveLength(PONTOS_ANIMACAO.length);
   });
 

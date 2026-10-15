@@ -198,13 +198,16 @@ export interface OpcoesJanela {
 
 /** Janela de fachada, desenhada de frente em 2D. */
 export function janela2(x: number, y: number, w: number, h: number, o: OpcoesJanela = {}): string {
+  // higiene do MAPA-HOME item 1: as contas de grelha passam pelo `f1`
+  // do projecto (desvio < 0,05 px, invisível) em vez de irem cruas
+  // para o HTML — era daqui que vinham os decimais de 15 casas.
   const arco = o.arco
-    ? `M${x} ${y + w / 2} A${w / 2} ${w / 2} 0 0 1 ${x + w} ${y + w / 2} V${y + h} H${x} Z`
-    : `M${x} ${y} H${x + w} V${y + h} H${x} Z`;
-  let s = `<path d="${arco}" fill="${C.pedra}" stroke="${K}" stroke-width="2.4" transform="translate(${x + w / 2} ${y + h / 2}) scale(1.28 1.16) translate(${-(x + w / 2)} ${-(y + h / 2)})"/>`;
-  s += `<path class="vidro" d="${arco}" stroke="${K}" stroke-width="2.2"/><path d="M${x + 3} ${y + h * 0.62} l${w * 0.3} ${-h * 0.3} M${x + 3} ${y + h * 0.82} l${w * 0.18} ${-h * 0.18}" stroke="#fff" stroke-opacity=".55" stroke-width="1.8" stroke-linecap="round"/><path d="M${x + w / 2} ${y} V${y + h}" stroke="${K}" stroke-width="1.6"/>`;
-  if (!o.varanda) s += `<rect x="${x - 4}" y="${y + h}" width="${w + 8}" height="3.5" fill="${C.pedraEsc}" stroke="${K}" stroke-width="1.6"/>`;
-  if (o.portadas) s += `<rect x="${x - w * 0.45}" y="${y}" width="${w * 0.4}" height="${h}" fill="${o.portadas}" stroke="${K}" stroke-width="2"/><rect x="${x + w * 1.05}" y="${y}" width="${w * 0.4}" height="${h}" fill="${o.portadas}" stroke="${K}" stroke-width="2"/>`;
+    ? `M${f1(x)} ${f1(y + w / 2)} A${f1(w / 2)} ${f1(w / 2)} 0 0 1 ${f1(x + w)} ${f1(y + w / 2)} V${f1(y + h)} H${f1(x)} Z`
+    : `M${f1(x)} ${f1(y)} H${f1(x + w)} V${f1(y + h)} H${f1(x)} Z`;
+  let s = `<path d="${arco}" fill="${C.pedra}" stroke="${K}" stroke-width="2.4" transform="translate(${f1(x + w / 2)} ${f1(y + h / 2)}) scale(1.28 1.16) translate(${f1(-(x + w / 2))} ${f1(-(y + h / 2))})"/>`;
+  s += `<path class="vidro" d="${arco}" stroke="${K}" stroke-width="2.2"/><path d="M${f1(x + 3)} ${f1(y + h * 0.62)} l${f1(w * 0.3)} ${f1(-h * 0.3)} M${f1(x + 3)} ${f1(y + h * 0.82)} l${f1(w * 0.18)} ${f1(-h * 0.18)}" stroke="#fff" stroke-opacity=".55" stroke-width="1.8" stroke-linecap="round"/><path d="M${f1(x + w / 2)} ${f1(y)} V${f1(y + h)}" stroke="${K}" stroke-width="1.6"/>`;
+  if (!o.varanda) s += `<rect x="${f1(x - 4)}" y="${f1(y + h)}" width="${f1(w + 8)}" height="3.5" fill="${C.pedraEsc}" stroke="${K}" stroke-width="1.6"/>`;
+  if (o.portadas) s += `<rect x="${f1(x - w * 0.45)}" y="${f1(y)}" width="${f1(w * 0.4)}" height="${f1(h)}" fill="${o.portadas}" stroke="${K}" stroke-width="2"/><rect x="${f1(x + w * 1.05)}" y="${f1(y)}" width="${f1(w * 0.4)}" height="${f1(h)}" fill="${o.portadas}" stroke="${K}" stroke-width="2"/>`;
   if (o.varanda) s += varandaFerro(x - 4, x + w + 4, y + h, o.flores);
   return s;
 }
@@ -214,16 +217,16 @@ export function varandaFerro(x0: number, x1: number, yb: number, flores?: boolea
   const dx = -7.9;
   const dy = 7;
   const alt = 13;
-  let s = `<path d="M${x0} ${yb} H${x1} l${dx} ${dy} H${x0 + dx} Z" fill="#6d6a66" stroke="${K}" stroke-width="1.4" stroke-linejoin="round"/>`;
-  s += `<path d="M${x0 + dx} ${yb + dy} H${x1 + dx} v2.6 H${x0 + dx} Z" fill="#46433f" stroke="${K}" stroke-width="1.2"/>`;
-  if (flores) s += `<rect x="${x0 + dx + 2}" y="${yb + dy - 5}" width="6" height="5" fill="#b8543a" stroke="${K}" stroke-width="1"/><circle cx="${x0 + dx + 5}" cy="${yb + dy - 8}" r="3.6" fill="#e2412a" stroke="${K}" stroke-width="1"/><circle cx="${x0 + dx + 2}" cy="${yb + dy - 6}" r="2.4" fill="#4fae6a" stroke="${K}" stroke-width=".8"/>`;
-  s += `<path d="M${x0} ${yb - alt} l${dx} ${dy} H${x1 + dx} L${x1} ${yb - alt}" fill="none" stroke="${C.ferro}" stroke-width="2" stroke-linejoin="round"/>`;
+  let s = `<path d="M${f1(x0)} ${f1(yb)} H${f1(x1)} l${dx} ${dy} H${f1(x0 + dx)} Z" fill="#6d6a66" stroke="${K}" stroke-width="1.4" stroke-linejoin="round"/>`;
+  s += `<path d="M${f1(x0 + dx)} ${f1(yb + dy)} H${f1(x1 + dx)} v2.6 H${f1(x0 + dx)} Z" fill="#46433f" stroke="${K}" stroke-width="1.2"/>`;
+  if (flores) s += `<rect x="${f1(x0 + dx + 2)}" y="${f1(yb + dy - 5)}" width="6" height="5" fill="#b8543a" stroke="${K}" stroke-width="1"/><circle cx="${f1(x0 + dx + 5)}" cy="${f1(yb + dy - 8)}" r="3.6" fill="#e2412a" stroke="${K}" stroke-width="1"/><circle cx="${f1(x0 + dx + 2)}" cy="${f1(yb + dy - 6)}" r="2.4" fill="#4fae6a" stroke="${K}" stroke-width=".8"/>`;
+  s += `<path d="M${f1(x0)} ${f1(yb - alt)} l${dx} ${dy} H${f1(x1 + dx)} L${f1(x1)} ${f1(yb - alt)}" fill="none" stroke="${C.ferro}" stroke-width="2" stroke-linejoin="round"/>`;
   const n = Math.max(3, Math.round((x1 - x0) / 4));
   for (let k = 0; k <= n; k++) {
     const x = x0 + dx + ((x1 - x0) * k) / n;
-    s += `<path d="M${f1(x)} ${yb + dy - alt} V${yb + dy}" stroke="${C.ferro}" stroke-width="1.1"/>`;
+    s += `<path d="M${f1(x)} ${f1(yb + dy - alt)} V${f1(yb + dy)}" stroke="${C.ferro}" stroke-width="1.1"/>`;
   }
-  s += `<path d="M${x0} ${yb - alt} V${yb} M${x1} ${yb - alt} V${yb} M${f1(x0 + dx / 2)} ${f1(yb - alt + dy / 2)} v${alt} M${f1(x1 + dx / 2)} ${f1(yb - alt + dy / 2)} v${alt}" stroke="${C.ferro}" stroke-width="1.1"/>`;
+  s += `<path d="M${f1(x0)} ${f1(yb - alt)} V${f1(yb)} M${f1(x1)} ${f1(yb - alt)} V${f1(yb)} M${f1(x0 + dx / 2)} ${f1(yb - alt + dy / 2)} v${alt} M${f1(x1 + dx / 2)} ${f1(yb - alt + dy / 2)} v${alt}" stroke="${C.ferro}" stroke-width="1.1"/>`;
   return s;
 }
 
@@ -245,9 +248,9 @@ export function janelaR(x: number, y: number, w: number, h: number, o: OpcoesJan
 
 export function porta2(x: number, w: number, h: number, cor: string, arco = false): string {
   const top = arco
-    ? `M${x} ${-h + w / 2} A${w / 2} ${w / 2} 0 0 1 ${x + w} ${-h + w / 2}`
-    : `M${x} ${-h} H${x + w}`;
-  return `<path d="${top} V0 H${x} Z" fill="${cor}" stroke="${K}" stroke-width="2.4"/><circle cx="${x + w * 0.78}" cy="${-h * 0.45}" r="2.3" fill="${C.amarelo}" stroke="${K}" stroke-width="1.2"/>`;
+    ? `M${f1(x)} ${f1(-h + w / 2)} A${f1(w / 2)} ${f1(w / 2)} 0 0 1 ${f1(x + w)} ${f1(-h + w / 2)}`
+    : `M${f1(x)} ${f1(-h)} H${f1(x + w)}`;
+  return `<path d="${top} V0 H${f1(x)} Z" fill="${cor}" stroke="${K}" stroke-width="2.4"/><circle cx="${f1(x + w * 0.78)}" cy="${f1(-h * 0.45)}" r="2.3" fill="${C.amarelo}" stroke="${K}" stroke-width="1.2"/>`;
 }
 
 export function placa2(x: number, y: number, w: number, txt: string, fundo: string, cor: string): string {
@@ -393,7 +396,7 @@ export function arcada(w: number, rc: number): string {
   for (let k = 0; k < n; k++) {
     const x = k * aw + 5;
     const lw = aw - 10;
-    s += `<path d="M${f1(x)} 0 V${-rc + lw / 2 + 4} A${f1(lw / 2)} ${f1(lw / 2)} 0 0 1 ${f1(x + lw)} ${-rc + lw / 2 + 4} V0 Z" fill="#3b2f26" stroke="${K}" stroke-width="2"/><rect x="${f1(x + lw * 0.25)}" y="-12" width="${f1(lw * 0.5)}" height="3" fill="#fff" stroke="${K}" stroke-width="1"/><path d="M${f1(x + lw / 2)} -9 V0" stroke="#fff" stroke-width="1.6"/>`;
+    s += `<path d="M${f1(x)} 0 V${f1(-rc + lw / 2 + 4)} A${f1(lw / 2)} ${f1(lw / 2)} 0 0 1 ${f1(x + lw)} ${f1(-rc + lw / 2 + 4)} V0 Z" fill="#3b2f26" stroke="${K}" stroke-width="2"/><rect x="${f1(x + lw * 0.25)}" y="-12" width="${f1(lw * 0.5)}" height="3" fill="#fff" stroke="${K}" stroke-width="1"/><path d="M${f1(x + lw / 2)} -9 V0" stroke="#fff" stroke-width="1.6"/>`;
   }
   return s;
 }
@@ -523,7 +526,7 @@ export function clerigos(ci: number, cj: number, E = 1.22, t: Terreno = PLANO): 
   let s = `<polygon class="ed-toque" points="${[P(ci - rt, cj - rt, z0), P(ci + rt, cj - rt, z0), P(ci + rt, cj + rt, z0), P(ci - rt, cj + rt, z0)].map(([x, y]) => `${f1(x)},${f1(y)}`).join(" ")}" fill="transparent"/>`;
   let z = z0;
   const pilastras = (w: number, hh: number): string =>
-    `<rect x="0" y="${-hh}" width="6" height="${hh}" fill="${G2}" stroke="${K}" stroke-width="1.2"/><rect x="${f1(w - 6)}" y="${-hh}" width="6" height="${hh}" fill="${G2}" stroke="${K}" stroke-width="1.2"/>`;
+    `<rect x="0" y="${f1(-hh)}" width="6" height="${f1(hh)}" fill="${G2}" stroke="${K}" stroke-width="1.2"/><rect x="${f1(w - 6)}" y="${f1(-hh)}" width="6" height="${f1(hh)}" fill="${G2}" stroke="${K}" stroke-width="1.2"/>`;
   const bloco = (lado: number, h: number, o: OpcoesCaixa = {}): void => {
     lado *= E;
     h *= E;
