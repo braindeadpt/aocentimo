@@ -1,12 +1,12 @@
 {
-  "consultadoEm": "2026-10-11T14:50:05.848Z",
+  "consultadoEm": "2026-10-16T19:39:31.724Z",
   "fonteUrl": "https://news.google.com/rss/search?q=ISP+site%3Adiariodarepublica.pt&hl=pt-PT&gl=PT&ceid=PT%3Apt",
   "nota": "Feed RSS do Google Notícias restrito ao DR; o DR não é legível por máquina (só shell JS).",
   "ultimaPortariaFeed": {
     "numero": "451-A/2026/1",
-    "data": "2026-10-09",
-    "titulo": "Portaria n.º 451-A/2026/1, de 9 de outubro - Diário da República",
-    "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1PajZIZUpmNmt0aUVFbmNrNlFrYUh3MWx1WGdaTW5ZMTZTNXNCaER2azFReXJIU2Q4WnFSek5EdGUzckgyOUp6THJPMTMxX1dLZVB2dUd4aFc2YW14UEJJeXNXcHBScC1pQmZKNm10aS1SanRCakR4aFVB?oc=5"
+    "data": "2026-10-12",
+    "titulo": "Análise Jurídica - Portaria n.º 451-A/2026/1 - Diário da República",
+    "link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQX2x4Mmxxajg1U0hjYTBGaVQyMThfbkZnT3dhb1dBV3NtbFRCRHFDc1dCckRYbEtZR01KemhPVVhMMjNsVC1MSGJ3dzhZdy1VVG9OTUNrdm5ia21nMmJ3Vk8wMlVtc0hmZ0RwTmlUNkxUYXlTcVl6NWY4NGVVZGxMdzhjbUZuM01PUUh3dUx5cFZpQzl0cFVpNElyOFhTcUU?oc=5"
   },
   "ultimaReportada": "451-A/2026/1",
   "ispJson": {
@@ -67,20 +67,16 @@
       "data": "2023-06-20"
     },
     {
+      "titulo": "Fixa os valores das taxas do imposto sobre os produtos petrolíferos e energéticos - Diário da República",
+      "data": "2023-06-13"
+    },
+    {
       "titulo": "Análise Jurídica - Decreto-Lei n.º 199/2026 - Diário da República",
       "data": "2026-10-07"
     },
     {
-      "titulo": "Deliberação n.º 1639/2012, de 16 de novembro - Diário da República",
-      "data": "2026-08-01"
-    },
-    {
       "titulo": "FINANÇAS E AMBIENTE E AÇÃO CLIMÁTICA - Diário da República",
       "data": "2022-03-11"
-    },
-    {
-      "titulo": "FUNDO DE PENSÕES DOS TRABALHADORES DO INSTITUTO DE SEGUROS DE PORTUGAL - Diário da República",
-      "data": "2024-01-08"
     },
     {
       "titulo": "Norma regulamentar do Instituto de Seguros de Portugal n.º 16/2007-R, de 29 de janeiro - Diário da República",
@@ -111,28 +107,20 @@
       "data": "2023-06-05"
     },
     {
-      "titulo": "Decreto-Lei n.º 124/94, de 18 de maio - Diário da República",
-      "data": "2023-06-20"
-    },
-    {
       "titulo": "Resolução n.º 35/2012, de 4 de setembro - Diário da República",
       "data": "2024-02-28"
     },
     {
-      "titulo": "SUPLEMENTO - Diário da República",
-      "data": "1999-05-26"
-    },
-    {
-      "titulo": "SUPLEMENTO - Diário da República",
-      "data": "1999-07-07"
-    },
-    {
-      "titulo": "Irregularidades no reembolso de imposto sobre produtos petrolíferos e energéticos - Diário da República",
-      "data": "2023-12-17"
+      "titulo": "Decreto-Lei n.º 124/94, de 18 de maio - Diário da República",
+      "data": "2023-06-20"
     },
     {
       "titulo": "Código dos Impostos Especiais de Consumo - CIEC - Diário da República",
       "data": "2023-06-03"
+    },
+    {
+      "titulo": "Irregularidades no reembolso de imposto sobre produtos petrolíferos e energéticos - Diário da República",
+      "data": "2023-12-17"
     },
     {
       "titulo": "Altera a designação do Instituto de Seguros de Portugal para Autoridade de Supervisão de Seguros e Fundos de Pensões e aprova os estatutos desta entidade - Diário da República",
@@ -156,11 +144,7 @@
     },
     {
       "titulo": "2. SUPLEMENTO - Diário da República",
-      "data": "1999-03-17"
-    },
-    {
-      "titulo": "Decreto-Lei n.º 71/2008, de 15 de abril - Diário da República",
-      "data": "2023-06-06"
+      "data": "1999-03-31"
     },
     {
       "titulo": "Diário da República n.º 189/1992, Série II de 1992-08-18 - Diário da República",
@@ -171,8 +155,8 @@
       "data": "2014-04-11"
     },
     {
-      "titulo": "Anúncio de procedimento n.º 6454/2026, de 16 de março - Diário da República",
-      "data": "2026-03-16"
+      "titulo": "Decreto-Lei n.º 71/2008, de 15 de abril - Diário da República",
+      "data": "2023-06-06"
     },
     {
       "titulo": "Acordão de 2023-01-25 (Processo nº 0586/12.7BEALM), de 25 de janeiro - Diário da República",
@@ -199,6 +183,10 @@
       "data": "2024-04-30"
     },
     {
+      "titulo": "Untitled - Diário da República",
+      "data": "1994-01-12"
+    },
+    {
       "titulo": "Decreto-Lei n.º 336/85, de 21 de agosto - Diário da República",
       "data": "2023-06-06"
     },
@@ -207,26 +195,38 @@
       "data": "2024-07-17"
     },
     {
-      "titulo": "DIÁRIO DA REPÚBLICA - Diário da República",
-      "data": "2024-01-19"
+      "titulo": "SUPLEMENTO - Diário da República",
+      "data": "1999-03-17"
     },
     {
       "titulo": "Decreto-Lei n.º 66/2006, de 22 de março - Diário da República",
       "data": "2006-03-22"
+    },
+    {
+      "titulo": "N.º 231 — 29 de Novembro de 2010 - Diário da República",
+      "data": "2010-11-29"
+    },
+    {
+      "titulo": "Despacho n.º 6058/2011, de 7 de abril - Diário da República",
+      "data": "2023-07-05"
+    },
+    {
+      "titulo": "Decreto-Lei n.º 43-A/2022, de 6 de julho - Diário da República",
+      "data": "2022-07-06"
     }
   ],
   "accao": "Há novas: abrir a issue, confirmar cada portaria no DR, ler o art. 2.º e atualizar data/fiscal/isp.json (vigencia, fonte, fonteUrl, ispELitro, nota) com os testes. O alarme nunca é dado.",
   "novas": [
     {
       "numero": "451-A/2026/1",
-      "data": "2026-10-09",
-      "titulo": "Portaria n.º 451-A/2026/1, de 9 de outubro - Diário da República",
-      "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1PajZIZUpmNmt0aUVFbmNrNlFrYUh3MWx1WGdaTW5ZMTZTNXNCaER2azFReXJIU2Q4WnFSek5EdGUzckgyOUp6THJPMTMxX1dLZVB2dUd4aFc2YW14UEJJeXNXcHBScC1pQmZKNm10aS1SanRCakR4aFVB?oc=5"
+      "data": "2026-10-12",
+      "titulo": "Análise Jurídica - Portaria n.º 451-A/2026/1 - Diário da República",
+      "link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQX2x4Mmxxajg1U0hjYTBGaVQyMThfbkZnT3dhb1dBV3NtbFRCRHFDc1dCckRYbEtZR01KemhPVVhMMjNsVC1MSGJ3dzhZdy1VVG9OTUNrdm5ia21nMmJ3Vk8wMlVtc0hmZ0RwTmlUNkxUYXlTcVl6NWY4NGVVZGxMdzhjbUZuM01PUUh3dUx5cFZpQzl0cFVpNElyOFhTcUU?oc=5"
     }
   ],
-  "idadeDias": 6,
-  "alarmeIdade": false,
+  "idadeDias": 11,
+  "alarmeIdade": true,
   "alarme": true,
-  "motivo": "feed",
+  "motivo": "ambos",
   "falhaFeed": null
 }
