@@ -1,14 +1,14 @@
 {
-  "consultadoEm": "2026-10-16T19:39:31.724Z",
+  "consultadoEm": "2026-10-18T12:32:55.632Z",
   "fonteUrl": "https://news.google.com/rss/search?q=ISP+site%3Adiariodarepublica.pt&hl=pt-PT&gl=PT&ceid=PT%3Apt",
   "nota": "Feed RSS do Google Notícias restrito ao DR; o DR não é legível por máquina (só shell JS).",
   "ultimaPortariaFeed": {
-    "numero": "451-A/2026/1",
-    "data": "2026-10-12",
-    "titulo": "Análise Jurídica - Portaria n.º 451-A/2026/1 - Diário da República",
-    "link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQX2x4Mmxxajg1U0hjYTBGaVQyMThfbkZnT3dhb1dBV3NtbFRCRHFDc1dCckRYbEtZR01KemhPVVhMMjNsVC1MSGJ3dzhZdy1VVG9OTUNrdm5ia21nMmJ3Vk8wMlVtc0hmZ0RwTmlUNkxUYXlTcVl6NWY4NGVVZGxMdzhjbUZuM01PUUh3dUx5cFZpQzl0cFVpNElyOFhTcUU?oc=5"
+    "numero": "458-A/2026/1",
+    "data": "2026-10-16",
+    "titulo": "Portaria n.º 458-A/2026/1, de 16 de outubro - Diário da República",
+    "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE80THpUNlFnV3p3RTlTUXcxUm1SMzJjMF94UjlFRVFET2ZGeVBuQk0zUWNEbHllWm1oalozRTcxWGV2SmpjX2NOeGg3SHdKanpiS1RnYkt4ZVo4YVJDSkZlME4tRlVXUWJhSVVYejdTSkdRd3piRXlwNDFn?oc=5"
   },
-  "ultimaReportada": "451-A/2026/1",
+  "ultimaReportada": "458-A/2026/1",
   "ispJson": {
     "vigencia": "2026-10-05",
     "portaria": "448-A/2026/1"
@@ -72,7 +72,7 @@
     },
     {
       "titulo": "Análise Jurídica - Decreto-Lei n.º 199/2026 - Diário da República",
-      "data": "2026-10-07"
+      "data": "2026-10-08"
     },
     {
       "titulo": "FINANÇAS E AMBIENTE E AÇÃO CLIMÁTICA - Diário da República",
@@ -143,8 +143,16 @@
       "data": "2023-09-04"
     },
     {
+      "titulo": "Norma regulamentar do Instituto de Seguros de Portugal n.º 7/2009-R, de 1 de junho - Diário da República",
+      "data": "2023-06-04"
+    },
+    {
       "titulo": "2. SUPLEMENTO - Diário da República",
       "data": "1999-03-31"
+    },
+    {
+      "titulo": "5158-(125) FINANÇAS E ECONOMIA FINANÇAS E AMBIENTE - Diário da República",
+      "data": "2016-12-30"
     },
     {
       "titulo": "Diário da República n.º 189/1992, Série II de 1992-08-18 - Diário da República",
@@ -183,6 +191,10 @@
       "data": "2024-04-30"
     },
     {
+      "titulo": "Acordão de 2023-03-02 (Processo nº 990/17.4BELRS), de 2 de março - Diário da República",
+      "data": "2023-03-02"
+    },
+    {
       "titulo": "Untitled - Diário da República",
       "data": "1994-01-12"
     },
@@ -191,28 +203,16 @@
       "data": "2023-06-06"
     },
     {
+      "titulo": "Resolução da Assembleia Legislativa da Região Autónoma dos Açores n.º 24/2026/A, de 18 de junho - Diário da República",
+      "data": "2026-06-18"
+    },
+    {
       "titulo": "Decreto-Lei n.º 47/2024, de 17 de julho - Diário da República",
       "data": "2024-07-17"
     },
     {
       "titulo": "SUPLEMENTO - Diário da República",
       "data": "1999-03-17"
-    },
-    {
-      "titulo": "Decreto-Lei n.º 66/2006, de 22 de março - Diário da República",
-      "data": "2006-03-22"
-    },
-    {
-      "titulo": "N.º 231 — 29 de Novembro de 2010 - Diário da República",
-      "data": "2010-11-29"
-    },
-    {
-      "titulo": "Despacho n.º 6058/2011, de 7 de abril - Diário da República",
-      "data": "2023-07-05"
-    },
-    {
-      "titulo": "Decreto-Lei n.º 43-A/2022, de 6 de julho - Diário da República",
-      "data": "2022-07-06"
     }
   ],
   "accao": "Há novas: abrir a issue, confirmar cada portaria no DR, ler o art. 2.º e atualizar data/fiscal/isp.json (vigencia, fonte, fonteUrl, ispELitro, nota) com os testes. O alarme nunca é dado.",
@@ -222,9 +222,15 @@
       "data": "2026-10-12",
       "titulo": "Análise Jurídica - Portaria n.º 451-A/2026/1 - Diário da República",
       "link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQX2x4Mmxxajg1U0hjYTBGaVQyMThfbkZnT3dhb1dBV3NtbFRCRHFDc1dCckRYbEtZR01KemhPVVhMMjNsVC1MSGJ3dzhZdy1VVG9OTUNrdm5ia21nMmJ3Vk8wMlVtc0hmZ0RwTmlUNkxUYXlTcVl6NWY4NGVVZGxMdzhjbUZuM01PUUh3dUx5cFZpQzl0cFVpNElyOFhTcUU?oc=5"
+    },
+    {
+      "numero": "458-A/2026/1",
+      "data": "2026-10-16",
+      "titulo": "Portaria n.º 458-A/2026/1, de 16 de outubro - Diário da República",
+      "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE80THpUNlFnV3p3RTlTUXcxUm1SMzJjMF94UjlFRVFET2ZGeVBuQk0zUWNEbHllWm1oalozRTcxWGV2SmpjX2NOeGg3SHdKanpiS1RnYkt4ZVo4YVJDSkZlME4tRlVXUWJhSVVYejdTSkdRd3piRXlwNDFn?oc=5"
     }
   ],
-  "idadeDias": 11,
+  "idadeDias": 13,
   "alarmeIdade": true,
   "alarme": true,
   "motivo": "ambos",
