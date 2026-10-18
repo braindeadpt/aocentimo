@@ -3,10 +3,10 @@
     "id": "pmd-gasoleo-diario",
     "fonte": "DGEG — Preços dos Combustíveis",
     "dataset": "PMD Gasóleo simples (2101)",
-    "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=2101&dataIni=2017-01-01&dataFim=2026-10-17",
+    "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=2101&dataIni=2017-01-01&dataFim=2026-10-18",
     "unidade": "eur_litro_media_nacional",
-    "recolhidoEm": "2026-10-17T10:22:33.032Z",
-    "serieAte": "2026-10-16"
+    "recolhidoEm": "2026-10-18T10:39:09.385Z",
+    "serieAte": "2026-10-17"
   },
   "series": [
     {
@@ -14312,6 +14312,10 @@
     {
       "t": "2026-10-16",
       "v": 2.1439
+    },
+    {
+      "t": "2026-10-17",
+      "v": 2.1435
     }
   ]
 }
