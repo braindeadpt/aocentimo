@@ -5,7 +5,7 @@
     "dataset": "serie 13168938 (Crédito aos consumidores)",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168938&lang=PT",
     "unidade": "percentagem_media_mensal",
-    "recolhidoEm": "2026-10-21T11:26:16.374Z",
+    "recolhidoEm": "2026-10-22T11:26:00.148Z",
     "serieAte": "2026-08"
   },
   "series": [
