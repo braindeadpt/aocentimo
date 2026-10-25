@@ -1,5 +1,5 @@
 {
-  "consultadoEm": "2026-10-23T20:02:18.838Z",
+  "consultadoEm": "2026-10-25T13:06:51.319Z",
   "fonteUrl": "https://news.google.com/rss/search?q=ISP+site%3Adiariodarepublica.pt&hl=pt-PT&gl=PT&ceid=PT%3Apt",
   "nota": "Feed RSS do Google Notícias restrito ao DR; o DR não é legível por máquina (só shell JS).",
   "ultimaPortariaFeed": {
@@ -71,20 +71,16 @@
       "data": "2026-10-08"
     },
     {
-      "titulo": "FUNDO DE PENSÕES DOS TRABALHADORES DO INSTITUTO DE SEGUROS DE PORTUGAL - Diário da República",
-      "data": "2024-01-08"
-    },
-    {
       "titulo": "Decreto-Lei n.º 123/94, de 18 de maio - Diário da República",
       "data": "2023-06-14"
     },
     {
-      "titulo": "Norma regulamentar do Instituto de Seguros de Portugal n.º 16/2007-R, de 29 de janeiro - Diário da República",
-      "data": "2023-06-04"
-    },
-    {
       "titulo": "Decreto-Lei n.º 251/97, de 26 de setembro - Diário da República",
       "data": "2023-06-07"
+    },
+    {
+      "titulo": "FUNDO DE PENSÕES DOS TRABALHADORES DO INSTITUTO DE SEGUROS DE PORTUGAL - Diário da República",
+      "data": "2024-01-08"
     },
     {
       "titulo": "Atualiza o valor das taxas unitárias do imposto sobre os produtos petrolíferos e energéticos - Diário da República",
@@ -101,6 +97,10 @@
     {
       "titulo": "Acordão de 2024-11-28 (Processo nº 00565/13.7BEAVR), de 28 de novembro - Diário da República",
       "data": "2025-08-18"
+    },
+    {
+      "titulo": "Regulamento n.º 9/2002, de 31 de janeiro - Diário da República",
+      "data": "2023-06-09"
     },
     {
       "titulo": "Resolução n.º 35/2012, de 4 de setembro - Diário da República",
@@ -121,6 +121,10 @@
     {
       "titulo": "Altera a designação do Instituto de Seguros de Portugal para Autoridade de Supervisão de Seguros e Fundos de Pensões e aprova os estatutos desta entidade - Diário da República",
       "data": "2023-06-05"
+    },
+    {
+      "titulo": "Norma regulamentar do Instituto de Seguros de Portugal n.º 16/2007-R, de 29 de janeiro - Diário da República",
+      "data": "2023-06-04"
     },
     {
       "titulo": "Decreto-Lei n.º 195/2002, de 25 de setembro - Diário da República",
@@ -153,10 +157,6 @@
     {
       "titulo": "Despacho n.º 12554/2025, de 27 de outubro - Diário da República",
       "data": "2025-10-27"
-    },
-    {
-      "titulo": "Regime transitório do período de liquidação de desvios e do ajustamento trimestral do preço de banda de regulação secundária - Diário da República",
-      "data": "2026-09-23"
     },
     {
       "titulo": "Medidas excecionais e temporárias de resposta ao aumento dos preços dos combustíveis - Diário da República",
@@ -230,7 +230,7 @@
       "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE80THpUNlFnV3p3RTlTUXcxUm1SMzJjMF94UjlFRVFET2ZGeVBuQk0zUWNEbHllWm1oalozRTcxWGV2SmpjX2NOeGg3SHdKanpiS1RnYkt4ZVo4YVJDSkZlME4tRlVXUWJhSVVYejdTSkdRd3piRXlwNDFn?oc=5"
     }
   ],
-  "idadeDias": 18,
+  "idadeDias": 20,
   "alarmeIdade": true,
   "alarme": true,
   "motivo": "ambos",
