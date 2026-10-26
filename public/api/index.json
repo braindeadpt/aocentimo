@@ -1,7 +1,7 @@
 {
   "nome": "AO CÊNTIMO — dados abertos",
   "descricao": "Séries estáticas geradas a partir de fontes oficiais (Eurostat, BPstat, DGEG, IGCP, AT). Atualizadas a cada build.",
-  "geradoEm": "2026-10-25T11:00:18.814Z",
+  "geradoEm": "2026-10-26T12:32:20.024Z",
   "endpoints": [
     {
       "path": "/api/deposito-prazo-ate1a-mensal.json",
