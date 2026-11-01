@@ -1,5 +1,5 @@
 {
-  "consultadoEm": "2026-10-30T20:59:00.617Z",
+  "consultadoEm": "2026-11-01T14:54:23.108Z",
   "fonteUrl": "https://news.google.com/rss/search?q=ISP+site%3Adiariodarepublica.pt&hl=pt-PT&gl=PT&ceid=PT%3Apt",
   "nota": "Feed RSS do Google Notícias restrito ao DR; o DR não é legível por máquina (só shell JS).",
   "ultimaPortariaFeed": {
@@ -93,10 +93,6 @@
     {
       "titulo": "Acordão de 2024-11-28 (Processo nº 00565/13.7BEAVR), de 28 de novembro - Diário da República",
       "data": "2025-08-18"
-    },
-    {
-      "titulo": "Regulamento n.º 9/2002, de 31 de janeiro - Diário da República",
-      "data": "2023-06-09"
     },
     {
       "titulo": "Resolução n.º 35/2012, de 4 de setembro - Diário da República",
@@ -207,8 +203,8 @@
       "data": "2022-07-06"
     },
     {
-      "titulo": "Edital n.º 1031/2012, de 22 de novembro - Diário da República",
-      "data": "2025-08-13"
+      "titulo": "Despacho n.º 9974/2021, de 14 de outubro - Diario da Republica",
+      "data": "2023-06-06"
     }
   ],
   "accao": "Há novas: abrir a issue, confirmar cada portaria no DR, ler o art. 2.º e atualizar data/fiscal/isp.json (vigencia, fonte, fonteUrl, ispELitro, nota) com os testes. O alarme nunca é dado.",
@@ -238,7 +234,7 @@
       "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE9yX1dtNzhpR05wc0FrWlFPcmRBTER5YXBiZGg3N1dNQ3FIUmVpOTJRaW01SmJlTHVMN05scURCTlNidGhoMU9pSzZibXlaREY1Y0tJUWc5cG1mVnowZ2MyN3VPOFRpOWZ6UDM2UmFuZnMwbW40OFlsZmtR?oc=5"
     }
   ],
-  "idadeDias": 25,
+  "idadeDias": 27,
   "alarmeIdade": true,
   "alarme": true,
   "motivo": "ambos",
