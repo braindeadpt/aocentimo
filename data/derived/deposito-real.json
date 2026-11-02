@@ -10,9 +10,9 @@
     "nota": "Aproximação: não conta com impostos. É diferença entre duas séries oficiais, não o juro real de um depósito concreto.",
     "unidade": "pontos_percentuais",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=12519805&lang=PT",
-    "recolhidoEm": "2026-11-01T12:55:02.153Z",
-    "serieAte": "2026-08",
-    "rotuloAte": "2026-08",
+    "recolhidoEm": "2026-11-02T15:10:49.549Z",
+    "serieAte": "2026-09",
+    "rotuloAte": "2026-09",
     "frequencia": "mensal"
   },
   "series": [
@@ -1151,6 +1151,10 @@
     {
       "t": "2026-08",
       "v": -1.93
+    },
+    {
+      "t": "2026-09",
+      "v": -1.73
     }
   ]
 }

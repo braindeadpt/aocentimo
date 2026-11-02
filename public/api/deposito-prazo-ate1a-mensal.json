@@ -5,8 +5,8 @@
     "dataset": "serie 12519805 (Taxas de juro — Depósitos)",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=12519805&lang=PT",
     "unidade": "percentagem",
-    "recolhidoEm": "2026-11-01T12:54:59.403Z",
-    "serieAte": "2026-08",
+    "recolhidoEm": "2026-11-02T15:10:46.501Z",
+    "serieAte": "2026-09",
     "tituloOficial": "Taxa de juro (TAA) de novos depósitos a prazo até 1 ano dos particulares",
     "periodicidade": "Mensal"
   },
@@ -1146,6 +1146,10 @@
     {
       "t": "2026-08",
       "v": 1.62
+    },
+    {
+      "t": "2026-09",
+      "v": 1.83
     }
   ]
 }
