@@ -6,8 +6,8 @@
     "nota": "Oficial = média da Euribor 3M nos 10 dias úteis, cap 2,50 %. Indicativa usa a média mensal — pode diferir dias dentro do mês.",
     "oficialPct": 2.5,
     "vigenciaOficial": "2026-09-01",
-    "serieAte": "2026-09",
-    "recolhidoEm": "2026-11-03T13:53:33.674Z"
+    "serieAte": "2026-10",
+    "recolhidoEm": "2026-11-04T14:00:15.141Z"
   },
   "series": [
     {
@@ -1580,6 +1580,10 @@
     },
     {
       "t": "2026-09",
+      "v": 2.5
+    },
+    {
+      "t": "2026-10",
       "v": 2.5
     }
   ]
