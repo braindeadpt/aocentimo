@@ -1,12 +1,12 @@
 {
-  "consultadoEm": "2026-11-06T21:44:04.695Z",
+  "consultadoEm": "2026-11-08T14:56:14.119Z",
   "fonteUrl": "https://news.google.com/rss/search?q=ISP+site%3Adiariodarepublica.pt&hl=pt-PT&gl=PT&ceid=PT%3Apt",
   "nota": "Feed RSS do Google Notícias restrito ao DR; o DR não é legível por máquina (só shell JS).",
   "ultimaPortariaFeed": {
-    "numero": "496-A/2026/1",
-    "data": "2026-11-06",
-    "titulo": "Portaria n.º 496-A/2026/1, de 6 de novembro - Diário da República",
-    "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTFBEaHg5ZEVKaHpqOXJqaUNocHdiRHZFaDlGNmQzNHdQU0lMV2pVWHBHaXRPZlljTXZpNHJad0lyU1c3aHA5b1cwZE0wRnI0RGFYdVhMbTB1cTFJdHMwanp3MnVjT3pQb09YYUNUM2RpQ0QxQThHZ2VBVEhn?oc=5"
+    "numero": "314-B/2026/1",
+    "data": "2026-07-24",
+    "titulo": "Portaria n.º 314-B/2026/1, de 24 de julho - Diário da República",
+    "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE9ONDlwX2JBaWYzUWxwSkxtNF9JTnRDVkc3MmQ1OTMxc0M1WUZpcF9nS000bW9kalNkRXJsZi11NE1kekJJd2tYLUtWZWJNcFJkYTE3SUFrTTYwT0lNVEYydkNUN2owYzlRQ0JFZXJ2NEtEWHdDQmVaUU9R?oc=5"
   },
   "ultimaReportada": "496-A/2026/1",
   "ispJson": {
@@ -39,7 +39,7 @@
       "data": "2023-07-10"
     },
     {
-      "titulo": "Decreto-Lei n.º 289/2001, de 13 de novembro - Diario da Republica",
+      "titulo": "Decreto-Lei n.º 289/2001, de 13 de novembro - Diário da República",
       "data": "2023-06-07"
     },
     {
@@ -60,23 +60,10 @@
     }
   ],
   "accao": "Há novas: abrir a issue, confirmar cada portaria no DR, ler o art. 2.º e atualizar data/fiscal/isp.json (vigencia, fonte, fonteUrl, ispELitro, nota) com os testes. O alarme nunca é dado.",
-  "novas": [
-    {
-      "numero": "471-A/2026/1",
-      "data": "2026-10-30",
-      "titulo": "Portaria n.º 471-A/2026/1, de 30 de outubro - Diário da República",
-      "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE9yX1dtNzhpR05wc0FrWlFPcmRBTER5YXBiZGg3N1dNQ3FIUmVpOTJRaW01SmJlTHVMN05scURCTlNidGhoMU9pSzZibXlaREY1Y0tJUWc5cG1mVnowZ2MyN3VPOFRpOWZ6UDM2UmFuZnMwbW40OFlsZmtR?oc=5"
-    },
-    {
-      "numero": "496-A/2026/1",
-      "data": "2026-11-06",
-      "titulo": "Portaria n.º 496-A/2026/1, de 6 de novembro - Diário da República",
-      "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTFBEaHg5ZEVKaHpqOXJqaUNocHdiRHZFaDlGNmQzNHdQU0lMV2pVWHBHaXRPZlljTXZpNHJad0lyU1c3aHA5b1cwZE0wRnI0RGFYdVhMbTB1cTFJdHMwanp3MnVjT3pQb09YYUNUM2RpQ0QxQThHZ2VBVEhn?oc=5"
-    }
-  ],
-  "idadeDias": 32,
+  "novas": [],
+  "idadeDias": 34,
   "alarmeIdade": true,
   "alarme": true,
-  "motivo": "ambos",
+  "motivo": "idade",
   "falhaFeed": null
 }
