@@ -1,5 +1,5 @@
 {
-  "consultadoEm": "2026-11-02T17:15:50.080Z",
+  "consultadoEm": "2026-11-09T17:40:35.842Z",
   "fontes": [
     {
       "rotulo": "Minutas (atas) da Assembleia Municipal",
@@ -1721,68 +1721,7 @@
       "data": null
     }
   ],
-  "novos": [
-    {
-      "titulo": "Minuta da Ata, 26.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 6 de outubro de 2026.",
-      "url": "https://www.cm-porto.pt/files/uploads/cms/20261006_MinutaAta26_Sess\\u00e3oExtAM_anon.pdf",
-      "data": "2026-10-06"
-    },
-    {
-      "titulo": "Minuta da Ata, 25.ª reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 6 de outubro de 2026 (Continuação de Sessão iniciada em 28 de setembro de 2026).",
-      "url": "https://www.cm-porto.pt/files/uploads/cms/20261006_MinutaAta25_ContSess\\u00e3oOrdAM_anon.pdf",
-      "data": "2026-10-06"
-    },
-    {
-      "titulo": "Minuta da Ata, 24.ª Reunião, Sessão Ordinária da Assembleia Municipal do Porto realizada no dia 28 de setembro de 2026.",
-      "url": "https://www.cm-porto.pt/files/uploads/cms/20260928_MinutaAta24_Sess%C3%A3oOrdAM-ass._anon..pdf",
-      "data": "2026-09-28"
-    },
-    {
-      "titulo": "Autorização prévia da assunção de compromissos plurianuais e cedência de utilização de imóvel relativos à instalação dos Headquarters, à criação do Museu dos Oceanos e às provas mundiais da “The Ocean Race”.",
-      "url": "https://www.cm-porto.pt/files/uploads/cms/20261006_Ext Ponto1 anon.pdf",
-      "data": null
-    },
-    {
-      "titulo": "Aprovação da atribuição de um apoio financeiro extraordinário às Juntas de Freguesia e Uniões de Freguesias.",
-      "url": "https://www.cm-porto.pt/files/uploads/cms/20261006_Ext Ponto2_anon.pdf",
-      "data": null
-    },
-    {
-      "titulo": "Apreciação do Relatório relativo à Petição de Cidadãos «Pela suspensão imediata do empreendimento “Emporium Park” e pela defesa da integridade urbana da envolvente do Parque da Cidade.»",
-      "url": "https://www.cm-porto.pt/files/uploads/cms/20261006_Ponto2 anon.pdf",
-      "data": null
-    },
-    {
-      "titulo": "Apreciação do Relatório relativo à Petição de Cidadãos «Pela preservação da área dos jardins da Diocese no morro da Sé do Porto “Nem a Sé se salva? Mais Verde, Menos Hotéis.”»",
-      "url": "https://www.cm-porto.pt/files/uploads/cms/20261006_Ponto3 anon.pdf",
-      "data": null
-    },
-    {
-      "titulo": "Moção “Por Uma Política de Salvaguarda da Paisagem Histórica Urbana do Centro Histórico do Porto”, apresentada pelo Grupo Municipal LIVRE.",
-      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto3Mo\\u00e7\\u00e3oLIVRE_anon.pdf",
-      "data": null
-    },
-    {
-      "titulo": "Recomendação “Para que o município do Porto adira à Semana Europeia da Mobilidade”, apresentada pelo Grupo Municipal LIVRE.",
-      "url": "https://www.cm-porto.pt/files/uploads/cms/20260928_02_GML_Semana_Europeia_Mobilidade_recomendao_signed%20(1).pdf",
-      "data": null
-    },
-    {
-      "titulo": "Recomendação “Menos vítimas, mais prevenção: por uma cultura de segurança rodoviária no Porto”, apresentada pelo Grupo Municipal Bloco de Esquerda.",
-      "url": "https://www.cm-porto.pt/files/uploads/cms/20260928_04_GMBE-Recom.Menos%20v%C3%ADtimas,%20mais%20preven%C3%A7%C3%A3o.pdf",
-      "data": null
-    },
-    {
-      "titulo": "Recomendação “Cultivar a cidade: pelo reforço das hortas comunitárias e da soberania alimentar no Porto”, apresentada pelo Grupo Municipal Bloco de Esquerda.",
-      "url": "https://www.cm-porto.pt/files/uploads/cms/20260928_05_GMBE_Rec.%20Cultivar%20a%20cidade.pdf",
-      "data": null
-    },
-    {
-      "titulo": "Recomendação “Pela Criação de Financiamento Específico para a Reabilitação de Conjuntos Habitacionais de Propriedade Mista”, apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
-      "url": "https://www.cm-porto.pt/files/uploads/cms/20260928_09_GMCDU_Rec.Pela%20Cria%C3%A7%C3%A3o%20de%20Financiamento.pdf",
-      "data": null
-    }
-  ],
+  "novos": [],
   "destacados": [],
   "accao": "Documento novo da Assembleia Municipal do Porto: abrir docs/VIGILANCIA-IMI-PORTO-2027.md, abrir o PDF e procurar o ponto «fixação das taxas do IMI» (e o IMI Familiar 30/70/140 €). Se a deliberação estiver lá: criar data/fiscal/imi-2027.json conforme a checklist (prazo legal de comunicação à AT: 31 de dezembro, art. 112.º n.º 14 do CIMI)."
 }
