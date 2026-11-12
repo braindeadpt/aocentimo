@@ -74,7 +74,9 @@ export interface ResultadoCompra {
 /**
  * Custo total de comprar casa: IMT (geral ou Jovem), IS de aquisição
  * (0,8 %), IS sobre o crédito (0,6 %) e registos. No IMT Jovem o IS de
- * aquisição segue a mesma isenção proporcional.
+ * aquisição segue a mesma isenção proporcional até ao limite do benefício
+ * (DL 48-A/2024, art. 9.º n.º 2 CIMT e art. 31.º-A CIS); acima desse
+ * limite perde-se totalmente a isenção.
  */
 export function custoCompra(
   preco: number,
@@ -91,13 +93,16 @@ export function custoCompra(
   const imtDevido =
     tipo === "hpp" && jovem ? imtJovem(preco, ano) : imt(preco, tipo, ano);
 
-  // IS de aquisição: no IMT Jovem é isento na mesma proporção do IMT
+  // IS de aquisição: no IMT Jovem é isento até isentoAte, paga só sobre o
+  // excedente até limiteBeneficio e perde a isenção acima desse teto
   const isBase = preco * r.impostoSelo.aquisicao.taxa;
   const isAquisicao =
     tipo === "hpp" && jovem
       ? preco <= r.jovem.isentoAte
         ? 0
-        : isBase * (1 - r.jovem.isentoAte / preco)
+        : preco <= r.jovem.limiteBeneficio
+          ? (preco - r.jovem.isentoAte) * r.impostoSelo.aquisicao.taxa
+          : isBase
       : isBase;
 
   const isCredito = montanteCredito * r.impostoSelo.credito.taxa;

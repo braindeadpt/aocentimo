@@ -1,6 +1,6 @@
 {
   "vigencia": "2026-01-01",
-  "fonte": "CIRS art. 31.º (coeficiente regime simplificado), art. 101.º (retenção 23 % em 2026); Código Contributivo art. 168.º (21,4 % sobre rendimento relevante)",
+  "fonte": "CIRS art. 31.º (coeficiente regime simplificado), art. 70.º (mínimo de existência), art. 101.º e art. 101.º-B (retenção 23 % e dispensa até 15 000 €); Código Contributivo art. 164.º e art. 168.º (21,4 % sobre rendimento relevante, variação ±25 %)",
   "fonteUrl": "https://info.portaldasfinancas.gov.pt",
   "regimeSimplificado": {
     "coeficienteServicos": 0.75,
@@ -12,11 +12,13 @@
     "rendimentoRelevante": 0.7,
     "baseMinimaIas": 1.5,
     "isencaoPrimeirosMeses": 12,
-    "nota": "21,4 % sobre 70 % do que faturas (serviços) ≈ 15 % do bruto; apuramento trimestral; base mínima 1,5×IAS = 805,70 €/mês em 2026"
+    "variacaoEscalaoSS": [-0.25, 0, 0.25],
+    "nota": "21,4 % sobre 70 % do que faturas (serviços) ≈ 15 % do bruto; apuramento trimestral; opção legal de ajustar a base entre −25 % e +25 % (CRC art. 164.º), respeitando a base mínima 1,5×IAS = 805,70 €/mês em 2026"
   },
   "retencaoFonte": {
     "tabela151": 0.23,
     "outros": 0.115,
-    "nota": "23 % em 2026 (desceu de 25 %) para profissões do art. 151.º; 11,5 % outros rendimentos cat. B"
+    "dispensaRetencaoAte": 15000,
+    "nota": "23 % em 2026 (desceu de 25 %) para profissões do art. 151.º; 11,5 % outros rendimentos cat. B; dispensa de retenção até 15 000 €/ano (CIRS art. 101.º-B n.º 1 al. a))"
   }
 }

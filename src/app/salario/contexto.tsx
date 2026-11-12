@@ -137,6 +137,11 @@ export interface SalarioEstado {
 
 const Ctx = createContext<SalarioEstado | null>(null);
 
+/** O subsídio de alimentação vence apenas nos dias de trabalho efectivo:
+ *  aproximação documentada de 11 meses × 22 dias úteis = 242 dias/ano
+ *  (exclui o mês de férias e os subsídios de férias e de Natal). */
+const DIAS_SA_ANO = 11 * 22;
+
 export function ProvedorSalario({
   ano,
   cenarios,
@@ -232,6 +237,9 @@ export function ProvedorSalario({
 
   // Em "casado único titular" o cônjuge sem rendimentos conta para o
   // quociente conjugal (÷2) mas não tem dedução específica própria.
+  // O subsídio de alimentação anualiza-se em 11 meses × 22 dias úteis
+  // (nota: o mês de férias e os subsídios não vencem SA); o IRS Jovem
+  // aplica-se ao 1.º titular mantendo o englobamento para taxa (art. 22.º n.º 4 CIRS).
   const resultado = useMemo<LinhaCenario["ano14"]>(() => {
     if (!foraDoCan || !motor) return linhaBase.ano14;
     const brutos =
@@ -240,8 +248,28 @@ export function ProvedorSalario({
         : situacao === "casado2"
           ? [bruto, conjuge]
           : [bruto, 0];
-    return motor.simularSalario(brutos, dependentes, ano);
-  }, [foraDoCan, linhaBase, motor, bruto, conjuge, situacao, dependentes, ano]);
+    const limDia = saIsento[formaSA];
+    const saIsentoAnual = Math.min(saPorDia, limDia) * DIAS_SA_ANO;
+    const saTributavelAnual = Math.max(0, saPorDia - limDia) * DIAS_SA_ANO;
+    return motor.simularSalario(brutos, dependentes, ano, 14, {
+      anoIrsJovem: anoJovem,
+      saIsentoAnual,
+      saTributavelAnual,
+    });
+  }, [
+    foraDoCan,
+    linhaBase,
+    motor,
+    bruto,
+    conjuge,
+    situacao,
+    dependentes,
+    saPorDia,
+    formaSA,
+    saIsento,
+    anoJovem,
+    ano,
+  ]);
 
   const valor: SalarioEstado = {
     ano,

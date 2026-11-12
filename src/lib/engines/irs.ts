@@ -1,5 +1,6 @@
 import irs2025 from "@data/fiscal/irs-2025.json";
 import irs2026 from "@data/fiscal/irs-2026.json";
+import irsJovem from "@data/fiscal/irs-jovem.json";
 import { TSU_TRABALHADOR, TSU_ENTIDADE } from "./seg-social";
 
 export interface EscalaoIRS {
@@ -151,22 +152,40 @@ export interface ResultadoSalario {
   pesoEstado: number; // (IRS + SS trabalhador + TSU) / custo empresa
 }
 
+export interface OpcoesSalario {
+  /** Ano de gozo do IRS Jovem no 1.º titular (1–10; 0 ou omitido = sem IRS Jovem). */
+  anoIrsJovem?: number;
+  /** Parte anual isenta do subsídio de alimentação (soma ao líquido e ao custo empresa, sem SS/IRS/TSU). */
+  saIsentoAnual?: number;
+  /** Parte anual tributável do subsídio de alimentação (soma ao bruto sujeito do 1.º titular: SS + IRS + TSU). */
+  saTributavelAnual?: number;
+}
+
 /**
  * IRS anual estimado para rendimentos de trabalho dependente (cat. A, continente).
  * Aproximação documentada: dedução específica fixa (ou contribuições, se maior),
  * abatimento por mínimo de existência, escalões com quociente conjugal,
- * deduções à coleta de despesas gerais e dependentes.
+ * deduções à coleta de despesas gerais e dependentes. Suporta opcionalmente
+ * IRS Jovem no 1.º titular (art. 12.º-B CIRS, até 55×IAS com englobamento
+ * para determinação da taxa — art. 22.º n.º 4) e subsídio de alimentação anual.
  */
 export function simularSalario(
   brutosMensais: number[],
   dependentes: number,
   ano = 2026,
-  meses = 14
+  meses = 14,
+  opts: OpcoesSalario = {}
 ): ResultadoSalario {
   const regras = REGRAS_IRS[ano];
   if (!regras) throw new Error(`Regras de IRS para ${ano} não disponíveis`);
 
-  const brutosAnuais = brutosMensais.map((b) => b * meses);
+  const saTrib = opts.saTributavelAnual ?? 0;
+  const saIsento = opts.saIsentoAnual ?? 0;
+  const anoGozo = opts.anoIrsJovem ?? 0;
+
+  const brutosAnuais = brutosMensais.map(
+    (b, i) => b * meses + (i === 0 ? saTrib : 0)
+  );
   const rbTotal = brutosAnuais.reduce((a, b) => a + b, 0);
   const nTitulares = brutosAnuais.length;
   const me = regras.minimoExistencia;
@@ -181,10 +200,35 @@ export function simularSalario(
     return { brutoAnual: rb, deducaoEspecifica: de, abatimentoME: abat, coletavel, ss: contrib };
   });
 
+  const pctJovem =
+    anoGozo >= 1 && anoGozo <= irsJovem.anosMax
+      ? irsJovem.isencaoPorAno[anoGozo - 1]
+      : 0;
+  const limiteJovem = irsJovem.limiteIsencaoIas * regras.ias;
+  const isentoJovem =
+    pctJovem > 0 && brutosAnuais.length > 0
+      ? Math.min(pctJovem * brutosAnuais[0], limiteJovem)
+      : 0;
+
   const coletavelTotal = titulares.reduce((a, t) => a + t.coletavel, 0);
-  const coletavelTributado = nTitulares === 2 ? coletavelTotal / 2 : coletavelTotal;
-  let irsBruto = impostoPorEscaloes(coletavelTributado, regras);
-  if (nTitulares === 2) irsBruto *= 2;
+  const coletavelTaxa = nTitulares === 2 ? coletavelTotal / 2 : coletavelTotal;
+  const coletavelEfetivo = titulares.reduce(
+    (a, t, i) => a + (i === 0 ? Math.max(0, t.coletavel - isentoJovem) : t.coletavel),
+    0
+  );
+  const coletavelTributado =
+    nTitulares === 2 ? coletavelEfetivo / 2 : coletavelEfetivo;
+
+  let irsBruto: number;
+  if (isentoJovem > 0) {
+    // Art. 22.º n.º 4 CIRS: o rendimento isento engloba para determinar a taxa média
+    const impostoTaxa = impostoPorEscaloes(coletavelTaxa, regras);
+    const taxaMedia = coletavelTaxa > 0 ? impostoTaxa / coletavelTaxa : 0;
+    irsBruto = taxaMedia * coletavelTributado * (nTitulares === 2 ? 2 : 1);
+  } else {
+    irsBruto = impostoPorEscaloes(coletavelTributado, regras);
+    if (nTitulares === 2) irsBruto *= 2;
+  }
 
   const deducoesColeta =
     regras.despesasGeraisPorTitular * nTitulares +
@@ -192,8 +236,8 @@ export function simularSalario(
 
   const irsAnual = Math.max(0, irsBruto - deducoesColeta);
   const ssAnual = titulares.reduce((a, t) => a + t.ss, 0);
-  const liquidoAnual = rbTotal - ssAnual - irsAnual;
-  const custoEmpresa = rbTotal * (1 + SS_ENTIDADE);
+  const liquidoAnual = rbTotal + saIsento - ssAnual - irsAnual;
+  const custoEmpresa = rbTotal * (1 + SS_ENTIDADE) + saIsento;
 
   return {
     titulares,
