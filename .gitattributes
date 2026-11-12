@@ -7,3 +7,4 @@
 # Fixar LF aqui, e não na máquina: a regra vive no repositório.
 scripts/ingest/*.fixture.* text eol=lf
 *.html text eol=lf
+docs/REVISAO-COPY-V5.md text eol=lf
