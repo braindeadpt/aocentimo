@@ -1,0 +1,72 @@
+{
+  "ano": 2026,
+  "vigencia": "2026-01-01",
+  "fonte": "Despacho n.º 233-A/2026, de 6 de janeiro (DR, Suplemento 2.ª série, n.º 3) — pensões pagas a partir de 1 de janeiro de 2026",
+  "fonteUrl": "https://files.diariodarepublica.pt/2s/2026/01/003000001/0000200010.pdf",
+  "ambito": "Pensões (cat. H), titulares residentes no continente, sem deficiência. Deficiência (Tabelas X e XI), Regiões Autónomas e trabalho dependente: fora do âmbito deste ficheiro.",
+  "formula": "retencao = max(0, R × taxaMarginal − parcelaAbater − parcelaAdicionalDependente × nDependentes)",
+  "parcelaFormulaNota": "Nas linhas de transição a parcela a abater é ela própria uma fórmula: taxa × fator × (limiar − R).",
+  "regras": {
+    "dependentes": {
+      "casadoUnicoTitular": 42.86,
+      "casadoDoisTitulares": 21.43,
+      "naoCasado": 34.29,
+      "nota": "Por cada dependente a cargo nas situações das tabelas VIII a XI, é adicionado à parcela a abater o valor de 42,86 € (casado, único titular), 21,43 € (casado, dois titulares) ou 34,29 € (não casado) — n.º 5.c do despacho."
+    },
+    "dependenteDeficiencia60": {
+      "naoCasadoOuCasadoUnicoTitular": 84.82,
+      "casadoDoisTitulares": 42.41,
+      "nota": "Valor a acrescer à parcela a abater por dependente com incapacidade permanente ≥60 % (n.º 5.a)"
+    },
+    "deducaoEspecificaPensao": {
+      "valor": 4587.09,
+      "baseLegal": "Art. 53.º do CIRS c/ art. 25.º, n.º 1 (8,54 × IAS = 4 587,09 €)",
+      "nota": "O rendimento líquido da categoria H obtém-se deduzindo, até à sua concorrência, o montante de 8,54 × IAS (4 587,09 € em 2026), ou a totalidade das quotizações para regimes obrigatórios de proteção social e subsistemas de saúde se superiores."
+    }
+  },
+  "tabelas": {
+    "VIII": {
+      "titulo": "Tabela VIII — Pensões: Não casado ou casado dois titulares",
+      "aplica": ["naoCasado", "casadoDoisTitulares"],
+      "parcelaAdicionalDependente": {
+        "naoCasado": 34.29,
+        "casadoDoisTitulares": 21.43
+      },
+      "linhas": [
+        { "ate": 920, "taxaMarginal": 0, "parcelaAbater": 0 },
+        { "ate": 1042, "taxaMarginal": 0.125, "parcelaAbaterFormula": { "taxa": 0.125, "fator": 2.6, "limiar": 1320.92 } },
+        { "ate": 1100, "taxaMarginal": 0.157, "parcelaAbaterFormula": { "taxa": 0.157, "fator": 1.35, "limiar": 1627.01 } },
+        { "ate": 1133, "taxaMarginal": 0.157, "parcelaAbater": 111.7 },
+        { "ate": 1239, "taxaMarginal": 0.212, "parcelaAbater": 174.02 },
+        { "ate": 1869, "taxaMarginal": 0.241, "parcelaAbater": 209.96 },
+        { "ate": 2114, "taxaMarginal": 0.311, "parcelaAbater": 340.79 },
+        { "ate": 2361, "taxaMarginal": 0.349, "parcelaAbater": 421.13 },
+        { "ate": 3462, "taxaMarginal": 0.431, "parcelaAbater": 614.74 },
+        { "ate": 5833, "taxaMarginal": 0.446, "parcelaAbater": 666.67 },
+        { "ate": 18332, "taxaMarginal": 0.505, "parcelaAbater": 1010.82 },
+        { "ate": null, "taxaMarginal": 0.53, "parcelaAbater": 1469.12 }
+      ]
+    },
+    "IX": {
+      "titulo": "Tabela IX — Pensões: Casado único titular",
+      "aplica": ["casadoUnicoTitular"],
+      "parcelaAdicionalDependente": {
+        "casadoUnicoTitular": 42.86
+      },
+      "linhas": [
+        { "ate": 920, "taxaMarginal": 0, "parcelaAbater": 0 },
+        { "ate": 1042, "taxaMarginal": 0.125, "parcelaAbaterFormula": { "taxa": 0.125, "fator": 2.6, "limiar": 1381.69 } },
+        { "ate": 1100, "taxaMarginal": 0.125, "parcelaAbaterFormula": { "taxa": 0.125, "fator": 1.728, "limiar": 1553.11 } },
+        { "ate": 1170, "taxaMarginal": 0.125, "parcelaAbater": 97.88 },
+        { "ate": 1526, "taxaMarginal": 0.159, "parcelaAbater": 137.66 },
+        { "ate": 1884, "taxaMarginal": 0.1928, "parcelaAbater": 189.24 },
+        { "ate": 2314, "taxaMarginal": 0.2177, "parcelaAbater": 236.16 },
+        { "ate": 3245, "taxaMarginal": 0.2792, "parcelaAbater": 378.48 },
+        { "ate": 3480, "taxaMarginal": 0.3233, "parcelaAbater": 521.59 },
+        { "ate": 6085, "taxaMarginal": 0.3237, "parcelaAbater": 522.99 },
+        { "ate": 18350, "taxaMarginal": 0.4293, "parcelaAbater": 1165.57 },
+        { "ate": null, "taxaMarginal": 0.53, "parcelaAbater": 3013.42 }
+      ]
+    }
+  }
+}

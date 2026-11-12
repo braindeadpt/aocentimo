@@ -32,6 +32,11 @@ legislativa/oficial (DR, AT, OE, IGCP, Código do IVA).
 | `isv-YYYY.json` | Tabelas A/B/C, agravamento do gasóleo, taxas intermédias e reduzidas, redução de usados importados da UE | CISV (Lei 22-A/2007) — DR consolidado |
 | `iuc-YYYY.json` | Tabelas das categorias A e B, adicional de CO2 e coeficientes por ano de matrícula | CIUC (Lei 22-A/2007, Anexo II) — DR consolidado + AT |
 | `imi-YYYY.json` | Intervalo legal da taxa, taxa por município, IMI familiar (30/70/140 €) e regras de prestação | CIMI (DL 287/2003) — DR + AT |
+| `credito-habitacao.json` | Limites de LTV, maturidade e DSTI (Rec. BdP), comissões máximas de reembolso antecipado (DL 74-A/2017) e garantia pública jovem (DL 44/2024 + Portaria 236-A/2024/1) | BdP + DR |
+| `adse.json` | Desconto de beneficiários titulares (3,5 % em 14 meses) e enquadramento contributivo pós-2006 (11 % SS) | DL 118/83 + Lei 30/2014 + Lei 60/2005 |
+| `retencao-pensoes-YYYY.json` | Tabelas de retenção na fonte mensais sobre pensões (Tabelas VIII e IX, continente) | Despacho AT anual (DR) |
+| `irc-YYYY.json` | Taxa geral de IRC (19 % em 2026, norma transitória), taxa PME (15 % até 50 000 €), derrama municipal máxima (1,5 %) e dividendos | CIRC (Lei 64/2025) + Lei 73/2013 |
+| `regioes-autonomas-YYYY.json` | Taxas de IVA (Açores 4/9/16 %, Madeira 4/12/22 %), diferenciais de IRS (Açores −30 %, Madeira) e majoração de escalões IMT (1,25) | CIVA art. 18.º + DLR Açores/Madeira + AT |
 
 ## Regras
 

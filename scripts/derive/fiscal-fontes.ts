@@ -41,6 +41,11 @@ const NOME_POR_FICHEIRO: Record<string, string> = {
   "isv-2026": "DR — Lei 22-A/2007 (CISV) — curado",
   "iuc-2026": "DR — Lei 22-A/2007 (CIUC) — curado",
   "imi-2026": "AT/DR — CIMI (DL 287/2003) — curado",
+  "credito-habitacao": "BdP/DR — DL 74-A/2017 + Rec. BdP + DL 44/2024 — curado",
+  "adse": "DR/ADSE — DL 118/83 + Lei 30/2014 — curado",
+  "retencao-pensoes-2026": "DR — Despacho 233-A/2026 — curado",
+  "irc-2026": "DR — CIRC (Lei 64/2025) — curado",
+  "regioes-autonomas-2026": "AT/DR — IVA (Of. 25045) + IRS/IMT ilhas — curado",
 };
 
 /** Normaliza "YYYY" | "YYYY-MM" | "YYYY-MM-DD" para data completa ISO. */

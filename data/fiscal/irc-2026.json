@@ -1,0 +1,60 @@
+{
+  "ano": 2026,
+  "vigencia": "2026-01-01",
+  "fonte": "Art. 87.º do CIRC na redação da Lei n.º 64/2025, de 7 de novembro; Lei n.º 73/2013 (art. 18.º); CIRS arts. 40.º-A e 71.º",
+  "fonteUrl": "https://diariodarepublica.pt/dr/detalhe/lei/64-2025-944874408",
+  "taxasGerais": {
+    "continente": 0.19,
+    "acores": 0.133,
+    "madeira": 0.133,
+    "nota": "Nos termos do art. 3.º, n.º 2 da Lei n.º 64/2025, de 7 de novembro (norma transitória), a taxa geral de IRC no continente é de 19 % em 2026 (descendo para 18 % em 2027 e 17 % em 2028). Nas Regiões Autónomas dos Açores e da Madeira a taxa geral em 2026 é de 13,3 % (redução de 30 % pelo art. 47.º do DLR n.º 15-A/2021/A e art. 19.º do DLR n.º 8/2025/M)."
+  },
+  "pmeSmallMidCap": {
+    "limiteMateriaColetavelReduzida": 50000,
+    "taxaReduzidaPrimeiroEscalao": {
+      "continente": 0.15,
+      "acores": 0.105,
+      "madeira": 0.105
+    },
+    "taxaExcedente": {
+      "continente": 0.19,
+      "acores": 0.133,
+      "madeira": 0.133
+    },
+    "baseLegal": "Art. 87.º, n.º 2 do CIRC na redação da Lei n.º 64/2025 c/ art. 3.º, n.º 4",
+    "nota": "Para sujeitos passivos qualificados como PME ou Small Mid Cap (Decreto-Lei n.º 372/2007) que exerçam diretamente e a título principal atividade agrícola, comercial ou industrial, a taxa aplicável aos primeiros 50 000 € de matéria coletável é de 15 % no continente (10,5 % nas Regiões Autónomas), aplicando-se a taxa geral ao excedente."
+  },
+  "interiorPme": {
+    "limiteMateriaColetavelReduzida": 50000,
+    "taxaReduzidaPrimeiroEscalao": {
+      "continente": 0.125,
+      "acores": 0.0875,
+      "madeira": 0.0875
+    },
+    "baseLegal": "Art. 41.º-B do EBF (Estatuto dos Benefícios Fiscais)",
+    "nota": "PME localizadas em territórios do Interior beneficiam de taxa reduzida de 12,5 % nos primeiros 50 000 € de matéria coletável (8,75 % nos Açores e Madeira)."
+  },
+  "derramaMunicipal": {
+    "taxaMaximaLegal": 0.015,
+    "baseLegal": "Lei n.º 73/2013, de 3 de setembro, art. 18.º, n.º 1 e 2",
+    "nota": "Os municípios podem deliberar o lançamento de derrama municipal até à taxa máxima legal de 1,5 % sobre o lucro tributável das pessoas coletivas. Podem também fixar uma taxa reduzida para empresas com volume de negócios não superior a 150 000 €."
+  },
+  "derramaEstadual": {
+    "baseLegal": "Art. 87.º-A do CIRC",
+    "escaloes": [
+      { "de": 1500000, "ate": 7500000, "taxaContinente": 0.03, "taxaAcores": 0.024, "taxaMadeira": 0.021 },
+      { "de": 7500000, "ate": 35000000, "taxaContinente": 0.05, "taxaAcores": 0.04, "taxaMadeira": 0.035 },
+      { "de": 35000000, "ate": null, "taxaContinente": 0.09, "taxaAcores": 0.072, "taxaMadeira": 0.063 }
+    ],
+    "nota": "Incide sobre a parte do lucro tributável que exceda 1 500 000 € por escalões adicionais progressivos."
+  },
+  "dividendosPessoasSingulares": {
+    "taxaLiberatoria": 0.28,
+    "baseLegalRetencao": "Art. 71.º, n.º 1, al. a) do CIRS",
+    "opcaoEnglobamento": {
+      "coeficienteEnglobamento": 0.5,
+      "baseLegal": "Art. 40.º-A do CIRS",
+      "nota": "A distribuição de lucros/dividendos a sócios pessoas singulares residentes está sujeita a taxa liberatória de 28 % na fonte. Em caso de opção pelo englobamento, os rendimentos de participações sociais em entidades sujeitas e não isentas de IRC são considerados em apenas 50 % do seu valor coletável para efeitos da tabela geral de IRS, eliminando a dupla tributação económica."
+    }
+  }
+}
