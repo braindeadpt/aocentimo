@@ -7,7 +7,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { SiteNav } from "@/components/SiteNav";
 
 const ISO_SERIE = /^\d{4}-\d{2}(?:-\d{2})?$/;
-const chaveIso = (s: string) => (s.length === 7 ? `${s}-31` : s);
+const chaveIso = (s: string) => (s.length === 7 ? `${s}-00` : s);
 
 /** Data máxima real entre as séries estatísticas ingeridas (exclui regras
  *  fiscais anuais como `"2026"` que não são leituras diárias/mensais). */
