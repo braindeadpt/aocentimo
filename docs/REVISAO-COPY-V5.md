@@ -64,10 +64,10 @@
 | 36 | `messages/pt.json:bairro.elenco.cartas.diana.papel` | Professora | sem número | aprovado 2026-10-06 |
 | 37 | `messages/pt.json:bairro.elenco.cartas.diana.perfil` | Função pública | sem número | aprovado 2026-10-06 |
 | 38 | `messages/pt.json:bairro.elenco.cartas.diana.ola` | a Diana | sem número | aprovado 2026-10-06 |
-| 39 | `messages/pt.json:bairro.elenco.cartas.diana.aprende` | Os escalões do IRS são os mesmos no público e no privado. | sem número | aprovado 2026-10-06 |
-| 40 | `messages/pt.json:bairro.elenco.cartas.diana.fala` | O desconto da ADSE ainda não está no simulador, mas o IRS calcula-se pelos mesmos escalões: podes já vê-los nas Finanças. | sem número | aprovado 2026-10-06 |
+| 39 | `messages/pt.json:bairro.elenco.cartas.diana.aprende` | O desconto da ADSE no recibo e os escalões do IRS. | sem número | aprovado 2026-10-06 |
+| 40 | `messages/pt.json:bairro.elenco.cartas.diana.fala` | Na função pública os escalões do IRS são os mesmos do privado e o desconto da ADSE acumula no recibo: entra nas Finanças ou simula o vencimento. | sem número | aprovado 2026-10-06 |
 | 41 | `messages/pt.json:bairro.elenco.cartas.diana.cenaRotulo` | Ver os escalões do IRS | sem número | aprovado 2026-10-06 |
-| 42 | `messages/pt.json:bairro.elenco.cartas.diana.rotaRotulo` | Simular o IRS → | sem número | aprovado 2026-10-06 |
+| 42 | `messages/pt.json:bairro.elenco.cartas.diana.rotaRotulo` | Simular com ADSE → | sem número | aprovado 2026-10-06 |
 | 43 | `messages/pt.json:bairro.elenco.cartas.pedro.nome` | Pedro | sem número | aprovado 2026-10-06 |
 | 44 | `messages/pt.json:bairro.elenco.cartas.pedro.papel` | Freelancer | sem número | aprovado 2026-10-06 |
 | 45 | `messages/pt.json:bairro.elenco.cartas.pedro.perfil` | Independente · recibos verdes | sem número | aprovado 2026-10-06 |
@@ -80,18 +80,18 @@
 | 52 | `messages/pt.json:bairro.elenco.cartas.manuel.papel` | Dono da mercearia | sem número | aprovado 2026-10-06 |
 | 53 | `messages/pt.json:bairro.elenco.cartas.manuel.perfil` | Pequeno empresário | sem número | aprovado 2026-10-06 |
 | 54 | `messages/pt.json:bairro.elenco.cartas.manuel.ola` | o Sr. Manuel | sem número | aprovado 2026-10-06 |
-| 55 | `messages/pt.json:bairro.elenco.cartas.manuel.aprende` | O IVA no talão da caixa e o que subiu nas prateleiras. | sem número | aprovado 2026-10-06 |
-| 56 | `messages/pt.json:bairro.elenco.cartas.manuel.fala` | As contas de IRC da empresa ainda não estão no simulador, mas já podes ver na Mercearia quanto subiram os preços e quanto do talão é IVA. | sem número | aprovado 2026-10-06 |
+| 55 | `messages/pt.json:bairro.elenco.cartas.manuel.aprende` | O IVA na caixa, o salário de gerente e o IRC da empresa. | sem número | aprovado 2026-10-06 |
+| 56 | `messages/pt.json:bairro.elenco.cartas.manuel.fala` | O IVA que entra na caixa não é da mercearia e o lucro paga IRC antes de chegar ao bolso. Entra na Mercearia ou simula as contas de uma PME. | sem número | aprovado 2026-10-06 |
 | 57 | `messages/pt.json:bairro.elenco.cartas.manuel.cenaRotulo` | Entrar na Mercearia | sem número | aprovado 2026-10-06 |
-| 58 | `messages/pt.json:bairro.elenco.cartas.manuel.rotaRotulo` | Ver o IVA no talão → | sem número | aprovado 2026-10-06 |
+| 58 | `messages/pt.json:bairro.elenco.cartas.manuel.rotaRotulo` | Simular uma PME → | sem número | aprovado 2026-10-06 |
 | 59 | `messages/pt.json:bairro.elenco.cartas.arminda.nome` | Dona Arminda | sem número | aprovado 2026-10-06 |
 | 60 | `messages/pt.json:bairro.elenco.cartas.arminda.papel` | Reformada | sem número | aprovado 2026-10-06 |
 | 61 | `messages/pt.json:bairro.elenco.cartas.arminda.perfil` | Pensão e poupança | sem número | aprovado 2026-10-06 |
 | 62 | `messages/pt.json:bairro.elenco.cartas.arminda.ola` | a Dona Arminda | sem número | aprovado 2026-10-06 |
-| 63 | `messages/pt.json:bairro.elenco.cartas.arminda.aprende` | Quanto rende a poupança face à subida dos preços. | sem número | aprovado 2026-10-06 |
-| 64 | `messages/pt.json:bairro.elenco.cartas.arminda.fala` | As tabelas de IRS das pensões ainda não estão no simulador, mas já podes ver nos Correios como proteger a poupança da inflação. | sem número | aprovado 2026-10-06 |
+| 63 | `messages/pt.json:bairro.elenco.cartas.arminda.aprende` | A retenção da pensão de reforma e o juro real da poupança. | sem número | aprovado 2026-10-06 |
+| 64 | `messages/pt.json:bairro.elenco.cartas.arminda.fala` | A pensão de reforma está isenta de Segurança Social e retém IRS por tabelas próprias. Entra nos Correios ou simula a tua pensão. | sem número | aprovado 2026-10-06 |
 | 65 | `messages/pt.json:bairro.elenco.cartas.arminda.cenaRotulo` | Entrar nos Correios | sem número | aprovado 2026-10-06 |
-| 66 | `messages/pt.json:bairro.elenco.cartas.arminda.rotaRotulo` | Simular a poupança → | sem número | aprovado 2026-10-06 |
+| 66 | `messages/pt.json:bairro.elenco.cartas.arminda.rotaRotulo` | Simular a pensão → | sem número | aprovado 2026-10-06 |
 | 67 | `messages/pt.json:bairro.elenco.cartas.goncalo.nome` | Gonçalo | sem número | aprovado 2026-10-06 |
 | 68 | `messages/pt.json:bairro.elenco.cartas.goncalo.papel` | Estudante, 16 anos | ⚠️ número escrito na frase: 16 anos | aprovado 2026-10-06 |
 | 69 | `messages/pt.json:bairro.elenco.cartas.goncalo.perfil` | Mesada e primeiro trabalho | sem número | aprovado 2026-10-06 |
