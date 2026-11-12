@@ -2669,8 +2669,11 @@ h3 {
   transition: fill var(--dur-curta) var(--ease-entra),
     stroke var(--dur-curta) var(--ease-entra);
 }
-/* foco = impressão — o papel é palete fixa, nos dois temas */
-.leitura:focus-within {
+/* foco = impressão (V3 arquivada) — restrito a :not([data-theme="dark"])
+   com :where() (especificidade 0,2,0) para nunca inverter um cartão escuro
+   para papel creme e deixar filhos com --ink/--ink2/--muted ilegíveis;
+   nas rotas V5 (.rt5) a regra própria mais abaixo mantém --papel. */
+:where(:root:not([data-theme="dark"])) .leitura:focus-within {
   --l-bg: var(--talao-paper);
   --l-ink: var(--talao-ink);
   --l-ink2: rgba(44, 36, 19, 0.78);
@@ -2682,7 +2685,7 @@ h3 {
   --l-mark: #7a5c10;
 }
 @media (hover: hover) {
-  .leitura:hover {
+  :where(:root:not([data-theme="dark"])) .leitura:hover {
     --l-bg: var(--talao-paper);
     --l-ink: var(--talao-ink);
     --l-ink2: rgba(44, 36, 19, 0.78);
@@ -4306,15 +4309,17 @@ html[data-theme="dark"] .tema-ponto {
    fallback var(--linha,0) passa a ler uma cor, o calc() invalida-se e o
    delay cai a 0 — mesmo efeito que o reset, sem animação quebrada. */
 
-/* superfície da rota migrada: chão plano, sem grelha milimetrada nem
-   grão — o contrato V5 é cor chapada */
-html:has(.rt5) {
+/* superfície da rota migrada e da home: chão plano, sem grelha milimetrada
+   nem grão — o contrato V5 é cor chapada. Inclui [data-theme="dark"] para
+   bater o (0,2,0) de :root[data-theme="dark"] { --grain-opacity: 0.08 }. */
+html:has(.rt5, .b5),
+:root[data-theme="dark"]:has(.rt5, .b5) {
   --grain-opacity: 0;
 }
 /* :root:has() + body: (0,2,1) — empata com a regra da grelha V4 e ganha
-   por vir depois no ficheiro; :has(.rt5) mais fraco perdia e a grelha
+   por vir depois no ficheiro; :has(.rt5, .b5) mais fraco perdia e a grelha
    milimetrada ficava por cima do chão V5 */
-:root:has(.rt5) body {
+:root:has(.rt5, .b5) body {
   background-color: var(--chao);
   background-image: none;
 }
@@ -4364,10 +4369,45 @@ html[data-theme="dark"] .rt5 {
 
 /* ————— mobília de página ————— */
 
-/* o cartão-instrumento: papel com traço grosso e sombra dura */
+/* o cartão-instrumento: papel com traço grosso e sombra dura.
+   Na V5 neutraliza-se a inversão V3 para --talao-paper em hover/focus-within:
+   o cartão mantém --papel nos dois temas (evitando contraste 1,15:1 na noite
+   do bairro) e dá feedback físico V5 na sombra dura e no contorno de foco. */
 .rt5 .leitura {
   border-width: var(--traco);
   border-color: var(--tinta);
+  transition:
+    background-color var(--dur-curta) var(--ease-entra),
+    color var(--dur-curta) var(--ease-entra),
+    border-color var(--dur-micro) var(--ease-entra),
+    box-shadow var(--dur-micro) var(--ease-entra);
+}
+.rt5 .leitura:focus-within {
+  --l-bg: var(--papel);
+  --l-ink: var(--tinta);
+  --l-ink2: var(--tinta-2);
+  --l-muted: var(--suave);
+  --l-line: var(--linha);
+  --l-line2: var(--suave);
+  --l-accent: var(--vermelho-txt);
+  --l-keep: var(--verde-txt);
+  --l-mark: var(--azul);
+  border-color: var(--azul);
+  box-shadow: 5px 6px 0 var(--tinta);
+}
+@media (hover: hover) {
+  .rt5 .leitura:hover {
+    --l-bg: var(--papel);
+    --l-ink: var(--tinta);
+    --l-ink2: var(--tinta-2);
+    --l-muted: var(--suave);
+    --l-line: var(--linha);
+    --l-line2: var(--suave);
+    --l-accent: var(--vermelho-txt);
+    --l-keep: var(--verde-txt);
+    --l-mark: var(--azul);
+    box-shadow: 5px 6px 0 var(--tinta);
+  }
 }
 .rt5 .leitura-head,
 .rt5 .leitura-foot {

@@ -231,6 +231,117 @@ test("todas as rotas cumprem contraste AA nos dois temas", async ({
   }
 });
 
+test("cartões .leitura focados e pairados em dark mantêm contraste AA ≥ 4,5:1", async ({
+  page,
+}) => {
+  test.setTimeout(120_000);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.addInitScript(() => {
+    try {
+      localStorage.setItem("aocentimo-theme", "dark");
+    } catch {}
+  });
+
+  // Mede todos os elementos de texto visíveis dentro dos cartões .leitura
+  // (exige ≥ 4,5:1 em texto do cartão; ignora .sr-only e o talão físico,
+  // que tem o seu próprio papel #f7f1e1 e já é coberto pelo AA_EVAL).
+  const AA_LEITURA = `(() => {
+    const srgb = (v) => { const c = v/255; return c <= 0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4); };
+    const lum = (rgb) => 0.2126*srgb(rgb[0]) + 0.7152*srgb(rgb[1]) + 0.0722*srgb(rgb[2]);
+    const parse = (s) => {
+      s = s.trim();
+      if (s.startsWith("#")) { const h = s.slice(1); return [0,2,4].map(i => parseInt(h.substr(i,2), 16)); }
+      const m = (s.match(/[\\d.]+/g) ?? []).slice(0,3).map(Number);
+      return s.startsWith("color(") ? m.map(v=>v*255) : m;
+    };
+    const fundoDe = (el) => {
+      for (let n = el; n; n = n.parentElement) {
+        const cs = getComputedStyle(n).backgroundColor;
+        const m = cs.match(/[\\d.]+/g);
+        if (m && (m.length < 4 || Number(m[3]) === 1)) return parse(cs);
+      }
+      return parse(getComputedStyle(document.body).backgroundColor);
+    };
+    const falhas = [];
+    for (const cartao of document.querySelectorAll(".leitura:focus-within, .leitura:hover")) {
+      for (const el of cartao.querySelectorAll("*")) {
+        if (el.closest(".sr-only, .talao")) continue;
+        const temTexto = [...el.childNodes].some(n => n.nodeType === 3 && (n.textContent ?? "").trim());
+        if (!temTexto) continue;
+        const cs = getComputedStyle(el);
+        if (cs.display === "none" || cs.visibility === "hidden" || parseFloat(cs.opacity) === 0) continue;
+        const r = el.getBoundingClientRect();
+        if (!r.width || !r.height) continue;
+        const frente = parse(el.namespaceURI?.includes("svg") ? cs.fill : cs.color);
+        const fundo = fundoDe(el);
+        const L1 = lum(frente), L2 = lum(fundo);
+        const ratio = (Math.max(L1,L2)+0.05)/(Math.min(L1,L2)+0.05);
+        if (ratio < 4.5) {
+          falhas.push(el.tagName.toLowerCase()+"."+String(el.className?.baseVal ?? el.className ?? "").slice(0,30)+" \\""+(el.textContent??"").trim().slice(0,32)+"\\" → "+ratio.toFixed(2)+":1");
+        }
+      }
+    }
+    return falhas.slice(0, 8);
+  })()`;
+
+  for (const rota of [
+    "/salario",
+    "/precos",
+    "/irs",
+    "/impostos",
+    "/poupanca",
+    "/credito",
+    "/casa",
+    "/inflacao",
+    "/trabalho",
+    "/dados",
+  ]) {
+    await page.goto(rota, { waitUntil: "domcontentloaded" });
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    const cartao = page.locator(".leitura").first();
+    await expect(cartao).toBeAttached();
+    await cartao.scrollIntoViewIfNeeded();
+
+    // 1. Hover sobre o cartão
+    await cartao.hover();
+    expect(await page.evaluate(AA_LEITURA), `${rota} [dark :hover]`).toEqual([]);
+
+    // 2. Foco num controlo dentro do cartão (:focus-within)
+    const controlo = cartao.locator("input, button, a, [tabindex]:not([tabindex='-1'])").first();
+    if ((await controlo.count()) > 0) {
+      await controlo.focus();
+      expect(
+        await page.evaluate(() => document.querySelectorAll(".leitura:focus-within").length),
+        `${rota}: nenhum .leitura ficou :focus-within`
+      ).toBeGreaterThan(0);
+      expect(await page.evaluate(AA_LEITURA), `${rota} [dark :focus-within]`).toEqual([]);
+    }
+  }
+});
+
+test("home sem grelha nem grão V4 e página 404 com pele .rt5", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const home = await page.evaluate(() => {
+    const html = getComputedStyle(document.documentElement);
+    const body = getComputedStyle(document.body);
+    return {
+      grao: parseFloat(html.getPropertyValue("--grain-opacity") || "0"),
+      malha: body.backgroundImage,
+    };
+  });
+  expect(home.grao).toBe(0);
+  expect(home.malha).toBe("none");
+
+  const res404 = await page.goto("/rota-inexistente-404");
+  expect(res404?.status()).toBe(404);
+  await expect(page.locator(".rt5").first()).toBeAttached();
+  expect(
+    await page.evaluate(() => getComputedStyle(document.body).backgroundImage)
+  ).toBe("none");
+});
+
 test("com reduced-motion nenhuma rota tem animação nem transição activa", async ({
   page,
 }) => {

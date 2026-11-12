@@ -51,7 +51,7 @@ export function ExploraIrs({
           o que sobra é o <strong>rendimento coletável</strong>, o
           número sobre o qual os escalões trabalham.
         </p>
-        <div className="mt-4 space-y-1 border-t border-divider pt-3 font-mono text-sm">
+        <div className="mt-4 space-y-1 border-t border-line pt-3 font-mono text-corpo-sm">
           <p className="flex justify-between">
             <span className="text-ink2">Salário bruto anual</span>
             <span className="num">{fmtEUR0(exemploColetavel.brutoAnual)}</span>
@@ -68,7 +68,7 @@ export function ExploraIrs({
               − {fmtEUR0(exemploColetavel.abatimentoME)}
             </span>
           </p>
-          <p className="flex justify-between border-t border-divider pt-1 font-semibold">
+          <p className="flex justify-between border-t border-line pt-1 font-semibold">
             <span>Rendimento coletável</span>
             <span className="num">{fmtEUR0(exemploColetavel.coletavel)}</span>
           </p>

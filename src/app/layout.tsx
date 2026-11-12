@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { ViewTransition } from "react";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -111,14 +111,15 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport = {
-  // o tema por omissão é escuro — a barra do browser acompanha
-  themeColor: "#0d0b08",
+export const viewport: Viewport = {
+  // claro por omissão (#f6f2ea); na preferência escura acompanha a noite do bairro (#141a33)
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f6f2ea" },
+    { media: "(prefers-color-scheme: dark)", color: "#141a33" },
+  ],
 };
 
-/** Resolve o tema antes da primeira pintura: escolha guardada → escuro.
- *  ESCURO POR OMISSÃO: o instrumento é a cara do produto.
- *  prefers-color-scheme não distingue «sem preferência» de «claro» —
+/** Resolve o tema antes da primeira pintura: escolha guardada → claro.
  *  O OMISSÃO é CLARO desde o veredicto do design sobre a P1: a home do
  *  bairro é uma página de papel e não tem tema — era estranho o site
  *  nascer escuro e a home clarear sozinha. Quem prefere escuro usa o
