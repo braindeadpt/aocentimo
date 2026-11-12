@@ -3,8 +3,8 @@ import { loadFonte, loadSerie } from "@/lib/data";
 import caBase from "@data/derived/ca-base.json";
 import cenarios from "@data/derived/cenarios-salario.json";
 import ss from "@data/fiscal/ss.json";
-import { FINO, fmtNum } from "@/lib/format";
-import { FALHOU, dadosBairro, fontes, linhaSalario, marcadores, moedasDaLinha } from "./dados";
+import { FINO, fmtEUR0, fmtNum } from "@/lib/format";
+import { FALHOU, dadosBairro, fontes, linhaSalario, marcadores, moedasDaLinha, pctDeFracao } from "./dados";
 
 const M = marcadores();
 
@@ -93,6 +93,29 @@ describe("marcadores()", () => {
   it("o valor do certificado de aforro é o oficial do IGCP", () => {
     const oficial = caBase.meta.oficialPct;
     expect(M.ca).toContain(String(oficial).replace(".", ","));
+  });
+
+  it("Regra nº1: se euribor, CA ou desemprego faltarem, devolve «—» e nunca «0,00 %»", () => {
+    expect(pctDeFracao(null, 2)).toBe(FALHOU);
+    expect(pctDeFracao(undefined, 2)).toBe(FALHOU);
+    expect(pctDeFracao(Number.NaN, 1)).toBe(FALHOU);
+    expect(pctDeFracao(0, 2)).toBe(`0,00${FINO}%`);
+
+    const emFalta = marcadores({ euribor: null, ca: undefined, desemprego: null });
+    expect(emFalta.euribor).toBe(FALHOU);
+    expect(emFalta.ca).toBe(FALHOU);
+    expect(emFalta.desemprego).toBe(FALHOU);
+    expect(emFalta.euribor).not.toContain("0,00");
+    expect(emFalta.ca).not.toContain("0,00");
+    expect(emFalta.desemprego).not.toContain("0,0");
+  });
+
+  it("fontes() formata datas em PT curto (sem ISO cru) e milhares com espaço fino", () => {
+    const f = fontes().join(" · ");
+    expect(f).not.toMatch(/\b20\d{2}-\d{2}(?:-\d{2})?\b/);
+    const l = linhaSalario()!;
+    expect(f).toContain(`${fmtEUR0(l.bruto)} brutos`);
+    expect(f).not.toContain(`${String(l.bruto)}${FINO}€`);
   });
 });
 
