@@ -11,6 +11,12 @@ import {
   simularDesemprego,
   type ResultadoDesemprego,
 } from "@/lib/engines/desemprego";
+import {
+  construirUrl,
+  lerBool,
+  lerInt,
+  useLeituraUrl,
+} from "@/lib/url-state";
 
 /**
  * O estado de /trabalho num contexto (sessão 3A): a régua do salário
@@ -49,6 +55,8 @@ export interface TrabalhoEstado {
   meses: number;
   /** duração ultrapassa os 180 dias — há degrau de −10 % no desenho */
   temCorte: boolean;
+  /** URL limpo com o estado partilhável para o <BotaoCopiar> */
+  urlPartilha: string;
 }
 
 const Ctx = createContext<TrabalhoEstado | null>(null);
@@ -65,10 +73,39 @@ export function ProvedorTrabalho({
   const [anosDescontos, setAnosDescontos] = useState(5);
   const [majoracao, setMajoracao] = useState(false);
 
+  // Leitura segura do estado por URL (Pilar 1 — T12)
+  useLeituraUrl((sp) => {
+    const b = lerInt(sp.get("bruto"), regua.min, regua.max);
+    if (b !== undefined) setBruto(b);
+    const id = lerInt(sp.get("idade"), 16, 66);
+    if (id !== undefined) setIdade(id);
+    const desc = lerInt(sp.get("descontos"), 0, 40);
+    if (desc !== undefined) setAnosDescontos(desc);
+    if (sp.has("majoracao")) setMajoracao(lerBool(sp.get("majoracao")));
+  });
+
   const r = useMemo(
     () => simularDesemprego(bruto, idade, anosDescontos, { majoracao }),
     [bruto, idade, anosDescontos, majoracao]
   );
+
+  const urlPartilha = useMemo(() => {
+    return construirUrl(
+      "/trabalho",
+      {
+        bruto,
+        idade,
+        descontos: anosDescontos,
+        majoracao,
+      },
+      {
+        bruto: regua.inicial,
+        idade: 35,
+        descontos: 5,
+        majoracao: false,
+      }
+    );
+  }, [bruto, idade, anosDescontos, majoracao, regua.inicial]);
 
   const valor: TrabalhoEstado = {
     regua,
@@ -83,6 +120,7 @@ export function ProvedorTrabalho({
     r,
     meses: Math.round(r.duracaoDias / 30),
     temCorte: r.duracaoDias > 180,
+    urlPartilha,
   };
 
   return <Ctx.Provider value={valor}>{children}</Ctx.Provider>;

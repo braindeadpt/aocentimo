@@ -35,10 +35,10 @@ export function interiorFinancas(
 ): string {
   const n = escaloes.length;
   const altura = n * (GV.h + GV.gap) + 16;
-  let s = `<defs><pattern id="finAz" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#f7f9ff"/><path d="M9 1.5 L16.5 9 L9 16.5 L1.5 9 Z" fill="none" stroke="#2445d6" stroke-width="1.6"/><circle cx="9" cy="9" r="2.3" fill="#2445d6"/></pattern>
-    <pattern id="finChao" width="40" height="20" patternUnits="userSpaceOnUse"><rect width="40" height="20" fill="#e4dccb"/><rect width="20" height="10" fill="#d6ccb7"/><rect x="20" y="10" width="20" height="10" fill="#d6ccb7"/></pattern></defs>`;
+  let s = `<defs><pattern id="b-finAz" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#f7f9ff"/><path d="M9 1.5 L16.5 9 L9 16.5 L1.5 9 Z" fill="none" stroke="#2445d6" stroke-width="1.6"/><circle cx="9" cy="9" r="2.3" fill="#2445d6"/></pattern>
+    <pattern id="b-finChao" width="40" height="20" patternUnits="userSpaceOnUse"><rect width="40" height="20" fill="#e4dccb"/><rect width="20" height="10" fill="#d6ccb7"/><rect x="20" y="10" width="20" height="10" fill="#d6ccb7"/></pattern></defs>`;
   // parede, lambrim, chão
-  s += `<rect x="0" y="0" width="640" height="410" fill="#f4efe4"/><rect x="0" y="250" width="640" height="160" fill="url(#finAz)"/><rect x="0" y="246" width="640" height="8" fill="#d8cbb4" stroke="${K}" stroke-width="2"/><rect x="0" y="410" width="640" height="60" fill="url(#finChao)" stroke="${K}" stroke-width="2.6"/>`;
+  s += `<rect x="0" y="0" width="640" height="410" fill="#f4efe4"/><rect x="0" y="250" width="640" height="160" fill="url(#b-finAz)"/><rect x="0" y="246" width="640" height="8" fill="#d8cbb4" stroke="${K}" stroke-width="2"/><rect x="0" y="410" width="640" height="60" fill="url(#b-finChao)" stroke="${K}" stroke-width="2.6"/>`;
   // placa e relógio
   s += `<rect x="190" y="26" width="150" height="30" rx="5" fill="${K}"/><text x="265" y="47" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="17" letter-spacing=".06em" fill="#fff">FINANÇAS</text>`;
   s += `<circle cx="265" cy="100" r="22" fill="#fbfaf6" stroke="${K}" stroke-width="3"/><path d="M265 100 v-14 M265 100 h10" stroke="${K}" stroke-width="2.6" stroke-linecap="round"/>`;
@@ -135,7 +135,17 @@ export function graficoIrs(escaloes: { de: number; ate: number | null; taxa: num
   s += `<text x="${GR.x1}" y="${GR.y0 + 34}" text-anchor="end" font-size="11.5" font-weight="700" fill="#4a4540">rendimento coletável por ano →</text>`;
   // o ponto do rendimento escolhido (a cena move-o por id)
   s += `<g id="grPonto"><path id="grLinha" stroke="#2445d6" stroke-width="2" stroke-dasharray="4 4"/><circle id="grMarg" r="7" fill="#fff" stroke="#e2412a" stroke-width="3"/><circle id="grMed" r="7" fill="#2445d6" stroke="#16130f" stroke-width="2"/><text id="grRot" font-family="Caveat" font-weight="700" font-size="20" fill="#2445d6"></text></g>`;
-  return `<svg class="grafico-irs" viewBox="0 0 520 290" role="img" aria-label="${fonteLabel}" font-family="Archivo">${s}</svg>`;
+  const texto =
+    `<dl class="b-sr">` +
+    escaloes
+      .map((e, k) => {
+        const faixa = e.ate != null ? `${moeda(e.de, 0)} a ${moeda(e.ate, 0)}` : `acima de ${moeda(e.de, 0)}`;
+        const ref = e.ate != null && e.ate > 0 ? e.ate : IRS_TOTAL;
+        return `<dt>${ordinal(k + 1)} escalão (${faixa})</dt><dd>taxa marginal ${pctTaxa(e.taxa)} · taxa média em ${moeda(ref, 0)}: ${pctTaxa(irsDe(ref) / ref)}</dd>`;
+      })
+      .join("") +
+    `</dl>`;
+  return `<svg class="grafico-irs" viewBox="0 0 520 290" role="img" aria-label="${fonteLabel}" font-family="Archivo">${s}</svg>${texto}`;
 }
 
 /** A posição do marcador do gráfico para um rendimento (a cena usa isto). */

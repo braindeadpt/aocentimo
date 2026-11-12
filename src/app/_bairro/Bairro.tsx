@@ -25,6 +25,7 @@
  * A cena de cada edifício entra em P1-3; aqui, em P1-1, o mapa já está,
  * com os números, a passar-se e a deixar-se passear.
  */
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { PausaAmbiente } from "@/components/PausaAmbiente";
 import { motionActiva, carregarGsap, type MotorGsap } from "@/lib/motion/gsap";
@@ -146,6 +147,9 @@ export interface PropsBairro {
 /** A hora local não emite eventos: lê-se ao montar e fica. */
 const semSubscricao = (): (() => void) => () => {};
 
+/** PROPOSTA (revisão de copy do dono): nota discreta quando a roda gira sem Ctrl/Cmd. */
+const AVISO_RODA = "Ctrl + roda para aproximar";
+
 export function Bairro({
   marcadores,
   edificios,
@@ -170,6 +174,10 @@ export function Bairro({
   const palcoRef = useRef<HTMLElement>(null);
   const camaraRef = useRef<Camera | null>(null);
   const cartaoRef = useRef<HTMLDivElement>(null);
+  const avisoRodaRef = useRef<HTMLSpanElement>(null);
+  const avisoRodaTimerRef = useRef<number | null>(null);
+  const acenarTimerRef = useRef<number | null>(null);
+  const vooGeracaoRef = useRef(0);
 
   // O HTML traz a hora do BUILD (export estático). O script em linha do
   // palco já acertou a classe pela hora local antes de pintar; aqui o
@@ -238,6 +246,18 @@ export function Bairro({
         }));
         arrumarPinos(janela, pinos);
       },
+      aoRodarSemTecla: () => {
+        const el = avisoRodaRef.current;
+        if (!el) return;
+        el.classList.add("b-on");
+        if (avisoRodaTimerRef.current !== null) {
+          window.clearTimeout(avisoRodaTimerRef.current);
+        }
+        avisoRodaTimerRef.current = window.setTimeout(() => {
+          avisoRodaTimerRef.current = null;
+          el.classList.remove("b-on");
+        }, 1600);
+      },
     });
     camara.defEnquadrar(enquadramentos);
     camara.defPinos([...pinos]);
@@ -255,6 +275,10 @@ export function Bairro({
 
     return () => {
       desligar();
+      if (avisoRodaTimerRef.current !== null) {
+        window.clearTimeout(avisoRodaTimerRef.current);
+        avisoRodaTimerRef.current = null;
+      }
       camaraRef.current = null;
     };
   }, [reflexo, enquadramentos, pinos]);
@@ -396,12 +420,30 @@ export function Bairro({
     }
   }, []);
 
+  const limparAtivo = useCallback(() => {
+    for (const ed of mundoRef.current?.querySelectorAll(".ed.b-ativo") ?? []) {
+      ed.classList.remove("b-ativo");
+    }
+  }, []);
+
+  const limparAceno = useCallback(() => {
+    if (acenarTimerRef.current !== null) {
+      window.clearTimeout(acenarTimerRef.current);
+      acenarTimerRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => () => limparAceno(), [limparAceno]);
+
   const entrar = useCallback(
     (id: string) => {
       // um arrasto de câmara não é um clique: sem esta guarda, o mapa
       // abria um edifício sempre que se passeava o dedo
       if (camaraRef.current?.foiArrasto) return;
       esconderCartao();
+      vooGeracaoRef.current += 1;
+      limparAceno();
+      setPersonagem(null);
       const mundo = mundoRef.current;
       const g = mundo?.querySelector(`.ed[data-id="${id}"]`) ?? null;
       if (mundo) {
@@ -421,10 +463,11 @@ export function Bairro({
       }
       aoEntrar?.(id);
     },
-    [aoEntrar, esconderCartao]
+    [aoEntrar, esconderCartao, limparAceno]
   );
 
   const fecharCena = useCallback(() => {
+    limparAtivo();
     setCenaAberta(null);
     // devolve o foco ao edifício que abriu a cena (PACK §2.3) — no frame
     // seguinte, depois do React desmontar a cena: focar antes podia ser
@@ -438,15 +481,18 @@ export function Bairro({
     } catch {
       /* sem history, a cena fecha na mesma */
     }
-  }, [cenaAberta]);
+  }, [cenaAberta, limparAtivo]);
 
   /* o Voltar do browser fecha a cena — a âncora é o estado do URL */
   useEffect(() => {
     if (!cenaAberta) return;
-    const aoVoltar = () => setCenaAberta(null);
+    const aoVoltar = () => {
+      limparAtivo();
+      setCenaAberta(null);
+    };
     window.addEventListener("popstate", aoVoltar);
     return () => window.removeEventListener("popstate", aoVoltar);
-  }, [cenaAberta]);
+  }, [cenaAberta, limparAtivo]);
 
   /*
    * A âncora é o estado do URL (PACK §2.3): abre no load E em qualquer
@@ -464,14 +510,28 @@ export function Bairro({
     const ler = () => {
       const id = window.location.hash.replace("#", "");
       if (id && temCena(id)) {
+        esconderCartao();
+        vooGeracaoRef.current += 1;
+        limparAceno();
+        setPersonagem(null);
+        const mundo = mundoRef.current;
+        const g = mundo?.querySelector(`.ed[data-id="${CSS.escape(id)}"]`) ?? null;
+        if (mundo) {
+          for (const outro of mundo.querySelectorAll(".ed")) {
+            outro.classList.toggle("b-ativo", outro === g);
+          }
+        }
         prefetearCena(id);
         setCenaAberta(id);
+      } else if (!id) {
+        limparAtivo();
+        setCenaAberta(null);
       }
     };
     ler();
     window.addEventListener("hashchange", ler);
     return () => window.removeEventListener("hashchange", ler);
-  }, []);
+  }, [esconderCartao, limparAceno, limparAtivo]);
 
   /*
    * O prefetch em intenção: ao pairar, ao focar pelo teclado ou ao
@@ -553,6 +613,8 @@ export function Bairro({
    * painel: nunca falha.
    */
   const voarParaPersonagem = useCallback(async (chave: string) => {
+    const minhaGeracao = ++vooGeracaoRef.current;
+    limparAceno();
     const mundo = mundoRef.current;
     const camara = camaraRef.current;
     if (!mundo || !camara) return;
@@ -567,7 +629,7 @@ export function Bairro({
       } catch {
         /* sem rede, salta na mesma */
       }
-      if (!mundoRef.current) return;
+      if (!mundoRef.current || vooGeracaoRef.current !== minhaGeracao) return;
       camara.ligarGsap(gsap);
     }
 
@@ -577,14 +639,11 @@ export function Bairro({
     try {
       const janela = janelaRef.current;
       if (!janela) return;
-      // o painel da personagem pode ainda não estar pintado (o estado
-      // React só entra no DOM no frame seguinte, e em reduced-motion
-      // não houve await de GSAP que deixasse o React correr) — mede-se
-      // depois de um frame
-      if (!palcoRef.current?.querySelector(".b-painel")) {
-        await new Promise<void>((res) => requestAnimationFrame(() => res()));
-        if (!mundoRef.current) return;
-      }
+      // o painel da personagem pode ainda não estar pintado ou ter mudado
+      // de personagem (o estado React só entra no DOM no frame seguinte, e
+      // em reduced-motion não houve await de GSAP que deixasse o React correr)
+      await new Promise<void>((res) => requestAnimationFrame(() => res()));
+      if (!mundoRef.current || vooGeracaoRef.current !== minhaGeracao) return;
 
       /*
        * O alvo, em unidades do MUNDO, recuperado do ecrã — e lido de
@@ -639,7 +698,10 @@ export function Bairro({
           chave === "rui"
             ? mundo.querySelector('[data-pessoa="marta"]')
             : null;
-        window.setTimeout(() => {
+        limparAceno();
+        acenarTimerRef.current = window.setTimeout(() => {
+          acenarTimerRef.current = null;
+          if (!mundoRef.current || vooGeracaoRef.current !== minhaGeracao) return;
           acenar(gsap, alvo);
           if (marta instanceof SVGGraphicsElement) acenar(gsap, marta);
         }, 900);
@@ -647,24 +709,27 @@ export function Bairro({
     } catch {
       /* getBBox falha em figuras escondidas — o painel já abriu */
     }
-  }, []);
+  }, [limparAceno]);
 
   useEffect(() => {
     const aplicar = (d: EscolhaPersonagem) => {
       if (!d?.chave) return;
       esconderCartao();
+      limparAtivo();
       // se uma cena estava aberta, o painel da personagem substitui-a —
       // e a âncora sai do URL, como no fechar normal
-      if (cenaAberta) {
-        setCenaAberta(null);
-        try {
-          const url = new URL(window.location.href);
-          url.hash = "";
-          history.replaceState(null, "", url.pathname + url.search);
-        } catch {
-          /* sem history, a cena fecha na mesma */
+      setCenaAberta((atual) => {
+        if (atual) {
+          try {
+            const url = new URL(window.location.href);
+            url.hash = "";
+            history.replaceState(null, "", url.pathname + url.search);
+          } catch {
+            /* sem history, a cena fecha na mesma */
+          }
         }
-      }
+        return null;
+      });
       setPersonagem(d);
       palcoRef.current?.scrollIntoView({
         block: "start",
@@ -672,23 +737,39 @@ export function Bairro({
       });
       void voarParaPersonagem(d.chave);
     };
-    const aoEscolher = (e: Event) =>
-      aplicar((e as CustomEvent<EscolhaPersonagem>).detail);
+    const aoEscolher = (e: Event) => {
+      // `pedirPersonagem` guarda sempre na fila antes de despachar o evento:
+      // drenar aqui impede que uma escolha já servida volte a disparar depois.
+      if (drenarEscolhas(aplicar, janela()) === 0) {
+        aplicar((e as CustomEvent<EscolhaPersonagem>).detail);
+      }
+    };
     window.addEventListener(EVT_PERSONAGEM, aoEscolher);
     // uma carta pode ter sido tocada ANTES de este efeito correr — o
     // toque vai ao vazio se não a servirmos aqui (medido a 40× de CPU)
     drenarEscolhas(aplicar, janela());
     return () => window.removeEventListener(EVT_PERSONAGEM, aoEscolher);
-  }, [cenaAberta, esconderCartao, voarParaPersonagem]);
+  }, [esconderCartao, limparAtivo, voarParaPersonagem]);
 
   const fecharPersonagem = useCallback(() => {
     if (!personagem) return;
+    vooGeracaoRef.current += 1;
+    limparAceno();
     setPersonagem(null);
     // devolve o foco à carta que abriu o painel
     document
       .querySelector<HTMLElement>(`.b-carta[data-k="${personagem.chave}"]`)
       ?.focus();
-  }, [personagem]);
+  }, [limparAceno, personagem]);
+
+  const entrarCenaDaPersonagem = useCallback(
+    (cenaId: string) => {
+      const id = cenaId.replace(/^#/, "");
+      pretender(id);
+      entrar(id);
+    },
+    [entrar, pretender]
+  );
 
   const info = cartaoAberto ? (porId.get(cartaoAberto) ?? null) : null;
 
@@ -719,6 +800,13 @@ export function Bairro({
             aria-label={descricao}
             dangerouslySetInnerHTML={{ __html: html }}
           />
+          <span
+            ref={avisoRodaRef}
+            className="b-aviso-roda"
+            aria-hidden="true"
+          >
+            {AVISO_RODA}
+          </span>
         </div>
 
         <div className="b-controlos" role="group" aria-label={rotuloHora}>
@@ -782,7 +870,12 @@ export function Bairro({
 
         {/* ————— o painel da personagem escolhida (P1-4) ————— */}
         {personagem && (
-          <PainelPersonagem p={personagem} aoFechar={fecharPersonagem} />
+          <PainelPersonagem
+            p={personagem}
+            aoFechar={fecharPersonagem}
+            aoEntrarCena={entrarCenaDaPersonagem}
+            aoPretenderCena={pretender}
+          />
         )}
 
         {/* ————— a cena do edifício aberto (P2a) —————
@@ -866,23 +959,28 @@ function CenaViva({
 }
 
 /**
- * O painel «Olá! Sou …» (P1-4) — a mesma moldura `.b-painel` que as
- * cenas usam: título, fala, o perfil a negrito e o Fechar. Fecha por
- * Escape e pelo ×, e o foco volta à carta — tratado no `aoFechar`.
+ * O painel «Olá! Sou …» (P1-4 / T05) — a mesma moldura `.b-painel` que as
+ * cenas usam: título, fala, perfil económico e os dois destinos vivos
+ * (entrar já na cena do bairro ou ir ao simulador completo). Fecha por
+ * Escape e pelo ×, devolvendo o foco à carta.
  */
 function PainelPersonagem({
   p,
   aoFechar,
+  aoEntrarCena,
+  aoPretenderCena,
 }: {
   p: EscolhaPersonagem;
   aoFechar: () => void;
+  aoEntrarCena: (cenaId: string) => void;
+  aoPretenderCena: (cenaId: string) => void;
 }) {
   const quemRef = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     // preventScroll: o scroll até ao palco já corre (aoEscolher); o
     // scroll-para-o-foco do browser cancelava-o e o ecrã ficava a meio
     quemRef.current?.focus({ preventScroll: true });
-  }, []);
+  }, [p.chave]);
   useEffect(() => {
     const aoTeclar = (e: KeyboardEvent) => {
       if (e.key === "Escape") aoFechar();
@@ -890,6 +988,8 @@ function PainelPersonagem({
     document.addEventListener("keydown", aoTeclar);
     return () => document.removeEventListener("keydown", aoTeclar);
   }, [aoFechar]);
+
+  const aquecer = () => aoPretenderCena(p.cenaId.replace(/^#/, ""));
 
   return (
     <div className="b-painel" role="dialog" aria-labelledby="b-quem-personagem">
@@ -909,14 +1009,22 @@ function PainelPersonagem({
       >
         {p.quem}
       </span>
-      {/* HTML do servidor — texto de messages/pt.json, nunca input do
-          utilizador; o realce .b-a do «Em breve» já vem dentro */}
-      <p className="b-fala" dangerouslySetInnerHTML={{ __html: p.fala }} />
+      <p className="b-fala">{p.fala}</p>
       <p className="b-perfil">{p.extra}</p>
       <div className="b-acoes">
-        <button type="button" className="b-btn b-claro" onClick={aoFechar}>
-          {p.fechar}
+        <button
+          type="button"
+          className="b-btn"
+          onPointerEnter={aquecer}
+          onFocus={aquecer}
+          onTouchStart={aquecer}
+          onClick={() => aoEntrarCena(p.cenaId)}
+        >
+          {p.cenaRotulo}
         </button>
+        <Link className="b-btn b-claro" href={p.rotaHref}>
+          {p.rotaRotulo}
+        </Link>
       </div>
     </div>
   );

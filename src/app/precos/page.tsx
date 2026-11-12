@@ -216,6 +216,7 @@ export default function PrecosPage() {
                     (e) => e.alvo === "combustiveis"
                   )}
                   estado={estadoLinha}
+                  rotulos={m.chart}
                 />
               </Cartao>
             ) : (

@@ -47,11 +47,11 @@ const barco = (cls: string, x: number, y: number, e: number, vela: string): stri
   `<g class="${cls}" transform="translate(${x} 0)"><g transform="translate(0 ${y}) scale(${e})"><path d="M-70 0 Q-35 16 0 0 L-8 -6 H-62 Z" fill="#7a4a26" stroke="${K}" stroke-width="2"/><path d="M-36 -6 V-44" stroke="${K}" stroke-width="2.2"/><path d="M-36 -42 H-14 V-12 H-58 V-42 Z" fill="${vela}" stroke="${K}" stroke-width="1.8"/><path d="M-62 -6 L-76 2" stroke="${K}" stroke-width="2.4"/><rect x="-54" y="-14" width="10" height="7" fill="#b5773f" stroke="${K}" stroke-width="1.2"/><rect x="-30" y="-14" width="10" height="7" fill="#b5773f" stroke="${K}" stroke-width="1.2"/></g></g>`;
 
 export function interiorClerigos(placa: string, colunas: readonly ColunaNorte[]): string {
-  let s = `<defs><linearGradient id="nteCeu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd0f0"/><stop offset="1" stop-color="#e3f4fb"/></linearGradient><linearGradient id="nteRio" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4c9fd1"/><stop offset="1" stop-color="#2f78ad"/></linearGradient></defs>`;
+  let s = `<defs><linearGradient id="b-nteCeu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd0f0"/><stop offset="1" stop-color="#e3f4fb"/></linearGradient><linearGradient id="b-nteRio" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4c9fd1"/><stop offset="1" stop-color="#2f78ad"/></linearGradient></defs>`;
 
   // ——— a VISTA: tudo o que está lá fora sobe para o lugar ao chegar ———
   s += `<g class="nte-vista">`;
-  s += `<rect x="-20" y="-20" width="680" height="510" fill="url(#nteCeu)"/>`;
+  s += `<rect x="-20" y="-20" width="680" height="510" fill="url(#b-nteCeu)"/>`;
   s += `<circle cx="520" cy="86" r="26" fill="#ffd34d" stroke="${K}" stroke-width="2.4"/>`;
   s += nuvem(70, 92, 0.9, 0) + nuvem(330, 70, 0.7, -9) + nuvem(470, 128, 0.55, -17);
 
@@ -67,7 +67,7 @@ export function interiorClerigos(placa: string, colunas: readonly ColunaNorte[])
   }
 
   // o Douro e o cintilar
-  s += `<path d="M-10 310 Q160 300 320 312 T650 306 V392 H-10 Z" fill="url(#nteRio)" stroke="${K}" stroke-width="2.4"/>`;
+  s += `<path d="M-10 310 Q160 300 320 312 T650 306 V392 H-10 Z" fill="url(#b-nteRio)" stroke="${K}" stroke-width="2.4"/>`;
   const brilhos: readonly (readonly [number, number, number])[] = [
     [24, 336, 38], [126, 350, 50], [262, 330, 36], [362, 352, 44], [470, 334, 54], [570, 356, 34], [196, 372, 30], [420, 378, 40],
   ];
@@ -109,7 +109,7 @@ export function interiorClerigos(placa: string, colunas: readonly ColunaNorte[])
       const h = Math.max(6, Math.min(100, c.pct) * 2.2);
       s += `<g class="nte-col" style="animation-delay:${atraso}s"><rect x="${x + 5}" y="${base - h + 5}" width="84" height="${h}" fill="${K}"/><rect x="${x}" y="${base - h}" width="84" height="${h}" fill="${c.cor}" stroke="${K}" stroke-width="2.6"/><rect x="${x + 8}" y="${base - h + 6}" width="10" height="${Math.max(0, h - 12)}" rx="4" fill="#fff" opacity=".35"/></g>`;
       // o brilho que passa pela coluna quando ela acaba de subir
-      s += `<clipPath id="nteCorte${k}"><rect x="${x}" y="${base - h}" width="84" height="${h}"/></clipPath><g clip-path="url(#nteCorte${k})"><path class="nte-brilho" style="animation-delay:${atraso + 0.7}s" d="M${x - 30} ${base} L${x - 6} ${base - h} H${x + 14} L${x - 10} ${base} Z" fill="#fff" opacity="0"/></g>`;
+      s += `<clipPath id="b-nteCorte${k}"><rect x="${x}" y="${base - h}" width="84" height="${h}"/></clipPath><g clip-path="url(#b-nteCorte${k})"><path class="nte-brilho" style="animation-delay:${atraso + 0.7}s" d="M${x - 30} ${base} L${x - 6} ${base - h} H${x + 14} L${x - 10} ${base} Z" fill="#fff" opacity="0"/></g>`;
       s += `<g class="nte-val-g" style="animation-delay:${atraso}s"><text id="nteV${k}" class="nte-val" style="animation-delay:${atraso}s" x="${x + 42}" y="${base - h - 12}" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="22" fill="${K}" stroke="#fff" stroke-width="5" paint-order="stroke">${c.valor}</text></g>`;
     } else {
       s += `<text x="${x + 42}" y="${base - 12}" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="21" fill="${K}">—</text>`;

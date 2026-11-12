@@ -12,6 +12,8 @@ import {
   trajetoriaCA,
   trajetoriaCTPC,
   trajetoriaColchao,
+  trajetoriaComReforco,
+  simularComReforco,
 } from "./poupanca";
 import { decomporCombustivel, ivaContido } from "./impostos";
 import { contribuicoes, custoDoTrabalho } from "./seg-social";
@@ -235,6 +237,26 @@ describe("custoCompra", () => {
     expect(r.imt).toBe(0);
     expect(r.isAquisicao).toBe(0);
     expect(r.isCredito).toBeCloseTo(1440, 6); // IS do crédito mantém-se
+
+    // Fronteira exacta de isenção total: 330 539 € → IS = 0
+    expect(custoCompra(330539, { jovem: true }).isAquisicao).toBe(0);
+  });
+
+  it("IMT Jovem: IS sobre o excedente até 660 982 €; acima perde toda a isenção (DL 48-A/2024)", () => {
+    // 450 000 € → (450 000 − 330 539) × 0,008 = 955,688 ≈ 955,69 €
+    const r450 = custoCompra(450000, { jovem: true });
+    expect(r450.isAquisicao).toBeCloseTo((450000 - 330539) * 0.008, 6);
+    expect(r450.isAquisicao).toBeCloseTo(955.69, 2);
+
+    // Fronteira exacta do limite do benefício: 660 982 € → (660 982 − 330 539) × 0,008 = 2 643,544 €
+    const r660 = custoCompra(660982, { jovem: true });
+    expect(r660.isAquisicao).toBeCloseTo((660982 - 330539) * 0.008, 6);
+    expect(r660.isAquisicao).toBeCloseTo(2643.54, 2);
+
+    // 700 000 € > 660 982 € → perde totalmente o benefício: 700 000 × 0,008 = 5 600,00 €
+    const r700 = custoCompra(700000, { jovem: true });
+    expect(r700.isAquisicao).toBeCloseTo(5600, 6);
+    expect(r700.imt).toBeCloseTo(imt(700000, "hpp"), 6);
   });
 });
 
@@ -549,6 +571,119 @@ describe("trajetorias de poupança", () => {
     expect(t[9].real).toBeCloseTo(10000 / Math.pow(1.02, 10), 6);
     expect(t.every((p) => p.juro === 0 && p.imposto === 0)).toBe(true);
   });
+
+  it("reforço mensal = 0 devolve exactamente a trajectória simples de cada produto", () => {
+    const dep0 = trajetoriaComReforco({
+      produto: "dep",
+      capitalInicial: 10000,
+      reforcoMensal: 0,
+      anos: 10,
+      taxaImposto: imposto,
+      taxaDeposito: 0.02,
+      inflacaoAnual: 0.02,
+    });
+    const depBase = trajetoriaDeposito(10000, 10, 0.02, imposto, 0.02);
+    expect(dep0[9].saldo).toBeCloseTo(depBase[9].saldo, 6);
+
+    const ca0 = trajetoriaComReforco({
+      produto: "ca",
+      capitalInicial: 10000,
+      reforcoMensal: 0,
+      anos: 10,
+      taxaImposto: imposto,
+      taxaCA: ca.serieF.taxaBrutaNovasSubscricoes,
+      premiosCA: premios,
+      inflacaoAnual: 0.02,
+    });
+    const caBase = trajetoriaCA(10000, 10, ca.serieF.taxaBrutaNovasSubscricoes, premios, imposto, 0.02);
+    expect(ca0[9].saldo).toBeCloseTo(caBase[9].saldo, 6);
+
+    const ct0 = trajetoriaComReforco({
+      produto: "ct",
+      capitalInicial: 10000,
+      reforcoMensal: 0,
+      anos: 10,
+      taxaImposto: imposto,
+      taxasCT: ct.serie5.taxasPorAno,
+      inflacaoAnual: 0.02,
+    });
+    const ctBase = trajetoriaCT(10000, ct.serie5.taxasPorAno, imposto, 0.02);
+    expect(ct0[9].saldo).toBeCloseTo(ctBase[9].saldo, 6);
+  });
+
+  it("tecto legal de 50 000 € nos CA Série F limita o capital que vence juros", () => {
+    const r50 = simularComReforco({
+      produto: "ca",
+      capitalInicial: 50000,
+      reforcoMensal: 0,
+      anos: 10,
+      taxaImposto: imposto,
+      taxaCA: ca.serieF.taxaBrutaNovasSubscricoes,
+      premiosCA: premios,
+      maximoEurosCA: ca.serieF.maximoEuros,
+    });
+    const r80 = simularComReforco({
+      produto: "ca",
+      capitalInicial: 80000,
+      reforcoMensal: 0,
+      anos: 10,
+      taxaImposto: imposto,
+      taxaCA: ca.serieF.taxaBrutaNovasSubscricoes,
+      premiosCA: premios,
+      maximoEurosCA: ca.serieF.maximoEuros,
+    });
+    // Acima de 50 000 € os 30 000 € excedentes não podem ser subscritos na Série F:
+    // os juros brutos são exactamente os mesmos de 50 000 €
+    expect(r80.capitalSubscritoProduto).toBe(50000);
+    expect(r80.jurosBrutos).toBeCloseTo(r50.jurosBrutos, 6);
+    expect(r80.capitalFinalLiquido).toBeCloseTo(r50.capitalFinalLiquido + 30000, 6);
+  });
+
+  it("reforços mensais respeitam o mínimo de 1 000 € nos CT Série 5 e de 100 € nos CA", () => {
+    // 200 €/mês < 1 000 € mínimo de subscrição CT Série 5 → reforços acumulam sem gerar novos juros de CT
+    const ctSemNovosJuros = simularComReforco({
+      produto: "ct",
+      capitalInicial: 10000,
+      reforcoMensal: 200,
+      anos: 5,
+      taxaImposto: imposto,
+      taxasCT: ct.serie5.taxasPorAno,
+      minimoSubscricaoCT: ct.serie5.minimoSubscricao.euros,
+    });
+    const ctBase5 = simularCT(10000, 5, ct.serie5.taxasPorAno, imposto);
+    expect(ctSemNovosJuros.jurosBrutos).toBeCloseTo(ctBase5.jurosBrutos, 6);
+    expect(ctSemNovosJuros.capitalFinalLiquido).toBeCloseTo(
+      ctBase5.capitalFinalLiquido + 200 * 12 * 5,
+      6
+    );
+
+    // 1 000 €/mês ≥ 1 000 € mínimo de subscrição CT Série 5 → tranches anuais vencem juros
+    const ctComReforco1000 = simularComReforco({
+      produto: "ct",
+      capitalInicial: 10000,
+      reforcoMensal: 1000,
+      anos: 5,
+      taxaImposto: imposto,
+      taxasCT: ct.serie5.taxasPorAno,
+      minimoSubscricaoCT: ct.serie5.minimoSubscricao.euros,
+    });
+    expect(ctComReforco1000.jurosBrutos).toBeGreaterThan(ctBase5.jurosBrutos);
+
+    // Em CA Série F, 200 €/mês ≥ 100 € gera novas subscrições trimestrais com juros compostos
+    const caComReforco200 = simularComReforco({
+      produto: "ca",
+      capitalInicial: 10000,
+      reforcoMensal: 200,
+      anos: 5,
+      taxaImposto: imposto,
+      taxaCA: ca.serieF.taxaBrutaNovasSubscricoes,
+      premiosCA: premios,
+      minimoSubscricaoCA: ca.serieF.minimoEuros,
+      maximoEurosCA: ca.serieF.maximoEuros,
+    });
+    const caBase5 = simularCA(10000, 5, ca.serieF.taxaBrutaNovasSubscricoes, premios, imposto);
+    expect(caComReforco200.jurosBrutos).toBeGreaterThan(caBase5.jurosBrutos);
+  });
 });
 
 describe("irs-anual (deduções à coleta)", () => {
@@ -600,6 +735,46 @@ describe("independente (recibos verdes)", () => {
   it("1.º ano de atividade isento de SS; base mínima 1,5×IAS", () => {
     expect(simularIndependente(24000, { primeiroAno: true }).ss).toBe(0);
     expect(simularIndependente(6000).ss).toBeCloseTo(805.7 * 12 * 0.214, 1);
+  });
+
+  it("dispensa de retenção até 15 000 € (art. 101.º-B CIRS) e opção voluntária", () => {
+    // ≤ 15 000 € → dispensado por omissão (retido = 0)
+    const r12 = simularIndependente(12000);
+    expect(r12.retido).toBe(0);
+    const r15 = simularIndependente(15000);
+    expect(r15.retido).toBe(0);
+
+    // > 15 000 € → retém 23 % por omissão
+    const r16 = simularIndependente(16000);
+    expect(r16.retido).toBeCloseTo(16000 * 0.23, 6);
+
+    // Opção voluntária de reter abaixo de 15 000 € (art. 101.º-B n.º 2 CIRS)
+    const rVoluntaria = simularIndependente(12000, { dispensaRetencao: false });
+    expect(rVoluntaria.retido).toBeCloseTo(12000 * 0.23, 6);
+  });
+
+  it("mínimo de existência em Cat. B (art. 70.º CIRS): isenta até ao valor de referência", () => {
+    // 12 000 € e 12 880 € (= VR 2026): IRS = 0 €
+    expect(simularIndependente(12000).irs).toBe(0);
+    expect(simularIndependente(12880).irs).toBe(0);
+
+    // 14 000 € (na rampa do mínimo de existência): abatimento reduz o coletável face aos 75 % brutos
+    const r14 = simularIndependente(14000);
+    expect(r14.coletavel).toBeLessThan(14000 * 0.75);
+    expect(r14.irs).toBeCloseTo(504, 0);
+  });
+
+  it("ajuste opcional da base SS em ±25 % (CRC art. 164.º), respeitando a base mínima legal", () => {
+    const normal = simularIndependente(24000);
+    const menos25 = simularIndependente(24000, { ajusteSS: -0.25 });
+    const mais25 = simularIndependente(24000, { ajusteSS: 0.25 });
+
+    expect(menos25.ss).toBeCloseTo(normal.ss * 0.75, 4);
+    expect(mais25.ss).toBeCloseTo(normal.ss * 1.25, 4);
+
+    // Em 15 000 € com −25 %, 70 % × 0,75 = 7 875 € < base mínima anual (1,5 × IAS × 12) → trava na base mínima
+    const piso = simularIndependente(15000, { ajusteSS: -0.25 });
+    expect(piso.ss).toBeCloseTo(1.5 * 537.13 * 12 * 0.214, 2);
   });
 });
 

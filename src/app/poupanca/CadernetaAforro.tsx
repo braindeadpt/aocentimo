@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useMemo } from "react";
-import { trajetoriaCA } from "@/lib/engines/poupanca";
+import { trajetoriaCA, trajetoriaComReforco } from "@/lib/engines/poupanca";
 import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
 import { mascaraFaixaRasgo, sementeDe } from "@/lib/materia";
 import { useArmado } from "@/lib/useArmado";
@@ -34,29 +34,67 @@ export function CadernetaAforro({
   /** taxa bruta CA Série F (ca.json) */
   taxaCA: number;
   premiosCA: { de: number; ate: number; pp: number }[];
-  /** a lista de prémios por extenso — «+0,25 p.p. 2.º ao 5.º ano · …» */
+  /** a lista de prémios por extenso — «+0,25 p.p. 2.º ao 5.º ano · …» */
   premiosNota: string;
   /** «Capital garantido pelo Estado» */
   garantia: string;
 }) {
-  const { capital, anos, inflacao, taxaImposto } = usePoupanca();
+  const {
+    reforcoMensal,
+    anos,
+    inflacao,
+    taxaImposto,
+    maximoEurosCA,
+    minimoSubscricaoCA,
+    capitalSubscritoCA,
+  } = usePoupanca();
   const anosCA = Math.min(anos, PRAZO_CA);
 
-  const traj = useMemo(
-    () => trajetoriaCA(capital, anosCA, taxaCA, premiosCA, taxaImposto, inflacao / 100),
-    [capital, anosCA, taxaCA, premiosCA, taxaImposto, inflacao]
-  );
+  const traj = useMemo(() => {
+    if (reforcoMensal === 0) {
+      return trajetoriaCA(
+        capitalSubscritoCA,
+        anosCA,
+        taxaCA,
+        premiosCA,
+        taxaImposto,
+        inflacao / 100
+      );
+    }
+    return trajetoriaComReforco({
+      produto: "ca",
+      capitalInicial: capitalSubscritoCA,
+      reforcoMensal,
+      anos: anosCA,
+      taxaImposto,
+      inflacaoAnual: inflacao / 100,
+      taxaCA,
+      premiosCA,
+      minimoSubscricaoCA,
+      maximoEurosCA,
+    });
+  }, [
+    capitalSubscritoCA,
+    reforcoMensal,
+    anosCA,
+    taxaCA,
+    premiosCA,
+    minimoSubscricaoCA,
+    maximoEurosCA,
+    taxaImposto,
+    inflacao,
+  ]);
   const ultimo = traj.at(-1);
   const impostoTotal = traj.reduce((a, p) => a + p.imposto, 0);
 
-  const runCad = `${capital}-${anosCA}-${inflacao}`;
+  const runCad = `${capitalSubscritoCA}-${reforcoMensal}-${anosCA}-${inflacao}`;
   const { ref: cadRef, arm: cadArm } = useArmado<HTMLDivElement>(runCad);
 
   // nominal vs real — o intervalo que a inflação come
-  const maxY = Math.max(capital, ...(ultimo ? [ultimo.saldo] : []));
+  const maxY = Math.max(capitalSubscritoCA, ...(ultimo ? [ultimo.saldo] : []));
   const xAno = (ano: number) => (anosCA > 0 ? (ano / anosCA) * W : 0);
   const yV = (v: number) => (maxY > 0 ? H - (v / maxY) * (H - 6) : H);
-  const pts = [{ ano: 0, saldo: capital, real: capital }, ...traj];
+  const pts = [{ ano: 0, saldo: capitalSubscritoCA, real: capitalSubscritoCA }, ...traj];
   const nomPath = pts.map((p, i) => `${i === 0 ? "M" : "L"}${xAno(p.ano)},${yV(p.saldo)}`).join(" ");
   const realPath = pts.map((p, i) => `${i === 0 ? "M" : "L"}${xAno(p.ano)},${yV(p.real)}`).join(" ");
   // o intervalo: nominal em frente, real de volta — polígono fechado
@@ -97,7 +135,9 @@ export function CadernetaAforro({
           <div className="talao-face px-5 pb-5 pt-6">
             <p className="talao-head text-center">Caderneta de Aforro</p>
             <p className="talao-sub talao-dim mt-1 text-center">
-              {fmtEUR0(capital)} a {fmtPct(taxaCA, 2)} + prémios · Série F
+              {fmtEUR0(capitalSubscritoCA)}
+              {reforcoMensal >= minimoSubscricaoCA ? ` (+${fmtEUR0(reforcoMensal)}/mês)` : ""} a{" "}
+              {fmtPct(taxaCA, 2)} + prémios · Série F (tecto {fmtEUR0(maximoEurosCA)})
               {anos > PRAZO_CA ? ` · até ao ano ${PRAZO_CA} (maturidade)` : ""}
             </p>
             <dl className="talao-body mt-3">
@@ -123,7 +163,7 @@ export function CadernetaAforro({
               className="mt-3 h-16 w-full"
               preserveAspectRatio="none"
               role="img"
-              aria-label={`Em ${anosCA} anos, ${fmtEUR0(capital)} viram ${ultimo ? fmtEUR0(ultimo.saldo) : "—"} na conta, que valem ${ultimo ? fmtEUR0(ultimo.real) : "—"} em euros de hoje.`}
+              aria-label={`Em ${anosCA} anos, ${fmtEUR0(capitalSubscritoCA)} viram ${ultimo ? fmtEUR0(ultimo.saldo) : "—"} na conta, que valem ${ultimo ? fmtEUR0(ultimo.real) : "—"} em euros de hoje.`}
             >
               <g className={cadArm("tempo-revela")} key={runCad}>
                 <path d={gapPath} fill="var(--color-up)" opacity={0.1} />

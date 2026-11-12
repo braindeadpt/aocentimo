@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, ViewTransition } from "react";
-import { m } from "@/lib/messages";
 
 /**
  * Navegação principal — as quatro perguntas da V4 (S1-07), + Aprender:
@@ -24,12 +23,40 @@ import { m } from "@/lib/messages";
  * Escape, clique fora e fecho à mudança de rota.
  */
 
-type Item = readonly [keyof typeof m.nav, string];
+export interface RotulosNav {
+  index: string;
+  fechar: string;
+  grupoGanhas: string;
+  grupoPagas: string;
+  grupoBanco: string;
+  grupoPais: string;
+  salario: string;
+  impostos: string;
+  inflacao: string;
+  credito: string;
+  casa: string;
+  irs: string;
+  trabalho: string;
+  poupanca: string;
+  precos: string;
+  dados: string;
+  aprender: string;
+}
 
-const GRUPOS: { id: string; rotulo: string; itens: readonly Item[] }[] = [
+type ChaveItem = Exclude<
+  keyof RotulosNav,
+  "index" | "fechar" | "grupoGanhas" | "grupoPagas" | "grupoBanco" | "grupoPais" | "aprender"
+>;
+type Item = readonly [ChaveItem, string];
+
+const ESTRUTURA_GRUPOS: {
+  id: string;
+  chaveRotulo: "grupoGanhas" | "grupoPagas" | "grupoBanco" | "grupoPais";
+  itens: readonly Item[];
+}[] = [
   {
     id: "ganhas",
-    rotulo: m.nav.grupoGanhas,
+    chaveRotulo: "grupoGanhas",
     itens: [
       ["salario", "/salario"],
       ["irs", "/irs"],
@@ -38,7 +65,7 @@ const GRUPOS: { id: string; rotulo: string; itens: readonly Item[] }[] = [
   },
   {
     id: "pagas",
-    rotulo: m.nav.grupoPagas,
+    chaveRotulo: "grupoPagas",
     itens: [
       ["impostos", "/impostos"],
       ["precos", "/precos"],
@@ -47,7 +74,7 @@ const GRUPOS: { id: string; rotulo: string; itens: readonly Item[] }[] = [
   },
   {
     id: "banco",
-    rotulo: m.nav.grupoBanco,
+    chaveRotulo: "grupoBanco",
     itens: [
       ["credito", "/credito"],
       ["casa", "/casa"],
@@ -56,17 +83,17 @@ const GRUPOS: { id: string; rotulo: string; itens: readonly Item[] }[] = [
   },
   {
     id: "pais",
-    rotulo: m.nav.grupoPais,
+    chaveRotulo: "grupoPais",
     itens: [["dados", "/dados"]],
   },
 ];
 
 const FOCAVEIS = "a[href], button:not([disabled])";
 
-export function SiteNav() {
+export function SiteNav({ rotulos }: { rotulos: RotulosNav }) {
   const pathname = usePathname();
   const detalhes = useRef<HTMLDetailsElement>(null);
-  const folha = useRef<HTMLElement>(null);
+  const folha = useRef<HTMLDivElement>(null);
   const [aberto, setAberto] = useState<string | null>(null);
 
   const ativo = (href: string) =>
@@ -152,7 +179,7 @@ export function SiteNav() {
       {/* flex-wrap: a 200 % de texto os grupos passam à linha em vez de
           transbordarem a página (1.4.4); à dimensão normal nada muda. */}
       <nav aria-label="Principal" className="hidden flex-wrap items-center gap-3 lg:flex">
-        {GRUPOS.map((g) => (
+        {ESTRUTURA_GRUPOS.map((g) => (
           <div
             key={g.id}
             className="group relative"
@@ -183,7 +210,7 @@ export function SiteNav() {
                 grupoAtivo(g.itens) ? " ligado" : ""
               }`}
             >
-              {g.rotulo}
+              {rotulos[g.chaveRotulo]}
               {grupoAtivo(g.itens) && indicador}
             </button>
             <div className="absolute left-0 top-full z-50 hidden pt-2 group-focus-within:block group-hover:block">
@@ -194,7 +221,7 @@ export function SiteNav() {
                     href={href}
                     aria-current={ativo(href) ? "page" : undefined}
                   >
-                    {m.nav[key]}
+                    {rotulos[key]}
                   </Link>
                 ))}
               </div>
@@ -206,7 +233,7 @@ export function SiteNav() {
           aria-current={ativo("/aprender") ? "page" : undefined}
           className="pil-nav relative"
         >
-          {m.nav.aprender}
+          {rotulos.aprender}
           {ativo("/aprender") && indicador}
         </Link>
       </nav>
@@ -215,18 +242,18 @@ export function SiteNav() {
       <div className="flex flex-wrap items-center gap-3 lg:hidden">
         <details ref={detalhes}>
           <summary className="pil-nav list-none">
-            {m.nav.index}
+            {rotulos.index}
           </summary>
           <div aria-hidden className="fixed inset-0 z-40 bg-ink/25" />
-          <nav
+          <div
             ref={folha}
-            aria-label="Principal"
+            aria-labelledby="folha-indice-titulo"
             role="dialog"
             aria-modal="true"
             className="nav-sheet nav-sheet-v5 fixed inset-x-0 bottom-0 z-50 max-h-[80vh] overflow-y-auto"
           >
             <div className="flex items-baseline justify-between px-5 pb-1 pt-4">
-              <p className="folha-titulo">{m.nav.index}</p>
+              <p id="folha-indice-titulo" className="folha-titulo">{rotulos.index}</p>
               {/* o «Fechar» da folha media 48×23 px em todas as rotas —
                   abaixo dos 24×24 do critério 2.5.8 (AA) e longe dos 44
                   de um alvo cómodo de dedo. O `padding` cresce a área de
@@ -234,15 +261,15 @@ export function SiteNav() {
                   sítio: muda o alvo, não a tinta. */}
               <button
                 type="button"
-                className="-mx-3 -my-3 cursor-pointer px-3 py-3 underline underline-offset-4"
+                className="-mx-3 -my-3 min-h-[44px] min-w-[44px] cursor-pointer px-3 py-3 underline underline-offset-4"
                 onClick={() => detalhes.current?.removeAttribute("open")}
               >
-                {m.nav.fechar}
+                {rotulos.fechar}
               </button>
             </div>
-            {GRUPOS.map((g) => (
+            {ESTRUTURA_GRUPOS.map((g) => (
               <div key={g.id} className="folha-grupo px-5 py-3">
-                <p className="folha-titulo mb-1">{g.rotulo}</p>
+                <p className="folha-titulo mb-1">{rotulos[g.chaveRotulo]}</p>
                 <div className="flex flex-col">
                   {g.itens.map(([key, href]) => (
                     <Link
@@ -251,7 +278,7 @@ export function SiteNav() {
                       aria-current={ativo(href) ? "page" : undefined}
                       className="py-2"
                     >
-                      {m.nav[key]}
+                      {rotulos[key]}
                     </Link>
                   ))}
                 </div>
@@ -263,10 +290,10 @@ export function SiteNav() {
                 aria-current={ativo("/aprender") ? "page" : undefined}
                 className="block py-2"
               >
-                {m.nav.aprender}
+                {rotulos.aprender}
               </Link>
             </div>
-          </nav>
+          </div>
         </details>
       </div>
     </>

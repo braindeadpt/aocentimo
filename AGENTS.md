@@ -237,7 +237,7 @@ e no `PRODUTO.md`:
 | `/` | **a home = o mapa do bairro** (não é uma lista de perguntas) | — |
 | `/salario` | bruto → líquido, SS, IRS, custo para a empresa | Fábrica · Segurança Social |
 | `/irs` | escalões, simulador do imposto | Finanças |
-| `/impostos` | IVA, ISP, cascata | Finanças |
+| `/impostos` | IVA, ISP, cascata | Mercearia · Bomba |
 | `/poupanca` | Certificados de Aforro, poder de compra | Correios |
 | `/credito` | Euribor, prestação, TAEG | Banco |
 | `/casa` | casa vs. salário | Casa da Inês |

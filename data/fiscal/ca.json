@@ -15,6 +15,12 @@
       { "anos": "14.º e 15.º", "de": 14, "ate": 15, "pp": 1.75 }
     ],
     "prazo": "15 anos",
+    "valorNominalUnidadeEUR": 1,
+    "minimoUnidades": 100,
+    "minimoEuros": 100,
+    "maximoUnidades": 50000,
+    "maximoEuros": 50000,
+    "limitesNota": "Subscrição mínima de 100 unidades (100 €); máximo acumulado por conta aforro de 50 000 unidades (50 000 €) na Série F — IGCP, Ficha Técnica Certificados de Aforro Série F (Portaria n.º 149-A/2023, de 2 de junho, art. 4.º)",
     "garantia": "Capital garantido pelo Estado",
     "tributacao": "Retenção liberatória sobre juros — ver data/fiscal/capitais.json"
   },

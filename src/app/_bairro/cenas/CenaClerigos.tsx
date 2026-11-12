@@ -13,6 +13,7 @@
  * `public/cenas/clerigos.json`; um em falta mostra «—», nunca 0.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { FINO, fmtEUR0, fmtNum } from "@/lib/format";
 import type { DadosClerigos } from "./dados-norte";
 import { atrasoColuna, interiorClerigos } from "./clerigos-arte";
@@ -134,6 +135,9 @@ export default function CenaClerigos({ D, aoFechar }: { D: DadosClerigos; aoFech
             <button className="b-btn b-claro" type="button" onClick={() => setPasso(1)}>
               {T.nteBtnOutra}
             </button>
+            <Link className="b-btn" href="/dados">
+              {T.nteLinkDados}
+            </Link>
           </>
         )}
       </div>

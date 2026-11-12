@@ -18,12 +18,19 @@ export function InstrumentoTaxaReal({
   estado: EstadoCartao;
   estadoRotulo: string;
 }) {
-  const { melhor, produtos, anos } = usePoupanca();
+  const { melhor, produtos, anos, urlPartilha } = usePoupanca();
 
   return (
     <Cartao
       icone="poupanca"
       breadcrumb="O BANCO / POUPANÇA · TAXA REAL LÍQUIDA"
+      acoes={[
+        {
+          copiar: urlPartilha,
+          rotulo: "Copiar ligação",
+          ariaLabel: "Copiar ligação desta simulação",
+        },
+      ]}
       meta={produtos.map(
         (p) => `${p.curto} ${comUnidade(fmtNum(p.taxaReal * 100, 1), "%")}`
       )}
@@ -33,7 +40,8 @@ export function InstrumentoTaxaReal({
         rotulo: "Fonte",
         itens: [
           {
-            nome: "Taxas CA e CTPC — IGCP",
+            /* PROPOSTA (revisão do dono) */
+            nome: "Taxas CA (Série F) e CT (Série 5) — IGCP",
             url: "https://www.igcp.pt",
           },
           {

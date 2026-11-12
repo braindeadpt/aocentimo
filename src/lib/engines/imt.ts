@@ -1,4 +1,32 @@
 import imt2026 from "@data/fiscal/imt-2026.json";
+import {
+  custoCompraPuro,
+  imtJovemPuro,
+  imtPuro,
+  isAquisicaoGeralPuro,
+  isAquisicaoJovemPuro,
+  type CompradoresJovens,
+  type EscalaoImt,
+  type RegrasImt,
+  type ResultadoCompra,
+  type TipoCompra,
+} from "./imt-puro";
+
+export type {
+  CompradoresJovens,
+  EscalaoImt,
+  RegrasImt,
+  ResultadoCompra,
+  TipoCompra,
+};
+
+export {
+  custoCompraPuro,
+  imtJovemPuro,
+  imtPuro,
+  isAquisicaoGeralPuro,
+  isAquisicaoJovemPuro,
+};
 
 /**
  * IMT + Imposto de Selo + registos — o custo de comprar casa.
@@ -6,46 +34,13 @@ import imt2026 from "@data/fiscal/imt-2026.json";
  * IMT incide sobre o maior valor entre preço de escritura e VPT.
  */
 
-interface EscalaoImt {
-  ate: number | null;
-  taxa: number;
-  taxaUnica?: boolean;
-  parcelaAbater: number;
-}
-
-interface RegrasImt {
-  ano: number;
-  fonte: string;
-  fonteUrl: string;
-  hpp: EscalaoImt[];
-  jovem: {
-    idadeMax: number;
-    isentoAte: number;
-    taxaExcedente: number;
-    parcelaAbater: number;
-    limiteBeneficio: number;
-  };
-  secundaria: EscalaoImt[];
-  impostoSelo: {
-    aquisicao: { taxa: number };
-    credito: { taxa: number };
-  };
-  registos: { semCredito: number; comCredito: number; nota: string };
-}
-
 export const REGRAS_IMT: Record<number, RegrasImt> = {
   2026: imt2026 as RegrasImt,
 };
 
-export type TipoCompra = "hpp" | "secundaria";
-
 /** IMT por escalões (ou taxa única nos dois últimos). */
 export function imt(valor: number, tipo: TipoCompra, ano = 2026): number {
-  const tabela = REGRAS_IMT[ano][tipo];
-  const linha = tabela.find((e) => e.ate === null || valor <= e.ate);
-  if (!linha) return 0;
-  if (linha.taxaUnica) return valor * linha.taxa;
-  return Math.max(0, valor * linha.taxa - linha.parcelaAbater);
+  return imtPuro(valor, tipo, REGRAS_IMT[ano]);
 }
 
 /**
@@ -54,64 +49,26 @@ export function imt(valor: number, tipo: TipoCompra, ano = 2026): number {
  * benefício aplica-se a tabela geral.
  */
 export function imtJovem(valor: number, ano = 2026): number {
-  const j = REGRAS_IMT[ano].jovem;
-  if (valor <= j.isentoAte) return 0;
-  if (valor <= j.limiteBeneficio)
-    return valor * j.taxaExcedente - j.parcelaAbater;
-  return imt(valor, "hpp", ano);
-}
-
-export interface ResultadoCompra {
-  valorTributavel: number;
-  imt: number;
-  isAquisicao: number;
-  isCredito: number;
-  registos: number;
-  totalCustos: number;
-  precoFinal: number; // preço + todos os custos
+  return imtJovemPuro(valor, REGRAS_IMT[ano]);
 }
 
 /**
- * Custo total de comprar casa: IMT (geral ou Jovem), IS de aquisição
- * (0,8 %), IS sobre o crédito (0,6 %) e registos. No IMT Jovem o IS de
- * aquisição segue a mesma isenção proporcional.
+ * Custo total de comprar casa: IMT (geral, Jovem ou compra a dois 50 %/50 %),
+ * IS de aquisição (0,8 %), IS sobre o crédito (0,6 %) e registos. No IMT
+ * Jovem o IS de aquisição segue a mesma isenção proporcional até ao limite
+ * do benefício (DL 48-A/2024, art. 9.º n.º 2 CIMT e art. 31.º-A CIS); acima
+ * desse limite perde-se totalmente a isenção.
  */
 export function custoCompra(
   preco: number,
   opts: {
     tipo?: TipoCompra;
     jovem?: boolean;
+    compradoresJovens?: CompradoresJovens;
     montanteCredito?: number;
     ano?: number;
   } = {}
 ): ResultadoCompra {
-  const { tipo = "hpp", jovem = false, montanteCredito = 0, ano = 2026 } = opts;
-  const r = REGRAS_IMT[ano];
-
-  const imtDevido =
-    tipo === "hpp" && jovem ? imtJovem(preco, ano) : imt(preco, tipo, ano);
-
-  // IS de aquisição: no IMT Jovem é isento na mesma proporção do IMT
-  const isBase = preco * r.impostoSelo.aquisicao.taxa;
-  const isAquisicao =
-    tipo === "hpp" && jovem
-      ? preco <= r.jovem.isentoAte
-        ? 0
-        : isBase * (1 - r.jovem.isentoAte / preco)
-      : isBase;
-
-  const isCredito = montanteCredito * r.impostoSelo.credito.taxa;
-  const registos =
-    montanteCredito > 0 ? r.registos.comCredito : r.registos.semCredito;
-
-  const totalCustos = imtDevido + isAquisicao + isCredito + registos;
-  return {
-    valorTributavel: preco,
-    imt: imtDevido,
-    isAquisicao,
-    isCredito,
-    registos,
-    totalCustos,
-    precoFinal: preco + totalCustos,
-  };
+  const { ano = 2026, ...resto } = opts;
+  return custoCompraPuro(preco, REGRAS_IMT[ano], resto);
 }

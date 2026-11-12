@@ -82,6 +82,7 @@ export const finNotaRodape = (motor: string) =>
 export const finBtnGrafico = "Aprender a ler o gráfico";
 export const finBtnVoltar = "Voltar ao bairro";
 export const finBtnOutra = "Ver outra vez";
+export const finBtnIrs = "Simular o meu IRS →";
 
 /* ————— Banco · a Euribor e a prestação ————— */
 
@@ -138,15 +139,16 @@ export const banExemplo = (capital: string, anos: number, spread: string) =>
 export const banExemploCap = "Montante";
 export const banExemploAnos = (n: number) => `${n} anos`;
 export const banExemploSpread = "Spread";
+export const banBtnCredito = "Simular o crédito →";
 
 /* ————— Mercearia · a inflação e o IVA no talão ————— */
 
 export const mercQuem = "Mercearia do Sr. Manuel · a inflação e o IVA";
 export const mercRotuloArte =
-  "Dentro da mercearia: duas prateleiras com pão, leite, carne, peixe, fruta, legumes, azeite e açúcar, cada uma com a etiqueta «1 € em 2020», o balcão com a caixa registadora e o Sr. Manuel.";
+  "Dentro da mercearia: duas prateleiras com pão, leite, carne, peixe, fruta, legumes, azeite e açúcar, cada uma com a etiqueta «1 € em 2020», o balcão com a caixa registadora e o Sr. Manuel.";
 
 export const mercFala1 = (mes: string) =>
-  `Bom dia! Em ${mes}, este saco de compras custava <b>10 €</b>. Quanto custa hoje o mesmo saco?`;
+  `Bom dia! Em ${mes}, este saco de compras custava <b>10 €</b>. Quanto custa hoje o mesmo saco?`;
 
 export const mercPalpiteAria = "O teu palpite em euros";
 export const mercBtnResposta = "Mostrar a resposta";
@@ -155,10 +157,10 @@ export const mercResposta = (juizo: string, real: string) =>
   `<b>${juizo}</b> Hoje o mesmo saco custa <span class="b-r">${real}</span>. Isto chama-se inflação.`;
 
 export const mercExplica = (comida: string, mes: string, total: string) =>
-  `A comida subiu <span class="b-r">${comida}</span> desde ${mes}; tudo o que compramos, em média, subiu <b>${total}</b>. Mas cada prateleira subiu à sua maneira: as etiquetas dizem quanto custa hoje o que custava 1 € em 2020.`;
+  `A comida subiu <span class="b-r">${comida}</span> desde ${mes}; tudo o que compramos, em média, subiu <b>${total}</b>. Mas cada prateleira subiu à sua maneira: as etiquetas dizem quanto custa hoje o que custava 1 € em 2020.`;
 
 export const mercEtiquetaHoje = (v: string) => `${v} hoje`;
-export const mercEtiquetaAntes = "1 € em 2020";
+export const mercEtiquetaAntes = "1 € em 2020";
 
 export const mercSubidaLegenda = (total: string) =>
   `tudo o que compramos (inflação geral): ${total}`;
@@ -182,7 +184,7 @@ export const mercFala4 =
   "E há uma parte de cada compra que vai para o Estado: o <b>IVA</b>. Já vem dentro do preço.";
 
 export const mercIvaTexto = (red: string, em10Red: string, inter: string, norm: string, em10Norm: string) =>
-  `O IVA tem três taxas. Os alimentos básicos da lista I do Código do IVA, como o pão, o leite, a fruta e os legumes, pagam a reduzida, ${red}: em cada 10 € ficam ${em10Red} para o Estado. As conservas e o vinho pagam a intermédia, ${inter}. Tudo o que não está nas listas do Código do IVA paga a normal, ${norm}: ${em10Norm} em cada 10 €.`;
+  `O IVA tem três taxas. Os alimentos básicos da lista I do Código do IVA, como o pão, o leite, a fruta e os legumes, pagam a reduzida, ${red}: em cada 10 € ficam ${em10Red} para o Estado. As conservas e o vinho pagam a intermédia, ${inter}. Tudo o que não está nas listas do Código do IVA paga a normal, ${norm}: ${em10Norm} em cada 10 €.`;
 
 export const mercIvaNota = (regiao: string) =>
   `* Taxa normal: o que não está nas listas I e II do Código do IVA (art. 18.º). Os exemplos são indicativos; as listas definem o enquadramento exato de cada produto. ${regiao}.`;
@@ -191,10 +193,12 @@ export const mercTalaoAria = (em10Red: string, em10Inter: string, em10Norm: stri
   `Talão de exemplo: por cada 10 euros em pão, leite e fruta e legumes, ${em10Red} são IVA; em conservas e vinho, ${em10Inter}; nos outros produtos, ${em10Norm}.`;
 
 export const mercTalaoCab = "MERCEARIA DO MANUEL";
-export const mercTalaoSub = "por cada 10,00 € que pagas em…";
+export const mercTalaoSub = "por cada 10,00 € que pagas em…";
 export const mercTalaoTotal = "TOTAL";
 export const mercTalaoIvaIncluido = "IVA incluído no preço";
 export const mercTalaoIvaTotal = "IVA total";
+export const mercBtnInflacao = "Ver a inflação por produto →";
+export const mercBtnImpostos = "Ver o IVA no cabaz →";
 
 /* ————— Fábrica · o salário da Inês ————— */
 

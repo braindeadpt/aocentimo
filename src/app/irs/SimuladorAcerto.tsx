@@ -8,14 +8,65 @@ import { mascaraFaixaRasgo, r1, sementeDe } from "@/lib/materia";
 import { useArmado } from "@/lib/useArmado";
 import { SITE_URL } from "@/lib/site";
 
-function Campo({ id, label, valor, onChange, nota }: {
-  id: string; label: string; valor: number; onChange: (v: number) => void; nota?: string;
+function parseClamp(
+  s: string,
+  min: number,
+  max: number,
+  inteiro = false
+): number {
+  const limpo = s.trim().replace(/\s+/g, "").replace(",", ".");
+  if (limpo === "") return min;
+  const n = Number(limpo);
+  if (!Number.isFinite(n)) return min;
+  const val = inteiro ? Math.round(n) : n;
+  return Math.min(max, Math.max(min, val));
+}
+
+function Campo({
+  id,
+  label,
+  valor,
+  onChange,
+  min = 0,
+  max = 100_000,
+  inteiro = false,
+  nota,
+}: {
+  id: string;
+  label: string;
+  valor: number;
+  onChange: (v: number) => void;
+  min?: number;
+  max?: number;
+  inteiro?: boolean;
+  nota?: string;
 }) {
+  const [texto, setTexto] = useState(() => String(valor).replace(".", ","));
+  const padrao = inteiro ? /^\d*$/ : /^\d*(?:[.,]\d*)?$/;
+
   return (
     <div>
       <label className="kicker block mb-1.5" htmlFor={id}>{label}</label>
-      <input id={id} type="number" min={0} step={50} value={valor}
-        onChange={(e) => onChange(Number(e.target.value) || 0)} className="field" />
+      <input
+        id={id}
+        type="text"
+        inputMode="decimal"
+        value={texto}
+        onChange={(e) => {
+          const cru = e.target.value;
+          if (cru !== "" && !padrao.test(cru.trim().replace(/\s+/g, ""))) {
+            return;
+          }
+          setTexto(cru);
+          onChange(parseClamp(cru, min, max, inteiro));
+        }}
+        onBlur={() => {
+          const final = parseClamp(texto, min, max, inteiro);
+          onChange(final);
+          setTexto(String(final).replace(".", ","));
+        }}
+        className="field"
+      />
       {nota && <p className="footnote mt-1">{nota}</p>}
     </div>
   );
@@ -32,18 +83,20 @@ export function SimuladorAcerto({ ano }: { ano: number }) {
   const [pprEntregas, setPprEntregas] = useState(0);
   const [idade, setIdade] = useState(30);
 
+  const idadeSegura = Math.min(100, Math.max(18, Math.round(idade)));
+
   const r = useMemo(
     () =>
       simularIrsAnual(bruto, dependentes, {
-        saude, educacao, rendas, lares, ivaFatura, pprEntregas, idadeTitular: idade,
+        saude, educacao, rendas, lares, ivaFatura, pprEntregas, idadeTitular: idadeSegura,
       }, ano),
-    [bruto, dependentes, saude, educacao, rendas, lares, ivaFatura, pprEntregas, idade, ano]
+    [bruto, dependentes, saude, educacao, rendas, lares, ivaFatura, pprEntregas, idadeSegura, ano]
   );
 
   // a nota reimprime-se linha a linha a cada mudança — o dl fica
   // estável, o Fragment com key remonta só as linhas (M-13 fix)
   const notaKey = [bruto, dependentes, saude, educacao, rendas, lares,
-    ivaFatura, pprEntregas, idade].map(r1).join("|");
+    ivaFatura, pprEntregas, idadeSegura].map(r1).join("|");
   const { ref: notaRef, arm: notaArm } = useArmado<HTMLDivElement>(notaKey);
   // contador de linha para a impressão escalonada — repõe-se a cada
   // render (variável simples, não ref: os hooks lint proíbem refs no render)
@@ -57,24 +110,24 @@ export function SimuladorAcerto({ ano }: { ano: number }) {
     <div className="grid md:grid-cols-2 gap-10">
       <div className="space-y-5">
         <div className="grid grid-cols-2 gap-4">
-          <Campo id="ac-bruto" label="Salário bruto mensal" valor={bruto} onChange={setBruto} />
-          <Campo id="ac-dep" label="Dependentes" valor={dependentes} onChange={setDependentes} />
+          <Campo id="ac-bruto" label="Salário bruto mensal" valor={bruto} onChange={setBruto} min={0} max={100_000} />
+          <Campo id="ac-dep" label="Dependentes" valor={dependentes} onChange={setDependentes} min={0} max={20} inteiro />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <Campo id="ac-saude" label="Despesas de saúde/ano" valor={saude} onChange={setSaude}
-            nota="15 %, até 1 000 €" />
+            min={0} max={100_000} nota="15 %, até 1 000 €" />
           <Campo id="ac-edu" label="Educação/ano" valor={educacao} onChange={setEducacao}
-            nota="30 %, até 800 €" />
+            min={0} max={100_000} nota="30 %, até 800 €" />
           <Campo id="ac-rendas" label="Rendas HPP/ano" valor={rendas} onChange={setRendas}
-            nota="15 %, até 900 € em 2026" />
+            min={0} max={100_000} nota="15 %, até 900 € em 2026" />
           <Campo id="ac-lares" label="Lares e apoio/ano" valor={lares} onChange={setLares}
-            nota="25 %, até 403,75 €" />
+            min={0} max={100_000} nota="25 %, até 403,75 €" />
           <Campo id="ac-iva" label="IVA das faturas (apurado)" valor={ivaFatura} onChange={setIvaFatura}
-            nota="o valor que o e-Fatura já apurou, até 250 €" />
-          <div className="grid grid-cols-2 gap-2">
+            min={0} max={10_000} nota="o valor que o e-Fatura já apurou, até 250 €" />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-2">
             <Campo id="ac-ppr" label="Entregas PPR/ano" valor={pprEntregas} onChange={setPprEntregas}
-              nota={`20 %, até ${fmtEUR0(limitePpr(idade))}`} />
-            <Campo id="ac-idade" label="Idade" valor={idade} onChange={setIdade} />
+              min={0} max={100_000} nota={`20 %, até ${fmtEUR0(limitePpr(idadeSegura))}`} />
+            <Campo id="ac-idade" label="Idade" valor={idadeSegura} onChange={setIdade} min={18} max={100} inteiro />
           </div>
         </div>
         <p className="footnote">

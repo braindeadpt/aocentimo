@@ -6,6 +6,7 @@ import { retencaoNaFonte } from "@/lib/engines/retencao";
 import { BarraTracos } from "@/components/BarraTracos";
 import { Regua } from "@/components/Regua";
 import { fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
+import { lerInt, useLeituraUrl } from "@/lib/url-state";
 
 /**
  * IRS Jovem (3A-02): os dez anos do regime como barra de traços —
@@ -93,6 +94,13 @@ export function SimuladorIrsJovem({
 }) {
   const [bruto, setBruto] = useState(regua.inicial);
   const [anoGozo, setAnoGozo] = useState(1);
+
+  useLeituraUrl((sp) => {
+    const j = lerInt(sp.get("jovem"), 1, 10);
+    if (j !== undefined) setAnoGozo(j);
+    const bJ = lerInt(sp.get("brutoJovem"), regua.min, regua.max);
+    if (bJ !== undefined) setBruto(bJ);
+  });
 
   const r = useMemo(
     () => simularIrsJovem(bruto * 14, anoGozo, ano),

@@ -2,7 +2,7 @@
   "ano": 2026,
   "vigencia": "2026-01-01",
   "fonte": "Ofício Circulado n.º 40129/2026, de 6 de janeiro (AT) — tabelas práticas IMT 2026; art. 17.º CIMT, redação da Lei n.º 73-A/2025 (OE2026)",
-  "fonteUrl": "https://apcmc.pt/legislacao/imt-tabelas-praticas-em-vigor-2026/",
+  "fonteUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cimt/Pages/cimt17.aspx",
   "nota": "IMT = valor × taxa − parcela a abater (incide sobre o maior de preço ou VPT). Continente; Açores e Madeira têm tabelas IV–VI próprias.",
   "hpp": [
     { "ate": 106346, "taxa": 0, "parcelaAbater": 0 },

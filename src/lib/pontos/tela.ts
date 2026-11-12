@@ -131,8 +131,13 @@ export class CampoTela {
   private W = 0;
   private H = 0;
   private dpr = 1;
-  private visivel = true;
+  private emVista = true;
+  private separadorVisivel = true;
   private raf = 0;
+
+  private get visivel(): boolean {
+    return this.emVista && this.separadorVisivel;
+  }
   private ultimo = 0;
   private relogio = 0;
   private theta = 0;
@@ -205,19 +210,31 @@ export class CampoTela {
     // — observadores: tamanho, visibilidade, separador, tema, fontes —
     this.ro = new ResizeObserver(() => this.medir());
     this.ro.observe(palco);
+    this.separadorVisivel = !document.hidden;
     if (typeof IntersectionObserver !== "undefined") {
       this.io = new IntersectionObserver(
-        (e) => {
-          this.visivel = e[0].isIntersecting && !document.hidden;
-          if (this.visivel) this.pedir();
+        (entradas) => {
+          const ultima = entradas[entradas.length - 1];
+          if (ultima) this.emVista = ultima.isIntersecting;
+          if (this.visivel) {
+            this.pedir();
+          } else if (this.raf) {
+            cancelAnimationFrame(this.raf);
+            this.raf = 0;
+          }
         },
         { threshold: 0.05 }
       );
       this.io.observe(palco);
     }
     const onVis = () => {
-      this.visivel = !document.hidden;
-      if (this.visivel) this.pedir();
+      this.separadorVisivel = !document.hidden;
+      if (this.visivel) {
+        this.pedir();
+      } else if (this.raf) {
+        cancelAnimationFrame(this.raf);
+        this.raf = 0;
+      }
     };
     document.addEventListener("visibilitychange", onVis);
     this.limpa.push(() => document.removeEventListener("visibilitychange", onVis));

@@ -238,4 +238,56 @@ export const DEMOS: Record<string, Demo> = {
     ],
     alt: "O salário nominal sobe 5 %, mas com inflação de 8 % o real desce 3 %",
   },
+  /* PROPOSTA (revisão do dono) — micro-demos adicionadas no T12 */
+  homologo: {
+    tipo: "barras",
+    barras: [
+      { rotulo: "em cadeia · mês anterior · −0,2\u202f%", pct: 25 },
+      { rotulo: "homóloga · 12 meses · +2,5\u202f%", pct: 75, cor: "acento" },
+    ],
+    alt: "A variação em cadeia compara com o mês anterior; a homóloga compara com o mesmo mês do ano passado",
+  },
+  "taxa-esforco": {
+    tipo: "pilha",
+    pilha: [
+      { rotulo: "prestações créditos · 35\u202f%", pct: 35, cor: "aviso" },
+      { rotulo: "rendimento livre · 65\u202f%", pct: 65 },
+    ],
+    total: "teto BdP 50\u202f%",
+    alt: "A taxa de esforço mede a fatia do rendimento líquido gasta em créditos: 35\u202f% gasta e 65\u202f% livre, dentro do limite de 50\u202f%",
+  },
+  duodecimos: {
+    tipo: "barras",
+    barras: [
+      { rotulo: "14 meses · 1\u202f200\u202f€/mês", pct: 70 },
+      { rotulo: "duodécimos a 50\u202f% · 1\u202f300\u202f€/mês", pct: 85, cor: "acento" },
+    ],
+    alt: "Com duodécimos o salário mensal sobe porque adianta fatias dos subsídios de férias e de Natal ao longo do ano",
+  },
+  ias: {
+    tipo: "barras",
+    barras: [
+      { rotulo: "1× IAS · 537,13\u202f€", pct: 40 },
+      { rotulo: "teto desemprego · 2,5× IAS · 1\u202f342,83\u202f€", pct: 100, cor: "acento" },
+    ],
+    alt: "O IAS fixa a bitola base de 537,13 euros e multiplica-se para calcular limites de apoios como o subsídio de desemprego",
+  },
+  "irs-jovem": {
+    tipo: "passos",
+    passos: [
+      { rotulo: "ano 1 · 100\u202f%", pct: 100, cor: "acento" },
+      { rotulo: "anos 2–4 · 75\u202f%", pct: 75 },
+      { rotulo: "anos 5–7 · 50\u202f%", pct: 50 },
+      { rotulo: "anos 8–10 · 25\u202f%", pct: 25 },
+    ],
+    alt: "A isenção do IRS Jovem desce em degraus: 100\u202f% no 1.º ano, 75\u202f%, 50\u202f% e 25\u202f% até ao 10.º ano",
+  },
+  imt: {
+    tipo: "barras",
+    barras: [
+      { rotulo: "tabela geral · ~3\u202f509\u202f€", pct: 75, cor: "aviso" },
+      { rotulo: "IMT Jovem · 0\u202f€", pct: 0, cor: "acento" },
+    ],
+    alt: "Numa casa de 200\u202f000 euros, o IMT geral custa cerca de 3\u202f509 euros e com IMT Jovem fica a zero",
+  },
 };

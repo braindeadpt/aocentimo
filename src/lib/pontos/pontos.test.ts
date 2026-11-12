@@ -1,5 +1,6 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { repartir } from "./repartir";
+import { CampoTela } from "./tela";
 import {
   faceMoeda,
   geoMontes,
@@ -195,5 +196,135 @@ describe("mola", () => {
     expect(molaAssentou(c)).toBe(true);
     expect(c.x).toBeCloseTo(100, 0);
     expect(c.y).toBeCloseTo(-50, 0);
+  });
+});
+
+describe("CampoTela — pausa fora do ecrã e visibilitychange", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("não reactiva requestAnimationFrame ao mudar de separador quando fora do ecrã", () => {
+    let ioCallback: ((entries: Array<{ isIntersecting: boolean }>) => void) | null = null;
+    const listeners = new Map<string, Set<() => void>>();
+    let hidden = false;
+    let rafId = 0;
+    const rafPendentes = new Set<number>();
+    let pedidosRaf = 0;
+
+    vi.stubGlobal("window", {
+      devicePixelRatio: 1,
+      matchMedia: () => ({
+        matches: false,
+        addEventListener: () => {},
+        removeEventListener: () => {},
+      }),
+    });
+    vi.stubGlobal("document", {
+      get hidden() {
+        return hidden;
+      },
+      documentElement: {},
+      addEventListener(ev: string, fn: () => void) {
+        if (!listeners.has(ev)) listeners.set(ev, new Set());
+        listeners.get(ev)!.add(fn);
+      },
+      removeEventListener(ev: string, fn: () => void) {
+        listeners.get(ev)?.delete(fn);
+      },
+    });
+    vi.stubGlobal("getComputedStyle", () => ({
+      getPropertyValue: () => "",
+    }));
+    vi.stubGlobal(
+      "ResizeObserver",
+      class {
+        observe() {}
+        disconnect() {}
+      }
+    );
+    vi.stubGlobal(
+      "MutationObserver",
+      class {
+        observe() {}
+        disconnect() {}
+      }
+    );
+    vi.stubGlobal(
+      "IntersectionObserver",
+      class {
+        constructor(cb: (entries: Array<{ isIntersecting: boolean }>) => void) {
+          ioCallback = cb;
+        }
+        observe() {}
+        disconnect() {}
+      }
+    );
+    vi.stubGlobal("requestAnimationFrame", () => {
+      pedidosRaf++;
+      const id = ++rafId;
+      rafPendentes.add(id);
+      return id;
+    });
+    vi.stubGlobal("cancelAnimationFrame", (id: number) => {
+      rafPendentes.delete(id);
+    });
+
+    const noop = () => {};
+    const ctxStub = {
+      setTransform: noop,
+      clearRect: noop,
+      save: noop,
+      restore: noop,
+      beginPath: noop,
+      closePath: noop,
+      arc: noop,
+      ellipse: noop,
+      fill: noop,
+      stroke: noop,
+      clip: noop,
+      moveTo: noop,
+      lineTo: noop,
+      translate: noop,
+      scale: noop,
+      transform: noop,
+      fillText: noop,
+      createLinearGradient: () => ({ addColorStop: noop }),
+    };
+    const canvas = {
+      width: 0,
+      height: 0,
+      getContext: () => ctxStub,
+    } as unknown as HTMLCanvasElement;
+    const palco = {
+      getBoundingClientRect: () => ({ width: 300, height: 200 }),
+    } as unknown as HTMLElement;
+
+    const campo = new CampoTela(canvas, palco, { layout: "moeda" });
+    expect(pedidosRaf).toBe(1);
+    expect(rafPendentes.size).toBe(1);
+
+    // Sai do ecrã: IntersectionObserver notifica isIntersecting = false
+    ioCallback!([{ isIntersecting: false }]);
+    expect(rafPendentes.size).toBe(0);
+    const antesTrocaSeparador = pedidosRaf;
+
+    // Utilizador sai e volta ao separador enquanto o elemento continua fora de vista
+    hidden = true;
+    listeners.get("visibilitychange")?.forEach((fn) => fn());
+    hidden = false;
+    listeners.get("visibilitychange")?.forEach((fn) => fn());
+
+    // Zero novos pedidos de rAF enquanto emVista === false
+    expect(pedidosRaf).toBe(antesTrocaSeparador);
+    expect(rafPendentes.size).toBe(0);
+
+    // Volta a entrar em vista com o separador visível → retoma rAF
+    ioCallback!([{ isIntersecting: true }]);
+    expect(pedidosRaf).toBe(antesTrocaSeparador + 1);
+    expect(rafPendentes.size).toBe(1);
+
+    campo.destruir();
+    expect(rafPendentes.size).toBe(0);
   });
 });

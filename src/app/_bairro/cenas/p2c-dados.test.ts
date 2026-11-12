@@ -107,8 +107,9 @@ describe("Quiosque — Jornal do Bairro", () => {
     expect(D.confianca).toEqual(confJson.series.at(-1));
   });
 
-  it("o salário mínimo vem de smn.json e o de 2015 é o ponto com esse ano", () => {
+  it("o salário mínimo vem de smn.json, com o ano da vigência, e o de 2015 é o ponto com esse ano", () => {
     expect(D.smn).toBe(smnJson.regioes.continente);
+    expect(D.smnAno).toBe(smnJson.vigencia.slice(0, 4));
     const p2015 = smnJson.serie.find((p) => p.ano === 2015)!;
     expect(D.smn0).toEqual({ ano: 2015, valor: p2015.valor });
   });
@@ -134,5 +135,16 @@ describe("Escola — minis do protótipo", () => {
     expect(D.subidaComida).toBeCloseTo(s.at(-1)!.v / s[0].v - 1, 10);
     const t = hicpCp00.series.filter((p) => p.t >= DESDE);
     expect(D.varHomologa).toBeCloseTo(t.at(-1)!.v / t.at(-13)!.v - 1, 10);
+  });
+
+  it("a terceira lição liga os 6 termos do glossário incluindo homologo", () => {
+    expect(D.gloss.map((g) => g.slug)).toEqual([
+      "ipc-ihpc",
+      "homologo",
+      "taxa-real",
+      "escalao-irs",
+      "spread",
+      "tsu",
+    ]);
   });
 });

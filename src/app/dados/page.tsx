@@ -19,13 +19,14 @@ import {
   variacao,
   type Serie,
 } from "@/lib/data";
-import { comUnidade, fmtData, fmtNum, fmtPct, fmtPeriodo } from "@/lib/format";
+import { FINO, comUnidade, fmtData, fmtNum, fmtPct, fmtPeriodo } from "@/lib/format";
 import { estadoDe } from "@/lib/leitura";
 import { cartoesDados, opcoesJanela, ROTULO_JANELA } from "@/lib/paineis";
 import { m } from "@/lib/messages";
 import usura from "@data/fiscal/usura-2026.json";
 import calendario from "@data/fiscal/calendario-2026.json";
 import eventos from "@data/fiscal/eventos.json";
+import servicosMinimos from "@data/fiscal/servicos-minimos.json";
 
 export const metadata: Metadata = metaDeRota("/dados");
 
@@ -104,9 +105,10 @@ export default function DadosPage() {
   // ————— nível 1: quatro números do país, cada um com o orbe —————
   const inflVar = ipc ? variacao(ipc, 12) : null;
   const eur12 = ultimo(euribor["12M"]);
+  // PROPOSTA (T06): frase de nível 1 encurtada para ≤ 25 palavras (revisão do dono)
   const fraseResposta =
     inflVar !== null && eur12
-      ? `A inflação está em ${fmtPct(inflVar, 1)} e a Euribor a 12 meses em ${comUnidade(fmtNum(eur12.v, 2), "%")} — a taxa a que os bancos emprestam dinheiro entre si. Cada número com fonte e data.`
+      ? `A inflação está em ${fmtPct(inflVar, 1)} e a Euribor a 12 meses em ${comUnidade(fmtNum(eur12.v, 2), "%")} — cada número oficial com fonte e data.`
       : "Os números do país, direto das fontes oficiais — cada um com a sua data e o selo de frescura.";
 
   // ————— o ano fiscal em anel (catálogo: ciclos = pontos) —————
@@ -245,7 +247,7 @@ export default function DadosPage() {
                   valor={caBase ? fmtPct(caBase.meta.oficialPct / 100, 3) : "—"}
                   meta={
                     caBase
-                      ? `oficial · ${caBase.meta.vigenciaOficial}`
+                      ? `oficial · ${fmtPeriodo(caBase.meta.vigenciaOficial)}`
                       : "série não recolhida"
                   }
                 />
@@ -313,11 +315,10 @@ export default function DadosPage() {
               <Source nome={calendario.fonte} url={calendario.fonteUrl} vigencia={calendario.vigencia} />
             </div>
 
-            {/* o painel honesto — o que ainda não conseguimos tem o
-                mesmo peso das leituras que correram bem */}
+            {/* o painel honesto — o que ainda não conseguimos e o que a lei já fixa */}
             <div className="mt-10">
-              <p className="kicker mb-3">O que ainda não conseguimos</p>
-              <div className="border border-line bg-panel px-5 py-6 text-corpo-sm text-ink2 space-y-3">
+              <p className="kicker mb-3">O que ainda não conseguimos — e o que a lei já fixa</p>
+              <div className="border border-line bg-panel px-5 py-6 text-corpo-sm text-ink2 space-y-4">
                 <p>
                   O Banco de Portugal publica diariamente o comparador de
                   comissões de ~200 instituições, mas só dentro da aplicação
@@ -333,21 +334,78 @@ export default function DadosPage() {
                     Comparador de comissões oficial →
                   </a>
                 </p>
+                <div className="border-t border-line/60 pt-3 space-y-2">
+                  <p className="font-medium text-ink">
+                    O que a lei já fixa: a Conta de Serviços Mínimos Bancários
+                  </p>
+                  <p>
+                    {/* PROPOSTA (revisão do dono) */}
+                    Embora as comissões de mercado sejam livres, a lei fixa um tecto
+                    máximo de 1{FINO}% do IAS ({comUnidade(fmtNum(servicosMinimos.tectoComissaoAnual.tectoAnualEuros, 2), "€/ano")} em {servicosMinimos.tectoComissaoAnual.indexanteApoiosSociais.ano})
+                    para a Conta de Serviços Mínimos Bancários. Inclui manutenção de conta,
+                    cartão de débito, homebanking, 5 transferências mensais MB{FINO}Way (até 30{FINO}€ cada)
+                    e 48 transferências interbancárias por ano (DL n.º 27-C/2000 e Lei n.º 24/2023).
+                  </p>
+                </div>
                 <p className="footnote">
-                  Quando o BdP estabilizar um acesso público, este painel
+                  Quando o BdP estabilizar um acesso público às comissões comerciais, este painel
                   passa a ter os números aqui. Até lá: nenhum número
                   inventado.
                 </p>
               </div>
-              <Source
-                nome="Banco de Portugal, Portal do Cliente Bancário"
-                url="https://clientebancario.bportugal.pt/pt-pt/aplicacao/comparador-de-comissoes"
-              />
+              <div className="space-y-2 mt-2">
+                <Source
+                  nome="Banco de Portugal, Portal do Cliente Bancário"
+                  url="https://clientebancario.bportugal.pt/pt-pt/aplicacao/comparador-de-comissoes"
+                />
+                <Source
+                  nome="Serviços Mínimos Bancários — DL n.º 27-C/2000 (alterado pela Lei n.º 24/2023)"
+                  url={servicosMinimos.fonteUrl}
+                  vigencia={servicosMinimos.vigencia}
+                />
+              </div>
             </div>
           </>
         }
         confirma={
           <>
+            <PaginaDetalhe rotulo={`Serviços Mínimos Bancários — o tecto legal de ${comUnidade(fmtNum(servicosMinimos.tectoComissaoAnual.tectoAnualEuros, 2), "€/ano")} (DL 27-C/2000)`}>
+              <div className="body-copy max-w-2xl space-y-4">
+                <p>
+                  {/* PROPOSTA (revisão do dono) */}
+                  Qualquer pessoa singular que não seja titular de outra conta de depósito à ordem
+                  em Portugal pode abrir ou converter gratuitamente a sua conta em Serviços Mínimos Bancários.
+                  As instituições de crédito não podem cobrar mais de 1{FINO}% do IAS por ano
+                  ({comUnidade(fmtNum(servicosMinimos.tectoComissaoAnual.tectoAnualEuros, 2), "€/ano")} em {servicosMinimos.tectoComissaoAnual.indexanteApoiosSociais.ano}).
+                </p>
+                <div className="space-y-2">
+                  <p className="font-medium text-ink">
+                    Serviços e operações incluídos no tecto legal:
+                  </p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    {servicosMinimos.servicosIncluidos.map((s, idx) => (
+                      <li key={idx}>{s}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="space-y-2">
+                  <p className="font-medium text-ink">
+                    Transferências incluídas sem encargo adicional:
+                  </p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    {servicosMinimos.transferenciasIncluidasNoTecto.map((t, idx) => (
+                      <li key={idx}>{t.replace(/(\d)\s+(€|%)/g, `$1${FINO}$2`)}</li>
+                    ))}
+                  </ul>
+                </div>
+                <Source
+                  nome="Decreto-Lei n.º 27-C/2000 (versão consolidada) · Lei n.º 24/2023"
+                  url={servicosMinimos.fonteUrl}
+                  vigencia={servicosMinimos.vigencia}
+                />
+              </div>
+            </PaginaDetalhe>
+
             <PaginaDetalhe rotulo="Euribor — as quatro médias mensais">
               {temEuribor ? (
                 <>
@@ -367,6 +425,7 @@ export default function DadosPage() {
                         ? "atrasada"
                         : "em-dia"
                     }
+                    rotulos={m.chart}
                   />
                   <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-px bg-line border border-line">
                     {(Object.keys(euribor) as (keyof typeof euribor)[]).map((k) => {
@@ -449,7 +508,7 @@ export default function DadosPage() {
                             <span className="absolute inset-y-0 right-0 w-px bg-ink" />
                           </span>
                           <span className="num text-rotulo text-muted">
-                            {fmtNum(cap - p.v, 1)} pp p/ teto
+                            {comUnidade(fmtNum(cap - p.v, 1), "p.p.")} p/ teto
                           </span>
                         </div>
                       ) : (
@@ -503,8 +562,8 @@ export default function DadosPage() {
                                   />
                                   <span className="absolute inset-y-0 right-0 w-px bg-ink" />
                                 </span>
-                                <span className="num w-14 text-right text-rotulo text-muted">
-                                  {fmtNum(cap - p.v, 1)} pp
+                                <span className="num w-16 text-right text-rotulo text-muted">
+                                  {comUnidade(fmtNum(cap - p.v, 1), "p.p.")}
                                 </span>
                               </div>
                             ) : (
@@ -535,14 +594,14 @@ export default function DadosPage() {
               {caBase ? (
                 <div className="grid md:grid-cols-2 gap-px bg-line border border-line">
                   <div className="bg-panel px-5 py-5">
-                    <p className="kicker">Oficial IGCP — {caBase.meta.vigenciaOficial}</p>
+                    <p className="kicker">Oficial IGCP — {fmtPeriodo(caBase.meta.vigenciaOficial)}</p>
                     <p className="num-read mt-1">{fmtPct(caBase.meta.oficialPct / 100, 3)}</p>
                     <p className="footnote mt-2">
                       Média da Euribor 3M nos 10 dias úteis anteriores, limitada a 2,50&#8239;% — a que conta para os juros.
                     </p>
                   </div>
                   <div className="bg-panel px-5 py-5">
-                    <p className="kicker">Indicativa — média mensal {caBase.meta.serieAte}</p>
+                    <p className="kicker">Indicativa — média mensal {fmtPeriodo(caBase.meta.serieAte)}</p>
                     <p className="num-read mt-1">
                       {fmtPct(caBase.series[caBase.series.length - 1].v / 100, 3)}
                     </p>

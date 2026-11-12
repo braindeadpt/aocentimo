@@ -8,9 +8,11 @@ import { NumHero } from "@/components/NumHero";
 import { SITE_URL } from "@/lib/site";
 import { useArmado } from "@/lib/useArmado";
 import { mascaraFaixaRasgo, sementeDe } from "@/lib/materia";
+import type { RegrasPmePuro } from "@/lib/engines/pme-puro";
 import { fmtEUR } from "@/lib/format";
 import { useTrabalho } from "./contexto";
 import { SimuladorIndependente } from "./SimuladorIndependente";
+import { SimuladorPme } from "./SimuladorPme";
 
 /**
  * Nível 2 de /trabalho (3A-03) — «Explora»: os controlos físicos do
@@ -48,7 +50,7 @@ function Contador({
   const move = (d: number) =>
     onChange(Math.min(max, Math.max(min, valor + d)));
   const btn =
-    "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-controlo border border-line2 bg-panel font-mono text-corpo text-ink2 transition-colors hover:text-ink disabled:opacity-40 disabled:hover:text-ink2";
+    "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-controlo border border-line2 bg-panel font-mono text-corpo text-ink2 transition-colors hover:text-ink disabled:opacity-40 disabled:hover:text-ink2";
   return (
     <div role="group" aria-labelledby={`${id}-rot`}>
       <span id={`${id}-rot`} className="kicker mb-1.5 block">
@@ -92,7 +94,7 @@ function ControlosDesemprego() {
   const s = useTrabalho();
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Contador
           id="idade"
           rotulo="A tua idade"
@@ -326,8 +328,14 @@ function MesesSubsidio() {
 }
 
 /** a grelha do nível 2: controlos à esquerda, a declaração a provar
-    à direita; por baixo os meses em traços e os recibos verdes */
-export function ExploraTrabalho({ ias }: { ias: number }) {
+    à direita; por baixo os meses em traços, os recibos verdes e a PME */
+export function ExploraTrabalho({
+  ias,
+  regrasPme,
+}: {
+  ias: number;
+  regrasPme: RegrasPmePuro;
+}) {
   return (
     <div className="space-y-10">
       <div className="grid items-start gap-10 md:grid-cols-[1fr_1.2fr]">
@@ -350,6 +358,31 @@ export function ExploraTrabalho({ ias }: { ias: number }) {
           <SimuladorIndependente />
         </div>
       </Cartao>
+      {/* PROPOSTA (revisão do dono) — Perfil Sr. Manuel: Pequena Empresa (PME) */}
+      <div id="pme" className="scroll-mt-24">
+        <Cartao
+          breadcrumb={`RECIBOS VERDES OU PEQUENA EMPRESA / PME · IRC ${regrasPme.irc.ano}`}
+          fonte={{
+            rotulo: "Fontes",
+            itens: [
+              {
+                nome: "CIRC art. 87.º (Lei 64/2025)",
+                url: regrasPme.irc.fonteUrl,
+              },
+              { nome: "CIRS arts. 40.º-A e 71.º · CIVA" },
+            ],
+          }}
+        >
+          <p className="leitura-insight">
+            Recibos verdes ou pequena empresa: para onde vai o dinheiro de uma
+            PME — do IVA na caixa ao salário de gerente, IRC sobre o lucro e
+            dividendos.
+          </p>
+          <div className="mt-4">
+            <SimuladorPme regras={regrasPme} />
+          </div>
+        </Cartao>
+      </div>
     </div>
   );
 }

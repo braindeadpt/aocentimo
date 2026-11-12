@@ -12,6 +12,7 @@
  * final é o mesmo.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { fmtEUR0 as fmtEUR } from "@/lib/format";
 import type { DadosBanco } from "./dados";
 import {
@@ -26,7 +27,7 @@ import {
 } from "./banco-arte";
 import CenaDePerto from "./CenaDePerto";
 import { pctTaxa } from "./financas-arte";
-import { chamarSenha } from "./senha";
+import { chamarSenha, reporSenha } from "./senha";
 import { useGsap, virarPalheta } from "./anima";
 import { pontosDaSerie } from "./utils";
 import * as T from "./textos";
@@ -124,16 +125,16 @@ export default function CenaBanco({ D, aoFechar }: { D: DadosBanco; aoFechar: ()
   const pa = prestacaoDe(exemplo.capital, exemplo.anos, a.v, exemplo.spread);
   const pb = prestacaoDe(exemplo.capital, exemplo.anos, b.v, exemplo.spread);
   const ph = prestacaoDe(exemplo.capital, exemplo.anos, hoje.v, exemplo.spread);
-  const dif = Math.abs(palpite - pb);
+  // o palpite arranca a 1,3× da prestação do mês mais barato
+  const palpiteInicial = Math.round((pa * 1.3) / 10) * 10;
+  const palpiteEfetivo = palpite || palpiteInicial;
+  const dif = Math.abs(palpiteEfetivo - pb);
   const juizo =
-    dif <= 25 ? "Acertaste em cheio!" : dif <= 80 ? "Quase!" : palpite < pb ? "Mais do que pensavas!" : "Um pouco menos!";
+    dif <= 25 ? "Acertaste em cheio!" : dif <= 80 ? "Quase!" : palpiteEfetivo < pb ? "Mais do que pensavas!" : "Um pouco menos!";
 
   const juro1a = (exemplo.capital * (eur[kVivo].v + exemplo.spread)) / 100 / 12;
   const prK = prestacaoDe(exemplo.capital, exemplo.anos, eur[kVivo].v, exemplo.spread);
   const frJuros = Math.max(0, Math.min(1, juro1a / prK));
-  // o palpite arranca a 1,3× da prestação do mês mais barato
-  const palpiteInicial = Math.round((pa * 1.3) / 10) * 10;
-  const palpiteEfetivo = palpite || palpiteInicial;
 
   // a calculadora do tempo: no passo 3 (a viagem) e no passo 4 (hoje)
   const calc = (
@@ -296,7 +297,7 @@ export default function CenaBanco({ D, aoFechar }: { D: DadosBanco; aoFechar: ()
           <>
             {/* o gráfico fica na coluna da conversa (`.b-corpo`), como no
                 protótipo — nunca dentro do desenho */}
-            <div dangerouslySetInnerHTML={{ __html: grafico.svg }} />
+            <div dangerouslySetInnerHTML={{ __html: grafico.svg + grafico.texto }} />
             <p dangerouslySetInnerHTML={{ __html: T.banGraficoTexto(mesLongo(hoje.t), pct2(hoje.v), fmtEUR(ph)) }} />
             <p className="nota-fin">{T.banNotaGrafico}</p>
             {calc}
@@ -311,18 +312,19 @@ export default function CenaBanco({ D, aoFechar }: { D: DadosBanco; aoFechar: ()
                   setExemplo(EX);
                   setPalpite(0);
                   setKEscolhido(null);
-                  const p = arteRef.current?.querySelector("#banPainel");
-                  if (p) p.textContent = "A 040";
+                  reporSenha(arteRef.current, "#banPainel", "A 040");
                   setPasso(1);
                 }}
               >
                 {T.finBtnOutra}
               </button>
+              <Link className="b-btn" href="/credito">
+                {T.banBtnCredito}
+              </Link>
             </div>
           </>
         )}
       </div>
-      <div className="b-acoes" />
     </CenaDePerto>
   );
 }

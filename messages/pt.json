@@ -99,7 +99,7 @@
       },
       "sobre": {
         "titulo": "Sobre",
-        "descricao": "O que é o AO CÊNTIMO, porquê existe e quem o faz: um projeto pessoal, sem publicidade nem rastreamento, com o código e os dados abertos."
+        "descricao": "O que é o AO CÊNTIMO, porque existe e quem o faz: um projeto pessoal, sem publicidade nem rastreamento, com o código e os dados abertos."
       }
     }
   },
@@ -534,57 +534,76 @@
       "lead": "O mesmo trabalho, pago de maneiras diferentes: por conta de outrem, na função pública, a recibos verdes ou com empresa própria. Cada pessoa do bairro mostra um caminho diferente do dinheiro. Toca numa para a encontrares no mapa.",
       "notas": "De onde vêm os números do bairro:",
       "ola": "Olá! Sou {quem}.",
-      "emBreve": "Em breve",
-      "segueDinheiro": "vais poder seguir o meu dinheiro pelo bairro.",
       "cartas": {
         "ines": {
           "nome": "Inês",
           "papel": "Operária da fábrica",
           "perfil": "Conta de outrem · setor privado",
           "ola": "a Inês",
-          "aprende": "Porque é que {bruto} brutos viram {liquido}."
+          "aprende": "Porque é que {bruto} brutos viram {liquido}.",
+          "fala": "Porque é que {bruto} brutos viram {liquido}? Segue o meu salário desde a Fábrica ou simula o teu recibo.",
+          "cenaRotulo": "Entrar na Fábrica",
+          "rotaRotulo": "Simular o recibo →"
         },
         "diana": {
           "nome": "Diana",
           "papel": "Professora",
           "perfil": "Função pública",
           "ola": "a Diana",
-          "aprende": "Descontos diferentes para o mesmo salário."
+          "aprende": "O desconto da ADSE no recibo e os escalões do IRS.",
+          "fala": "Na função pública os escalões do IRS são os mesmos do privado e o desconto da ADSE acumula no recibo: entra nas Finanças ou simula o vencimento.",
+          "cenaRotulo": "Ver os escalões do IRS",
+          "rotaRotulo": "Simular com ADSE →"
         },
         "pedro": {
           "nome": "Pedro",
           "papel": "Freelancer",
           "perfil": "Independente · recibos verdes",
           "ola": "o Pedro",
-          "aprende": "Segurança Social trimestral e IRS da categoria B."
+          "aprende": "Segurança Social trimestral e IRS da categoria B.",
+          "fala": "A recibos verdes pago a Segurança Social do meu bolso, de três em três meses. Vê a conta ao balcão ou simula os teus recibos.",
+          "cenaRotulo": "Entrar na Seg. Social",
+          "rotaRotulo": "Simular recibos verdes →"
         },
         "manuel": {
           "nome": "Sr. Manuel",
           "papel": "Dono da mercearia",
           "perfil": "Pequeno empresário",
           "ola": "o Sr. Manuel",
-          "aprende": "O IVA que cobra, a TSU que paga, o lucro da empresa."
+          "aprende": "O IVA na caixa, o salário de gerente e o IRC da empresa.",
+          "fala": "O IVA que entra na caixa não é da mercearia e o lucro paga IRC antes de chegar ao bolso. Entra na Mercearia ou simula as contas de uma PME.",
+          "cenaRotulo": "Entrar na Mercearia",
+          "rotaRotulo": "Simular uma PME →"
         },
         "arminda": {
           "nome": "Dona Arminda",
           "papel": "Reformada",
           "perfil": "Pensão e poupança",
           "ola": "a Dona Arminda",
-          "aprende": "Quanto rende a poupança e o IRS sobre a pensão."
+          "aprende": "A retenção da pensão de reforma e o juro real da poupança.",
+          "fala": "A pensão de reforma está isenta de Segurança Social e retém IRS por tabelas próprias. Entra nos Correios ou simula a tua pensão.",
+          "cenaRotulo": "Entrar nos Correios",
+          "rotaRotulo": "Simular a pensão →"
         },
         "goncalo": {
           "nome": "Gonçalo",
           "papel": "Estudante, 16 anos",
           "perfil": "Mesada e primeiro trabalho",
           "ola": "o Gonçalo",
-          "aprende": "O primeiro recibo, o IRS Jovem, a primeira conta."
+          "aprende": "As palavras do dinheiro na Escola e o benefício do IRS Jovem.",
+          "fala": "Antes do primeiro recibo convém saber ler os números. Passa pela Escola ou vê quanto poupa o IRS Jovem.",
+          "cenaRotulo": "Entrar na Escola",
+          "rotaRotulo": "Ver o IRS Jovem →"
         },
         "rui": {
           "nome": "Rui e Marta",
           "papel": "Casal com crédito",
           "perfil": "Crédito à habitação",
           "ola": "o Rui, e esta é a Marta",
-          "aprende": "A prestação, a Euribor e quanto do salário ela come."
+          "aprende": "A prestação, a Euribor e quanto do salário ela come.",
+          "fala": "Quando a Euribor mexe, a prestação da casa mexe com ela. Entra no Banco ou simula um empréstimo.",
+          "cenaRotulo": "Entrar no Banco",
+          "rotaRotulo": "Simular a prestação →"
         }
       }
     },

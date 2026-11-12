@@ -194,37 +194,56 @@ const ORDEM_CARTAS = [
   "rui",
 ] as const;
 
+/** Os dois destinos reais de cada carta (cena por âncora + rota de aprofundamento). */
+const DESTINOS_CARTAS: Record<
+  (typeof ORDEM_CARTAS)[number],
+  { cenaId: string; rotaHref: string }
+> = {
+  ines: { cenaId: "fabrica", rotaHref: "/salario" },
+  diana: { cenaId: "financas", rotaHref: "/salario?adse=1" },
+  pedro: { cenaId: "segsocial", rotaHref: "/trabalho" },
+  manuel: { cenaId: "mercearia", rotaHref: "/trabalho#pme" },
+  arminda: { cenaId: "correios", rotaHref: "/salario?modo=pensao#pensao" },
+  goncalo: { cenaId: "escola", rotaHref: "/irs?jovem=1" },
+  rui: { cenaId: "banco", rotaHref: "/credito" },
+};
+
 /**
- * Monta as sete cartas no servidor — só texto e a chave; a figura é
+ * Monta as sete cartas no servidor — só texto e destinos; a figura é
  * desenhada no cliente pelo `pessoa(ELENCO[·])` do kit (o SVG já não
  * viaja duplicado no payload RSC). O número da Inês vem de
  * `linhaSalario()` (data/derived, via fmtEUR0): se a linha faltar sai
  * «—», nunca um número escrito à mão. O que se repete nas sete
- * (o molde do «Olá!», o «Em breve», o «Fechar») vai uma vez no
- * `comum`; o painel monta-se no cliente sem a fala viajar pronta —
- * é sempre texto de pt.json, seguro para dangerouslySetInnerHTML.
+ * (o molde do «Olá!» e o «Fechar») vai uma vez no `comum`.
  */
 function cartasDoElenco(
   ref: ReturnType<typeof linhaSalario>
 ): { cartas: CartaDados[]; comum: CartasComum } {
   const el = m.bairro.elenco;
+  const vars = {
+    bruto: fmtEUR0(ref?.bruto ?? NaN),
+    liquido: fmtEUR0(ref?.liquido ?? NaN),
+  };
   return {
-    // tuplos: [chave, nome, papel, olá, perfil, aprende] — ver CartaDados
+    // tuplos compactos — ver CartaDados em Cartas.tsx
     cartas: ORDEM_CARTAS.map((k) => {
       const c = el.cartas[k];
+      const dest = DESTINOS_CARTAS[k];
       return [
         k,
         c.nome,
         c.papel,
         c.ola,
         c.perfil,
-        t(c.aprende, {
-          bruto: fmtEUR0(ref?.bruto ?? NaN),
-          liquido: fmtEUR0(ref?.liquido ?? NaN),
-        }),
+        t(c.aprende, vars),
+        t(c.fala, vars),
+        dest.cenaId,
+        c.cenaRotulo,
+        dest.rotaHref,
+        c.rotaRotulo,
       ];
     }),
-    // [molde do Olá, emBreve, segueDinheiro, fechar] — ver CartasComum
-    comum: [el.ola, el.emBreve, el.segueDinheiro, m.bairro.breve.fechar],
+    // [molde do Olá, fechar] — ver CartasComum
+    comum: [el.ola, m.bairro.breve.fechar],
   };
 }

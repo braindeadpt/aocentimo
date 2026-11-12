@@ -140,3 +140,62 @@ test.describe("3D — /metodologia e /sobre", () => {
     ).toBeVisible();
   });
 });
+
+test.describe("T07 — /poupanca: CT Série 5, tecto 50k CA, BPstat, reforços e FGD", () => {
+  test("compara CT Série 5 (sem capitalização), aplica tecto de 50 000 € em CA Série F, liga BPstat e valida <dl>", async ({
+    page,
+  }) => {
+    await visitaLimpa(page, "/poupanca");
+
+    // 1. Série principal de Certificados do Tesouro é Série 5 (10 anos, sem capitalização)
+    await expect(
+      page.getByText(/Certificados do Tesouro Série 5/).first()
+    ).toBeVisible();
+    await expect(
+      page.getByText(/Armadilha do resgate antecipado · CT Série 5/)
+    ).toBeVisible();
+
+    // 2. Régua de Depósito a prazo traz marcador «média BPstat»
+    await expect(page.getByText(/média BPstat/)).toBeVisible();
+
+    // 3. Régua de Reforço mensal existe e reage
+    const reguaReforco = page.getByLabel("Reforço mensal");
+    await expect(reguaReforco).toBeAttached();
+
+    // 4. Nível 3 explica CT Série 5 + CTPC antigo fechado em 2021 + Garantia República vs. FGD
+    await expect(
+      page.locator("details.pg-detalhe summary", {
+        hasText: /Certificados do Tesouro Série 5/,
+      })
+    ).toBeVisible();
+    await expect(
+      page.locator("details.pg-detalhe summary", {
+        hasText: /Fundo de Garantia de Depósitos/,
+      })
+    ).toBeVisible();
+
+    // 5. Todos os <dl> em /poupanca têm filhos directos válidos (apenas <dt>, <dd> ou 1 nível de <div> com <dt>/<dd>)
+    const dlInvalidos = await page.evaluate(() => {
+      const erros: string[] = [];
+      for (const dl of document.querySelectorAll("dl")) {
+        for (const child of dl.children) {
+          const tag = child.tagName.toLowerCase();
+          if (tag === "dt" || tag === "dd") continue;
+          if (tag === "div") {
+            for (const grand of child.children) {
+              const gTag = grand.tagName.toLowerCase();
+              if (gTag !== "dt" && gTag !== "dd") {
+                erros.push(`dl > div > ${gTag}`);
+              }
+            }
+          } else {
+            erros.push(`dl > ${tag}`);
+          }
+        }
+      }
+      return erros;
+    });
+    expect(dlInvalidos).toEqual([]);
+  });
+});
+

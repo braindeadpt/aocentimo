@@ -3,9 +3,15 @@ name: deploy — GitHub Pages
 on:
   push:
     branches: [main]
+  workflow_run:
+    workflows: ["CI pós-ingestão"]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
+  contents: read
+  actions: read
   pages: write
   id-token: write
 
@@ -14,32 +20,55 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  qualidade:
-    # gate: e2e + auditorias correm ANTES do build/deploy —
-    # uma falha aqui impede a publicação
+  decidir:
+    # Em push/workflow_dispatch avança sempre. Em workflow_run ("CI pós-ingestão"),
+    # um dia sem dados novos salta o job `qualidade` mas fecha o run como
+    # `success` — verificamos na API que `qualidade` correu mesmo e passou
+    # antes de gastar minutos num redeploy idêntico.
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
+    outputs:
+      publicar: ${{ steps.gate.outputs.publicar }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Verificar se há publicação a fazer
+        id: gate
+        uses: actions/github-script@v7
         with:
-          node-version: 22
-          cache: npm
-      - uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-      - run: npm ci
-      - run: npx playwright install chromium --with-deps
-      - run: npm run test:e2e
-        # webServer do playwright faz `npm run build` e serve o out/ na 3100
-      - run: node scripts/_serve-static.mjs &
-      - run: sleep 1 && npm run audit
+          script: |
+            if (context.eventName !== "workflow_run") {
+              core.setOutput("publicar", "true");
+              return;
+            }
+            const { owner, repo } = context.repo;
+            const runId = context.payload.workflow_run?.id;
+            const { data } = await github.rest.actions.listJobsForWorkflowRun({
+              owner,
+              repo,
+              run_id: runId,
+              per_page: 50,
+            });
+            const qual = data.jobs.find((j) => j.name === "qualidade");
+            if (qual && qual.conclusion === "success") {
+              core.info("CI pós-ingestão validou commit novo (qualidade = success) — avança deploy.");
+              core.setOutput("publicar", "true");
+            } else {
+              core.info(
+                `CI pós-ingestão terminou sem executar qualidade (estado: ${qual?.conclusion ?? "ausente"}) — sem dados novos para publicar.`
+              );
+              core.setOutput("publicar", "false");
+            }
 
   build:
-    needs: qualidade
+    needs: decidir
+    if: needs.decidir.outputs.publicar == 'true'
+    # Unifica build + e2e + auditorias + og-bairro numa única máquina:
+    # o webServer do Playwright já executa `npm run build` sobre `out/`,
+    # evitando duplicar `npm ci`, instalação do Chromium e `next build`.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -50,15 +79,20 @@ jobs:
           key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
       - run: npm ci
       - run: npx playwright install chromium --with-deps
-      - run: npm run build
-      # O cartão de partilha regenera-se por deploy: os marcadores levam
-      # os valores que o deploy leva (o gasóleo muda todos os dias). Se a
-      # captura falhar, o out/ já traz o PNG commitado — avisa mas não
-      # bloqueia a publicação.
-      - run: node scripts/_serve-static.mjs &
-      - name: Cartão de partilha com os valores deste deploy
+      - run: npm run derive
+      - run: npm run test:e2e
+        # webServer do playwright faz `npm run build` e serve o out/ na 3100
+      - name: Auditorias e cartão de partilha sobre o out/ construído
         run: |
+          node scripts/_serve-static.mjs &
+          SRV=$!
+          trap "kill $SRV 2>/dev/null || true" EXIT
           sleep 1
+          npm run audit
+          # O cartão de partilha regenera-se por deploy: os marcadores levam
+          # os valores que o deploy leva (o gasóleo muda todos os dias). Se a
+          # captura falhar, o out/ já traz o PNG commitado — avisa mas não
+          # bloqueia a publicação.
           OG_SAIDA=out/og-bairro.png node scripts/_og-bairro.mjs \
             || echo "::warning::og-bairro falhou — publica-se o PNG commitado"
       - uses: actions/configure-pages@v5
@@ -75,10 +109,12 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
-      # O orçamento verificada SOBRE o que o CDN serve, já não sobre a
+      # O orçamento verificado SOBRE o que o CDN serve, já não sobre a
       # calibração local do gate: busca a home publicada e conta o gzip
       # real. Falha aqui desfaz a ilusão de «passou no build».
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22

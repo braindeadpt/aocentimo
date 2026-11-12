@@ -14,6 +14,7 @@ import {
   REGRAS_IRS,
   type FatiaEscalao,
 } from "@/lib/engines/irs";
+import { construirUrl, lerInt, useLeituraUrl } from "@/lib/url-state";
 
 /**
  * O estado do nível 1 de /irs num contexto (sessão 3A): a régua do
@@ -60,6 +61,8 @@ export interface IrsEstado {
   mito: number;
   /** taxa de solidariedade — para a nota de pé dos recipientes */
   solidariedade: { de: number; taxa: number }[];
+  /** URL limpo com o estado partilhável para o <BotaoCopiar> */
+  urlPartilha: string;
 }
 
 const Ctx = createContext<IrsEstado | null>(null);
@@ -79,6 +82,19 @@ export function ProvedorIrs({
 }) {
   const regras = REGRAS_IRS[ano];
   const [bruto, setBruto] = useState(brutoInicial);
+
+  useLeituraUrl((sp) => {
+    const bRaw = lerInt(sp.get("bruto"), regua.min, regua.max);
+    if (bRaw !== undefined) setBruto(bRaw);
+  });
+
+  const urlPartilha = useMemo(() => {
+    return construirUrl(
+      "/irs",
+      { bruto },
+      { bruto: brutoInicial }
+    );
+  }, [bruto, brutoInicial]);
 
   // bruto anual → coletável tributado: a mesma conta de /salario,
   // pelo motor (14 meses, um titular, sem dependentes)
@@ -105,6 +121,7 @@ export function ProvedorIrs({
     taxaMedia,
     mito,
     solidariedade: regras.solidariedade,
+    urlPartilha,
   };
 
   return <Ctx.Provider value={valor}>{children}</Ctx.Provider>;

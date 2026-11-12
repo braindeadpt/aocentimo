@@ -19,6 +19,13 @@ export function RespostaTrabalho() {
     <Cartao
       icone="trabalho"
       breadcrumb="O QUE GANHAS / TRABALHO · SUBSÍDIO DE DESEMPREGO"
+      acoes={[
+        {
+          copiar: s.urlPartilha,
+          rotulo: "Copiar ligação",
+          ariaLabel: "Copiar ligação desta simulação",
+        },
+      ]}
       controlos={
         <Regua
           id="bruto-d"

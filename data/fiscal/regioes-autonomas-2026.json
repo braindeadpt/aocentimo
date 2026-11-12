@@ -1,0 +1,64 @@
+{
+  "ano": 2026,
+  "vigencia": "2026-01-01",
+  "fonte": "Art. 18.º, n.º 3 do CIVA c/ Ofício Circulado n.º 25045/2024 da AT; DLR n.º 15-A/2021/A (Açores); DLR n.º 6/2024/M e DLR n.º 8/2025/M (Madeira); SFP Taxas Aplicáveis 2026 da AT",
+  "fonteUrl": "https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/legislacao/instrucoes_administrativas/Documents/Oficio_circulado_25045_2024.pdf",
+  "iva": {
+    "acores": {
+      "taxaReduzida": 0.04,
+      "taxaIntermedia": 0.09,
+      "taxaNormal": 0.16,
+      "baseLegal": "DLR n.º 15-A/2021/A, art. 47.º e Despacho n.º 194/2021-XXII c/ Ofício Circulado n.º 25045/2024 da AT",
+      "nota": "Redução em 30 % com arredondamento face às taxas nacionais de IVA (4 %, 9 % e 16 %)."
+    },
+    "madeira": {
+      "taxaReduzida": 0.04,
+      "taxaIntermedia": 0.12,
+      "taxaNormal": 0.22,
+      "baseLegal": "DLR n.º 6/2024/M, art. 21.º (taxa reduzida de 4 % em vigor desde 1 de outubro de 2024); Lei n.º 14-A/2012 (taxas intermédia de 12 % e normal de 22 %) c/ Ofício Circulado n.º 25045/2024 da AT",
+      "nota": "A taxa reduzida na Madeira foi reduzida de 5 % para 4 % com efeitos a 1 de outubro de 2024 pelo art. 21.º do DLR n.º 6/2024/M."
+    },
+    "continenteReferencia": {
+      "taxaReduzida": 0.06,
+      "taxaIntermedia": 0.13,
+      "taxaNormal": 0.23
+    }
+  },
+  "irs": {
+    "acores": {
+      "reducaoGeralEscaloesPct": 0.3,
+      "baseLegal": "Art. 4.º do DLR n.º 2/1999/A, de 20/01 na redação do art. 47.º do DLR n.º 15-A/2021/A, de 31/05",
+      "taxaSolidariedade": {
+        "de80kAte250k": 0.0175,
+        "acima250k": 0.035
+      },
+      "taxaLiberatoriaCapitais": 0.196,
+      "taxasEscaloes2026": [
+        { "ate": 8342, "taxaContinente": 0.125, "taxaAcores": 0.0875 },
+        { "ate": 12587, "taxaContinente": 0.157, "taxaAcores": 0.1099 },
+        { "ate": 17838, "taxaContinente": 0.212, "taxaAcores": 0.1484 },
+        { "ate": 23089, "taxaContinente": 0.241, "taxaAcores": 0.1687 },
+        { "ate": 29397, "taxaContinente": 0.311, "taxaAcores": 0.2177 },
+        { "ate": 43090, "taxaContinente": 0.349, "taxaAcores": 0.2443 },
+        { "ate": 46566, "taxaContinente": 0.431, "taxaAcores": 0.3017 },
+        { "ate": 86634, "taxaContinente": 0.446, "taxaAcores": 0.3122 },
+        { "ate": null, "taxaContinente": 0.48, "taxaAcores": 0.336 }
+      ],
+      "nota": "Nos Açores aplica-se uma redução de 30 % face a todas as taxas nacionais de IRS do art. 68.º do CIRS, bem como sobre a taxa de solidariedade (1,75 % e 3,50 %) e sobre as taxas liberatórias de capitais (19,60 % em vez de 28 %)."
+    },
+    "madeira": {
+      "baseLegal": "Art. 2.º do DLR n.º 3/2001/M, de 22/02 na redação do art. 18.º do DLR n.º 8/2025/M, de 30/12",
+      "taxaSolidariedade": {
+        "de80kAte250k": 0.025,
+        "acima250k": 0.05
+      },
+      "nota": "Na Região Autónoma da Madeira as taxas de IRS são adaptadas anualmente pelo Orçamento Regional (DLR n.º 8/2025/M)."
+    },
+    "retencaoFonteNota": "O Despacho n.º 233-A/2026 (ponto 2) vigora exclusivamente para residentes no Continente. As retenções mensais nas Regiões Autónomas são reguladas por despachos próprios dos Governos Regionais."
+  },
+  "imt": {
+    "coeficienteIncidencia": 1.25,
+    "baseLegal": "Lei n.º 21/90, de 4 de agosto",
+    "nota": "Os montantes de incidência da tabela do IMT na RAA e na RAM são multiplicados pelo coeficiente de 1,25 (majoração de 25 % nos limiares de isenção e escalões face ao continente)."
+  }
+}

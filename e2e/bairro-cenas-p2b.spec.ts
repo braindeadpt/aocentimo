@@ -47,17 +47,21 @@ async function percorre(page: Page, id: string) {
     await expect(page.locator(".b-corpo .b-calc")).toBeVisible();
     await entra(/aprender a ler o gráfico/i); // 4 → 5
     await expect(page.locator(".b-corpo .grafico-irs")).toBeVisible();
+    await expect(page.locator(".b-corpo dl.b-sr")).toBeAttached();
     await expect(page.locator('.b-cena a[href="/poupanca"]')).toBeVisible();
   } else if (id === "bomba") {
     await entra(/atestar e ver a resposta/i); // 1 → 2
     await entra(/aprender a ler o gráfico/i); // 2 → 3
     await expect(page.locator(".b-corpo .grafico-irs")).toBeVisible();
+    await expect(page.locator(".b-corpo dl.b-sr")).toBeAttached();
     await expect(page.locator('.b-cena a[href="/precos"]')).toBeVisible();
+    await expect(page.locator('.b-cena a[href="/impostos"]')).toBeVisible();
   } else {
     await entra(/chamar a senha/i); // 1 → 2
     await entra(/mostrar a resposta/i); // 2 → 3
     await entra(/recibos verdes/i); // 3 → 4
     await expect(page.locator(".b-barras-quem")).toBeVisible();
+    await expect(page.locator('.b-cena a[href="/trabalho"]')).toBeVisible();
     await expect(page.locator('.b-cena a[href="/salario"]')).toBeVisible();
   }
 }

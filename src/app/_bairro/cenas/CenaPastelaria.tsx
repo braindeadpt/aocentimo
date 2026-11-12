@@ -16,6 +16,7 @@
  * reduced-motion o preço final aparece escrito e nenhum chunk é pedido.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { graficoLinhas, rebase } from "@/lib/viz/grafico-linhas";
 import { fmtEUR, fmtPct } from "@/lib/format";
 import type { DadosPastelaria } from "./dados-p2c";
@@ -100,8 +101,12 @@ export default function CenaPastelaria({
   useEffect(() => {
     const raiz = arteRef.current?.closest(".b-cena");
     const el = raiz?.querySelector("#pastHoje");
-    if (!raiz || !el || passo < 2 || hoje === null) return;
     const gen = ++geracao.current;
+    if (!raiz || !el) return;
+    if (passo < 2 || hoje === null) {
+      el.textContent = T.pastQuadroHoje("?");
+      return;
+    }
     let morto = false;
     let tween: { kill?: () => void } | null = null;
     (async () => {
@@ -199,10 +204,7 @@ export default function CenaPastelaria({
               }}
             />
             {grafico && (
-              <>
-                <div dangerouslySetInnerHTML={{ __html: grafico.svg }} />
-                <div dangerouslySetInnerHTML={{ __html: grafico.texto }} />
-              </>
+              <div dangerouslySetInnerHTML={{ __html: grafico.svg + grafico.texto }} />
             )}
             <p className="nota-fin">{T.pastNotaIndice}</p>
           </>
@@ -250,9 +252,9 @@ export default function CenaPastelaria({
             >
               {T.pastBtnOutra}
             </button>
-            <a className="b-btn" href="/inflacao">
+            <Link className="b-btn" href="/inflacao">
               {T.pastLinkInflacao}
-            </a>
+            </Link>
           </>
         )}
       </div>

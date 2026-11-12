@@ -189,7 +189,14 @@ async function roda(p, caixa) {
         let lido = null;
         const id = setInterval(() => {
           janela.dispatchEvent(
-            new WheelEvent("wheel", { deltaY: k % 2 ? 120 : -120, clientX: x, clientY: y, bubbles: true, cancelable: true })
+            new WheelEvent("wheel", {
+              deltaY: k % 2 ? 120 : -120,
+              ctrlKey: true,
+              clientX: x,
+              clientY: y,
+              bubbles: true,
+              cancelable: true,
+            })
           );
           k += 1;
           if (k === 10) lido = (0, eval)(gesto);
@@ -261,6 +268,7 @@ for (const rota of rotas) {
   let fluidez = null;
   const janela = await p.$(".b-janela");
   if (janela) {
+    await janela.scrollIntoViewIfNeeded();
     const caixa = await janela.boundingBox();
     if (caixa) {
       const registador = p.evaluate(REGISTADOR(3000));

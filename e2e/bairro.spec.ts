@@ -526,3 +526,138 @@ test.describe("o bairro — a geometria do enquadramento inicial (P1, acabamento
   }
 
 });
+
+test.describe("o bairro — scroll, roda, diálogos e notas (T03)", () => {
+  test("a roda sem Ctrl não prende o scroll e mostra aviso; com Ctrl aproxima", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    await page.locator('.b-mundo[data-vivo="1"]').waitFor({ state: "attached" });
+
+    const mundo = page.locator(".b-mundo");
+    const escala = async () => {
+      const t = await mundo.evaluate((el) => getComputedStyle(el).transform);
+      return Number(/matrix\(([\d.]+)/.exec(t)?.[1] ?? "0");
+    };
+    const antes = await escala();
+
+    const semCtrl = await page.evaluate(() => {
+      const j = document.querySelector(".b-janela")!;
+      const r = j.getBoundingClientRect();
+      const ev = new WheelEvent("wheel", {
+        deltaY: -120,
+        ctrlKey: false,
+        metaKey: false,
+        clientX: r.left + r.width / 2,
+        clientY: r.top + r.height / 2,
+        bubbles: true,
+        cancelable: true,
+      });
+      j.dispatchEvent(ev);
+      return ev.defaultPrevented;
+    });
+    expect(semCtrl, "roda sem Ctrl chamou preventDefault()").toBe(false);
+    expect(await escala()).toBeCloseTo(antes, 5);
+    await expect(page.locator(".b-aviso-roda")).toHaveClass(/b-on/);
+
+    const comCtrl = await page.evaluate(() => {
+      const j = document.querySelector(".b-janela")!;
+      const r = j.getBoundingClientRect();
+      const ev = new WheelEvent("wheel", {
+        deltaY: -120,
+        ctrlKey: true,
+        clientX: r.left + r.width / 2,
+        clientY: r.top + r.height / 2,
+        bubbles: true,
+        cancelable: true,
+      });
+      j.dispatchEvent(ev);
+      return ev.defaultPrevented;
+    });
+    expect(comCtrl, "roda com Ctrl não fez zoom").toBe(true);
+    expect(await escala()).toBeGreaterThan(antes);
+  });
+
+  test("no telemóvel permite scroll vertical à escala inicial e passa a pan livre quando ampliado", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+    await page.locator('.b-mundo[data-vivo="1"]').waitFor({ state: "attached" });
+
+    const janela = page.locator(".b-janela");
+    await expect(janela).not.toHaveClass(/b-ampliado/);
+    expect(await janela.evaluate((el) => getComputedStyle(el).touchAction)).toBe("pan-y");
+
+    await page.getByRole("button", { name: "Aproximar" }).click();
+    await expect(janela).toHaveClass(/b-ampliado/);
+    expect(await janela.evaluate((el) => getComputedStyle(el).touchAction)).toBe("none");
+
+    await page.getByRole("button", { name: "Ver o bairro todo" }).click();
+    await expect
+      .poll(async () => (await janela.getAttribute("data-camara")) === "pousada")
+      .toBe(true);
+    await expect(janela).not.toHaveClass(/b-ampliado/);
+    expect(await janela.evaluate((el) => getComputedStyle(el).touchAction)).toBe("pan-y");
+  });
+
+  test("diálogos mutuamente exclusivos e .b-ativo limpo ao fechar cena ou voltar", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    await page.locator('.b-mundo[data-vivo="1"]').waitFor({ state: "attached" });
+
+    await page.locator('.b-cartas .b-carta[data-k="ines"]').click();
+    await expect(page.locator(".b-painel")).toBeVisible();
+
+    const financas = page.locator('.b-mundo .ed[data-id="financas"]');
+    await financas.focus();
+    await expect(financas).toBeFocused();
+    await financas.press("Enter");
+
+    await expect(page.locator(".b-cena")).toBeVisible();
+    await expect(page.locator(".b-painel")).toBeHidden();
+    await expect(financas).toHaveClass(/b-ativo/);
+
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".b-cena")).toBeHidden();
+    await expect(page.locator(".b-mundo .ed.b-ativo")).toHaveCount(0);
+
+    // Também via hashchange + popstate (Voltar do browser)
+    await page.locator('.b-cartas .b-carta[data-k="pedro"]').click();
+    await expect(page.locator(".b-painel")).toBeVisible();
+    await page.evaluate(() => {
+      window.location.hash = "#banco";
+    });
+    await expect(page.locator(".b-cena")).toBeVisible();
+    await expect(page.locator(".b-painel")).toBeHidden();
+    await expect(page.locator('.b-mundo .ed[data-id="banco"]')).toHaveClass(/b-ativo/);
+
+    await page.goBack();
+    await expect(page.locator(".b-cena")).toBeHidden();
+    await expect(page.locator(".b-mundo .ed.b-ativo")).toHaveCount(0);
+  });
+
+  test("edifício focado por teclado mostra anel de foco visível e .b-notas não tem ISO cru", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    await page.locator('.b-mundo[data-vivo="1"]').waitFor({ state: "attached" });
+
+    // Foco por teclado (Tab) activa :focus-visible
+    for (let i = 0; i < 30; i++) {
+      await page.keyboard.press("Tab");
+      const id = await page.evaluate(
+        () => document.activeElement?.closest(".ed")?.getAttribute("data-id") ?? null
+      );
+      if (id === "fabrica") break;
+    }
+    const estilo = await page
+      .locator('.b-mundo .ed[data-id="fabrica"]')
+      .evaluate((el) => {
+        const cs = getComputedStyle(el);
+        return { style: cs.outlineStyle, width: parseFloat(cs.outlineWidth) };
+      });
+    expect(estilo.style).toBe("solid");
+    expect(estilo.width).toBeGreaterThanOrEqual(4);
+
+    const notas = await page.locator(".b-notas").innerText();
+    expect(notas).not.toMatch(/\b20\d{2}-\d{2}(?:-\d{2})?\b/);
+    expect(notas).toContain("1\u202F500\u202F€");
+  });
+});

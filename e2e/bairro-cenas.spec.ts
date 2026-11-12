@@ -111,9 +111,11 @@ test.describe("as cenas P2a — abrir, percorrer, fechar", () => {
     await expect(page.locator(".grafico-irs")).toBeVisible();
     // a cómoda mostra o degrau: a gaveta ativa saiu
     await expect(page.locator(".gaveta.ativa")).toHaveCount(1);
-    // o equivalente textual do gráfico: o aria-label com os dois números
+    // o equivalente textual do gráfico: o aria-label + dl.b-sr
     const aria = await page.locator(".grafico-irs").getAttribute("aria-label");
     expect(aria).toMatch(/degrau|taxa/i);
+    await expect(page.locator(".b-cena-texto dl.b-sr")).toBeAttached();
+    await expect(page.locator('.b-cena a[href="/irs"]')).toBeVisible();
   });
 
   test("a cena do Banco refaz a prestação ao mexer no tempo (motor real, não fórmula da cena)", async ({ page }) => {
@@ -138,9 +140,12 @@ test.describe("as cenas P2a — abrir, percorrer, fechar", () => {
 
     // o quadro de letras mostra a Euribor de hoje
     await expect(page.locator("#banPrest")).not.toHaveText(antes);
+    await expect(page.locator(".b-cena-texto dl.b-sr")).toBeAttached();
+    await expect(page.locator('.b-cena a[href="/credito"]')).toBeVisible();
+    await expect(page.locator(".b-cena .b-acoes:empty")).toHaveCount(0);
   });
 
-  test("a mercearia mostra o talão do IVA com as taxas de data/", async ({ page }) => {
+  test("a mercearia mostra o talão do IVA com as taxas de data/, liga a /inflacao e /impostos e repõe o SVG", async ({ page }) => {
     await page.goto("/#mercearia");
     const cena = page.locator(".b-cena");
     await expect(cena).toBeVisible();
@@ -150,6 +155,7 @@ test.describe("as cenas P2a — abrir, percorrer, fechar", () => {
 
     await page.getByRole("button", { name: /aprender a ler o gráfico/i }).click();
     await expect(page.locator(".grafico-irs").first()).toBeVisible();
+    await expect(page.locator(".b-cena-texto dl.b-sr")).toBeAttached();
 
     await page.getByRole("button", { name: /ver o iva no talão/i }).click();
     const talao = page.locator(".b-talao");
@@ -158,6 +164,13 @@ test.describe("as cenas P2a — abrir, percorrer, fechar", () => {
     await expect(talao).toContainText("6");
     await expect(talao).toContainText("13");
     await expect(talao).toContainText("23");
+    await expect(page.locator('.b-cena a[href="/inflacao"]')).toBeVisible();
+    await expect(page.locator('.b-cena a[href="/impostos"]')).toBeVisible();
+
+    // «Ver outra vez» repõe o saco e as etiquetas das prateleiras
+    await page.getByRole("button", { name: /ver outra vez/i }).click();
+    await expect(page.locator("#mercSacoTxt")).toHaveText("10\u202F€");
+    await expect(page.locator(".etq-b").first()).toHaveText("?");
   });
 
   test("a fábrica mostra o estado final sem animação (reduced-motion) e o contador bate certo", async ({
@@ -176,6 +189,61 @@ test.describe("as cenas P2a — abrir, percorrer, fechar", () => {
     // e nenhuma moeda ficou esquecida no mapa
     const moedas = await page.locator(".moeda-salario").count();
     expect(moedas).toBe(0);
+  });
+
+  test("no Banco, clicar «Mostrar a resposta» sem mexer no slider usa palpiteEfetivo e .b-r/.b-bj/.b-bc passam AA (≥ 4,5:1)", async ({
+    page,
+  }) => {
+    // Série controlada: min 0 % (pa ≈ 483 € → palpiteInicial = 630 €) e
+    // pico ~2,95 % (TAN 3,95 % → pb ≈ 712 €? Não: para pb ≈ 630 € em
+    // 150 000 € a 30 anos, TAN = 2,96 % → Euribor = 1,96 %). Com o bug
+    // antigo (palpite = 0), |0 − 630| = 630 dava «Mais do que pensavas!»;
+    // com palpiteEfetivo = 630 €, |630 − 629| ≤ 25 dá «Acertaste em cheio!».
+    await page.route("**/cenas/banco.json", (r) =>
+      r.fulfill({
+        contentType: "application/json",
+        body: JSON.stringify({
+          serie: { inicio: "2021-01", v: [0, 1.96] },
+          fonte: "BPstat (teste)",
+        }),
+      }),
+    );
+    await page.goto("/#banco");
+    await expect(page.locator(".b-cena")).toBeVisible();
+    await page.getByRole("button", { name: /chamar a senha/i }).click();
+    await page.getByRole("button", { name: /mostrar a resposta/i }).click();
+    await expect(page.locator(".b-fala")).toContainText(/acertaste em cheio/i);
+
+    // Contraste WCAG AA (≥ 4,5:1) medido em runtime sobre .b-r, .b-bj e .b-bc
+    const contrastes = await page.evaluate(() => {
+      const parseRgb = (s: string) => {
+        const m = s.match(/\d+(\.\d+)?/g)?.map(Number) ?? [0, 0, 0];
+        return [m[0], m[1], m[2]];
+      };
+      const lum = ([r, g, b]: number[]) => {
+        const c = (v: number) => {
+          const x = v / 255;
+          return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
+        };
+        return 0.2126 * c(r) + 0.7152 * c(g) + 0.0722 * c(b);
+      };
+      const ratio = (el: Element) => {
+        const cs = getComputedStyle(el);
+        const l1 = lum(parseRgb(cs.color));
+        const l2 = lum(parseRgb(cs.backgroundColor));
+        return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+      };
+      return {
+        falaR: ratio(document.querySelector(".b-fala .b-r")!),
+        calcR: ratio(document.querySelector(".b-calc-linha b.b-r")!),
+        bj: ratio(document.querySelector(".b-barra-juros .b-bj")!),
+        bc: ratio(document.querySelector(".b-barra-juros .b-bc")!),
+      };
+    });
+    expect(contrastes.falaR).toBeGreaterThanOrEqual(4.5);
+    expect(contrastes.calcR).toBeGreaterThanOrEqual(4.5);
+    expect(contrastes.bj).toBeGreaterThanOrEqual(4.5);
+    expect(contrastes.bc).toBeGreaterThanOrEqual(4.5);
   });
 
   test("as quatro cenas não escrevem um único erro na consola", async ({ page }) => {

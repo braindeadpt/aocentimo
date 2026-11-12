@@ -1,0 +1,24 @@
+{
+  "ano": 2026,
+  "vigencia": "2026-01-01",
+  "fonte": "Decreto-Lei n.º 118/83 (arts. 46.º e 47.º na redação da Lei n.º 30/2014), Lei n.º 53-D/2006 (art. 8.º-A), DL n.º 4/2021 e Lei n.º 60/2005",
+  "fonteUrl": "https://www2.adse.pt/sou-beneficiario/desconto/",
+  "beneficiariosTitulares": {
+    "taxaDesconto": 0.035,
+    "mesesIncidencia": 14,
+    "baseIncidencia": "Remuneração base mensal, pensão ou reforma, subsídio de férias e subsídio de Natal (14 meses)",
+    "limiarSalvaguardaPensoes": 635.0,
+    "nota": "Os beneficiários titulares no ativo e aposentados descontam 3,50 % para a ADSE sobre a remuneração base/pensão e sobre os subsídios de férias e de Natal (14 meses), nos termos do art. 46.º e 47.º do DL 118/83 e do art. 8.º-A da Lei n.º 53-D/2006. Nas pensões, da aplicação do desconto não pode resultar valor líquido inferior ao limiar de salvaguarda legal (635,00 €)."
+  },
+  "regimeProtecaoSocial": {
+    "cgaFechadaNovosSubscritores": "2006-01-01",
+    "baseLegal": "Lei n.º 60/2005, de 29 de dezembro",
+    "admitidosDesde2006": {
+      "regime": "Regime Geral da Segurança Social",
+      "taxaContributivaTrabalhador": 0.11,
+      "taxaAdseOpcional": 0.035,
+      "descontoTotalComAdse": 0.145,
+      "nota": "Os trabalhadores que iniciaram funções públicas a partir de 1 de janeiro de 2006 são obrigatoriamente enquadrados no Regime Geral da Segurança Social (desconto de 11 % para a SS). Caso estejam inscritos na ADSE (opcional/facultativo), o desconto de 3,50 % para a ADSE acumula com a TSU do trabalhador (totalizando 14,50 % de descontos sociais/saúde sobre a base salarial)."
+    }
+  }
+}

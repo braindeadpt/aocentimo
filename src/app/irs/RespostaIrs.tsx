@@ -25,6 +25,13 @@ export function RespostaIrs() {
     <Cartao
       icone="irs"
       breadcrumb={`O QUE GANHAS / IRS · ESCALÕES ${s.ano}`}
+      acoes={[
+        {
+          copiar: s.urlPartilha,
+          rotulo: "Copiar ligação",
+          ariaLabel: "Copiar ligação desta simulação",
+        },
+      ]}
       controlos={
         <Regua
           id="bruto"

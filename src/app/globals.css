@@ -848,13 +848,16 @@ html[data-theme="dark"] .tema-ponto {
 .chip {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.45em;
+  min-height: 44px;
+  min-width: 44px;
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   font-size: var(--text-kicker);
   letter-spacing: var(--tracking-mono-md);
   text-transform: uppercase;
-  padding: 0.38rem 0.72rem;
+  padding: 0.38rem 0.85rem;
   border: 1px solid var(--line2);
   border-radius: var(--raio-controlo);
   background: transparent;
@@ -915,7 +918,9 @@ html[data-theme="dark"] .tema-ponto {
 .segmentado-op {
   display: inline-flex;
   align-items: center;
-  min-height: 34px;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
   /* o espaço lateral encolhe com o ecrã — três opções cabem numa linha
      a 375 px mesmo com a fonte de reserva (display: optional) */
   padding: 0.3rem clamp(0.45rem, 2.3vw, 0.85rem);
@@ -960,11 +965,17 @@ html[data-theme="dark"] .tema-ponto {
 }
 .copiar-lig {
   border: 0;
-  /* a área de toque do «JSON»/«copiar» era o texto: 27×17 px, abaixo dos
-     24×24 do critério 2.5.8 (AA). O `padding` cresce o alvo e a margem
-     negativa devolve o desenho ao sítio — a linha não se mexe. */
-  padding: 4px 6px;
-  margin: -4px -6px;
+  /* a área de toque do «JSON»/«copiar» sobe a ≥ 44×44 px sem aumentar a
+     altura do rodapé do cartão: min-height/min-width alargam o alvo e a
+     margem negativa devolve o desenho ao sítio — a linha não se mexe. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 4px 7px;
+  margin-block: -13px;
+  margin-inline: -7px;
   background: none;
   font: inherit;
   letter-spacing: inherit;
@@ -2343,9 +2354,10 @@ h3 {
   margin-left: auto;
   width: 7rem;
   min-width: 4rem;
-  /* 1,5 rem = 24 px: o mínimo do 2.5.8 (AA). A pista (1 px) e o polegar
-     (9 px) ficam como estavam, centrados — cresce só a área de toque. */
-  height: 1.5rem;
+  /* 44 px de caixa de toque sem crescer a fila do readout (margin-block
+     negativo): a pista (1 px) e o polegar (9 px) continuam centrados. */
+  height: 44px;
+  margin-block: -10px;
   background: transparent;
   cursor: ew-resize;
   flex-shrink: 0;
@@ -2669,8 +2681,11 @@ h3 {
   transition: fill var(--dur-curta) var(--ease-entra),
     stroke var(--dur-curta) var(--ease-entra);
 }
-/* foco = impressão — o papel é palete fixa, nos dois temas */
-.leitura:focus-within {
+/* foco = impressão (V3 arquivada) — restrito a :not([data-theme="dark"])
+   com :where() (especificidade 0,2,0) para nunca inverter um cartão escuro
+   para papel creme e deixar filhos com --ink/--ink2/--muted ilegíveis;
+   nas rotas V5 (.rt5) a regra própria mais abaixo mantém --papel. */
+:where(:root:not([data-theme="dark"])) .leitura:focus-within {
   --l-bg: var(--talao-paper);
   --l-ink: var(--talao-ink);
   --l-ink2: rgba(44, 36, 19, 0.78);
@@ -2682,7 +2697,7 @@ h3 {
   --l-mark: #7a5c10;
 }
 @media (hover: hover) {
-  .leitura:hover {
+  :where(:root:not([data-theme="dark"])) .leitura:hover {
     --l-bg: var(--talao-paper);
     --l-ink: var(--talao-ink);
     --l-ink2: rgba(44, 36, 19, 0.78);
@@ -2784,15 +2799,21 @@ h3 {
 }
 .leitura-acoes {
   display: flex;
+  align-items: center;
   gap: 1rem;
 }
 /* As acções do rodapé do cartão («página →», «JSON») são alvos a sério —
-   não texto dentro de uma frase — e mediam 53×17 px. O `padding` cresce
-   a área de toque para 27 px e a margem negativa devolve a fila à mesma
-   altura: muda o alvo, não a tinta. */
+   não texto dentro de uma frase — e sobem a ≥ 44×44 px. A margem
+   negativa devolve a fila à mesma altura: muda o alvo, não a tinta. */
 .leitura-acoes .lq-link {
-  padding-block: 5px;
-  margin-block: -5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding-inline: 7px;
+  margin-block: -13px;
+  margin-inline: -7px;
 }
 /* cartão sem fonte no rodapé — as acções encostam à direita na mesma */
 .leitura-acoes:only-child {
@@ -4084,7 +4105,8 @@ html[data-theme="dark"] .b5 .b-palco.noite {
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  min-height: 40px;
+  min-height: 44px;
+  min-width: 44px;
   padding: 0.4rem 0.95rem;
   font-family: "Archivo", "Archivo Fallback", "Arial Black", sans-serif;
   font-weight: 700;
@@ -4137,6 +4159,9 @@ html[data-theme="dark"] .b5 .b-palco.noite {
   overflow: hidden;
 }
 .nav-menu-v5 a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
   padding: 0.6rem 1rem;
   font-family: "Archivo", "Archivo Fallback", "Arial Black", sans-serif;
   font-weight: 600;
@@ -4187,6 +4212,12 @@ html[data-theme="dark"] .b5 .b-palco.noite {
   font-size: 0.95rem;
   color: var(--tinta-2);
 }
+.nav-sheet-v5 a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 44px;
+}
 .nav-sheet-v5 a:hover {
   color: var(--tinta);
 }
@@ -4206,6 +4237,9 @@ html[data-theme="dark"] .b5 .b-palco.noite {
 /* skip-link — a primeira pílula do site; estado final = papel, traço
    e sombra dura (AA nos dois temas: papel/tinta seguem o tema) */
 .skip-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   background: var(--papel);
   color: var(--tinta);
   border: var(--traco-fino) solid var(--tinta);
@@ -4220,8 +4254,10 @@ html[data-theme="dark"] .b5 .b-palco.noite {
 .pil-tema {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.45rem;
-  min-height: 34px;
+  min-height: 44px;
+  min-width: 44px;
   padding: 0.3rem 0.8rem;
   font-family: "Archivo", "Archivo Fallback", "Arial Black", sans-serif;
   font-weight: 700;
@@ -4306,15 +4342,17 @@ html[data-theme="dark"] .tema-ponto {
    fallback var(--linha,0) passa a ler uma cor, o calc() invalida-se e o
    delay cai a 0 — mesmo efeito que o reset, sem animação quebrada. */
 
-/* superfície da rota migrada: chão plano, sem grelha milimetrada nem
-   grão — o contrato V5 é cor chapada */
-html:has(.rt5) {
+/* superfície da rota migrada e da home: chão plano, sem grelha milimetrada
+   nem grão — o contrato V5 é cor chapada. Inclui [data-theme="dark"] para
+   bater o (0,2,0) de :root[data-theme="dark"] { --grain-opacity: 0.08 }. */
+html:has(.rt5, .b5),
+:root[data-theme="dark"]:has(.rt5, .b5) {
   --grain-opacity: 0;
 }
 /* :root:has() + body: (0,2,1) — empata com a regra da grelha V4 e ganha
-   por vir depois no ficheiro; :has(.rt5) mais fraco perdia e a grelha
+   por vir depois no ficheiro; :has(.rt5, .b5) mais fraco perdia e a grelha
    milimetrada ficava por cima do chão V5 */
-:root:has(.rt5) body {
+:root:has(.rt5, .b5) body {
   background-color: var(--chao);
   background-image: none;
 }
@@ -4364,10 +4402,45 @@ html[data-theme="dark"] .rt5 {
 
 /* ————— mobília de página ————— */
 
-/* o cartão-instrumento: papel com traço grosso e sombra dura */
+/* o cartão-instrumento: papel com traço grosso e sombra dura.
+   Na V5 neutraliza-se a inversão V3 para --talao-paper em hover/focus-within:
+   o cartão mantém --papel nos dois temas (evitando contraste 1,15:1 na noite
+   do bairro) e dá feedback físico V5 na sombra dura e no contorno de foco. */
 .rt5 .leitura {
   border-width: var(--traco);
   border-color: var(--tinta);
+  transition:
+    background-color var(--dur-curta) var(--ease-entra),
+    color var(--dur-curta) var(--ease-entra),
+    border-color var(--dur-micro) var(--ease-entra),
+    box-shadow var(--dur-micro) var(--ease-entra);
+}
+.rt5 .leitura:focus-within {
+  --l-bg: var(--papel);
+  --l-ink: var(--tinta);
+  --l-ink2: var(--tinta-2);
+  --l-muted: var(--suave);
+  --l-line: var(--linha);
+  --l-line2: var(--suave);
+  --l-accent: var(--vermelho-txt);
+  --l-keep: var(--verde-txt);
+  --l-mark: var(--azul);
+  border-color: var(--azul);
+  box-shadow: 5px 6px 0 var(--tinta);
+}
+@media (hover: hover) {
+  .rt5 .leitura:hover {
+    --l-bg: var(--papel);
+    --l-ink: var(--tinta);
+    --l-ink2: var(--tinta-2);
+    --l-muted: var(--suave);
+    --l-line: var(--linha);
+    --l-line2: var(--suave);
+    --l-accent: var(--vermelho-txt);
+    --l-keep: var(--verde-txt);
+    --l-mark: var(--azul);
+    box-shadow: 5px 6px 0 var(--tinta);
+  }
 }
 .rt5 .leitura-head,
 .rt5 .leitura-foot {
@@ -4393,6 +4466,7 @@ html[data-theme="dark"] .rt5 {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
+  min-height: 44px;
   margin: 0.3rem 0;
   padding: 0.5rem 1rem;
   font-family: "Archivo", "Archivo Fallback", "Arial Black", sans-serif;
@@ -4424,6 +4498,7 @@ html[data-theme="dark"] .rt5 {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
+  min-height: 44px;
   padding: 0.55rem 1.1rem;
   font-size: 0.9rem;
   letter-spacing: 0.02em;
@@ -4457,7 +4532,7 @@ html[data-theme="dark"] .rt5 {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  min-height: 40px;
+  min-height: 44px;
   padding: 0.4rem 0.95rem;
   font-family: "Archivo", "Archivo Fallback", "Arial Black", sans-serif;
   font-weight: 700;

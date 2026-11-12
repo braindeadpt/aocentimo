@@ -155,3 +155,113 @@ test("/credito — o choque +1 p.p. muda a resposta e o mapa confirma", async ({
     page.locator("details.pg-detalhe table").first()
   ).toBeVisible();
 });
+
+test("/casa — simulador de IMI anual respeita o Porto e calcula prestações e IMI Familiar", async ({
+  page,
+}) => {
+  await page.goto("/casa", { waitUntil: "domcontentloaded" });
+
+  await expect(
+    page.getByText("Depois da escritura: o IMI todos os anos")
+  ).toBeVisible();
+
+  // No estado inicial (VPT 120 000 € no Porto a 0,324 %), o IMI é 388,80 € em 2 prestações (maio e novembro)
+  await expect(page.getByText(/388,80/).first()).toBeVisible();
+  await expect(page.getByText(/2 prestações \(maio e novembro\)/i).first()).toBeVisible();
+
+  // Selecionar 2 dependentes no Porto mantém 0 € de dedução enquanto o interruptor de município aderente está desligado
+  const op2Dep = page.getByRole("radio", { name: /^2 \(/ });
+  await op2Dep.scrollIntoViewIfNeeded();
+  await op2Dep.click();
+  await expect(page.getByText(/Porto sem dedução em 2026/i)).toBeVisible();
+
+  // Ligar o interruptor de município aderente aplica −70 € (388,80 − 70 = 318,80 €)
+  const swFamiliar = page.getByRole("switch", {
+    name: /Município aderente ao IMI Familiar/i,
+  });
+  await swFamiliar.click();
+  await expect(page.getByText(/318,80/).first()).toBeVisible();
+
+  // O nível 3 tem o detalhe das faixas legais do IMI
+  const detImi = page.locator("details.pg-detalhe", {
+    hasText: /IMI 2026 — faixas legais/i,
+  });
+  await detImi.locator("summary").click();
+  await expect(detImi.locator("table")).toBeVisible();
+});
+
+test("/impostos — simulador fiscal do automóvel (ISV, IUC, combustível e isenção de elétricos)", async ({
+  page,
+}) => {
+  await page.goto("/impostos", { waitUntil: "domcontentloaded" });
+
+  await expect(
+    page.getByText(
+      "Quanto de um carro e de andar nele é imposto (ISV, IUC e combustível)"
+    )
+  ).toBeVisible();
+
+  // Estado inicial (Gasolina): mostra ISV na matrícula e IUC anual
+  await expect(
+    page.getByText(/1 · Uma vez, na matrícula \(ISV\)/i)
+  ).toBeVisible();
+  await expect(
+    page.getByText(/2 · Todos os anos a circular \(IUC \+ bomba\)/i)
+  ).toBeVisible();
+
+  // Mudar para Elétrico mostra ZeroInformativo («isento»)
+  const opEletrico = page.getByRole("radio", { name: /^Elétrico$/i });
+  await opEletrico.scrollIntoViewIfNeeded();
+  await opEletrico.click();
+  await expect(
+    page.getByText(/isento \(exclusão de incidência\)/i)
+  ).toBeVisible();
+  await expect(page.getByText(/isento todos os anos/i)).toBeVisible();
+
+  // O nível 3 explica o regime de pagamento do IUC no mês da matrícula em 2026 vs. DL 161/2026
+  const detCarro = page.locator("details.pg-detalhe", {
+    hasText: /ISV e IUC 2026/i,
+  });
+  await detCarro.locator("summary").click();
+  await expect(detCarro).toContainText(/161\/2026/);
+});
+
+test("/casa — compra a dois (umDeDois) e Garantia Pública do Estado (≤ 35 anos, 100 % crédito)", async ({
+  page,
+}) => {
+  await page.goto("/casa", { waitUntil: "domcontentloaded" });
+
+  // 1. Selector de elegibilidade IMT Jovem: Regime geral · Jovem 100 % · Compra a 2 (1 ≤35)
+  const grupoJovem = page.getByRole("radiogroup", {
+    name: /compradores elegíveis para imt jovem/i,
+  });
+  await expect(grupoJovem).toBeVisible();
+
+  // Em 200 000 €: escolher "Compra a 2 (1 ≤35)" aplica 50 % da isenção
+  await grupoJovem.getByRole("radio", { name: /Compra a 2/i }).click();
+  await expect(
+    page.getByText(/Compra em compropriedade/i)
+  ).toBeVisible();
+  await expect(page.getByText(/\(Jovem 1\/2\)/i)).toBeVisible();
+
+  // 2. Garantia Pública do Estado (≤ 35 anos, até 100 % crédito)
+  const swGarantia = page.getByRole("switch", {
+    name: /Garantia Pública do Estado/i,
+  });
+  await swGarantia.scrollIntoViewIfNeeded();
+  await swGarantia.click();
+
+  await expect(
+    page.getByText(/Financiamento a 100.*% com Garantia Pública/i)
+  ).toBeVisible();
+  await expect(
+    page.getByText(/os impostos e registos.*não são financiados/i)
+  ).toBeVisible();
+
+  // 3. Detalhe no nível 3 sobre a Garantia Pública (DL 44/2024)
+  const detGarantia = page.locator("details.pg-detalhe", {
+    hasText: /Garantia Pública do Estado/i,
+  });
+  await detGarantia.locator("summary").click();
+  await expect(detGarantia).toContainText(/44\/2024/);
+});

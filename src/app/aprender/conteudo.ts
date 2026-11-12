@@ -39,9 +39,19 @@ export const GRUPO_DE: Record<string, GrupoId> = {
   "rendimento-relevante": "ganhas",
   englobamento: "ganhas",
   "salario-real": "ganhas",
+  ias: "ganhas",
+  "rendimento-coletavel": "ganhas",
+  "irs-jovem": "ganhas",
+  duodecimos: "ganhas",
+  "subsidio-alimentacao": "ganhas",
+  adse: "ganhas",
   // O que pagas — impostos, preços, inflação
   iva: "pagas",
   isp: "pagas",
+  imt: "pagas",
+  "imposto-selo": "pagas",
+  imi: "pagas",
+  "isv-iuc": "pagas",
   // O banco — crédito, casa, poupança
   euribor: "banco",
   spread: "banco",
@@ -52,8 +62,17 @@ export const GRUPO_DE: Record<string, GrupoId> = {
   "taxa-real": "banco",
   "retencao-capitais": "banco",
   ppr: "banco",
+  "taxa-mista": "banco",
+  "taxa-esforco": "banco",
+  "mais-valias": "banco",
+  "servicos-minimos-bancarios": "banco",
+  "fundo-garantia-depositos": "banco",
   // O país — os números oficiais (a estatística em si, não o preço)
   "ipc-ihpc": "pais",
+  homologo: "pais",
+  pib: "pais",
+  "populacao-ativa": "pais",
+  "indice-precos-habitacao": "pais",
 };
 
 /** A frase de nível 1 — uma definição que se lê sem saber nenhum outro
@@ -73,9 +92,9 @@ export const FRASE: Record<string, string> = {
   "taxa-efetiva-marginal":
     "A marginal é a taxa do último degrau de rendimento; a efetiva é o imposto total a dividir pelo que ganhas — mais baixa.",
   "deducao-especifica":
-    "Uma fatia do salário que fica de fora antes de o IRS contar — em 2026 são cerca de 4 587 € por ano.",
+    "Uma fatia do salário que fica de fora antes de o IRS contar — em 2026 são cerca de 4 587 € por ano.",
   "minimo-existencia":
-    "A lei protege o rendimento essencial para viver: em 2026 ninguém paga IRS sobre até 12 880 € por ano.",
+    "A lei protege o rendimento essencial para viver: em 2026 ninguém paga IRS sobre até 12 880 € por ano.",
   "retencao-fonte":
     "O IRS que o empregador desconta todos os meses e entrega ao Estado por ti — um adiantamento que se acerta na declaração.",
   tsu: "A contribuição para a Segurança Social: saem 11 % do teu recibo e a empresa paga mais 23,75 % que nunca vês.",
@@ -98,6 +117,40 @@ export const FRASE: Record<string, string> = {
     "Escolher entre pagar uma taxa fixa sozinha ou somar o rendimento ao resto e pagar a tua taxa de IRS.",
   "salario-real":
     "O salário medido pelo que ele compra: se os preços sobem mais do que o teu aumento, ficas a ganhar menos.",
+  /* PROPOSTA (revisão do dono) — frases de nível 1 dos 19 novos termos */
+  homologo:
+    "A variação homóloga compara com o mesmo mês do ano passado; a em cadeia compara com o mês anterior.",
+  pib: "O valor de tudo o que o país produz num ano — mede a riqueza criada e o crescimento da economia.",
+  "populacao-ativa":
+    "Conta quem trabalha e quem procura emprego: quem estuda ou não procura fica fora da taxa de desemprego.",
+  "indice-precos-habitacao":
+    "O termómetro oficial dos preços das casas: mede quanto custa comprar habitação face a um ano de referência.",
+  ias: "A bitola oficial do Estado para calcular apoios sociais, subsídios de desemprego e limites fiscais.",
+  "rendimento-coletavel":
+    "A parte do salário que o fisco realmente tributa, depois de descontar a dedução específica ao bruto.",
+  "irs-jovem":
+    "Dez anos de desconto no IRS até aos 35 anos: 100\u202f% no primeiro ano, a descer até 25\u202f% no décimo.",
+  duodecimos:
+    "Receber os subsídios de férias e Natal às fatias mês a mês em vez de duas vezes por ano.",
+  "subsidio-alimentacao":
+    "O subsídio diário para comer: em cartão tem isenção fiscal até 10,455\u202f€ por dia, em dinheiro só até 6,15\u202f€.",
+  adse: "O subsistema de saúde público: desconta 3,5\u202f% do vencimento base ao longo dos 14 meses do ano.",
+  imt: "O imposto que pagas quando compras casa — jovens até 35 anos têm isenção na primeira habitação até 330\u202f539\u202f€.",
+  "imposto-selo":
+    "Uma taxa que recai sobre contratos e compras: na casa leva 0,8\u202f% do preço e 0,6\u202f% do crédito.",
+  imi: "O imposto anual de ser dono de uma casa: a câmara aplica uma taxa entre 0,3\u202f% e 0,45\u202f% sobre o valor fiscal.",
+  "isv-iuc":
+    "Os impostos dos automóveis: o ISV paga-se uma vez ao matricular; o IUC paga-se todos os anos pela matrícula.",
+  "taxa-mista":
+    "A taxa variável mexe com a Euribor; a fixa nunca muda; a mista fica congelada no início e varia depois.",
+  "taxa-esforco":
+    "A fatia do teu ordenado líquido que vai para pagar créditos ao banco — o limite recomendado é 50\u202f%.",
+  "mais-valias":
+    "O lucro que tens quando vendes um bem mais caro do que compraste — o Estado tributa essa diferença.",
+  "servicos-minimos-bancarios":
+    "Uma conta bancária essencial com cartão e transferências, com custo máximo fixado por lei em 5,37\u202f€ por ano.",
+  "fundo-garantia-depositos":
+    "O cofre que protege as tuas poupanças no banco até 100\u202f000\u202f€ caso a instituição vá à falência.",
 };
 
 /** Exemplo com números para os termos que ainda não têm `exemplo` no
@@ -111,16 +164,16 @@ export const EXEMPLO: Record<string, string> = {
     "Para o mesmo mês, o INE pode dizer 2,4 % e o Eurostat 2,1 % — a mesma inflação, duas réguas.",
   "taxa-efetiva-marginal":
     "Com marginal de 35 %, a efetiva pode ficar perto de 17 % — a média é cerca de metade do último degrau.",
-  "deducao-especifica": "Em 2026: 8,54 × IAS de 537,13 € ≈ 4 587 € do ano que não pagam IRS.",
+  "deducao-especifica": "Em 2026: 8,54 × IAS de 537,13 € ≈ 4 587 € do ano que não pagam IRS.",
   "minimo-existencia":
-    "Em 2026 o mínimo protege 920 € × 14 = 12 880 € — quem ganha o salário mínimo não paga IRS.",
+    "Em 2026 o mínimo protege 920 € × 14 = 12 880 € — quem ganha o salário mínimo não paga IRS.",
   "retencao-fonte":
-    "Se reténs 200 € por mês e o IRS anual devido é 2 200 €, recebes a diferença como reembolso.",
-  tsu: "Num salário de 1 000 €: saem 110 € teus e a empresa paga mais 237,50 € — custo real de 1 237,50 €.",
+    "Se reténs 200 € por mês e o IRS anual devido é 2 200 €, recebes a diferença como reembolso.",
+  tsu: "Num salário de 1 000 €: saem 110 € teus e a empresa paga mais 237,50 € — custo real de 1 237,50 €.",
   isp: "Do preço de cada litro, uma parte fixa em cêntimos é ISP — e o IVA de 23 % ainda incide sobre esse imposto.",
   iva: "Um livro de 10 € leva 6 %, um jantar de 20 € leva 13 %, uma televisão de 300 € leva 23 %.",
   "certificados-aforro":
-    "1 000 € em Certificados de Aforro: juros a cada três meses e um prémio que cresce quanto mais tempo ficam.",
+    "1 000 € em Certificados de Aforro: juros a cada três meses e um prémio que cresce quanto mais tempo ficam.",
   "taxa-real":
     "Depósito a 1,5 % com inflação de 3 %: a taxa real é −1,5 % — perdes poder de compra sem o saldo descer.",
   "retencao-capitais":
@@ -128,12 +181,46 @@ export const EXEMPLO: Record<string, string> = {
   "deducao-coleta":
     "250 € de despesas de saúde devolvem 15 % — 37,50 € a menos de IRS a pagar.",
   "limite-deducoes":
-    "No 1.º escalão não há teto; no último, a soma das deduções pára nos 1 000 €.",
-  ppr: "1 000 € entregues no ano voltam 200 € pelo IRS — mas um resgate fora das regras obriga a devolver o benefício.",
+    "No 1.º escalão não há teto; no último, a soma das deduções pára nos 1 000 €.",
+  ppr: "1 000 € entregues no ano voltam 200 € pelo IRS — mas um resgate fora das regras obriga a devolver o benefício.",
   "rendimento-relevante":
-    "Faturas 10 000 € em serviços: a Segurança Social conta 7 000 € e cobra 21,4 % — cerca de 1 498 €.",
+    "Faturas 10 000 € em serviços: a Segurança Social conta 7 000 € e cobra 21,4 % — cerca de 1 498 €.",
   englobamento:
-    "1 000 € de mais-valias: à taxa autónoma pagas 280 €; englobadas a uma marginal de 21 %, 210 €.",
+    "1 000 € de mais-valias: à taxa autónoma pagas 280 €; englobadas a uma marginal de 21 %, 210 €.",
+  /* PROPOSTA (revisão do dono) — exemplos com números dos 19 novos termos */
+  homologo:
+    "Se a inflação homóloga for 2,5\u202f% e a em cadeia \u22120,2\u202f%, os preços subiram no ano mas desceram no mês.",
+  pib: "Crescimento homólogo de 1,8\u202f% no PIB significa mais 1,8\u202f% de riqueza real gerada face ao mesmo trimestre do ano anterior.",
+  "populacao-ativa":
+    "Numa população ativa de 5\u202f300\u202f000 pessoas com 350\u202f000 desempregados, a taxa de desemprego é 6,6\u202f%.",
+  "indice-precos-habitacao":
+    "Com a base 2015 = 100, um índice de 205 indica que as casas custam mais do dobro do que em 2015.",
+  ias: "Em 2026 o IAS vale 537,13\u202f€; o teto máximo do subsídio de desemprego é 2,5 × IAS = 1\u202f342,83\u202f€/mês.",
+  "rendimento-coletavel":
+    "Num salário anual de 21\u202f000\u202f€, tira-se a dedução específica de 4\u202f587,09\u202f€ — o rendimento coletável é 16\u202f412,91\u202f€.",
+  "irs-jovem":
+    "No 1.º ano a trabalhar, até 29\u202f542,15\u202f€ de rendimento (55 × IAS de 537,13\u202f€) fica 100\u202f% isento de IRS.",
+  duodecimos:
+    "Num salário de 1\u202f200\u202f€, 50\u202f% em duodécimos soma 100\u202f€ brutos ao mês e metade dos subsídios na época.",
+  "subsidio-alimentacao":
+    "A 9,00\u202f€/dia em cartão ficas 100\u202f% isento; em dinheiro pagarias IRS e Segurança Social sobre 2,85\u202f€ por dia.",
+  adse: "Num vencimento de 1\u202f500\u202f€, o desconto de 3,5\u202f% para a ADSE retira 52,50\u202f€ por mês (735,00\u202f€ por ano a 14 meses).",
+  imt: "Uma casa de 200\u202f000\u202f€ para habitação própria paga cerca de 3\u202f509\u202f€ de IMT normal, mas 0\u202f€ com IMT Jovem.",
+  "imposto-selo":
+    "Casa de 200\u202f000\u202f€ com empréstimo de 180\u202f000\u202f€: 1\u202f600\u202f€ de selo da compra + 1\u202f080\u202f€ de selo do crédito = 2\u202f680\u202f€.",
+  imi: "Um imóvel com VPT de 120\u202f000\u202f€ e taxa de 0,324\u202f% paga 388,80\u202f€ de IMI por ano, em 2 prestações.",
+  "isv-iuc":
+    "Um ligeiro a gasolina paga ISV no registo da matrícula e depois IUC todos os anos no mês da matrícula.",
+  "taxa-mista":
+    "Taxa mista a 5 anos com 2,8\u202f% e depois Euribor 12M + 0,75\u202f%: prestação fixa 5 anos e variável depois.",
+  "taxa-esforco":
+    "Prestações de crédito de 700\u202f€ com rendimento líquido de 2\u202f000\u202f€ dão 35\u202f% de esforço (abaixo dos 50\u202f% do BdP).",
+  "mais-valias":
+    "Venda de ações com lucro de 500\u202f€: paga 28\u202f% de taxa autónoma (140\u202f€ de imposto sobre capitais).",
+  "servicos-minimos-bancarios":
+    "Conta de serviços mínimos tem cartão e transferências por no máximo 5,37\u202f€ por ano (1\u202f% do IAS).",
+  "fundo-garantia-depositos":
+    "Se um banco falir, o FGD devolve o teu dinheiro até ao limite de 100\u202f000\u202f€ por titular.",
 };
 
 /** Ficha de nível 3 — a legislação e a fonte oficial de cada termo.
@@ -212,7 +299,7 @@ export const FICHA: Record<string, FichaTermo> = {
     fonte: "Art. 70.º CIRS — OE2026",
     url: AT,
     legislacao:
-      "Em 2026 o mínimo de existência é 14 × SMN = 12 880 €, com abatimento progressivo até ao limite da fórmula do art. 70.º.",
+      "Em 2026 o mínimo de existência é 14 × SMN = 12 880 €, com abatimento progressivo até ao limite da fórmula do art. 70.º.",
   },
   "retencao-fonte": {
     fonte: "Despacho n.º 233-A/2026, de 6 de janeiro (DR, 2.ª série, n.º 3)",
@@ -260,13 +347,13 @@ export const FICHA: Record<string, FichaTermo> = {
     fonte: "Arts. 78.º a 84.º CIRS (redação OE2026, Lei 73-A/2025)",
     url: "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/Deducoes_a_coleta/Paginas/default.aspx",
     legislacao:
-      "Saúde 15 % (até 1 000 €), educação 30 % (até 800 €), rendas, PPR 20 % e o IVA das faturas pedidas com NIF.",
+      "Saúde 15 % (até 1 000 €), educação 30 % (até 800 €), rendas, PPR 20 % e o IVA das faturas pedidas com NIF.",
   },
   "limite-deducoes": {
     fonte: "Art. 78.º CIRS — limite global das deduções à coleta",
     url: AT,
     legislacao:
-      "Sem limite no 1.º escalão, 1 000 € no último e um valor intermédio nos restantes — majorado 5 % por dependente a partir do terceiro.",
+      "Sem limite no 1.º escalão, 1 000 € no último e um valor intermédio nos restantes — majorado 5 % por dependente a partir do terceiro.",
   },
   ppr: {
     fonte: "Art. 21.º EBF — benefício fiscal das entregas; taxa efetiva de 8 % no reembolso dentro das condições legais",
@@ -291,6 +378,121 @@ export const FICHA: Record<string, FichaTermo> = {
     url: "https://ec.europa.eu/eurostat",
     conceito:
       "Não há legislação própria: o salário real é o nominal corrigido pela inflação oficial — é a medida do poder de compra.",
+  },
+  /* PROPOSTA (revisão do dono) — fichas de legislação/fonte dos 19 novos termos */
+  homologo: {
+    fonte: "Eurostat e INE (metodologia de índices)",
+    url: "https://ec.europa.eu/eurostat",
+    conceito:
+      "A variação homóloga compara com o mesmo período do ano anterior para eliminar a sazonalidade; a variação em cadeia compara com o mês imediatamente anterior.",
+  },
+  pib: {
+    fonte: "INE e Eurostat — Contas Nacionais",
+    url: "https://www.ine.pt",
+    conceito:
+      "O Produto Interno Bruto mede a produção total da economia a preços de mercado num trimestre ou ano.",
+  },
+  "populacao-ativa": {
+    fonte: "INE — Inquérito ao Emprego e Eurostat (série une_rt_m)",
+    url: "https://www.ine.pt",
+    legislacao:
+      "Metodologia da OIT: a taxa de desemprego calcula-se sobre a população ativa (pessoas empregadas e desempregadas à procura ativa de trabalho).",
+  },
+  "indice-precos-habitacao": {
+    fonte: "INE e Eurostat — Índice de Preços da Habitação (HPI)",
+    url: "https://ec.europa.eu/eurostat",
+    legislacao:
+      "Regulamento (UE) 2016/792 do Parlamento Europeu e do Conselho relativo aos índices de preços da habitação.",
+  },
+  ias: {
+    fonte: "Portaria n.º 480-A/2025/1 e Lei n.º 53-B/2006",
+    url: "https://diariodarepublica.pt",
+    legislacao:
+      "O IAS fixa-se em 537,13\u202f€ em 2026, servindo de bitola para cálculo de apoios sociais, limites e deduções no IRS.",
+  },
+  "rendimento-coletavel": {
+    fonte: "Arts. 15.º, 22.º e 25.º CIRS (OE2026, Lei n.º 73-A/2025)",
+    url: AT,
+    legislacao:
+      "No trabalho dependente (cat. A), o rendimento coletável resulta do rendimento bruto deduzido de 8,54 × IAS (4\u202f587,09\u202f€ em 2026) ou contribuições obrigatórias.",
+  },
+  "irs-jovem": {
+    fonte: "Art. 12.º-B CIRS (redação Lei n.º 45-A/2024 e Lei n.º 73-A/2025)",
+    url: AT,
+    legislacao:
+      "Isenção parcial para jovens até aos 35 anos durante 10 anos: 100\u202f% no 1.º ano, 75\u202f% nos 2.º a 4.º, 50\u202f% nos 5.º a 7.º e 25\u202f% nos 8.º a 10.º, com teto de 55 × IAS.",
+  },
+  duodecimos: {
+    fonte: "Art. 264.º do Código do Trabalho e art. 99.º-C do CIRS",
+    url: AT,
+    legislacao:
+      "Permite fracionar o pagamento dos subsídios de férias e de Natal pelos 12 meses do ano (a 50\u202f% ou 100\u202f%), com retenção autónoma de IRS sobre cada duodécimo.",
+  },
+  "subsidio-alimentacao": {
+    fonte: "Portaria n.º 51-B/2026/1 e art. 2.º n.º 3 al. b) do CIRS",
+    url: "https://diariodarepublica.pt",
+    legislacao:
+      "Limites diários de isenção de IRS e TSU em 2026: 6,15\u202f€ em dinheiro (valor AP) ou 10,455\u202f€ em vale ou cartão de refeição.",
+  },
+  adse: {
+    fonte: "Decreto-Lei n.º 118/83 (arts. 46.º e 47.º) e Lei n.º 53-D/2006",
+    url: "https://www2.adse.pt",
+    legislacao:
+      "Desconto de 3,50\u202f% sobre o vencimento base e pensões ao longo de 14 meses. Nas pensões vigora o limiar de salvaguarda de 635,00\u202f€.",
+  },
+  imt: {
+    fonte: "Art. 17.º do CIMT (Ofício Circulado 40129/2026) e Decreto-Lei n.º 48-A/2024 (IMT Jovem)",
+    url: AT,
+    legislacao:
+      "IMT progressivo por escalões. Jovens até aos 35 anos têm isenção na aquisição de primeira habitação própria permanente até 330\u202f539\u202f€ em 2026.",
+  },
+  "imposto-selo": {
+    fonte: "Código do Imposto do Selo — Tabela Geral verbas 1.1 (aquisição) e 17.1 (crédito)",
+    url: AT,
+    legislacao:
+      "Taxa de 0,8\u202f% sobre o valor de aquisição do imóvel e 0,6\u202f% sobre o montante de crédito habitação concedido por prazo superior a 5 anos.",
+  },
+  imi: {
+    fonte: "Código do IMI (CIMI), arts. 112.º, 112.º-A e 120.º (Decreto-Lei n.º 287/2003)",
+    url: AT,
+    legislacao:
+      "Taxa para prédios urbanos fixada entre 0,30\u202f% e 0,45\u202f% pela assembleia municipal sobre o VPT. O IMI familiar prevê reduções fixas por dependente.",
+  },
+  "isv-iuc": {
+    fonte: "Código do ISV e Código do IUC (Lei n.º 22-A/2007) — tabelas em vigor",
+    url: "https://diariodarepublica.pt",
+    legislacao:
+      "O ISV é liquidado uma única vez na matrícula do veículo; o IUC é devido anualmente pela titularidade da viatura consoante a cilindrada e emissões.",
+  },
+  "taxa-mista": {
+    fonte: "Banco de Portugal — DL n.º 74-A/2017 e Portal do Cliente Bancário",
+    url: "https://clientebancario.bportugal.pt",
+    legislacao:
+      "Taxa fixa nos anos iniciais acordados (comissão máxima de reembolso antecipado de 2,0\u202f%) e variável no período restante (comissão máxima de 0,5\u202f%).",
+  },
+  "taxa-esforco": {
+    fonte: "Banco de Portugal — Recomendação Macroprudencial (DSTI) e Instrução n.º 16/2023",
+    url: "https://clientebancario.bportugal.pt",
+    legislacao:
+      "Limite geral de 50\u202f% no rácio entre os encargos mensais de crédito e o rendimento líquido do agregado familiar.",
+  },
+  "mais-valias": {
+    fonte: "Arts. 10.º, 22.º, 43.º e 72.º CIRS — tributação de ganhos de capital",
+    url: AT,
+    legislacao:
+      "Ganhos mobiliários tributam a taxa autónoma de 28\u202f% (salvo englobamento). Ganhos imobiliários englobam em 50\u202f%, com isenção no reinvestimento em habitação própria.",
+  },
+  "servicos-minimos-bancarios": {
+    fonte: "Decreto-Lei n.º 27-C/2000 (redação da Lei n.º 24/2023) e Banco de Portugal",
+    url: "https://clientebancario.bportugal.pt",
+    legislacao:
+      "Conta essencial com comissão anual máxima travada em 1\u202f% do IAS (5,37\u202f€ em 2026), incluindo cartão de débito e transferências gratuitas.",
+  },
+  "fundo-garantia-depositos": {
+    fonte: "Regime Geral das Instituições de Crédite e Sociedades Financeiras (art. 154.º e ss.)",
+    url: "https://www.fgd.pt",
+    legislacao:
+      "Garante o reembolso de depósitos constituídos em instituições participantes até ao limite de 100\u202f000\u202f€ por depositante e por banco.",
   },
 };
 

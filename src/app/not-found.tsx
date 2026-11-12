@@ -7,24 +7,26 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <div className="mx-auto max-w-6xl px-5 py-24">
-      <p className="kicker">Erro 404</p>
-      <h1 className="titulo-pagina">
-        Este euro
-        <br />
-        não existe.
-      </h1>
-      <p className="lede mt-6">
-        A página que procuras não está nos nossos registos — ou mudou de
-        sítio. O índice tem tudo o que publicámos.
-      </p>
-      <div className="mt-8 flex flex-wrap gap-3">
-        <Botao href="/" variante="primario">
-          Voltar ao início
-        </Botao>
-        <Botao href="/dados" variante="secundario">
-          Ver os dados
-        </Botao>
+    <div className="rt5">
+      <div className="mx-auto max-w-6xl px-5 py-24">
+        <p className="kicker">Erro 404</p>
+        <h1 className="titulo-pagina">
+          Este euro
+          <br />
+          não existe.
+        </h1>
+        <p className="lede mt-6">
+          A página que procuras não está nos nossos registos — ou mudou de
+          sítio. O índice tem tudo o que publicámos.
+        </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Botao href="/" variante="primario">
+            Voltar ao início
+          </Botao>
+          <Botao href="/dados" variante="secundario">
+            Ver os dados
+          </Botao>
+        </div>
       </div>
     </div>
   );

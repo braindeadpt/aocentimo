@@ -28,6 +28,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     .filter((f) => f.id.startsWith("euribor-"))
     .map((f) => f.id);
   const taeg = fontes.filter((f) => f.id.startsWith("taeg-")).map((f) => f.id);
+  const todasFontes = fontes.map((f) => f.id);
 
   const caBase = loadDerivado<{ meta?: { recolhidoEm?: string } }>("ca-base");
   const caBaseEm = caBase?.meta?.recolhidoEm;
@@ -35,18 +36,33 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const rotas: { path: string; ids?: string[]; extra?: string[] }[] = [
     {
       path: "",
-      ids: ["hicp-pt-cp00", "hicp-pt-cp01", "euribor-3m-mensal", "fiscal-smn", "fiscal-ca", ...pmd],
+      ids: [
+        "hicp-pt-cp00",
+        "hicp-pt-cp01",
+        "euribor-3m-mensal",
+        "euribor-12m-mensal",
+        "une-pt-total",
+        "fiscal-smn",
+        "fiscal-ca",
+        ...pmd,
+      ],
     },
     { path: "/salario", ids: ["fiscal-irs-2026", "fiscal-ss"] },
     { path: "/impostos", ids: ["fiscal-iva", "fiscal-isp"] },
     { path: "/inflacao", ids: hicp },
-    { path: "/credito", ids: ["euribor-3m-mensal"] },
-    { path: "/casa", ids: ["euribor-3m-mensal", "fiscal-imt-2026"] },
+    { path: "/credito", ids: ["euribor-3m-mensal", "euribor-12m-mensal"] },
+    {
+      path: "/casa",
+      ids: ["euribor-3m-mensal", "hpi-pt", "lci-pt-homologo", "fiscal-imt-2026"],
+    },
     {
       path: "/irs",
       ids: ["fiscal-irs-2026", "fiscal-retencao-2026", "fiscal-irs-jovem", "fiscal-deducoes-2026"],
     },
-    { path: "/trabalho", ids: ["fiscal-desemprego", "fiscal-catb"] },
+    {
+      path: "/trabalho",
+      ids: ["une-pt-total", "une-ue27-total", "fiscal-desemprego", "fiscal-catb"],
+    },
     {
       path: "/poupanca",
       ids: ["fiscal-ca", "fiscal-capitais", "fiscal-ppr", "fiscal-mais-valias"],
@@ -58,11 +74,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       ids: [...euribor, ...taeg, "fiscal-usura-2026", "fiscal-calendario-2026"],
       extra: caBaseEm ? [caBaseEm] : [],
     },
+    { path: "/metodologia", ids: todasFontes },
     // editoriais — sem data honesta, omitem lastModified
     { path: "/aprender" },
     // termos do glossário — derivados do conteúdo, nunca escritos à mão
     ...GLOSSARIO.map((t) => ({ path: `/aprender/${t.slug}` })),
-    { path: "/metodologia" },
     { path: "/estilo" },
     { path: "/sobre" },
   ];

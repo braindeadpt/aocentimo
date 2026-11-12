@@ -1,5 +1,5 @@
 {
-  "verificadoEm": "2026-11-12T14:52:54.955Z",
+  "verificadoEm": "2026-11-12T18:26:11.195Z",
   "estado": "ok",
   "series": [
     {
@@ -683,6 +683,51 @@
       "serieAte": "2026-09",
       "esperadoAte": "2026-08-31",
       "frequencia": "mensal",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-adse",
+      "fonte": "DR/ADSE — DL 118/83 + Lei 30/2014 — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-credito-habitacao",
+      "fonte": "BdP/DR — DL 74-A/2017 + Rec. BdP + DL 44/2024 — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-irc-2026",
+      "fonte": "DR — CIRC (Lei 64/2025) — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-regioes-autonomas-2026",
+      "fonte": "AT/DR — IVA (Of. 25045) + IRS/IMT ilhas — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
+      "estado": "em-dia",
+      "atrasoPeriodos": 0
+    },
+    {
+      "id": "fiscal-retencao-pensoes-2026",
+      "fonte": "DR — Despacho 233-A/2026 — curado",
+      "serieAte": "2026",
+      "esperadoAte": "2024",
+      "frequencia": "anual",
       "estado": "em-dia",
       "atrasoPeriodos": 0
     }

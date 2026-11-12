@@ -33,16 +33,24 @@ export type CartaDados = [
   ola: string,
   /** O perfil económico — «Conta de outrem · setor privado». */
   perfil: string,
-  /** O que se aprende, já com os números dos dados lá dentro. */
+  /** O que se aprende na carta, já com os números dos dados lá dentro. */
   aprende: string,
+  /** A fala no painel (logo a seguir ao «Olá! Sou …»). */
+  fala: string,
+  /** O `data-id` do edifício cuja cena abre sem sair da home. */
+  cenaId: string,
+  /** O rótulo do botão primário que abre a cena. */
+  cenaRotulo: string,
+  /** A rota de aprofundamento (ex.: "/salario"). */
+  rotaHref: string,
+  /** O rótulo da ligação secundária para a rota. */
+  rotaRotulo: string,
 ];
 
 /** O que as sete cartas partilham — vem uma vez, não sete. */
 export type CartasComum = [
   /** O molde do «Olá!» — «Olá! Sou {quem}.» */
   olaTpl: string,
-  emBreve: string,
-  segue: string,
   fechar: string,
 ];
 
@@ -68,13 +76,29 @@ function figuraDaCarta(chave: ChaveElenco): { svg: string; viewBox: string } {
 
 /** Monta o detalhe do evento — as partes repetidas vêm do `comum`. */
 function escolha(c: CartaDados, cm: CartasComum): EscolhaPersonagem {
-  const [chave, nome, papel, ola, perfil, aprende] = c;
+  const [
+    chave,
+    nome,
+    papel,
+    ola,
+    perfil,
+    ,
+    fala,
+    cenaId,
+    cenaRotulo,
+    rotaHref,
+    rotaRotulo,
+  ] = c;
   return {
     chave,
     quem: `${nome} · ${papel}`,
-    fala: `${cm[0].replace("{quem}", ola)} ${aprende} <span class="b-a">${cm[1]}</span> ${cm[2]}`,
+    fala: `${cm[0].replace("{quem}", ola)} ${fala}`,
     extra: perfil,
-    fechar: cm[3],
+    cenaId,
+    cenaRotulo,
+    rotaHref,
+    rotaRotulo,
+    fechar: cm[1],
   };
 }
 

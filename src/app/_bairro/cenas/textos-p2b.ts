@@ -54,16 +54,16 @@ export const corSemDados =
   "Os dados de inflação não estão disponíveis agora — sem eles não se mede o poder de compra.";
 
 export const corExplica = (variacao: string, mesT1: string) =>
-  `<p>O dinheiro não desapareceu: <b>encolheu</b>. Os preços subiram ${variacao} desde então e cada euro compra menos. Chama-se perder <b>poder de compra</b>: a linha vermelha no monte de notas marca o que ele ainda compra em ${mesT1}.</p>`;
+  `O dinheiro não desapareceu: <b>encolheu</b>. Os preços subiram ${variacao} desde então e cada euro compra menos. Chama-se perder <b>poder de compra</b>: a linha vermelha no monte de notas marca o que ele ainda compra em ${mesT1}.`;
 export const corExplicaCA = (taxa: string, imposto: string) =>
-  `<p>E nos <b>Certificados de Aforro</b>, a poupança do Estado que se faz nos Correios? Hoje rendem <b>${taxa}</b> por ano, mais um prémio a partir do 2.º ano, e ${imposto} dos juros ficam retidos como imposto.</p>`;
+  `E nos <b>Certificados de Aforro</b>, a poupança do Estado que se faz nos Correios? Hoje rendem <b>${taxa}</b> por ano, mais um prémio a partir do 2.º ano, e ${imposto} dos juros ficam retidos como imposto.`;
 
 export const corBtnCertificados = "E se fosse para os certificados? →";
 
 export const corFala4 = (cap: string) =>
   `Os ${cap} crescem nos certificados. Mas crescem <b>mais depressa do que os preços?</b>`;
 export const corExplicaLiq = (taxa: string, liq: string) =>
-  `<p>No 1.º ano, a taxa de ${taxa} fica em <b>${liq}</b> depois do imposto. Se a inflação for maior do que isso, os euros aumentam mas compram menos; se for menor, ganha-se poder de compra. Experimenta:</p>`;
+  `No 1.º ano, a taxa de ${taxa} fica em <b>${liq}</b> depois do imposto. Se a inflação for maior do que isso, os euros aumentam mas compram menos; se for menor, ganha-se poder de compra. Experimenta:`;
 export const corNotaHipotese = (taxa: string, vigencia: string, infl: string, garantia: string) =>
   `Isto é uma hipótese, não uma previsão: a taxa dos certificados muda todos os meses (hoje ${taxa}, em vigor desde ${vigencia}) e ninguém sabe a inflação futura. Começa com a inflação dos últimos 12 meses, ${infl}. ${garantia}.`;
 
@@ -126,7 +126,7 @@ export const bmbSemDados =
   "O preço médio de hoje não está disponível — sem ele não se abre o litro.";
 
 export const bmbExplica =
-  `<p>Olha para dentro de <b>um litro</b>. Por baixo, o que paga o combustível e quem o traz até à bomba. Por cima, três impostos: o <span class="b-r">ISP</span>, a <span class="b-r">taxa de carbono</span> e o <span class="b-r">IVA</span>.</p>`;
+  `Olha para dentro de <b>um litro</b>. Por baixo, o que paga o combustível e quem o traz até à bomba. Por cima, três impostos: o <span class="b-r">ISP</span>, a <span class="b-r">taxa de carbono</span> e o <span class="b-r">IVA</span>.`;
 export const bmbCombustiveisAria = "Escolher o combustível";
 export const bmbCamProduto = "Combustível e distribuição";
 export const bmbCamIsp = "ISP";
@@ -136,7 +136,7 @@ export const bmbImpostosLitro = "Impostos em cada litro";
 export const bmbDeposito = (litros: number) => `Num depósito de ${litros} litros`;
 
 export const bmbIvaSobreImp = (v: string) =>
-  `<p>Repara no tracejado dentro do IVA: são <span class="b-r">${v}</span> por litro de <b>IVA sobre os outros impostos</b>. O IVA calcula-se sobre o preço que já leva o ISP e a taxa de carbono: paga-se imposto sobre imposto.</p>`;
+  `Repara no tracejado dentro do IVA: são <span class="b-r">${v}</span> por litro de <b>IVA sobre os outros impostos</b>. O IVA calcula-se sobre o preço que já leva o ISP e a taxa de carbono: paga-se imposto sobre imposto.`;
 export const bmbNotaIsp = (vigencia: string, notaIsp: string, data: string) =>
   `O ISP muda por portaria, às vezes todas as semanas. Valores em vigor desde ${vigencia}: ${notaIsp}. Preço: média nacional da DGEG de ${data}.`;
 
@@ -163,6 +163,7 @@ export const bmbGraficoAria = (
 export const bmbBtnVoltar = "Voltar ao bairro";
 export const bmbBtnOutra = "Ver outra vez";
 export const bmbBtnPrecos = "Ver os preços todos →";
+export const bmbBtnImpostos = "Ver os impostos no preço →";
 
 /* ————— Segurança Social · o recibo e o bolo comum ————— */
 
@@ -205,19 +206,19 @@ export const ssReciboTsu = (taxa: string) => `A empresa paga por cima (${taxa})`
 export const ssReciboTotal = "Para a Segurança Social";
 
 export const ssExplica = (ss: string, tsu: string, custo: string, bruto: string) =>
-  `<p>A Inês vê no recibo os <b>${ss}</b> que lhe descontam. Mas a empresa paga mais <span class="b-a">${tsu}</span> por ela, a chamada TSU, que nunca aparece no recibo. Por isso a Inês custa à empresa <b>${custo}</b> por mês, e não ${bruto}.</p>`;
+  `A Inês vê no recibo os <b>${ss}</b> que lhe descontam. Mas a empresa paga mais <span class="b-a">${tsu}</span> por ela, a chamada TSU, que nunca aparece no recibo. Por isso a Inês custa à empresa <b>${custo}</b> por mês, e não ${bruto}.`;
 export const ssBolo =
-  `<p>Este dinheiro vai para um bolo comum que paga, por exemplo, as pensões de quem já não trabalha e os subsídios de desemprego, de doença e parentais.</p>`;
+  `Este dinheiro vai para um bolo comum que paga, por exemplo, as pensões de quem já não trabalha e os subsídios de desemprego, de doença e parentais.`;
 
 export const ssBtnPedro = "E o Pedro, a recibos verdes? →";
 
 export const ssFala4 =
   "O Pedro trabalha a <b>recibos verdes</b>. Não tem empresa: paga tudo sozinho.";
 export const ssPedroTexto = (fat: string, taxa: string, rr: string, ssMes: string, isencao: number) =>
-  `<p>Se o Pedro faturar os mesmos <b>${fat}</b> por mês, desconta ${taxa} sobre ${rr} do que fatura: <span class="b-a">${ssMes}</span> por mês, pagos por ele, de 3 em 3 meses. No primeiro ano de atividade está isento (${isencao} meses).</p>`;
+  `Se o Pedro faturar os mesmos <b>${fat}</b> por mês, desconta ${taxa} sobre ${rr} do que fatura: <span class="b-a">${ssMes}</span> por mês, pagos por ele, de 3 em 3 meses. No primeiro ano de atividade está isento (${isencao} meses).`;
 export const ssBarrasAria = (inesEla: string, inesEmp: string, pedro: string) =>
   `Por cada 100 euros: a Inês desconta ${inesEla} e a empresa paga ${inesEmp}; o Pedro paga ${pedro} sozinho.`;
-export const ssBarrasLegenda = "em cada 100 € de salário ou de faturação";
+export const ssBarrasLegenda = "em cada 100 € de salário ou de faturação";
 export const ssNomeInes = "Inês";
 export const ssNomePedro = "Pedro";
 export const ssEla = (v: string) => `ela ${v}`;
@@ -225,11 +226,12 @@ export const ssEmpresa = (v: string) => `empresa ${v}`;
 export const ssEle = (v: string) => `ele ${v}`;
 
 export const ssCompara = (ines: string, pedro: string, sente: string) =>
-  `<p>Por cada 100 €, entram mais na Segurança Social pela Inês (${ines}) do que pelo Pedro (${pedro}). Mas a Inês só sente os ${sente} que lhe descontam; o Pedro sente tudo, porque paga do próprio bolso.</p>`;
+  `Por cada 100 €, entram mais na Segurança Social pela Inês (${ines}) do que pelo Pedro (${pedro}). Mas a Inês só sente os ${sente} que lhe descontam; o Pedro sente tudo, porque paga do próprio bolso.`;
 export const ssNotaCatb = (rr: string, baseMinIas: string, ias: string, baseMin: string, isencao: number, retencao: string) =>
   `Recibos verdes: rendimento relevante de ${rr} do faturado em serviços, com base mínima de ${baseMinIas} × IAS (${baseMin}). Isenção nos primeiros ${isencao} meses; os clientes retêm ${retencao} na fonte (art. 151.º do CIRS). O apuramento da Segurança Social é trimestral — aqui mostra-se a média anual. IAS de ${ias}.`;
 
 export const ssBtnVoltar = "Voltar ao bairro";
 export const ssBtnOutra = "Ver outra vez";
 export const ssBtnSalario = "Fazer contas com o teu salário →";
+export const ssBtnTrabalho = "Simular recibos verdes →";
 export const ssSemDados = "Os dados do salário não estão disponíveis agora.";

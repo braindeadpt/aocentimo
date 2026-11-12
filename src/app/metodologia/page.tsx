@@ -213,7 +213,7 @@ export default function MetodologiaPage() {
         <h2 className="font-display text-display-sm text-ink">Limitações honestas</h2>
         <ul className="list-disc pl-5 space-y-2">
           <li>A inflação oficial é um índice de cabaz médio — não o preço do teu cabaz.</li>
-          <li>A retenção na fonte mensal segue as tabelas do Despacho n.º 233-A/2026 (continente, sem deficiência). Faltam deduções de saúde/educação, IRS Jovem, pensões e regimes especiais. Açores e Madeira têm regras próprias.</li>
+          <li>A retenção na fonte mensal segue as tabelas do Despacho n.º 233-A/2026 (continente, sem deficiência). Faltam pensões e regimes especiais. Açores e Madeira têm regras próprias.</li>
           <li>O ISP muda por portaria, por vezes semanalmente — os valores mostrados têm data de vigência explícita.</li>
           <li>Simuladores não são aconselhamento. Para decisões fiscais, consulta um contabilista certificado.</li>
         </ul>

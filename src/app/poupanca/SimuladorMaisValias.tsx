@@ -1,11 +1,146 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { simularMaisValia, TipoAtivo } from "@/lib/engines/mais-valias";
-import { simularSalario } from "@/lib/engines/irs";
+import type { EscalaoIRS, RegrasIRS } from "@/lib/engines/irs";
 import { fmtEUR, fmtPct } from "@/lib/format";
 
-export function SimuladorMaisValias() {
+export interface RegrasMaisValiasProps {
+  mobiliarios: {
+    taxaAutonoma: number;
+    exclusoesDetencao: { anosMin: number; exclusao: number }[];
+  };
+  cripto: {
+    isencaoDetencaoDias: number;
+    taxa: number;
+  };
+  imoveis: {
+    percentagemEnglobada: number;
+  };
+}
+
+export type TipoAtivo = "mobiliarios" | "cripto" | "imovel";
+
+function impostoPorEscaloesPuro(rc: number, regras: RegrasIRS): number {
+  let restante = rc;
+  let anterior = 0;
+  let total = 0;
+  for (const e of regras.escaloes) {
+    const limite = e.ate ?? Infinity;
+    const fatia = Math.min(restante, limite - anterior);
+    if (fatia <= 0) break;
+    total += fatia * e.taxa;
+    restante -= fatia;
+    anterior = limite;
+  }
+  for (const s of regras.solidariedade) {
+    if (rc > s.de) {
+      const topo = s.ate ?? Infinity;
+      total += (Math.min(rc, topo) - s.de) * s.taxa;
+    }
+  }
+  return total;
+}
+
+function abatimentoME(rb: number, de: number, regras: RegrasIRS): number {
+  const me = regras.minimoExistencia;
+  const vr = me.valorReferencia;
+  const limiteDG = me.limiteDespesasGerais / me.taxa1Escalao;
+  const L = vr - limiteDG / 3.6 + me.limite1Escalao / 3.6;
+
+  let abatimento: number;
+  if (rb <= vr) {
+    abatimento = vr - (de + limiteDG);
+  } else if (rb <= L) {
+    abatimento = vr - 2.6 * (rb - vr) - (de + limiteDG);
+  } else {
+    abatimento = L - me.limite1Escalao - 1.35 * (rb - L) - de;
+  }
+  return Math.max(0, Math.min(abatimento, rb - de));
+}
+
+function coletavelSalarioPuro(
+  brutoMensal: number,
+  regras: RegrasIRS,
+  ssTrab: number
+): number {
+  const rb = brutoMensal * 14;
+  const contrib = rb * ssTrab;
+  const de = Math.max(regras.deducaoEspecificaFixa, contrib);
+  const aplicaME = rb <= regras.minimoExistencia.naoAplicaAcimaPorTitular;
+  const abat = aplicaME ? abatimentoME(rb, de, regras) : 0;
+  return Math.max(0, rb - de - abat);
+}
+
+function parseClamp(
+  s: string,
+  min: number,
+  max: number,
+  inteiro = false
+): number {
+  const limpo = s.trim().replace(/\s+/g, "").replace(",", ".");
+  if (limpo === "") return min;
+  const n = Number(limpo);
+  if (!Number.isFinite(n)) return min;
+  const val = inteiro ? Math.round(n) : n;
+  return Math.min(max, Math.max(min, val));
+}
+
+function CampoNumero({
+  id,
+  label,
+  valor,
+  onChange,
+  min = 0,
+  max = 10_000_000,
+  inteiro = false,
+}: {
+  id: string;
+  label: string;
+  valor: number;
+  onChange: (v: number) => void;
+  min?: number;
+  max?: number;
+  inteiro?: boolean;
+}) {
+  const [texto, setTexto] = useState(() => String(valor).replace(".", ","));
+  const padrao = inteiro ? /^\d*$/ : /^\d*(?:[.,]\d*)?$/;
+
+  return (
+    <div>
+      <label className="kicker block mb-1.5" htmlFor={id}>{label}</label>
+      <input
+        id={id}
+        type="text"
+        inputMode="decimal"
+        value={texto}
+        onChange={(e) => {
+          const cru = e.target.value;
+          if (cru !== "" && !padrao.test(cru.trim().replace(/\s+/g, ""))) {
+            return;
+          }
+          setTexto(cru);
+          onChange(parseClamp(cru, min, max, inteiro));
+        }}
+        onBlur={() => {
+          const final = parseClamp(texto, min, max, inteiro);
+          onChange(final);
+          setTexto(String(final).replace(".", ","));
+        }}
+        className="field min-h-[44px]"
+      />
+    </div>
+  );
+}
+
+export function SimuladorMaisValias({
+  regrasMV,
+  regrasIrs,
+  ssTrab,
+}: {
+  regrasMV: RegrasMaisValiasProps;
+  regrasIrs: RegrasIRS;
+  ssTrab: number;
+}) {
   const [tipo, setTipo] = useState<TipoAtivo>("mobiliarios");
   const [compra, setCompra] = useState(10000);
   const [venda, setVenda] = useState(15000);
@@ -16,22 +151,77 @@ export function SimuladorMaisValias() {
   const [salario, setSalario] = useState(1500);
 
   const coletavel = useMemo(
-    () => simularSalario([salario], 0).coletavelTributado,
-    [salario]
+    () =>
+      coletavelSalarioPuro(
+        Math.min(100_000, Math.max(0, salario)),
+        regrasIrs,
+        ssTrab
+      ),
+    [salario, regrasIrs, ssTrab]
   );
 
-  const r = useMemo(
-    () =>
-      simularMaisValia(venda, compra, {
-        tipo,
-        despesas,
-        anosDetencao: anos,
-        diasDetencao: dias,
-        pctReinvestida: reinvestida / 100,
-        coletavelOutros: coletavel,
-      }),
-    [venda, compra, tipo, despesas, anos, dias, reinvestida, coletavel]
-  );
+  const r = useMemo(() => {
+    const anosDet = Math.min(50, Math.max(0, anos));
+    const diasDet = Math.min(36_500, Math.max(0, dias));
+    const pctReinv = Math.min(1, Math.max(0, reinvestida / 100));
+    const mv = Math.max(0, venda - compra - despesas);
+
+    let tributavel = mv;
+    let excluido = 0;
+    let autonomo: number | null = null;
+
+    if (tipo === "cripto") {
+      if (diasDet >= regrasMV.cripto.isencaoDetencaoDias) {
+        tributavel = 0;
+        excluido = 1;
+      } else {
+        autonomo = mv * regrasMV.cripto.taxa;
+      }
+    } else if (tipo === "imovel") {
+      const base = mv * regrasMV.imoveis.percentagemEnglobada;
+      tributavel = base * (1 - Math.min(1, pctReinv));
+      excluido = 1 - tributavel / Math.max(mv, 1e-9);
+    } else {
+      const ex =
+        regrasMV.mobiliarios.exclusoesDetencao
+          .filter((e) => anosDet >= e.anosMin)
+          .at(-1)?.exclusao ?? 0;
+      tributavel = mv * (1 - ex);
+      excluido = ex;
+      autonomo = tributavel * regrasMV.mobiliarios.taxaAutonoma;
+    }
+
+    const englobado =
+      impostoPorEscaloesPuro(coletavel + tributavel, regrasIrs) -
+      impostoPorEscaloesPuro(coletavel, regrasIrs);
+
+    const melhor: "autonomo" | "englobado" | "impovel" =
+      tipo === "imovel"
+        ? "impovel"
+        : autonomo !== null && autonomo <= englobado
+          ? "autonomo"
+          : "englobado";
+
+    return {
+      maisValia: mv,
+      tributavel,
+      impostoAutonomo: autonomo,
+      impostoEnglobado: englobado,
+      melhor,
+      excluido,
+    };
+  }, [
+    venda,
+    compra,
+    tipo,
+    despesas,
+    anos,
+    dias,
+    reinvestida,
+    coletavel,
+    regrasMV,
+    regrasIrs,
+  ]);
 
   const imposto = r.impostoAutonomo !== null && r.melhor === "autonomo"
     ? r.impostoAutonomo
@@ -43,53 +233,25 @@ export function SimuladorMaisValias() {
         <div>
           <label className="kicker block mb-1.5" htmlFor="mv-tipo">O que vendeste</label>
           <select id="mv-tipo" value={tipo} onChange={(e) => setTipo(e.target.value as TipoAtivo)}
-            className="field">
+            className="field min-h-[44px]">
             <option value="mobiliarios">Ações / ETF / fundos</option>
             <option value="cripto">Cripto</option>
             <option value="imovel">Imóvel</option>
           </select>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="kicker block mb-1.5" htmlFor="mv-compra">Compraste por</label>
-            <input id="mv-compra" type="number" min={0} step={500} value={compra}
-              onChange={(e) => setCompra(Number(e.target.value) || 0)} className="field" />
-          </div>
-          <div>
-            <label className="kicker block mb-1.5" htmlFor="mv-venda">Vendeste por</label>
-            <input id="mv-venda" type="number" min={0} step={500} value={venda}
-              onChange={(e) => setVenda(Number(e.target.value) || 0)} className="field" />
-          </div>
-          <div>
-            <label className="kicker block mb-1.5" htmlFor="mv-desp">Despesas (comissões, obras)</label>
-            <input id="mv-desp" type="number" min={0} step={50} value={despesas}
-              onChange={(e) => setDespesas(Number(e.target.value) || 0)} className="field" />
-          </div>
+          <CampoNumero id="mv-compra" label="Compraste por" valor={compra} onChange={setCompra} min={0} max={10_000_000} />
+          <CampoNumero id="mv-venda" label="Vendeste por" valor={venda} onChange={setVenda} min={0} max={10_000_000} />
+          <CampoNumero id="mv-desp" label="Despesas (comissões, obras)" valor={despesas} onChange={setDespesas} min={0} max={10_000_000} />
           {tipo === "cripto" ? (
-            <div>
-              <label className="kicker block mb-1.5" htmlFor="mv-dias">Dias na carteira</label>
-              <input id="mv-dias" type="number" min={0} value={dias}
-                onChange={(e) => setDias(Number(e.target.value) || 0)} className="field" />
-            </div>
+            <CampoNumero key="mv-dias" id="mv-dias" label="Dias na carteira" valor={dias} onChange={setDias} min={0} max={36_500} inteiro />
           ) : (
-            <div>
-              <label className="kicker block mb-1.5" htmlFor="mv-anos">Anos de detenção</label>
-              <input id="mv-anos" type="number" min={0} max={40} value={anos}
-                onChange={(e) => setAnos(Number(e.target.value) || 0)} className="field" />
-            </div>
+            <CampoNumero key="mv-anos" id="mv-anos" label="Anos de detenção" valor={anos} onChange={setAnos} min={0} max={50} inteiro />
           )}
           {tipo === "imovel" && (
-            <div>
-              <label className="kicker block mb-1.5" htmlFor="mv-reinv">% reinvestida noutra HPP</label>
-              <input id="mv-reinv" type="number" min={0} max={100} value={reinvestida}
-                onChange={(e) => setReinvestida(Number(e.target.value) || 0)} className="field" />
-            </div>
+            <CampoNumero key="mv-reinv" id="mv-reinv" label="% reinvestida noutra HPP" valor={reinvestida} onChange={setReinvestida} min={0} max={100} />
           )}
-          <div>
-            <label className="kicker block mb-1.5" htmlFor="mv-sal">O teu bruto mensal (p/ englobar)</label>
-            <input id="mv-sal" type="number" min={0} step={100} value={salario}
-              onChange={(e) => setSalario(Number(e.target.value) || 0)} className="field" />
-          </div>
+          <CampoNumero id="mv-sal" label="O teu bruto mensal (p/ englobar)" valor={salario} onChange={setSalario} min={0} max={100_000} />
         </div>
         <p className="footnote">
           Mobiliários em mercado regulamentado: exclusão de 10 % (&gt;2 anos),
@@ -123,12 +285,10 @@ export function SimuladorMaisValias() {
             <dt className="text-ink2">Englobado nos teus escalões</dt>
             <dd className="num">{fmtEUR(r.impostoEnglobado)}</dd>
           </div>
-          <div className="mt-1 border-t-2 border-ink py-2.5">
-            <div className="flex items-baseline justify-between gap-4">
-              <dt className="font-medium">Pagas</dt>
-              <dd className="num-read font-medium text-up">{fmtEUR(imposto)}</dd>
-            </div>
-            <dd className="mt-1 text-rotulo text-muted">
+          <div className="mt-1 border-t-2 border-ink py-2.5 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <dt className="font-medium">Pagas</dt>
+            <dd className="num-read font-medium text-up">{fmtEUR(imposto)}</dd>
+            <dd className="w-full text-rotulo text-muted">
               {r.melhor === "autonomo"
                 ? "a taxa autónoma é a que fica mais barata"
                 : r.melhor === "englobado"
@@ -141,3 +301,5 @@ export function SimuladorMaisValias() {
     </div>
   );
 }
+export type { EscalaoIRS };
+

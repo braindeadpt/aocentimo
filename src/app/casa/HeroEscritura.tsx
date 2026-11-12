@@ -20,11 +20,19 @@ export function InstrumentoEscritura({
   estado: EstadoCartao;
   estadoRotulo: string;
 }) {
-  const { preco, compra, dinheiroEntrada, jovem, tipo } = useCasa();
+  const { preco, compra, dinheiroEntrada, jovem, compradoresJovens, tipo, urlPartilha } =
+    useCasa();
   return (
     <Cartao
       icone="casa"
       breadcrumb={`O BANCO / COMPRAR CASA · IMT ${anoImt} + REGISTOS`}
+      acoes={[
+        {
+          copiar: urlPartilha,
+          rotulo: "Copiar ligação",
+          ariaLabel: "Copiar ligação desta simulação",
+        },
+      ]}
       meta={[
         `IMT ${fmtEUR0(compra.imt)}`,
         `selo ${fmtEUR0(compra.isAquisicao + compra.isCredito)}`,
@@ -49,7 +57,11 @@ export function InstrumentoEscritura({
       <p className="footnote mt-2">
         saem-te do bolso no dia da escritura — a casa é de{" "}
         {fmtEUR0(preco)} e o banco empresta o resto
-        {jovem && tipo === "hpp" ? " · com IMT Jovem" : ""}
+        {jovem && tipo === "hpp"
+          ? compradoresJovens === "umDeDois"
+            ? " · com IMT Jovem (1 de 2)"
+            : " · com IMT Jovem"
+          : ""}
       </p>
     </Cartao>
   );

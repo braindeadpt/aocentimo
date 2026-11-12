@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { imi, desdobraPrestacoes, taxaDoMunicipio, compararMunicipios, REGRAS_IMI } from "./imi";
+import {
+  imi as imiPuro,
+  desdobraPrestacoes as desdobraPrestacoesPuro,
+  taxaDoMunicipio as taxaDoMunicipioPuro,
+} from "./imi-puro";
+import imt2026 from "@data/fiscal/imt-2026.json";
 
 describe("IMI — a coleta", () => {
   // VPT 120 000 × 0,324 % = 388,80
@@ -196,5 +202,37 @@ describe("IMI — a diferença entre municípios", () => {
     const { min, max } = REGRAS_IMI[2026].taxasLegais.urbanos;
     expect(taxa).toBeGreaterThan(min);
     expect(taxa).toBeLessThan(max);
+  });
+
+  it("núcleo imi-puro produz exactamente os mesmos valores sem importar JSON", () => {
+    const regras = REGRAS_IMI[2026];
+    expect(taxaDoMunicipioPuro("porto", regras)).toBe(taxaDoMunicipio("porto"));
+    expect(
+      imiPuro(
+        {
+          vpt: 150000,
+          taxa: 0.0035,
+          imiFamiliar: true,
+          habitacaoPropriaPermanente: true,
+          dependentes: 2,
+        },
+        regras
+      )
+    ).toEqual(
+      imi({
+        vpt: 150000,
+        taxa: 0.0035,
+        imiFamiliar: true,
+        habitacaoPropriaPermanente: true,
+        dependentes: 2,
+      })
+    );
+    expect(desdobraPrestacoesPuro(455, regras)).toEqual(desdobraPrestacoes(455));
+  });
+
+  it("imt-2026.json tem fonteUrl oficial do Portal das Finanças ou Diário da República", () => {
+    expect(imt2026.fonteUrl).toMatch(
+      /^https:\/\/(info\.portaldasfinancas\.gov\.pt|diariodarepublica\.pt)\//
+    );
   });
 });

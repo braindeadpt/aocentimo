@@ -430,6 +430,16 @@
   cursor: pointer;
   outline: none;
 }
+/* Anel de foco visível (WCAG 2.4.7): contorno e halo claro ao navegar por
+   teclado (Tab), sem `will-change` nas camadas nem promoção em repouso. */
+[data-pele="v5"] .ed:focus-visible {
+  outline: 8px solid #2445d6;
+  outline-offset: 6px;
+  border-radius: 6px;
+}
+[data-pele="v5"] .b-noite .ed:focus-visible {
+  outline-color: #ffc62b;
+}
 [data-pele="v5"] .ed > .ed-corpo {
   transition: transform 0.25s cubic-bezier(0.3, 1.6, 0.5, 1);
 }
@@ -437,6 +447,9 @@
 [data-pele="v5"] .ed:focus-visible > .ed-corpo,
 [data-pele="v5"] .ed.b-ativo > .ed-corpo {
   transform: translateY(-7px);
+}
+[data-pele="v5"] .ed:focus-visible > .ed-corpo {
+  filter: drop-shadow(0 0 6px #ffc62b);
 }
 /* No telemóvel, o marcador que não cabe inteiro esbate-se e volta quando
    entra na vista (camara.ts, `esconderCortados`). */
@@ -522,6 +535,32 @@
   font-size: 20px;
   color: var(--azul);
 }
+[data-pele="v5"] .b-aviso-roda {
+  position: absolute;
+  left: 50%;
+  top: 14px;
+  transform: translateX(-50%);
+  z-index: 3;
+  pointer-events: none;
+  color: var(--tinta);
+  background: var(--papel);
+  border: 3px solid var(--tinta);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-weight: 800;
+  font-size: 13.5px;
+  box-shadow: var(--sombra-dura);
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.18s,
+    visibility 0.18s;
+}
+[data-pele="v5"] .b-aviso-roda.b-on {
+  opacity: 1;
+  visibility: visible;
+}
 
 /* ——— o cartão de um edifício ——— */
 [data-pele="v5"] .b-cartao {
@@ -585,7 +624,7 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--azul);
-  padding-right: 30px;
+  padding-right: 44px;
 }
 [data-pele="v5"] .b-painel .b-fala {
   font-weight: 700;
@@ -613,12 +652,21 @@
 [data-pele="v5"] .b-painel .b-perfil {
   margin: 0;
   font-weight: 700;
+  font-size: 14.5px;
+  color: var(--tinta-2);
 }
 [data-pele="v5"] .b-painel .b-acoes {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
   align-items: center;
+  margin-top: 2px;
+}
+[data-pele="v5"] .b-painel .b-acoes .b-btn {
+  max-width: 100%;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
 }
 [data-pele="v5"] .b-fechar {
   position: absolute;
@@ -630,6 +678,22 @@
   cursor: pointer;
   font-weight: 900;
   color: var(--tinta);
+}
+[data-pele="v5"] .b-painel .b-fechar {
+  top: 8px;
+  right: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  line-height: 1;
+  border: 3px solid var(--tinta);
+  border-radius: 999px;
+  background: var(--papel);
+}
+[data-pele="v5"] .b-painel .b-fechar:hover {
+  background: var(--amarelo-2);
 }
 [data-pele="v5"] .b-painel .b-fonte {
   font-size: 12.5px;
@@ -985,6 +1049,17 @@
   }
 }
 @media (max-width: 700px) {
+  /* À escala inicial o bairro inteiro já está visível (decisão do dono,
+     2026-10-07): 1 dedo na vertical faz scroll da página sem armadilha;
+     1 dedo na horizontal passeia, 2 dedos fazem pinça, e quando ampliado
+     (.b-ampliado) volta a touch-action: none para passear em todas as direcções. */
+  [data-pele="v5"] .b-janela:not(.b-ampliado) {
+    touch-action: pan-y;
+  }
+  [data-pele="v5"] .ed:focus-visible {
+    outline-width: 16px;
+    outline-offset: 8px;
+  }
   [data-pele="v5"] .b-ctl {
     padding: 5px 9px;
     font-size: 12px;
@@ -1005,8 +1080,23 @@
     padding: 12px 14px;
     gap: 6px;
   }
+  [data-pele="v5"] .b-painel .b-fechar {
+    top: 6px;
+    right: 6px;
+  }
   [data-pele="v5"] .b-painel .b-fala {
-    font-size: 17px;
+    font-size: 16.5px;
+  }
+  [data-pele="v5"] .b-painel .b-perfil {
+    font-size: 13.5px;
+  }
+  [data-pele="v5"] .b-painel .b-acoes {
+    gap: 8px;
+  }
+  [data-pele="v5"] .b-painel .b-acoes .b-btn {
+    min-height: 44px;
+    padding: 8px 14px;
+    font-size: 14.5px;
   }
   [data-pele="v5"] .b-painel .b-fonte {
     display: none;

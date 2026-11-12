@@ -15,10 +15,15 @@ import { estadoDe, rotulosLeitura } from "@/lib/leitura";
 import { m } from "@/lib/messages";
 import iva from "@data/fiscal/iva.json";
 import isp from "@data/fiscal/isp.json";
+import isvDados from "@data/fiscal/isv-2026.json";
+import iucDados from "@data/fiscal/iuc-2026.json";
+import regioes from "@data/fiscal/regioes-autonomas-2026.json";
+import type { LitroDecomposto, RegrasIsv, RegrasIuc } from "@/lib/engines/carro-puro";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 import { CABAZ } from "./cabaz";
 import { CampoCabaz } from "./CampoCabaz";
 import { LitroFuel, type LitroFuelItem } from "./LitroFuel";
+import { SimuladorCarro } from "./SimuladorCarro";
 import { TalaoCompras } from "./TalaoCompras";
 
 export const metadata: Metadata = metaDeRota("/impostos");
@@ -63,6 +68,28 @@ export default function ImpostosPage() {
     ];
   });
   const pmd = loadFonte("dgeg", "pmd-gasoleo-diario");
+  const itemGasolina = combustiveis.find((c) => c.id === "gasolina95");
+  const itemGasoleo = combustiveis.find((c) => c.id === "gasoleo");
+  const litroGasolina: LitroDecomposto | null = itemGasolina
+    ? {
+        precoLitro: itemGasolina.precoLitro,
+        produto: itemGasolina.dec.produto,
+        isp: itemGasolina.dec.isp,
+        carbono: itemGasolina.dec.carbono,
+        iva: itemGasolina.dec.iva,
+        impostos: itemGasolina.dec.impostos,
+      }
+    : null;
+  const litroGasoleo: LitroDecomposto | null = itemGasoleo
+    ? {
+        precoLitro: itemGasoleo.precoLitro,
+        produto: itemGasoleo.dec.produto,
+        isp: itemGasoleo.dec.isp,
+        carbono: itemGasoleo.dec.carbono,
+        iva: itemGasoleo.dec.iva,
+        impostos: itemGasoleo.dec.impostos,
+      }
+    : null;
 
   return (
     <div className="rt5">
@@ -76,7 +103,7 @@ export default function ImpostosPage() {
       />
       <Pagina
       pergunta="Quanto do que compras é imposto?"
-      edificio={{ href: "/#financas", titulo: m.bairro.edificios.financas.titulo }}
+      edificio={{ href: "/#mercearia", titulo: m.bairro.edificios.mercearia.titulo }}
       rota="/impostos"
       kicker="Impostos — o imposto dentro do preço"
       resposta={{
@@ -131,10 +158,16 @@ export default function ImpostosPage() {
             meta={["preços editáveis"]}
             fonte={{
               rotulo: m.common.fonte,
-              itens: [{ nome: iva.fonte, url: iva.fonteUrl }],
+              itens: [
+                { nome: iva.fonte, url: iva.fonteUrl },
+                { nome: regioes.fonte, url: regioes.fonteUrl },
+              ],
             }}
           >
-            <TalaoCompras scrubAria={m.chart.scrubAria} />
+            <TalaoCompras
+              scrubAria={m.chart.scrubAria}
+              ivaRegioes={regioes.iva}
+            />
           </Cartao>
 
           {/* o litro em duas peças — estrutura (isométrico) e quantidade
@@ -157,6 +190,22 @@ export default function ImpostosPage() {
               }}
             />
           )}
+
+          {/* PROPOSTA (revisão do dono) — ISV, IUC e custo fiscal anual do automóvel */}
+          <SimuladorCarro
+            regrasIsv={isvDados as unknown as RegrasIsv}
+            regrasIuc={iucDados as unknown as RegrasIuc}
+            litroGasolina={litroGasolina}
+            litroGasoleo={litroGasoleo}
+            estado={estadoDe(fresh, "fiscal-isv-2026")}
+            estadoRotulo={rotulos.estados[estadoDe(fresh, "fiscal-isv-2026")]}
+            rotuloFonte={m.common.fonte}
+            fontes={[
+              { nome: "CISV — Diário da República", url: isvDados.fonteUrl },
+              { nome: "CIUC — Diário da República", url: iucDados.fonteUrl },
+              { nome: "DGEG — PMD", url: pmd?.meta.url },
+            ]}
+          />
         </div>
       }
       confirma={
@@ -214,6 +263,40 @@ export default function ImpostosPage() {
               vigencia={isp.vigencia}
               nota={isp.nota}
             />
+          </PaginaDetalhe>
+
+          {/* PROPOSTA (revisão do dono) */}
+          <PaginaDetalhe
+            rotulo={`ISV e IUC ${isvDados.ano} — compra, circulação e pagamento no mês da matrícula`}
+          >
+            <div className="body-copy space-y-4">
+              <p>{isvDados.nota.replace(/(\d) (€|%)/g, "$1\u202F$2")}</p>
+              <p>
+                <strong>Taxas intermédias e usados importados:</strong>{" "}
+                {isvDados.alteracaoLoe2026.efeito.replace(/(\d) (€|%)/g, "$1\u202F$2")}{" "}
+                {isvDados.veiculosUsadosImportadosUE.nota.replace(/(\d) (€|%)/g, "$1\u202F$2")}
+              </p>
+              <p>{iucDados.nota.replace(/(\d) (€|%)/g, "$1\u202F$2")}</p>
+              <p>
+                <strong>
+                  Quando se paga o IUC em {iucDados.ano} vs. 2027 (DL
+                  161/2026):
+                </strong>{" "}
+                {iucDados.cobrancas.nota.replace(/(\d) (€|%)/g, "$1\u202F$2")}
+              </p>
+            </div>
+            <div className="mt-4 space-y-2">
+              <Source
+                nome={isvDados.fonte}
+                url={isvDados.fonteUrl}
+                vigencia={isvDados.vigencia}
+              />
+              <Source
+                nome={iucDados.fonte}
+                url={iucDados.fonteUrl}
+                vigencia={iucDados.vigencia}
+              />
+            </div>
           </PaginaDetalhe>
 
           <PaginaDetalhe rotulo="As fórmulas — e a cascata do imposto sobre imposto">

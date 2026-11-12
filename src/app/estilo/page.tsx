@@ -136,22 +136,22 @@ const ANEL_ANO = (() => {
 })();
 
 const TOKENS: [string, string, string][] = [
-  ["floor", "bg-floor", "#f4f3ec / #0d0b08 — nível 0, fundo"],
-  ["panel", "bg-panel", "#fbfaf6 / #1a1611 — nível 1, conteúdo"],
-  ["raised", "bg-raised", "#fdfcf9 / #251f18 — nível 2, resultado"],
-  ["overlay", "bg-overlay", "#ffffff / #342e20 — nível 3, sobreposição"],
-  ["ink", "bg-ink", "#1b1811 / #f2ecdd — tinta"],
-  ["ink2", "bg-ink2", "#57534a / #aba28c — secundário"],
-  ["muted", "bg-muted", "#6f6a58 / #8f8878 — meta (AA nos dois temas)"],
-  ["line", "bg-line", "#e0dcc9 / #2c271e — hairline"],
-  ["line2", "bg-line2", "#b7b19d / #57503c — regra, borda de campo"],
-  ["accent", "bg-accent", "#b93a17 / #ff6133 — vermilhão-sinal, o que sai"],
-  ["accent-ink", "bg-accent-ink", "#8f2a10 / #a03012 — corte mais fundo"],
-  ["keep", "bg-keep", "#1f6b4d / #63d6a4 — o que é teu"],
-  ["mark", "bg-mark", "#a07c17 / #f0c468 — torrado: fonte, foco, chrome activo"],
+  ["floor", "bg-floor", "#f6f2ea / #141a33 — chão da página (--chao)"],
+  ["panel", "bg-panel", "#ffffff / #1d2442 — cartão e conteúdo (--papel)"],
+  ["raised", "bg-raised", "#ffffff / #1d2442 — resultado (--papel)"],
+  ["overlay", "bg-overlay", "#ffffff / #1d2442 — sobreposição (--papel)"],
+  ["ink", "bg-ink", "#16130f / #f4efe4 — tinta e traço (--tinta)"],
+  ["ink2", "bg-ink2", "#4a4540 / #c6c0b4 — secundário (--tinta-2)"],
+  ["muted", "bg-muted", "#6e675e / #a49d90 — fontes e notas (--suave, AA)"],
+  ["line", "bg-line", "#e4e1da / #2f3760 — divisões (--linha)"],
+  ["line2", "bg-line2", "#6e675e / #a49d90 — regra e borda de campo (--suave)"],
+  ["accent", "bg-accent", "#c73a1d / #ff7a5c — vermelho-txt, o que sai"],
+  ["accent-ink", "bg-accent-ink", "#c73a1d / #ff7a5c — corte mais fundo"],
+  ["keep", "bg-keep", "#0a7a4f / #3fc48a — verde-txt, o que fica contigo"],
+  ["mark", "bg-mark", "#2445d6 / #8da2ff — azul: foco, fonte, acento neutro"],
   ["warn", "bg-warn", "#8a5f08 / #f0c468 — aviso"],
-  ["up", "bg-up", "#b03016 / #ff6133 — sobe (mau em preços)"],
-  ["down", "bg-down", "#1f6b4d / #63d6a4 — desce (bom em preços)"],
+  ["up", "bg-up", "#c73a1d / #ff7a5c — sobe (mau em preços)"],
+  ["down", "bg-down", "#0a7a4f / #3fc48a — desce (bom em preços)"],
   ["papel-sai", "bg-papel-sai", "#f0d5c6 — papel avermelhado, o troço arrancado (fixo nos dois temas)"],
   ["papel-sai-tinta", "bg-papel-sai-tinta", "#7a2a10 — a tinta desse papel (6,9:1)"],
   ["papel-fica", "bg-papel-fica", "#dcead4 — papel esverdeado, o que é teu (fixo)"],
@@ -160,9 +160,9 @@ const TOKENS: [string, string, string][] = [
 
 const REGRAS = [
   "Verde só para «o teu dinheiro» — nunca decoração nem fundo genérico.",
-  "Torrado só como marcador funcional: fonte, citação, anel de foco.",
-  "Vermilhão-sinal só no dinheiro que sai do bolso — nunca no chrome (nav, links, régua são torrado/tinta).",
-  "Escuro por omissão — o instrumento é a cara; o claro é o documento.",
+  "Azul como marcador funcional na pele V5: foco, fonte e acento neutro.",
+  "Vermelho só no dinheiro que sai do bolso — nunca no chrome.",
+  "Claro por omissão — a folha de papel do bairro; o escuro é a noite sobre o Porto.",
 ];
 
 // 1B-01 — o conjunto fechado de ícones, por família
@@ -179,11 +179,10 @@ const ICONES_ESTADO: readonly NomeIcone[] = [
 ];
 
 const REGRAS_SUPERFICIE = [
-  "Textura só no nível 0: papel milimetrado no claro; no escuro a mesma malha em fósforo esbatido — ecrã de registo, não papel.",
-  "panel, raised e overlay nunca têm textura — a leitura manda.",
-  "O fio de luz de 1px na aresta superior só existe no escuro; no claro é a sombra subtil que eleva.",
+  "Cor chapada na V5: chão plano (#f6f2ea no claro, #141a33 na noite), sem malha nem textura.",
+  "Cartões, resultados e menus usam papel (#ffffff / #1d2442), traço grosso de tinta e sombra dura.",
+  "Sem gradientes decorativos, sem vidro e sem sombras difusas.",
   "overlay não leva texto muted — só ink/ink2. Meta e fontes vivem nos níveis baixos.",
-  "O grão é global — o vidro do instrumento; cobre todos os níveis por igual.",
   ".blueprint (pontos) não é um nível: é a textura de uma zona de medição, atrás de diagramas.",
 ];
 
@@ -200,7 +199,7 @@ export default function EstiloPage() {
         preto grosso e cor chapada, para dos 11 aos 50 anos.{" "}
         <strong>Archivo</strong> faz todo o trabalho — o eixo da largura
         aperta a manchete e alarga o número, e é isso que separa título de
-        cuerpo. <strong>Caveat</strong> só escreve à mão, nos gráficos e no
+        corpo. <strong>Caveat</strong> só escreve à mão, nos gráficos e no
         quadro da escola. O talão e o recibo levam a monoespaçada do
         sistema. Verde é o que fica contigo, vermelho é o que sai, azul é
         neutro. Claro por omissão — o escuro é a noite do bairro.
@@ -268,7 +267,7 @@ export default function EstiloPage() {
             {/* a ponte número–unidade é sempre o FINO (U+202F) — este
                 excerto é a especificação, logo tem de ser exemplar */}
             <p className="num text-[1.4rem] leading-tight">
-              {comUnidade("38,40", "€")} · {comUnidade("1 234,56", "€")}
+              {comUnidade("38,40", "€")} · {comUnidade("1\u202f234,56", "€")}
             </p>
             <p className="footnote mt-1">{E.monoNota}</p>
           </div>
@@ -516,8 +515,7 @@ export default function EstiloPage() {
               A moldura da referência — contorno tracejado, raio pormenor —
               para o cabeçalho dos cartões <code className="num">Cartao</code>{" "}
               (prop <code className="num">icone</code>). Dentro de um cartão
-              o traço desenha-se ao foco/à passagem, com a inversão para
-              papel.
+              o traço desenha-se ao foco/à passagem.
             </p>
           </div>
           <div className="border border-line bg-panel p-6">
@@ -575,9 +573,9 @@ export default function EstiloPage() {
       <section className="stack-sec">
         <h2 className="kicker mb-4">Cor — semântica primeiro, dados depois</h2>
         <p className="footnote mb-4 max-w-xl">
-          Três cores com significado fixo — vermelhão é o que sai (e só aí;
-          o chrome é torrado e tinta), verde é o que fica contigo, torrado
-          marca a fonte. Os dados vivem fora delas:
+          Três cores com significado fixo — vermelho é o que sai (nunca no
+          chrome), verde é o que fica contigo, azul é o acento neutro e foco
+          na pele V5. Os dados vivem fora delas:
           uma rampa azul-aço para famílias ordinais e uma rampa neutra de
           «data ink» para contexto. Os swatches são ao vivo — mudam com o
           tema (botão no topo).
@@ -750,18 +748,18 @@ export default function EstiloPage() {
       </section>
 
       <section className="stack-sec">
-        <h2 className="kicker mb-4">Superfícies — escala de elevação</h2>
+        <h2 className="kicker mb-4">Superfícies — aliases de elevação na pele V5</h2>
         <p className="footnote mb-4 max-w-xl">
-          Quatro níveis, um instrumento. No claro a elevação é sombra subtil
-          e a superfície recua; no escuro é luz — luminância crescente na
-          rampa e um fio de 1px na aresta superior. Troca o tema para ver as
-          duas mecânicas.
+          Os quatro aliases herdados da V4 apontam hoje para a pele V5 (.rt5):
+          floor é o chão plano (--chao) e panel, raised e overlay vestem papel
+          (--papel) com sombra dura sem desfoque. Troca o tema para ver o
+          papel e a noite do bairro.
         </p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="border border-line bg-floor px-4 py-6">
             <p className="kicker-xs">0 — floor</p>
             <p className="footnote mt-2">
-              fundo da página · a grelha vive só aqui
+              fundo da página · chão plano (--chao), sem textura
             </p>
           </div>
           <div className="border border-line bg-panel px-4 py-6">
@@ -830,11 +828,11 @@ export default function EstiloPage() {
           </div>
         </div>
         <p className="footnote mt-4">
-          Texturas, três papéis: a malha milimetrada vive só no nível 0;
-          o grão fino é o vidro do instrumento — global, igual nos dois
-          temas; <code className="num">.blueprint</code> é textura duma
-          zona de medição, atrás de diagramas. Nenhuma fica em cima de
-          texto corrido.
+          Superfícies na V5: o chão e os cartões são cor chapada (a malha e o
+          filtro de ruído da V4 foram desligados nas rotas e na home);{" "}
+          <code className="num">.blueprint</code> fica reservado a uma zona de
+          medição, atrás de diagramas. Nenhuma textura fica em cima de texto
+          corrido.
         </p>
       </section>
 
@@ -1341,7 +1339,7 @@ export default function EstiloPage() {
       </section>
 
       <section className="stack-sec">
-        <h2 className="kicker mb-4">Os dois papéis — porquê o talão não muda de cor</h2>
+        <h2 className="kicker mb-4">Os dois papéis — porque é que o talão não muda de cor</h2>
         <div className="grid items-start gap-8 md:grid-cols-[1fr_auto]">
           <div>
             <p className="footnote max-w-xl">
@@ -1387,6 +1385,7 @@ export default function EstiloPage() {
         <h2 className="kicker mb-4">A barra do euro — assinatura</h2>
         <EuroBar
           total={25987}
+          scrubAria={m.chart.scrubAria}
           segmentos={[
             { label: "Fica contigo", valor: 16419.69, cor: "var(--color-keep)" },
             { label: "IRS", valor: 2270.31, cor: "var(--color-accent)" },
@@ -1562,9 +1561,9 @@ export default function EstiloPage() {
         <h2 className="kicker mb-4">O cartão e a página — a anatomia fixa</h2>
         <p className="footnote mb-4 max-w-xl">
           Duas peças de arquitectura, não de desenho.{" "}
-          <code className="num">Cartao</code> é a casca Ledger que todo o
+          <code className="num">Cartao</code> é a casca que todo o
           cartão-instrumento partilha — o <code className="num">Leitura</code>{" "}
-          já nasce sobre ela (mesmo DOM, mesma inversão para papel).{" "}
+          já nasce sobre ela (mesmo DOM, mesma casca).{" "}
           <code className="num">Pagina</code> é o template de três níveis
           obrigatório nas rotas de conteúdo: 1 · a resposta, 2 · Explora,
           3 · Confirma — e a pergunta seguinte, para nenhuma página ser um
@@ -1587,13 +1586,13 @@ export default function EstiloPage() {
                       sério e 18 px de caixa não chegavam aos 24×24 do 2.5.8.
                       O `py` cresce a área de toque, o `-my` devolve a linha. */}
                   <span className="num text-rotulo">presets:</span>
-                  <a href="/salario" className="lq-link num -my-1 py-1 text-rotulo">
+                  <a href="/salario" className="lq-link num -my-3 inline-flex min-h-[44px] min-w-[44px] items-center justify-center py-3 text-rotulo">
                     mínimo
                   </a>
-                  <a href="/salario" className="lq-link num -my-1 py-1 text-rotulo">
+                  <a href="/salario" className="lq-link num -my-3 inline-flex min-h-[44px] min-w-[44px] items-center justify-center py-3 text-rotulo">
                     1 500 €
                   </a>
-                  <a href="/salario" className="lq-link num -my-1 py-1 text-rotulo">
+                  <a href="/salario" className="lq-link num -my-3 inline-flex min-h-[44px] min-w-[44px] items-center justify-center py-3 text-rotulo">
                     2 000 €
                   </a>
                 </div>
@@ -1621,10 +1620,8 @@ export default function EstiloPage() {
               breadcrumb mono + meta + selo de estado · <strong>corpo</strong> — UMA ideia ·{" "}
               <strong>controlos</strong> — hairline tracejada, a zona de
               medição · <strong>rodapé</strong> — fonte + «ver →» + «JSON».
-              Passa o rato ou o foco: inverte para papel. O conteúdo do
-              corpo fala em <code className="num">--l-*</code> para
-              inverter com o cartão (ou herda a tinta — nunca usa tokens
-              globais de cor).
+              Passa o rato ou o foco: a sombra dura afunda e o foco realça o
+              contorno em azul, mantendo o papel do tema nos dois modos.
             </p>
           </div>
           <div className="border border-line bg-panel px-5 py-4 lg:col-span-2">

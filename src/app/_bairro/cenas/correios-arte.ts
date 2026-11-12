@@ -131,7 +131,14 @@ export function graficoAforro(
   s += `<text x="${GC.x1 - 4}" y="${(y(f.real) + (f.real > c.saldo - 400 && f.real < c.saldo + 400 ? -8 : 18)).toFixed(1)}" text-anchor="end" font-family="Caveat" font-weight="700" font-size="18" fill="#0c7a4f">…e o que compram</text>`;
   s += `<text x="${x(5).toFixed(1)}" y="${(y(c.saldo) - 8).toFixed(1)}" font-family="Caveat" font-weight="700" font-size="17" fill="#6e675e">colchão: sempre ${fmtEUR0(cap0)}…</text>`;
   s += `<text x="${GC.x1 - 4}" y="${Math.min(GC.y0 - 6, y(c.real) + 20).toFixed(1)}" text-anchor="end" font-family="Caveat" font-weight="700" font-size="17" fill="#6e675e">…mas compra cada vez menos</text>`;
-  return `<svg class="grafico-irs" viewBox="0 0 520 280" role="img" aria-label="${aria}" font-family="Archivo">${s}</svg>`;
+  const texto =
+    `<dl class="b-sr">` +
+    `<dt>Certificados de Aforro (euros nominais)</dt><dd>${fmtEUR0(cap0)} → ${fmtEUR0(f.saldo)}</dd>` +
+    `<dt>Certificados de Aforro (poder de compra)</dt><dd>${fmtEUR0(cap0)} → ${fmtEUR0(f.real)}</dd>` +
+    `<dt>No colchão (euros nominais)</dt><dd>${fmtEUR0(cap0)} → ${fmtEUR0(c.saldo)}</dd>` +
+    `<dt>No colchão (poder de compra)</dt><dd>${fmtEUR0(cap0)} → ${fmtEUR0(c.real)}</dd>` +
+    `</dl>`;
+  return `<svg class="grafico-irs" viewBox="0 0 520 280" role="img" aria-label="${aria}" font-family="Archivo">${s}</svg>${texto}`;
 }
 
 /* ————— pessoas do interior: a MESMA personagem do mapa (`pessoa()`), com

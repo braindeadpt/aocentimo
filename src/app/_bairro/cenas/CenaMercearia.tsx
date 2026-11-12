@@ -10,7 +10,8 @@
  * GSAP de `anima.ts` faz o caminho; sem, o estado final entra logo.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { fmtNum } from "@/lib/format";
+import Link from "next/link";
+import { FINO, fmtEUR, fmtNum } from "@/lib/format";
 import type { DadosMercearia } from "./dados";
 import {
   barrasSubida,
@@ -27,7 +28,6 @@ import {
 } from "./mercearia-arte";
 import { acenar, useGsap } from "./anima";
 import CenaDePerto from "./CenaDePerto";
-import { pontosDaSerie } from "./utils";
 import * as T from "./textos";
 
 export default function CenaMercearia({ D, aoFechar }: { D: DadosMercearia; aoFechar: () => void }) {
@@ -59,6 +59,13 @@ export default function CenaMercearia({ D, aoFechar }: { D: DadosMercearia; aoFe
     };
   }, []);
 
+  // PASSO 1: garante que ao abrir ou recomeçar o SVG está no estado inicial
+  useEffect(() => {
+    const raiz = arteRef.current;
+    if (!raiz || passo !== 1) return;
+    reporMercearia(raiz);
+  }, [passo]);
+
   // PASSO 2: o saco conta de 10 € até ao preço de hoje, as etiquetas
   // viram uma a uma e o produto que mais subiu salta. Ao sair do passo
   // (ou sem movimento) fica o estado final.
@@ -68,7 +75,7 @@ export default function CenaMercearia({ D, aoFechar }: { D: DadosMercearia; aoFe
     const saco = raiz.querySelector("#mercSacoTxt");
     const fim = () => {
       etiquetasDe(D, raiz);
-      if (saco) saco.textContent = `${fmtNum(realSaco, 2)} €`;
+      if (saco) saco.textContent = fmtEUR(realSaco);
     };
     const gsap = gsapRef.current;
     if (!gsap) {
@@ -83,7 +90,7 @@ export default function CenaMercearia({ D, aoFechar }: { D: DadosMercearia; aoFe
         duration: 1.3,
         ease: "power2.out",
         onUpdate: () => {
-          if (saco) saco.textContent = `${fmtNum(o.v, 2)} €`;
+          if (saco) saco.textContent = fmtEUR(o.v);
         },
       })
     );
@@ -133,8 +140,13 @@ export default function CenaMercearia({ D, aoFechar }: { D: DadosMercearia; aoFe
     const t = raiz.querySelector("#mercTalaoArte");
     if (!t) return;
     const gsap = gsapRef.current;
-    if (gsap) gsap.fromTo(t, { opacity: 1, y: 40 }, { y: 0, duration: 0.7, ease: "power2.out" });
-    else t.setAttribute("opacity", "1");
+    if (gsap) {
+      const tw = gsap.fromTo(t, { opacity: 1, y: 40 }, { y: 0, duration: 0.7, ease: "power2.out" });
+      return () => {
+        tw.kill();
+      };
+    }
+    t.setAttribute("opacity", "1");
   }, [passo, gsapRef]);
 
   const juizo =
@@ -149,8 +161,8 @@ export default function CenaMercearia({ D, aoFechar }: { D: DadosMercearia; aoFe
   // as taxas do IVA vêm de data/fiscal/iva.json — se uma faltar, o texto
   // diz «—», nunca 0 % inventado (regra nº1)
   const ivaDe = (nome: string) => D.iva.taxas.find((x) => x.nome === nome)?.taxa ?? null;
-  const ivaPct = (t: number | null) => (t === null ? "—" : `${fmtNum(t * 100, 0)}\u202f%`);
-  const ivaEm10 = (t: number | null) => (t === null ? "—" : `${fmtNum((10 * t) / (1 + t), 2)}\u202f€`);
+  const ivaPct = (t: number | null) => (t === null ? "—" : `${fmtNum(t * 100, 0)}${FINO}%`);
+  const ivaEm10 = (t: number | null) => (t === null ? "—" : fmtEUR((10 * t) / (1 + t)));
   const ivaRed = ivaDe("Reduzida");
   const ivaInt = ivaDe("Intermédia");
   const ivaNor = ivaDe("Normal");
@@ -165,7 +177,7 @@ export default function CenaMercearia({ D, aoFechar }: { D: DadosMercearia; aoFe
             passo === 1
               ? T.mercFala1(mesLongo(D.t0))
               : passo === 2
-                ? T.mercResposta(juizo, `${fmtNum(realSaco, 2)} €`)
+                ? T.mercResposta(juizo, fmtEUR(realSaco))
                 : passo === 3
                   ? T.mercFala3(mesLongo(D.t0))
                   : T.mercFala4,
@@ -175,7 +187,7 @@ export default function CenaMercearia({ D, aoFechar }: { D: DadosMercearia; aoFe
         {passo === 1 && (
           <>
             <div className="b-palpite">
-              <output htmlFor="mercPal">{fmtNum(palpite, 2)} €</output>
+              <output htmlFor="mercPal">{fmtEUR(palpite)}</output>
               <input
                 id="mercPal"
                 type="range"
@@ -265,11 +277,16 @@ export default function CenaMercearia({ D, aoFechar }: { D: DadosMercearia; aoFe
               >
                 {T.finBtnOutra}
               </button>
+              <Link className="b-btn" href="/inflacao">
+                {T.mercBtnInflacao}
+              </Link>
+              <Link className="b-btn" href="/impostos">
+                {T.mercBtnImpostos}
+              </Link>
             </div>
           </>
         )}
       </div>
-      <div className="b-acoes" />
     </CenaDePerto>
   );
 }

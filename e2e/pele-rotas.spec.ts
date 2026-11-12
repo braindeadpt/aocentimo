@@ -19,7 +19,7 @@ import { test, expect, type Page } from "@playwright/test";
 const ROTAS: { rota: string; edificio: string; titulo: string }[] = [
   { rota: "/salario", edificio: "fabrica", titulo: "Fábrica" },
   { rota: "/irs", edificio: "financas", titulo: "Finanças" },
-  { rota: "/impostos", edificio: "financas", titulo: "Finanças" },
+  { rota: "/impostos", edificio: "mercearia", titulo: "Mercearia do Manuel" },
   { rota: "/poupanca", edificio: "correios", titulo: "Correios" },
   { rota: "/credito", edificio: "banco", titulo: "Banco" },
   { rota: "/casa", edificio: "casa", titulo: "Casa da Inês" },
