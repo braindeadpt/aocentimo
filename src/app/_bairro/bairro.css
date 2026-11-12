@@ -624,7 +624,7 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--azul);
-  padding-right: 30px;
+  padding-right: 44px;
 }
 [data-pele="v5"] .b-painel .b-fala {
   font-weight: 700;
@@ -652,12 +652,21 @@
 [data-pele="v5"] .b-painel .b-perfil {
   margin: 0;
   font-weight: 700;
+  font-size: 14.5px;
+  color: var(--tinta-2);
 }
 [data-pele="v5"] .b-painel .b-acoes {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
   align-items: center;
+  margin-top: 2px;
+}
+[data-pele="v5"] .b-painel .b-acoes .b-btn {
+  max-width: 100%;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
 }
 [data-pele="v5"] .b-fechar {
   position: absolute;
@@ -669,6 +678,22 @@
   cursor: pointer;
   font-weight: 900;
   color: var(--tinta);
+}
+[data-pele="v5"] .b-painel .b-fechar {
+  top: 8px;
+  right: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  line-height: 1;
+  border: 3px solid var(--tinta);
+  border-radius: 999px;
+  background: var(--papel);
+}
+[data-pele="v5"] .b-painel .b-fechar:hover {
+  background: var(--amarelo-2);
 }
 [data-pele="v5"] .b-painel .b-fonte {
   font-size: 12.5px;
@@ -1055,8 +1080,23 @@
     padding: 12px 14px;
     gap: 6px;
   }
+  [data-pele="v5"] .b-painel .b-fechar {
+    top: 6px;
+    right: 6px;
+  }
   [data-pele="v5"] .b-painel .b-fala {
-    font-size: 17px;
+    font-size: 16.5px;
+  }
+  [data-pele="v5"] .b-painel .b-perfil {
+    font-size: 13.5px;
+  }
+  [data-pele="v5"] .b-painel .b-acoes {
+    gap: 8px;
+  }
+  [data-pele="v5"] .b-painel .b-acoes .b-btn {
+    min-height: 44px;
+    padding: 8px 14px;
+    font-size: 14.5px;
   }
   [data-pele="v5"] .b-painel .b-fonte {
     display: none;

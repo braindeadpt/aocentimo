@@ -20,8 +20,12 @@ import type { EscolhaPersonagem } from "./personagem";
 const INES: EscolhaPersonagem = {
   chave: "ines",
   quem: "Inês · Operária da fábrica",
-  fala: 'Olá! Sou a Inês. <span class="b-a">Em breve</span>.',
+  fala: "Olá! Sou a Inês. Segue o meu salário desde a Fábrica ou simula o teu recibo.",
   extra: "Conta de outrem · setor privado",
+  cenaId: "fabrica",
+  cenaRotulo: "Entrar na Fábrica",
+  rotaHref: "/salario",
+  rotaRotulo: "Simular o recibo →",
   fechar: "Fechar",
 };
 
@@ -50,12 +54,18 @@ describe("a ponte das cartas — sem janela de perda", () => {
     expect(ouvido).toHaveBeenCalledTimes(1);
   });
 
-  it("o <Bairro> drena a fila ao montar e aplica o pedido perdido", () => {
+  it("o <Bairro> drena a fila ao montar e aplica o pedido perdido com destinos vivos", () => {
     pedirPersonagem(INES, alvo); // chegou antes — ninguém ouviu
     const aplicado = vi.fn();
     const quantos = drenarEscolhas(aplicado, alvo);
     expect(quantos).toBe(1);
     expect(aplicado).toHaveBeenCalledWith(INES);
+    expect(aplicado.mock.calls[0][0]).toMatchObject({
+      cenaId: "fabrica",
+      cenaRotulo: "Entrar na Fábrica",
+      rotaHref: "/salario",
+      rotaRotulo: "Simular o recibo →",
+    });
   });
 
   it("a fila esvazia-se: o mesmo pedido não é aplicado duas vezes", () => {
