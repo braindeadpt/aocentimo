@@ -112,3 +112,110 @@ test("/inflacao: régua de anos da máquina do tempo funciona", async ({
     new RegExp(`janeiro de ${max}`)
   );
 });
+
+// ————— Vaga 3 / T08: Testes de Crédito, TAEG, Cartões e Serviços Mínimos —————
+
+test("/credito: selector de Euribor 3M, 6M e 12M sincroniza rótulo e marcador", async ({
+  page,
+}) => {
+  await page.goto("/credito");
+
+  const grupo = page.getByRole("radiogroup", { name: /prazo da euribor/i });
+  await expect(grupo).toBeVisible();
+
+  const radio3m = grupo.getByRole("radio", { name: "3 meses" });
+  const radio6m = grupo.getByRole("radio", { name: "6 meses" });
+  const radio12m = grupo.getByRole("radio", { name: "12 meses" });
+
+  await expect(radio3m).toBeVisible();
+  await expect(radio6m).toBeVisible();
+  await expect(radio12m).toBeVisible();
+
+  // Selecciona 3 meses — o herói e a régua mudam para 3M
+  await radio3m.click();
+  await expect(page.locator(".pg-instrumento")).toContainText(/Euribor 3M/);
+  await expect(page.locator("label[for='eur']")).toContainText(/Euribor 3M/);
+
+  // Selecciona 6 meses — o herói e a régua mudam para 6M
+  await radio6m.click();
+  await expect(page.locator(".pg-instrumento")).toContainText(/Euribor 6M/);
+  await expect(page.locator("label[for='eur']")).toContainText(/Euribor 6M/);
+
+  // Selecciona 12 meses — o herói e a régua mudam para 12M
+  await radio12m.click();
+  await expect(page.locator(".pg-instrumento")).toContainText(/Euribor 12M/);
+  await expect(page.locator("label[for='eur']")).toContainText(/Euribor 12M/);
+});
+
+test("/credito: simulador TAN vs TAEG e MTIC calcula custos adicionais", async ({
+  page,
+}) => {
+  await page.goto("/credito");
+
+  const seccaoTaeg = page.locator("figure", {
+    hasText: /Porque é que o spread mais baixo pode sair mais caro/i,
+  });
+  await expect(seccaoTaeg).toBeVisible();
+
+  // Verifica elementos de comparação TAN e TAEG
+  await expect(seccaoTaeg.getByText(/TAN \(taxa nominal\)/i)).toBeVisible();
+  await expect(seccaoTaeg.getByText(/TAEG \(custo real\)/i)).toBeVisible();
+  await expect(seccaoTaeg.getByText(/MTIC total/i)).toBeVisible();
+  await expect(seccaoTaeg.getByText(/Serviços Mínimos Bancários/i).first()).toBeVisible();
+});
+
+test("/credito: cartão de crédito revolving simula prazos e alerta de dívida não liquidada", async ({
+  page,
+}) => {
+  await page.goto("/credito");
+
+  const seccaoCartao = page.locator("figure", {
+    hasText: /A armadilha do pagamento mínimo no cartão de crédito/i,
+  });
+  await expect(seccaoCartao).toBeVisible();
+
+  // Verifica opções de percentagem de reembolso
+  const segModalidade = seccaoCartao.getByRole("radiogroup", {
+    name: /pagamento mensal do cartão/i,
+  });
+  await expect(segModalidade).toBeVisible();
+
+  // Pagamento a 100 % mostra free-float sem juros
+  await segModalidade.getByRole("radio", { name: /100.*%/i }).click();
+  await expect(seccaoCartao.getByText(/zero juros \(free-float\)/i)).toBeVisible();
+
+  // Volta a 4 % — calcula tempo até saldar e juros
+  await segModalidade.getByRole("radio", { name: /4.*%/i }).click();
+  await expect(seccaoCartao.getByText(/Tempo até saldar/i)).toBeVisible();
+  await expect(seccaoCartao.getByText(/Juros pagos/i)).toBeVisible();
+
+  // Se o mínimo em euros for 0 e modalidade 3 %, os juros comem o pagamento e mostra alerta
+  const sliderMinEur = page.getByRole("slider", {
+    name: /prestação mínima do contrato/i,
+  });
+  await sliderMinEur.focus();
+  await page.keyboard.press("Home"); // move para o mínimo (0 €)
+
+  await segModalidade.getByRole("radio", { name: /3.*%/i }).click();
+  await expect(seccaoCartao.getByRole("alert")).toBeVisible();
+  await expect(seccaoCartao.getByText(/A dívida nunca é liquidada!/i)).toBeVisible();
+});
+
+test("/dados: exibe informação oficial dos Serviços Mínimos Bancários", async ({
+  page,
+}) => {
+  await page.goto("/dados");
+
+  // Painel honesto menciona o tecto legal dos Serviços Mínimos Bancários
+  const blocoSmb = page.locator("div", {
+    hasText: /Conta de Serviços Mínimos Bancários/i,
+  }).first();
+  await expect(blocoSmb).toBeVisible();
+  await expect(blocoSmb).toContainText(/5,37.*€\/ano/i);
+
+  // Detalhe no Confirma está presente
+  const detalheSmb = page.locator("details.pg-detalhe", {
+    hasText: /Serviços Mínimos Bancários/i,
+  });
+  await expect(detalheSmb).toBeVisible();
+});

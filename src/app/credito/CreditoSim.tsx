@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useMemo,
   useState,
@@ -11,6 +12,16 @@ import {
   simularPrestacao,
   type ResultadoPrestacao,
 } from "@/lib/engines/prestacao";
+
+export type PrazoEuribor = "3m" | "6m" | "12m";
+
+export interface InfoEuriborPrazo {
+  valor: number | null;
+  serieAte: string | null;
+  mediana: number | null;
+}
+
+export type TabelaPrazosEuribor = Record<PrazoEuribor, InfoEuriborPrazo>;
 
 /**
  * O contrato de crédito partilhado pelos três níveis de /credito (V4):
@@ -29,6 +40,10 @@ interface EstadoCredito {
   /** Euribor em vigor na régua — null quando a fonte falhou */
   euribor: number | null;
   spread: number;
+  /** Prazo da Euribor selecionado ("3m", "6m" ou "12m") */
+  prazoEuribor: PrazoEuribor;
+  /** Dados dos três prazos de Euribor (3M, 6M, 12M) */
+  taxasEuribor: TabelaPrazosEuribor;
   /** o choque de +1 p.p. — um interruptor, não uma nota de rodapé */
   choque: boolean;
   /** taxa efectiva = euribor + choque */
@@ -42,25 +57,49 @@ interface EstadoCredito {
   setEuribor: (v: number | null) => void;
   setSpread: (v: number) => void;
   setChoque: (v: boolean) => void;
+  setPrazoEuribor: (p: PrazoEuribor) => void;
 }
 
 const Ctx = createContext<EstadoCredito | null>(null);
 
+const TABELA_PADRAO: TabelaPrazosEuribor = {
+  "3m": { valor: null, serieAte: null, mediana: null },
+  "6m": { valor: null, serieAte: null, mediana: null },
+  "12m": { valor: null, serieAte: null, mediana: null },
+};
+
 export function CreditoProvider({
-  euriborInicial,
+  euriborInicial = null,
+  taxasEuribor = TABELA_PADRAO,
   children,
 }: {
-  /** último valor da Euribor 3M do BPstat — null = fonte em falha */
-  euriborInicial: number | null;
+  /** último valor da Euribor do BPstat — null = fonte em falha */
+  euriborInicial?: number | null;
+  /** tabela com valores e metadados dos prazos 3M, 6M e 12M */
+  taxasEuribor?: TabelaPrazosEuribor;
   children: ReactNode;
 }) {
+  const [prazoEuribor, setPrazoEuriborState] = useState<PrazoEuribor>("12m");
   const [capital, setCapital] = useState(200000);
   const [anos, setAnos] = useState(30);
+
+  // o valor inicial segue o prazo seleccionado (12M por omissão) ou euriborInicial
+  const valor12m = taxasEuribor["12m"]?.valor;
+  const taxaInicial = valor12m !== null && valor12m !== undefined ? valor12m : euriborInicial;
+
   const [euribor, setEuribor] = useState<number | null>(
-    euriborInicial !== null ? Math.round(euriborInicial * 100) / 100 : null
+    taxaInicial !== null ? Math.round(taxaInicial * 100) / 100 : null
   );
   const [spread, setSpread] = useState(1.0);
   const [choque, setChoque] = useState(false);
+
+  const setPrazoEuribor = useCallback((p: PrazoEuribor) => {
+    setPrazoEuriborState(p);
+    const novo = taxasEuribor[p]?.valor;
+    if (novo !== null && novo !== undefined) {
+      setEuribor(Math.round(novo * 100) / 100);
+    }
+  }, [taxasEuribor]);
 
   const eurEf = euribor === null ? null : euribor + (choque ? 1 : 0);
   const sim = useMemo(
@@ -85,6 +124,8 @@ export function CreditoProvider({
       anos,
       euribor,
       spread,
+      prazoEuribor,
+      taxasEuribor,
       choque,
       eurEf,
       sim,
@@ -94,8 +135,9 @@ export function CreditoProvider({
       setEuribor,
       setSpread,
       setChoque,
+      setPrazoEuribor,
     }),
-    [capital, anos, euribor, spread, choque, eurEf, sim, base]
+    [capital, anos, euribor, spread, prazoEuribor, taxasEuribor, choque, eurEf, sim, base, setPrazoEuribor]
   );
 
   return <Ctx.Provider value={valor}>{children}</Ctx.Provider>;

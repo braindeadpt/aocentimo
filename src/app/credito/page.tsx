@@ -9,25 +9,67 @@ import { CreditoProvider } from "./CreditoSim";
 import { FrasePrestacao, InstrumentoPrestacao } from "./HeroPrestacao";
 import { MapaAmortizacao } from "./MapaAmortizacao";
 import { SimuladorPrestacao } from "./SimuladorPrestacao";
+import { SimuladorTaeg } from "./SimuladorTaeg";
+import { SimuladorCartao } from "./SimuladorCartao";
 import { loadFonte, loadFreshness, loadPainel } from "@/lib/data";
-import { fmtPeriodo } from "@/lib/format";
+import { FINO, comUnidade, fmtNum, fmtPeriodo } from "@/lib/format";
 import { estadoDe, rotulosLeitura } from "@/lib/leitura";
 import { m } from "@/lib/messages";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 import eventos from "@data/fiscal/eventos.json";
+import usura from "@data/fiscal/usura-2026.json";
+import cartoes from "@data/fiscal/cartoes.json";
+import servicosMinimos from "@data/fiscal/servicos-minimos.json";
 
 export const metadata: Metadata = metaDeRota("/credito");
 
 export default function CreditoPage() {
-  const eur = loadFonte("bpstat", "euribor-3m-mensal");
-  const ultimo = eur?.series.at(-1) ?? null;
-  // o marcador «agora» da régua da taxa é a Euribor 12M — a referência
-  // de contrato mais comum; a mediana de 10 anos vem do painel derivado
+  const eur3 = loadFonte("bpstat", "euribor-3m-mensal");
+  const ultimo3 = eur3?.series.at(-1) ?? null;
+
+  const eur6 = loadFonte("bpstat", "euribor-6m-mensal");
+  const ultimo6 = eur6?.series.at(-1) ?? null;
+
   const eur12 = loadFonte("bpstat", "euribor-12m-mensal");
   const ultimo12 = eur12?.series.at(-1) ?? null;
+
+  const painel = loadPainel();
+  const mediana3 =
+    painel?.series.find((s) => s.id === "euribor-3m-mensal")?.referencia?.valor ?? null;
+  const mediana6 =
+    painel?.series.find((s) => s.id === "euribor-6m-mensal")?.referencia?.valor ?? null;
   const mediana12 =
-    loadPainel()?.series.find((s) => s.id === "euribor-12m-mensal")?.referencia
-      ?.valor ?? null;
+    painel?.series.find((s) => s.id === "euribor-12m-mensal")?.referencia?.valor ?? null;
+
+  const taxasEuribor = {
+    "3m": {
+      valor: ultimo3?.v ?? null,
+      serieAte: ultimo3?.t ?? null,
+      mediana: mediana3,
+    },
+    "6m": {
+      valor: ultimo6?.v ?? null,
+      serieAte: ultimo6?.t ?? null,
+      mediana: mediana6,
+    },
+    "12m": {
+      valor: ultimo12?.v ?? null,
+      serieAte: ultimo12?.t ?? null,
+      mediana: mediana12,
+    },
+  };
+
+  const taegRenovavel = loadFonte("bpstat", "taeg-renovavel-mensal");
+  const taegMediaMercado = taegRenovavel?.series.at(-1)?.v ?? null;
+  const taegMediaAte = taegRenovavel?.meta.serieAte ?? null;
+
+  const hoje = new Date().toISOString().slice(0, 10);
+  const trimestreUsura =
+    usura.trimestres.find((t) => hoje >= t.de && hoje <= t.ate) ??
+    usura.trimestres[usura.trimestres.length - 1];
+  const taegMaximaUsura = trimestreUsura?.taegMaxima?.renovavel ?? 18.5;
+  const rotuloTrimestreUsura = trimestreUsura?.trimestre ?? "2026-T4";
+
   const fresh = loadFreshness();
   const estado = estadoDe(fresh, "euribor-3m-mensal");
   const rotulos = rotulosLeitura();
@@ -44,7 +86,10 @@ export default function CreditoPage() {
       />
       {/* o contrato é um só — a resposta, as réguas e a confirmação
           partilham capital, prazo, Euribor e spread via provider */}
-      <CreditoProvider euriborInicial={ultimo?.v ?? null}>
+      <CreditoProvider
+        euriborInicial={ultimo12?.v ?? ultimo3?.v ?? null}
+        taxasEuribor={taxasEuribor}
+      >
         <Pagina
           pergunta="Quanto vais pagar ao banco, no total?"
           edificio={{ href: "/#banco", titulo: m.bairro.edificios.banco.titulo }}
@@ -53,7 +98,7 @@ export default function CreditoPage() {
           resposta={{
             instrumento: (
               <InstrumentoPrestacao
-                euriborAte={ultimo?.t ?? null}
+                euriborAte={ultimo12?.t ?? ultimo3?.t ?? null}
                 estado={estado}
                 estadoRotulo={rotulos.estados[estado]}
               />
@@ -66,14 +111,14 @@ export default function CreditoPage() {
                 title="O simulador — mexe no contrato"
                 source={
                   <Source
-                    nome="Cálculo próprio — sistema de amortização francês · Euribor 3M, BPstat"
-                    serieAte={ultimo?.t}
+                    nome="Cálculo próprio — sistema de amortização francês · Euribor 3M, 6M e 12M, BPstat"
+                    serieAte={ultimo12?.t ?? ultimo3?.t}
                   />
                 }
               >
                 <SimuladorPrestacao
-                  euriborAtual={ultimo?.v ?? null}
-                  euriborAte={ultimo?.t ?? null}
+                  euriborAtual={ultimo3?.v ?? null}
+                  euriborAte={ultimo3?.t ?? null}
                   euribor12m={ultimo12?.v ?? null}
                   mediana12m={mediana12}
                   rotulos={{
@@ -89,6 +134,43 @@ export default function CreditoPage() {
                 />
               </Figure>
 
+              {/* Ouro Escondido #1 — Painel TAN vs. TAEG e MTIC */}
+              <Figure
+                title="Porque é que o spread mais baixo pode sair mais caro (TAN vs. TAEG e MTIC)"
+                source={
+                  <Source
+                    nome="Cálculo próprio — simulação TAEG por bisseção e MTIC (DL n.º 133/2009 e DL n.º 74-A/2017)"
+                    nota={`Custos indicativos de mercado: comissão de conta limitada por lei a ${comUnidade(fmtNum(servicosMinimos.tectoComissaoAnual.tectoAnualEuros, 2), "€/ano")} nos Serviços Mínimos Bancários (DL n.º 27-C/2000)`}
+                  />
+                }
+              >
+                <SimuladorTaeg
+                  smbTectoAnual={servicosMinimos.tectoComissaoAnual.tectoAnualEuros}
+                  smbAno={servicosMinimos.tectoComissaoAnual.indexanteApoiosSociais.ano}
+                />
+              </Figure>
+
+              {/* Ouro Escondido #2 — Simulador Cartão de Crédito Revolving */}
+              <Figure
+                title="A armadilha do pagamento mínimo no cartão de crédito"
+                source={
+                  <Source
+                    nome="Banco de Portugal — BPstat (série 13168964) e taxas de usura trimestrais (DL n.º 133/2009)"
+                    url="https://clientebancario.bportugal.pt/pt-pt/taxas-de-juro-credito-aos-consumidores"
+                    serieAte={taegMediaAte ?? undefined}
+                    nota="A modalidade de pagamento mínimo é contratual — não existe mínimo legal em Portugal"
+                  />
+                }
+              >
+                <SimuladorCartao
+                  taegMediaMercado={taegMediaMercado}
+                  taegMediaAte={taegMediaAte}
+                  taegMaximaUsura={taegMaximaUsura}
+                  trimestreUsura={rotuloTrimestreUsura}
+                  fonteCartoesUrl={cartoes.fonteUrl}
+                />
+              </Figure>
+
               {/* a linha anotada da Euribor 3M desde 1994 — os eventos
                   BCE têm fonte (data/fiscal/eventos.json) */}
               <Figure
@@ -97,16 +179,16 @@ export default function CreditoPage() {
                   <Source
                     nome="Banco de Portugal — BPstat · Euribor 3M, média mensal"
                     url="https://bpstat.bportugal.pt"
-                    serieAte={ultimo?.t}
+                    serieAte={ultimo3?.t}
                   />
                 }
               >
-                {eur ? (
+                {eur3 ? (
                   <LineChart
                     series={[
                       {
                         name: "Euribor 3M",
-                        data: eur.series.map((p) => [p.t, p.v]),
+                        data: eur3.series.map((p) => [p.t, p.v]),
                         cor: "var(--color-ink)",
                       },
                     ]}
@@ -189,12 +271,80 @@ export default function CreditoPage() {
                 </div>
               </PaginaDetalhe>
 
+              {/* Ouro Escondido #3 — Serviços Mínimos Bancários */}
+              <PaginaDetalhe rotulo={`Serviços Mínimos Bancários — o tecto legal de ${comUnidade(fmtNum(servicosMinimos.tectoComissaoAnual.tectoAnualEuros, 2), "€/ano")} (DL 27-C/2000)`}>
+                <div className="body-copy max-w-2xl space-y-4">
+                  <p>
+                    {/* PROPOSTA (revisão do dono) */}
+                    Quem contrata crédito à habitação é muitas vezes obrigado a manter
+                    uma conta de depósito à ordem no banco mutuante. A lei portuguesa
+                    garante que qualquer consumidor pode converter essa conta em
+                    Conta de Serviços Mínimos Bancários sem custos (art. 4.º-A do DL n.º 27-C/2000).
+                  </p>
+                  <div className="space-y-2">
+                    <p className="font-medium text-ink">
+                      O que a lei garante por 1{FINO}% do IAS ({comUnidade(fmtNum(servicosMinimos.tectoComissaoAnual.tectoAnualEuros, 2), "€/ano")}):
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1">
+                      {servicosMinimos.servicosIncluidos.map((s, idx) => (
+                        <li key={idx}>{s}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="font-medium text-ink">
+                      Transferências sem comissão adicional:
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1">
+                      {servicosMinimos.transferenciasIncluidasNoTecto.map((t, idx) => (
+                        <li key={idx}>{t.replace(/(\d)\s+(€|%)/g, `$1${FINO}$2`)}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <Source
+                    nome="Decreto-Lei n.º 27-C/2000 (versão consolidada) · Lei n.º 24/2023"
+                    url={servicosMinimos.fonteUrl}
+                    vigencia={servicosMinimos.vigencia}
+                  />
+                </div>
+              </PaginaDetalhe>
+
+              {/* Detalhes de Cartões de Crédito */}
+              <PaginaDetalhe rotulo="Cartões de crédito — regras de reembolso e tectos de usura (DL 133/2009)">
+                <div className="body-copy max-w-2xl space-y-4">
+                  <p>
+                    {/* PROPOSTA (revisão do dono) */}
+                    O crédito aos consumidores através de cartões é regulado pelo Decreto-Lei
+                    n.º 133/2009. A lei proíbe cobrança de comissões de processamento de
+                    prestações (art. 23.º-A) e impõe limites trimestrais de usura calculados
+                    pelo Banco de Portugal a partir da TAEG média do mercado mais 25{FINO}%.
+                  </p>
+                  <p>
+                    {/* PROPOSTA (revisão do dono) */}
+                    Não existe percentagem mínima fixada por lei para o pagamento mensal:
+                    o montante ou percentagem mínima a pagar é livremente acordado no contrato.
+                    Quanto mais baixa for a percentagem paga, mais juros acumulam e mais anos
+                    a dívida demora a extinguir.
+                  </p>
+                  <Source
+                    nome="Decreto-Lei n.º 133/2009 (regime dos contratos de crédito aos consumidores)"
+                    url={cartoes.fonteUrl}
+                    vigencia={cartoes.vigencia}
+                  />
+                </div>
+              </PaginaDetalhe>
+
               <PaginaDetalhe rotulo="Fontes e dados">
                 <div className="body-copy max-w-2xl space-y-3">
                   <Source
-                    nome="Euribor 3M e 12M, médias mensais — Banco de Portugal, BPstat"
+                    nome="Euribor 3M, 6M e 12M, médias mensais — Banco de Portugal, BPstat"
                     url="https://bpstat.bportugal.pt"
-                    serieAte={ultimo?.t}
+                    serieAte={ultimo12?.t ?? ultimo3?.t}
+                  />
+                  <Source
+                    nome="Taxas de juro de crédito ao consumo e limites de usura — Banco de Portugal"
+                    url="https://clientebancario.bportugal.pt/pt-pt/taxas-de-juro-credito-aos-consumidores"
+                    serieAte={taegMediaAte ?? undefined}
                   />
                   <Source
                     nome="Decisões do BCE anotadas no gráfico — data/fiscal/eventos.json, com fonte por evento"
@@ -209,8 +359,8 @@ export default function CreditoPage() {
                     <a href="/api/euribor-12m-mensal.json" className="lq-link">
                       /api/euribor-12m-mensal.json
                     </a>
-                    . A simulação é cálculo próprio — não inclui seguros nem
-                    comissões (por isso é «aprox. MTIC», nunca TAEG).
+                    . A simulação de habitação é cálculo próprio baseado no sistema francês
+                    de amortização com cálculo de TAEG por bisseção.
                   </p>
                 </div>
               </PaginaDetalhe>

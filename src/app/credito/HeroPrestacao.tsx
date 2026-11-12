@@ -28,12 +28,14 @@ export function InstrumentoPrestacao({
   estado,
   estadoRotulo,
 }: {
-  /** período do último valor da Euribor 3M (YYYY-MM → fmtPeriodo) */
+  /** período do último valor da Euribor (YYYY-MM → fmtPeriodo) */
   euriborAte: string | null;
   estado: EstadoCartao;
   estadoRotulo: string;
 }) {
-  const { anos, euribor, choque, sim } = useCredito();
+  const { anos, euribor, choque, sim, prazoEuribor, taxasEuribor } = useCredito();
+  const ate = taxasEuribor[prazoEuribor]?.serieAte ?? euriborAte;
+  const rotuloPrazo = prazoEuribor.toUpperCase();
 
   return (
     <Cartao
@@ -43,10 +45,10 @@ export function InstrumentoPrestacao({
         sim ? `TAN ${fmtPct(sim.tan)}` : "TAN —",
         ...(euribor !== null
           ? [
-              `Euribor 3M ${comUnidade(fmtNum(euribor, 2), "%")}${choque ? " + choque" : ""}`,
+              `Euribor ${rotuloPrazo} ${comUnidade(fmtNum(euribor, 2), "%")}${choque ? " + choque" : ""}`,
             ]
           : []),
-        ...(euriborAte ? [`série até ${fmtPeriodo(euriborAte)}`] : []),
+        ...(ate ? [`série até ${fmtPeriodo(ate)}`] : []),
       ]}
       estado={estado}
       estadoRotulo={estadoRotulo}
@@ -54,7 +56,7 @@ export function InstrumentoPrestacao({
         rotulo: "Fonte",
         itens: [
           {
-            nome: "Euribor 3M — Banco de Portugal, BPstat",
+            nome: `Euribor ${rotuloPrazo} — Banco de Portugal, BPstat`,
             url: "https://bpstat.bportugal.pt",
           },
         ],
