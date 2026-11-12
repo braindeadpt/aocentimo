@@ -1,6 +1,6 @@
 {
-  "geradoEm": "2026-11-11T13:50:25.584Z",
-  "recolhidoEm": "2026-11-11T13:50:25.568Z",
+  "geradoEm": "2026-11-12T14:52:54.965Z",
+  "recolhidoEm": "2026-11-12T14:52:54.945Z",
   "series": [
     {
       "id": "hicp-pt-cp00",
@@ -354,7 +354,7 @@
       },
       "fonte": "Banco de Portugal — BPstat",
       "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168436&lang=PT",
-      "recolhidoEm": "2026-11-11T13:50:20.963Z"
+      "recolhidoEm": "2026-11-12T14:52:48.695Z"
     },
     {
       "id": "euribor-12m-mensal",
@@ -473,25 +473,21 @@
       },
       "fonte": "Banco de Portugal — BPstat",
       "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168437&lang=PT",
-      "recolhidoEm": "2026-11-11T13:50:21.381Z"
+      "recolhidoEm": "2026-11-12T14:52:49.336Z"
     },
     {
       "id": "pmd-gasoleo-diario",
       "rotulo": "pmd-gasoleo-diario",
-      "valor": 2.1265,
+      "valor": 2.1248,
       "unidade": "€/L",
-      "t": "2026-11-10",
-      "rotuloAte": "2026-11-10",
+      "t": "2026-11-11",
+      "rotuloAte": "2026-11-11",
       "variacao": {
-        "abs": -0.0184,
-        "pct": -0.0086,
-        "periodo": "2026-10-11"
+        "abs": -0.0231,
+        "pct": -0.0108,
+        "periodo": "2026-10-12"
       },
       "spark": [
-        {
-          "t": "2026-10-18",
-          "v": 2.1447
-        },
         {
           "t": "2026-10-19",
           "v": 2.1748
@@ -583,31 +579,31 @@
         {
           "t": "2026-11-10",
           "v": 2.1265
+        },
+        {
+          "t": "2026-11-11",
+          "v": 2.1248
         }
       ],
       "estado": "em-dia",
       "referencia": null,
       "fonte": "DGEG — Preços dos Combustíveis",
-      "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=2101&dataIni=2017-01-01&dataFim=2026-11-11",
-      "recolhidoEm": "2026-11-11T13:50:24.553Z"
+      "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=2101&dataIni=2017-01-01&dataFim=2026-11-12",
+      "recolhidoEm": "2026-11-12T14:52:53.537Z"
     },
     {
       "id": "pmd-gasolina95-diario",
       "rotulo": "pmd-gasolina95-diario",
-      "valor": 1.9139,
+      "valor": 1.9112,
       "unidade": "€/L",
-      "t": "2026-11-10",
-      "rotuloAte": "2026-11-10",
+      "t": "2026-11-11",
+      "rotuloAte": "2026-11-11",
       "variacao": {
-        "abs": -0.1581,
-        "pct": -0.0763,
-        "periodo": "2026-10-11"
+        "abs": -0.1985,
+        "pct": -0.0941,
+        "periodo": "2026-10-12"
       },
       "spark": [
-        {
-          "t": "2026-10-18",
-          "v": 2.1156
-        },
         {
           "t": "2026-10-19",
           "v": 2.0992
@@ -699,13 +695,17 @@
         {
           "t": "2026-11-10",
           "v": 1.9139
+        },
+        {
+          "t": "2026-11-11",
+          "v": 1.9112
         }
       ],
       "estado": "em-dia",
       "referencia": null,
       "fonte": "DGEG — Preços dos Combustíveis",
-      "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=3201&dataIni=2017-01-01&dataFim=2026-11-11",
-      "recolhidoEm": "2026-11-11T13:50:24.907Z"
+      "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=3201&dataIni=2017-01-01&dataFim=2026-11-12",
+      "recolhidoEm": "2026-11-12T14:52:54.099Z"
     },
     {
       "id": "ca-base",
@@ -821,7 +821,7 @@
       "referencia": null,
       "fonte": "IGCP (oficial) + BPstat Euribor 3M (indicativa)",
       "url": "https://www.igcp.pt/pt/aforristas/produtos-de-aforro/certificados-de-aforro",
-      "recolhidoEm": "2026-11-11T13:50:25.567Z"
+      "recolhidoEm": "2026-11-12T14:52:54.944Z"
     },
     {
       "id": "une-ue27-total",
@@ -1288,7 +1288,7 @@
       "referencia": null,
       "fonte": "Eurostat — une_rt_m (PT − EU27_2020)",
       "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?format=JSON&geo=PT&s_adj=SA&age=TOTAL&unit=PC_ACT&sex=T&sinceTimePeriod=2000",
-      "recolhidoEm": "2026-11-11T13:50:25.568Z"
+      "recolhidoEm": "2026-11-12T14:52:54.945Z"
     },
     {
       "id": "hpi-pt",
@@ -1520,7 +1520,7 @@
       "referencia": null,
       "fonte": "Eurostat — prc_hpi_q ÷ ei_lmlc_q",
       "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hpi_q?format=JSON&geo=PT&purchase=TOTAL&unit=I15_Q&sinceTimePeriod=2000",
-      "recolhidoEm": "2026-11-11T13:50:25.568Z"
+      "recolhidoEm": "2026-11-12T14:52:54.945Z"
     },
     {
       "id": "pib-pt-homologo",
