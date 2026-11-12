@@ -8,8 +8,9 @@ import { Pagina, PaginaDetalhe } from "@/components/Pagina";
 import { CasaProvider } from "./CasaSim";
 import { FraseEscritura, InstrumentoEscritura } from "./HeroEscritura";
 import { SimuladorCasa } from "./SimuladorCasa";
+import { SimuladorImi } from "./SimuladorImi";
 import { loadFonte, loadDerivado, loadFreshness } from "@/lib/data";
-import { fmtEUR0, fmtNum, fmtPeriodo, fmtPct } from "@/lib/format";
+import { fmtEUR, fmtEUR0, fmtNum, fmtPeriodo, fmtPct, MENOS } from "@/lib/format";
 import {
   anotacaoDe,
   estadoDe,
@@ -20,6 +21,8 @@ import {
 } from "@/lib/leitura";
 import { m, t } from "@/lib/messages";
 import imt from "@data/fiscal/imt-2026.json";
+import imiDados from "@data/fiscal/imi-2026.json";
+import type { RegrasImi } from "@/lib/engines/imi-puro";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 
 export const metadata: Metadata = metaDeRota("/casa");
@@ -178,6 +181,35 @@ export default function CasaPage() {
                 />
               </Figure>
 
+              {/* PROPOSTA (revisão do dono) */}
+              <Figure
+                title="Depois da escritura: o IMI todos os anos"
+                source={
+                  <Source
+                    nome={`${imiDados.fonte}; ${imiDados.porto.fonte}`}
+                    url={imiDados.fonteUrl}
+                    vigencia={imiDados.vigencia}
+                  />
+                }
+              >
+                <SimuladorImi
+                  regras={imiDados as unknown as RegrasImi}
+                  estado={estadoDe(fresh, "fiscal-imi-2026")}
+                  estadoRotulo={
+                    rotulos.estados[estadoDe(fresh, "fiscal-imi-2026")]
+                  }
+                  rotuloFonte={m.common.fonte}
+                  fonteCimi={{
+                    nome: "CIMI — Portal das Finanças",
+                    url: imiDados.fonteUrl,
+                  }}
+                  fontePorto={{
+                    nome: "Assembleia Municipal do Porto",
+                    url: imiDados.porto.fonteUrl,
+                  }}
+                />
+              </Figure>
+
               {/* a casa contra o salário — a razão de índices, com o
                   nível de 2015 a tracejado como referência */}
               {cartaoRazao ? (
@@ -239,12 +271,107 @@ export default function CasaPage() {
                 </div>
               </PaginaDetalhe>
 
+              {/* PROPOSTA (revisão do dono) */}
+              <PaginaDetalhe rotulo={`IMI ${imiDados.ano} — faixas legais, IMI Familiar e prestações`}>
+                <div className="space-y-6">
+                  <div>
+                    <p className="kicker-xs mb-3">
+                      Faixas legais do IMI (art. 112.º do CIMI)
+                    </p>
+                    <table className="w-full text-corpo-sm bg-raised border border-line shadow-raised">
+                      <thead>
+                        <tr className="text-left border-b-2 border-ink">
+                          <th scope="col" className="px-4 py-2 font-medium">
+                            Tipo de prédio / referência
+                          </th>
+                          <th scope="col" className="px-4 py-2 font-medium text-right">
+                            Taxa
+                          </th>
+                          <th scope="col" className="px-4 py-2 font-medium">
+                            Regra legal
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="border-b border-line">
+                          <td className="px-4 py-1.5 text-ink2">
+                            Prédios urbanos (intervalo nacional)
+                          </td>
+                          <td className="px-4 py-1.5 text-right num">
+                            {fmtPct(imiDados.taxasLegais.urbanos.min, 2)} a{" "}
+                            {fmtPct(imiDados.taxasLegais.urbanos.max, 2)}
+                          </td>
+                          <td className="px-4 py-1.5 text-ink2">
+                            Fixada anualmente por cada assembleia municipal
+                          </td>
+                        </tr>
+                        <tr className="border-b border-line">
+                          <td className="px-4 py-1.5 text-ink2">
+                            Município do Porto (referência curada)
+                          </td>
+                          <td className="px-4 py-1.5 text-right num">
+                            {fmtPct(imiDados.porto.taxa, 3)}
+                          </td>
+                          <td className="px-4 py-1.5 text-ink2">
+                            Taxa bruta deliberada para prédios urbanos
+                          </td>
+                        </tr>
+                        <tr className="border-b border-line last:border-0">
+                          <td className="px-4 py-1.5 text-ink2">
+                            Prédios rústicos
+                          </td>
+                          <td className="px-4 py-1.5 text-right num">
+                            {fmtPct(imiDados.taxasLegais.rusticos, 1)}
+                          </td>
+                          <td className="px-4 py-1.5 text-ink2">
+                            Taxa fixa nacional (art. 112.º n.º 1 al. a) CIMI)
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="body-copy max-w-2xl space-y-3">
+                    <p>{imiDados.nota}</p>
+                    <p>
+                      <strong>IMI Familiar ({imiDados.imiFamiliar.base}):</strong>{" "}
+                      dedução fixa à coleta de{" "}
+                      {imiDados.imiFamiliar.deducoes
+                        .map(
+                          (d) =>
+                            `${MENOS}${fmtEUR0(d.valor)} (${d.dependentes === 3 ? "3 ou mais" : d.dependentes} ${d.dependentes === 1 ? "dependente" : "dependentes"})`
+                        )
+                        .join(", ")}
+                      , em habitação própria e permanente nos municípios que o
+                      deliberem. {imiDados.imiFamiliar.nota}
+                    </p>
+                    <p>
+                      <strong>Regime de prestações ({imiDados.prestacoes.base}):</strong>{" "}
+                      até {fmtEUR0(100)} paga-se numa prestação única em maio; de{" "}
+                      {fmtEUR(100.01)} a {fmtEUR0(500)} em duas prestações (maio e
+                      novembro); acima de {fmtEUR0(500)} em três prestações (maio,
+                      agosto e novembro). {imiDados.prestacoes.atraso}
+                    </p>
+                  </div>
+                </div>
+              </PaginaDetalhe>
+
               <PaginaDetalhe rotulo="Fontes e dados">
                 <div className="body-copy max-w-2xl space-y-3">
                   <Source
                     nome={imt.fonte}
                     url={imt.fonteUrl}
                     vigencia={imt.vigencia}
+                  />
+                  <Source
+                    nome={imiDados.fonte}
+                    url={imiDados.fonteUrl}
+                    vigencia={imiDados.vigencia}
+                  />
+                  <Source
+                    nome={imiDados.porto.fonte}
+                    url={imiDados.porto.fonteUrl}
+                    vigencia={imiDados.vigencia}
                   />
                   <Source
                     nome="Euribor 3M, média mensal — Banco de Portugal, BPstat"

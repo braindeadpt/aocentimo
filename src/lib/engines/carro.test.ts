@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { isv, iuc, custoAnualCarro, REGRAS_ISV, REGRAS_IUC } from "./carro";
+import { isv, iuc, custoAnualCarro, custoFiscalAnualCarro, REGRAS_ISV, REGRAS_IUC } from "./carro";
+import {
+  isv as isvPuro,
+  iuc as iucPuro,
+  custoFiscalAnualCarro as custoFiscalAnualCarroPuro,
+} from "./carro-puro";
 
 describe("ISV — tabela A (Ligeiros de passageiros)", () => {
   // Cilindrada: escalão 1251+ → 1400 × 5,61 − 6 194,88 = 1 659,12
@@ -229,5 +234,76 @@ describe("IUC — o custo de manter um carro na estrada", () => {
   it("as tabelas gravadas são as da Lei n.º 82/2023, iguais em 2024–2026", () => {
     expect(REGRAS_ISV[2026].vigencia).toBe("2026-01-01");
     expect(REGRAS_IUC[2026].vigencia).toBe("2026-01-01");
+  });
+
+  it("núcleo carro-puro e custoFiscalAnualCarro: gasolina, gasóleo, PHEV e elétrico isento", () => {
+    const litroGasolina = {
+      precoLitro: 1.7,
+      produto: 0.72,
+      isp: 0.52,
+      carbono: 0.14,
+      iva: 0.32,
+      impostos: 0.98,
+    };
+    const litroGasoleo = {
+      precoLitro: 1.6,
+      produto: 0.77,
+      isp: 0.38,
+      carbono: 0.15,
+      iva: 0.3,
+      impostos: 0.83,
+    };
+
+    expect(
+      isvPuro(
+        { cilindrada: 1200, co2: 120, norma: "WLTP", combustivel: "gasolina" },
+        REGRAS_ISV[2026]
+      )
+    ).toEqual(
+      isv({ cilindrada: 1200, co2: 120, norma: "WLTP", combustivel: "gasolina" })
+    );
+    expect(
+      iucPuro(
+        { cilindrada: 1200, anoMatricula: 2022, combustivel: "gasolina" },
+        REGRAS_IUC[2026]
+      )
+    ).toEqual(iuc({ cilindrada: 1200, anoMatricula: 2022, combustivel: "gasolina" }));
+
+    const eletrico = custoFiscalAnualCarroPuro(
+      {
+        propulsao: "eletrico",
+        cilindrada: 1400,
+        co2: 0,
+        anoMatricula: 2026,
+        kmAno: 15000,
+        consumoLitros100: 6,
+        litroGasolina,
+        litroGasoleo,
+      },
+      REGRAS_ISV[2026],
+      REGRAS_IUC[2026]
+    );
+    expect(eletrico.isento).toBe(true);
+    expect(eletrico.isv.total).toBe(0);
+    expect(eletrico.iuc.total).toBe(0);
+    expect(eletrico.impostosAnuais).toBe(0);
+
+    const phev = custoFiscalAnualCarro({
+      propulsao: "phev",
+      cilindrada: 1400,
+      co2: 140,
+      anoMatricula: 2024,
+      kmAno: 10000,
+      consumoLitros100: 6,
+      litroGasolina,
+      litroGasoleo,
+    });
+    expect(phev.isento).toBe(false);
+    // PHEV aplica 25 % do ISV (1 789,59 × 0,25 = 447,40)
+    expect(phev.isv.total).toBeCloseTo(447.4, 2);
+    expect(phev.iuc.total).toBe(62.4);
+    expect(phev.litrosAno).toBe(600);
+    expect(phev.impostosCombustivelAno).toBeCloseTo(600 * 0.98, 2);
+    expect(phev.impostosAnuais).toBeCloseTo(62.4 + 600 * 0.98, 2);
   });
 });
