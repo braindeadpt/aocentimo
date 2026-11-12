@@ -19,13 +19,14 @@ import {
   variacao,
   type Serie,
 } from "@/lib/data";
-import { comUnidade, fmtData, fmtNum, fmtPct, fmtPeriodo } from "@/lib/format";
+import { FINO, comUnidade, fmtData, fmtNum, fmtPct, fmtPeriodo } from "@/lib/format";
 import { estadoDe } from "@/lib/leitura";
 import { cartoesDados, opcoesJanela, ROTULO_JANELA } from "@/lib/paineis";
 import { m } from "@/lib/messages";
 import usura from "@data/fiscal/usura-2026.json";
 import calendario from "@data/fiscal/calendario-2026.json";
 import eventos from "@data/fiscal/eventos.json";
+import servicosMinimos from "@data/fiscal/servicos-minimos.json";
 
 export const metadata: Metadata = metaDeRota("/dados");
 
@@ -314,11 +315,10 @@ export default function DadosPage() {
               <Source nome={calendario.fonte} url={calendario.fonteUrl} vigencia={calendario.vigencia} />
             </div>
 
-            {/* o painel honesto — o que ainda não conseguimos tem o
-                mesmo peso das leituras que correram bem */}
+            {/* o painel honesto — o que ainda não conseguimos e o que a lei já fixa */}
             <div className="mt-10">
-              <p className="kicker mb-3">O que ainda não conseguimos</p>
-              <div className="border border-line bg-panel px-5 py-6 text-corpo-sm text-ink2 space-y-3">
+              <p className="kicker mb-3">O que ainda não conseguimos — e o que a lei já fixa</p>
+              <div className="border border-line bg-panel px-5 py-6 text-corpo-sm text-ink2 space-y-4">
                 <p>
                   O Banco de Portugal publica diariamente o comparador de
                   comissões de ~200 instituições, mas só dentro da aplicação
@@ -334,21 +334,78 @@ export default function DadosPage() {
                     Comparador de comissões oficial →
                   </a>
                 </p>
+                <div className="border-t border-line/60 pt-3 space-y-2">
+                  <p className="font-medium text-ink">
+                    O que a lei já fixa: a Conta de Serviços Mínimos Bancários
+                  </p>
+                  <p>
+                    {/* PROPOSTA (revisão do dono) */}
+                    Embora as comissões de mercado sejam livres, a lei fixa um tecto
+                    máximo de 1{FINO}% do IAS ({comUnidade(fmtNum(servicosMinimos.tectoComissaoAnual.tectoAnualEuros, 2), "€/ano")} em {servicosMinimos.tectoComissaoAnual.indexanteApoiosSociais.ano})
+                    para a Conta de Serviços Mínimos Bancários. Inclui manutenção de conta,
+                    cartão de débito, homebanking, 5 transferências mensais MB{FINO}Way (até 30{FINO}€ cada)
+                    e 48 transferências interbancárias por ano (DL n.º 27-C/2000 e Lei n.º 24/2023).
+                  </p>
+                </div>
                 <p className="footnote">
-                  Quando o BdP estabilizar um acesso público, este painel
+                  Quando o BdP estabilizar um acesso público às comissões comerciais, este painel
                   passa a ter os números aqui. Até lá: nenhum número
                   inventado.
                 </p>
               </div>
-              <Source
-                nome="Banco de Portugal, Portal do Cliente Bancário"
-                url="https://clientebancario.bportugal.pt/pt-pt/aplicacao/comparador-de-comissoes"
-              />
+              <div className="space-y-2 mt-2">
+                <Source
+                  nome="Banco de Portugal, Portal do Cliente Bancário"
+                  url="https://clientebancario.bportugal.pt/pt-pt/aplicacao/comparador-de-comissoes"
+                />
+                <Source
+                  nome="Serviços Mínimos Bancários — DL n.º 27-C/2000 (alterado pela Lei n.º 24/2023)"
+                  url={servicosMinimos.fonteUrl}
+                  vigencia={servicosMinimos.vigencia}
+                />
+              </div>
             </div>
           </>
         }
         confirma={
           <>
+            <PaginaDetalhe rotulo={`Serviços Mínimos Bancários — o tecto legal de ${comUnidade(fmtNum(servicosMinimos.tectoComissaoAnual.tectoAnualEuros, 2), "€/ano")} (DL 27-C/2000)`}>
+              <div className="body-copy max-w-2xl space-y-4">
+                <p>
+                  {/* PROPOSTA (revisão do dono) */}
+                  Qualquer pessoa singular que não seja titular de outra conta de depósito à ordem
+                  em Portugal pode abrir ou converter gratuitamente a sua conta em Serviços Mínimos Bancários.
+                  As instituições de crédito não podem cobrar mais de 1{FINO}% do IAS por ano
+                  ({comUnidade(fmtNum(servicosMinimos.tectoComissaoAnual.tectoAnualEuros, 2), "€/ano")} em {servicosMinimos.tectoComissaoAnual.indexanteApoiosSociais.ano}).
+                </p>
+                <div className="space-y-2">
+                  <p className="font-medium text-ink">
+                    Serviços e operações incluídos no tecto legal:
+                  </p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    {servicosMinimos.servicosIncluidos.map((s, idx) => (
+                      <li key={idx}>{s}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="space-y-2">
+                  <p className="font-medium text-ink">
+                    Transferências incluídas sem encargo adicional:
+                  </p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    {servicosMinimos.transferenciasIncluidasNoTecto.map((t, idx) => (
+                      <li key={idx}>{t.replace(/(\d)\s+(€|%)/g, `$1${FINO}$2`)}</li>
+                    ))}
+                  </ul>
+                </div>
+                <Source
+                  nome="Decreto-Lei n.º 27-C/2000 (versão consolidada) · Lei n.º 24/2023"
+                  url={servicosMinimos.fonteUrl}
+                  vigencia={servicosMinimos.vigencia}
+                />
+              </div>
+            </PaginaDetalhe>
+
             <PaginaDetalhe rotulo="Euribor — as quatro médias mensais">
               {temEuribor ? (
                 <>

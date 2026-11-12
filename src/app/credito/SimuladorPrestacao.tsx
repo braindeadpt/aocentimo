@@ -4,9 +4,16 @@ import { Interruptor } from "@/components/Interruptor";
 import { JuroCapital } from "@/components/JuroCapital";
 import { NumHero } from "@/components/NumHero";
 import { Regua } from "@/components/Regua";
+import { Segmentado } from "@/components/Segmentado";
 import { TweenNum } from "@/components/TweenNum";
 import { FINO, comUnidade, fmtData, fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
-import { useCredito } from "./CreditoSim";
+import { useCredito, type PrazoEuribor } from "./CreditoSim";
+
+const OPCOES_PRAZO_EURIBOR = [
+  { id: "3m", rotulo: "3 meses" },
+  { id: "6m", rotulo: "6 meses" },
+  { id: "12m", rotulo: "12 meses" },
+] as const;
 
 /**
  * Crédito — o nível 2 de /credito: as réguas do contrato e o mapa.
@@ -56,24 +63,32 @@ export function SimuladorPrestacao({
     choque,
     sim: r,
     base,
+    prazoEuribor,
+    taxasEuribor,
     setCapital,
     setAnos,
     setEuribor,
     setSpread,
     setChoque,
+    setPrazoEuribor,
   } = useCredito();
   const runMapa = `${capital}-${anos}-${r?.tan ?? "sem-taxa"}-${spread}-${choque}`;
 
-  // presets da taxa — âncora é o valor oficial de hoje (12M): a mediana
-  // de 10 anos do painel e ±0,5 p.p. em redor do «agora»
+  const infoPrazo = taxasEuribor[prazoEuribor];
+  const taxaAtual = infoPrazo?.valor ?? (prazoEuribor === "12m" ? euribor12m : euriborAtual);
+  const dataAtual = infoPrazo?.serieAte ?? euriborAte;
+  const medianaAtual = infoPrazo?.mediana ?? mediana12m;
+
+  // presets da taxa — âncora é o valor oficial do prazo selecionado:
+  // a mediana de 10 anos do painel e ±0,5 p.p. em redor do «agora»
   const presetsTaxa = [
-    ...(mediana12m !== null
-      ? [{ rotulo: rotulos.mediana10, valor: mediana12m }]
+    ...(medianaAtual !== null
+      ? [{ rotulo: rotulos.mediana10, valor: medianaAtual }]
       : []),
-    ...(euribor12m !== null
+    ...(taxaAtual !== null
       ? [
-          { rotulo: rotulos.menos, valor: euribor12m - 0.5 },
-          { rotulo: rotulos.mais, valor: euribor12m + 0.5 },
+          { rotulo: rotulos.menos, valor: taxaAtual - 0.5 },
+          { rotulo: rotulos.mais, valor: taxaAtual + 0.5 },
         ]
       : []),
   ];
@@ -105,11 +120,24 @@ export function SimuladorPrestacao({
           unidade="anos"
           formato={(v) => fmtNum(v, 0)}
         />
+        {/* Selector de prazo da Euribor (3M · 6M · 12M) */}
+        <div>
+          <label className="kicker block mb-1.5">Prazo da Euribor</label>
+          <Segmentado
+            rotulo="Prazo da Euribor"
+            valor={prazoEuribor}
+            onChange={(id) => setPrazoEuribor(id as PrazoEuribor)}
+            opcoes={OPCOES_PRAZO_EURIBOR}
+          />
+        </div>
+
         {/* regra nº1: se o BPstat falhou o campo da taxa fica livre —
             o input simples de sempre, nunca um número inventado */}
         {euribor === null ? (
           <div>
-            <label className="kicker block mb-1.5" htmlFor="eur">Euribor (%)</label>
+            <label className="kicker block mb-1.5" htmlFor="eur">
+              Euribor {prazoEuribor.toUpperCase()} (%)
+            </label>
             <input id="eur" type="number" step={0.1} value=""
               onChange={(e) =>
                 setEuribor(e.target.value === "" ? null : Number(e.target.value))
@@ -119,7 +147,7 @@ export function SimuladorPrestacao({
         ) : (
           <Regua
             id="eur"
-            rotulo={rotulos.euribor}
+            rotulo={`Euribor ${prazoEuribor.toUpperCase()} (%)`}
             valor={euribor}
             onChange={setEuribor}
             min={-0.5}
@@ -128,8 +156,8 @@ export function SimuladorPrestacao({
             unidade="%"
             formato={(v) => fmtNum(v, 2)}
             marcadorAgora={
-              euribor12m !== null
-                ? { valor: euribor12m, rotulo: rotulos.agora12m }
+              taxaAtual !== null
+                ? { valor: taxaAtual, rotulo: `agora ${prazoEuribor.toUpperCase()}` }
                 : undefined
             }
             presets={presetsTaxa}
@@ -158,10 +186,10 @@ export function SimuladorPrestacao({
           comissões — é o número a comparar entre bancos, não o spread sozinho.
         </p>
         <p className="footnote mt-1">
-          {euriborAtual !== null ? (
+          {taxaAtual !== null ? (
             <>
-              Euribor 3M real em {fmtPct(euriborAtual / 100, 2)} (BPstat, média
-              de {euriborAte ? fmtData(euriborAte) : "série mais recente"}) — o
+              Euribor {prazoEuribor.toUpperCase()} real em {fmtPct(taxaAtual / 100, 2)} (BPstat, média
+              de {dataAtual ? fmtData(dataAtual) : "série mais recente"}) — o
               valor vem preenchido, muda-o à vontade.
             </>
           ) : (
