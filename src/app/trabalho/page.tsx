@@ -6,10 +6,12 @@ import { EstadoVazio } from "@/components/EstadoVazio";
 import { Source } from "@/components/Source";
 import desemprego from "@data/fiscal/desemprego.json";
 import catb from "@data/fiscal/catb.json";
+import irc from "@data/fiscal/irc-2026.json";
 import irs from "@data/fiscal/irs-2026.json";
 import smn from "@data/fiscal/smn.json";
 import cenariosJson from "@data/derived/cenarios-salario.json";
 import type { CenariosSalario } from "@/lib/cenarios";
+import { REGRAS_PME_2026 } from "@/lib/engines/pme";
 import { loadFonte, loadFreshness } from "@/lib/data";
 import { comUnidade, fmtEUR0, fmtNum, fmtPct, fmtPeriodo } from "@/lib/format";
 import {
@@ -113,9 +115,30 @@ export default function TrabalhoPage() {
           instrumento: <RespostaTrabalho />,
           frase: <FraseTrabalho />,
         }}
-        explora={<ExploraTrabalho ias={ias} />}
+        explora={<ExploraTrabalho ias={ias} regrasPme={REGRAS_PME_2026} />}
         confirma={
           <>
+            {/* PROPOSTA (revisão do dono) — Regras fiscais de PME: IRC, TSU de gerente e dividendos */}
+            <PaginaDetalhe
+              rotulo={`Pequena empresa (PME) — IVA, IRC ${irc.ano} e dividendos`}
+            >
+              <div className="body-copy max-w-2xl space-y-4">
+                <p>
+                  <strong>1. O IVA na caixa não é da empresa:</strong> a empresa
+                  cobra IVA aos clientes nas vendas e abate o IVA que pagou aos
+                  fornecedores nas compras dedutíveis, entregando a diferença ao
+                  Estado.
+                </p>
+                <p>
+                  <strong>2. IRC das PME em {irc.ano}:</strong>{" "}
+                  {irc.pmeSmallMidCap.nota} {irc.derramaMunicipal.nota}
+                </p>
+                <p>
+                  <strong>3. Dividendos (lucros distribuídos):</strong>{" "}
+                  {irc.dividendosPessoasSingulares.opcaoEnglobamento.nota}
+                </p>
+              </div>
+            </PaginaDetalhe>
             <PaginaDetalhe rotulo="As regras — DL 220/2006">
               <div className="body-copy max-w-2xl space-y-4">
                 <p>
@@ -250,6 +273,11 @@ export default function TrabalhoPage() {
                   nome={catb.fonte}
                   vigencia={catb.vigencia}
                   url={catb.fonteUrl}
+                />
+                <Source
+                  nome={irc.fonte}
+                  vigencia={irc.vigencia}
+                  url={irc.fonteUrl}
                 />
                 <Source
                   nome={smn.fonte}

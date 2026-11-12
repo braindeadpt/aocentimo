@@ -17,6 +17,7 @@ import iva from "@data/fiscal/iva.json";
 import isp from "@data/fiscal/isp.json";
 import isvDados from "@data/fiscal/isv-2026.json";
 import iucDados from "@data/fiscal/iuc-2026.json";
+import regioes from "@data/fiscal/regioes-autonomas-2026.json";
 import type { LitroDecomposto, RegrasIsv, RegrasIuc } from "@/lib/engines/carro-puro";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 import { CABAZ } from "./cabaz";
@@ -157,10 +158,16 @@ export default function ImpostosPage() {
             meta={["preços editáveis"]}
             fonte={{
               rotulo: m.common.fonte,
-              itens: [{ nome: iva.fonte, url: iva.fonteUrl }],
+              itens: [
+                { nome: iva.fonte, url: iva.fonteUrl },
+                { nome: regioes.fonte, url: regioes.fonteUrl },
+              ],
             }}
           >
-            <TalaoCompras scrubAria={m.chart.scrubAria} />
+            <TalaoCompras
+              scrubAria={m.chart.scrubAria}
+              ivaRegioes={regioes.iva}
+            />
           </Cartao>
 
           {/* o litro em duas peças — estrutura (isométrico) e quantidade
@@ -263,19 +270,19 @@ export default function ImpostosPage() {
             rotulo={`ISV e IUC ${isvDados.ano} — compra, circulação e pagamento no mês da matrícula`}
           >
             <div className="body-copy space-y-4">
-              <p>{isvDados.nota}</p>
+              <p>{isvDados.nota.replace(/(\d) (€|%)/g, "$1\u202F$2")}</p>
               <p>
                 <strong>Taxas intermédias e usados importados:</strong>{" "}
-                {isvDados.alteracaoLoe2026.efeito}{" "}
-                {isvDados.veiculosUsadosImportadosUE.nota}
+                {isvDados.alteracaoLoe2026.efeito.replace(/(\d) (€|%)/g, "$1\u202F$2")}{" "}
+                {isvDados.veiculosUsadosImportadosUE.nota.replace(/(\d) (€|%)/g, "$1\u202F$2")}
               </p>
-              <p>{iucDados.nota}</p>
+              <p>{iucDados.nota.replace(/(\d) (€|%)/g, "$1\u202F$2")}</p>
               <p>
                 <strong>
                   Quando se paga o IUC em {iucDados.ano} vs. 2027 (DL
                   161/2026):
                 </strong>{" "}
-                {iucDados.cobrancas.nota}
+                {iucDados.cobrancas.nota.replace(/(\d) (€|%)/g, "$1\u202F$2")}
               </p>
             </div>
             <div className="mt-4 space-y-2">

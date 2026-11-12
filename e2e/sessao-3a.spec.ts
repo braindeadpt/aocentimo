@@ -107,6 +107,73 @@ test("4B-02 — /irs nível 1 fala em bruto; «rendimento coletável» vive no n
   await expect(nivel2).toContainText(/\d{2}\s?\d{3}\s*€/);
 });
 
+test("T11 — /salario: duodécimos, ADSE (Diana), regiões autónomas, 10,455 € e pensão Cat. H (Dona Arminda)", async ({
+  page,
+}) => {
+  await page.goto("/salario");
+
+  // 10,455 € exatos na nota legal do subsídio de alimentação em cartão
+  await expect(page.locator("main")).toContainText(/10,455\s*€\/dia/);
+
+  // Duodécimos 100 % sobe o líquido mensal mas preserva o líquido anual ao cêntimo
+  const talao = page.locator(".talao").first();
+  await expect(talao).toContainText("1\u202F166,83\u202F€");
+  await page
+    .getByRole("radiogroup", { name: "Subsídios de férias e de Natal" })
+    .getByRole("radio", { name: /Duod\. 100/i })
+    .click();
+  await expect(talao).toContainText(/DUODÉCIMOS/i);
+  await expect(talao).toContainText("1\u202F361,30\u202F€");
+
+  // Repor 14 meses e ligar Subsistema ADSE (3,5 % — Função Pública)
+  await page
+    .getByRole("radiogroup", { name: "Subsídios de férias e de Natal" })
+    .getByRole("radio", { name: "14 meses" })
+    .click();
+  await page
+    .getByRole("switch", { name: /Subsistema ADSE/i })
+    .click();
+  await expect(talao).toContainText(/ADSE 3,5\s*%/);
+  await expect(talao).toContainText("52,50\u202F€");
+
+  // Região Autónoma dos Açores mostra SMN 966 € e redução de 30 % no IRS
+  await page
+    .getByRole("radiogroup", { name: "Região" })
+    .getByRole("radio", { name: /Açores/i })
+    .click();
+  await expect(page.locator("main")).toContainText(/966\s*€/);
+  await expect(page.locator("main")).toContainText(/30\s*%/);
+
+  // Modo Pensão de reforma (Cat. H): isenta de SS (0,00 €) e Tabela VIII
+  await page
+    .getByRole("radiogroup", { name: "Tipo de rendimento" })
+    .getByRole("radio", { name: /Pensão \(Cat\. H\)/i })
+    .click();
+  await expect(talao).toContainText(/Recibo de pensão/i);
+  await expect(talao).toContainText(/TABELA VIII/i);
+  await expect(talao).toContainText(/Isento/i);
+});
+
+test("T11 — /impostos (IVA Açores/Madeira) e /trabalho#pme (Sr. Manuel PME)", async ({
+  page,
+}) => {
+  await page.goto("/impostos");
+  const rgIva = page.getByRole("radiogroup", {
+    name: "Taxas de IVA por região",
+  });
+  await expect(rgIva).toBeVisible();
+  await rgIva.getByRole("radio", { name: /Açores/i }).click();
+  await expect(page.locator("main")).toContainText(/4\s*%/);
+  await expect(page.locator("main")).toContainText(/16\s*%/);
+
+  await page.goto("/trabalho#pme");
+  const secPme = page.locator("#pme");
+  await expect(secPme).toBeVisible();
+  await expect(secPme).toContainText(/O IVA na caixa não é da empresa/i);
+  await expect(secPme).toContainText(/Remuneração do sócio-gerente/i);
+  await expect(secPme).toContainText(/Lucro da PME, IRC e saída de dividendos/i);
+});
+
 test.describe("3A — a resposta sem JS", () => {
   test.use({ javaScriptEnabled: false });
 

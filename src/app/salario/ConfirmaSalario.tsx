@@ -5,7 +5,7 @@ import { fmtEUR, fmtEUR0, fmtPct } from "@/lib/format";
 import { diaLiberdade, useSalario } from "./contexto";
 
 /**
- * Nível 3 de /salario (3A-01) — «Confirma»: as contas por extenso.
+ * Nível 3 de /salario (3A-01 + T11) — «Confirma»: as contas por extenso.
  * Vivem dentro de PaginaDetalhe (details fechados por defeito): os
  * antigos quatro KPI soltos e a tabela anual ficam aqui, integrados
  * na narrativa em vez de flutuarem na página.
@@ -22,18 +22,43 @@ const val = "num text-ink";
 export function AnoDetalhe() {
   const s = useSalario();
   const r = s.resultado;
+  const ePensao = s.tipoRendimento === "pensao";
+  const adseAnual = ePensao ? r.ssAnual : (r.adseAnual ?? 0);
   return (
     <div className="max-w-xl">
       <div className={linha}>
-        <span className={rot}>Salário bruto anual</span>
+        <span className={rot}>
+          {ePensao ? "Pensão bruta anual (14 meses)" : "Salário bruto anual"}
+        </span>
         <span className={val}>{fmtEUR(r.brutoAnualTotal)}</span>
       </div>
       <div className={linha}>
         <span className={rot}>Segurança Social (11&#8239;%)</span>
-        <span className={val}>{fmtEUR(r.ssAnual)}</span>
+        <span className={val}>
+          {ePensao ? (
+            <ZeroInformativo
+              valor="0"
+              unidade="€"
+              nota="as pensões de reforma (Cat. H) estão isentas de TSU"
+            />
+          ) : (
+            fmtEUR(r.ssAnual)
+          )}
+        </span>
       </div>
+      {s.adse && adseAnual > 0 && (
+        <div className={linha}>
+          <span className={rot}>
+            Subsistema ADSE ({fmtPct(s.adseRegras.taxaDesconto, 1)} × 14 meses)
+          </span>
+          <span className={val}>{fmtEUR(adseAnual)}</span>
+        </div>
+      )}
       <div className={linha}>
-        <span className={rot}>IRS {s.ano} (estimativa)</span>
+        <span className={rot}>
+          IRS {s.ano} (estimativa
+          {s.regiao === "acores" ? " · Açores −30\u202F%" : ""})
+        </span>
         <span className={val}>
           {r.irsAnual === 0 ? (
             <ZeroInformativo
@@ -47,7 +72,7 @@ export function AnoDetalhe() {
         </span>
       </div>
       <div className={linha}>
-        <span className={rot}>Líquido anual</span>
+        <span className={rot}>Líquido anual (idêntico com ou sem duodécimos)</span>
         <span className={val}>{fmtEUR(r.liquidoAnual)}</span>
       </div>
       <div className={linha}>
