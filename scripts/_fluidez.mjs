@@ -268,6 +268,7 @@ for (const rota of rotas) {
   let fluidez = null;
   const janela = await p.$(".b-janela");
   if (janela) {
+    await janela.scrollIntoViewIfNeeded();
     const caixa = await janela.boundingBox();
     if (caixa) {
       const registador = p.evaluate(REGISTADOR(3000));
