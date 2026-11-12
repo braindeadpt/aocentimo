@@ -38,8 +38,8 @@ export function quadroTexto(v: number): string[] {
 
 /** O interior: balcão de mármore, o cofre, o quadro da Euribor, a senha, o gerente, o papel da prestação. */
 export function interiorBanco(): string {
-  let s = `<defs><pattern id="banMarmore" width="60" height="30" patternUnits="userSpaceOnUse"><rect width="60" height="30" fill="#e9e4da"/><path d="M0 22 q15 -8 30 -2 t30 -4" fill="none" stroke="#cfc6b6" stroke-width="1.4"/><path d="M0 0 H60 M30 0 V30" stroke="#d6cebf" stroke-width="1.2"/></pattern></defs>`;
-  s += `<rect x="0" y="0" width="640" height="410" fill="#e8efe9"/><rect x="0" y="0" width="640" height="30" fill="#0c5e3f"/><rect x="0" y="410" width="640" height="60" fill="url(#banMarmore)" stroke="${K}" stroke-width="2.6"/>`;
+  let s = `<defs><pattern id="b-banMarmore" width="60" height="30" patternUnits="userSpaceOnUse"><rect width="60" height="30" fill="#e9e4da"/><path d="M0 22 q15 -8 30 -2 t30 -4" fill="none" stroke="#cfc6b6" stroke-width="1.4"/><path d="M0 0 H60 M30 0 V30" stroke="#d6cebf" stroke-width="1.2"/></pattern></defs>`;
+  s += `<rect x="0" y="0" width="640" height="410" fill="#e8efe9"/><rect x="0" y="0" width="640" height="30" fill="#0c5e3f"/><rect x="0" y="410" width="640" height="60" fill="url(#b-banMarmore)" stroke="${K}" stroke-width="2.6"/>`;
   for (const x of [20, 600])
     s += `<rect x="${x}" y="30" width="22" height="380" fill="#f3efe6" stroke="${K}" stroke-width="2.4"/><rect x="${x - 4}" y="30" width="30" height="14" fill="#e2dccf" stroke="${K}" stroke-width="2"/>`;
   // o cofre ao fundo
@@ -67,6 +67,7 @@ export function graficoBanco(
   aria: string
 ): {
   svg: string;
+  texto: string;
   x: (k: number) => number;
   ya: (v: number) => number;
   yb: (v: number) => number;
@@ -103,7 +104,15 @@ export function graficoBanco(
   s += `<text x="${GB.x0 + 6}" y="${ya(Math.min(tMax - 0.6, 2.3)).toFixed(1)}" font-family="Caveat" font-weight="700" font-size="17" fill="#7a5600">o spread do banco</text>`;
   s += `<text x="${GB.x0 + 6}" y="${GB.b1 - 6}" font-family="Caveat" font-weight="700" font-size="19" fill="#c7361f">a prestação (sobe e desce com ela)</text>`;
   s += `<g><path id="banCursor" stroke="#16130f" stroke-width="1.6" stroke-dasharray="3 3"/><circle id="banPa" r="6" fill="#2445d6" stroke="#16130f" stroke-width="2"/><circle id="banPb" r="6" fill="#e2412a" stroke="#16130f" stroke-width="2"/></g>`;
-  return { svg: `<svg class="grafico-irs" viewBox="0 0 520 285" role="img" aria-label="${aria}" font-family="Archivo">${s}</svg>`, x, ya, yb, prs };
+  const texto =
+    n > 0
+      ? `<dl class="b-sr">` +
+        `<dt>Euribor a 12 meses</dt><dd>${mesCurto(eur[0].t)}: ${pct2(eur[0].v)} → ${mesCurto(eur[n - 1].t)}: ${pct2(eur[n - 1].v)}</dd>` +
+        `<dt>Taxa do empréstimo (Euribor + spread de ${pct2(o.spread)})</dt><dd>${pct2(eur[0].v + o.spread)} → ${pct2(eur[n - 1].v + o.spread)}</dd>` +
+        `<dt>Prestação mensal</dt><dd>${fmtEUR0(prs[0])} → ${fmtEUR0(prs[n - 1])}</dd>` +
+        `</dl>`
+      : `<dl class="b-sr"><dt>Euribor a 12 meses</dt><dd>—</dd></dl>`;
+  return { svg: `<svg class="grafico-irs" viewBox="0 0 520 285" role="img" aria-label="${aria}" font-family="Archivo">${s}</svg>`, texto, x, ya, yb, prs };
 }
 
 /**

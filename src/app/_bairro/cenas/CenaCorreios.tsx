@@ -18,7 +18,8 @@
  *     protótipo e vivem no string SVG — a árvore React não os conhece.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { fmtEUR0, fmtPct, fmtNum } from "@/lib/format";
+import Link from "next/link";
+import { FINO, fmtEUR0, fmtPct, fmtNum } from "@/lib/format";
 import { trajetoriaCA, trajetoriaColchao } from "@/lib/engines/poupanca";
 import type { DadosCorreios } from "./dados-p2b";
 import { escreverPilha, graficoAforro, interiorCorreios, PL } from "./correios-arte";
@@ -139,7 +140,9 @@ export default function CenaCorreios({ D, aoFechar }: { D: DadosCorreios; aoFech
     const pilhaCA = raiz.querySelector<SVGGElement>("#pilhaCA");
     if (pilhaCA) pilhaCA.style.opacity = passo >= 4 ? "1" : "0";
     if (passo === 1) {
-      // estado de abertura: o colchão cheio, os certificados vazios
+      // estado de abertura: senha inicial, o colchão cheio, os certificados vazios
+      const p = raiz.querySelector("#corPainel");
+      if (p) p.textContent = "A 014";
       porPilha("pilhaCol", cap0, cap0, false);
       porPilha("pilhaCA", 0, 0, false);
     }
@@ -332,13 +335,12 @@ export default function CenaCorreios({ D, aoFechar }: { D: DadosCorreios; aoFech
           <div className="opcoes">
             {voltar}
             {outra}
-            <a className="b-btn" href="/poupanca">
+            <Link className="b-btn" href="/poupanca">
               {T.corBtnPoupanca}
-            </a>
+            </Link>
           </div>
         )}
       </div>
-      <div className="b-acoes" />
     </CenaDePerto>
   );
 }
@@ -346,5 +348,5 @@ export default function CenaCorreios({ D, aoFechar }: { D: DadosCorreios; aoFech
 /** «+23,4 %» — o pctVar da Mercearia, reutilizado. */
 function pctVarTxt(r: number): string {
   const v = fmtNum(Math.abs(r - 1) * 100, 1);
-  return `${r >= 1 ? "+" : "−"}${v} %`.replace(" ", "\u202F");
+  return `${r >= 1 ? "+" : "−"}${v}${FINO}%`;
 }

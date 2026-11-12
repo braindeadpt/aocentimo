@@ -15,6 +15,7 @@
  * 0 (regra nº1).
  */
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { graficoLinhas } from "@/lib/viz/grafico-linhas";
 import { FINO, fmtEUR0, fmtNum } from "@/lib/format";
 import { setaVar, trimestre } from "./p2c-arte-base";
@@ -48,13 +49,12 @@ export default function CenaQuiosque({
   );
 
   // a manchete escreve-se quando se «lê» o jornal (passo 2) — texto
-  // directo no SVG, como no protótipo; sem animação, não há o que
-  // esperar em reduced-motion
+  // directo no SVG, como no protótipo; ao voltar ao passo 1 repõe-se vazia
   useEffect(() => {
     const raiz = arteRef.current?.closest(".b-cena");
     const el = raiz?.querySelector("#quiManchete");
-    if (!el || passo < 2) return;
-    el.textContent = pct1(ultJovens?.v);
+    if (!el) return;
+    el.textContent = passo < 2 ? "" : pct1(ultJovens?.v);
   }, [passo, ultJovens]);
 
   const grafico = useMemo(() => {
@@ -140,7 +140,7 @@ export default function CenaQuiosque({
             </b>
             <LinhaJornal
               valor={pct1(ultPt?.v)}
-              cor="r"
+              cor="b-r"
               texto={T.quiJornalDesemprego(
                 pct1(ultPt?.v),
                 ultPt ? mesLongo(ultPt.t) : "—",
@@ -150,7 +150,7 @@ export default function CenaQuiosque({
             />
             <LinhaJornal
               valor={pct1(ultJovens?.v)}
-              cor="r"
+              cor="b-r"
               texto={
                 ultJovens && ultPt
                   ? T.quiJornalJovens(fmtNum(ultJovens.v / ultPt.v, 1))
@@ -163,7 +163,7 @@ export default function CenaQuiosque({
                   ? setaVar(D.pib.v, 1)
                   : "—"
               }
-              cor={D.pib && D.pib.v >= 0 ? "g" : "r"}
+              cor={D.pib && D.pib.v >= 0 ? "b-g" : "b-r"}
               texto={
                 D.pib
                   ? T.quiJornalPib(
@@ -180,7 +180,7 @@ export default function CenaQuiosque({
                   ? setaVar(D.inflacao.v * 100, 1)
                   : "—"
               }
-              cor="r"
+              cor="b-r"
               texto={
                 D.inflacao
                   ? T.quiJornalInflacao(
@@ -210,7 +210,7 @@ export default function CenaQuiosque({
               texto={
                 D.smn !== null && D.smn0
                   ? T.quiJornalSmn(
-                      "2026",
+                      D.smnAno ?? "—",
                       fmtEUR0(D.smn),
                       String(D.smn0.ano),
                       fmtEUR0(D.smn0.valor)
@@ -222,8 +222,7 @@ export default function CenaQuiosque({
         )}
         {passo === 3 && grafico && (
           <>
-            <div dangerouslySetInnerHTML={{ __html: grafico.svg }} />
-            <div dangerouslySetInnerHTML={{ __html: grafico.texto }} />
+            <div dangerouslySetInnerHTML={{ __html: grafico.svg + grafico.texto }} />
             <p
               dangerouslySetInnerHTML={{
                 __html: T.quiGraficoTexto(
@@ -260,12 +259,12 @@ export default function CenaQuiosque({
             >
               {T.quiBtnOutra}
             </button>
-            <a className="b-btn" href="/trabalho">
+            <Link className="b-btn" href="/trabalho">
               {T.quiLinkTrabalho}
-            </a>
-            <a className="b-btn" href="/dados">
+            </Link>
+            <Link className="b-btn" href="/dados">
               {T.quiLinkDados}
-            </a>
+            </Link>
           </>
         )}
       </div>
@@ -280,7 +279,7 @@ function LinhaJornal({
   texto,
 }: {
   valor: string;
-  cor: "r" | "g" | "";
+  cor: "b-r" | "b-g" | "";
   texto: string;
 }) {
   return (

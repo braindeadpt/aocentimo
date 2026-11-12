@@ -17,7 +17,8 @@
  *     em reduced-motion escreve-se o estado final.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
+import Link from "next/link";
+import { FINO, fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
 import type { CombCena, DadosBomba } from "./dados-p2b";
 import { aplicarJarra, CAM, interiorBomba, JR, mostrador, graficoComb, rotulosJarra, type Dec } from "./bomba-arte";
 import { pontosDeDias } from "./utils";
@@ -26,7 +27,7 @@ import CenaDePerto from "./CenaDePerto";
 import * as T from "./textos-p2b";
 
 /** «0,444 €» — o EURO(v, 3) do protótipo, por format.ts. */
-const eur3 = (v: number) => `${fmtNum(v, 3)} €`;
+const eur3 = (v: number) => `${fmtNum(v, 3)}${FINO}€`;
 
 export default function CenaBomba({ D, aoFechar }: { D: DadosBomba; aoFechar: () => void }) {
   /** 1 palpite · 2 o litro por camadas · 3 o gráfico. */
@@ -296,14 +297,16 @@ export default function CenaBomba({ D, aoFechar }: { D: DadosBomba; aoFechar: ()
             <div className="opcoes">
               {voltar}
               {outra}
-              <a className="b-btn" href="/precos">
+              <Link className="b-btn" href="/precos">
                 {T.bmbBtnPrecos}
-              </a>
+              </Link>
+              <Link className="b-btn" href="/impostos">
+                {T.bmbBtnImpostos}
+              </Link>
             </div>
           </>
         )}
       </div>
-      <div className="b-acoes" />
     </CenaDePerto>
   );
 }

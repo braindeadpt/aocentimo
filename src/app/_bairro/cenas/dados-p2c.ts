@@ -153,8 +153,9 @@ export interface DadosQuiosque {
   pib: Ponto | null;
   /** Confiança dos consumidores — último mês. */
   confianca: Ponto | null;
-  /** O salário mínimo do continente em vigor, e o de 2015. */
+  /** O salário mínimo do continente em vigor, o ano da sua vigência e o de 2015. */
   smn: number | null;
+  smnAno: string | null;
   smn0: { ano: number; valor: number } | null;
   /** A inflação homóloga (cp00 a 12 meses), com o mês. */
   inflacao: { v: number; t: string } | null;
@@ -201,6 +202,7 @@ export function dadosQuiosqueP2c(): DadosQuiosque {
     pib: pib?.series.at(-1) ?? null,
     confianca: conf?.series.at(-1) ?? null,
     smn: smn.regioes?.continente ?? null,
+    smnAno: smnJson.vigencia ? String(smnJson.vigencia).slice(0, 4) : null,
     smn0: smn.serie[0]
       ? { ano: smn.serie[0].ano, valor: smn.serie[0].valor }
       : null,

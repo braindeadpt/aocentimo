@@ -68,9 +68,9 @@ const PRATELEIRA: [string, number, number][] = [
 
 /** O interior: prateleiras com etiquetas «1 € em 2020», o balcão e o Sr. Manuel. */
 export function interiorMercearia(): string {
-  let s = `<defs><pattern id="mercAz" width="16" height="16" patternUnits="userSpaceOnUse"><rect width="16" height="16" fill="#eaf7ef"/><path d="M8 2 q6 6 0 12 q-6 -6 0 -12z" fill="#0c8f5c" opacity=".55"/></pattern>
-    <pattern id="mercChao" width="40" height="20" patternUnits="userSpaceOnUse"><rect width="40" height="20" fill="#d9cdb6"/><rect width="20" height="10" fill="#c9bb9f"/><rect x="20" y="10" width="20" height="10" fill="#c9bb9f"/></pattern></defs>`;
-  s += `<rect x="0" y="0" width="640" height="410" fill="url(#mercAz)"/><rect x="0" y="410" width="640" height="60" fill="url(#mercChao)" stroke="${K}" stroke-width="2.6"/>`;
+  let s = `<defs><pattern id="b-mercAz" width="16" height="16" patternUnits="userSpaceOnUse"><rect width="16" height="16" fill="#eaf7ef"/><path d="M8 2 q6 6 0 12 q-6 -6 0 -12z" fill="#0c8f5c" opacity=".55"/></pattern>
+    <pattern id="b-mercChao" width="40" height="20" patternUnits="userSpaceOnUse"><rect width="40" height="20" fill="#d9cdb6"/><rect width="20" height="10" fill="#c9bb9f"/><rect x="20" y="10" width="20" height="10" fill="#c9bb9f"/></pattern></defs>`;
+  s += `<rect x="0" y="0" width="640" height="410" fill="url(#b-mercAz)"/><rect x="0" y="410" width="640" height="60" fill="url(#b-mercChao)" stroke="${K}" stroke-width="2.6"/>`;
   s += `<rect x="130" y="16" width="380" height="34" rx="6" fill="#fff6e3" stroke="${K}" stroke-width="2.8"/><text x="320" y="40" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="17" letter-spacing=".06em" fill="${K}">MERCEARIA DO MANUEL</text>`;
   // a estante com duas prateleiras
   s += `<rect x="24" y="70" width="412" height="300" fill="#8a5a2b" stroke="${K}" stroke-width="3"/><rect x="36" y="80" width="388" height="280" fill="#f3e6cf" stroke="${K}" stroke-width="2"/>`;
@@ -79,7 +79,7 @@ export function interiorMercearia(): string {
     // o `.prod-i` interior é o que salta: o GSAP mexe no transform dele
     // sem apagar o translate da prateleira
     s += `<g class="prod" data-id="${id}" transform="translate(${x} ${y})"><g class="prod-i">${ICONE[id]}</g></g>`;
-    s += `<g class="etiq" id="etq-${id}" transform="translate(${x} ${y + 14})"><path d="M-36 0 h72 v26 h-72z" fill="#fff" stroke="${K}" stroke-width="2"/><text class="etq-a" x="0" y="11" text-anchor="middle" font-family="Archivo" font-weight="700" font-size="8.5" fill="#6e675e">1 € em 2020</text><text class="etq-b" x="0" y="23" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="12" fill="${K}">?</text></g>`;
+    s += `<g class="etiq" id="etq-${id}" transform="translate(${x} ${y + 14})"><path d="M-36 0 h72 v26 h-72z" fill="#fff" stroke="${K}" stroke-width="2"/><text class="etq-a" x="0" y="11" text-anchor="middle" font-family="Archivo" font-weight="700" font-size="8.5" fill="#6e675e">1${FINO}€ em 2020</text><text class="etq-b" x="0" y="23" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="12" fill="${K}">?</text></g>`;
   }
   // o balcão: caixa registadora, o talão escondido, o saco, o Sr. Manuel
   s += `<g id="mercManuel" transform="translate(540 352) scale(1.05)">${manuel()}</g>`;
@@ -87,7 +87,7 @@ export function interiorMercearia(): string {
   s += `<g><rect x="452" y="262" width="44" height="30" rx="4" fill="#c9ced3" stroke="${K}" stroke-width="2.2"/><rect x="458" y="254" width="32" height="10" fill="#e9ecef" stroke="${K}" stroke-width="2"/><rect x="460" y="270" width="28" height="10" fill="#1d2024"/><text x="474" y="278.5" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="7" fill="#6fe07a">0,000</text></g>`;
   s += `<g><rect x="584" y="250" width="50" height="42" rx="5" fill="#2c3036" stroke="${K}" stroke-width="2.4"/><rect x="590" y="256" width="38" height="12" fill="#6fe07a" stroke="${K}" stroke-width="1.4"/><path d="M592 274 h10 M606 274 h10 M620 274 h8 M592 282 h10 M606 282 h10" stroke="#aeb4ba" stroke-width="3"/>
     <g id="mercTalaoArte" opacity="0"><rect x="596" y="210" width="26" height="42" fill="#fff" stroke="${K}" stroke-width="1.6"/><path d="M600 220 h18 M600 226 h14 M600 232 h18 M600 238 h10" stroke="${K}" stroke-width="1" opacity=".5"/></g></g>`;
-  s += `<g id="mercSaco" transform="translate(478 452) scale(1.35)"><path d="M-26 0 l4 -44 h44 l4 44z" fill="#f3e6cf" stroke="${K}" stroke-width="2.4" stroke-linejoin="round"/><path d="M-12 -44 q12 -18 24 0" fill="none" stroke="${K}" stroke-width="2.4"/><path d="M-10 -44 v-8 q10 -12 20 0 v8" fill="#4fae6a" stroke="${K}" stroke-width="1.6"/><circle cx="-6" cy="-48" r="7" fill="#e2412a" stroke="${K}" stroke-width="1.6"/><text id="mercSacoTxt" x="0" y="-16" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="11" fill="${K}">10 €</text></g>`;
+  s += `<g id="mercSaco" transform="translate(478 452) scale(1.35)"><path d="M-26 0 l4 -44 h44 l4 44z" fill="#f3e6cf" stroke="${K}" stroke-width="2.4" stroke-linejoin="round"/><path d="M-12 -44 q12 -18 24 0" fill="none" stroke="${K}" stroke-width="2.4"/><path d="M-10 -44 v-8 q10 -12 20 0 v8" fill="#4fae6a" stroke="${K}" stroke-width="1.6"/><circle cx="-6" cy="-48" r="7" fill="#e2412a" stroke="${K}" stroke-width="1.6"/><text id="mercSacoTxt" x="0" y="-16" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="11" fill="${K}">10${FINO}€</text></g>`;
   return s;
 }
 
@@ -102,13 +102,16 @@ export function etiquetasDe(D: DadosMercearia, raiz: ParentNode): void {
 }
 
 /** O texto de baixo de uma etiqueta: o preço de hoje do que custava 1 €. */
-export const textoEtiqueta = (r: number): string => (r ? `${fmtNum(r, 2)} € hoje` : "—");
+export const textoEtiqueta = (r: number): string => (r ? `${fmtNum(r, 2)}${FINO}€ hoje` : "—");
 
 /** «Ver outra vez»: a mercearia volta ao estado de abertura (o protótipo redesenhava o interior). */
 export function reporMercearia(raiz: ParentNode): void {
   raiz.querySelectorAll(".etq-b").forEach((b) => (b.textContent = "?"));
+  raiz.querySelectorAll<SVGElement>(".etiq, .prod-i").forEach((el) => {
+    el.style.transform = "";
+  });
   const saco = raiz.querySelector("#mercSacoTxt");
-  if (saco) saco.textContent = "10 €";
+  if (saco) saco.textContent = `10${FINO}€`;
   const t = raiz.querySelector<SVGGElement>("#mercTalaoArte");
   if (t) {
     t.setAttribute("opacity", "0");
@@ -171,7 +174,12 @@ export function graficoIndice(D: DadosMercearia, it: ItemMerc & { r: number }): 
   s += `<text x="${(x(kz) - 8).toFixed(1)}" y="${(y(tot[kz].v) + 20).toFixed(1)}" text-anchor="end" font-family="Caveat" font-weight="700" font-size="17" fill="#16130f">inflação geral: ${geral}</text>`;
   const hoje = Math.round(a[kz].v);
   const aria = `Índice de preços de ${it.nome}, com 100 no preço de ${mesLongo(D.t0)}: hoje vale ${hoje}. A inflação geral, a tracejado, vale ${geral}.`;
-  return `<svg class="grafico-irs" viewBox="0 0 520 280" role="img" aria-label="${aria}" font-family="Archivo">${s}</svg>`;
+  const texto =
+    `<dl class="b-sr">` +
+    `<dt>${it.nome}</dt><dd>100 (${mesCurto(D.t0)}) → ${hoje} (${pctVar(it.r)})</dd>` +
+    `<dt>Inflação geral</dt><dd>100 (${mesCurto(D.t0)}) → ${geral} (${pctVar(razao(D.total, D.t0))})</dd>` +
+    `</dl>`;
+  return `<svg class="grafico-irs" viewBox="0 0 520 280" role="img" aria-label="${aria}" font-family="Archivo">${s}</svg>${texto}`;
 }
 
 /** O talão do IVA: por cada 10 € gastos, quanto é IVA (taxas de data/). */
@@ -190,17 +198,17 @@ export function talaoIva(D: DadosMercearia): { html: string; aria: string } {
   const soma: Record<string, number> = {};
   for (const [, n] of linhas) soma[n] = (soma[n] ?? 0) + ivaDe(t[n]);
   const totIva = Object.values(soma).reduce((a, b) => a + b, 0);
-  const em10 = (n: string) => `${fmtNum(ivaDe(t[n]), 2)} €`;
+  const em10 = (n: string) => `${fmtNum(ivaDe(t[n]), 2)}${FINO}€`;
   const aria = `Talão de exemplo: por cada 10 euros em pão, leite e fruta e legumes, ${em10("Reduzida")} são IVA; em conservas e vinho, ${em10("Intermédia")}; nos outros produtos, ${em10("Normal")}.`;
   const html =
     `<div class="b-talao" role="img" aria-label="${aria}">` +
-    `<b class="t-cab">MERCEARIA DO MANUEL</b><span class="t-sub">por cada 10,00 € que pagas em…</span>` +
+    `<b class="t-cab">MERCEARIA DO MANUEL</b><span class="t-sub">por cada 10,00${FINO}€ que pagas em…</span>` +
     linhas.map(([nome, n]) => `<span class="t-l"><span>${nome}</span><span>10,00 ${letra[n]}</span></span>`).join("") +
     `<span class="t-sep"></span><span class="t-l"><b>TOTAL</b><b>60,00</b></span><span class="t-sep"></span><span class="t-sub">IVA incluído no preço</span>` +
     Object.keys(soma)
       .map((n) => `<span class="t-l"><span>${letra[n]} · taxa ${n.toLowerCase()} ${fmtNum(t[n] * 100, 0)}${FINO}%</span><span>${fmtNum(soma[n], 2)}</span></span>`)
       .join("") +
-    `<span class="t-l t-tot"><b>IVA total</b><b>${fmtNum(totIva, 2)} €</b></span></div>`;
+    `<span class="t-l t-tot"><b>IVA total</b><b>${fmtNum(totIva, 2)}${FINO}€</b></span></div>`;
   return { html, aria };
 }
 

@@ -17,6 +17,7 @@
  * ensinou que um callback atrasado soma por cima do valor final.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { graficoLinhas } from "@/lib/viz/grafico-linhas";
 import type { DadosCasa } from "./dados-p2c";
 import { interiorCasa, PX_POR_MES } from "./casa-arte";
@@ -179,8 +180,7 @@ export default function CenaCasa({ D, aoFechar }: { D: DadosCasa; aoFechar: () =
         )}
         {passo === 3 && grafico && (
           <>
-            <div dangerouslySetInnerHTML={{ __html: grafico.svg }} />
-            <div dangerouslySetInnerHTML={{ __html: grafico.texto }} />
+            <div dangerouslySetInnerHTML={{ __html: grafico.svg + grafico.texto }} />
             <p dangerouslySetInnerHTML={{ __html: T.casaGraficoTexto(
               String(Math.round(hpiU?.v ?? 0)),
               String(Math.round(lciU?.v ?? 0))
@@ -211,9 +211,9 @@ export default function CenaCasa({ D, aoFechar }: { D: DadosCasa; aoFechar: () =
             >
               {T.casaBtnOutra}
             </button>
-            <a className="b-btn" href="/casa">
+            <Link className="b-btn" href="/casa">
               {T.casaLinkCasa}
-            </a>
+            </Link>
           </>
         )}
       </div>

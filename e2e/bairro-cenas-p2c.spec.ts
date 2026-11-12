@@ -225,6 +225,10 @@ test.describe("Pastelaria — comer fora contra em casa", () => {
     await expect(page.locator(".b-cena-texto")).toContainText(/6/);
     const link = page.getByRole("link", { name: /inflação/i }).last();
     expect(await link.getAttribute("href")).toBe("/inflacao");
+
+    // «Ver outra vez» repõe o quadro de ardósia em «hoje: ?»
+    await page.getByRole("button", { name: /ver outra vez/i }).click();
+    await expect(page.locator("#pastHoje")).toHaveText("hoje: ?");
   });
 
   test("reduced-motion: o preço de hoje já está escrito, sem GSAP", async ({ browser }) => {
@@ -275,6 +279,20 @@ test.describe("Quiosque — o Jornal do Bairro", () => {
     // os links do jornal para /trabalho e /dados
     expect(await page.getByRole("link", { name: /trabalho/i }).last().getAttribute("href")).toBe("/trabalho");
     expect(await page.getByRole("link", { name: /dados/i }).last().getAttribute("href")).toBe("/dados");
+
+    // «Ver outra vez» limpa a manchete do jornal no quiosque
+    await page.getByRole("button", { name: /ver outra vez/i }).click();
+    await expect(page.locator("#quiManchete")).toHaveText("");
+  });
+});
+
+test.describe("Torre dos Clérigos — o Norte na economia", () => {
+  test("percorre os dois passos e liga a /dados no fecho", async ({ page }) => {
+    await page.goto("/#clerigos");
+    await expect(page.locator(".b-cena")).toBeVisible();
+    await expect(page.locator(".b-quem").first()).toContainText(/clérigos/i);
+    await page.getByRole("button", { name: /cada pessoa/i }).click();
+    await expect(page.locator('.b-cena a[href="/dados"]')).toBeVisible();
   });
 });
 

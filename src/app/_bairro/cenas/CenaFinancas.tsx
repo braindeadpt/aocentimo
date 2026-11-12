@@ -16,6 +16,7 @@
  * entram logo — o estado final é sempre o mesmo.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { fmtEUR0 as fmtEUR } from "@/lib/format";
 import type { DadosFinancas } from "./dados";
 import { coletavel, gavetaMaisAlta, irsPorEscaloes } from "./irs-gavetas";
@@ -284,35 +285,41 @@ export default function CenaFinancas({ D, aoFechar }: { D: DadosFinancas; aoFech
           </>
         )}
       </div>
-      <div className="b-acoes">
-        {passo === 3 && (
-          // o protótipo recomeça em 1 500 € ao entrar no gráfico
-          // (calcFinancas(1500)): senão a fala dizia o degrau dos 1 500 e
-          // a gaveta acesa e o ponto mostravam os 1 650 do palpite
-          <button className="b-btn" type="button" onClick={() => { animarRef.current = true; setVisto(1500); setSalario(1500); setPasso(4); }}>
-            {T.finBtnGrafico}
-          </button>
-        )}
-        {passo === 4 && (
-          <>
-            <button className="b-btn b-claro" type="button" onClick={aoFechar}>
-              {T.finBtnVoltar}
+      {passo >= 3 && (
+        <div className="b-acoes">
+          {passo === 3 && (
+            // o protótipo recomeça em 1 500 € ao entrar no gráfico
+            // (calcFinancas(1500)): senão a fala dizia o degrau dos 1 500 e
+            // a gaveta acesa e o ponto mostravam os 1 650 do palpite
+            <button className="b-btn" type="button" onClick={() => { animarRef.current = true; setVisto(1500); setSalario(1500); setPasso(4); }}>
+              {T.finBtnGrafico}
             </button>
-            <button
-              className="b-btn b-claro"
-              type="button"
-              onClick={() => {
-                reporSenha(arteRef.current, "#finPainel", "A 022", "#finTalao");
-                setPasso(1);
-                setVisto(1500);
-                setSalario(1650);
-              }}
-            >
-              {T.finBtnOutra}
-            </button>
-          </>
-        )}
-      </div>
+          )}
+          {passo === 4 && (
+            <>
+              <button className="b-btn b-claro" type="button" onClick={aoFechar}>
+                {T.finBtnVoltar}
+              </button>
+              <button
+                className="b-btn b-claro"
+                type="button"
+                onClick={() => {
+                  reporSenha(arteRef.current, "#finPainel", "A 022", "#finTalao");
+                  setPalpite("mais");
+                  setPasso(1);
+                  setVisto(1500);
+                  setSalario(1650);
+                }}
+              >
+                {T.finBtnOutra}
+              </button>
+              <Link className="b-btn" href="/irs">
+                {T.finBtnIrs}
+              </Link>
+            </>
+          )}
+        </div>
+      )}
       {/* a tabela oficial, para quem quer confirmar (como no protótipo) */}
       <details className="b-confirma">
         <summary>{T.finTabelaResumo}</summary>

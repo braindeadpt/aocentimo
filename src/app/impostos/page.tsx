@@ -76,7 +76,7 @@ export default function ImpostosPage() {
       />
       <Pagina
       pergunta="Quanto do que compras é imposto?"
-      edificio={{ href: "/#financas", titulo: m.bairro.edificios.financas.titulo }}
+      edificio={{ href: "/#mercearia", titulo: m.bairro.edificios.mercearia.titulo }}
       rota="/impostos"
       kicker="Impostos — o imposto dentro do preço"
       resposta={{

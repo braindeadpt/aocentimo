@@ -107,8 +107,9 @@ describe("Quiosque — Jornal do Bairro", () => {
     expect(D.confianca).toEqual(confJson.series.at(-1));
   });
 
-  it("o salário mínimo vem de smn.json e o de 2015 é o ponto com esse ano", () => {
+  it("o salário mínimo vem de smn.json, com o ano da vigência, e o de 2015 é o ponto com esse ano", () => {
     expect(D.smn).toBe(smnJson.regioes.continente);
+    expect(D.smnAno).toBe(smnJson.vigencia.slice(0, 4));
     const p2015 = smnJson.serie.find((p) => p.ano === 2015)!;
     expect(D.smn0).toEqual({ ano: 2015, valor: p2015.valor });
   });

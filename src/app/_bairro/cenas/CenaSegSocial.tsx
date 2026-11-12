@@ -16,6 +16,7 @@
  *     protótipo e vivem no string SVG — a árvore React não os conhece.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
 import type { DadosSegSocial } from "./dados-p2b";
 import { barrasQuem, interiorSegSocial, moedaSvg, nivel, reciboInes } from "./segsocial-arte";
@@ -292,14 +293,16 @@ export default function CenaSegSocial({ D, aoFechar }: { D: DadosSegSocial; aoFe
             <div className="opcoes">
               {voltar}
               {outra}
-              <a className="b-btn" href="/salario">
+              <Link className="b-btn" href="/trabalho">
+                {T.ssBtnTrabalho}
+              </Link>
+              <Link className="b-btn" href="/salario">
                 {T.ssBtnSalario}
-              </a>
+              </Link>
             </div>
           </>
         )}
       </div>
-      <div className="b-acoes" />
     </CenaDePerto>
   );
 }

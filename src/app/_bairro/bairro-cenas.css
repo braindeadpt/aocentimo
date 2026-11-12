@@ -14,6 +14,38 @@
 
 /* ————— conteúdo comum ————— */
 
+/* Contraste WCAG AA (≥ 4,5:1) para texto vermelho/verde sobre realces
+   claros (--vermelho-2 #ffe1d9 / --verde-2 #d3f2e3): --vermelho (#e2412a)
+   media 3,15:1 e --verde (#0c8f5c) media 3,45:1. --verde-fundo (#096b44,
+   5,50:1) já vem da pele; --vermelho-fundo (#a82814, 5,71:1) define-se
+   aqui para as cenas sem tocar em globals.css nem bairro.css. */
+[data-pele="v5"] .b-cena,
+[data-pele="v5"] .b-painel {
+  --vermelho-fundo: #a82814;
+}
+
+[data-pele="v5"][data-theme="dark"] .b-cena,
+[data-pele="v5"][data-theme="dark"] .b-painel {
+  --vermelho-fundo: var(--vermelho);
+}
+
+html[data-theme="dark"] .b5 .b-palco .b-cena,
+html[data-theme="dark"] .b5 .b-palco .b-painel {
+  --vermelho-fundo: #a82814;
+}
+
+[data-pele="v5"] .b-painel .b-fala .b-r,
+[data-pele="v5"] .b-cena .b-cena-texto .b-r {
+  background: var(--vermelho-2);
+  color: var(--vermelho-fundo);
+}
+
+[data-pele="v5"] .b-painel .b-fala .b-g,
+[data-pele="v5"] .b-cena .b-cena-texto .b-g {
+  background: var(--verde-2);
+  color: var(--verde-fundo);
+}
+
 [data-pele="v5"] .b-cena .b-corpo {
   display: grid;
   gap: 12px;
@@ -146,7 +178,7 @@
 
 [data-pele="v5"] .b-calc-linha b.b-r {
   background: var(--vermelho-2);
-  color: var(--vermelho);
+  color: var(--vermelho-fundo);
   font-weight: 800;
   padding: 0 0.2em;
   border-radius: 4px;
@@ -175,12 +207,12 @@
 
 [data-pele="v5"] .b-barra-juros .b-bj {
   background: var(--vermelho-2);
-  color: var(--vermelho);
+  color: var(--vermelho-fundo);
 }
 
 [data-pele="v5"] .b-barra-juros .b-bc {
   background: var(--verde-2);
-  color: var(--verde);
+  color: var(--verde-fundo);
 }
 
 /* ————— o exemplo ajustável do banco ————— */
@@ -402,8 +434,9 @@
 }
 
 [data-pele="v5"] .b-jornal .b-j-cab {
-  font-family: Georgia, "Times New Roman", serif;
   font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
   text-align: center;
   border-bottom: 3px double var(--tinta);
   padding-bottom: 6px;
@@ -439,16 +472,18 @@
   justify-self: start;
 }
 
-/* o valor a vermelho/verde leva o fundo do realce, como o `.r`/`.g` do protótipo */
+/* o valor a vermelho/verde leva o fundo do realce, com contraste AA */
+[data-pele="v5"] .b-jornal .b-j-v.b-r,
 [data-pele="v5"] .b-jornal .b-j-v.r {
-  color: var(--vermelho);
+  color: var(--vermelho-fundo);
   background: var(--vermelho-2);
   padding: 0 0.12em;
   border-radius: 4px;
 }
 
+[data-pele="v5"] .b-jornal .b-j-v.b-g,
 [data-pele="v5"] .b-jornal .b-j-v.g {
-  color: var(--verde);
+  color: var(--verde-fundo);
   background: var(--verde-2);
   padding: 0 0.12em;
   border-radius: 4px;

@@ -36,4 +36,5 @@ export const nteFecho = (norte: string, pais: string) =>
 export const nteBtnPessoa = "E por cada pessoa? →";
 export const nteBtnVoltar = "Voltar ao bairro";
 export const nteBtnOutra = "Ver outra vez";
+export const nteLinkDados = "Ver os dados do país →";
 export const nteFalha = "A fonte falhou — este número fica por mostrar.";

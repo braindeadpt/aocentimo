@@ -19,7 +19,8 @@
  * azuis/vermelhas/verdes caem em `#b-gEtiq`, como no protótipo.
  */
 import { useEffect, useRef, useState } from "react";
-import { fmtEUR } from "@/lib/format";
+import Link from "next/link";
+import { fmtEUR, fmtNum } from "@/lib/format";
 import type { DadosFabrica } from "./dados";
 import * as T from "./textos";
 
@@ -276,7 +277,7 @@ export default function CenaFabrica({ D, mundoRef, camaraRef, aoFechar }: PropsF
 
   const fala =
     passo === 99
-      ? T.fabFalaCasa(fmtEUR(l.liquido), fmtNumFica(l.fica))
+      ? T.fabFalaCasa(fmtEUR(l.liquido), fmtNum(l.fica, 2))
       : passo === 4
         ? T.fabFalaRua
         : passo === 3
@@ -292,13 +293,7 @@ export default function CenaFabrica({ D, mundoRef, camaraRef, aoFechar }: PropsF
       <p
         className="b-fala"
         aria-live="polite"
-        dangerouslySetInnerHTML={{
-          __html:
-            fala +
-            (passo === 99
-              ? ` <a class="b-btn" href="/salario">${T.fabBtnSimulador}</a>`
-              : ""),
-        }}
+        dangerouslySetInnerHTML={{ __html: fala }}
       />
       <div className="contador" role="status" aria-label={T.fabContAria}>
         <span style={{ background: "var(--azul-2)" }}>{T.fabContSS(fmtEUR(totais.ss))}</span>
@@ -306,20 +301,20 @@ export default function CenaFabrica({ D, mundoRef, camaraRef, aoFechar }: PropsF
         <span style={{ background: "var(--verde-2)" }}>{T.fabContCasa(fmtEUR(totais.casa))}</span>
       </div>
       <div className="b-acoes">
-        {passo === 99 && (
-          <button className="b-btn b-claro" type="button" onClick={() => { setTotais({ ss: 0, irs: 0, casa: 0 }); aoPasso(1); setRodada((r) => r + 1); }}>
-            {T.fabBtnOutra}
-          </button>
-        )}
         <button className="b-btn b-claro" type="button" onClick={aoFechar}>
           {T.finBtnVoltar}
         </button>
+        {passo === 99 && (
+          <>
+            <button className="b-btn b-claro" type="button" onClick={() => { setTotais({ ss: 0, irs: 0, casa: 0 }); aoPasso(1); setRodada((r) => r + 1); }}>
+              {T.fabBtnOutra}
+            </button>
+            <Link className="b-btn" href="/salario">
+              {T.fabBtnSimulador}
+            </Link>
+          </>
+        )}
       </div>
     </div>
   );
-}
-
-/** «71,92 cêntimos» — o `fica` do cenário, já com a vírgula do site. */
-function fmtNumFica(fica: number): string {
-  return fica.toLocaleString("pt-PT", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
