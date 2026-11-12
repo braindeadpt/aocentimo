@@ -44,10 +44,6 @@ const INTRO = /Archivo-intro/;   // vive em public/, com o preload escrito à ma
 const CONTRATO =
   /Archivo_base|Archivo_larga|Archivo-intro|Caveat_600|Caveat_700/;
 
-/** A monoespaçada é do SISTEMA, por contrato (--font-mono). */
-const DO_SISTEMA =
-  /^(ui-monospace|SFMono|Menlo|Monaco|Consolas|Liberation Mono|Courier New|cursive|Comic Sans)/i;
-
 /** As rotas que o spec abre: a home, o chrome, uma de dados, uma editorial. */
 const ROTAS = ["/", "/estilo", "/salario", "/dados"] as const;
 

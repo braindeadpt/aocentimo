@@ -104,9 +104,10 @@ export default function DadosPage() {
   // ————— nível 1: quatro números do país, cada um com o orbe —————
   const inflVar = ipc ? variacao(ipc, 12) : null;
   const eur12 = ultimo(euribor["12M"]);
+  // PROPOSTA (T06): frase de nível 1 encurtada para ≤ 25 palavras (revisão do dono)
   const fraseResposta =
     inflVar !== null && eur12
-      ? `A inflação está em ${fmtPct(inflVar, 1)} e a Euribor a 12 meses em ${comUnidade(fmtNum(eur12.v, 2), "%")} — a taxa a que os bancos emprestam dinheiro entre si. Cada número com fonte e data.`
+      ? `A inflação está em ${fmtPct(inflVar, 1)} e a Euribor a 12 meses em ${comUnidade(fmtNum(eur12.v, 2), "%")} — cada número oficial com fonte e data.`
       : "Os números do país, direto das fontes oficiais — cada um com a sua data e o selo de frescura.";
 
   // ————— o ano fiscal em anel (catálogo: ciclos = pontos) —————
@@ -245,7 +246,7 @@ export default function DadosPage() {
                   valor={caBase ? fmtPct(caBase.meta.oficialPct / 100, 3) : "—"}
                   meta={
                     caBase
-                      ? `oficial · ${caBase.meta.vigenciaOficial}`
+                      ? `oficial · ${fmtPeriodo(caBase.meta.vigenciaOficial)}`
                       : "série não recolhida"
                   }
                 />
@@ -367,6 +368,7 @@ export default function DadosPage() {
                         ? "atrasada"
                         : "em-dia"
                     }
+                    rotulos={m.chart}
                   />
                   <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-px bg-line border border-line">
                     {(Object.keys(euribor) as (keyof typeof euribor)[]).map((k) => {
@@ -449,7 +451,7 @@ export default function DadosPage() {
                             <span className="absolute inset-y-0 right-0 w-px bg-ink" />
                           </span>
                           <span className="num text-rotulo text-muted">
-                            {fmtNum(cap - p.v, 1)} pp p/ teto
+                            {comUnidade(fmtNum(cap - p.v, 1), "p.p.")} p/ teto
                           </span>
                         </div>
                       ) : (
@@ -503,8 +505,8 @@ export default function DadosPage() {
                                   />
                                   <span className="absolute inset-y-0 right-0 w-px bg-ink" />
                                 </span>
-                                <span className="num w-14 text-right text-rotulo text-muted">
-                                  {fmtNum(cap - p.v, 1)} pp
+                                <span className="num w-16 text-right text-rotulo text-muted">
+                                  {comUnidade(fmtNum(cap - p.v, 1), "p.p.")}
                                 </span>
                               </div>
                             ) : (
@@ -535,14 +537,14 @@ export default function DadosPage() {
               {caBase ? (
                 <div className="grid md:grid-cols-2 gap-px bg-line border border-line">
                   <div className="bg-panel px-5 py-5">
-                    <p className="kicker">Oficial IGCP — {caBase.meta.vigenciaOficial}</p>
+                    <p className="kicker">Oficial IGCP — {fmtPeriodo(caBase.meta.vigenciaOficial)}</p>
                     <p className="num-read mt-1">{fmtPct(caBase.meta.oficialPct / 100, 3)}</p>
                     <p className="footnote mt-2">
                       Média da Euribor 3M nos 10 dias úteis anteriores, limitada a 2,50&#8239;% — a que conta para os juros.
                     </p>
                   </div>
                   <div className="bg-panel px-5 py-5">
-                    <p className="kicker">Indicativa — média mensal {caBase.meta.serieAte}</p>
+                    <p className="kicker">Indicativa — média mensal {fmtPeriodo(caBase.meta.serieAte)}</p>
                     <p className="num-read mt-1">
                       {fmtPct(caBase.series[caBase.series.length - 1].v / 100, 3)}
                     </p>

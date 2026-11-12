@@ -226,6 +226,16 @@ test.describe("P4 · SEO", () => {
         200
       );
     }
+
+    // rotas alimentadas por dados ingeridos expõem <lastmod> honesto
+    for (const comData of ["", "/credito", "/casa", "/trabalho", "/metodologia"]) {
+      const bloco = xml.match(
+        new RegExp(`<url>\\s*<loc>${SITE_URL}${comData}</loc>[\\s\\S]*?</url>`)
+      )?.[0];
+      expect(bloco, `${comData || "/"} com lastmod no sitemap`).toContain(
+        "<lastmod>"
+      );
+    }
   });
 
   test("o robots.txt aponta para o sitemap e o manifest responde", async ({

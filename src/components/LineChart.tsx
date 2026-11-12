@@ -6,7 +6,13 @@ import { EmptyState } from "@/components/EmptyState";
 import { OrbeEstado } from "@/components/OrbeEstado";
 import { chaveSeries, interpDom, interpPts, type Dominio, type PontoTV } from "@/lib/grafico";
 import { easeEntra } from "@/lib/useValorAnimado";
-import { m } from "@/lib/messages";
+
+export interface RotulosChart {
+  scrubAria: string;
+  ultimo: string;
+  atrasada: string;
+  eventosAria: string;
+}
 
 interface SerieIn {
   name: string;
@@ -37,6 +43,8 @@ interface Props {
   eventos?: EventoAn[];
   /** Selo de frescura — "atrasada" marca a falha no mostrador. */
   estado?: "em-dia" | "atrasada" | "sem-sla";
+  /** Rótulos acessíveis vindos do servidor (sem importar pt.json no cliente). */
+  rotulos: RotulosChart;
 }
 
 /* paleta por defeito SEM cores semânticas: tinta + rampa azul-aço.
@@ -127,6 +135,7 @@ export function LineChart({
   unidade = "",
   eventos,
   estado,
+  rotulos,
 }: Props) {
   const yFormat = (v: number) => comUnidade(fmtNum(v), unidade);
   const wrap = useRef<HTMLDivElement>(null);
@@ -391,7 +400,7 @@ export function LineChart({
             if (!p0) return null;
             return (
               <tr key={p0.t}>
-                <td>{new Date(p0.t).toISOString().slice(0, 10)}</td>
+                <td>{fmtData(new Date(p0.t).toISOString().slice(0, 10))}</td>
                 {dados.map((d) => (
                   <td key={d.name}>
                     {d.pts[pIdx] ? yFormat(d.pts[pIdx].v) : "—"}
@@ -410,11 +419,11 @@ export function LineChart({
         {estado === "atrasada" && (
           <span className="inline-flex items-center gap-1.5">
             <OrbeEstado estado="atrasada" tamanho={14} />
-            <span className="chart-readout-t text-warn">{m.chart.atrasada}</span>
+            <span className="chart-readout-t text-warn">{rotulos.atrasada}</span>
           </span>
         )}
         <span className="chart-readout-t">
-          {ativo === null ? `${m.chart.ultimo} · ` : ""}
+          {ativo === null ? `${rotulos.ultimo} · ` : ""}
           {alvo !== null ? fmtData(new Date(alvo).toISOString().slice(0, 10)) : ""}
         </span>
         {lidos?.map((p, i) => (
@@ -434,7 +443,7 @@ export function LineChart({
           min={0}
           max={Math.max(0, nPts - 1)}
           value={idx}
-          aria-label={m.chart.scrubAria}
+          aria-label={rotulos.scrubAria}
           aria-valuetext={
             alvo !== null ? fmtData(new Date(alvo).toISOString().slice(0, 10)) : undefined
           }
@@ -630,17 +639,17 @@ export function LineChart({
           (o SVG é aria-hidden: sem esta lista o evento não existia para
           leitores de ecrã nem para quem quer verificar) */}
       {evs.length > 0 && (
-        <ul aria-label={m.chart.eventosAria} className="mt-1 flex flex-wrap gap-x-5 gap-y-1">
+        <ul aria-label={rotulos.eventosAria} className="mt-1 flex flex-wrap gap-x-5 gap-y-1">
           {evs.map((ev) => (
             <li key={ev.ms} className="flex items-baseline gap-1.5 text-kicker">
               <span aria-hidden className="inline-block h-2 w-2 self-center bg-mark" />
               {/* a citação é um alvo a sério: 17 px de caixa não chegavam
-                  aos 24×24 do 2.5.8 quando a lista passa a duas filas
-                  (a folga é 4 px). O `py` cresce o alvo e o `-my` devolve
-                  a linha ao sítio — muda o alvo, não a tinta. */}
+                  aos 44×44 confortáveis de toque quando a lista passa a duas
+                  filas. O `py` cresce o alvo e o `-my` devolve a linha ao
+                  sítio — muda o alvo, não a tinta. */}
               <a
                 href={ev.url}
-                className="-my-1 py-1 font-mono text-muted underline decoration-line2 underline-offset-2 transition-colors hover:text-ink"
+                className="-my-3 inline-flex min-h-[44px] items-center py-3 font-mono text-muted underline decoration-line2 underline-offset-2 transition-colors hover:text-ink"
               >
                 {ev.rotulo}
               </a>

@@ -73,9 +73,9 @@ export const FRASE: Record<string, string> = {
   "taxa-efetiva-marginal":
     "A marginal é a taxa do último degrau de rendimento; a efetiva é o imposto total a dividir pelo que ganhas — mais baixa.",
   "deducao-especifica":
-    "Uma fatia do salário que fica de fora antes de o IRS contar — em 2026 são cerca de 4 587 € por ano.",
+    "Uma fatia do salário que fica de fora antes de o IRS contar — em 2026 são cerca de 4 587 € por ano.",
   "minimo-existencia":
-    "A lei protege o rendimento essencial para viver: em 2026 ninguém paga IRS sobre até 12 880 € por ano.",
+    "A lei protege o rendimento essencial para viver: em 2026 ninguém paga IRS sobre até 12 880 € por ano.",
   "retencao-fonte":
     "O IRS que o empregador desconta todos os meses e entrega ao Estado por ti — um adiantamento que se acerta na declaração.",
   tsu: "A contribuição para a Segurança Social: saem 11 % do teu recibo e a empresa paga mais 23,75 % que nunca vês.",
@@ -111,16 +111,16 @@ export const EXEMPLO: Record<string, string> = {
     "Para o mesmo mês, o INE pode dizer 2,4 % e o Eurostat 2,1 % — a mesma inflação, duas réguas.",
   "taxa-efetiva-marginal":
     "Com marginal de 35 %, a efetiva pode ficar perto de 17 % — a média é cerca de metade do último degrau.",
-  "deducao-especifica": "Em 2026: 8,54 × IAS de 537,13 € ≈ 4 587 € do ano que não pagam IRS.",
+  "deducao-especifica": "Em 2026: 8,54 × IAS de 537,13 € ≈ 4 587 € do ano que não pagam IRS.",
   "minimo-existencia":
-    "Em 2026 o mínimo protege 920 € × 14 = 12 880 € — quem ganha o salário mínimo não paga IRS.",
+    "Em 2026 o mínimo protege 920 € × 14 = 12 880 € — quem ganha o salário mínimo não paga IRS.",
   "retencao-fonte":
-    "Se reténs 200 € por mês e o IRS anual devido é 2 200 €, recebes a diferença como reembolso.",
-  tsu: "Num salário de 1 000 €: saem 110 € teus e a empresa paga mais 237,50 € — custo real de 1 237,50 €.",
+    "Se reténs 200 € por mês e o IRS anual devido é 2 200 €, recebes a diferença como reembolso.",
+  tsu: "Num salário de 1 000 €: saem 110 € teus e a empresa paga mais 237,50 € — custo real de 1 237,50 €.",
   isp: "Do preço de cada litro, uma parte fixa em cêntimos é ISP — e o IVA de 23 % ainda incide sobre esse imposto.",
   iva: "Um livro de 10 € leva 6 %, um jantar de 20 € leva 13 %, uma televisão de 300 € leva 23 %.",
   "certificados-aforro":
-    "1 000 € em Certificados de Aforro: juros a cada três meses e um prémio que cresce quanto mais tempo ficam.",
+    "1 000 € em Certificados de Aforro: juros a cada três meses e um prémio que cresce quanto mais tempo ficam.",
   "taxa-real":
     "Depósito a 1,5 % com inflação de 3 %: a taxa real é −1,5 % — perdes poder de compra sem o saldo descer.",
   "retencao-capitais":
@@ -128,12 +128,12 @@ export const EXEMPLO: Record<string, string> = {
   "deducao-coleta":
     "250 € de despesas de saúde devolvem 15 % — 37,50 € a menos de IRS a pagar.",
   "limite-deducoes":
-    "No 1.º escalão não há teto; no último, a soma das deduções pára nos 1 000 €.",
-  ppr: "1 000 € entregues no ano voltam 200 € pelo IRS — mas um resgate fora das regras obriga a devolver o benefício.",
+    "No 1.º escalão não há teto; no último, a soma das deduções pára nos 1 000 €.",
+  ppr: "1 000 € entregues no ano voltam 200 € pelo IRS — mas um resgate fora das regras obriga a devolver o benefício.",
   "rendimento-relevante":
-    "Faturas 10 000 € em serviços: a Segurança Social conta 7 000 € e cobra 21,4 % — cerca de 1 498 €.",
+    "Faturas 10 000 € em serviços: a Segurança Social conta 7 000 € e cobra 21,4 % — cerca de 1 498 €.",
   englobamento:
-    "1 000 € de mais-valias: à taxa autónoma pagas 280 €; englobadas a uma marginal de 21 %, 210 €.",
+    "1 000 € de mais-valias: à taxa autónoma pagas 280 €; englobadas a uma marginal de 21 %, 210 €.",
 };
 
 /** Ficha de nível 3 — a legislação e a fonte oficial de cada termo.
@@ -212,7 +212,7 @@ export const FICHA: Record<string, FichaTermo> = {
     fonte: "Art. 70.º CIRS — OE2026",
     url: AT,
     legislacao:
-      "Em 2026 o mínimo de existência é 14 × SMN = 12 880 €, com abatimento progressivo até ao limite da fórmula do art. 70.º.",
+      "Em 2026 o mínimo de existência é 14 × SMN = 12 880 €, com abatimento progressivo até ao limite da fórmula do art. 70.º.",
   },
   "retencao-fonte": {
     fonte: "Despacho n.º 233-A/2026, de 6 de janeiro (DR, 2.ª série, n.º 3)",
@@ -260,13 +260,13 @@ export const FICHA: Record<string, FichaTermo> = {
     fonte: "Arts. 78.º a 84.º CIRS (redação OE2026, Lei 73-A/2025)",
     url: "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Rendimentos/Declaracao/Deducoes_a_coleta/Paginas/default.aspx",
     legislacao:
-      "Saúde 15 % (até 1 000 €), educação 30 % (até 800 €), rendas, PPR 20 % e o IVA das faturas pedidas com NIF.",
+      "Saúde 15 % (até 1 000 €), educação 30 % (até 800 €), rendas, PPR 20 % e o IVA das faturas pedidas com NIF.",
   },
   "limite-deducoes": {
     fonte: "Art. 78.º CIRS — limite global das deduções à coleta",
     url: AT,
     legislacao:
-      "Sem limite no 1.º escalão, 1 000 € no último e um valor intermédio nos restantes — majorado 5 % por dependente a partir do terceiro.",
+      "Sem limite no 1.º escalão, 1 000 € no último e um valor intermédio nos restantes — majorado 5 % por dependente a partir do terceiro.",
   },
   ppr: {
     fonte: "Art. 21.º EBF — benefício fiscal das entregas; taxa efetiva de 8 % no reembolso dentro das condições legais",

@@ -1,7 +1,13 @@
 "use client";
 
 import { useLayoutEffect, useSyncExternalStore } from "react";
-import { m } from "@/lib/messages";
+
+export interface RotulosTema {
+  mudarParaClaro: string;
+  mudarParaEscuro: string;
+  claro: string;
+  escuro: string;
+}
 
 /**
  * Alternador claro/escuro — apenas apresentação.
@@ -15,7 +21,7 @@ import { m } from "@/lib/messages";
  * effect corre antes do paint pós-hidratação e repõe a escolha guardada —
  * sem frame errado, sem transição (os dois writes caem na mesma frame).
  */
-export function ThemeToggle() {
+export function ThemeToggle({ rotulos }: { rotulos: RotulosTema }) {
   useLayoutEffect(() => {
     try {
       // o default é CLARO desde o veredicto do design sobre a P1 — o
@@ -51,8 +57,8 @@ export function ThemeToggle() {
     <button
       type="button"
       data-theme-toggle
-      aria-label={escuro ? m.tema.mudarParaClaro : m.tema.mudarParaEscuro}
-      title={escuro ? m.tema.mudarParaClaro : m.tema.mudarParaEscuro}
+      aria-label={escuro ? rotulos.mudarParaClaro : rotulos.mudarParaEscuro}
+      title={escuro ? rotulos.mudarParaClaro : rotulos.mudarParaEscuro}
       aria-pressed={escuro}
       className="pil-tema"
     >
@@ -60,7 +66,7 @@ export function ThemeToggle() {
           data-theme em CSS (posto pelo script inline ANTES do primeiro
           paint): não há flip pós-hidratação nem transição ao carregar */}
       <span aria-hidden className="tema-ponto" />
-      {escuro ? m.tema.claro : m.tema.escuro}
+      {escuro ? rotulos.claro : rotulos.escuro}
     </button>
   );
 }

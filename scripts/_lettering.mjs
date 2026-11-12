@@ -45,7 +45,7 @@ function textoVisivel(html) {
     .replace(/<style[\s\S]*?<\/style>/gi, " ")
     .replace(/<code[\s\S]*?<\/code>/gi, " ")
     .replace(/<pre[\s\S]*?<\/pre>/gi, " ")
-    .replace(/<[^>]+>/g, " ")
+    .replace(/<[^>]+>/g, "\n")
     .replace(/&ldquo;|&rdquo;|&quot;|&#34;/gi, '"')
     .replace(/&nbsp;|&#160;/gi, " ")
     .replace(/&#8239;|&#x202f;/gi, " ")
@@ -70,6 +70,14 @@ const REGRAS = [
     // p.p.) — «cêntimos» e palavras não são símbolo
     re: /\d[  ](?=€|%|p\.p\.|c(?![\p{L}]))/gu,
     msg: "espaço normal/NBSP entre número e unidade — usar U+202F",
+  },
+  {
+    id: "milhares",
+    // agrupamento de milhares com espaço normal ou NBSP largo («1 000»,
+    // «12 880», «1 234,56») — a casa usa sempre o fino U+202F (FINO).
+    // Exclui anos de 4 dígitos («em 2026») e códigos com barra/hífen.
+    re: /(?<![\p{N}/-])\d{1,3}[  ]\d{3}(?![\p{N}/-])/gu,
+    msg: "espaço normal/NBSP no separador de milhares — usar U+202F",
   },
   {
     id: "aspas",

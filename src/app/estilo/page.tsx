@@ -267,7 +267,7 @@ export default function EstiloPage() {
             {/* a ponte número–unidade é sempre o FINO (U+202F) — este
                 excerto é a especificação, logo tem de ser exemplar */}
             <p className="num text-[1.4rem] leading-tight">
-              {comUnidade("38,40", "€")} · {comUnidade("1 234,56", "€")}
+              {comUnidade("38,40", "€")} · {comUnidade("1\u202f234,56", "€")}
             </p>
             <p className="footnote mt-1">{E.monoNota}</p>
           </div>
@@ -1385,6 +1385,7 @@ export default function EstiloPage() {
         <h2 className="kicker mb-4">A barra do euro — assinatura</h2>
         <EuroBar
           total={25987}
+          scrubAria={m.chart.scrubAria}
           segmentos={[
             { label: "Fica contigo", valor: 16419.69, cor: "var(--color-keep)" },
             { label: "IRS", valor: 2270.31, cor: "var(--color-accent)" },
@@ -1585,13 +1586,13 @@ export default function EstiloPage() {
                       sério e 18 px de caixa não chegavam aos 24×24 do 2.5.8.
                       O `py` cresce a área de toque, o `-my` devolve a linha. */}
                   <span className="num text-rotulo">presets:</span>
-                  <a href="/salario" className="lq-link num -my-1 py-1 text-rotulo">
+                  <a href="/salario" className="lq-link num -my-3 inline-flex min-h-[44px] min-w-[44px] items-center justify-center py-3 text-rotulo">
                     mínimo
                   </a>
-                  <a href="/salario" className="lq-link num -my-1 py-1 text-rotulo">
+                  <a href="/salario" className="lq-link num -my-3 inline-flex min-h-[44px] min-w-[44px] items-center justify-center py-3 text-rotulo">
                     1 500 €
                   </a>
-                  <a href="/salario" className="lq-link num -my-1 py-1 text-rotulo">
+                  <a href="/salario" className="lq-link num -my-3 inline-flex min-h-[44px] min-w-[44px] items-center justify-center py-3 text-rotulo">
                     2 000 €
                   </a>
                 </div>
