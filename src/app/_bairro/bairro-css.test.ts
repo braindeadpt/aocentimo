@@ -32,9 +32,10 @@ const CSS = readFileSync(
 
 /** As classes de estado — postas por JS, nunca no HTML do servidor. */
 const ESTADOS = new Set([
-  "b-on", // marcador aceso (cartão aberto)
+  "b-on", // marcador aceso (cartão aberto) / aviso da roda visível
   "b-ativo", // edifício aberto
   "b-arrasto", // a câmara está a ser arrastada
+  "b-ampliado", // o mapa está ampliado além da vista inicial
   "b-fim-tarde", // hora do dia
   "b-noite", // hora do dia
   "b-repinta", // a câmara pede pintura nova à escala

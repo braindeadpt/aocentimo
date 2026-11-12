@@ -1,11 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { simularIndependente } from "@/lib/engines/independente";
+import { REGRAS_CATB, simularIndependente } from "@/lib/engines/independente";
 import { CampoCentimos, type ParteCentimos } from "@/components/CampoCentimos";
 import { Interruptor } from "@/components/Interruptor";
 import { Regua } from "@/components/Regua";
-import { comUnidade, fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
+import { Segmentado } from "@/components/Segmentado";
+import { comUnidade, fmtEUR, fmtEUR0, fmtNum, fmtPct, MENOS } from "@/lib/format";
 
 /**
  * Recibos verdes — da faturação ao bolso (3A-03). A codificação vem
@@ -15,17 +16,40 @@ import { comUnidade, fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
  * 3A retirou por contar a mesma história pior).
  *
  * A faturação é régua (controlo físico, não input de número); o
- * primeiro ano de atividade é interruptor. O quadro de linhas fica —
- * é a conta por extenso que o campo resume.
+ * primeiro ano de atividade e a retenção na fonte são interruptores;
+ * a variação da base de incidência da SS (±25 %, art. 164.º CRC) é
+ * segmentada. O quadro de linhas fica — é a conta por extenso que o
+ * campo resume.
  */
 export function SimuladorIndependente() {
   const [faturacao, setFaturacao] = useState(2000);
   const [primeiroAno, setPrimeiroAno] = useState(false);
+  const [dispensaManual, setDispensaManual] = useState<boolean | null>(null);
+  const [ajusteSS, setAjusteSS] = useState(0);
+
+  const limiarDispensa = REGRAS_CATB.retencaoFonte.dispensaRetencaoAte;
+  const taxaRetencao = REGRAS_CATB.retencaoFonte.tabela151;
+  const opcoesSS = REGRAS_CATB.segurancaSocial.variacaoEscalaoSS;
 
   const anual = faturacao * 12;
+  const dispensaPorLei = anual <= limiarDispensa;
+  const dispensaRetencao = dispensaManual ?? dispensaPorLei;
+
+  const mudaFaturacao = (novo: number) => {
+    if ((novo * 12 <= limiarDispensa) !== (faturacao * 12 <= limiarDispensa)) {
+      setDispensaManual(null);
+    }
+    setFaturacao(novo);
+  };
+
   const r = useMemo(
-    () => simularIndependente(anual, { primeiroAno }),
-    [anual, primeiroAno]
+    () =>
+      simularIndependente(anual, {
+        primeiroAno,
+        dispensaRetencao,
+        ajusteSS,
+      }),
+    [anual, primeiroAno, dispensaRetencao, ajusteSS]
   );
 
   // de cada euro faturado — os cêntimos que saem e os que ficam
@@ -66,7 +90,7 @@ export function SimuladorIndependente() {
             id="fat"
             rotulo="Faturação média mensal"
             valor={faturacao}
-            onChange={setFaturacao}
+            onChange={mudaFaturacao}
             min={0}
             max={6000}
             passo={100}
@@ -82,11 +106,50 @@ export function SimuladorIndependente() {
             rotulo="Primeiro ano de atividade (isento de SS)"
             className="text-corpo-sm"
           />
+          {/* PROPOSTA (revisão do dono) */}
+          <Interruptor
+            ligado={!dispensaRetencao}
+            onChange={(reter) => setDispensaManual(!reter)}
+            rotulo={`Retenção na fonte (${fmtPct(taxaRetencao, 0)})`}
+            nota={
+              dispensaPorLei
+                ? `dispensada até ${fmtEUR0(limiarDispensa)}/ano (art. 101.º-B)`
+                : "adiantamento ao Estado pelos clientes com contabilidade"
+            }
+            className="text-corpo-sm"
+          />
+          {/* PROPOSTA (revisão do dono) */}
+          <div>
+            <span className="kicker mb-1.5 block">
+              Base de incidência da SS (art. 164.º)
+            </span>
+            <Segmentado
+              rotulo="Base de incidência da Segurança Social"
+              valor={String(ajusteSS)}
+              onChange={(v) => setAjusteSS(Number(v))}
+              opcoes={opcoesSS.map((v) => ({
+                id: String(v),
+                rotulo:
+                  v === 0
+                    ? "Normal"
+                    : v > 0
+                      ? `+${fmtPct(v, 0)}`
+                      : fmtPct(v, 0),
+                desativado: primeiroAno || undefined,
+                razao: primeiroAno
+                  ? "isento de Segurança Social no 1.º ano"
+                  : undefined,
+              }))}
+            />
+          </div>
+          {/* PROPOSTA (revisão do dono) */}
           <p className="footnote">
-            Regime simplificado: o IRS incide sobre 75 % do que faturas.
-            A SS é 21,4 % sobre o rendimento relevante (70 % do bruto) —
-            cerca de 15 % do que recebes, com base mínima de 1,5×IAS. Os
-            clientes retêm 23 % na fonte (2026), que acerta na liquidação.
+            Regime simplificado: o IRS incide sobre 75 % do que faturas (com
+            mínimo de existência até ao limiar legal). A SS é 21,4 % sobre
+            70 % do bruto (ajustável em ±25 %, respeitando a base mínima de
+            1,5×IAS). Até {fmtEUR0(limiarDispensa)}/ano há dispensa de
+            retenção na fonte (art. 101.º-B CIRS); acima disso os clientes
+            retêm {fmtPct(taxaRetencao, 0)}, que acertam na liquidação.
           </p>
         </div>
 
@@ -103,11 +166,11 @@ export function SimuladorIndependente() {
                 <dt className="text-ink2">
                   Segurança Social{primeiroAno && " (isento)"}
                 </dt>
-                <dd className="num text-up">{fmtEUR(r.ss)} −</dd>
+                <dd className="num text-up">{fmtEUR(r.ss)} {MENOS}</dd>
               </div>
               <div className="flex justify-between border-b border-line/60 py-1.5">
                 <dt className="text-ink2">IRS (75 % × escalões)</dt>
-                <dd className="num text-up">{fmtEUR(r.irs)} −</dd>
+                <dd className="num text-up">{fmtEUR(r.irs)} {MENOS}</dd>
               </div>
               <div className="mt-1 flex justify-between border-t-2 border-ink py-2.5">
                 <dt className="font-medium">Líquido anual</dt>
@@ -122,6 +185,19 @@ export function SimuladorIndependente() {
               <div className="flex justify-between py-1 text-ink2">
                 <dt>Peso total (SS + IRS)</dt>
                 <dd className="num text-up">{fmtPct(r.pesoTotal)}</dd>
+              </div>
+              {/* PROPOSTA (revisão do dono) */}
+              <div className="mt-1 flex justify-between border-t border-line/60 pt-2 pb-1 text-ink2">
+                <dt>Retido na fonte ({dispensaRetencao ? "dispensado" : fmtPct(taxaRetencao, 0)})</dt>
+                <dd className="num">{fmtEUR(r.retido)}</dd>
+              </div>
+              {/* PROPOSTA (revisão do dono) */}
+              <div className="flex justify-between py-1 text-ink2">
+                <dt>{r.reembolsoEstimado >= 0 ? "Reembolso estimado" : "Acerto a pagar"}</dt>
+                <dd className={`num ${r.reembolsoEstimado > 0 ? "text-keep" : r.reembolsoEstimado < 0 ? "text-up" : ""}`}>
+                  {r.reembolsoEstimado > 0 ? "+" : r.reembolsoEstimado < 0 ? MENOS : ""}
+                  {fmtEUR(Math.abs(r.reembolsoEstimado))}
+                </dd>
               </div>
             </dl>
           </div>

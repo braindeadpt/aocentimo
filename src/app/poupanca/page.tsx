@@ -336,7 +336,7 @@ export default function PoupancaPage() {
                     à saída — dentro das condições legais. Fora delas devolves
                     o benefício com penalização: é dinheiro preso.
                   </p>
-                  <SimuladorPpr />
+                  <SimuladorPpr taxaLiberatoria={capitais.retencaoLiberatoria.taxa} />
                 </div>
               </PaginaDetalhe>
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { marcadorCabe } from "./camara";
+import { eixoArrastoInicial, marcadorCabe, rodaFazZoom } from "./camara";
 import { ALTURA_PIN } from "@/lib/bairro/iso";
 
 /* O critério de «cabe inteiro» que esconde, no telemóvel, os marcadores
@@ -36,5 +36,33 @@ describe("marcadorCabe", () => {
     expect(marcadorCabe({ x: 700, w: 100 }, 300, 1, larga, L, A)).toBe(true);
     // com k = 1,7 a placa cresce e passa a sair pela direita
     expect(marcadorCabe({ x: 720, w: 100 }, 300, 1.7, larga, L, A)).toBe(false);
+  });
+});
+
+describe("rodaFazZoom", () => {
+  it("sem Ctrl nem Cmd deixa a página fazer scroll vertical", () => {
+    expect(rodaFazZoom({ ctrlKey: false, metaKey: false })).toBe(false);
+  });
+
+  it("com Ctrl (ou pinça de trackpad) ou Cmd faz zoom no mapa", () => {
+    expect(rodaFazZoom({ ctrlKey: true, metaKey: false })).toBe(true);
+    expect(rodaFazZoom({ ctrlKey: false, metaKey: true })).toBe(true);
+  });
+});
+
+describe("eixoArrastoInicial", () => {
+  it("abaixo de 5 px permanece indeciso para não engolir o toque", () => {
+    expect(eixoArrastoInicial(2, 3)).toBe("indeciso");
+    expect(eixoArrastoInicial(0, 5)).toBe("indeciso");
+  });
+
+  it("gesto predominantemente vertical cede ao scroll da página", () => {
+    expect(eixoArrastoInicial(4, 24)).toBe("scroll");
+    expect(eixoArrastoInicial(10, -10)).toBe("scroll");
+  });
+
+  it("gesto predominantemente horizontal passeia o mapa", () => {
+    expect(eixoArrastoInicial(24, 6)).toBe("livre");
+    expect(eixoArrastoInicial(-18, 4)).toBe("livre");
   });
 });

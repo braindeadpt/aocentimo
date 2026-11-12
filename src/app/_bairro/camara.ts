@@ -95,6 +95,23 @@ export interface OpcoesCamera {
   aoMudar?: (v: Vista) => void;
   /** Chamado na primeira pintura com tamanho, para as janelas acesas. */
   aoEnquadrar?: () => void;
+  /** Chamado quando a roda gira sem Ctrl/Cmd — avisa sem prender o scroll. */
+  aoRodarSemTecla?: () => void;
+}
+
+/** Roda com Ctrl/Cmd (ou pinça de trackpad, que envia ctrlKey) faz zoom; sem tecla deixa a página fazer scroll. */
+export function rodaFazZoom(e: Pick<WheelEvent, "ctrlKey" | "metaKey">): boolean {
+  return Boolean(e.ctrlKey || e.metaKey);
+}
+
+/**
+ * Decide se um gesto de 1 dedo à escala inicial (onde o bairro cabe todo)
+ * deve deixar a página fazer scroll vertical (`"scroll"`), passear o mapa
+ * (`"livre"`) ou esperar por mais deslocamento (`"indeciso"`).
+ */
+export function eixoArrastoInicial(dx: number, dy: number): "livre" | "indeciso" | "scroll" {
+  if (Math.hypot(dx, dy) <= 5) return "indeciso";
+  return Math.abs(dy) >= Math.abs(dx) ? "scroll" : "livre";
 }
 
 /** A última arrumação escrita, pelo primeiro marcador (muda se o DOM mudar). */
@@ -112,7 +129,14 @@ export class Camera {
   private escalaPintada = 0;
   private temporizadorRepinta: ReturnType<typeof setTimeout> | null = null;
   private toques = new Map<number, PointerEvent>();
-  private arrasto: { x: number; y: number; vx: number; vy: number; mov: boolean } | null = null;
+  private arrasto: {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    mov: boolean;
+    eixo: "livre" | "indeciso" | "scroll";
+  } | null = null;
   private pinca: { d: number; w: number } | null = null;
   /** O último `pointermove` por aplicar: aplica-se UM por fotograma. */
   private pendente: PointerEvent | null = null;
@@ -176,6 +200,11 @@ export class Camera {
     return w;
   }
 
+  /** O mapa está ampliado além da vista inicial (onde o bairro cabe todo)? */
+  estaAmpliada(): boolean {
+    return this.vista.w < this.larguraTudo() * 0.98;
+  }
+
   /**
    * Escreve a transformação. É a ÚNICA vez que a câmara toca no DOM:
    * `transform` no contentor, nada mais. Os marcadores são re-arrumados
@@ -188,6 +217,7 @@ export class Camera {
       `translate(${(-(this.vista.x - MUNDO.x) * s).toFixed(2)}px, ` +
       `${(-(this.vista.y - MUNDO.y) * s).toFixed(2)}px) ` +
       `scale(${s.toFixed(5)})`;
+    this.janela.classList.toggle("b-ampliado", this.estaAmpliada());
     vistaDaJanela.set(this.janela, { ...this.vista });
     // uma pintura nova à escala certa, quando a escala mudou e a câmara parou
     if (Math.abs(s - this.escalaPintada) / s > 0.03) {
@@ -387,6 +417,10 @@ export class Camera {
     };
 
     const aoRodar = (e: WheelEvent) => {
+      if (!rodaFazZoom(e)) {
+        this.opts.aoRodarSemTecla?.();
+        return;
+      }
       e.preventDefault();
       emGesto(true);
       if (this.fimRoda) clearTimeout(this.fimRoda);
@@ -405,11 +439,24 @@ export class Camera {
     const aoBaixar = (e: PointerEvent) => {
       this.toques.set(e.pointerId, e);
       if (this.toques.size === 1) {
-        this.arrasto = { x: e.clientX, y: e.clientY, vx: this.vista.x, vy: this.vista.y, mov: false };
+        const livre =
+          e.pointerType !== "touch" ||
+          janela.clientWidth > LARGURA_ESTREITA ||
+          this.estaAmpliada();
+        this.arrasto = {
+          x: e.clientX,
+          y: e.clientY,
+          vx: this.vista.x,
+          vy: this.vista.y,
+          mov: false,
+          eixo: livre ? "livre" : "indeciso",
+        };
+        if (livre) this.mexeu = true;
       } else if (this.toques.size === 2) {
         const [a, b] = [...this.toques.values()];
         this.pinca = { d: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY), w: this.vista.w };
         this.arrasto = null;
+        this.mexeu = true;
         emGesto(true);
       }
     };
@@ -440,10 +487,17 @@ export class Camera {
         );
         return;
       }
-      if (!this.arrasto) return;
+      if (!this.arrasto || this.arrasto.eixo === "scroll") return;
       const k = this.vista.w / janela.clientWidth;
       const dx = e.clientX - this.arrasto.x;
       const dy = e.clientY - this.arrasto.y;
+      if (this.arrasto.eixo === "indeciso") {
+        const dec = eixoArrastoInicial(dx, dy);
+        if (dec === "indeciso") return;
+        this.arrasto.eixo = dec;
+        if (dec === "scroll") return;
+        this.mexeu = true;
+      }
       if (Math.hypot(dx, dy) > 5) {
         this.arrasto.mov = true;
         emGesto(true);
@@ -472,10 +526,6 @@ export class Camera {
       }, 0);
     };
 
-    const aoMexer = () => {
-      this.mexeu = true;
-    };
-
     const aoResize = () => this.enquadrarSePrecisa();
 
     window.addEventListener("pointermove", aoMover);
@@ -483,8 +533,6 @@ export class Camera {
     window.addEventListener("pointercancel", aoLevantar);
     janela.addEventListener("wheel", aoRodar, { passive: false });
     janela.addEventListener("pointerdown", aoBaixar);
-    janela.addEventListener("pointerdown", aoMexer);
-    janela.addEventListener("wheel", aoMexer);
 
     // o contentor pode nascer escondido e sem largura — só se enquadra
     // quando tem tamanho, e re-enquadra ao mudar
@@ -497,8 +545,6 @@ export class Camera {
       window.removeEventListener("pointercancel", aoLevantar);
       janela.removeEventListener("wheel", aoRodar);
       janela.removeEventListener("pointerdown", aoBaixar);
-      janela.removeEventListener("pointerdown", aoMexer);
-      janela.removeEventListener("wheel", aoMexer);
       ro.disconnect();
       if (this.temporizadorRepinta) clearTimeout(this.temporizadorRepinta);
       if (this.fimRoda) clearTimeout(this.fimRoda);

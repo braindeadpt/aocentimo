@@ -21,7 +21,7 @@
  * entram em P2, com a cena à vista, em `dadosCena()`.
  */
 import { loadFonte, loadSerie, type Serie } from "@/lib/data";
-import { comUnidade, fmtEUR, fmtNum, fmtPct } from "@/lib/format";
+import { comUnidade, fmtData, fmtEUR, fmtEUR0, fmtNum, fmtPct, fmtPeriodo } from "@/lib/format";
 import caBase from "@data/derived/ca-base.json";
 import cenarios from "@data/derived/cenarios-salario.json";
 import ss from "@data/fiscal/ss.json";
@@ -76,9 +76,13 @@ function variacaoDesde(serie: Serie | null, desde: string): number | null {
 /**
  * Uma taxa que vem em percentagem (2,9537 = 2,9537 %) reexpressada em
  * fração, que é o que `fmtPct` espera. Sem isto, `fmtPct` multiplicava por
- * cem e escrevia 295,37 %.
+ * cem e escrevia 295,37 %. Quando a fonte falta (`null`/`undefined`/`NaN`),
+ * devolve `FALHOU` («—»), nunca `0,00 %` (Regra nº1).
  */
-const comoFracao = (pct: number | null): number | null => (pct === null ? null : pct / 100);
+export function pctDeFracao(pct: number | null | undefined, casas: number): string {
+  if (pct == null || !Number.isFinite(pct)) return FALHOU;
+  return fmtPct(pct / 100, casas);
+}
 
 /**
  * Uma percentagem com o sinal à frente, com `casas` decimais.
@@ -140,15 +144,33 @@ export function linhaSalario(): LinhaSalario | null {
   return { ...l, ano: meta.ano, perfil: meta.perfil };
 }
 
+/** Sobreposições opcionais para testar a falha honesta de fontes (Regra nº1). */
+export interface FontesMarcadoresTeste {
+  euribor?: PontoSerie | null;
+  ca?: { oficialPct?: number } | undefined;
+  desemprego?: PontoSerie | null;
+}
+
 /** Os valores dos marcadores, já formatados. */
-export function marcadores(): MarcadoresBairro & { gasoleoUn: string; gasolinaUn: string } {
+export function marcadores(
+  sobrepor?: FontesMarcadoresTeste
+): MarcadoresBairro & { gasoleoUn: string; gasolinaUn: string } {
   const l = linhaSalario();
 
   const gasoleo = ultimo(loadFonte("dgeg", "pmd-gasoleo-diario"));
   const gasolina = ultimo(loadFonte("dgeg", "pmd-gasolina95-diario"));
-  const euribor = ultimo(loadFonte("bpstat", "euribor-12m-mensal"));
-  const ca = (caBase as { meta?: { oficialPct?: number } }).meta;
-  const desemprego = ultimo(loadFonte("eurostat", "une-pt-total"));
+  const euribor =
+    sobrepor && "euribor" in sobrepor
+      ? sobrepor.euribor
+      : ultimo(loadFonte("bpstat", "euribor-12m-mensal"));
+  const ca =
+    sobrepor && "ca" in sobrepor
+      ? sobrepor.ca
+      : (caBase as { meta?: { oficialPct?: number } }).meta;
+  const desemprego =
+    sobrepor && "desemprego" in sobrepor
+      ? sobrepor.desemprego
+      : ultimo(loadFonte("eurostat", "une-pt-total"));
   const cp00 = loadSerie("cp00");
   const cp01 = loadSerie("cp01");
   const cp11 = loadSerie("cp11");
@@ -170,14 +192,14 @@ export function marcadores(): MarcadoresBairro & { gasoleoUn: string; gasolinaUn
     cabaz: sinalPct(cabaz),
     cafes: sinalPct(cafes),
     // a Euribor e o certificado de aforro publicam-se em percentagem
-    euribor: fmtPct(comoFracao(euribor?.v ?? null) ?? 0, 2),
-    ca: fmtPct(comoFracao(ca?.oficialPct ?? null) ?? 0, 2),
+    euribor: pctDeFracao(euribor?.v, 2),
+    ca: pctDeFracao(ca?.oficialPct, 2),
     gasoleo: gasoleo ? fmtNum(gasoleo.v, 3) : FALHOU,
     gasolina: gasolina ? fmtNum(gasolina.v, 3) : FALHOU,
     // uma casa decimal, como no protótipo e como no ticker do site:
     // arredondar a «+4 %» era um número que não é o número da fonte
     inflacao: sinalPct(inflacao === null ? null : inflacao * 100, 1),
-    desemprego: fmtPct(comoFracao(desemprego?.v ?? null) ?? 0, 1),
+    desemprego: pctDeFracao(desemprego?.v, 1),
     // a Torre dos Clérigos: o peso do Norte no PIB (INE, Contas Regionais)
     nortePib: typeof norte.pib?.pesoPct === "number" ? fmtPct(norte.pib.pesoPct / 100, 1) : FALHOU,
     gasoleoUn: gasoleo ? comUnidade(fmtNum(gasoleo.v, 3), "€/L") : FALHOU,
@@ -191,10 +213,10 @@ export function fontes(): string[] {
   const notas: string[] = [];
 
   const gasoleo = ultimo(loadFonte("dgeg", "pmd-gasoleo-diario"));
-  if (gasoleo) notas.push(`combustíveis — DGEG, ${gasoleo.t}`);
+  if (gasoleo) notas.push(`combustíveis — DGEG, ${fmtData(gasoleo.t)}`);
 
   const euribor = ultimo(loadFonte("bpstat", "euribor-12m-mensal"));
-  if (euribor) notas.push(`Euribor 12M — BPstat, ${euribor.t}`);
+  if (euribor) notas.push(`Euribor 12M — BPstat, ${fmtPeriodo(euribor.t)}`);
   if (typeof norte.pib?.pesoPct === "number") notas.push(`Norte no PIB — ${norte.pib.fonte}`);
 
   const ca = (caBase as { meta?: { oficialPct?: number } }).meta;
@@ -203,13 +225,13 @@ export function fontes(): string[] {
   );
 
   const cp00 = ultimo(loadSerie("cp00"));
-  if (cp00) notas.push(`inflação — Eurostat IHPC, ${cp00.t}`);
+  if (cp00) notas.push(`inflação — Eurostat IHPC, ${fmtPeriodo(cp00.t)}`);
 
   const desemprego = ultimo(loadFonte("eurostat", "une-pt-total"));
-  if (desemprego) notas.push(`desemprego — Eurostat, ${desemprego.t}`);
+  if (desemprego) notas.push(`desemprego — Eurostat, ${fmtPeriodo(desemprego.t)}`);
 
   if (l) notas.push(
-    `salário — motores AO CÊNTIMO, ${comUnidade(String(l.bruto), "€")} brutos, regras ${l.ano}`
+    `salário — motores AO CÊNTIMO, ${fmtEUR0(l.bruto)} brutos, regras ${l.ano}`
   );
 
   return notas;

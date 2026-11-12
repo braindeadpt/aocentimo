@@ -26,6 +26,16 @@ interface Props {
  * de poder de compra que resta — o contorno tracejado é o que foi
  * comido. O valor final está no HTML sem JS.
  */
+const MAX_VALOR_PC = 10_000_000;
+
+function parseValorPc(s: string): number {
+  const limpo = s.trim().replace(/\s+/g, "").replace(",", ".");
+  if (limpo === "") return 0;
+  const n = Number(limpo);
+  if (!Number.isFinite(n)) return 0;
+  return Math.min(MAX_VALOR_PC, Math.max(0, n));
+}
+
 export function PoderDeCompra({
   serie,
   estado,
@@ -42,6 +52,7 @@ export function PoderDeCompra({
   const anosNum = useMemo(() => anos.map(Number), [anos]);
   const [ano, setAno] = useState(anos[Math.min(5, anos.length - 1)] ?? "2020");
   const [valor, setValor] = useState(1000);
+  const [textoValor, setTextoValor] = useState("1000");
 
   const ponto = serie.find((p) => p.t.startsWith(ano));
   const ultimo = serie[serie.length - 1];
@@ -69,11 +80,22 @@ export function PoderDeCompra({
             </label>
             <input
               id="pd-valor"
-              type="number"
-              min={0}
-              step={50}
-              value={valor}
-              onChange={(e) => setValor(Number(e.target.value) || 0)}
+              type="text"
+              inputMode="decimal"
+              value={textoValor}
+              onChange={(e) => {
+                const cru = e.target.value;
+                if (cru !== "" && !/^\d*(?:[.,]\d*)?$/.test(cru.trim().replace(/\s+/g, ""))) {
+                  return;
+                }
+                setTextoValor(cru);
+                setValor(parseValorPc(cru));
+              }}
+              onBlur={() => {
+                const final = parseValorPc(textoValor);
+                setValor(final);
+                setTextoValor(String(final).replace(".", ","));
+              }}
               className="field"
             />
           </div>

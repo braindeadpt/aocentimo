@@ -4,6 +4,56 @@ import { useMemo, useState } from "react";
 import { salarioReal, type PontoSerie } from "@/lib/engines/deflator";
 import { fmtEUR, fmtPct } from "@/lib/format";
 
+const MAX_SALARIO_REAL = 100_000;
+
+function parseSalario(s: string): number {
+  const limpo = s.trim().replace(/\s+/g, "").replace(",", ".");
+  if (limpo === "") return 0;
+  const n = Number(limpo);
+  if (!Number.isFinite(n)) return 0;
+  return Math.min(MAX_SALARIO_REAL, Math.max(0, n));
+}
+
+function CampoSalario({
+  id,
+  label,
+  valor,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  valor: number;
+  onChange: (v: number) => void;
+}) {
+  const [texto, setTexto] = useState(() => String(valor).replace(".", ","));
+
+  return (
+    <div>
+      <label className="kicker block mb-1.5" htmlFor={id}>{label}</label>
+      <input
+        id={id}
+        type="text"
+        inputMode="decimal"
+        value={texto}
+        onChange={(e) => {
+          const cru = e.target.value;
+          if (cru !== "" && !/^\d*(?:[.,]\d*)?$/.test(cru.trim().replace(/\s+/g, ""))) {
+            return;
+          }
+          setTexto(cru);
+          onChange(parseSalario(cru));
+        }}
+        onBlur={() => {
+          const final = parseSalario(texto);
+          onChange(final);
+          setTexto(String(final).replace(".", ","));
+        }}
+        className="field"
+      />
+    </div>
+  );
+}
+
 /** "O salário congelou?" — compara o bruto de hoje com o antigo corrigido pelo IHPC. */
 export function SalarioReal({ serie }: { serie: PontoSerie[] }) {
   const anos = useMemo(
@@ -15,10 +65,13 @@ export function SalarioReal({ serie }: { serie: PontoSerie[] }) {
   const [salarioHoje, setSalarioHoje] = useState(1400);
 
   const r = useMemo(() => {
+    if (salarioAntigo <= 0) return null;
     // último mês disponível desse ano
     const ponto = [...serie].reverse().find((p) => p.t.startsWith(anoInicio));
     if (!ponto) return null;
-    return { mes: ponto.t, ...salarioReal(salarioAntigo, salarioHoje, ponto.t, serie)! };
+    const calc = salarioReal(salarioAntigo, salarioHoje, ponto.t, serie);
+    if (!calc) return null;
+    return { mes: ponto.t, ...calc };
   }, [serie, anoInicio, salarioAntigo, salarioHoje]);
 
   const ultimo = serie.at(-1)?.t;
@@ -36,16 +89,8 @@ export function SalarioReal({ serie }: { serie: PontoSerie[] }) {
               ))}
             </select>
           </div>
-          <div>
-            <label className="kicker block mb-1.5" htmlFor="sr-ant">ganhavas, brutos</label>
-            <input id="sr-ant" type="number" min={0} step={50} value={salarioAntigo}
-              onChange={(e) => setSalarioAntigo(Number(e.target.value) || 0)} className="field" />
-          </div>
-          <div>
-            <label className="kicker block mb-1.5" htmlFor="sr-hoje">hoje ganhas</label>
-            <input id="sr-hoje" type="number" min={0} step={50} value={salarioHoje}
-              onChange={(e) => setSalarioHoje(Number(e.target.value) || 0)} className="field" />
-          </div>
+          <CampoSalario id="sr-ant" label="ganhavas, brutos" valor={salarioAntigo} onChange={setSalarioAntigo} />
+          <CampoSalario id="sr-hoje" label="hoje ganhas" valor={salarioHoje} onChange={setSalarioHoje} />
         </div>
         <p className="footnote">
           O salário «antigo» é corrigido pelo IHPC total (índice geral) — a
@@ -73,7 +118,12 @@ export function SalarioReal({ serie }: { serie: PontoSerie[] }) {
             </div>
           </dl>
         ) : (
-          <p className="px-5 py-6 footnote">— escolhe um ano com dados.</p>
+          /* PROPOSTA (revisão do dono) */
+          <p className="px-5 py-6 footnote">
+            {salarioAntigo <= 0
+              ? "— indica um salário inicial superior a 0 €."
+              : "— escolhe um ano com dados."}
+          </p>
         )}
         <p className="px-5 pb-4 footnote">
           {r && r.variacaoReal < 0

@@ -5,6 +5,67 @@ import { simularMaisValia, TipoAtivo } from "@/lib/engines/mais-valias";
 import { simularSalario } from "@/lib/engines/irs";
 import { fmtEUR, fmtPct } from "@/lib/format";
 
+function parseClamp(
+  s: string,
+  min: number,
+  max: number,
+  inteiro = false
+): number {
+  const limpo = s.trim().replace(/\s+/g, "").replace(",", ".");
+  if (limpo === "") return min;
+  const n = Number(limpo);
+  if (!Number.isFinite(n)) return min;
+  const val = inteiro ? Math.round(n) : n;
+  return Math.min(max, Math.max(min, val));
+}
+
+function CampoNumero({
+  id,
+  label,
+  valor,
+  onChange,
+  min = 0,
+  max = 10_000_000,
+  inteiro = false,
+}: {
+  id: string;
+  label: string;
+  valor: number;
+  onChange: (v: number) => void;
+  min?: number;
+  max?: number;
+  inteiro?: boolean;
+}) {
+  const [texto, setTexto] = useState(() => String(valor).replace(".", ","));
+  const padrao = inteiro ? /^\d*$/ : /^\d*(?:[.,]\d*)?$/;
+
+  return (
+    <div>
+      <label className="kicker block mb-1.5" htmlFor={id}>{label}</label>
+      <input
+        id={id}
+        type="text"
+        inputMode="decimal"
+        value={texto}
+        onChange={(e) => {
+          const cru = e.target.value;
+          if (cru !== "" && !padrao.test(cru.trim().replace(/\s+/g, ""))) {
+            return;
+          }
+          setTexto(cru);
+          onChange(parseClamp(cru, min, max, inteiro));
+        }}
+        onBlur={() => {
+          const final = parseClamp(texto, min, max, inteiro);
+          onChange(final);
+          setTexto(String(final).replace(".", ","));
+        }}
+        className="field"
+      />
+    </div>
+  );
+}
+
 export function SimuladorMaisValias() {
   const [tipo, setTipo] = useState<TipoAtivo>("mobiliarios");
   const [compra, setCompra] = useState(10000);
@@ -16,7 +77,7 @@ export function SimuladorMaisValias() {
   const [salario, setSalario] = useState(1500);
 
   const coletavel = useMemo(
-    () => simularSalario([salario], 0).coletavelTributado,
+    () => simularSalario([Math.min(100_000, Math.max(0, salario))], 0).coletavelTributado,
     [salario]
   );
 
@@ -25,9 +86,9 @@ export function SimuladorMaisValias() {
       simularMaisValia(venda, compra, {
         tipo,
         despesas,
-        anosDetencao: anos,
-        diasDetencao: dias,
-        pctReinvestida: reinvestida / 100,
+        anosDetencao: Math.min(50, Math.max(0, anos)),
+        diasDetencao: Math.min(36_500, Math.max(0, dias)),
+        pctReinvestida: Math.min(1, Math.max(0, reinvestida / 100)),
         coletavelOutros: coletavel,
       }),
     [venda, compra, tipo, despesas, anos, dias, reinvestida, coletavel]
@@ -50,46 +111,18 @@ export function SimuladorMaisValias() {
           </select>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="kicker block mb-1.5" htmlFor="mv-compra">Compraste por</label>
-            <input id="mv-compra" type="number" min={0} step={500} value={compra}
-              onChange={(e) => setCompra(Number(e.target.value) || 0)} className="field" />
-          </div>
-          <div>
-            <label className="kicker block mb-1.5" htmlFor="mv-venda">Vendeste por</label>
-            <input id="mv-venda" type="number" min={0} step={500} value={venda}
-              onChange={(e) => setVenda(Number(e.target.value) || 0)} className="field" />
-          </div>
-          <div>
-            <label className="kicker block mb-1.5" htmlFor="mv-desp">Despesas (comissões, obras)</label>
-            <input id="mv-desp" type="number" min={0} step={50} value={despesas}
-              onChange={(e) => setDespesas(Number(e.target.value) || 0)} className="field" />
-          </div>
+          <CampoNumero id="mv-compra" label="Compraste por" valor={compra} onChange={setCompra} min={0} max={10_000_000} />
+          <CampoNumero id="mv-venda" label="Vendeste por" valor={venda} onChange={setVenda} min={0} max={10_000_000} />
+          <CampoNumero id="mv-desp" label="Despesas (comissões, obras)" valor={despesas} onChange={setDespesas} min={0} max={10_000_000} />
           {tipo === "cripto" ? (
-            <div>
-              <label className="kicker block mb-1.5" htmlFor="mv-dias">Dias na carteira</label>
-              <input id="mv-dias" type="number" min={0} value={dias}
-                onChange={(e) => setDias(Number(e.target.value) || 0)} className="field" />
-            </div>
+            <CampoNumero key="mv-dias" id="mv-dias" label="Dias na carteira" valor={dias} onChange={setDias} min={0} max={36_500} inteiro />
           ) : (
-            <div>
-              <label className="kicker block mb-1.5" htmlFor="mv-anos">Anos de detenção</label>
-              <input id="mv-anos" type="number" min={0} max={40} value={anos}
-                onChange={(e) => setAnos(Number(e.target.value) || 0)} className="field" />
-            </div>
+            <CampoNumero key="mv-anos" id="mv-anos" label="Anos de detenção" valor={anos} onChange={setAnos} min={0} max={50} inteiro />
           )}
           {tipo === "imovel" && (
-            <div>
-              <label className="kicker block mb-1.5" htmlFor="mv-reinv">% reinvestida noutra HPP</label>
-              <input id="mv-reinv" type="number" min={0} max={100} value={reinvestida}
-                onChange={(e) => setReinvestida(Number(e.target.value) || 0)} className="field" />
-            </div>
+            <CampoNumero key="mv-reinv" id="mv-reinv" label="% reinvestida noutra HPP" valor={reinvestida} onChange={setReinvestida} min={0} max={100} />
           )}
-          <div>
-            <label className="kicker block mb-1.5" htmlFor="mv-sal">O teu bruto mensal (p/ englobar)</label>
-            <input id="mv-sal" type="number" min={0} step={100} value={salario}
-              onChange={(e) => setSalario(Number(e.target.value) || 0)} className="field" />
-          </div>
+          <CampoNumero id="mv-sal" label="O teu bruto mensal (p/ englobar)" valor={salario} onChange={setSalario} min={0} max={100_000} />
         </div>
         <p className="footnote">
           Mobiliários em mercado regulamentado: exclusão de 10 % (&gt;2 anos),
