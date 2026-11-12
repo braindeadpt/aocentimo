@@ -37,19 +37,10 @@ if (jaLa) {
   process.exit(0);
 }
 
-// logo a seguir ao charset no início do <head>, antes dos scripts, para
-// a fonte de 116% chegar antes da primeira pintura mesmo sob carga paralela
-const MARCA_CHARSET = '<meta charSet="utf-8"/>';
-const ic = html.indexOf(MARCA_CHARSET);
-const ih = html.indexOf("<head>");
-const i =
-  ic >= 0
-    ? ic + MARCA_CHARSET.length
-    : ih >= 0
-      ? ih + "<head>".length
-      : html.indexOf("</head>");
+// no fim do <head>, para não ficar antes do charset nem da folha
+const i = html.indexOf("</head>");
 if (i < 0) {
-  console.error("FALHA: o index.html não tem <head>");
+  console.error("FALHA: o index.html não tem </head>");
   process.exit(1);
 }
 await writeFile(ALVO, html.slice(0, i) + LINK + html.slice(i));
