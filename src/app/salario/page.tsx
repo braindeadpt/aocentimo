@@ -9,6 +9,9 @@ import ss from "@data/fiscal/ss.json";
 import smn from "@data/fiscal/smn.json";
 import sa from "@data/fiscal/subsidio-alimentacao.json";
 import irsJovem from "@data/fiscal/irs-jovem.json";
+import adse from "@data/fiscal/adse.json";
+import retencaoPensoes from "@data/fiscal/retencao-pensoes-2026.json";
+import regioes from "@data/fiscal/regioes-autonomas-2026.json";
 import cenariosJson from "@data/derived/cenarios-salario.json";
 import type { CenariosSalario } from "@/lib/cenarios";
 import { JsonLd, webApplication } from "@/lib/jsonld";
@@ -47,6 +50,16 @@ export default function SalarioPage() {
       saIsento={sa.isentoPorDia}
       irsJovemIsencao={irsJovem.isencaoPorAno}
       seloNaoRetido={m.salario.naoRetido}
+      smnRegioes={smn.regioes}
+      adseRegras={{
+        taxaDesconto: adse.beneficiariosTitulares.taxaDesconto,
+        limiarSalvaguardaPensoes:
+          adse.beneficiariosTitulares.limiarSalvaguardaPensoes,
+      }}
+      pensaoDeducaoEspecifica={
+        retencaoPensoes.regras.deducaoEspecificaPensao.valor
+      }
+      acoresReducaoIrsPct={regioes.irs.acores.reducaoGeralEscaloesPct}
       regua={{
         rotulo: m.regua.salarioBruto,
         marcador: { valor: smn.regioes.continente, rotulo: m.regua.minimo },
@@ -123,20 +136,22 @@ export default function SalarioPage() {
                 <p>
                   O recibo mensal usa as{" "}
                   <strong>tabelas de retenção na fonte</strong> oficiais
-                  (continente, sem deficiência) e trata o excedente do
-                  subsídio de alimentação como salário. O que fica de
-                  fora de propósito: deduções de saúde/educação/rendas,
-                  subsídio de desemprego, Açores e Madeira, e regimes
-                  especiais. O número certo é o da tua liquidação — esta
-                  é a mecânica, não o teu caso particular.
+                  (Despacho n.º 233-A/2026 — Tabelas I a III para trabalho
+                  dependente e Tabelas VIII e IX para pensões da categoria H,
+                  continente) e trata o excedente do subsídio de alimentação
+                  como salário. Nos Açores a liquidação anual reflete a redução
+                  regional de 30 % sobre as taxas de IRS (DLR n.º 15-A/2021/A).
+                  O número certo é o da tua liquidação — esta é a mecânica, não
+                  o teu caso particular.
                 </p>
               </div>
             </PaginaDetalhe>
             <PaginaDetalhe rotulo="Legislação e fontes">
               <div className="space-y-2">
                 <Source
-                  nome="Retenção na fonte — Despacho n.º 233-A/2026"
+                  nome="Retenção na fonte (Cat. A e Cat. H) — Despacho n.º 233-A/2026"
                   vigencia={irs.vigencia}
+                  url={retencaoPensoes.fonteUrl}
                 />
                 <Source
                   nome="Escalões — art. 68.º CIRS, redação da Lei n.º 73-A/2025 (OE2026)"
@@ -147,6 +162,16 @@ export default function SalarioPage() {
                   nome="TSU — Segurança Social"
                   vigencia={ss.vigencia}
                   url={ss.fonteUrl}
+                />
+                <Source
+                  nome={adse.fonte}
+                  vigencia={adse.vigencia}
+                  url={adse.fonteUrl}
+                />
+                <Source
+                  nome={regioes.fonte}
+                  vigencia={regioes.vigencia}
+                  url={regioes.fonteUrl}
                 />
                 <Source
                   nome={sa.fonte}

@@ -38,8 +38,8 @@ const CARTAS_ESPERADAS = [
     quem: "Diana · Professora",
     cenaId: "financas",
     cenaRotulo: "Ver os escalões do IRS",
-    rotaHref: "/irs",
-    rotaRotulo: "Simular o IRS →",
+    rotaHref: "/salario",
+    rotaRotulo: "Simular com ADSE →",
   },
   {
     k: "pedro",
@@ -56,8 +56,8 @@ const CARTAS_ESPERADAS = [
     quem: "Sr. Manuel · Dono da mercearia",
     cenaId: "mercearia",
     cenaRotulo: "Entrar na Mercearia",
-    rotaHref: "/impostos",
-    rotaRotulo: "Ver o IVA no talão →",
+    rotaHref: "/trabalho#pme",
+    rotaRotulo: "Simular uma PME →",
   },
   {
     k: "arminda",
@@ -65,8 +65,8 @@ const CARTAS_ESPERADAS = [
     quem: "Dona Arminda · Reformada",
     cenaId: "correios",
     cenaRotulo: "Entrar nos Correios",
-    rotaHref: "/poupanca",
-    rotaRotulo: "Simular a poupança →",
+    rotaHref: "/salario#pensao",
+    rotaRotulo: "Simular a pensão →",
   },
   {
     k: "goncalo",

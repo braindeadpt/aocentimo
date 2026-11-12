@@ -200,10 +200,10 @@ const DESTINOS_CARTAS: Record<
   { cenaId: string; rotaHref: string }
 > = {
   ines: { cenaId: "fabrica", rotaHref: "/salario" },
-  diana: { cenaId: "financas", rotaHref: "/irs" },
+  diana: { cenaId: "financas", rotaHref: "/salario" },
   pedro: { cenaId: "segsocial", rotaHref: "/trabalho" },
-  manuel: { cenaId: "mercearia", rotaHref: "/impostos" },
-  arminda: { cenaId: "correios", rotaHref: "/poupanca" },
+  manuel: { cenaId: "mercearia", rotaHref: "/trabalho#pme" },
+  arminda: { cenaId: "correios", rotaHref: "/salario#pensao" },
   goncalo: { cenaId: "escola", rotaHref: "/irs" },
   rui: { cenaId: "banco", rotaHref: "/credito" },
 };

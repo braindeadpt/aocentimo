@@ -550,10 +550,10 @@
           "papel": "Professora",
           "perfil": "Função pública",
           "ola": "a Diana",
-          "aprende": "Os escalões do IRS são os mesmos no público e no privado.",
-          "fala": "O desconto da ADSE ainda não está no simulador, mas o IRS calcula-se pelos mesmos escalões: podes já vê-los nas Finanças.",
+          "aprende": "O desconto da ADSE no recibo e os escalões do IRS.",
+          "fala": "Na função pública os escalões do IRS são os mesmos do privado e o desconto da ADSE acumula no recibo: entra nas Finanças ou simula o vencimento.",
           "cenaRotulo": "Ver os escalões do IRS",
-          "rotaRotulo": "Simular o IRS →"
+          "rotaRotulo": "Simular com ADSE →"
         },
         "pedro": {
           "nome": "Pedro",
@@ -570,20 +570,20 @@
           "papel": "Dono da mercearia",
           "perfil": "Pequeno empresário",
           "ola": "o Sr. Manuel",
-          "aprende": "O IVA no talão da caixa e o que subiu nas prateleiras.",
-          "fala": "As contas de IRC da empresa ainda não estão no simulador, mas já podes ver na Mercearia quanto subiram os preços e quanto do talão é IVA.",
+          "aprende": "O IVA na caixa, o salário de gerente e o IRC da empresa.",
+          "fala": "O IVA que entra na caixa não é da mercearia e o lucro paga IRC antes de chegar ao bolso. Entra na Mercearia ou simula as contas de uma PME.",
           "cenaRotulo": "Entrar na Mercearia",
-          "rotaRotulo": "Ver o IVA no talão →"
+          "rotaRotulo": "Simular uma PME →"
         },
         "arminda": {
           "nome": "Dona Arminda",
           "papel": "Reformada",
           "perfil": "Pensão e poupança",
           "ola": "a Dona Arminda",
-          "aprende": "Quanto rende a poupança face à subida dos preços.",
-          "fala": "As tabelas de IRS das pensões ainda não estão no simulador, mas já podes ver nos Correios como proteger a poupança da inflação.",
+          "aprende": "A retenção da pensão de reforma e o juro real da poupança.",
+          "fala": "A pensão de reforma está isenta de Segurança Social e retém IRS por tabelas próprias. Entra nos Correios ou simula a tua pensão.",
           "cenaRotulo": "Entrar nos Correios",
-          "rotaRotulo": "Simular a poupança →"
+          "rotaRotulo": "Simular a pensão →"
         },
         "goncalo": {
           "nome": "Gonçalo",

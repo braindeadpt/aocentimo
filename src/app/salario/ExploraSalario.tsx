@@ -4,25 +4,39 @@ import { Fragment, type ReactNode } from "react";
 import { AnelPontos, type PontoAnel } from "@/components/AnelPontos";
 import { CampoCentimos, type ParteCentimos } from "@/components/CampoCentimos";
 import { Cartao } from "@/components/Cartao";
+import { Chip } from "@/components/Chip";
+import { Interruptor } from "@/components/Interruptor";
 import { Regua } from "@/components/Regua";
 import { Segmentado } from "@/components/Segmentado";
 import { ZeroInformativo } from "@/components/ZeroInformativo";
+import type { RegiaoIrs } from "@/lib/engines/irs";
+import type { ModoDuodecimos } from "@/lib/engines/recibo";
 import { SITE_URL } from "@/lib/site";
 import { useArmado } from "@/lib/useArmado";
 import { comUnidade, fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
-import { diaLiberdade, useSalario, type Situacao } from "./contexto";
+import {
+  diaLiberdade,
+  useSalario,
+  type Situacao,
+  type TipoRendimento,
+} from "./contexto";
 
 /**
- * Nível 2 de /salario (3A-01) — «Explora»: os controlos físicos, o
+ * Nível 2 de /salario (3A-01 + T11) — «Explora»: os controlos físicos, o
  * talão de vencimento (a melhor peça do site — fica), o custo total
  * como campo de cêntimos em montes (substitui a explosão isométrica,
  * que não era proporcional) e o dia da liberdade fiscal num anel de
  * 365 pontos — calculado, não ilustrado.
  */
 
+/** Formata valor monetário preservando 3 casas decimais quando o diploma legal as fixa (ex.: 10,455 €). */
+function fmtMoedaExata(v: number): string {
+  const temTresCasas = Math.round(v * 1000) % 10 !== 0;
+  return temTresCasas ? comUnidade(fmtNum(v, 3), "€") : fmtEUR(v);
+}
+
 /** Contador — o controlo físico de contagem baixa (dependentes, ano
-    de gozo, €/dia): botões pílula −/+ à volta do valor em mono.
-    Nasceu na sessão 3A para /salario — é local à rota. */
+    de gozo, €/dia): botões pílula −/+ ≥ 44×44 px à volta do valor em mono. */
 function Contador({
   id,
   rotulo,
@@ -50,7 +64,7 @@ function Contador({
       Math.min(max, Math.max(min, Number((valor + d * passo).toFixed(casas))))
     );
   const btn =
-    "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-controlo border border-line2 bg-panel font-mono text-corpo text-ink2 transition-colors hover:text-ink disabled:opacity-40 disabled:hover:text-ink2";
+    "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-controlo border border-line2 bg-panel font-mono text-corpo text-ink2 transition-colors hover:text-ink disabled:opacity-40 disabled:hover:text-ink2";
   return (
     <div role="group" aria-labelledby={`${id}-rot`}>
       <span id={`${id}-rot`} className="kicker mb-1.5 block">
@@ -88,13 +102,89 @@ function Contador({
   );
 }
 
-/** os controlos — físicos, não selects de browser: segmentado para a
-    situação e a forma de pagamento, contadores para dependentes, IRS
-    Jovem e subsídio de alimentação, régua para o bruto do cônjuge */
+/** os controlos — físicos, não selects de browser: segmentado para o
+    tipo de rendimento (Cat. A vs. Cat. H), região, duodécimos, situação
+    e forma de pagamento; contadores e chips para subsídio de alimentação;
+    interruptor para ADSE */
 function ControlosSalario() {
   const s = useSalario();
+  const ePensao = s.tipoRendimento === "pensao";
+  const presetsSA = [
+    { rotulo: comUnidade(fmtNum(0, 0), "€"), valor: 0 },
+    { rotulo: comUnidade(fmtNum(6, 2), "€"), valor: 6 },
+    {
+      rotulo: `${comUnidade(fmtNum(s.saIsento.dinheiro, 2), "€")} (isento dinheiro)`,
+      valor: s.saIsento.dinheiro,
+    },
+    { rotulo: comUnidade(fmtNum(10.2, 2), "€"), valor: 10.2 },
+  ];
+
+  const extraMesDuo =
+    s.recibo.liquido - (s.recibo.liquidoSemDuodecimos ?? s.recibo.liquido);
+
   return (
     <div className="space-y-5">
+      {/* PROPOSTA (revisão do dono) — Categoria A vs. Categoria H (Pensão de reforma) */}
+      <div id="pensao" className="scroll-mt-24">
+        <span className="kicker mb-1.5 block">Rendimento</span>
+        <Segmentado
+          rotulo="Tipo de rendimento"
+          valor={s.tipoRendimento}
+          onChange={(v) => s.setTipoRendimento(v as TipoRendimento)}
+          opcoes={[
+            { id: "trabalho", rotulo: "Trabalho (Cat. A)" },
+            { id: "pensao", rotulo: "Pensão (Cat. H)" },
+          ]}
+        />
+        {ePensao && (
+          <p className="footnote mt-1.5">
+            Uma pensão de {fmtEUR0(s.bruto)} está{" "}
+            <strong>isenta dos 11 % de Segurança Social</strong> e retém IRS
+            pelas <strong>Tabelas VIII e IX</strong> do Despacho n.º
+            233-A/2026. Na liquidação anual (art. 53.º CIRS), a dedução
+            específica é de {fmtEUR(s.pensaoDeducaoEspecifica)} (8,54×IAS).
+          </p>
+        )}
+      </div>
+
+      {/* PROPOSTA (revisão do dono) — Região Autónoma: Continente · Açores · Madeira */}
+      <div>
+        <span className="kicker mb-1.5 block">Região</span>
+        <Segmentado
+          rotulo="Região"
+          valor={s.regiao}
+          onChange={(v) => s.setRegiao(v as RegiaoIrs)}
+          opcoes={[
+            { id: "continente", rotulo: "Continente" },
+            { id: "acores", rotulo: "Açores" },
+            { id: "madeira", rotulo: "Madeira" },
+          ]}
+        />
+        <p className="footnote mt-1.5">
+          Salário mínimo regional em {s.ano}:{" "}
+          <strong>{fmtEUR0(s.smnRegioes[s.regiao])}</strong>.{" "}
+          {s.regiao === "acores" && (
+            <>
+              Nos <strong>Açores</strong> (art. 47.º do DLR n.º 15-A/2021/A), o
+              IRS anual tem uma redução oficial de{" "}
+              <strong>{fmtPct(s.acoresReducaoIrsPct, 0)}</strong> em todos os
+              escalões do art. 68.º do CIRS (o recibo mensal mantém a tabela de
+              referência do Despacho n.º 233-A/2026, exclusiva do Continente).
+            </>
+          )}
+          {s.regiao === "madeira" && (
+            <>
+              Na <strong>Madeira</strong> o salário mínimo regional é de{" "}
+              <strong>{fmtEUR0(s.smnRegioes.madeira)}</strong>. As taxas por
+              escalão do DLR n.º 8/2025/M e os despachos regionais de retenção
+              são próprios da Região Autónoma — por rigor (Regra n.º 1), o
+              cálculo de IRS mantém a tabela nacional de referência sem
+              extrapolar escalões não verificados.
+            </>
+          )}
+        </p>
+      </div>
+
       <div>
         <span className="kicker mb-1.5 block">Situação</span>
         <Segmentado
@@ -116,7 +206,9 @@ function ControlosSalario() {
       {s.situacao === "casado2" && (
         <Regua
           id="conjuge"
-          rotulo="Bruto mensal do cônjuge"
+          rotulo={
+            ePensao ? "Pensão bruta mensal do cônjuge" : "Bruto mensal do cônjuge"
+          }
           valor={s.conjuge}
           onChange={s.setConjuge}
           min={s.cenarios.meta.inicio}
@@ -128,7 +220,47 @@ function ControlosSalario() {
         />
       )}
 
-      <div className="grid grid-cols-2 gap-4">
+      {/* PROPOSTA (revisão do dono) — Duodécimos (art. 99.º-C CIRS) */}
+      <div>
+        <span className="kicker mb-1.5 block">
+          Subsídios de férias e de Natal
+        </span>
+        <Segmentado
+          rotulo="Subsídios de férias e de Natal"
+          valor={s.duodecimos}
+          onChange={(v) => s.setDuodecimos(v as ModoDuodecimos)}
+          opcoes={[
+            { id: "14", rotulo: "14 meses" },
+            { id: "50", rotulo: "Duod. 50 %" },
+            { id: "100", rotulo: "Duod. 100 %" },
+          ]}
+        />
+        <p className="footnote mt-1.5">
+          {s.duodecimos === "14" ? (
+            <>
+              Em <strong>14 meses</strong> recebes o subsídio de férias e o de
+              Natal por inteiro nos respetivos meses. Se passares para{" "}
+              <strong>duodécimos</strong>, recebes mais todos os meses mas o{" "}
+              <strong>líquido anual ({fmtEUR(s.resultado.liquidoAnual)})</strong>{" "}
+              e o <strong>IRS anual ({fmtEUR(s.resultado.irsAnual)})</strong>{" "}
+              são idênticos ao cêntimo.
+            </>
+          ) : (
+            <>
+              Com duodécimos a <strong>{s.duodecimos} %</strong> entram{" "}
+              <strong>+{fmtEUR(extraMesDuo)}/mês</strong> líquidos na conta: as
+              frações dos subsídios têm{" "}
+              <strong>retenção autónoma (art. 99.º-C CIRS)</strong> — não somam
+              ao base para subir o escalão do mês. Ao fim dos 14 meses, o{" "}
+              <strong>líquido anual ({fmtEUR(s.resultado.liquidoAnual)})</strong>{" "}
+              e o <strong>IRS anual ({fmtEUR(s.resultado.irsAnual)})</strong>{" "}
+              são idênticos ao cêntimo!
+            </>
+          )}
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Contador
           id="dep"
           rotulo="Dependentes"
@@ -138,71 +270,124 @@ function ControlosSalario() {
           max={10}
           formato={(v) => fmtNum(v, 0)}
         />
-        <Contador
-          id="jovem"
-          rotulo="IRS Jovem"
-          valor={s.anoJovem}
-          onChange={s.setAnoJovem}
-          min={0}
-          max={s.irsJovemIsencao.length}
-          formato={(v) => (v === 0 ? "Não" : `${v}.º ano`)}
+        {!ePensao && (
+          <Contador
+            id="jovem"
+            rotulo="IRS Jovem"
+            valor={s.anoJovem}
+            onChange={s.setAnoJovem}
+            min={0}
+            max={s.irsJovemIsencao.length}
+            formato={(v) => (v === 0 ? "Não" : `${v}.º ano`)}
+            nota={
+              s.anoJovem > 0
+                ? `${fmtPct(s.irsJovemIsencao[s.anoJovem - 1], 0)} isento`
+                : undefined
+            }
+          />
+        )}
+      </div>
+
+      {/* PROPOSTA (revisão do dono) — Perfil Diana: Subsistema ADSE (3,5 % × 14 meses) */}
+      <div>
+        <Interruptor
+          ligado={s.adse}
+          onChange={s.setAdse}
+          rotulo={`Subsistema ADSE (${fmtPct(s.adseRegras.taxaDesconto, 1)} — Função Pública)`}
           nota={
-            s.anoJovem > 0
-              ? `${fmtPct(s.irsJovemIsencao[s.anoJovem - 1], 0)} isento`
-              : undefined
+            ePensao
+              ? `desconto facultativo nos 14 meses com limiar de salvaguarda em ${fmtEUR(s.adseRegras.limiarSalvaguardaPensoes)} (DL 118/83 art. 47.º)`
+              : `acumula com os 11\u202F% de SS para trabalhadores em funções públicas admitidos desde 2006 (DL 118/83 art. 46.º)`
           }
+          className="text-corpo-sm"
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Contador
-          id="sa"
-          rotulo="Subs. alimentação"
-          valor={s.saPorDia}
-          onChange={s.setSaPorDia}
-          min={0}
-          max={30}
-          passo={0.5}
-          formato={(v) => comUnidade(fmtNum(v, 2), "€/dia")}
-        />
-        <div>
-          <span className="kicker mb-1.5 block">Subsídio pago em</span>
-          <Segmentado
-            rotulo="Subsídio pago em"
-            valor={s.formaSA}
-            onChange={(v) => s.setFormaSA(v as "cartao" | "dinheiro")}
-            opcoes={
-              s.saPorDia > 0
-                ? [
-                    { id: "cartao", rotulo: "Cartão/vale" },
-                    { id: "dinheiro", rotulo: "Dinheiro" },
-                  ]
-                : [
-                    {
-                      id: "cartao",
-                      rotulo: "Cartão/vale",
-                      desativado: true,
-                      razao: "sem subsídio de alimentação não há forma de pagamento",
-                    },
-                    {
-                      id: "dinheiro",
-                      rotulo: "Dinheiro",
-                      desativado: true,
-                      razao: "sem subsídio de alimentação não há forma de pagamento",
-                    },
-                  ]
-            }
-          />
+      {!ePensao && (
+        <div className="space-y-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Contador
+              id="sa"
+              rotulo="Subs. alimentação"
+              valor={s.saPorDia}
+              onChange={s.setSaPorDia}
+              min={0}
+              max={30}
+              passo={0.05}
+              formato={(v) => comUnidade(fmtNum(v, 2), "€/dia")}
+            />
+            <div>
+              <span className="kicker mb-1.5 block">Subsídio pago em</span>
+              <Segmentado
+                rotulo="Subsídio pago em"
+                valor={s.formaSA}
+                onChange={(v) => s.setFormaSA(v as "cartao" | "dinheiro")}
+                opcoes={
+                  s.saPorDia > 0
+                    ? [
+                        { id: "cartao", rotulo: "Cartão/vale" },
+                        { id: "dinheiro", rotulo: "Dinheiro" },
+                      ]
+                    : [
+                        {
+                          id: "cartao",
+                          rotulo: "Cartão/vale",
+                          desativado: true,
+                          razao:
+                            "sem subsídio de alimentação não há forma de pagamento",
+                        },
+                        {
+                          id: "dinheiro",
+                          rotulo: "Dinheiro",
+                          desativado: true,
+                          razao:
+                            "sem subsídio de alimentação não há forma de pagamento",
+                        },
+                      ]
+                }
+              />
+            </div>
+          </div>
+
+          {/* PROPOSTA (revisão do dono) — Chips de preset rápido para o subsídio de alimentação */}
+          <div
+            className="flex flex-wrap items-center gap-2"
+            role="group"
+            aria-label="Valores de referência de subsídio de alimentação"
+          >
+            {presetsSA.map((p) => (
+              <Chip
+                key={p.valor}
+                ativo={Math.abs(s.saPorDia - p.valor) < 0.005}
+                onClick={() => {
+                  s.setSaPorDia(p.valor);
+                  if (
+                    Math.abs(p.valor - s.saIsento.dinheiro) < 0.005 &&
+                    s.formaSA !== "dinheiro"
+                  ) {
+                    s.setFormaSA("dinheiro");
+                  }
+                }}
+              >
+                {p.rotulo}
+              </Chip>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       <p className="footnote">
         O recibo usa as <strong>tabelas de retenção reais de {s.ano}</strong>{" "}
-        (Despacho 233-A/2026). O subs. de alimentação é isento até{" "}
-        {fmtEUR(s.limiteSA)}/dia em{" "}
-        {s.formaSA === "cartao" ? "cartão" : "dinheiro"} — o excedente
-        tributa como salário. O ano usa os escalões do IRS com dedução
-        específica e mínimo de existência.
+        (Despacho 233-A/2026).{" "}
+        {!ePensao && (
+          <>
+            O subs. de alimentação é isento até {fmtMoedaExata(s.limiteSA)}/dia
+            em {s.formaSA === "cartao" ? "cartão" : "dinheiro"} — o excedente
+            tributa como salário.{" "}
+          </>
+        )}
+        O ano usa os escalões do IRS com dedução específica e mínimo de
+        existência.
       </p>
     </div>
   );
@@ -215,15 +400,19 @@ function ControlosSalario() {
 function TalaoRecibo() {
   const s = useSalario();
   const recibo = s.recibo;
+  const ePensao = s.tipoRendimento === "pensao";
+  const duoBruto = recibo.duodecimosBruto ?? 0;
+  const descAdse = recibo.adse ?? 0;
 
-  // reimpressão: dados novos = recibo novo — o <dl> remonta-se e cada
-  // linha imprime escalonada (talao-linha + --linha); o contador
-  // repõe-se a cada render para as linhas ficarem sequenciais mesmo
-  // quando a linha do subsídio não existe
   const reciboKey = [
+    s.tipoRendimento,
+    s.duodecimos,
+    s.adse,
     recibo.bruto,
+    duoBruto,
     recibo.saTotal,
     recibo.ss,
+    descAdse,
     recibo.retencao,
     recibo.liquido,
     recibo.custoEmpresa,
@@ -242,7 +431,9 @@ function TalaoRecibo() {
         <div className="talao">
           <span className="carimbo">simulação</span>
           <div className="talao-face px-6 pb-5 pt-7">
-            <p className="talao-head text-center">Recibo de vencimento</p>
+            <p className="talao-head text-center">
+              {ePensao ? "Recibo de pensão" : "Recibo de vencimento"}
+            </p>
             <p className="talao-sub mt-1 text-center talao-dim">
               * * * simulado * * *
             </p>
@@ -252,9 +443,25 @@ function TalaoRecibo() {
                   className={talaoArm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
                   style={{ "--linha": prox() } as React.CSSProperties}
                 >
-                  <dt className="talao-dim">SALÁRIO BRUTO</dt>
+                  <dt className="talao-dim">
+                    {ePensao ? "PENSÃO BRUTA" : "SALÁRIO BRUTO"}
+                  </dt>
                   <dd>{fmtEUR(recibo.bruto)}</dd>
                 </div>
+                {duoBruto > 0 && (
+                  <div
+                    className={talaoArm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
+                    style={{ "--linha": prox() } as React.CSSProperties}
+                  >
+                    <dt className="talao-dim">
+                      DUODÉCIMOS ({s.duodecimos} %)
+                      <span className="talao-note block">
+                        RETENÇÃO AUTÓNOMA ART. 99.º-C
+                      </span>
+                    </dt>
+                    <dd>{fmtEUR(duoBruto)}</dd>
+                  </div>
+                )}
                 {recibo.saTotal > 0 && (
                   <div
                     className={talaoArm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
@@ -277,10 +484,62 @@ function TalaoRecibo() {
                 >
                   <dt className="talao-dim">SEG. SOCIAL 11 %</dt>
                   <dd>
-                    {fmtEUR(recibo.ss)} −
-                    <span className={"talao-retido " + talaoArm("talao-carimbo-anim")} aria-hidden>Retido</span>
+                    {ePensao ? (
+                      <>
+                        <ZeroInformativo
+                          valor={fmtNum(0, 2)}
+                          unidade="€"
+                          nota="isento nas pensões"
+                        />
+                        <span
+                          className={
+                            "talao-retido talao-retido-neutro " +
+                            talaoArm("talao-carimbo-anim")
+                          }
+                          aria-hidden
+                        >
+                          Isento
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        {fmtEUR(recibo.ss)} −
+                        <span className={"talao-retido " + talaoArm("talao-carimbo-anim")} aria-hidden>Retido</span>
+                      </>
+                    )}
                   </dd>
                 </div>
+                {s.adse && (
+                  <div
+                    className={talaoArm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
+                    style={{ "--linha": prox() } as React.CSSProperties}
+                  >
+                    <dt className="talao-dim">
+                      ADSE {fmtPct(s.adseRegras.taxaDesconto, 1)}
+                    </dt>
+                    <dd>
+                      {descAdse === 0 ? (
+                        <ZeroInformativo
+                          valor={fmtNum(0, 2)}
+                          unidade="€"
+                          nota="limiar de salvaguarda 635 €"
+                        />
+                      ) : (
+                        <>
+                          {fmtEUR(descAdse)} −
+                          <span
+                            className={
+                              "talao-retido " + talaoArm("talao-carimbo-anim")
+                            }
+                            aria-hidden
+                          >
+                            Retido
+                          </span>
+                        </>
+                      )}
+                    </dd>
+                  </div>
+                )}
                 <div
                   className={talaoArm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
                   style={{ "--linha": prox() } as React.CSSProperties}
@@ -289,14 +548,13 @@ function TalaoRecibo() {
                     IRS RETIDO
                     <span className="talao-note block">
                       TAXA EFETIVA {fmtPct(recibo.taxaEfetiva)}
-                      {s.anoJovem > 0 && ` · JOVEM ${s.anoJovem}.º ANO`}
+                      {!ePensao &&
+                        s.anoJovem > 0 &&
+                        ` · JOVEM ${s.anoJovem}.º ANO`}
                     </span>
                   </dt>
                   <dd>
                     {recibo.retencao === 0 ? (
-                      // zero como informação (1B-05) + carimbo neutro
-                      // «Não retido» (1D-02): diz-se o corte que não
-                      // existe — nunca tinta de saída nem de «fica»
                       <>
                         <ZeroInformativo
                           valor={fmtNum(0, 2)}
@@ -334,7 +592,9 @@ function TalaoRecibo() {
                   className={talaoArm("talao-linha") + " talao-sep flex justify-between gap-4 py-1.5"}
                   style={{ "--linha": prox() } as React.CSSProperties}
                 >
-                  <dt className="talao-dim">CUSTO TOTAL P/ A EMPRESA</dt>
+                  <dt className="talao-dim">
+                    {ePensao ? "VALOR BRUTO PAGO" : "CUSTO TOTAL P/ A EMPRESA"}
+                  </dt>
                   <dd className="talao-dim">
                     {fmtEUR(recibo.custoEmpresa)}/mês
                   </dd>
@@ -367,17 +627,24 @@ function TalaoRecibo() {
 function CustoMontes() {
   const s = useSalario();
   const r = s.recibo;
+  const ePensao = s.tipoRendimento === "pensao";
   const porEuro = r.custoEmpresa > 0 ? 100 / r.custoEmpresa : 0;
   const mes = (v: number) => `${fmtEUR0(v)}/mês`;
+  const descAdse = r.adse ?? 0;
+
   const partes: ParteCentimos[] = [
-    {
-      id: "tsu",
-      rotulo: "TSU — a parte da empresa",
-      rotuloCurto: "TSU",
-      valor: r.tsuEntidade * porEuro,
-      tom: "sai",
-      detalhe: mes(r.tsuEntidade),
-    },
+    ...(ePensao
+      ? []
+      : [
+          {
+            id: "tsu",
+            rotulo: "TSU — a parte da empresa",
+            rotuloCurto: "TSU",
+            valor: r.tsuEntidade * porEuro,
+            tom: "sai" as const,
+            detalhe: mes(r.tsuEntidade),
+          },
+        ]),
     {
       id: "irs",
       rotulo: "IRS retido",
@@ -386,14 +653,30 @@ function CustoMontes() {
       tom: "sai",
       detalhe: r.retencao > 0 ? mes(r.retencao) : undefined,
     },
-    {
-      id: "ss",
-      rotulo: "Segurança Social — a tua parte",
-      rotuloCurto: "Seg. Social",
-      valor: r.ss * porEuro,
-      tom: "sai",
-      detalhe: mes(r.ss),
-    },
+    ...(ePensao
+      ? []
+      : [
+          {
+            id: "ss",
+            rotulo: "Segurança Social — a tua parte",
+            rotuloCurto: "Seg. Social",
+            valor: r.ss * porEuro,
+            tom: "sai" as const,
+            detalhe: mes(r.ss),
+          },
+        ]),
+    ...(s.adse && descAdse > 0
+      ? [
+          {
+            id: "adse",
+            rotulo: "Subsistema ADSE (3,5\u202F%)",
+            rotuloCurto: "ADSE",
+            valor: descAdse * porEuro,
+            tom: "sai" as const,
+            detalhe: mes(descAdse),
+          },
+        ]
+      : []),
     {
       id: "fica",
       rotulo: "Chega à tua conta",
@@ -403,11 +686,11 @@ function CustoMontes() {
       detalhe: mes(r.liquido),
     },
   ];
-  const fica = partes[3].valor;
+  const fica = r.liquido * porEuro;
   return (
     <Cartao
       icone="salario"
-      breadcrumb={`O TEU SALÁRIO / CUSTO TOTAL · MOTORES ${s.ano}`}
+      breadcrumb={`O TEU ${ePensao ? "RENDIMENTO / PENSÃO" : "SALÁRIO / CUSTO TOTAL"} · MOTORES ${s.ano}`}
       fonte={{
         rotulo: "Fontes",
         itens: [
@@ -417,22 +700,32 @@ function CustoMontes() {
       }}
     >
       <p className="leitura-insight">
-        O recibo mostra o que tu vês — este campo mostra o que a empresa
-        paga.
+        {ePensao
+          ? "Sem Segurança Social nem TSU patronal — de cada euro bruto de pensão, quanto fica e quanto retém IRS."
+          : "O recibo mostra o que tu vês — este campo mostra o que a empresa paga."}
       </p>
       <CampoCentimos
         className="mt-4"
         partes={partes}
         layout="montes"
         textos={{
-          pronto: (
+          pronto: ePensao ? (
+            <>
+              De cada euro de pensão bruta,{" "}
+              <b>{comUnidade(fmtNum(fica), "c")}</b> chegam-te.
+            </>
+          ) : (
             <>
               De cada euro que a empresa gasta contigo,{" "}
               <b>{comUnidade(fmtNum(fica), "c")}</b> chegam-te.
             </>
           ),
         }}
-        equivalente={`De cada euro que a empresa gasta contigo (bruto de ${fmtEUR0(r.bruto)}): ${fmtNum(fica)} cêntimos chegam à tua conta; ${fmtNum(partes[0].valor)} vão para a TSU da empresa, ${fmtNum(partes[1].valor)} para o IRS e ${fmtNum(partes[2].valor)} para a Segurança Social.`}
+        equivalente={
+          ePensao
+            ? `De cada euro da tua pensão bruta (${fmtEUR0(r.bruto)}): ${fmtNum(fica)} cêntimos chegam à tua conta e ${fmtNum(r.retencao * porEuro)} vão para o IRS retido.`
+            : `De cada euro que a empresa gasta contigo (bruto de ${fmtEUR0(r.bruto)}): ${fmtNum(fica)} cêntimos chegam à tua conta; ${fmtNum(r.tsuEntidade * porEuro)} vão para a TSU da empresa, ${fmtNum(r.retencao * porEuro)} para o IRS e ${fmtNum(r.ss * porEuro)} para a Segurança Social.`
+        }
       />
     </Cartao>
   );
