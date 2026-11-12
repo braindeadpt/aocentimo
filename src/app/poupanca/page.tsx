@@ -6,14 +6,14 @@ import { Source } from "@/components/Source";
 import { EstadoVazio } from "@/components/EstadoVazio";
 import { CampoCentimos } from "@/components/CampoCentimos";
 import { Pagina, PaginaDetalhe } from "@/components/Pagina";
-import { PoupancaProvider, PRAZO_CA } from "./PoupancaSim";
+import { PoupancaProvider, PRAZO_CA, PRAZO_CT } from "./PoupancaSim";
 import { FraseTaxaReal, InstrumentoTaxaReal } from "./HeroTaxaReal";
 import { ComparadorPoupanca } from "./ComparadorPoupanca";
 import { CadernetaAforro } from "./CadernetaAforro";
 import { SimuladorPpr } from "./SimuladorPpr";
 import { SimuladorMaisValias } from "./SimuladorMaisValias";
-import { loadDerivado, loadFreshness } from "@/lib/data";
-import { comUnidade, fmtData, fmtNum, fmtPct, fmtPeriodo } from "@/lib/format";
+import { loadDerivado, loadFonte, loadFreshness } from "@/lib/data";
+import { comUnidade, fmtData, fmtEUR0, fmtNum, fmtPct, fmtPeriodo } from "@/lib/format";
 import {
   anotacaoDe,
   estadoDe,
@@ -26,10 +26,15 @@ import {
 } from "@/lib/leitura";
 import { m, t } from "@/lib/messages";
 import ca from "@data/fiscal/ca.json";
+import ct from "@data/fiscal/ct.json";
 import capitais from "@data/fiscal/capitais.json";
 import ppr from "@data/fiscal/ppr.json";
 import maisValias from "@data/fiscal/mais-valias.json";
-import { JsonLd, webApplication } from "@/lib/jsonld";export const metadata: Metadata = metaDeRota("/poupanca");
+import irs2026 from "@data/fiscal/irs-2026.json";
+import ss from "@data/fiscal/ss.json";
+import type { RegrasIRS } from "@/lib/engines/irs";
+import { JsonLd, webApplication } from "@/lib/jsonld";
+export const metadata: Metadata = metaDeRota("/poupanca");
 
 /** derivado ca-base: taxa base mensal dos CA Série F (IGCP oficial +
     Euribor 3M indicativa) — o meta é mais rico que uma fonte crua */
@@ -103,6 +108,16 @@ export default function PoupancaPage() {
       ? Math.round(hicpTot.varHomologa * 1000) / 10
       : null;
 
+  // ————— a taxa média real dos novos depósitos a prazo até 1 ano (BPstat) —————
+  const depFonte = loadFonte("bpstat", "deposito-prazo-ate1a-mensal");
+  const ultDep = depFonte?.series[depFonte.series.length - 1];
+  const taxaBpstat = ultDep !== undefined ? ultDep.v : null;
+  const depReal = loadDerivado<{
+    meta: { fonte: string; url: string; serieAte: string };
+    series: Ponto[];
+  }>("deposito-real");
+  const ultDepReal = depReal?.series[depReal.series.length - 1];
+
   // ————— os cêntimos do imposto — calculados do JSON, nunca escritos —————
   const centimosFisco = capitais.retencaoLiberatoria.taxa * 100;
   const centimosFica = 100 - centimosFisco;
@@ -126,9 +141,13 @@ export default function PoupancaPage() {
       <PoupancaProvider
         taxaCA={ca.serieF.taxaBrutaNovasSubscricoes}
         premiosCA={ca.serieF.premiosPermanencia}
-        taxasCtpc={ca.ctpc.taxasPorAno}
-        premioCtpc={ca.ctpc.premio.atual}
+        maximoEurosCA={ca.serieF.maximoEuros}
+        minimoSubscricaoCA={ca.serieF.minimoEuros}
+        taxasCT={ct.serie5.taxasPorAno}
+        minimoSubscricaoCT={ct.serie5.minimoSubscricao.euros}
+        maximoEurosCT={ct.serie5.maximoPorConta.euros}
         taxaImposto={capitais.retencaoLiberatoria.taxa}
+        taxaDepositoInicial={taxaBpstat}
         inflacaoInicial={inflacaoReal ?? 2}
       >
         <Pagina
@@ -195,17 +214,22 @@ export default function PoupancaPage() {
                 title="Quatro destinos para o mesmo dinheiro"
                 source={
                   <Source
-                    nome="Cálculo próprio — taxas CA (IGCP) e retenção CIRS"
-                    vigencia={ca.vigencia}
-                    nota={`${capitais.fonte} · vigente ${fmtData(capitais.vigencia)}`}
+                    /* PROPOSTA (revisão do dono) */
+                    nome="Cálculo próprio — taxas CA Série F e CT Série 5 (IGCP), depósitos (BPstat) e retenção CIRS"
+                    vigencia={ct.vigencia}
+                    nota={`${capitais.fonte} · vigente ${fmtData(capitais.vigencia)}${
+                      depFonte?.meta.serieAte
+                        ? ` · depósitos BPstat até ${fmtData(depFonte.meta.serieAte)}`
+                        : ""
+                    }`}
                   />
                 }
               >
                 <ComparadorPoupanca
                   taxaCA={ca.serieF.taxaBrutaNovasSubscricoes}
                   premiosCA={ca.serieF.premiosPermanencia}
-                  taxasCtpc={ca.ctpc.taxasPorAno}
-                  premioCtpc={ca.ctpc.premio.atual}
+                  taxasCT={ct.serie5.taxasPorAno}
+                  taxaBpstat={taxaBpstat}
                   inflacaoReal={inflacaoReal}
                 />
               </Figure>
@@ -274,42 +298,109 @@ export default function PoupancaPage() {
                   </table>
                   <p>
                     Prazo máximo de {PRAZO_CA} anos, com resgate possível a
-                    partir do 3.º mês. {ca.serieF.garantia}. Tributação:{" "}
+                    partir do 3.º mês. Subscrição mínima de{" "}
+                    {fmtEUR0(ca.serieF.minimoEuros)} e tecto legal acumulado de{" "}
+                    <strong>{fmtEUR0(ca.serieF.maximoEuros)}</strong> por
+                    titular ({fmtNum(ca.serieF.maximoUnidades, 0)} unidades,
+                    Portaria 149-A/2023). {ca.serieF.garantia}. Tributação:{" "}
                     {ca.serieF.tributacao.toLowerCase()}.
                   </p>
                 </div>
               </PaginaDetalhe>
 
-              <PaginaDetalhe rotulo="Certificados do Tesouro Poupança Crescimento — as regras">
+              {/* PROPOSTA (revisão do dono): CT Série 5 + secção dobrada CTPC suspenso */}
+              <PaginaDetalhe rotulo="Certificados do Tesouro Série 5 — as regras (e o que mudou face aos CTPC)">
                 <div className="body-copy max-w-2xl space-y-4">
                   <p>
-                    {ca.ctpc.nota}. Do 2.º ano soma-se o prémio ligado ao
-                    PIB: {ca.ctpc.premio.nota}
+                    Em comercialização desde {fmtData(ct.serie5.subscricaoDesde)}{" "}
+                    ({ct.serie5.criacao}). Prazo de {PRAZO_CT} anos, subscrição
+                    mínima de {fmtEUR0(ct.serie5.minimoSubscricao.euros)} e
+                    máximo por conta de {fmtEUR0(ct.serie5.maximoPorConta.euros)}.
+                    Ao contrário dos Certificados de Aforro,{" "}
+                    <strong>não há capitalização</strong>: os juros vencem uma
+                    vez por ano e são transferidos líquidos de IRS para o IBAN.
                   </p>
                   <table className="w-full text-corpo-sm bg-raised border border-line shadow-raised">
                     <thead>
                       <tr className="text-left border-b-2 border-ink">
-                        <th scope="col" className="px-4 py-2 font-medium">Ano</th>
-                        <th scope="col" className="px-4 py-2 font-medium text-right">Taxa bruta</th>
-                        <th scope="col" className="px-4 py-2 font-medium text-right">+ prémio PIB</th>
+                        <th scope="col" className="px-4 py-2 font-medium">Ano de vida</th>
+                        <th scope="col" className="px-4 py-2 font-medium text-right">Taxa bruta fixa</th>
+                        <th scope="col" className="px-4 py-2 font-medium text-right">Taxa líquida (após 28 %)</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {ca.ctpc.taxasPorAno.map((tx, i) => (
+                      {ct.serie5.taxasPorAno.map((tx, i) => (
                         <tr key={i} className="border-b border-line last:border-0">
-                          <td className="px-4 py-1.5 text-ink2">{i + 1}.º</td>
+                          <td className="px-4 py-1.5 text-ink2">{i + 1}.º ano</td>
                           <td className="px-4 py-1.5 text-right num">{fmtPct(tx, 2)}</td>
                           <td className="px-4 py-1.5 text-right num">
-                            {i >= 1 ? fmtPct(ca.ctpc.premio.atual, 2) : "—"}
+                            {fmtPct(tx * (1 - capitais.retencaoLiberatoria.taxa), 2)}
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                   <p className="footnote">
-                    Simulado com o prémio em vigor ({fmtPct(ca.ctpc.premio.atual, 2)},
-                    máximo {fmtPct(ca.ctpc.premio.cap, 1)}) — o PIB futuro
-                    ninguém o conhece. Prazo: {ca.ctpc.prazo}.
+                    <strong>Resgate antecipado:</strong> só permitido decorrido
+                    o 1.º ano, e implica a perda total dos juros corridos desde
+                    o último aniversário anual até ao dia do resgate.
+                  </p>
+                  <div className="border-t border-line pt-3 space-y-2">
+                    <p className="kicker">
+                      Já tenho CTPC antigos — fechados a novas subscrições em 2021
+                    </p>
+                    <p className="text-corpo-sm text-ink2">
+                      Os <strong>Certificados do Tesouro Poupança Crescimento (CTPC)</strong>{" "}
+                      e os <strong>CTPV</strong> estão fechados a novas
+                      subscrições (os CTPC desde{" "}
+                      {fmtData(ca.ctpc.subscricaoSuspensaDesde)}, pela{" "}
+                      {ca.ctpc.subscricaoBase}; os CTPV desde{" "}
+                      {fmtData(ct.seriesSuspostas.ctpv.suspensaDesde)}). Quem já
+                      os detém mantém os direitos até ao fim dos{" "}
+                      {ca.ctpc.prazo}: taxas base de{" "}
+                      {fmtPct(ca.ctpc.taxasPorAno[0], 2)} a{" "}
+                      {fmtPct(ca.ctpc.taxasPorAno[ca.ctpc.taxasPorAno.length - 1], 2)}{" "}
+                      acrescidas do prémio ligado ao PIB a partir do 2.º ano
+                      (em vigor: {fmtPct(ca.ctpc.premio.atual, 2)}, tecto de{" "}
+                      {fmtPct(ca.ctpc.premio.cap, 1)}).
+                    </p>
+                  </div>
+                </div>
+              </PaginaDetalhe>
+
+              {/* PROPOSTA (revisão do dono): Garantia da República vs. FGD */}
+              <PaginaDetalhe rotulo="Quem garante o capital — República Portuguesa vs. Fundo de Garantia de Depósitos">
+                <div className="body-copy max-w-2xl space-y-3">
+                  <p>
+                    <strong>Certificados de Aforro e do Tesouro (IGCP):</strong>{" "}
+                    são dívida pública directa da República Portuguesa. Não têm
+                    intermediário bancário nem tecto de garantia — o reembolso
+                    do capital investido é garantido na totalidade pelo Estado
+                    português (respeitando os tectos de subscrição de{" "}
+                    {fmtEUR0(ca.serieF.maximoEuros)} na Série F dos CA e{" "}
+                    {fmtEUR0(ct.serie5.maximoPorConta.euros)} na Série 5 dos CT).
+                  </p>
+                  <p>
+                    <strong>Depósitos bancários a prazo:</strong> são
+                    responsabilidade do banco comercial onde estão depositados e
+                    estão protegidos pelo{" "}
+                    <strong>Fundo de Garantia de Depósitos (FGD)</strong> até ao
+                    limite legal de <strong>{fmtEUR0(100000)}</strong> por
+                    depositante e por instituição de crédito (Regime Geral das
+                    Instituições de Crédito e Sociedades Financeiras, art.
+                    166.º).{taxaBpstat !== null && ultDepReal !== undefined ? (
+                      <>
+                        {" "}A taxa média dos novos depósitos a prazo até 1 ano
+                        dos particulares era de{" "}
+                        <strong>{comUnidade(fmtNum(taxaBpstat, 2), "%")}</strong>{" "}
+                        brutos em {fmtPeriodo(depFonte!.meta.serieAte)} (diferença
+                        face à inflação homóloga:{" "}
+                        <strong>
+                          {comUnidade(fmtNum(ultDepReal.v, 2), "p.p.")}
+                        </strong>
+                        ).
+                      </>
+                    ) : null}
                   </p>
                 </div>
               </PaginaDetalhe>
@@ -336,17 +427,53 @@ export default function PoupancaPage() {
                     à saída — dentro das condições legais. Fora delas devolves
                     o benefício com penalização: é dinheiro preso.
                   </p>
-                  <SimuladorPpr taxaLiberatoria={capitais.retencaoLiberatoria.taxa} />
+                  <SimuladorPpr
+                    taxaLiberatoria={capitais.retencaoLiberatoria.taxa}
+                    regrasPpr={{
+                      deducao: {
+                        pct: ppr.deducao.pct,
+                        limitesPorIdade: ppr.deducao.limitesPorIdade,
+                      },
+                      saida: {
+                        taxaEfetivaDentro: ppr.saida.taxaEfetivaDentro,
+                      },
+                    }}
+                  />
                 </div>
               </PaginaDetalhe>
 
               <PaginaDetalhe rotulo="Mais-valias — o imposto sobre o ganho">
-                <SimuladorMaisValias />
+                <SimuladorMaisValias
+                  regrasMV={{
+                    mobiliarios: {
+                      taxaAutonoma: maisValias.mobiliarios.taxaAutonoma,
+                      exclusoesDetencao: maisValias.mobiliarios.exclusoesDetencao,
+                    },
+                    cripto: {
+                      isencaoDetencaoDias: maisValias.cripto.isencaoDetencaoDias,
+                      taxa: maisValias.cripto.taxa,
+                    },
+                    imoveis: {
+                      percentagemEnglobada: maisValias.imoveis.percentagemEnglobada,
+                    },
+                  }}
+                  regrasIrs={irs2026 as RegrasIRS}
+                  ssTrab={ss.trabalhador.taxa}
+                />
               </PaginaDetalhe>
 
               <PaginaDetalhe rotulo="Fontes e dados">
                 <div className="body-copy max-w-2xl space-y-3">
                   <Source nome={ca.fonte} url={ca.fonteUrl} vigencia={ca.vigencia} />
+                  <Source nome={ct.fonte} url={ct.fonteUrl} vigencia={ct.vigencia} />
+                  {depFonte && (
+                    <Source
+                      nome={`${depFonte.meta.fonte} — ${depFonte.meta.dataset}`}
+                      url={depFonte.meta.url}
+                      serieAte={depFonte.meta.serieAte}
+                      recolhidoEm={depFonte.meta.recolhidoEm}
+                    />
+                  )}
                   <Source
                     nome={capitais.fonte}
                     url={capitais.fonteUrl}

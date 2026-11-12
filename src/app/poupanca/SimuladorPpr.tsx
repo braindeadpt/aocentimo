@@ -1,10 +1,26 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { REGRAS_PPR, limitePpr } from "@/lib/engines/irs-anual";
 import { NumHero } from "@/components/NumHero";
 import { Regua } from "@/components/Regua";
 import { fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
+
+export interface RegrasPprProps {
+  deducao: {
+    pct: number;
+    limitesPorIdade: { ate: number | null; limite: number }[];
+  };
+  saida: {
+    taxaEfetivaDentro: number;
+  };
+}
+
+function limitePprPuro(idade: number, regrasPpr: RegrasPprProps): number {
+  const l = regrasPpr.deducao.limitesPorIdade.find(
+    (x) => x.ate === null || idade <= x.ate
+  );
+  return l?.limite ?? 0;
+}
 
 function parseClamp(s: string, min: number, max: number): number {
   const limpo = s.trim().replace(/\s+/g, "").replace(",", ".");
@@ -54,13 +70,19 @@ function CampoDecimal({
           onChange(final);
           setTexto(String(final).replace(".", ","));
         }}
-        className="field"
+        className="field min-h-[44px]"
       />
     </div>
   );
 }
 
-export function SimuladorPpr({ taxaLiberatoria }: { taxaLiberatoria: number }) {
+export function SimuladorPpr({
+  taxaLiberatoria,
+  regrasPpr,
+}: {
+  taxaLiberatoria: number;
+  regrasPpr: RegrasPprProps;
+}) {
   const [entregas, setEntregas] = useState(2000);
   const [idade, setIdade] = useState(30);
   const [anos, setAnos] = useState(10);
@@ -72,13 +94,13 @@ export function SimuladorPpr({ taxaLiberatoria }: { taxaLiberatoria: number }) {
   const r = useMemo(() => {
     const ent = Math.min(100_000, Math.max(0, entregas));
     const tx = Math.min(25, Math.max(0, taxa));
-    const limite = limitePpr(idadeClamp);
-    const deducaoAnual = Math.min(ent * REGRAS_PPR.deducao.pct, limite);
+    const limite = limitePprPuro(idadeClamp, regrasPpr);
+    const deducaoAnual = Math.min(ent * regrasPpr.deducao.pct, limite);
     // juros compostos sobre entregas anuais no fim de cada ano (teto defensivo ≤ 50 anos)
     let capital = 0;
     for (let i = 0; i < anosClamp; i++) capital = (capital + ent) * (1 + tx / 100);
     const rendimentos = capital - ent * anosClamp;
-    const impostoSaida = rendimentos * REGRAS_PPR.saida.taxaEfetivaDentro;
+    const impostoSaida = rendimentos * regrasPpr.saida.taxaEfetivaDentro;
     const impostoNormal = rendimentos * taxaLiberatoria;
     return {
       deducaoAnual,
@@ -90,7 +112,7 @@ export function SimuladorPpr({ taxaLiberatoria }: { taxaLiberatoria: number }) {
       liquido: capital - impostoSaida,
       poupancaTotal: deducaoAnual * anosClamp + (impostoNormal - impostoSaida),
     };
-  }, [entregas, idadeClamp, anosClamp, taxa, taxaLiberatoria]);
+  }, [entregas, idadeClamp, anosClamp, taxa, taxaLiberatoria, regrasPpr]);
 
   return (
     <div className="grid md:grid-cols-2 gap-10">
@@ -136,7 +158,7 @@ export function SimuladorPpr({ taxaLiberatoria }: { taxaLiberatoria: number }) {
           formato={(v) => fmtNum(v, 0)}
         />
         <p className="footnote">
-          Dedução à coleta de 20 % das entregas, até {fmtEUR0(limitePpr(idadeClamp))}
+          Dedução à coleta de 20 % das entregas, até {fmtEUR0(limitePprPuro(idadeClamp, regrasPpr))}
           /ano na tua idade — entra no limite global do art. 78.º. Na saída
           dentro das condições legais, os rendimentos pagam 8 % efetivos.
           Resgatar fora das condições devolve o benefício +10 %/ano — o PPR
@@ -183,3 +205,4 @@ export function SimuladorPpr({ taxaLiberatoria }: { taxaLiberatoria: number }) {
     </div>
   );
 }
+

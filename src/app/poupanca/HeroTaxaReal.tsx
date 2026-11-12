@@ -33,7 +33,8 @@ export function InstrumentoTaxaReal({
         rotulo: "Fonte",
         itens: [
           {
-            nome: "Taxas CA e CTPC — IGCP",
+            /* PROPOSTA (revisão do dono) */
+            nome: "Taxas CA (Série F) e CT (Série 5) — IGCP",
             url: "https://www.igcp.pt",
           },
           {

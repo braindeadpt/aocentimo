@@ -365,3 +365,258 @@ export function resgateAntecipadoCT(
     anosQueFaltavam: Math.max(0, taxasPorAno.length - decorridos),
   };
 }
+
+/**
+ * Trajectória anual com entregas periódicas mensais (`reforcoMensal`).
+ *
+ * Regras legais de subscrição e limites dos produtos IGCP (Portaria 149-A/2023
+ * e RCM 141-A/2026):
+ * - Depósito e Colchão aceitam qualquer reforço mensal.
+ * - CA Série F exige mínimo de 100 € por subscrição e tem tecto legal de
+ *   50 000 € de capital subscrito acumulado por titular (`maximoEurosCA`).
+ *   O que exceder 50 000 € de entregas (ou reforços abaixo de 100 €) fica
+ *   na conta à ordem sem render juros de CA.
+ * - CT Série 5 exige mínimo de 1 000 € por subscrição e não capitaliza juros:
+ *   reforços mensais abaixo de 1 000 € não geram novas subscrições de CT
+ *   (ficam fora do certificado, à ordem); a partir de 1 000 €/mês, cada
+ *   ano de entregas abre uma tranche que vence juros anuais simples pela
+ *   tabela de taxas a partir do ano seguinte.
+ */
+export function trajetoriaComReforco(opts: {
+  produto: "dep" | "ca" | "ct" | "colchao";
+  capitalInicial: number;
+  reforcoMensal: number;
+  anos: number;
+  taxaImposto: number;
+  inflacaoAnual?: number;
+  taxaDeposito?: number;
+  taxaCA?: number;
+  premiosCA?: PremioPermanencia[];
+  minimoSubscricaoCA?: number;
+  maximoEurosCA?: number;
+  taxasCT?: number[];
+  minimoSubscricaoCT?: number;
+  maximoEurosCT?: number;
+}): PontoPoupanca[] {
+  const {
+    produto,
+    capitalInicial,
+    reforcoMensal,
+    anos,
+    taxaImposto,
+    inflacaoAnual = 0,
+    taxaDeposito = 0,
+    taxaCA = 0,
+    premiosCA = [],
+    minimoSubscricaoCA = 100,
+    maximoEurosCA = 50000,
+    taxasCT = [],
+    minimoSubscricaoCT = 1000,
+    maximoEurosCT = 1000000,
+  } = opts;
+
+  const refMes = Math.max(0, reforcoMensal);
+  const nAnos = Math.max(1, Math.round(anos));
+
+  if (produto === "colchao") {
+    const out: PontoPoupanca[] = [];
+    for (let a = 1; a <= nAnos; a++) {
+      const saldo = capitalInicial + refMes * 12 * a;
+      out.push(ponto(a, saldo, 0, 0, inflacaoAnual));
+    }
+    return out;
+  }
+
+  if (produto === "dep") {
+    if (refMes === 0) {
+      return trajetoriaDeposito(
+        capitalInicial,
+        nAnos,
+        taxaDeposito,
+        taxaImposto,
+        inflacaoAnual
+      );
+    }
+    const out: PontoPoupanca[] = [];
+    let saldo = capitalInicial;
+    for (let a = 1; a <= nAnos; a++) {
+      const entregasAno = refMes * 12;
+      // Entregas mensais distribuídas ao longo do ano rendem em média meio ano no ano de entrada
+      const baseMedia = saldo + entregasAno * 0.5;
+      const juro = baseMedia * taxaDeposito;
+      const imp = juro * taxaImposto;
+      saldo += entregasAno + juro - imp;
+      out.push(ponto(a, saldo, juro, imp, inflacaoAnual));
+    }
+    return out;
+  }
+
+  if (produto === "ca") {
+    const nCA = Math.min(nAnos, 15);
+    const capSub0 = Math.min(capitalInicial, maximoEurosCA);
+    const fora0 = Math.max(0, capitalInicial - capSub0);
+    if (refMes === 0 && fora0 === 0) {
+      return trajetoriaCA(
+        capSub0,
+        nCA,
+        taxaCA,
+        premiosCA,
+        taxaImposto,
+        inflacaoAnual
+      );
+    }
+
+    // Cada tranche trimestral tem o seu próprio relógio de permanência (trimestrescorridos)
+    const tranches: { saldo: number; trimestres: number }[] =
+      capSub0 > 0 ? [{ saldo: capSub0, trimestres: 0 }] : [];
+    let subscritoTotal = capSub0;
+    let foraCA = fora0;
+    const out: PontoPoupanca[] = [];
+
+    for (let a = 1; a <= nCA; a++) {
+      let juroAno = 0;
+      let impAno = 0;
+      for (let q = 1; q <= 4; q++) {
+        // 1. Vencimento trimestral das tranches já subscritas
+        for (const tr of tranches) {
+          tr.trimestres += 1;
+          const anoVida = Math.ceil(tr.trimestres / 4);
+          const taxa = taxaCAPorAno(anoVida, taxaCA, premiosCA);
+          const juro = tr.saldo * (taxa / 4);
+          const imp = juro * taxaImposto;
+          tr.saldo += juro - imp;
+          juroAno += juro;
+          impAno += imp;
+        }
+        // 2. Entregas dos 3 meses do trimestre (se cada entrega ≥ mínimo de subscrição 100 €)
+        if (refMes > 0) {
+          const entregaTrim = refMes * 3;
+          if (refMes >= minimoSubscricaoCA && subscritoTotal < maximoEurosCA) {
+            const cabe = Math.min(entregaTrim, maximoEurosCA - subscritoTotal);
+            if (cabe >= minimoSubscricaoCA) {
+              tranches.push({ saldo: cabe, trimestres: 0 });
+              subscritoTotal += cabe;
+              foraCA += entregaTrim - cabe;
+            } else {
+              foraCA += entregaTrim;
+            }
+          } else {
+            foraCA += entregaTrim;
+          }
+        }
+      }
+      const saldoTotal =
+        tranches.reduce((s, tr) => s + tr.saldo, 0) + foraCA;
+      out.push(ponto(a, saldoTotal, juroAno, impAno, inflacaoAnual));
+    }
+    return out;
+  }
+
+  // produto === "ct" (Certificados do Tesouro Série 5)
+  const prazoCT = taxasCT.length || 10;
+  const nCT = Math.min(nAnos, prazoCT);
+  const capSub0 =
+    capitalInicial >= minimoSubscricaoCT
+      ? Math.min(capitalInicial, maximoEurosCT)
+      : 0;
+  const fora0 = capitalInicial - capSub0;
+
+  if (refMes === 0 && fora0 === 0) {
+    return trajetoriaCT(
+      capSub0,
+      taxasCT.slice(0, nCT),
+      taxaImposto,
+      inflacaoAnual
+    );
+  }
+
+  // Sem capitalização: cada tranche anual subscrita vence juros simples pela sua idade
+  const tranchesCT: { capital: number; anosVida: number }[] =
+    capSub0 > 0 ? [{ capital: capSub0, anosVida: 0 }] : [];
+  let subscritoCT = capSub0;
+  let foraCT = fora0;
+  let jurosLiquidosAcum = 0;
+  const out: PontoPoupanca[] = [];
+
+  for (let a = 1; a <= nCT; a++) {
+    let juroAno = 0;
+    let impAno = 0;
+    for (const tr of tranchesCT) {
+      if (tr.anosVida < taxasCT.length) {
+        const taxa = taxasCT[tr.anosVida];
+        const juro = tr.capital * taxa;
+        const imp = juro * taxaImposto;
+        juroAno += juro;
+        impAno += imp;
+        jurosLiquidosAcum += juro - imp;
+        tr.anosVida += 1;
+      }
+    }
+    if (refMes > 0) {
+      const entregaAno = refMes * 12;
+      // Em CT Série 5 cada subscrição exige no mínimo 1 000 € (1 000 unidades)
+      if (refMes >= minimoSubscricaoCT && subscritoCT < maximoEurosCT) {
+        const cabe = Math.min(entregaAno, maximoEurosCT - subscritoCT);
+        if (cabe >= minimoSubscricaoCT) {
+          tranchesCT.push({ capital: cabe, anosVida: 0 });
+          subscritoCT += cabe;
+          foraCT += entregaAno - cabe;
+        } else {
+          foraCT += entregaAno;
+        }
+      } else {
+        foraCT += entregaAno;
+      }
+    }
+    const saldoTotal = subscritoCT + foraCT + jurosLiquidosAcum;
+    out.push(ponto(a, saldoTotal, juroAno, impAno, inflacaoAnual));
+  }
+  return out;
+}
+
+/**
+ * Resumo final (`ResultadoPoupanca`) a partir de `trajetoriaComReforco`,
+ * contabilizando o total investido (`capitalInicial + reforcoMensal * 12 * anosEf`).
+ */
+export function simularComReforco(
+  opts: Parameters<typeof trajetoriaComReforco>[0]
+): ResultadoPoupanca & { totalEntregas: number; capitalSubscritoProduto: number } {
+  const pts = trajetoriaComReforco(opts);
+  const nEf = pts.length;
+  const refMes = Math.max(0, opts.reforcoMensal);
+  const totalEntregas = opts.capitalInicial + refMes * 12 * nEf;
+  const jurosBrutos = pts.reduce((s, p) => s + p.juro, 0);
+  const imposto = pts.reduce((s, p) => s + p.imposto, 0);
+  const ultimo = pts[pts.length - 1];
+  const liquido = ultimo ? ultimo.saldo : totalEntregas;
+  const real =
+    ultimo ? ultimo.real : totalEntregas / Math.pow(1 + (opts.inflacaoAnual ?? 0), nEf);
+
+  let capitalSubscritoProduto = totalEntregas;
+  if (opts.produto === "ca") {
+    const maxCA = opts.maximoEurosCA ?? 50000;
+    const minCA = opts.minimoSubscricaoCA ?? 100;
+    const cap0 = Math.min(opts.capitalInicial, maxCA);
+    const entregasValidas = refMes >= minCA ? refMes * 12 * nEf : 0;
+    capitalSubscritoProduto = Math.min(maxCA, cap0 + entregasValidas);
+  } else if (opts.produto === "ct") {
+    const maxCT = opts.maximoEurosCT ?? 1000000;
+    const minCT = opts.minimoSubscricaoCT ?? 1000;
+    const cap0 =
+      opts.capitalInicial >= minCT ? Math.min(opts.capitalInicial, maxCT) : 0;
+    const entregasValidas = refMes >= minCT ? refMes * 12 * nEf : 0;
+    capitalSubscritoProduto = Math.min(maxCT, cap0 + entregasValidas);
+  }
+
+  return {
+    capitalFinalBruto: totalEntregas + jurosBrutos,
+    jurosBrutos,
+    imposto,
+    capitalFinalLiquido: liquido,
+    taxaLiquida: totalEntregas > 0 ? liquido / totalEntregas - 1 : 0,
+    valorReal: real,
+    totalEntregas,
+    capitalSubscritoProduto,
+  };
+}
+

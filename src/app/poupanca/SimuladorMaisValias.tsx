@@ -1,9 +1,75 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { simularMaisValia, TipoAtivo } from "@/lib/engines/mais-valias";
-import { simularSalario } from "@/lib/engines/irs";
+import type { EscalaoIRS, RegrasIRS } from "@/lib/engines/irs";
 import { fmtEUR, fmtPct } from "@/lib/format";
+
+export interface RegrasMaisValiasProps {
+  mobiliarios: {
+    taxaAutonoma: number;
+    exclusoesDetencao: { anosMin: number; exclusao: number }[];
+  };
+  cripto: {
+    isencaoDetencaoDias: number;
+    taxa: number;
+  };
+  imoveis: {
+    percentagemEnglobada: number;
+  };
+}
+
+export type TipoAtivo = "mobiliarios" | "cripto" | "imovel";
+
+function impostoPorEscaloesPuro(rc: number, regras: RegrasIRS): number {
+  let restante = rc;
+  let anterior = 0;
+  let total = 0;
+  for (const e of regras.escaloes) {
+    const limite = e.ate ?? Infinity;
+    const fatia = Math.min(restante, limite - anterior);
+    if (fatia <= 0) break;
+    total += fatia * e.taxa;
+    restante -= fatia;
+    anterior = limite;
+  }
+  for (const s of regras.solidariedade) {
+    if (rc > s.de) {
+      const topo = s.ate ?? Infinity;
+      total += (Math.min(rc, topo) - s.de) * s.taxa;
+    }
+  }
+  return total;
+}
+
+function abatimentoME(rb: number, de: number, regras: RegrasIRS): number {
+  const me = regras.minimoExistencia;
+  const vr = me.valorReferencia;
+  const limiteDG = me.limiteDespesasGerais / me.taxa1Escalao;
+  const L = vr - limiteDG / 3.6 + me.limite1Escalao / 3.6;
+
+  let abatimento: number;
+  if (rb <= vr) {
+    abatimento = vr - (de + limiteDG);
+  } else if (rb <= L) {
+    abatimento = vr - 2.6 * (rb - vr) - (de + limiteDG);
+  } else {
+    abatimento = L - me.limite1Escalao - 1.35 * (rb - L) - de;
+  }
+  return Math.max(0, Math.min(abatimento, rb - de));
+}
+
+function coletavelSalarioPuro(
+  brutoMensal: number,
+  regras: RegrasIRS,
+  ssTrab: number
+): number {
+  const rb = brutoMensal * 14;
+  const contrib = rb * ssTrab;
+  const de = Math.max(regras.deducaoEspecificaFixa, contrib);
+  const aplicaME = rb <= regras.minimoExistencia.naoAplicaAcimaPorTitular;
+  const abat = aplicaME ? abatimentoME(rb, de, regras) : 0;
+  return Math.max(0, rb - de - abat);
+}
 
 function parseClamp(
   s: string,
@@ -60,13 +126,21 @@ function CampoNumero({
           onChange(final);
           setTexto(String(final).replace(".", ","));
         }}
-        className="field"
+        className="field min-h-[44px]"
       />
     </div>
   );
 }
 
-export function SimuladorMaisValias() {
+export function SimuladorMaisValias({
+  regrasMV,
+  regrasIrs,
+  ssTrab,
+}: {
+  regrasMV: RegrasMaisValiasProps;
+  regrasIrs: RegrasIRS;
+  ssTrab: number;
+}) {
   const [tipo, setTipo] = useState<TipoAtivo>("mobiliarios");
   const [compra, setCompra] = useState(10000);
   const [venda, setVenda] = useState(15000);
@@ -77,22 +151,77 @@ export function SimuladorMaisValias() {
   const [salario, setSalario] = useState(1500);
 
   const coletavel = useMemo(
-    () => simularSalario([Math.min(100_000, Math.max(0, salario))], 0).coletavelTributado,
-    [salario]
+    () =>
+      coletavelSalarioPuro(
+        Math.min(100_000, Math.max(0, salario)),
+        regrasIrs,
+        ssTrab
+      ),
+    [salario, regrasIrs, ssTrab]
   );
 
-  const r = useMemo(
-    () =>
-      simularMaisValia(venda, compra, {
-        tipo,
-        despesas,
-        anosDetencao: Math.min(50, Math.max(0, anos)),
-        diasDetencao: Math.min(36_500, Math.max(0, dias)),
-        pctReinvestida: Math.min(1, Math.max(0, reinvestida / 100)),
-        coletavelOutros: coletavel,
-      }),
-    [venda, compra, tipo, despesas, anos, dias, reinvestida, coletavel]
-  );
+  const r = useMemo(() => {
+    const anosDet = Math.min(50, Math.max(0, anos));
+    const diasDet = Math.min(36_500, Math.max(0, dias));
+    const pctReinv = Math.min(1, Math.max(0, reinvestida / 100));
+    const mv = Math.max(0, venda - compra - despesas);
+
+    let tributavel = mv;
+    let excluido = 0;
+    let autonomo: number | null = null;
+
+    if (tipo === "cripto") {
+      if (diasDet >= regrasMV.cripto.isencaoDetencaoDias) {
+        tributavel = 0;
+        excluido = 1;
+      } else {
+        autonomo = mv * regrasMV.cripto.taxa;
+      }
+    } else if (tipo === "imovel") {
+      const base = mv * regrasMV.imoveis.percentagemEnglobada;
+      tributavel = base * (1 - Math.min(1, pctReinv));
+      excluido = 1 - tributavel / Math.max(mv, 1e-9);
+    } else {
+      const ex =
+        regrasMV.mobiliarios.exclusoesDetencao
+          .filter((e) => anosDet >= e.anosMin)
+          .at(-1)?.exclusao ?? 0;
+      tributavel = mv * (1 - ex);
+      excluido = ex;
+      autonomo = tributavel * regrasMV.mobiliarios.taxaAutonoma;
+    }
+
+    const englobado =
+      impostoPorEscaloesPuro(coletavel + tributavel, regrasIrs) -
+      impostoPorEscaloesPuro(coletavel, regrasIrs);
+
+    const melhor: "autonomo" | "englobado" | "impovel" =
+      tipo === "imovel"
+        ? "impovel"
+        : autonomo !== null && autonomo <= englobado
+          ? "autonomo"
+          : "englobado";
+
+    return {
+      maisValia: mv,
+      tributavel,
+      impostoAutonomo: autonomo,
+      impostoEnglobado: englobado,
+      melhor,
+      excluido,
+    };
+  }, [
+    venda,
+    compra,
+    tipo,
+    despesas,
+    anos,
+    dias,
+    reinvestida,
+    coletavel,
+    regrasMV,
+    regrasIrs,
+  ]);
 
   const imposto = r.impostoAutonomo !== null && r.melhor === "autonomo"
     ? r.impostoAutonomo
@@ -104,7 +233,7 @@ export function SimuladorMaisValias() {
         <div>
           <label className="kicker block mb-1.5" htmlFor="mv-tipo">O que vendeste</label>
           <select id="mv-tipo" value={tipo} onChange={(e) => setTipo(e.target.value as TipoAtivo)}
-            className="field">
+            className="field min-h-[44px]">
             <option value="mobiliarios">Ações / ETF / fundos</option>
             <option value="cripto">Cripto</option>
             <option value="imovel">Imóvel</option>
@@ -156,12 +285,10 @@ export function SimuladorMaisValias() {
             <dt className="text-ink2">Englobado nos teus escalões</dt>
             <dd className="num">{fmtEUR(r.impostoEnglobado)}</dd>
           </div>
-          <div className="mt-1 border-t-2 border-ink py-2.5">
-            <div className="flex items-baseline justify-between gap-4">
-              <dt className="font-medium">Pagas</dt>
-              <dd className="num-read font-medium text-up">{fmtEUR(imposto)}</dd>
-            </div>
-            <dd className="mt-1 text-rotulo text-muted">
+          <div className="mt-1 border-t-2 border-ink py-2.5 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <dt className="font-medium">Pagas</dt>
+            <dd className="num-read font-medium text-up">{fmtEUR(imposto)}</dd>
+            <dd className="w-full text-rotulo text-muted">
               {r.melhor === "autonomo"
                 ? "a taxa autónoma é a que fica mais barata"
                 : r.melhor === "englobado"
@@ -174,3 +301,5 @@ export function SimuladorMaisValias() {
     </div>
   );
 }
+export type { EscalaoIRS };
+
