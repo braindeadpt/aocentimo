@@ -219,3 +219,49 @@ test("/dados: exibe informação oficial dos Serviços Mínimos Bancários", asy
   });
   await expect(detalheSmb).toBeVisible();
 });
+
+// ————— Vaga 4 / T10: Taxa Mista, Amortização Antecipada e Limites BdP —————
+
+test("/credito: modalidade de taxa mista e fixa, DSTI BdP e amortização antecipada", async ({
+  page,
+}) => {
+  await page.goto("/credito");
+
+  // 1. Selector de modalidade de taxa (variável · mista · fixa)
+  const grupoModalidade = page.getByRole("radiogroup", {
+    name: /modalidade de taxa de juro/i,
+  });
+  await expect(grupoModalidade).toBeVisible();
+
+  await grupoModalidade.getByRole("radio", { name: "Taxa mista" }).click();
+
+  const grupoAnosFixos = page.getByRole("radiogroup", {
+    name: /período inicial de taxa fixa/i,
+  });
+  await expect(grupoAnosFixos).toBeVisible();
+  await grupoAnosFixos.getByRole("radio", { name: "5 anos" }).click();
+
+  await expect(
+    page.getByText(/Capital em dívida ao fim do período fixo/i)
+  ).toBeVisible();
+
+  // 2. Taxa de esforço (DSTI) e maturidade recomendada pelo Banco de Portugal
+  await expect(
+    page.getByText(/Taxa de esforço \(DSTI sobre/i)
+  ).toBeVisible();
+
+  // 3. Simulador de amortização antecipada
+  const seccaoAmort = page.locator("figure", {
+    hasText: /Quanto poupas se amortizares mais cedo/i,
+  });
+  await expect(seccaoAmort).toBeVisible();
+  await expect(
+    seccaoAmort.getByText(/Opção A · Baixar a prestação/i)
+  ).toBeVisible();
+  await expect(
+    seccaoAmort.getByText(/Opção B · Encurtar o prazo/i)
+  ).toBeVisible();
+  await expect(
+    seccaoAmort.getByText(/Comissão máxima legal:/i)
+  ).toBeVisible();
+});

@@ -9,10 +9,11 @@ import { CreditoProvider } from "./CreditoSim";
 import { FrasePrestacao, InstrumentoPrestacao } from "./HeroPrestacao";
 import { MapaAmortizacao } from "./MapaAmortizacao";
 import { SimuladorPrestacao } from "./SimuladorPrestacao";
+import { SimuladorAmortizacao } from "./SimuladorAmortizacao";
 import { SimuladorTaeg } from "./SimuladorTaeg";
 import { SimuladorCartao } from "./SimuladorCartao";
 import { loadFonte, loadFreshness, loadPainel } from "@/lib/data";
-import { FINO, comUnidade, fmtNum, fmtPeriodo } from "@/lib/format";
+import { FINO, comUnidade, fmtNum, fmtPct, fmtPeriodo } from "@/lib/format";
 import { estadoDe, rotulosLeitura } from "@/lib/leitura";
 import { m } from "@/lib/messages";
 import { JsonLd, webApplication } from "@/lib/jsonld";
@@ -20,6 +21,7 @@ import eventos from "@data/fiscal/eventos.json";
 import usura from "@data/fiscal/usura-2026.json";
 import cartoes from "@data/fiscal/cartoes.json";
 import servicosMinimos from "@data/fiscal/servicos-minimos.json";
+import creditoHabitacao from "@data/fiscal/credito-habitacao.json";
 
 export const metadata: Metadata = metaDeRota("/credito");
 
@@ -89,6 +91,7 @@ export default function CreditoPage() {
       <CreditoProvider
         euriborInicial={ultimo12?.v ?? ultimo3?.v ?? null}
         taxasEuribor={taxasEuribor}
+        regrasCredito={creditoHabitacao}
       >
         <Pagina
           pergunta="Quanto vais pagar ao banco, no total?"
@@ -132,6 +135,20 @@ export default function CreditoPage() {
                     mais: m.regua.mais05,
                   }}
                 />
+              </Figure>
+
+              {/* PROPOSTA (revisão do dono) — Amortização Antecipada */}
+              <Figure
+                title="Quanto poupas se amortizares mais cedo"
+                source={
+                  <Source
+                    nome={`Cálculo próprio — sistema francês · ${creditoHabitacao.reembolsoAntecipado.baseLegal}`}
+                    url={creditoHabitacao.fonteUrl}
+                    vigencia={creditoHabitacao.vigencia}
+                  />
+                }
+              >
+                <SimuladorAmortizacao />
               </Figure>
 
               {/* Ouro Escondido #1 — Painel TAN vs. TAEG e MTIC */}
@@ -215,6 +232,97 @@ export default function CreditoPage() {
             <>
               <PaginaDetalhe rotulo="O mapa de amortização — ano a ano, com os números na mesa">
                 <MapaAmortizacao />
+              </PaginaDetalhe>
+
+              {/* PROPOSTA (revisão do dono) — Recomendação Macroprudencial BdP e Reembolso Antecipado */}
+              <PaginaDetalhe rotulo="Limites do Banco de Portugal (LTV, DSTI e prazos) e comissão de amortização antecipada (DL 74-A/2017)">
+                <div className="body-copy max-w-2xl space-y-4">
+                  <p>
+                    {/* PROPOSTA (revisão do dono) */}
+                    <strong>
+                      Comissão de reembolso antecipado (
+                      {creditoHabitacao.reembolsoAntecipado.baseLegal}):
+                    </strong>{" "}
+                    {creditoHabitacao.reembolsoAntecipado.nota}
+                  </p>
+                  <div className="space-y-2">
+                    <p className="font-medium text-ink">
+                      {/* PROPOSTA (revisão do dono) */}
+                      Recomendação Macroprudencial do Banco de Portugal:
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li>
+                        <strong>Maturidade máxima por idade:</strong>{" "}
+                        {comUnidade(
+                          fmtNum(
+                            creditoHabitacao.recomendacaoMacroprudencialBdP
+                              .maturidadeMaxima.ate30Anos,
+                            0
+                          ),
+                          "anos"
+                        )}{" "}
+                        para mutuários com idade ≤{FINO}30 anos;{" "}
+                        {comUnidade(
+                          fmtNum(
+                            creditoHabitacao.recomendacaoMacroprudencialBdP
+                              .maturidadeMaxima.mais30Ate35Anos,
+                            0
+                          ),
+                          "anos"
+                        )}{" "}
+                        entre 31 e 35 anos;{" "}
+                        {comUnidade(
+                          fmtNum(
+                            creditoHabitacao.recomendacaoMacroprudencialBdP
+                              .maturidadeMaxima.mais35Anos,
+                            0
+                          ),
+                          "anos"
+                        )}{" "}
+                        acima de 35 anos.
+                      </li>
+                      <li>
+                        <strong>Taxa de esforço (DSTI):</strong> limite geral
+                        recomendado de{" "}
+                        {fmtPct(
+                          creditoHabitacao.recomendacaoMacroprudencialBdP.dsti
+                            .limiteGeral,
+                          0
+                        )}{" "}
+                        do rendimento líquido mensal, calculado com um choque de
+                        +{fmtNum(
+                          creditoHabitacao.recomendacaoMacroprudencialBdP.dsti
+                            .choqueTaxaJuroPrazosLongos * 100,
+                          1
+                        )}
+                        {FINO}p.p. na taxa de juro para contratos a taxa
+                        variável ou mista com prazo superior a 10 anos (Instrução
+                        BdP n.º 16/2023).
+                      </li>
+                      <li>
+                        <strong>Rácio financiamento/garantia (LTV):</strong>{" "}
+                        máximo de{" "}
+                        {fmtPct(
+                          creditoHabitacao.recomendacaoMacroprudencialBdP.ltv
+                            .hpp,
+                          0
+                        )}{" "}
+                        na habitação própria e permanente e{" "}
+                        {fmtPct(
+                          creditoHabitacao.recomendacaoMacroprudencialBdP.ltv
+                            .outrosFins,
+                          0
+                        )}{" "}
+                        em habitação secundária.
+                      </li>
+                    </ul>
+                  </div>
+                  <Source
+                    nome={creditoHabitacao.fonte.replace(" c/ ", " e ")}
+                    url={creditoHabitacao.fonteUrl}
+                    vigencia={creditoHabitacao.vigencia}
+                  />
+                </div>
               </PaginaDetalhe>
 
               <PaginaDetalhe rotulo="TAN, TAEG, MTIC — os termos que interessam (e a fórmula)">
@@ -345,6 +453,11 @@ export default function CreditoPage() {
                     nome="Taxas de juro de crédito ao consumo e limites de usura — Banco de Portugal"
                     url="https://clientebancario.bportugal.pt/pt-pt/taxas-de-juro-credito-aos-consumidores"
                     serieAte={taegMediaAte ?? undefined}
+                  />
+                  <Source
+                    nome={creditoHabitacao.fonte.replace(" c/ ", " e ")}
+                    url={creditoHabitacao.fonteUrl}
+                    vigencia={creditoHabitacao.vigencia}
                   />
                   <Source
                     nome="Decisões do BCE anotadas no gráfico — data/fiscal/eventos.json, com fonte por evento"

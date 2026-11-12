@@ -225,3 +225,43 @@ test("/impostos — simulador fiscal do automóvel (ISV, IUC, combustível e ise
   await detCarro.locator("summary").click();
   await expect(detCarro).toContainText(/161\/2026/);
 });
+
+test("/casa — compra a dois (umDeDois) e Garantia Pública do Estado (≤ 35 anos, 100 % crédito)", async ({
+  page,
+}) => {
+  await page.goto("/casa", { waitUntil: "domcontentloaded" });
+
+  // 1. Selector de elegibilidade IMT Jovem: Regime geral · Jovem 100 % · Compra a 2 (1 ≤35)
+  const grupoJovem = page.getByRole("radiogroup", {
+    name: /compradores elegíveis para imt jovem/i,
+  });
+  await expect(grupoJovem).toBeVisible();
+
+  // Em 200 000 €: escolher "Compra a 2 (1 ≤35)" aplica 50 % da isenção
+  await grupoJovem.getByRole("radio", { name: /Compra a 2/i }).click();
+  await expect(
+    page.getByText(/Compra em compropriedade/i)
+  ).toBeVisible();
+  await expect(page.getByText(/\(Jovem 1\/2\)/i)).toBeVisible();
+
+  // 2. Garantia Pública do Estado (≤ 35 anos, até 100 % crédito)
+  const swGarantia = page.getByRole("switch", {
+    name: /Garantia Pública do Estado/i,
+  });
+  await swGarantia.scrollIntoViewIfNeeded();
+  await swGarantia.click();
+
+  await expect(
+    page.getByText(/Financiamento a 100.*% com Garantia Pública/i)
+  ).toBeVisible();
+  await expect(
+    page.getByText(/os impostos e registos.*não são financiados/i)
+  ).toBeVisible();
+
+  // 3. Detalhe no nível 3 sobre a Garantia Pública (DL 44/2024)
+  const detGarantia = page.locator("details.pg-detalhe", {
+    hasText: /Garantia Pública do Estado/i,
+  });
+  await detGarantia.locator("summary").click();
+  await expect(detGarantia).toContainText(/44\/2024/);
+});

@@ -6,7 +6,15 @@ import { JuroCapital } from "@/components/JuroCapital";
 import { NumHero } from "@/components/NumHero";
 import { Regua } from "@/components/Regua";
 import { Segmentado } from "@/components/Segmentado";
-import { comUnidade, fmtEUR, fmtEUR0, fmtNum, fmtPct } from "@/lib/format";
+import type { CompradoresJovens } from "@/lib/engines/imt-puro";
+import {
+  FINO,
+  comUnidade,
+  fmtEUR,
+  fmtEUR0,
+  fmtNum,
+  fmtPct,
+} from "@/lib/format";
 import { mascaraFaixaRasgo, sementeDe } from "@/lib/materia";
 import { useArmado } from "@/lib/useArmado";
 import { useCasa } from "./CasaSim";
@@ -17,17 +25,6 @@ import { useCasa } from "./CasaSim";
  * O estado vive no <CasaProvider> — o mesmo preço, a mesma entrada e o
  * mesmo contrato que a resposta do nível 1 lê e que as tabelas do
  * nível 3 confirmam.
- *
- * A escritura é papel (matéria M-01): arestas rasgadas, carimbo,
- * linhas que se imprimem em sequência (talao-linha). A acreção — o
- * preço a somar IMT, Selo e registos — vê-se nas linhas que imprimem
- * uma a uma e na barra que empilha uma camada por custo, ao mesmo
- * ritmo (a camada cresce quando a sua linha imprime).
- *
- * A segunda transformação: os N anos de prestações — a faixa anual
- * divide-se em capital (keep: fica teu, é património) e juro (up: sai
- * para o banco). A divisória troca de peso ao longo do tempo.
- * Interrogável por ano (régua + readout).
  */
 
 const COMP = 320;
@@ -49,18 +46,28 @@ export function SimuladorCasa({
     preco,
     tipo,
     jovem,
+    compradoresJovens,
+    garantiaPublica,
+    garantiaPublicaElegivel,
     entradaEf,
+    entradaMinimaBdP,
+    ltvAtual,
+    ltvMaximoBdP,
     anos,
     euribor,
     spread,
     credito,
     compra,
     prest,
+    prestSemGarantia90,
+    regrasCredito,
     dinheiroEntrada,
     realEscritura,
     setPreco,
     setTipo,
     setJovem,
+    setCompradoresJovens,
+    setGarantiaPublica,
     setEntrada,
     setAnos,
     setEuribor,
@@ -68,7 +75,7 @@ export function SimuladorCasa({
   } = useCasa();
 
   // re-animações por mudança de valores — spans/grupos efémeros, nunca inputs
-  const runEscritura = `${preco}-${tipo}-${jovem}-${credito}`;
+  const runEscritura = `${preco}-${tipo}-${compradoresJovens}-${credito}`;
   const runTempo = `${credito}-${anos}-${euribor}-${spread}`;
 
   // gates de dobra (M-09): nascer à vista = nascer impresso; abaixo
@@ -87,11 +94,28 @@ export function SimuladorCasa({
   const arestaTopo = mascaraFaixaRasgo(COMP, { semente: SEMENTE, ponta: "topo", grosseria: 0.35 });
   const arestaFundo = mascaraFaixaRasgo(COMP, { semente: SEMENTE + 3, ponta: "fundo", grosseria: 0.35 });
 
+  const pctEntradaMinBdP = Math.round((1 - ltvMaximoBdP) * 100);
+  const garantiaValorMax = Math.round(
+    preco * regrasCredito.garantiaPublicaJovem.garantiaMaxPct
+  );
+
+  const presetsEntrada = [
+    {
+      rotulo: `Mín. BdP (${comUnidade(fmtNum(pctEntradaMinBdP, 0), "%")})`,
+      valor: entradaMinimaBdP,
+    },
+    {
+      rotulo: comUnidade("20", "%"),
+      valor: Math.round(preco * 0.2),
+    },
+    ...(garantiaPublicaElegivel
+      ? [{ rotulo: `${comUnidade("0", "€")} (Garantia)`, valor: 0 }]
+      : []),
+  ];
+
   return (
     <div className="grid md:grid-cols-2 gap-10">
       <div className="space-y-5">
-        {/* todo o input numérico é régua (catálogo V4 §5); a finalidade
-            é uma escolha exclusiva — o segmentado do sistema */}
         <Regua
           id="preco"
           rotulo="Preço da casa"
@@ -112,7 +136,7 @@ export function SimuladorCasa({
             { id: "secundaria", rotulo: "Secundária" },
           ]}
         />
-        <div>
+        <div className="space-y-3">
           {/* desactivado fora da HPP — a razão fica acessível no
               próprio interruptor (title + nota visível) */}
           <Interruptor
@@ -123,7 +147,38 @@ export function SimuladorCasa({
             rotulo="IMT Jovem (≤35 anos, 1.ª casa)"
             className="text-corpo-sm"
           />
+
+          {/* PROPOSTA (revisão do dono) — Selector de compra individual vs compra a dois (art. 9.º CIMT) */}
+          {tipo === "hpp" && (
+            <div>
+              <label className="kicker block mb-1.5">
+                Compradores elegíveis para IMT Jovem
+              </label>
+              <Segmentado
+                rotulo="Compradores elegíveis para IMT Jovem"
+                valor={compradoresJovens}
+                onChange={(id) =>
+                  setCompradoresJovens(id as CompradoresJovens)
+                }
+                opcoes={[
+                  { id: "nenhum", rotulo: "Regime geral" },
+                  { id: "todos", rotulo: `Jovem 100${FINO}%` },
+                  { id: "umDeDois", rotulo: "Compra a 2 (1 ≤35)" },
+                ]}
+              />
+              {compradoresJovens === "umDeDois" && (
+                <p className="footnote mt-1.5">
+                  {/* PROPOSTA (revisão do dono) */}
+                  Compra em compropriedade (50{FINO}% / 50{FINO}%) onde apenas 1
+                  dos 2 compradores cumpre os requisitos do IMT Jovem: metade
+                  beneficia da isenção de IMT e Selo de compra e a outra metade
+                  paga pela tabela geral HPP (art. 9.º do CIMT).
+                </p>
+              )}
+            </div>
+          )}
         </div>
+
         <Regua
           id="entrada"
           rotulo="Entrada"
@@ -134,9 +189,85 @@ export function SimuladorCasa({
           passo={1000}
           unidade="€"
           formato={(v) => fmtNum(v, 0)}
+          presets={presetsEntrada}
           limites={{ max: "não podes entrar com mais do que a casa" }}
-          descricao={`${fmtPct(preco > 0 ? entradaEf / preco : 0, 0)} do preço · crédito de ${fmtEUR0(credito)}`}
+          descricao={`${fmtPct(preco > 0 ? entradaEf / preco : 0, 0)} do preço · LTV ${fmtPct(ltvAtual, 0)} (máx. BdP ${fmtPct(ltvMaximoBdP, 0)}) · crédito de ${fmtEUR0(credito)}`}
         />
+
+        {/* PROPOSTA (revisão do dono) — Garantia Pública do Estado (DL 44/2024) */}
+        <div className="space-y-2">
+          <Interruptor
+            ligado={garantiaPublica}
+            onChange={setGarantiaPublica}
+            desativado={!garantiaPublicaElegivel}
+            razao={
+              tipo !== "hpp"
+                ? "só se aplica a 1.ª habitação própria e permanente"
+                : `só se aplica a imóveis até ${fmtEUR0(regrasCredito.garantiaPublicaJovem.precoMax)}`
+            }
+            rotulo={`Garantia Pública do Estado (≤${FINO}${regrasCredito.garantiaPublicaJovem.idadeMax} anos, até 100${FINO}% crédito)`}
+            className="text-corpo-sm"
+          />
+
+          {garantiaPublica && (
+            <div
+              role="status"
+              className="border border-line bg-panel p-3.5 text-corpo-sm text-ink2 space-y-1.5"
+            >
+              <p className="font-medium text-ink">
+                {/* PROPOSTA (revisão do dono) */}
+                Financiamento a 100{FINO}% com Garantia Pública até{" "}
+                {fmtPct(regrasCredito.garantiaPublicaJovem.garantiaMaxPct, 0)} (
+                {fmtEUR0(garantiaValorMax)})
+              </p>
+              <p>
+                {/* PROPOSTA (revisão do dono) */}
+                O Estado garante até{" "}
+                {fmtPct(regrasCredito.garantiaPublicaJovem.garantiaMaxPct, 0)}{" "}
+                do valor de transação (DL n.º 44/2024), permitindo {fmtEUR0(0)}{" "}
+                de entrada para o preço.{" "}
+                <strong>
+                  Mas os impostos e registos ({fmtEUR0(compra.totalCustos)}) não
+                  são financiados
+                </strong>{" "}
+                e saem do teu bolso no dia da escritura.
+              </p>
+              {prest && prestSemGarantia90 && (
+                <p className="text-up">
+                  {/* PROPOSTA (revisão do dono) */}
+                  Pedir 100{FINO}% em vez de 90{FINO}% agrava a prestação em{" "}
+                  <strong>
+                    +{fmtEUR(prest.prestacao - prestSemGarantia90.prestacao)}
+                    /mês
+                  </strong>{" "}
+                  e soma{" "}
+                  <strong>
+                    +{fmtEUR0(prest.jurosTotais - prestSemGarantia90.jurosTotais)}
+                  </strong>{" "}
+                  em juros ao longo de {comUnidade(fmtNum(anos, 0), "anos")}.
+                </p>
+              )}
+            </div>
+          )}
+
+          {!garantiaPublica && ltvAtual > ltvMaximoBdP + 0.001 && (
+            <div
+              role="status"
+              className="border border-up/50 bg-panel p-3.5 text-corpo-sm text-ink2"
+            >
+              {/* PROPOSTA (revisão do dono) */}
+              Sem Garantia Pública Jovem, o Banco de Portugal recomenda um
+              financiamento (LTV) máximo de{" "}
+              <strong>{fmtPct(ltvMaximoBdP, 0)}</strong> — o que exige pelo
+              menos{" "}
+              <strong>
+                {fmtEUR0(entradaMinimaBdP)} ({fmtPct(1 - ltvMaximoBdP, 0)})
+              </strong>{" "}
+              de capitais próprios para a entrada.
+            </div>
+          )}
+        </div>
+
         <Regua
           id="prazo"
           rotulo="Prazo"
@@ -150,12 +281,21 @@ export function SimuladorCasa({
         />
         {euribor === null ? (
           <div>
-            <label className="kicker block mb-1.5" htmlFor="eur">Euribor (%)</label>
-            <input id="eur" type="number" step={0.1} value=""
+            <label className="kicker block mb-1.5" htmlFor="eur">
+              Euribor (%)
+            </label>
+            <input
+              id="eur"
+              type="number"
+              step={0.1}
+              value=""
               onChange={(e) =>
-                setEuribor(e.target.value === "" ? null : Number(e.target.value))
+                setEuribor(
+                  e.target.value === "" ? null : Number(e.target.value)
+                )
               }
-              className="field" />
+              className="field"
+            />
           </div>
         ) : (
           <Regua
@@ -196,7 +336,10 @@ export function SimuladorCasa({
       </div>
 
       {/* resultado pegajoso — acompanha o scroll dos inputs */}
-      <div className="space-y-8 self-start md:sticky md:top-6" aria-live="polite">
+      <div
+        className="space-y-8 self-start md:sticky md:top-6"
+        aria-live="polite"
+      >
         {/* a escritura — papel, linhas que se imprimem, camada a camada */}
         <div className="talao-wrap" ref={talaoRef}>
           <div
@@ -216,16 +359,32 @@ export function SimuladorCasa({
                   {camadas.map((c, i) => (
                     <div
                       key={c.nome}
-                      className={talaoArm("talao-linha") + " talao-sep flex items-baseline justify-between gap-3 py-1.5"}
+                      className={
+                        talaoArm("talao-linha") +
+                        " talao-sep flex items-baseline justify-between gap-3 py-1.5"
+                      }
                       style={{ "--linha": i } as React.CSSProperties}
                     >
                       <dt className="talao-dim flex items-center gap-2">
-                        <span className="sw" style={{ background: c.cor }} aria-hidden />
+                        <span
+                          className="sw"
+                          style={{ background: c.cor }}
+                          aria-hidden
+                        />
                         {c.nome}
-                        {c.nome === "IMT" && jovem && tipo === "hpp" && " (Jovem)"}
+                        {c.nome === "IMT" &&
+                          jovem &&
+                          tipo === "hpp" &&
+                          (compradoresJovens === "umDeDois"
+                            ? " (Jovem 1/2)"
+                            : " (Jovem)")}
                       </dt>
                       <dd className="num">
-                        {i > 0 && <span aria-hidden className="talao-dim">+ </span>}
+                        {i > 0 && (
+                          <span aria-hidden className="talao-dim">
+                            +{" "}
+                          </span>
+                        )}
                         {fmtEUR(c.v)}
                       </dd>
                     </div>
@@ -249,20 +408,30 @@ export function SimuladorCasa({
                 ))}
               </div>
               <div
-                className={talaoArm("talao-linha") + " talao-cut mt-1 flex items-baseline justify-between gap-4 py-2.5"}
+                className={
+                  talaoArm("talao-linha") +
+                  " talao-cut mt-1 flex items-baseline justify-between gap-4 py-2.5"
+                }
                 style={{ "--linha": camadas.length } as React.CSSProperties}
                 key={`cut-${runEscritura}`}
               >
                 <span className="talao-total">Custa mesmo</span>
-                <span className="text-display-sm font-bold">{fmtEUR0(realEscritura)}</span>
+                <span className="text-display-sm font-bold">
+                  {fmtEUR0(realEscritura)}
+                </span>
               </div>
               <p
-                className={talaoArm("talao-linha") + " talao-note talao-dim"}
-                style={{ "--linha": camadas.length + 1 } as React.CSSProperties}
+                className={
+                  talaoArm("talao-linha") + " talao-note talao-dim"
+                }
+                style={
+                  { "--linha": camadas.length + 1 } as React.CSSProperties
+                }
                 key={`note-${runEscritura}`}
               >
                 à entrada saem-te {fmtEUR0(dinheiroEntrada)} do bolso —{" "}
-                {fmtEUR0(entradaEf)} de entrada + {fmtEUR0(compra.totalCustos)} de custos
+                {fmtEUR0(entradaEf)} de entrada + {fmtEUR0(compra.totalCustos)}{" "}
+                de custos
               </p>
             </div>
           </div>
@@ -278,15 +447,23 @@ export function SimuladorCasa({
             <span className="kicker">Todos os meses</span>
           </div>
           <div className="px-5 py-5">
-            <NumHero valor={prest ? fmtEUR(prest.prestacao) : "—"} sufixo={prest ? "/mês" : undefined} animar={prest?.prestacao} />
+            <NumHero
+              valor={prest ? fmtEUR(prest.prestacao) : "—"}
+              sufixo={prest ? "/mês" : undefined}
+              animar={prest?.prestacao}
+            />
             <dl className="mt-4 text-corpo-sm space-y-2">
               <div className="flex justify-between border-b border-line/60 pb-1.5">
                 <dt className="text-ink2">TAN (Euribor + spread)</dt>
                 <dd className="num">{prest ? fmtPct(prest.tan) : "—"}</dd>
               </div>
               <div className="flex justify-between border-b border-line/60 pb-1.5">
-                <dt className="text-ink2">Juros totais em {comUnidade(fmtNum(anos, 0), "anos")}</dt>
-                <dd className="num">{prest ? fmtEUR0(prest.jurosTotais) : "—"}</dd>
+                <dt className="text-ink2">
+                  Juros totais em {comUnidade(fmtNum(anos, 0), "anos")}
+                </dt>
+                <dd className="num">
+                  {prest ? fmtEUR0(prest.jurosTotais) : "—"}
+                </dd>
               </div>
               <div className="flex justify-between pb-1.5">
                 <dt className="text-ink2">A casa custa, no fim</dt>

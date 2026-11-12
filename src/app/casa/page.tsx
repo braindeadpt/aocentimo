@@ -10,7 +10,7 @@ import { FraseEscritura, InstrumentoEscritura } from "./HeroEscritura";
 import { SimuladorCasa } from "./SimuladorCasa";
 import { SimuladorImi } from "./SimuladorImi";
 import { loadFonte, loadDerivado, loadFreshness } from "@/lib/data";
-import { fmtEUR, fmtEUR0, fmtNum, fmtPeriodo, fmtPct, MENOS } from "@/lib/format";
+import { FINO, fmtEUR, fmtEUR0, fmtNum, fmtPeriodo, fmtPct, MENOS } from "@/lib/format";
 import {
   anotacaoDe,
   estadoDe,
@@ -22,7 +22,9 @@ import {
 import { m, t } from "@/lib/messages";
 import imt from "@data/fiscal/imt-2026.json";
 import imiDados from "@data/fiscal/imi-2026.json";
+import creditoHabitacao from "@data/fiscal/credito-habitacao.json";
 import type { RegrasImi } from "@/lib/engines/imi-puro";
+import type { RegrasImt } from "@/lib/engines/imt-puro";
 import { JsonLd, webApplication } from "@/lib/jsonld";
 
 export const metadata: Metadata = metaDeRota("/casa");
@@ -145,7 +147,11 @@ export default function CasaPage() {
       />
       {/* a compra é uma só — a resposta, a escritura e as tabelas
           partilham preço, entrada e contrato via provider */}
-      <CasaProvider euriborInicial={ultimo?.v ?? null}>
+      <CasaProvider
+        euriborInicial={ultimo?.v ?? null}
+        regrasImt={imt as unknown as RegrasImt}
+        regrasCredito={creditoHabitacao}
+      >
         <Pagina
           pergunta="Quanto custa mesmo comprar esta casa?"
           edificio={{ href: "/#casa", titulo: m.bairro.edificios.casa.titulo }}
@@ -248,7 +254,7 @@ export default function CasaPage() {
                 />
               </PaginaDetalhe>
 
-              <PaginaDetalhe rotulo="IMT Jovem — a isenção dos ≤35 anos">
+              <PaginaDetalhe rotulo="IMT Jovem — a isenção dos ≤35 anos e a compra a dois">
                 <div className="body-copy max-w-2xl space-y-3">
                   <p>{imt.jovem.nota}</p>
                   <p>
@@ -256,6 +262,55 @@ export default function CasaPage() {
                     mesma proporção — nunca o IS do crédito. Ilhas e imóveis
                     para arrendamento têm regras próprias.
                   </p>
+                  <p>
+                    {/* PROPOSTA (revisão do dono) */}
+                    <strong>Compra a dois (quotas-partes, art. 9.º do CIMT):</strong>{" "}
+                    quando um imóvel é adquirido em compropriedade (50{FINO}% / 50{FINO}%)
+                    e apenas um dos compradores cumpre os requisitos do IMT Jovem
+                    (idade ≤{FINO}{imt.jovem.idadeMax} anos e não ser titular de
+                    outro imóvel habitacional), a isenção aplica-se à sua quota-parte
+                    (50{FINO}% do imposto apurado pela tabela Jovem) e o outro
+                    comprador liquida 50{FINO}% do imposto apurado pela tabela
+                    geral de habitação própria e permanente.
+                  </p>
+                </div>
+              </PaginaDetalhe>
+
+              {/* PROPOSTA (revisão do dono) — Garantia Pública Jovem */}
+              <PaginaDetalhe rotulo={`Garantia Pública do Estado (≤${FINO}${creditoHabitacao.garantiaPublicaJovem.idadeMax} anos, até ${fmtEUR0(creditoHabitacao.garantiaPublicaJovem.precoMax)})`}>
+                <div className="body-copy max-w-2xl space-y-3">
+                  <p>
+                    {/* PROPOSTA (revisão do dono) */}
+                    Ao abrigo do{" "}
+                    <strong>
+                      {creditoHabitacao.garantiaPublicaJovem.baseLegal}
+                    </strong>
+                    , o Estado pode prestar garantia pessoal até{" "}
+                    {fmtPct(
+                      creditoHabitacao.garantiaPublicaJovem.garantiaMaxPct,
+                      0
+                    )}{" "}
+                    do valor da transação para viabilizar financiamento bancário
+                    até{" "}
+                    {fmtPct(
+                      creditoHabitacao.garantiaPublicaJovem.financiamentoMaxPct,
+                      0
+                    )}{" "}
+                    do preço de compra (dispensando os 10{FINO}% de entrada
+                    exigidos pelo limite de LTV do Banco de Portugal).
+                  </p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    {creditoHabitacao.garantiaPublicaJovem.condicoes.map(
+                      (c, idx) => (
+                        <li key={idx}>{c}</li>
+                      )
+                    )}
+                  </ul>
+                  <Source
+                    nome={creditoHabitacao.garantiaPublicaJovem.baseLegal}
+                    url={creditoHabitacao.fonteUrl}
+                    vigencia={creditoHabitacao.vigencia}
+                  />
                 </div>
               </PaginaDetalhe>
 
@@ -332,7 +387,7 @@ export default function CasaPage() {
                   </div>
 
                   <div className="body-copy max-w-2xl space-y-3">
-                    <p>{imiDados.nota}</p>
+                    <p>{imiDados.nota.replace(/(\d)\s+(€|%)/g, `$1${FINO}$2`)}</p>
                     <p>
                       <strong>IMI Familiar ({imiDados.imiFamiliar.base}):</strong>{" "}
                       dedução fixa à coleta de{" "}
@@ -343,14 +398,14 @@ export default function CasaPage() {
                         )
                         .join(", ")}
                       , em habitação própria e permanente nos municípios que o
-                      deliberem. {imiDados.imiFamiliar.nota}
+                      deliberem. {imiDados.imiFamiliar.nota.replace(/(\d)\s+(€|%)/g, `$1${FINO}$2`)}
                     </p>
                     <p>
                       <strong>Regime de prestações ({imiDados.prestacoes.base}):</strong>{" "}
                       até {fmtEUR0(100)} paga-se numa prestação única em maio; de{" "}
                       {fmtEUR(100.01)} a {fmtEUR0(500)} em duas prestações (maio e
                       novembro); acima de {fmtEUR0(500)} em três prestações (maio,
-                      agosto e novembro). {imiDados.prestacoes.atraso}
+                      agosto e novembro). {imiDados.prestacoes.atraso.replace(/(\d)\s+(€|%)/g, `$1${FINO}$2`)}
                     </p>
                   </div>
                 </div>
@@ -372,6 +427,11 @@ export default function CasaPage() {
                     nome={imiDados.porto.fonte}
                     url={imiDados.porto.fonteUrl}
                     vigencia={imiDados.vigencia}
+                  />
+                  <Source
+                    nome={creditoHabitacao.fonte.replace(" c/ ", " e ")}
+                    url={creditoHabitacao.fonteUrl}
+                    vigencia={creditoHabitacao.vigencia}
                   />
                   <Source
                     nome="Euribor 3M, média mensal — Banco de Portugal, BPstat"

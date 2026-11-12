@@ -20,7 +20,8 @@ export function InstrumentoEscritura({
   estado: EstadoCartao;
   estadoRotulo: string;
 }) {
-  const { preco, compra, dinheiroEntrada, jovem, tipo } = useCasa();
+  const { preco, compra, dinheiroEntrada, jovem, compradoresJovens, tipo } =
+    useCasa();
   return (
     <Cartao
       icone="casa"
@@ -49,7 +50,11 @@ export function InstrumentoEscritura({
       <p className="footnote mt-2">
         saem-te do bolso no dia da escritura — a casa é de{" "}
         {fmtEUR0(preco)} e o banco empresta o resto
-        {jovem && tipo === "hpp" ? " · com IMT Jovem" : ""}
+        {jovem && tipo === "hpp"
+          ? compradoresJovens === "umDeDois"
+            ? " · com IMT Jovem (1 de 2)"
+            : " · com IMT Jovem"
+          : ""}
       </p>
     </Cartao>
   );
