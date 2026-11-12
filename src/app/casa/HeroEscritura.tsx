@@ -20,12 +20,19 @@ export function InstrumentoEscritura({
   estado: EstadoCartao;
   estadoRotulo: string;
 }) {
-  const { preco, compra, dinheiroEntrada, jovem, compradoresJovens, tipo } =
+  const { preco, compra, dinheiroEntrada, jovem, compradoresJovens, tipo, urlPartilha } =
     useCasa();
   return (
     <Cartao
       icone="casa"
       breadcrumb={`O BANCO / COMPRAR CASA · IMT ${anoImt} + REGISTOS`}
+      acoes={[
+        {
+          copiar: urlPartilha,
+          rotulo: "Copiar ligação",
+          ariaLabel: "Copiar ligação desta simulação",
+        },
+      ]}
       meta={[
         `IMT ${fmtEUR0(compra.imt)}`,
         `selo ${fmtEUR0(compra.isAquisicao + compra.isCredito)}`,

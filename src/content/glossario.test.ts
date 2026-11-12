@@ -5,6 +5,12 @@ import {
   relacionados,
   termoPorSlug,
 } from "./glossario";
+import { DEMOS } from "./demos";
+import {
+  FICHA,
+  FRASE,
+  GRUPO_DE,
+} from "../app/aprender/conteudo";
 
 describe("glossario", () => {
   it("tem slugs únicos em todos os termos", () => {
@@ -57,5 +63,47 @@ describe("glossario", () => {
     expect(relacionados("retencao-capitais").map((t) => t.slug)).toEqual(
       expect.arrayContaining(["ppr", "englobamento"])
     );
+  });
+
+  it("tem 42 termos no total com todos os 19 novos termos essenciais presentes", () => {
+    expect(GLOSSARIO.length).toBe(42);
+    const slugs = GLOSSARIO.map((t) => t.slug);
+    expect(slugs).toEqual(
+      expect.arrayContaining([
+        "homologo",
+        "pib",
+        "populacao-ativa",
+        "indice-precos-habitacao",
+        "ias",
+        "rendimento-coletavel",
+        "irs-jovem",
+        "duodecimos",
+        "subsidio-alimentacao",
+        "adse",
+        "imt",
+        "imposto-selo",
+        "imi",
+        "isv-iuc",
+        "taxa-mista",
+        "taxa-esforco",
+        "mais-valias",
+        "servicos-minimos-bancarios",
+        "fundo-garantia-depositos",
+      ])
+    );
+  });
+
+  it("cada termo do glossário tem correspondência em GRUPO_DE, FRASE e FICHA", () => {
+    for (const t of GLOSSARIO) {
+      expect(GRUPO_DE[t.slug], `Falta GRUPO_DE para ${t.slug}`).toBeDefined();
+      expect(FRASE[t.slug], `Falta FRASE para ${t.slug}`).toBeDefined();
+      expect(FICHA[t.slug], `Falta FICHA para ${t.slug}`).toBeDefined();
+    }
+  });
+
+  it("demos interativas existem para homologo, taxa-esforco e duodecimos", () => {
+    expect(DEMOS["homologo"]).toBeDefined();
+    expect(DEMOS["taxa-esforco"]).toBeDefined();
+    expect(DEMOS["duodecimos"]).toBeDefined();
   });
 });

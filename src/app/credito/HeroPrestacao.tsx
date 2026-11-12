@@ -33,7 +33,7 @@ export function InstrumentoPrestacao({
   estado: EstadoCartao;
   estadoRotulo: string;
 }) {
-  const { anos, euribor, choque, sim, prazoEuribor, taxasEuribor } = useCredito();
+  const { anos, euribor, choque, sim, prazoEuribor, taxasEuribor, urlPartilha } = useCredito();
   const ate = taxasEuribor[prazoEuribor]?.serieAte ?? euriborAte;
   const rotuloPrazo = prazoEuribor.toUpperCase();
 
@@ -41,6 +41,13 @@ export function InstrumentoPrestacao({
     <Cartao
       icone="credito"
       breadcrumb="O BANCO / CRÉDITO HABITAÇÃO · CÁLCULO PRÓPRIO"
+      acoes={[
+        {
+          copiar: urlPartilha,
+          rotulo: "Copiar ligação",
+          ariaLabel: "Copiar ligação desta simulação",
+        },
+      ]}
       meta={[
         sim ? `TAN ${fmtPct(sim.tan)}` : "TAN —",
         ...(euribor !== null

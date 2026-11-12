@@ -109,6 +109,7 @@ export default function AprenderPage() {
                    promete um exemplo por termo e o mapa editorial
                    cobre os que o glossário ainda não tem */
                 exemplo: exemploDe(t),
+                sinonimos: t.sinonimos,
               })),
             }))}
             textos={{

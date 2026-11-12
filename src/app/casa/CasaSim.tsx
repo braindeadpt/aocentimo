@@ -20,6 +20,14 @@ import {
   type RegrasCreditoHabitacao,
   type ResultadoPrestacao,
 } from "@/lib/engines/prestacao";
+import {
+  construirUrl,
+  lerBool,
+  lerEnum,
+  lerFloat,
+  lerInt,
+  useLeituraUrl,
+} from "@/lib/url-state";
 
 /**
  * A compra partilhada pelos três níveis de /casa (V4): o nível 1 lê o
@@ -70,6 +78,8 @@ interface EstadoCasa {
   setAnos: (v: number) => void;
   setEuribor: (v: number | null) => void;
   setSpread: (v: number) => void;
+  /** URL limpo com o estado partilhável para o <BotaoCopiar> */
+  urlPartilha: string;
 }
 
 const Ctx = createContext<EstadoCasa | null>(null);
@@ -99,6 +109,31 @@ export function CasaProvider({
     euriborInicial !== null ? Math.round(euriborInicial * 100) / 100 : null
   );
   const [spread, setSpread] = useState(1.0);
+
+  // Leitura segura do estado por URL (Pilar 1 — T12)
+  useLeituraUrl((sp) => {
+    const p = lerInt(sp.get("preco"), 20000, 3000000);
+    if (p !== undefined) setPreco(p);
+    const ent = lerInt(sp.get("entrada"), 0, 3000000);
+    if (ent !== undefined) setEntradaState(ent);
+    const tp = lerEnum(sp.get("tipo"), ["hpp", "secundaria"] as const);
+    if (tp) setTipo(tp);
+    const cj = lerEnum(sp.get("jovens"), ["nenhum", "todos", "umDeDois"] as const);
+    if (cj) {
+      setCompradoresJovensState(cj);
+    } else if (sp.has("jovem")) {
+      setCompradoresJovensState(lerBool(sp.get("jovem")) ? "todos" : "nenhum");
+    }
+    if (sp.has("garantia")) {
+      setGarantiaPublicaState(lerBool(sp.get("garantia")));
+    }
+    const a = lerInt(sp.get("anos"), 5, 40);
+    if (a !== undefined) setAnos(a);
+    const s = lerFloat(sp.get("spread"), 0, 5);
+    if (s !== undefined) setSpread(s);
+    const e = lerFloat(sp.get("euribor"), -1, 10);
+    if (e !== undefined) setEuribor(e);
+  });
 
   const jovem = compradoresJovens !== "nenhum";
 
@@ -174,6 +209,30 @@ export function CasaProvider({
     [preco, entradaMinimaBdP, anos, euribor, spread]
   );
 
+  const urlPartilha = useMemo(() => {
+    return construirUrl(
+      "/casa",
+      {
+        preco,
+        entrada,
+        tipo,
+        jovens: compradoresJovens !== "nenhum" ? compradoresJovens : undefined,
+        garantia: garantiaPublica,
+        anos,
+        spread,
+      },
+      {
+        preco: 200000,
+        entrada: 20000,
+        tipo: "hpp",
+        jovens: undefined,
+        garantia: false,
+        anos: 30,
+        spread: 1.0,
+      }
+    );
+  }, [preco, entrada, tipo, compradoresJovens, garantiaPublica, anos, spread]);
+
   const valor = useMemo<EstadoCasa>(
     () => ({
       preco,
@@ -207,6 +266,7 @@ export function CasaProvider({
       setAnos,
       setEuribor,
       setSpread,
+      urlPartilha,
     }),
     [
       preco,
@@ -233,6 +293,7 @@ export function CasaProvider({
       setCompradoresJovens,
       setGarantiaPublica,
       setEntrada,
+      urlPartilha,
     ]
   );
 

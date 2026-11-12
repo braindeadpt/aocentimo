@@ -161,7 +161,7 @@ test.describe("P4 · SEO", () => {
     expect(titulos.size).toBe(ROTAS.length);
   });
 
-  test("os 23 termos do glossário têm canonical e cartão próprios", async ({
+  test("os termos do glossário têm canonical e cartão próprios", async ({
     request,
   }) => {
     const titulos = new Set<string>();
@@ -200,7 +200,7 @@ test.describe("P4 · SEO", () => {
     expect(corpo.readUInt32BE(20)).toBe(630);
   });
 
-  test("o sitemap tem as 15 rotas e os 23 termos, e cada URL existe", async ({
+  test("o sitemap tem as 15 rotas e os termos do glossário, e cada URL existe", async ({
     request,
   }) => {
     const xml = await (await request.get("/sitemap.xml")).text();

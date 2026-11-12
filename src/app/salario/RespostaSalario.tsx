@@ -49,6 +49,13 @@ export function RespostaSalario() {
     <Cartao
       icone="salario"
       breadcrumb={`O QUE GANHAS / ${s.tipoRendimento === "pensao" ? "PENSÃO CAT. H" : "SALÁRIO"} · MOTORES ${s.ano}`}
+      acoes={[
+        {
+          copiar: s.urlPartilha,
+          rotulo: "Copiar ligação",
+          ariaLabel: "Copiar ligação desta simulação",
+        },
+      ]}
       controlos={
         <Regua
           id="bruto"

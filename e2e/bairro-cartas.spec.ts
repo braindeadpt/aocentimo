@@ -38,7 +38,7 @@ const CARTAS_ESPERADAS = [
     quem: "Diana · Professora",
     cenaId: "financas",
     cenaRotulo: "Ver os escalões do IRS",
-    rotaHref: "/salario",
+    rotaHref: "/salario?adse=1",
     rotaRotulo: "Simular com ADSE →",
   },
   {
@@ -65,7 +65,7 @@ const CARTAS_ESPERADAS = [
     quem: "Dona Arminda · Reformada",
     cenaId: "correios",
     cenaRotulo: "Entrar nos Correios",
-    rotaHref: "/salario#pensao",
+    rotaHref: "/salario?modo=pensao#pensao",
     rotaRotulo: "Simular a pensão →",
   },
   {
@@ -74,7 +74,7 @@ const CARTAS_ESPERADAS = [
     quem: "Gonçalo · Estudante, 16 anos",
     cenaId: "escola",
     cenaRotulo: "Entrar na Escola",
-    rotaHref: "/irs",
+    rotaHref: "/irs?jovem=1",
     rotaRotulo: "Ver o IRS Jovem →",
   },
   {

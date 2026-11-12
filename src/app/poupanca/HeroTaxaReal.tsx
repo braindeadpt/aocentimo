@@ -18,12 +18,19 @@ export function InstrumentoTaxaReal({
   estado: EstadoCartao;
   estadoRotulo: string;
 }) {
-  const { melhor, produtos, anos } = usePoupanca();
+  const { melhor, produtos, anos, urlPartilha } = usePoupanca();
 
   return (
     <Cartao
       icone="poupanca"
       breadcrumb="O BANCO / POUPANÇA · TAXA REAL LÍQUIDA"
+      acoes={[
+        {
+          copiar: urlPartilha,
+          rotulo: "Copiar ligação",
+          ariaLabel: "Copiar ligação desta simulação",
+        },
+      ]}
       meta={produtos.map(
         (p) => `${p.curto} ${comUnidade(fmtNum(p.taxaReal * 100, 1), "%")}`
       )}

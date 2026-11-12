@@ -17,6 +17,14 @@ import {
   type RegrasCreditoHabitacao,
   type ResultadoPrestacaoMista,
 } from "@/lib/engines/prestacao";
+import {
+  construirUrl,
+  lerBool,
+  lerEnum,
+  lerFloat,
+  lerInt,
+  useLeituraUrl,
+} from "@/lib/url-state";
 
 export type PrazoEuribor = "3m" | "6m" | "12m";
 export type AnosFixosMista = 2 | 5 | 10;
@@ -82,6 +90,8 @@ interface EstadoCredito {
   setFaixaEtaria: (f: FaixaEtariaMutuario) => void;
   setChoque: (v: boolean) => void;
   setPrazoEuribor: (p: PrazoEuribor) => void;
+  /** URL limpo com o estado partilhável para o <BotaoCopiar> */
+  urlPartilha: string;
 }
 
 const Ctx = createContext<EstadoCredito | null>(null);
@@ -136,6 +146,31 @@ export function CreditoProvider({
     },
     [taxasEuribor]
   );
+
+  // Leitura segura do estado por URL (Pilar 1 — T12)
+  useLeituraUrl((sp) => {
+    const cap = lerInt(sp.get("capital"), 10000, 1500000);
+    if (cap !== undefined) setCapital(cap);
+    const a = lerInt(sp.get("anos"), 5, 40);
+    if (a !== undefined) setAnos(a);
+    const s = lerFloat(sp.get("spread"), 0, 5);
+    if (s !== undefined) setSpread(s);
+    const reg = lerEnum(sp.get("regime"), ["variavel", "mista", "fixa"] as const);
+    if (reg) setRegimeTaxa(reg);
+    const af = lerInt(sp.get("anosFixos"), 2, 10);
+    if (af === 2 || af === 5 || af === 10) setAnosFixos(af);
+    const tf = lerFloat(sp.get("tanFixa"), 0, 15);
+    if (tf !== undefined) setTanFixa(tf);
+    const rend = lerInt(sp.get("rendimento"), 500, 30000);
+    if (rend !== undefined) setRendimentoLiquido(rend);
+    const fe = lerEnum(sp.get("faixa"), ["ate30", "31a35", "mais35"] as const);
+    if (fe) setFaixaEtaria(fe);
+    const pz = lerEnum(sp.get("prazo"), ["3m", "6m", "12m"] as const);
+    if (pz) setPrazoEuribor(pz);
+    if (sp.has("choque")) setChoque(lerBool(sp.get("choque")));
+    const e = lerFloat(sp.get("euribor"), -1, 10);
+    if (e !== undefined) setEuribor(e);
+  });
 
   const eurEf = euribor === null ? null : euribor + (choque ? 1 : 0);
 
@@ -214,6 +249,47 @@ export function CreditoProvider({
     regrasCredito,
   ]);
 
+  const urlPartilha = useMemo(() => {
+    return construirUrl(
+      "/credito",
+      {
+        capital,
+        anos,
+        spread,
+        regime: regimeTaxa,
+        anosFixos: regimeTaxa === "mista" ? anosFixos : undefined,
+        tanFixa: regimeTaxa !== "variavel" ? tanFixa : undefined,
+        rendimento: rendimentoLiquido,
+        faixa: faixaEtaria,
+        prazo: prazoEuribor,
+        choque,
+      },
+      {
+        capital: 200000,
+        anos: 30,
+        spread: 1.0,
+        regime: "variavel",
+        anosFixos: 5,
+        tanFixa: 2.8,
+        rendimento: 2000,
+        faixa: "31a35",
+        prazo: "12m",
+        choque: false,
+      }
+    );
+  }, [
+    capital,
+    anos,
+    spread,
+    regimeTaxa,
+    anosFixos,
+    tanFixa,
+    rendimentoLiquido,
+    faixaEtaria,
+    prazoEuribor,
+    choque,
+  ]);
+
   const valor = useMemo<EstadoCredito>(
     () => ({
       capital,
@@ -244,6 +320,7 @@ export function CreditoProvider({
       setFaixaEtaria,
       setChoque,
       setPrazoEuribor,
+      urlPartilha,
     }),
     [
       capital,
@@ -264,6 +341,7 @@ export function CreditoProvider({
       sim,
       base,
       setPrazoEuribor,
+      urlPartilha,
     ]
   );
 

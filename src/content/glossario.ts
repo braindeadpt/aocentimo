@@ -3,6 +3,7 @@ export interface Termo {
   termo: string;
   definicao: string;
   exemplo?: string;
+  sinonimos?: string[];
 }
 
 export const GLOSSARIO: Termo[] = [
@@ -135,6 +136,12 @@ export const GLOSSARIO: Termo[] = [
     termo: "Rendimento relevante",
     definicao:
       "A base sobre a qual um trabalhador independente paga Segurança Social: 70 % do que faturas em serviços. Sobre esse valor aplica-se a taxa de 21,4 % — na prática, cerca de 15 % do teu bruto, apurado trimestralmente.",
+    sinonimos: [
+      "recibos verdes",
+      "trabalhador independente",
+      "faturação",
+      "segurança social",
+    ],
   },
   {
     slug: "englobamento",
@@ -148,6 +155,216 @@ export const GLOSSARIO: Termo[] = [
     definicao:
       "O salário corrigido pela inflação — o que ele compra de facto, não os euros que diz no recibo. Se o teu bruto subiu 5 % e os preços subiram 8 %, tiveste um aumento nominal e um corte real.",
     exemplo: "1 200 € em 2020 valem ~1 440 € hoje; se agora ganhas 1 400 €, perdeste poder de compra.",
+  },
+  /* PROPOSTA (revisão do dono) — 19 novos termos do glossário (T12) */
+  {
+    slug: "homologo",
+    termo: "Variação homóloga vs em cadeia",
+    definicao:
+      "A variação homóloga compara o valor de um mês ou trimestre com o mesmo período do ano anterior (12 meses de intervalo), eliminando o efeito da sazonalidade. A variação em cadeia compara com o período imediatamente anterior.",
+    exemplo:
+      "Se a inflação homóloga for 2,5\u202f% e a em cadeia \u22120,2\u202f%, os preços subiram face ao ano passado mas abrandaram face ao mês anterior.",
+    sinonimos: [
+      "homólogo",
+      "homologo",
+      "variação homóloga",
+      "variação em cadeia",
+      "inflação homóloga",
+    ],
+  },
+  {
+    slug: "pib",
+    termo: "PIB",
+    definicao:
+      "Produto Interno Bruto: o valor a preços de mercado de todos os bens e serviços finais produzidos num país num dado período. É a medida padrão da dimensão e do crescimento de uma economia.",
+    exemplo:
+      "Um crescimento homólogo do PIB de 1,8\u202f% significa que a economia produziu mais 1,8\u202f% de riqueza real do que no mesmo trimestre do ano anterior.",
+    sinonimos: ["produto interno bruto", "economia", "crescimento"],
+  },
+  {
+    slug: "populacao-ativa",
+    termo: "População ativa e taxa de desemprego",
+    definicao:
+      "A população ativa inclui as pessoas com emprego e as desempregadas que procuram ativamente trabalho. A taxa de desemprego mede a percentagem de desempregados sobre a população ativa — quem estuda ou não procura emprego fica de fora do denominador.",
+    exemplo:
+      "Se existirem 350\u202f000 desempregados numa população ativa de 5\u202f300\u202f000 pessoas, a taxa de desemprego é de 6,6\u202f%.",
+    sinonimos: [
+      "desemprego",
+      "taxa de desemprego",
+      "população ativa",
+      "emprego",
+    ],
+  },
+  {
+    slug: "indice-precos-habitacao",
+    termo: "Índice de Preços da Habitação (HPI)",
+    definicao:
+      "Mede a evolução dos preços de transação das habitações adquiridas pelas famílias (casas novas e existentes). É a referência oficial do INE e do Eurostat para acompanhar o mercado imobiliário residencial.",
+    exemplo:
+      "Com a base 2015 = 100, um índice de 205 indica que os preços de compra das casas mais do que duplicaram face a 2015.",
+    sinonimos: ["HPI", "preços das casas", "imobiliário", "habitação"],
+  },
+  {
+    slug: "ias",
+    termo: "IAS",
+    definicao:
+      "Indexante dos Apoios Sociais: o valor de referência fixado anualmente por portaria para calcular e atualizar prestações sociais, limites de isenção e tetos legais. Em 2026 fixa-se em 537,13\u202f€.",
+    exemplo:
+      "Em 2026, o teto do subsídio de desemprego é 2,5 × IAS = 1\u202f342,83\u202f€ por mês.",
+    sinonimos: ["indexante dos apoios sociais", "537,13"],
+  },
+  {
+    slug: "rendimento-coletavel",
+    termo: "Rendimento coletável",
+    definicao:
+      "O valor sobre o qual incidem as taxas dos escalões do IRS. Obtém-se subtraindo ao rendimento bruto as deduções específicas (como 8,54 × IAS no trabalho dependente) e eventuais abatimentos legais como o mínimo de existência.",
+    exemplo:
+      "Num salário anual de 21\u202f000\u202f€ (1\u202f500\u202f€ × 14), abatem-se 4\u202f587,09\u202f€ de dedução específica, ficando 16\u202f412,91\u202f€ de rendimento coletável.",
+    sinonimos: ["coletável", "matéria coletável", "base de incidência"],
+  },
+  {
+    slug: "irs-jovem",
+    termo: "IRS Jovem",
+    definicao:
+      "Regime fiscal do art. 12.º-B do CIRS para jovens trabalhadores (até aos 35 anos) que entregam declaração de IRS sozinhos. Dá uma isenção parcial durante dez anos: 100\u202f% no 1.º ano, 75\u202f% nos 2.º a 4.º, 50\u202f% nos 5.º a 7.º e 25\u202f% nos 8.º a 10.º, até ao teto anual de 55 × IAS.",
+    exemplo:
+      "No 1.º ano de trabalho independente ou por conta de outrem, até 29\u202f542,15\u202f€ de rendimento (55 × 537,13\u202f€) fica totalmente livre de IRS.",
+    sinonimos: ["isenção jovem", "artigo 12-b", "jovens trabalhadores"],
+  },
+  {
+    slug: "duodecimos",
+    termo: "Duodécimos",
+    definicao:
+      "Modalidade em que os subsídios de férias e de Natal são pagos fracionados ao longo dos 12 meses do ano (a 50\u202f% ou 100\u202f%) em vez de pagos por inteiro nos meses habituais. No recibo, cada fração retém à taxa autónoma prevista no art. 99.º-C do CIRS.",
+    exemplo:
+      "Com 50\u202f% em duodécimos num salário de 1\u202f200\u202f€, recebes mais 100\u202f€ brutos todos os meses e metade de cada subsídio na respetiva época.",
+    sinonimos: [
+      "fracionamento",
+      "pagamento em duodécimos",
+      "subsídios fracionados",
+    ],
+  },
+  {
+    slug: "subsidio-alimentacao",
+    termo: "Subsídio de alimentação",
+    definicao:
+      "Compensação pecuniária por dia de trabalho efetivo para despesas de refeição. Em 2026 é isento de IRS e de Segurança Social até 6,15\u202f€/dia se pago em dinheiro, ou até 10,455\u202f€/dia se pago em cartão ou vale de refeição (+70\u202f% por lei). O excedente tributa como salário normal.",
+    exemplo:
+      "Um subsídio de 9,00\u202f€/dia pago em cartão de refeição fica 100\u202f% isento; se fosse pago em dinheiro tributaria IRS e SS sobre 2,85\u202f€ por dia.",
+    sinonimos: ["subsídio de refeição", "cartão refeição", "vale refeição"],
+  },
+  {
+    slug: "adse",
+    termo: "ADSE",
+    definicao:
+      "Subsistema público de proteção na doença dos trabalhadores em funções públicas. O desconto é de 3,5\u202f% sobre as remunerações base e pensões ao longo de 14 meses. Para admitidos a partir de 2006 é facultativo e acumula com os 11\u202f% de Segurança Social geral.",
+    exemplo:
+      "Num vencimento de 1\u202f500\u202f€, o desconto de 3,5\u202f% para a ADSE retira 52,50\u202f€ por mês (735,00\u202f€ por ano a 14 meses).",
+    sinonimos: [
+      "saúde função pública",
+      "desconto 3,5 %",
+      "proteção na doença",
+    ],
+  },
+  {
+    slug: "imt",
+    termo: "IMT e IMT Jovem",
+    definicao:
+      "Imposto Municipal sobre as Transmissões Onerosas de Imóveis: pago ao Estado no ato de compra de um imóvel. O IMT Jovem isenta totalmente jovens até aos 35 anos na aquisição de primeira habitação própria e permanente com valor até 330\u202f539\u202f€ em 2026.",
+    exemplo:
+      "Uma casa de 200\u202f000\u202f€ para habitação própria paga cerca de 3\u202f509\u202f€ de IMT na tabela geral; com o benefício do IMT Jovem paga 0\u202f€.",
+    sinonimos: ["IMT Jovem", "imposto de transmissão", "compra de casa"],
+  },
+  {
+    slug: "imposto-selo",
+    termo: "Imposto do Selo",
+    definicao:
+      "O tributo mais antigo do sistema fiscal português, incidente sobre contratos, documentos, títulos e operações financeiras. Na compra de casa com empréstimo cobra 0,8\u202f% sobre o valor da escritura e 0,6\u202f% sobre o montante financiado a mais de 5 anos.",
+    exemplo:
+      "Comprar uma casa de 200\u202f000\u202f€ com empréstimo de 180\u202f000\u202f€ paga 1\u202f600\u202f€ de selo da compra e 1\u202f080\u202f€ de selo do crédito = 2\u202f680\u202f€.",
+    sinonimos: ["selo", "tabela geral imposto do selo", "IS"],
+  },
+  {
+    slug: "imi",
+    termo: "IMI e Valor Patrimonial Tributário",
+    definicao:
+      "Imposto Municipal sobre Imóveis: cobrado todos os anos sobre o Valor Patrimonial Tributário (VPT) dos prédios rústicos e urbanos. Nos prédios urbanos a taxa situa-se entre 0,3\u202f% e 0,45\u202f%, fixada anualmente por cada assembleia municipal.",
+    exemplo:
+      "Um apartamento com VPT de 120\u202f000\u202f€ num concelho com taxa de 0,324\u202f% paga 388,80\u202f€ de IMI por ano, dividido em duas prestações.",
+    sinonimos: ["VPT", "valor patrimonial tributário", "imposto municipal"],
+  },
+  {
+    slug: "isv-iuc",
+    termo: "ISV e IUC",
+    definicao:
+      "Os dois impostos principais sobre automóveis: o ISV (Imposto sobre Veículos) paga-se uma única vez ao matricular o veículo; o IUC (Imposto Único de Circulação) é anual e incide sobre a propriedade, calculados em função da cilindrada e das emissões de CO2.",
+    exemplo:
+      "Ao comprar um carro novo ligeiro a gasolina paga-se ISV no ato da matrícula e depois IUC todos os anos no mês de aniversário da matrícula.",
+    sinonimos: [
+      "imposto sobre veículos",
+      "imposto único de circulação",
+      "selo do carro",
+    ],
+  },
+  {
+    slug: "taxa-mista",
+    termo: "Taxa fixa, mista e variável",
+    definicao:
+      "Modalidades de taxa de juro no crédito habitação: a variável varia com a Euribor; a fixa mantém o mesmo valor do primeiro ao último dia; a mista combina um período inicial a taxa fixa (ex.: 2, 5 ou 10 anos) seguido de taxa variável até ao fim do contrato.",
+    exemplo:
+      "Um crédito a 30 anos com taxa mista a 5 anos fixa a prestação durante 60 meses; a partir do 6.º ano a taxa passa a Euribor mais spread.",
+    sinonimos: [
+      "taxa mista",
+      "taxa fixa",
+      "taxa variável",
+      "modalidade de juro",
+    ],
+  },
+  {
+    slug: "taxa-esforco",
+    termo: "Taxa de esforço (DSTI)",
+    definicao:
+      "Debt Service-to-Income: a percentagem do rendimento líquido mensal do agregado familiar destinada ao pagamento das prestações de todos os créditos contratados. A recomendação macroprudencial do Banco de Portugal fixa o limite máximo geral em 50\u202f%.",
+    exemplo:
+      "Prestações de crédito de 700\u202f€ num agregado com rendimento líquido de 2\u202f000\u202f€ correspondem a uma taxa de esforço de 35\u202f%.",
+    sinonimos: [
+      "DSTI",
+      "debt service to income",
+      "esforço financeiro",
+      "limite BdP",
+    ],
+  },
+  {
+    slug: "mais-valias",
+    termo: "Mais-valias",
+    definicao:
+      "O ganho financeiro obtido na venda de bens ou direitos por valor superior ao custo de aquisição (imóveis, ações, participações). Nos imóveis para habitação própria e permanente há isenção se o valor for reinvestido noutra habitação própria nos prazos legais.",
+    exemplo:
+      "Ações compradas por 1\u202f000\u202f€ e vendidas por 1\u202f500\u202f€ geram 500\u202f€ de mais-valia mobiliária, pagando 28\u202f% de taxa autónoma (140\u202f€).",
+    sinonimos: ["lucro de venda", "ganho de capital", "reinvestimento"],
+  },
+  {
+    slug: "servicos-minimos-bancarios",
+    termo: "Serviços mínimos bancários",
+    definicao:
+      "Conta de depósito à ordem com cartão de débito, homebanking e transferências sem comissões abusivas para quem não tenha outra conta. O encargo anual máximo está travado por lei em 1\u202f% do IAS (5,37\u202f€ por ano em 2026).",
+    exemplo:
+      "Em vez de pagar 60\u202f€ ou 80\u202f€ anuais em comissões de manutenção de conta, uma conta de serviços mínimos bancários tem o custo anual limitado a 5,37\u202f€.",
+    sinonimos: ["SMB", "conta essencial", "comissões bancárias reduzidas"],
+  },
+  {
+    slug: "fundo-garantia-depositos",
+    termo: "Fundo de Garantia de Depósitos",
+    definicao:
+      "Mecanismo público de proteção que garante o reembolso dos depósitos bancários constituídos nas instituições de crédito participantes até ao limite de 100\u202f000\u202f€ por depositante e por instituição, caso o banco entre em incumprimento ou falência.",
+    exemplo:
+      "Se um cliente tiver 80\u202f000\u202f€ depositados num banco que entre em liquidação, o FGD assegura o reembolso integral dos 80\u202f000\u202f€.",
+    sinonimos: [
+      "FGD",
+      "garantia de depósitos",
+      "100 000 euros",
+      "proteção bancária",
+    ],
   },
 ];
 
@@ -191,6 +408,25 @@ const MENCOES: Record<string, RegExp> = {
   "rendimento-relevante": /\brendimento relevante\b/i,
   englobamento: /\benglobamento\b|\benglobar\b|\btaxa aut[oó]noma\b/i,
   "salario-real": /\bsal[aá]rio real\b|\bpoder de compra\b/i,
+  homologo: /\bhom[oó]log[ao]s?\b|\bvaria[cç][ãa]o em cadeia\b/i,
+  pib: /\bPIB\b|\bProduto Interno Bruto\b/i,
+  "populacao-ativa": /\bpopula[cç][ãa]o ativa\b|\btaxa de desemprego\b/i,
+  "indice-precos-habitacao": /\bHPI\b|\bpre[cç]os da habita[cç][ãa]o\b/i,
+  ias: /\bIAS\b|\bindexante dos apoios sociais\b/i,
+  "rendimento-coletavel": /\brendimento colet[aá]vel\b/i,
+  "irs-jovem": /\bIRS Jovem\b/i,
+  duodecimos: /\bduod[eé]cimos?\b/i,
+  "subsidio-alimentacao": /\bsubs[ií]dio de alimenta[cç][ãa]o\b|\bsubs[ií]dio de refei[cç][ãa]o\b/i,
+  adse: /\bADSE\b/,
+  imt: /\bIMT\b/,
+  "imposto-selo": /\bImposto do Selo\b/i,
+  imi: /\bIMI\b|\bVPT\b|\bValor Patrimonial Tribut[aá]rio\b/i,
+  "isv-iuc": /\bISV\b|\bIUC\b/,
+  "taxa-mista": /\btaxa mista\b|\btaxa fixa\b/i,
+  "taxa-esforco": /\btaxa de esfor[cç]o\b|\bDSTI\b/i,
+  "mais-valias": /\bmais-valias?\b/i,
+  "servicos-minimos-bancarios": /\bservi[cç]os m[ií]nimos banc[aá]rios\b|\bSMB\b/i,
+  "fundo-garantia-depositos": /\bFundo de Garantia de Dep[oó]sitos\b|\bFGD\b/i,
 };
 
 export function termoPorSlug(slug: string): Termo | undefined {

@@ -8,6 +8,7 @@ export interface TermoLista {
   termo: string;
   definicao: string;
   exemplo?: string;
+  sinonimos?: string[];
 }
 
 export interface GrupoLista {
@@ -60,7 +61,9 @@ export function PesquisaGlossario({
       ...g,
       termos: nq
         ? g.termos.filter((t) =>
-            norm(`${t.termo} ${t.definicao} ${t.exemplo ?? ""}`).includes(nq)
+            norm(
+              `${t.slug} ${t.termo} ${t.definicao} ${t.exemplo ?? ""} ${(t.sinonimos ?? []).join(" ")}`
+            ).includes(nq)
           )
         : g.termos,
     }))
@@ -76,7 +79,7 @@ export function PesquisaGlossario({
         <input
           id="pesquisa-glossario"
           type="search"
-          className="field"
+          className="field min-h-[44px]"
           placeholder={textos.placeholder}
           value={q}
           onChange={(e) => setQ(e.target.value)}

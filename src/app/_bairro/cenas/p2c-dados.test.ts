@@ -136,4 +136,15 @@ describe("Escola — minis do protótipo", () => {
     const t = hicpCp00.series.filter((p) => p.t >= DESDE);
     expect(D.varHomologa).toBeCloseTo(t.at(-1)!.v / t.at(-13)!.v - 1, 10);
   });
+
+  it("a terceira lição liga os 6 termos do glossário incluindo homologo", () => {
+    expect(D.gloss.map((g) => g.slug)).toEqual([
+      "ipc-ihpc",
+      "homologo",
+      "taxa-real",
+      "escalao-irs",
+      "spread",
+      "tsu",
+    ]);
+  });
 });

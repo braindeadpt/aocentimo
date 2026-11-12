@@ -26,6 +26,15 @@ import type {
 import type { CenariosSalario, LinhaCenario } from "@/lib/cenarios";
 import type { SituacaoRetencao, TabelaId } from "@/lib/engines/retencao";
 import { fmtData } from "@/lib/format";
+import {
+  construirUrl,
+  lerBool,
+  lerEnum,
+  lerFloat,
+  lerInt,
+  snapValor,
+  useLeituraUrl,
+} from "@/lib/url-state";
 
 /**
  * O estado da página /salario num contexto (sessão 3A + T11): o <Pagina>
@@ -164,6 +173,8 @@ export interface SalarioEstado {
   /** fora do perfil canónico e o motor ainda não chegou — os números
       mostrados são os últimos calculados (a linha canónica do bruto) */
   motorACarregar: boolean;
+  /** URL limpo com o estado partilhável para o <BotaoCopiar> */
+  urlPartilha: string;
 }
 
 const Ctx = createContext<SalarioEstado | null>(null);
@@ -229,6 +240,43 @@ export function ProvedorSalario({
     window.addEventListener("hashchange", lerHash);
     return () => window.removeEventListener("hashchange", lerHash);
   }, []);
+
+  // Leitura segura do estado por URL (Pilar 1 — T12)
+  useLeituraUrl((sp) => {
+    const bRaw = lerInt(sp.get("bruto"), cenarios.meta.inicio, cenarios.meta.fim);
+    if (bRaw !== undefined) {
+      const grelha = cenarios.linhas.map((l) => l.bruto);
+      setBruto(snapValor(bRaw, grelha));
+    }
+    const m = lerEnum(sp.get("modo"), ["trabalho", "pensao"] as const);
+    if (m) {
+      setTipoRendimento(m);
+    } else if (lerBool(sp.get("pensao"))) {
+      setTipoRendimento("pensao");
+    }
+    const reg = lerEnum(sp.get("regiao"), ["continente", "madeira", "acores"] as const);
+    if (reg) setRegiao(reg);
+    const duo = lerEnum(sp.get("duod"), ["14", "50", "100"] as const);
+    if (duo) setDuodecimos(duo);
+    if (sp.has("adse")) {
+      setAdse(lerBool(sp.get("adse")));
+    }
+    const sit = lerEnum(sp.get("sit") ?? sp.get("situacao"), ["solteiro", "casado2", "casado1"] as const);
+    if (sit) setSituacao(sit);
+    const cRaw = lerInt(sp.get("conjuge"), cenarios.meta.inicio, cenarios.meta.fim);
+    if (cRaw !== undefined) {
+      const grelha = cenarios.linhas.map((l) => l.bruto);
+      setConjuge(snapValor(cRaw, grelha));
+    }
+    const dep = lerInt(sp.get("dep") ?? sp.get("dependentes"), 0, 10);
+    if (dep !== undefined) setDependentes(dep);
+    const sa = lerFloat(sp.get("sa"), 0, 30);
+    if (sa !== undefined) setSaPorDia(sa);
+    const fsa = lerEnum(sp.get("formaSa") ?? sp.get("formaSA"), ["cartao", "dinheiro"] as const);
+    if (fsa) setFormaSA(fsa);
+    const jov = lerInt(sp.get("jovem") ?? sp.get("anoJovem"), 0, 10);
+    if (jov !== undefined) setAnoJovem(jov);
+  });
 
   // fora do perfil canónico (solteiro, 0 dependentes, sem SA, sem IRS
   // Jovem, trabalho Cat. A, continente, 14 meses, sem ADSE) o recibo precisa do motor —
@@ -370,6 +418,51 @@ export function ProvedorSalario({
     ano,
   ]);
 
+  const urlPartilha = useMemo(() => {
+    return construirUrl(
+      "/salario",
+      {
+        bruto,
+        modo: tipoRendimento,
+        regiao,
+        duod: duodecimos,
+        adse,
+        sit: situacao,
+        conjuge: situacao === "casado2" ? conjuge : undefined,
+        dep: dependentes,
+        sa: saPorDia,
+        formaSa: saPorDia > 0 ? formaSA : undefined,
+        jovem: anoJovem,
+      },
+      {
+        bruto: cenarios.meta.brutoRef,
+        modo: "trabalho",
+        regiao: "continente",
+        duod: "14",
+        adse: false,
+        sit: "solteiro",
+        conjuge: cenarios.meta.brutoRef,
+        dep: 0,
+        sa: 0,
+        formaSa: "cartao",
+        jovem: 0,
+      }
+    );
+  }, [
+    bruto,
+    tipoRendimento,
+    regiao,
+    duodecimos,
+    adse,
+    situacao,
+    conjuge,
+    dependentes,
+    saPorDia,
+    formaSA,
+    anoJovem,
+    cenarios.meta.brutoRef,
+  ]);
+
   const valor: SalarioEstado = {
     ano,
     cenarios,
@@ -407,6 +500,7 @@ export function ProvedorSalario({
     resultado,
     limiteSA: saIsento[formaSA],
     motorACarregar: foraDoCan && !motor,
+    urlPartilha,
   };
 
   return <Ctx.Provider value={valor}>{children}</Ctx.Provider>;

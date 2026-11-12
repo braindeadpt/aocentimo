@@ -243,7 +243,14 @@ export function dadosEscolaP2c(): DadosEscola {
   // o índice dos últimos 13 meses viaja compacto: `inicio` é o t do
   // primeiro deles. Os termos são os do glossário REAL do site — a
   // Escola nunca inventa uma definição (regra nº1 aplica-se ao texto)
-  const gloss = ["ipc-ihpc", "taxa-real", "escalao-irs", "spread", "tsu"]
+  const gloss = [
+    "ipc-ihpc",
+    "homologo",
+    "taxa-real",
+    "escalao-irs",
+    "spread",
+    "tsu",
+  ]
     .map((slug) => termoPorSlug(slug))
     .filter((t): t is NonNullable<typeof t> => t !== undefined)
     .map((t) => ({ slug: t.slug, termo: t.termo, def: t.definicao }));

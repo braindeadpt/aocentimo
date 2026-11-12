@@ -207,6 +207,7 @@ export const escVerGlossario = "glossário →";
 
 export const escOnde: Record<string, { titulo: string; href: string }> = {
   "ipc-ihpc": { titulo: "a Pastelaria", href: "/#pastelaria" },
+  homologo: { titulo: "o Quiosque", href: "/#quiosque" },
   "taxa-real": { titulo: "os Correios", href: "/#correios" },
   "escalao-irs": { titulo: "as Finanças", href: "/#financas" },
   spread: { titulo: "o Banco", href: "/#banco" },

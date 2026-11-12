@@ -15,6 +15,12 @@ import {
   type PremioPermanencia,
   type ResultadoPoupanca,
 } from "@/lib/engines/poupanca";
+import {
+  construirUrl,
+  lerFloat,
+  lerInt,
+  useLeituraUrl,
+} from "@/lib/url-state";
 
 /**
  * A poupança partilhada pelos três níveis de /poupanca (V4/V5): o nível 1
@@ -81,6 +87,8 @@ interface EstadoPoupanca {
   setAnos: (v: number) => void;
   setTaxaDeposito: (v: number) => void;
   setInflacao: (v: number) => void;
+  /** URL limpo com o estado partilhável para o <BotaoCopiar> */
+  urlPartilha: string;
 }
 
 const Ctx = createContext<EstadoPoupanca | null>(null);
@@ -137,6 +145,20 @@ export function PoupancaProvider({
   const [anos, setAnos] = useState(10);
   const [taxaDeposito, setTaxaDeposito] = useState(taxaDepositoInicial ?? 1.5);
   const [inflacao, setInflacao] = useState(inflacaoInicial);
+
+  // Leitura segura do estado por URL (Pilar 1 — T12)
+  useLeituraUrl((sp) => {
+    const c = lerInt(sp.get("capital"), 100, 1000000);
+    if (c !== undefined) setCapital(c);
+    const r = lerInt(sp.get("reforco"), 0, 5000);
+    if (r !== undefined) setReforcoMensal(r);
+    const a = lerInt(sp.get("anos"), 1, 15);
+    if (a !== undefined) setAnos(a);
+    const td = lerFloat(sp.get("tanb"), 0, 20);
+    if (td !== undefined) setTaxaDeposito(td);
+    const inf = lerFloat(sp.get("inflacao"), -5, 20);
+    if (inf !== undefined) setInflacao(inf);
+  });
 
   const dep = useMemo(() => {
     if (reforcoMensal === 0) {
@@ -321,6 +343,34 @@ export function PoupancaProvider({
 
   const realColchao = 1 / (1 + inflacao / 100) - 1;
 
+  const urlPartilha = useMemo(() => {
+    return construirUrl(
+      "/poupanca",
+      {
+        capital,
+        reforco: reforcoMensal,
+        anos,
+        tanb: taxaDeposito,
+        inflacao,
+      },
+      {
+        capital: 10000,
+        reforco: 0,
+        anos: 10,
+        tanb: taxaDepositoInicial ?? 1.5,
+        inflacao: inflacaoInicial,
+      }
+    );
+  }, [
+    capital,
+    reforcoMensal,
+    anos,
+    taxaDeposito,
+    inflacao,
+    taxaDepositoInicial,
+    inflacaoInicial,
+  ]);
+
   const valor = useMemo<EstadoPoupanca>(
     () => ({
       capital,
@@ -347,6 +397,7 @@ export function PoupancaProvider({
       setAnos,
       setTaxaDeposito,
       setInflacao,
+      urlPartilha,
     }),
     [
       capital,
@@ -368,6 +419,7 @@ export function PoupancaProvider({
       melhor,
       pior,
       realColchao,
+      urlPartilha,
     ]
   );
 

@@ -316,11 +316,13 @@ test.describe("Escola — ler gráficos e as palavras", () => {
     await expect(page.locator(".b-cena-texto")).toContainText(/homóloga/i);
     await page.getByRole("button", { name: /terceira lição/i }).click();
 
-    // passo 4: o glossário — cartões do glossário real do site (o
-    // «homólogo» do protótipo não é termo do glossário: aprende-se na
-    // lição 2, não entra aqui — sem definições inventadas)
+    // passo 4: o glossário — cartões do glossário real do site (reposto o
+    // 6.º cartão com «homólogo» a ligar ao Quiosque — T12)
     const cartoes = page.locator(".b-cena-texto .b-glossario .b-gloss-card");
-    await expect(cartoes).toHaveCount(5);
+    await expect(cartoes).toHaveCount(6);
+    await expect(
+      page.locator('.b-cena-texto .b-glossario a[href="/#quiosque"]')
+    ).toBeVisible();
     // cada cartão tem o termo e um link de âncora para a cena, focável
     const primeiroLink = cartoes.first().locator("a").first();
     await primeiroLink.focus();
