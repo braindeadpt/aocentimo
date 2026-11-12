@@ -25,6 +25,7 @@
  * A cena de cada edifício entra em P1-3; aqui, em P1-1, o mapa já está,
  * com os números, a passar-se e a deixar-se passear.
  */
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { PausaAmbiente } from "@/components/PausaAmbiente";
 import { motionActiva, carregarGsap, type MotorGsap } from "@/lib/motion/gsap";
@@ -638,14 +639,11 @@ export function Bairro({
     try {
       const janela = janelaRef.current;
       if (!janela) return;
-      // o painel da personagem pode ainda não estar pintado (o estado
-      // React só entra no DOM no frame seguinte, e em reduced-motion
-      // não houve await de GSAP que deixasse o React correr) — mede-se
-      // depois de um frame
-      if (!palcoRef.current?.querySelector(".b-painel")) {
-        await new Promise<void>((res) => requestAnimationFrame(() => res()));
-        if (!mundoRef.current || vooGeracaoRef.current !== minhaGeracao) return;
-      }
+      // o painel da personagem pode ainda não estar pintado ou ter mudado
+      // de personagem (o estado React só entra no DOM no frame seguinte, e
+      // em reduced-motion não houve await de GSAP que deixasse o React correr)
+      await new Promise<void>((res) => requestAnimationFrame(() => res()));
+      if (!mundoRef.current || vooGeracaoRef.current !== minhaGeracao) return;
 
       /*
        * O alvo, em unidades do MUNDO, recuperado do ecrã — e lido de
@@ -764,6 +762,15 @@ export function Bairro({
       ?.focus();
   }, [limparAceno, personagem]);
 
+  const entrarCenaDaPersonagem = useCallback(
+    (cenaId: string) => {
+      const id = cenaId.replace(/^#/, "");
+      pretender(id);
+      entrar(id);
+    },
+    [entrar, pretender]
+  );
+
   const info = cartaoAberto ? (porId.get(cartaoAberto) ?? null) : null;
 
   return (
@@ -863,7 +870,12 @@ export function Bairro({
 
         {/* ————— o painel da personagem escolhida (P1-4) ————— */}
         {personagem && (
-          <PainelPersonagem p={personagem} aoFechar={fecharPersonagem} />
+          <PainelPersonagem
+            p={personagem}
+            aoFechar={fecharPersonagem}
+            aoEntrarCena={entrarCenaDaPersonagem}
+            aoPretenderCena={pretender}
+          />
         )}
 
         {/* ————— a cena do edifício aberto (P2a) —————
@@ -947,23 +959,28 @@ function CenaViva({
 }
 
 /**
- * O painel «Olá! Sou …» (P1-4) — a mesma moldura `.b-painel` que as
- * cenas usam: título, fala, o perfil a negrito e o Fechar. Fecha por
- * Escape e pelo ×, e o foco volta à carta — tratado no `aoFechar`.
+ * O painel «Olá! Sou …» (P1-4 / T05) — a mesma moldura `.b-painel` que as
+ * cenas usam: título, fala, perfil económico e os dois destinos vivos
+ * (entrar já na cena do bairro ou ir ao simulador completo). Fecha por
+ * Escape e pelo ×, devolvendo o foco à carta.
  */
 function PainelPersonagem({
   p,
   aoFechar,
+  aoEntrarCena,
+  aoPretenderCena,
 }: {
   p: EscolhaPersonagem;
   aoFechar: () => void;
+  aoEntrarCena: (cenaId: string) => void;
+  aoPretenderCena: (cenaId: string) => void;
 }) {
   const quemRef = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     // preventScroll: o scroll até ao palco já corre (aoEscolher); o
     // scroll-para-o-foco do browser cancelava-o e o ecrã ficava a meio
     quemRef.current?.focus({ preventScroll: true });
-  }, []);
+  }, [p.chave]);
   useEffect(() => {
     const aoTeclar = (e: KeyboardEvent) => {
       if (e.key === "Escape") aoFechar();
@@ -971,6 +988,8 @@ function PainelPersonagem({
     document.addEventListener("keydown", aoTeclar);
     return () => document.removeEventListener("keydown", aoTeclar);
   }, [aoFechar]);
+
+  const aquecer = () => aoPretenderCena(p.cenaId.replace(/^#/, ""));
 
   return (
     <div className="b-painel" role="dialog" aria-labelledby="b-quem-personagem">
@@ -990,14 +1009,22 @@ function PainelPersonagem({
       >
         {p.quem}
       </span>
-      {/* HTML do servidor — texto de messages/pt.json, nunca input do
-          utilizador; o realce .b-a do «Em breve» já vem dentro */}
-      <p className="b-fala" dangerouslySetInnerHTML={{ __html: p.fala }} />
+      <p className="b-fala">{p.fala}</p>
       <p className="b-perfil">{p.extra}</p>
       <div className="b-acoes">
-        <button type="button" className="b-btn b-claro" onClick={aoFechar}>
-          {p.fechar}
+        <button
+          type="button"
+          className="b-btn"
+          onPointerEnter={aquecer}
+          onFocus={aquecer}
+          onTouchStart={aquecer}
+          onClick={() => aoEntrarCena(p.cenaId)}
+        >
+          {p.cenaRotulo}
         </button>
+        <Link className="b-btn b-claro" href={p.rotaHref}>
+          {p.rotaRotulo}
+        </Link>
       </div>
     </div>
   );

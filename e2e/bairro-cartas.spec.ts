@@ -3,31 +3,92 @@ import cenarios from "../data/derived/cenarios-salario.json";
 import { fmtEUR0 } from "../src/lib/format";
 
 /**
- * As sete cartas — «Escolhe a tua personagem» (P1-4 do PACK V5
- * PRODUÇÃO; o `CARTAS` do mapa.tpl.html).
+ * As sete cartas — «Escolhe a tua personagem» (P1-4 / T05).
  *
  *   · sete botões com nome acessível, numa grelha com ≥4 colunas a
  *     1440 px e 2 a 375 px, sem sobreposição nem transbordo;
  *   · clicar leva ao palco, abre o painel «Nome · papel» com a fala
- *     «Olá! Sou …» e o «Em breve» marcado; Escape fecha e devolve o
- *     foco à carta;
- *   · se a personagem existir no mapa (`.b-mundo [data-pessoa]` — a
- *     sessão «gente» pode ainda não ter fundido), a câmara mexe; se
- *     não existir, o clique não falha na mesma;
+ *     «Olá! Sou …» (nunca «Em breve») e DOIS destinos accionáveis
+ *     (botão primário que abre a cena por âncora + ligação para a rota
+ *     de aprofundamento), mais botão «×» ≥ 44×44 px; Escape e «×»
+ *     fecham e devolvem o foco à carta;
+ *   · clicar no CTA de cena fecha o painel da personagem, sincroniza a
+ *     âncora URL (#fabrica, #financas, …), marca o edifício .b-ativo e
+ *     abre a cena correspondente com foco no título;
+ *   · a câmara pousa cada personagem dentro da janela e fora do painel
+ *     a 1440×900 e a 390×844;
  *   · reduced-motion não descarrega o GSAP ao clicar;
  *   · o número da Inês vem de cenarios-salario.json formatado, nunca
  *     escrito à mão.
  */
 
-const NOMES = [
-  ["ines", "Inês"],
-  ["diana", "Diana"],
-  ["pedro", "Pedro"],
-  ["manuel", "Sr. Manuel"],
-  ["arminda", "Dona Arminda"],
-  ["goncalo", "Gonçalo"],
-  ["rui", "Rui e Marta"],
+const CARTAS_ESPERADAS = [
+  {
+    k: "ines",
+    nome: "Inês",
+    quem: "Inês · Operária da fábrica",
+    cenaId: "fabrica",
+    cenaRotulo: "Entrar na Fábrica",
+    rotaHref: "/salario",
+    rotaRotulo: "Simular o recibo →",
+  },
+  {
+    k: "diana",
+    nome: "Diana",
+    quem: "Diana · Professora",
+    cenaId: "financas",
+    cenaRotulo: "Ver os escalões do IRS",
+    rotaHref: "/irs",
+    rotaRotulo: "Simular o IRS →",
+  },
+  {
+    k: "pedro",
+    nome: "Pedro",
+    quem: "Pedro · Freelancer",
+    cenaId: "segsocial",
+    cenaRotulo: "Entrar na Seg. Social",
+    rotaHref: "/trabalho",
+    rotaRotulo: "Simular recibos verdes →",
+  },
+  {
+    k: "manuel",
+    nome: "Sr. Manuel",
+    quem: "Sr. Manuel · Dono da mercearia",
+    cenaId: "mercearia",
+    cenaRotulo: "Entrar na Mercearia",
+    rotaHref: "/impostos",
+    rotaRotulo: "Ver o IVA no talão →",
+  },
+  {
+    k: "arminda",
+    nome: "Dona Arminda",
+    quem: "Dona Arminda · Reformada",
+    cenaId: "correios",
+    cenaRotulo: "Entrar nos Correios",
+    rotaHref: "/poupanca",
+    rotaRotulo: "Simular a poupança →",
+  },
+  {
+    k: "goncalo",
+    nome: "Gonçalo",
+    quem: "Gonçalo · Estudante, 16 anos",
+    cenaId: "escola",
+    cenaRotulo: "Entrar na Escola",
+    rotaHref: "/irs",
+    rotaRotulo: "Ver o IRS Jovem →",
+  },
+  {
+    k: "rui",
+    nome: "Rui e Marta",
+    quem: "Rui e Marta · Casal com crédito",
+    cenaId: "banco",
+    cenaRotulo: "Entrar no Banco",
+    rotaHref: "/credito",
+    rotaRotulo: "Simular a prestação →",
+  },
 ] as const;
+
+const NOMES = CARTAS_ESPERADAS.map((c) => [c.k, c.nome] as const);
 
 const carta = (page: Page, k: string) =>
   page.locator(`.b-cartas .b-carta[data-k="${k}"]`);
@@ -93,32 +154,94 @@ test.describe("as sete cartas — escolhe a tua personagem (P1-4)", () => {
     ).toBe(true);
   });
 
-  test("clicar abre o painel «Olá!» com o título certo; Escape fecha e devolve o foco à carta", async ({
+  test("cada uma das 7 cartas mostra os dois CTAs vivos (sem «Em breve»), × ≥ 44×44 px, e Escape/× devolvem foco à carta", async ({
     page,
   }) => {
+    test.setTimeout(60_000);
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
+    await expect(page.locator('.b-mundo[data-vivo="1"]')).toBeAttached();
 
+    for (const esp of CARTAS_ESPERADAS) {
+      const c = carta(page, esp.k);
+      await c.click();
+
+      const painel = page.locator('.b-painel[aria-labelledby="b-quem-personagem"]');
+      await expect(painel).toBeVisible();
+      await expect(painel.locator("#b-quem-personagem")).toHaveText(esp.quem);
+
+      const fala = painel.locator(".b-fala");
+      await expect(fala).toContainText("Olá! Sou ");
+      await expect(fala).not.toContainText("Em breve");
+
+      // Botão primário para abrir a cena do bairro
+      const btnCena = painel.locator(".b-acoes button.b-btn");
+      await expect(btnCena).toBeVisible();
+      await expect(btnCena).toHaveText(esp.cenaRotulo);
+
+      // Ligação secundária para o simulador de aprofundamento
+      const lnkRota = painel.locator(`.b-acoes a.b-btn.b-claro[href="${esp.rotaHref}"]`);
+      await expect(lnkRota).toBeVisible();
+      await expect(lnkRota).toHaveText(esp.rotaRotulo);
+
+      // Alvo de toque do botão Fechar (×) ≥ 44×44 px
+      const btnFechar = painel.locator("button.b-fechar");
+      const boxFechar = await btnFechar.boundingBox();
+      expect(boxFechar).toBeTruthy();
+      expect(boxFechar!.width).toBeGreaterThanOrEqual(44);
+      expect(boxFechar!.height).toBeGreaterThanOrEqual(44);
+    }
+
+    // Fechar por × devolve foco à última carta aberta (rui)
+    await page.locator('.b-painel[aria-labelledby="b-quem-personagem"] button.b-fechar').click();
+    await expect(page.locator('#b-quem-personagem')).toHaveCount(0);
+    await expect(carta(page, "rui")).toBeFocused();
+
+    // E Escape também fecha e devolve o foco à carta que abriu o painel
     const ines = carta(page, "ines");
     await ines.click();
-
-    const painel = page.locator(".b-painel");
-    await expect(painel).toBeVisible();
-    await expect(painel.locator(".b-quem")).toHaveText(
-      "Inês · Operária da fábrica"
-    );
-    const fala = painel.locator(".b-fala");
-    await expect(fala).toContainText("Olá! Sou a Inês.");
-    await expect(fala).toContainText(
-      "vais poder seguir o meu dinheiro pelo bairro"
-    );
-    // o «Em breve» vem marcado (realce azul do protótipo)
-    await expect(fala.locator(".b-a")).toHaveText("Em breve");
-
-    // Escape fecha e o foco volta à carta que abriu o painel
+    await expect(page.locator('#b-quem-personagem')).toBeVisible();
     await page.keyboard.press("Escape");
-    await expect(painel).toBeHidden();
+    await expect(page.locator('#b-quem-personagem')).toHaveCount(0);
     await expect(ines).toBeFocused();
+  });
+
+  test("clicar no CTA primário abre a cena correspondente (com âncora e foco no título) e fecha o painel da carta", async ({
+    page,
+  }) => {
+    test.setTimeout(60_000);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    await expect(page.locator('.b-mundo[data-vivo="1"]')).toBeAttached();
+
+    // Caso 1: Diana → #financas (moldura .b-cena)
+    await carta(page, "diana").click();
+    const painelDiana = page.locator('.b-painel[aria-labelledby="b-quem-personagem"]');
+    await expect(painelDiana).toBeVisible();
+    await painelDiana.getByRole("button", { name: "Ver os escalões do IRS" }).click();
+
+    await expect(painelDiana).toHaveCount(0);
+    await expect(page.locator(".b-cena")).toBeVisible();
+    expect(new URL(page.url()).hash).toBe("#financas");
+    await expect(page.locator('.b-mundo .ed[data-id="financas"]')).toHaveClass(/b-ativo/);
+    await expect(page.locator("#cena-quem")).toBeFocused();
+
+    // Escape fecha a cena e devolve foco ao edifício
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".b-cena")).toBeHidden();
+    await expect(page.locator('.b-mundo .ed[data-id="financas"]')).toBeFocused();
+
+    // Caso 2: Inês → #fabrica (cena sobre o mapa em #fab-quem)
+    await carta(page, "ines").click();
+    const painelInes = page.locator('.b-painel[aria-labelledby="b-quem-personagem"]');
+    await expect(painelInes).toBeVisible();
+    await painelInes.getByRole("button", { name: "Entrar na Fábrica" }).click();
+
+    await expect(painelInes).toHaveCount(0);
+    expect(new URL(page.url()).hash).toBe("#fabrica");
+    await expect(page.locator('.b-mundo .ed[data-id="fabrica"]')).toHaveClass(/b-ativo/);
+    await expect(page.locator("#fab-quem")).toBeVisible();
+    await expect(page.locator("#fab-quem")).toBeFocused();
   });
 
   // O caso que o CI reprovou duas vezes: uma carta tocada ANTES de o React
@@ -146,6 +269,12 @@ test("o clique numa carta antes de hidratar não se perde: o painel abre na mesm
   await expect(page.locator(".b-painel .b-quem")).toHaveText(
     "Inês · Operária da fábrica"
   );
+  await expect(
+    page.locator(".b-painel .b-acoes button.b-btn")
+  ).toHaveText("Entrar na Fábrica");
+  await expect(
+    page.locator('.b-painel .b-acoes a.b-btn.b-claro[href="/salario"]')
+  ).toHaveText("Simular o recibo →");
 });
 
 test("o clique leva ao palco e — havendo personagem no mapa — mexe a câmara", async ({

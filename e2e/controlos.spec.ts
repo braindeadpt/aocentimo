@@ -31,6 +31,19 @@ test.describe("/estilo — um sistema, todos os estados", () => {
     const caixa = await icone.boundingBox();
     expect(caixa!.width).toBeGreaterThanOrEqual(44);
     expect(caixa!.height).toBeGreaterThanOrEqual(44);
+
+    // T06 — alvos de toque ≥ 44×44 px em todos os controlos do sistema
+    for (const sel of [
+      ".pil-tema",
+      "#controlos .chip",
+      "#controlos .segmentado-op",
+      ".chart-scrub",
+    ]) {
+      const b = await page.locator(sel).first().boundingBox();
+      expect(b, `${sel} visível`).not.toBeNull();
+      expect(b!.width, `${sel} largura ≥ 44`).toBeGreaterThanOrEqual(44);
+      expect(b!.height, `${sel} altura ≥ 44`).toBeGreaterThanOrEqual(44);
+    }
   });
 
   test("desactivado fica focável e anuncia a razão", async ({ page }) => {

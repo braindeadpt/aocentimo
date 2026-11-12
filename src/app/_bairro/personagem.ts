@@ -19,10 +19,18 @@ export interface EscolhaPersonagem {
   chave: string;
   /** «Nome · papel» — o título do painel. */
   quem: string;
-  /** A fala «Olá! Sou …», em HTML com o realce `.b-a` do «Em breve». */
+  /** A fala «Olá! Sou …» e o convite honesto ao que já se pode explorar. */
   fala: string;
   /** O perfil económico — a linha a negrito por baixo da fala. */
   extra: string;
-  /** O rótulo do botão de fechar. */
+  /** O `data-id` do edifício cuja cena abre sem sair da home (ex.: "fabrica"). */
+  cenaId: string;
+  /** O rótulo do botão primário que abre a cena. */
+  cenaRotulo: string;
+  /** A rota de aprofundamento (ex.: "/salario"). */
+  rotaHref: string;
+  /** O rótulo da ligação secundária para o simulador completo. */
+  rotaRotulo: string;
+  /** O rótulo do botão de fechar (`×`). */
   fechar: string;
 }

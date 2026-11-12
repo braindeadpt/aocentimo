@@ -113,6 +113,7 @@ export default function CreditoPage() {
                     unidade="%"
                     eventos={eventos.eventos.filter((e) => e.alvo === "euribor")}
                     estado={estado}
+                    rotulos={m.chart}
                   />
                 ) : (
                   <EstadoVazio

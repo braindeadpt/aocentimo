@@ -39,4 +39,23 @@ describe("glossario", () => {
       expect(relacionados(t.slug).map((r) => r.slug)).not.toContain(t.slug);
     }
   });
+
+  it("reconhece 28 % com fino inseparável (U+202F), espaço ou colado, sem falsos positivos", () => {
+    expect(mencoesEm("pagam 28\u202f% de imposto").map((m) => m.slug)).toContain(
+      "retencao-capitais"
+    );
+    expect(mencoesEm("taxa de 28 % ou 28%.").map((m) => m.slug)).toEqual([
+      "retencao-capitais",
+      "retencao-capitais",
+    ]);
+    expect(mencoesEm("sujeito a retenção liberatória").map((m) => m.slug)).toContain(
+      "retencao-capitais"
+    );
+    expect(mencoesEm("subiu 128\u202f% ou 2,28\u202f%").map((m) => m.slug)).not.toContain(
+      "retencao-capitais"
+    );
+    expect(relacionados("retencao-capitais").map((t) => t.slug)).toEqual(
+      expect.arrayContaining(["ppr", "englobamento"])
+    );
+  });
 });

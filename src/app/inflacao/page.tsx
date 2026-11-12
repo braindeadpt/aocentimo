@@ -253,6 +253,7 @@ export default function InflacaoPage() {
                   unidade="%"
                   eventos={eventos.eventos.filter((e) => e.alvo === "ihpc")}
                   estado={estadoCp00}
+                  rotulos={m.chart}
                 />
               </Cartao>
             ) : (

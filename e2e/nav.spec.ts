@@ -25,6 +25,10 @@ test.describe("desktop @1440", () => {
     await expect(
       nav.getByRole("link", { name: "Salário", exact: true })
     ).toBeHidden();
+    // aria-label="Principal" único no documento (diálogo mobile usa «Índice»)
+    await expect(page.locator('[aria-label="Principal"]')).toHaveCount(1);
+    // cabeçalho anuncia a data real mais recente das séries estatísticas
+    await expect(page.locator(".cab-fio")).toContainText(/dados até \d{1,2} \w{3} \d{4}|\w{3} \d{4}/i);
   });
 
   test("o menu abre ao passar e fecha ao sair; aria-expanded acompanha", async ({
@@ -138,7 +142,7 @@ test.describe("mobile @375", () => {
   }) => {
     await page.goto("/");
     await page.locator("summary", { hasText: "Índice" }).click();
-    const folha = page.getByRole("dialog", { name: "Principal" });
+    const folha = page.getByRole("dialog", { name: "Índice" });
     await expect(folha).toBeVisible();
     for (const p of PERGUNTAS) await expect(folha.getByText(p)).toBeVisible();
     await expect(folha.getByRole("link", { name: "IRS" })).toBeVisible();
@@ -187,7 +191,7 @@ test.describe("mobile @375", () => {
   test("clique fora fecha; mudar de rota fecha", async ({ page }) => {
     await page.goto("/");
     const indice = page.locator("summary", { hasText: "Índice" });
-    const folha = page.getByRole("dialog", { name: "Principal" });
+    const folha = page.getByRole("dialog", { name: "Índice" });
     await indice.click();
     await expect(folha).toBeVisible();
     await page.mouse.click(10, 10); // scrim

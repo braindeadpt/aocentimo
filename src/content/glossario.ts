@@ -56,7 +56,7 @@ export const GLOSSARIO: Termo[] = [
     slug: "taxa-efetiva-marginal",
     termo: "Taxa efetiva vs marginal",
     definicao:
-      "A taxa marginal é a do teu último escalão; a efetiva é o imposto total dividido pelo rendimento — sempre menor. Quando alguém diz 'pago 35 % de IRS', normalmente é a marginal; a efetiva pode ser metade disso.",
+      "A taxa marginal é a do teu último escalão; a efetiva é o imposto total dividido pelo rendimento — sempre menor. Quando alguém diz «pago 35 % de IRS», normalmente é a marginal; a efetiva pode ser metade disso.",
   },
   {
     slug: "deducao-especifica",
@@ -184,7 +184,7 @@ const MENCOES: Record<string, RegExp> = {
   iva: /\bIVA\b/,
   "certificados-aforro": /\bcertificados de aforro\b/i,
   "taxa-real": /\btaxa real\b|\btaxa nominal\b/i,
-  "retencao-capitais": /\b28 ?%\b|\breten[cç][ãa]o liberat[oó]ria\b/i,
+  "retencao-capitais": /(?<![\d,.])28[\s\u202f]?%(?!\w)|\breten[cç][ãa]o liberat[oó]ria\b/i,
   "deducao-coleta": /\bdedu[cç][õo]es?\b/i,
   "limite-deducoes": /\blimite global\b|\bart\.? ?78\b/i,
   ppr: /\bPPR\b/,

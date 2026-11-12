@@ -534,57 +534,76 @@
       "lead": "O mesmo trabalho, pago de maneiras diferentes: por conta de outrem, na função pública, a recibos verdes ou com empresa própria. Cada pessoa do bairro mostra um caminho diferente do dinheiro. Toca numa para a encontrares no mapa.",
       "notas": "De onde vêm os números do bairro:",
       "ola": "Olá! Sou {quem}.",
-      "emBreve": "Em breve",
-      "segueDinheiro": "vais poder seguir o meu dinheiro pelo bairro.",
       "cartas": {
         "ines": {
           "nome": "Inês",
           "papel": "Operária da fábrica",
           "perfil": "Conta de outrem · setor privado",
           "ola": "a Inês",
-          "aprende": "Porque é que {bruto} brutos viram {liquido}."
+          "aprende": "Porque é que {bruto} brutos viram {liquido}.",
+          "fala": "Porque é que {bruto} brutos viram {liquido}? Segue o meu salário desde a Fábrica ou simula o teu recibo.",
+          "cenaRotulo": "Entrar na Fábrica",
+          "rotaRotulo": "Simular o recibo →"
         },
         "diana": {
           "nome": "Diana",
           "papel": "Professora",
           "perfil": "Função pública",
           "ola": "a Diana",
-          "aprende": "Descontos diferentes para o mesmo salário."
+          "aprende": "Os escalões do IRS são os mesmos no público e no privado.",
+          "fala": "O desconto da ADSE ainda não está no simulador, mas o IRS calcula-se pelos mesmos escalões: podes já vê-los nas Finanças.",
+          "cenaRotulo": "Ver os escalões do IRS",
+          "rotaRotulo": "Simular o IRS →"
         },
         "pedro": {
           "nome": "Pedro",
           "papel": "Freelancer",
           "perfil": "Independente · recibos verdes",
           "ola": "o Pedro",
-          "aprende": "Segurança Social trimestral e IRS da categoria B."
+          "aprende": "Segurança Social trimestral e IRS da categoria B.",
+          "fala": "A recibos verdes pago a Segurança Social do meu bolso, de três em três meses. Vê a conta ao balcão ou simula os teus recibos.",
+          "cenaRotulo": "Entrar na Seg. Social",
+          "rotaRotulo": "Simular recibos verdes →"
         },
         "manuel": {
           "nome": "Sr. Manuel",
           "papel": "Dono da mercearia",
           "perfil": "Pequeno empresário",
           "ola": "o Sr. Manuel",
-          "aprende": "O IVA que cobra, a TSU que paga, o lucro da empresa."
+          "aprende": "O IVA no talão da caixa e o que subiu nas prateleiras.",
+          "fala": "As contas de IRC da empresa ainda não estão no simulador, mas já podes ver na Mercearia quanto subiram os preços e quanto do talão é IVA.",
+          "cenaRotulo": "Entrar na Mercearia",
+          "rotaRotulo": "Ver o IVA no talão →"
         },
         "arminda": {
           "nome": "Dona Arminda",
           "papel": "Reformada",
           "perfil": "Pensão e poupança",
           "ola": "a Dona Arminda",
-          "aprende": "Quanto rende a poupança e o IRS sobre a pensão."
+          "aprende": "Quanto rende a poupança face à subida dos preços.",
+          "fala": "As tabelas de IRS das pensões ainda não estão no simulador, mas já podes ver nos Correios como proteger a poupança da inflação.",
+          "cenaRotulo": "Entrar nos Correios",
+          "rotaRotulo": "Simular a poupança →"
         },
         "goncalo": {
           "nome": "Gonçalo",
           "papel": "Estudante, 16 anos",
           "perfil": "Mesada e primeiro trabalho",
           "ola": "o Gonçalo",
-          "aprende": "O primeiro recibo, o IRS Jovem, a primeira conta."
+          "aprende": "As palavras do dinheiro na Escola e o benefício do IRS Jovem.",
+          "fala": "Antes do primeiro recibo convém saber ler os números. Passa pela Escola ou vê quanto poupa o IRS Jovem.",
+          "cenaRotulo": "Entrar na Escola",
+          "rotaRotulo": "Ver o IRS Jovem →"
         },
         "rui": {
           "nome": "Rui e Marta",
           "papel": "Casal com crédito",
           "perfil": "Crédito à habitação",
           "ola": "o Rui, e esta é a Marta",
-          "aprende": "A prestação, a Euribor e quanto do salário ela come."
+          "aprende": "A prestação, a Euribor e quanto do salário ela come.",
+          "fala": "Quando a Euribor mexe, a prestação da casa mexe com ela. Entra no Banco ou simula um empréstimo.",
+          "cenaRotulo": "Entrar no Banco",
+          "rotaRotulo": "Simular a prestação →"
         }
       }
     },
