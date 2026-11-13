@@ -5,8 +5,8 @@
     "dataset": "prc_hicp_minr",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=NRG&unit=I25",
     "unidade": "Índice 2025=100",
-    "recolhidoEm": "2026-10-13T15:09:56.517Z",
-    "serieAte": "2026-09",
+    "recolhidoEm": "2026-11-13T15:32:05.527Z",
+    "serieAte": "2026-10",
     "frequencia": "mensal"
   },
   "series": [
@@ -1484,7 +1484,11 @@
     },
     {
       "t": "2026-09",
-      "v": 116.82
+      "v": 116.74
+    },
+    {
+      "t": "2026-10",
+      "v": 118.43
     }
   ]
 }

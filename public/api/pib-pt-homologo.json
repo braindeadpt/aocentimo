@@ -5,10 +5,10 @@
     "dataset": "namq_10_gdp",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?format=JSON&geo=PT&na_item=B1GQ&unit=CLV_PCH_SM&s_adj=SCA&sinceTimePeriod=2000",
     "unidade": "percentagem_variacao_homologa",
-    "recolhidoEm": "2026-10-13T15:09:59.388Z",
-    "serieAte": "2026-06-30",
+    "recolhidoEm": "2026-11-13T15:32:08.645Z",
+    "serieAte": "2026-09-30",
     "frequencia": "trimestral",
-    "rotuloAte": "2026-Q2"
+    "rotuloAte": "2026-Q3"
   },
   "series": [
     {
@@ -434,6 +434,10 @@
     {
       "t": "2026-Q2",
       "v": 2.6
+    },
+    {
+      "t": "2026-Q3",
+      "v": 2.4
     }
   ]
 }

@@ -1,16 +1,16 @@
 {
-  "derivadoEm": "2026-11-13T14:16:11.590Z",
+  "derivadoEm": "2026-11-13T15:32:11.200Z",
   "unidade": "Índice 2025=100",
   "series": [
     {
       "id": "confianca-pt",
-      "serieAte": "2026-09",
-      "ultimo": -22.6,
-      "varMensal": 0.1078431372549021,
-      "varHomologa": 0.3063583815028902,
-      "varDesdeInicio": 8.416666666666668,
+      "serieAte": "2026-10",
+      "ultimo": -26.8,
+      "varMensal": 0.1806167400881058,
+      "varHomologa": 1.0458015267175573,
+      "varDesdeInicio": 10.166666666666668,
       "desde": "2000-01",
-      "pontos": 321
+      "pontos": 322
     },
     {
       "id": "elec-pt-domestico",
@@ -24,263 +24,263 @@
     },
     {
       "id": "hicp-pt-cp00",
-      "serieAte": "2026-09",
-      "ultimo": 105.08,
-      "varMensal": 0.009705006245796148,
-      "varHomologa": 0.03557701783778456,
-      "varDesdeInicio": 0.9946848899012908,
+      "serieAte": "2026-10",
+      "ultimo": 105.13,
+      "varMensal": -0.00019020446980513772,
+      "varHomologa": 0.03924476077500987,
+      "varDesdeInicio": 0.9956340167046317,
       "desde": "1996-01",
-      "pontos": 369
+      "pontos": 370
     },
     {
       "id": "hicp-pt-cp01",
-      "serieAte": "2026-08",
-      "ultimo": 102.82,
-      "varMensal": -0.003875217981011487,
-      "varHomologa": 0.02115403714370837,
-      "varDesdeInicio": 0.967846889952153,
+      "serieAte": "2026-09",
+      "ultimo": 103.31,
+      "varMensal": 0.004765609803540256,
+      "varHomologa": 0.02358069949469925,
+      "varDesdeInicio": 0.9772248803827752,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp0111",
-      "serieAte": "2026-08",
-      "ultimo": 102.31,
-      "varMensal": -0.0031179966871284536,
-      "varHomologa": 0.02330466093218642,
-      "varDesdeInicio": 1.211629917855599,
+      "serieAte": "2026-09",
+      "ultimo": 102.23,
+      "varMensal": -0.0007819372495357081,
+      "varHomologa": 0.02342576834517973,
+      "varDesdeInicio": 1.20990056204064,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp0112",
-      "serieAte": "2026-08",
-      "ultimo": 103.62,
-      "varMensal": -0.004897723998847507,
-      "varHomologa": 0.03053207359522633,
-      "varDesdeInicio": 0.9278139534883721,
+      "serieAte": "2026-09",
+      "ultimo": 103.66,
+      "varMensal": 0.00038602586373279326,
+      "varHomologa": 0.021884858044164027,
+      "varDesdeInicio": 0.9285581395348836,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp0113",
-      "serieAte": "2026-08",
-      "ultimo": 110.28,
-      "varMensal": 0.006755523096585675,
-      "varHomologa": 0.0935052057511156,
-      "varDesdeInicio": 1.4232036914963746,
+      "serieAte": "2026-09",
+      "ultimo": 111.39,
+      "varMensal": 0.01006528835690968,
+      "varHomologa": 0.10287128712871288,
+      "varDesdeInicio": 1.4475939353988134,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp0114",
-      "serieAte": "2026-08",
-      "ultimo": 100.82,
-      "varMensal": -0.0009908838684107068,
-      "varHomologa": 0.004984051036682616,
-      "varDesdeInicio": 0.4521100388880885,
+      "serieAte": "2026-09",
+      "ultimo": 100.68,
+      "varMensal": -0.001388613370362888,
+      "varHomologa": 0.0005963029218843398,
+      "varDesdeInicio": 0.4500936194728503,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp0115",
-      "serieAte": "2026-08",
-      "ultimo": 96.11,
-      "varMensal": -0.00342181667357941,
-      "varHomologa": -0.01080691642651294,
-      "varDesdeInicio": 0.6941653446148424,
+      "serieAte": "2026-09",
+      "ultimo": 97.41,
+      "varMensal": 0.013526167932577226,
+      "varHomologa": 0.0021604938271604294,
+      "varDesdeInicio": 0.7170809095716553,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp0116",
-      "serieAte": "2026-08",
-      "ultimo": 103.61,
-      "varMensal": -0.027592679493195663,
-      "varHomologa": -0.006996358060187885,
-      "varDesdeInicio": 1.3116912092815707,
+      "serieAte": "2026-09",
+      "ultimo": 102.16,
+      "varMensal": -0.013994788147862203,
+      "varHomologa": -0.01074852328846712,
+      "varDesdeInicio": 1.2793395805443997,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp0117",
-      "serieAte": "2026-08",
-      "ultimo": 99.73,
-      "varMensal": -0.0013018225515721556,
-      "varHomologa": -0.013941071781688715,
-      "varDesdeInicio": 1.3394323246539994,
+      "serieAte": "2026-09",
+      "ultimo": 103.8,
+      "varMensal": 0.04081018750626685,
+      "varHomologa": 0.0171484566389025,
+      "varDesdeInicio": 1.434904996481351,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp0118",
-      "serieAte": "2026-08",
-      "ultimo": 98.55,
-      "varMensal": 0.013367609254498685,
-      "varHomologa": -0.012623985572587967,
-      "varDesdeInicio": 0.6235584843492585,
+      "serieAte": "2026-09",
+      "ultimo": 99.24,
+      "varMensal": 0.007001522070015198,
+      "varHomologa": -0.014106894496324277,
+      "varDesdeInicio": 0.6349258649093903,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp02",
-      "serieAte": "2026-08",
-      "ultimo": 102.94,
-      "varMensal": -0.00464126861342104,
-      "varHomologa": 0.028474373064242123,
-      "varDesdeInicio": 2.0940787496242854,
+      "serieAte": "2026-09",
+      "ultimo": 101.77,
+      "varMensal": -0.011365844181076373,
+      "varHomologa": 0.015465974855318271,
+      "varDesdeInicio": 2.0589119326720766,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp03",
-      "serieAte": "2026-08",
-      "ultimo": 84.24,
-      "varMensal": -0.06493506493506503,
-      "varHomologa": -0.011151543608404776,
-      "varDesdeInicio": -0.377245508982036,
+      "serieAte": "2026-09",
+      "ultimo": 102.6,
+      "varMensal": 0.21794871794871795,
+      "varHomologa": -0.019401701232916003,
+      "varDesdeInicio": -0.24151696606786438,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp04",
-      "serieAte": "2026-08",
-      "ultimo": 103.68,
-      "varMensal": 0.0027079303675048463,
-      "varHomologa": 0.03318385650224228,
-      "varDesdeInicio": 1.5971943887775553,
+      "serieAte": "2026-09",
+      "ultimo": 103.95,
+      "varMensal": 0.002604166666666628,
+      "varHomologa": 0.034122562674094775,
+      "varDesdeInicio": 1.6039579158316633,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp045",
-      "serieAte": "2026-08",
-      "ultimo": 101.71,
-      "varMensal": 0.0027605244996548053,
-      "varHomologa": 0.014867291957693025,
-      "varDesdeInicio": 1.3830834114339268,
+      "serieAte": "2026-09",
+      "ultimo": 101.91,
+      "varMensal": 0.0019663749877101844,
+      "varHomologa": 0.01676144866806338,
+      "varDesdeInicio": 1.3877694470477975,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp05",
-      "serieAte": "2026-08",
-      "ultimo": 101.62,
-      "varMensal": -0.0005900865460267729,
-      "varHomologa": 0.016606642657062933,
-      "varDesdeInicio": 0.515359379660006,
+      "serieAte": "2026-09",
+      "ultimo": 102.02,
+      "varMensal": 0.003936233024994996,
+      "varHomologa": 0.018671992011981928,
+      "varDesdeInicio": 0.5213241872949597,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp06",
-      "serieAte": "2026-08",
-      "ultimo": 103.23,
-      "varMensal": 0.004671532846715367,
-      "varHomologa": 0.029007177033492933,
-      "varDesdeInicio": 0.8126426690079016,
+      "serieAte": "2026-09",
+      "ultimo": 103.44,
+      "varMensal": 0.0020342923568729414,
+      "varHomologa": 0.02925373134328356,
+      "varDesdeInicio": 0.8163301141352062,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp07",
-      "serieAte": "2026-08",
-      "ultimo": 109.5,
-      "varMensal": 0.02212265471856627,
-      "varHomologa": 0.08577094695091726,
-      "varDesdeInicio": 1.4060646011865525,
+      "serieAte": "2026-09",
+      "ultimo": 108.59,
+      "varMensal": -0.008310502283104992,
+      "varHomologa": 0.08503197442046369,
+      "varDesdeInicio": 1.3860689958250936,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp0722",
-      "serieAte": "2026-08",
-      "ultimo": 122.83,
-      "varMensal": 0.05379203843514067,
-      "varHomologa": 0.23970528865563182,
-      "varDesdeInicio": 2.19953112789789,
+      "serieAte": "2026-09",
+      "ultimo": 129.42,
+      "varMensal": 0.05365138809737026,
+      "varHomologa": 0.3031920249723088,
+      "varDesdeInicio": 2.3711904141703566,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp08",
-      "serieAte": "2026-08",
-      "ultimo": 96.76,
-      "varMensal": -0.0014447884416924723,
-      "varHomologa": -0.03855325914149439,
-      "varDesdeInicio": -0.26468576639562275,
+      "serieAte": "2026-09",
+      "ultimo": 97.49,
+      "varMensal": 0.007544439851178066,
+      "varHomologa": -0.02108645446329961,
+      "varDesdeInicio": -0.25913823238847944,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp09",
-      "serieAte": "2026-08",
-      "ultimo": 103.12,
-      "varMensal": -0.000290838584585566,
-      "varHomologa": 0.01887165299871565,
-      "varDesdeInicio": 0.6168077767325181,
+      "serieAte": "2026-09",
+      "ultimo": 100.09,
+      "varMensal": -0.0293832428238945,
+      "varHomologa": 0.0026044275267956035,
+      "varDesdeInicio": 0.5693007212292255,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp10",
-      "serieAte": "2026-08",
-      "ultimo": 103.44,
-      "varMensal": 0.0008708272859216585,
-      "varHomologa": 0.044742955257044664,
-      "varDesdeInicio": 1.4877344877344878,
+      "serieAte": "2026-09",
+      "ultimo": 103.67,
+      "varMensal": 0.00222351121423051,
+      "varHomologa": 0.04600948441126024,
+      "varDesdeInicio": 1.4932659932659935,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp11",
-      "serieAte": "2026-08",
-      "ultimo": 110.24,
-      "varMensal": 0.015943231038613857,
-      "varHomologa": 0.043445338381448075,
-      "varDesdeInicio": 1.9491706795077577,
+      "serieAte": "2026-09",
+      "ultimo": 111.42,
+      "varMensal": 0.01070391872278671,
+      "varHomologa": 0.05671471927162371,
+      "varDesdeInicio": 1.9807383627608344,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-cp12",
-      "serieAte": "2026-08",
-      "ultimo": 103.43,
-      "varMensal": 0.005639280505590788,
-      "varHomologa": 0.029051835638244965,
-      "varDesdeInicio": 1.360337745321771,
+      "serieAte": "2026-09",
+      "ultimo": 103.62,
+      "varMensal": 0.0018369912017789588,
+      "varHomologa": 0.027364663890541395,
+      "varDesdeInicio": 1.364673664993154,
       "desde": "1996-01",
-      "pontos": 368
+      "pontos": 369
     },
     {
       "id": "hicp-pt-food",
-      "serieAte": "2026-09",
-      "ultimo": 103.1,
-      "varMensal": 0.0025281991443017395,
-      "varHomologa": 0.022513140930278647,
-      "varDesdeInicio": 1.1109746109746108,
+      "serieAte": "2026-10",
+      "ultimo": 103.35,
+      "varMensal": 0.0024248302618816685,
+      "varHomologa": 0.023672741679873224,
+      "varDesdeInicio": 1.1160933660933658,
       "desde": "1996-01",
-      "pontos": 369
+      "pontos": 370
     },
     {
       "id": "hicp-pt-nrg",
-      "serieAte": "2026-09",
-      "ultimo": 116.82,
-      "varMensal": 0.03252607389075475,
-      "varHomologa": 0.17065838260346713,
-      "varDesdeInicio": 1.8794675868868622,
+      "serieAte": "2026-10",
+      "ultimo": 118.43,
+      "varMensal": 0.014476614699331952,
+      "varHomologa": 0.19120901227117285,
+      "varDesdeInicio": 1.9191520828198179,
       "desde": "1996-01",
-      "pontos": 369
+      "pontos": 370
     },
     {
       "id": "hicp-pt-tot_x_nrg_food",
-      "serieAte": "2026-09",
-      "ultimo": 104.72,
-      "varMensal": 0.009933455492332927,
-      "varHomologa": 0.02807775377969762,
-      "varDesdeInicio": 0.6611675126903553,
+      "serieAte": "2026-10",
+      "ultimo": 104.57,
+      "varMensal": -0.002480206047887104,
+      "varHomologa": 0.03126232741617344,
+      "varDesdeInicio": 0.6587880710659898,
       "desde": "1999-12",
-      "pontos": 322
+      "pontos": 323
     },
     {
       "id": "hpi-pt",
@@ -304,43 +304,43 @@
     },
     {
       "id": "pib-pt-homologo",
-      "serieAte": "2026-06-30",
-      "ultimo": 2.6,
-      "varMensal": 0.08333333333333341,
-      "varHomologa": -0.2777777777777778,
-      "varDesdeInicio": -0.4090909090909091,
+      "serieAte": "2026-09-30",
+      "ultimo": 2.4,
+      "varMensal": -0.07692307692307698,
+      "varHomologa": -0.07692307692307698,
+      "varDesdeInicio": -0.4545454545454546,
       "desde": "2000-Q1",
-      "pontos": 106
+      "pontos": 107
     },
     {
       "id": "une-pt-jovem",
-      "serieAte": "2026-08",
-      "ultimo": 19.8,
-      "varMensal": -0.057142857142857106,
-      "varHomologa": 0.047619047619047734,
-      "varDesdeInicio": 0.5590551181102363,
+      "serieAte": "2026-09",
+      "ultimo": 19.1,
+      "varMensal": -0.04020100502512549,
+      "varHomologa": 0.03243243243243251,
+      "varDesdeInicio": 0.503937007874016,
       "desde": "2000-01",
-      "pontos": 320
+      "pontos": 321
     },
     {
       "id": "une-pt-total",
-      "serieAte": "2026-08",
-      "ultimo": 5.7,
+      "serieAte": "2026-09",
+      "ultimo": 5.6,
       "varMensal": 0,
-      "varHomologa": -0.03389830508474579,
-      "varDesdeInicio": 0.017857142857142953,
+      "varHomologa": -0.05084745762711876,
+      "varDesdeInicio": 0,
       "desde": "2000-01",
-      "pontos": 320
+      "pontos": 321
     },
     {
       "id": "une-ue27-total",
-      "serieAte": "2026-08",
-      "ultimo": 6.1,
+      "serieAte": "2026-09",
+      "ultimo": 6.2,
       "varMensal": 0,
-      "varHomologa": 0.016666666666666607,
-      "varDesdeInicio": -0.3711340206185567,
+      "varHomologa": 0.03333333333333336,
+      "varDesdeInicio": -0.3608247422680412,
       "desde": "2000-01",
-      "pontos": 320
+      "pontos": 321
     }
   ]
 }

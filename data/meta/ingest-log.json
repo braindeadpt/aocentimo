@@ -1,13 +1,9 @@
 {
-  "correuEm": "2026-11-13T14:16:11.089Z",
+  "correuEm": "2026-11-13T15:32:10.566Z",
   "fontes": {
-    "bpstat": {
+    "eurostat": {
       "ok": true,
-      "series": 14
-    },
-    "dgeg": {
-      "ok": true,
-      "series": 3
+      "series": 34
     }
   }
 }

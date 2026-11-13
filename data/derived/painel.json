@@ -1,24 +1,20 @@
 {
-  "geradoEm": "2026-11-13T14:16:11.612Z",
-  "recolhidoEm": "2026-11-13T14:16:11.593Z",
+  "geradoEm": "2026-11-13T15:32:11.235Z",
+  "recolhidoEm": "2026-11-13T15:32:11.204Z",
   "series": [
     {
       "id": "hicp-pt-cp00",
       "rotulo": "hicp-pt-cp00",
-      "valor": 105.08,
+      "valor": 105.13,
       "unidade": "Índice 2025=100",
-      "t": "2026-09",
-      "rotuloAte": "2026-09",
+      "t": "2026-10",
+      "rotuloAte": "2026-10",
       "variacao": {
-        "abs": 3.61,
-        "pct": 0.0356,
-        "periodo": "2025-09"
+        "abs": 3.97,
+        "pct": 0.0392,
+        "periodo": "2025-10"
       },
       "spark": [
-        {
-          "t": "2024-10",
-          "v": 99.2
-        },
         {
           "t": "2024-11",
           "v": 98.2
@@ -109,32 +105,32 @@
         },
         {
           "t": "2026-09",
-          "v": 105.08
+          "v": 105.15
+        },
+        {
+          "t": "2026-10",
+          "v": 105.13
         }
       ],
       "estado": "em-dia",
       "referencia": null,
       "fonte": "Eurostat",
       "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=TOTAL&unit=I25",
-      "recolhidoEm": "2026-10-13T15:09:44.470Z"
+      "recolhidoEm": "2026-11-13T15:31:46.516Z"
     },
     {
       "id": "inflacao-homologa",
       "rotulo": "inflacao-homologa",
-      "valor": 3.56,
+      "valor": 3.92,
       "unidade": "%",
-      "t": "2026-09",
-      "rotuloAte": "2026-09",
+      "t": "2026-10",
+      "rotuloAte": "2026-10",
       "variacao": {
-        "abs": 1.64,
-        "pct": 0.8542,
-        "periodo": "2025-09"
+        "abs": 1.94,
+        "pct": 0.9798,
+        "periodo": "2025-10"
       },
       "spark": [
-        {
-          "t": "2024-10",
-          "v": 2.64
-        },
         {
           "t": "2024-11",
           "v": 2.68
@@ -225,17 +221,21 @@
         },
         {
           "t": "2026-09",
-          "v": 3.56
+          "v": 3.63
+        },
+        {
+          "t": "2026-10",
+          "v": 3.92
         }
       ],
       "estado": "em-dia",
       "referencia": {
-        "valor": 1.78,
+        "valor": 1.8,
         "rotulo": "mediana 10 anos"
       },
       "fonte": "Eurostat",
       "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr?format=JSON&geo=PT&coicop18=TOTAL&unit=I25",
-      "recolhidoEm": "2026-10-13T15:09:44.470Z"
+      "recolhidoEm": "2026-11-13T15:31:46.516Z"
     },
     {
       "id": "euribor-3m-mensal",
@@ -821,25 +821,21 @@
       "referencia": null,
       "fonte": "IGCP (oficial) + BPstat Euribor 3M (indicativa)",
       "url": "https://www.igcp.pt/pt/aforristas/produtos-de-aforro/certificados-de-aforro",
-      "recolhidoEm": "2026-11-13T14:16:11.592Z"
+      "recolhidoEm": "2026-11-13T15:32:11.202Z"
     },
     {
       "id": "une-ue27-total",
       "rotulo": "une-ue27-total",
-      "valor": 6.1,
+      "valor": 6.2,
       "unidade": "%",
-      "t": "2026-08",
-      "rotuloAte": "2026-08",
+      "t": "2026-09",
+      "rotuloAte": "2026-09",
       "variacao": {
-        "abs": 0.1,
-        "pct": 0.0167,
-        "periodo": "2025-08"
+        "abs": 0.2,
+        "pct": 0.0333,
+        "periodo": "2025-09"
       },
       "spark": [
-        {
-          "t": "2024-09",
-          "v": 5.9
-        },
         {
           "t": "2024-10",
           "v": 5.8
@@ -922,40 +918,40 @@
         },
         {
           "t": "2026-06",
-          "v": 6.1
+          "v": 6.2
         },
         {
           "t": "2026-07",
-          "v": 6.1
+          "v": 6.2
         },
         {
           "t": "2026-08",
-          "v": 6.1
+          "v": 6.2
+        },
+        {
+          "t": "2026-09",
+          "v": 6.2
         }
       ],
       "estado": "em-dia",
       "referencia": null,
       "fonte": "Eurostat",
       "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?format=JSON&geo=EU27_2020&s_adj=SA&age=TOTAL&unit=PC_ACT&sex=T&sinceTimePeriod=2000",
-      "recolhidoEm": "2026-10-13T15:09:58.744Z"
+      "recolhidoEm": "2026-11-13T15:32:07.722Z"
     },
     {
       "id": "une-pt-total",
       "rotulo": "une-pt-total",
-      "valor": 5.7,
+      "valor": 5.6,
       "unidade": "%",
-      "t": "2026-08",
-      "rotuloAte": "2026-08",
+      "t": "2026-09",
+      "rotuloAte": "2026-09",
       "variacao": {
-        "abs": -0.2,
-        "pct": -0.0339,
-        "periodo": "2025-08"
+        "abs": -0.3,
+        "pct": -0.0508,
+        "periodo": "2025-09"
       },
       "spark": [
-        {
-          "t": "2024-09",
-          "v": 6.4
-        },
         {
           "t": "2024-10",
           "v": 6.5
@@ -998,7 +994,7 @@
         },
         {
           "t": "2025-08",
-          "v": 5.9
+          "v": 5.8
         },
         {
           "t": "2025-09",
@@ -1046,35 +1042,35 @@
         },
         {
           "t": "2026-08",
-          "v": 5.7
+          "v": 5.6
+        },
+        {
+          "t": "2026-09",
+          "v": 5.6
         }
       ],
       "estado": "em-dia",
       "referencia": {
-        "valor": 6.1,
+        "valor": 6.2,
         "rotulo": "UE27"
       },
       "fonte": "Eurostat",
       "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?format=JSON&geo=PT&s_adj=SA&age=TOTAL&unit=PC_ACT&sex=T&sinceTimePeriod=2000",
-      "recolhidoEm": "2026-10-13T15:09:58.094Z"
+      "recolhidoEm": "2026-11-13T15:32:06.635Z"
     },
     {
       "id": "une-pt-jovem",
       "rotulo": "une-pt-jovem",
-      "valor": 19.8,
+      "valor": 19.1,
       "unidade": "%",
-      "t": "2026-08",
-      "rotuloAte": "2026-08",
+      "t": "2026-09",
+      "rotuloAte": "2026-09",
       "variacao": {
-        "abs": 0.9,
-        "pct": 0.0476,
-        "periodo": "2025-08"
+        "abs": 0.6,
+        "pct": 0.0324,
+        "periodo": "2025-09"
       },
       "spark": [
-        {
-          "t": "2024-09",
-          "v": 20.9
-        },
         {
           "t": "2024-10",
           "v": 21.3
@@ -1085,7 +1081,7 @@
         },
         {
           "t": "2024-12",
-          "v": 20.4
+          "v": 20.5
         },
         {
           "t": "2025-01",
@@ -1113,11 +1109,11 @@
         },
         {
           "t": "2025-07",
-          "v": 19.5
+          "v": 19.4
         },
         {
           "t": "2025-08",
-          "v": 18.9
+          "v": 18.8
         },
         {
           "t": "2025-09",
@@ -1157,7 +1153,7 @@
         },
         {
           "t": "2026-06",
-          "v": 20
+          "v": 19.9
         },
         {
           "t": "2026-07",
@@ -1165,32 +1161,32 @@
         },
         {
           "t": "2026-08",
-          "v": 19.8
+          "v": 19.9
+        },
+        {
+          "t": "2026-09",
+          "v": 19.1
         }
       ],
       "estado": "em-dia",
       "referencia": null,
       "fonte": "Eurostat",
       "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?format=JSON&geo=PT&s_adj=SA&age=Y_LT25&unit=PC_ACT&sex=T&sinceTimePeriod=2000",
-      "recolhidoEm": "2026-10-13T15:09:58.561Z"
+      "recolhidoEm": "2026-11-13T15:32:07.586Z"
     },
     {
       "id": "desemprego-gap",
       "rotulo": "desemprego-gap",
-      "valor": -0.4,
+      "valor": -0.6,
       "unidade": "p.p.",
-      "t": "2026-08",
-      "rotuloAte": "2026-08",
+      "t": "2026-09",
+      "rotuloAte": "2026-09",
       "variacao": {
-        "abs": -0.3,
+        "abs": -0.5,
         "pct": null,
-        "periodo": "2025-08"
+        "periodo": "2025-09"
       },
       "spark": [
-        {
-          "t": "2024-09",
-          "v": 0.5
-        },
         {
           "t": "2024-10",
           "v": 0.7
@@ -1233,7 +1229,7 @@
         },
         {
           "t": "2025-08",
-          "v": -0.1
+          "v": -0.2
         },
         {
           "t": "2025-09",
@@ -1273,22 +1269,26 @@
         },
         {
           "t": "2026-06",
-          "v": -0.4
+          "v": -0.5
         },
         {
           "t": "2026-07",
-          "v": -0.4
+          "v": -0.5
         },
         {
           "t": "2026-08",
-          "v": -0.4
+          "v": -0.6
+        },
+        {
+          "t": "2026-09",
+          "v": -0.6
         }
       ],
       "estado": "em-dia",
       "referencia": null,
       "fonte": "Eurostat — une_rt_m (PT − EU27_2020)",
       "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?format=JSON&geo=PT&s_adj=SA&age=TOTAL&unit=PC_ACT&sex=T&sinceTimePeriod=2000",
-      "recolhidoEm": "2026-11-13T14:16:11.593Z"
+      "recolhidoEm": "2026-11-13T15:32:11.204Z"
     },
     {
       "id": "hpi-pt",
@@ -1404,7 +1404,7 @@
       "referencia": null,
       "fonte": "Eurostat",
       "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hpi_q?format=JSON&geo=PT&purchase=TOTAL&unit=I15_Q&sinceTimePeriod=2000",
-      "recolhidoEm": "2026-10-13T15:09:58.929Z"
+      "recolhidoEm": "2026-11-13T15:32:07.842Z"
     },
     {
       "id": "casa-em-salarios",
@@ -1520,25 +1520,21 @@
       "referencia": null,
       "fonte": "Eurostat — prc_hpi_q ÷ ei_lmlc_q",
       "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hpi_q?format=JSON&geo=PT&purchase=TOTAL&unit=I15_Q&sinceTimePeriod=2000",
-      "recolhidoEm": "2026-11-13T14:16:11.593Z"
+      "recolhidoEm": "2026-11-13T15:32:11.203Z"
     },
     {
       "id": "pib-pt-homologo",
       "rotulo": "pib-pt-homologo",
-      "valor": 2.6,
+      "valor": 2.4,
       "unidade": "% homóloga",
-      "t": "2026-Q2",
-      "rotuloAte": "2026-Q2",
+      "t": "2026-Q3",
+      "rotuloAte": "2026-Q3",
       "variacao": {
-        "abs": 0.2,
-        "pct": 0.0833,
-        "periodo": "2026-Q1"
+        "abs": -0.2,
+        "pct": -0.0769,
+        "periodo": "2026-Q2"
       },
       "spark": [
-        {
-          "t": "2020-Q3",
-          "v": -6.1
-        },
         {
           "t": "2020-Q4",
           "v": -6.7
@@ -1630,6 +1626,10 @@
         {
           "t": "2026-Q2",
           "v": 2.6
+        },
+        {
+          "t": "2026-Q3",
+          "v": 2.4
         }
       ],
       "estado": "em-dia",
@@ -1639,7 +1639,7 @@
       },
       "fonte": "Eurostat",
       "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?format=JSON&geo=PT&na_item=B1GQ&unit=CLV_PCH_SM&s_adj=SCA&sinceTimePeriod=2000",
-      "recolhidoEm": "2026-10-13T15:09:59.388Z"
+      "recolhidoEm": "2026-11-13T15:32:08.645Z"
     },
     {
       "id": "lci-pt-homologo",
@@ -1755,36 +1755,32 @@
       "referencia": null,
       "fonte": "Eurostat",
       "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/ei_lmlc_q?format=JSON&geo=PT&indic=LM-LCI-TOT&nace_r2=B-S&s_adj=SCA&unit=PCH_SM&p_adj=NV&sinceTimePeriod=2000",
-      "recolhidoEm": "2026-10-13T15:09:59.760Z"
+      "recolhidoEm": "2026-11-13T15:32:09.617Z"
     },
     {
       "id": "confianca-pt",
       "rotulo": "confianca-pt",
-      "valor": -22.6,
+      "valor": -26.8,
       "unidade": "saldo",
-      "t": "2026-09",
-      "rotuloAte": "2026-09",
+      "t": "2026-10",
+      "rotuloAte": "2026-10",
       "variacao": {
-        "abs": -5.3,
+        "abs": -13.7,
         "pct": null,
-        "periodo": "2025-09"
+        "periodo": "2025-10"
       },
       "spark": [
         {
-          "t": "2024-10",
-          "v": -14.6
-        },
-        {
           "t": "2024-11",
-          "v": -14.4
+          "v": -14.3
         },
         {
           "t": "2024-12",
-          "v": -15.8
+          "v": -15.7
         },
         {
           "t": "2025-01",
-          "v": -15.2
+          "v": -15.1
         },
         {
           "t": "2025-02",
@@ -1800,7 +1796,7 @@
         },
         {
           "t": "2025-05",
-          "v": -15.8
+          "v": -15.9
         },
         {
           "t": "2025-06",
@@ -1816,15 +1812,15 @@
         },
         {
           "t": "2025-09",
-          "v": -17.3
+          "v": -17.4
         },
         {
           "t": "2025-10",
-          "v": -13.2
+          "v": -13.1
         },
         {
           "t": "2025-11",
-          "v": -15.1
+          "v": -15
         },
         {
           "t": "2025-12",
@@ -1836,7 +1832,7 @@
         },
         {
           "t": "2026-02",
-          "v": -17.2
+          "v": -17.1
         },
         {
           "t": "2026-03",
@@ -1860,18 +1856,22 @@
         },
         {
           "t": "2026-08",
-          "v": -20.4
+          "v": -20.5
         },
         {
           "t": "2026-09",
-          "v": -22.6
+          "v": -22.7
+        },
+        {
+          "t": "2026-10",
+          "v": -26.8
         }
       ],
       "estado": "em-dia",
       "referencia": null,
       "fonte": "Eurostat",
       "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/ei_bsco_m?format=JSON&geo=PT&indic=BS-CSMCI&s_adj=SA&unit=BAL&sinceTimePeriod=2000",
-      "recolhidoEm": "2026-10-13T15:09:59.572Z"
+      "recolhidoEm": "2026-11-13T15:32:09.491Z"
     },
     {
       "id": "elec-pt-domestico",
@@ -1987,7 +1987,7 @@
       "referencia": null,
       "fonte": "Eurostat",
       "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nrg_pc_204?format=JSON&geo=PT&nrg_cons=KWH2500-4999&tax=I_TAX&currency=EUR&unit=KWH&sinceTimePeriod=2000",
-      "recolhidoEm": "2026-10-13T15:10:00.258Z"
+      "recolhidoEm": "2026-11-13T15:32:10.565Z"
     }
   ]
 }

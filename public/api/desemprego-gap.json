@@ -9,9 +9,9 @@
     "formula": "Taxa de desemprego dessazonalizada PT menos a média UE27, em pontos percentuais.",
     "unidade": "pontos_percentuais",
     "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?format=JSON&geo=PT&s_adj=SA&age=TOTAL&unit=PC_ACT&sex=T&sinceTimePeriod=2000",
-    "recolhidoEm": "2026-11-13T14:16:11.593Z",
-    "serieAte": "2026-08",
-    "rotuloAte": "2026-08",
+    "recolhidoEm": "2026-11-13T15:32:11.204Z",
+    "serieAte": "2026-09",
+    "rotuloAte": "2026-09",
     "frequencia": "mensal"
   },
   "series": [
@@ -753,7 +753,7 @@
     },
     {
       "t": "2015-05",
-      "v": 2.5
+      "v": 2.4
     },
     {
       "t": "2015-06",
@@ -777,7 +777,7 @@
     },
     {
       "t": "2015-11",
-      "v": 2.7
+      "v": 2.8
     },
     {
       "t": "2015-12",
@@ -845,7 +845,7 @@
     },
     {
       "t": "2017-04",
-      "v": 1.5
+      "v": 1.4
     },
     {
       "t": "2017-05",
@@ -977,7 +977,7 @@
     },
     {
       "t": "2020-01",
-      "v": 0.2
+      "v": 0.3
     },
     {
       "t": "2020-02",
@@ -1013,7 +1013,7 @@
     },
     {
       "t": "2020-10",
-      "v": 0.1
+      "v": 0.2
     },
     {
       "t": "2020-11",
@@ -1245,7 +1245,7 @@
     },
     {
       "t": "2025-08",
-      "v": -0.1
+      "v": -0.2
     },
     {
       "t": "2025-09",
@@ -1285,15 +1285,19 @@
     },
     {
       "t": "2026-06",
-      "v": -0.4
+      "v": -0.5
     },
     {
       "t": "2026-07",
-      "v": -0.4
+      "v": -0.5
     },
     {
       "t": "2026-08",
-      "v": -0.4
+      "v": -0.6
+    },
+    {
+      "t": "2026-09",
+      "v": -0.6
     }
   ]
 }
