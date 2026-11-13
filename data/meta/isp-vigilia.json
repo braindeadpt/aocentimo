@@ -1,14 +1,14 @@
 {
-  "consultadoEm": "2026-11-08T14:56:14.119Z",
+  "consultadoEm": "2026-11-13T22:06:28.946Z",
   "fonteUrl": "https://news.google.com/rss/search?q=ISP+site%3Adiariodarepublica.pt&hl=pt-PT&gl=PT&ceid=PT%3Apt",
   "nota": "Feed RSS do Google Notícias restrito ao DR; o DR não é legível por máquina (só shell JS).",
   "ultimaPortariaFeed": {
-    "numero": "314-B/2026/1",
-    "data": "2026-07-24",
-    "titulo": "Portaria n.º 314-B/2026/1, de 24 de julho - Diário da República",
-    "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE9ONDlwX2JBaWYzUWxwSkxtNF9JTnRDVkc3MmQ1OTMxc0M1WUZpcF9nS000bW9kalNkRXJsZi11NE1kekJJd2tYLUtWZWJNcFJkYTE3SUFrTTYwT0lNVEYydkNUN2owYzlRQ0JFZXJ2NEtEWHdDQmVaUU9R?oc=5"
+    "numero": "501-A/2026/1",
+    "data": "2026-11-13",
+    "titulo": "Portaria n.º 501-A/2026/1, de 13 de novembro - Diário da República",
+    "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1OVUtnU3FCTGR3NjFhYzdvbEtFSGZKYmpHSzRxWWViNFNHOWVjMXVkZGY1Q0RmaFd0aXdvWkJ1dUNfM0ZqM1B1NlZ5LWJkd0U0V2hVb29WMFVURXg1bmZGX25nVkZHYXVQZWV6eG44cTNwYkFBbGNWWjFR?oc=5"
   },
-  "ultimaReportada": "496-A/2026/1",
+  "ultimaReportada": "501-A/2026/1",
   "ispJson": {
     "vigencia": "2026-10-05",
     "portaria": "448-A/2026/1"
@@ -60,10 +60,23 @@
     }
   ],
   "accao": "Há novas: abrir a issue, confirmar cada portaria no DR, ler o art. 2.º e atualizar data/fiscal/isp.json (vigencia, fonte, fonteUrl, ispELitro, nota) com os testes. O alarme nunca é dado.",
-  "novas": [],
-  "idadeDias": 34,
+  "novas": [
+    {
+      "numero": "496-A/2026/1",
+      "data": "2026-11-06",
+      "titulo": "Portaria n.º 496-A/2026/1, de 6 de novembro - Diário da República",
+      "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTFBEaHg5ZEVKaHpqOXJqaUNocHdiRHZFaDlGNmQzNHdQU0lMV2pVWHBHaXRPZlljTXZpNHJad0lyU1c3aHA5b1cwZE0wRnI0RGFYdVhMbTB1cTFJdHMwanp3MnVjT3pQb09YYUNUM2RpQ0QxQThHZ2VBVEhn?oc=5"
+    },
+    {
+      "numero": "501-A/2026/1",
+      "data": "2026-11-13",
+      "titulo": "Portaria n.º 501-A/2026/1, de 13 de novembro - Diário da República",
+      "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1OVUtnU3FCTGR3NjFhYzdvbEtFSGZKYmpHSzRxWWViNFNHOWVjMXVkZGY1Q0RmaFd0aXdvWkJ1dUNfM0ZqM1B1NlZ5LWJkd0U0V2hVb29WMFVURXg1bmZGX25nVkZHYXVQZWV6eG44cTNwYkFBbGNWWjFR?oc=5"
+    }
+  ],
+  "idadeDias": 39,
   "alarmeIdade": true,
   "alarme": true,
-  "motivo": "idade",
+  "motivo": "ambos",
   "falhaFeed": null
 }
