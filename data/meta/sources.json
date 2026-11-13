@@ -211,7 +211,7 @@
     "id": "euribor-1m-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168439&lang=PT",
-    "recolhidoEm": "2026-11-12T14:52:48.330Z",
+    "recolhidoEm": "2026-11-13T14:16:06.292Z",
     "serieAte": "2026-10",
     "frequencia": "mensal"
   },
@@ -219,7 +219,7 @@
     "id": "euribor-3m-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168436&lang=PT",
-    "recolhidoEm": "2026-11-12T14:52:48.695Z",
+    "recolhidoEm": "2026-11-13T14:16:06.536Z",
     "serieAte": "2026-10",
     "frequencia": "mensal"
   },
@@ -227,7 +227,7 @@
     "id": "euribor-6m-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168438&lang=PT",
-    "recolhidoEm": "2026-11-12T14:52:49.025Z",
+    "recolhidoEm": "2026-11-13T14:16:06.778Z",
     "serieAte": "2026-10",
     "frequencia": "mensal"
   },
@@ -235,32 +235,32 @@
     "id": "euribor-12m-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168437&lang=PT",
-    "recolhidoEm": "2026-11-12T14:52:49.336Z",
+    "recolhidoEm": "2026-11-13T14:16:07.085Z",
     "serieAte": "2026-10",
     "frequencia": "mensal"
   },
   {
     "id": "pmd-gasoleo-diario",
     "fonte": "DGEG — Preços dos Combustíveis",
-    "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=2101&dataIni=2017-01-01&dataFim=2026-11-12",
-    "recolhidoEm": "2026-11-12T14:52:53.537Z",
-    "serieAte": "2026-11-11",
+    "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=2101&dataIni=2017-01-01&dataFim=2026-11-13",
+    "recolhidoEm": "2026-11-13T14:16:10.387Z",
+    "serieAte": "2026-11-12",
     "frequencia": "diaria"
   },
   {
     "id": "pmd-gasolina95-diario",
     "fonte": "DGEG — Preços dos Combustíveis",
-    "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=3201&dataIni=2017-01-01&dataFim=2026-11-12",
-    "recolhidoEm": "2026-11-12T14:52:54.099Z",
-    "serieAte": "2026-11-11",
+    "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=3201&dataIni=2017-01-01&dataFim=2026-11-13",
+    "recolhidoEm": "2026-11-13T14:16:10.893Z",
+    "serieAte": "2026-11-12",
     "frequencia": "diaria"
   },
   {
     "id": "pmd-gpl-diario",
     "fonte": "DGEG — Preços dos Combustíveis",
-    "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=1120&dataIni=2017-01-01&dataFim=2026-11-12",
-    "recolhidoEm": "2026-11-12T14:52:54.310Z",
-    "serieAte": "2026-11-11",
+    "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=1120&dataIni=2017-01-01&dataFim=2026-11-13",
+    "recolhidoEm": "2026-11-13T14:16:11.087Z",
+    "serieAte": "2026-11-12",
     "frequencia": "diaria"
   },
   {
@@ -403,7 +403,7 @@
     "id": "taeg-pessoal-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168963&lang=PT",
-    "recolhidoEm": "2026-11-12T14:52:49.738Z",
+    "recolhidoEm": "2026-11-13T14:16:07.407Z",
     "serieAte": "2026-09",
     "frequencia": "mensal"
   },
@@ -411,7 +411,7 @@
     "id": "taeg-pessoal-educacao-saude-energia-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168938&lang=PT",
-    "recolhidoEm": "2026-11-12T14:52:50.010Z",
+    "recolhidoEm": "2026-11-13T14:16:07.615Z",
     "serieAte": "2026-09",
     "frequencia": "mensal"
   },
@@ -419,7 +419,7 @@
     "id": "taeg-pessoal-outros-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168943&lang=PT",
-    "recolhidoEm": "2026-11-12T14:52:50.272Z",
+    "recolhidoEm": "2026-11-13T14:16:07.908Z",
     "serieAte": "2026-09",
     "frequencia": "mensal"
   },
@@ -427,7 +427,7 @@
     "id": "taeg-automovel-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168944&lang=PT",
-    "recolhidoEm": "2026-11-12T14:52:50.541Z",
+    "recolhidoEm": "2026-11-13T14:16:08.121Z",
     "serieAte": "2026-09",
     "frequencia": "mensal"
   },
@@ -435,7 +435,7 @@
     "id": "taeg-automovel-novo-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168942&lang=PT",
-    "recolhidoEm": "2026-11-12T14:52:50.840Z",
+    "recolhidoEm": "2026-11-13T14:16:08.333Z",
     "serieAte": "2026-09",
     "frequencia": "mensal"
   },
@@ -443,7 +443,7 @@
     "id": "taeg-automovel-usado-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168941&lang=PT",
-    "recolhidoEm": "2026-11-12T14:52:51.183Z",
+    "recolhidoEm": "2026-11-13T14:16:08.604Z",
     "serieAte": "2026-09",
     "frequencia": "mensal"
   },
@@ -451,7 +451,7 @@
     "id": "taeg-automovel-ald-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168939&lang=PT",
-    "recolhidoEm": "2026-11-12T14:52:51.439Z",
+    "recolhidoEm": "2026-11-13T14:16:08.812Z",
     "serieAte": "2026-09",
     "frequencia": "mensal"
   },
@@ -459,7 +459,7 @@
     "id": "taeg-renovavel-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=13168964&lang=PT",
-    "recolhidoEm": "2026-11-12T14:52:51.976Z",
+    "recolhidoEm": "2026-11-13T14:16:09.001Z",
     "serieAte": "2026-09",
     "frequencia": "mensal"
   },
@@ -595,7 +595,7 @@
     "id": "deposito-prazo-ate1a-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=12519805&lang=PT",
-    "recolhidoEm": "2026-11-12T14:52:52.429Z",
+    "recolhidoEm": "2026-11-13T14:16:09.410Z",
     "serieAte": "2026-09",
     "frequencia": "mensal"
   },
@@ -603,7 +603,7 @@
     "id": "deposito-prazo-total-mensal",
     "fonte": "Banco de Portugal — BPstat",
     "url": "https://bpstat.bportugal.pt/api/observations/?series_ids=12519807&lang=PT",
-    "recolhidoEm": "2026-11-12T14:52:52.945Z",
+    "recolhidoEm": "2026-11-13T14:16:09.919Z",
     "serieAte": "2026-09",
     "frequencia": "mensal"
   },
