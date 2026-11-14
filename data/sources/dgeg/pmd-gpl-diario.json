@@ -3,10 +3,10 @@
     "id": "pmd-gpl-diario",
     "fonte": "DGEG — Preços dos Combustíveis",
     "dataset": "PMD GPL Auto (1120)",
-    "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=1120&dataIni=2017-01-01&dataFim=2026-11-13",
+    "url": "https://precoscombustiveis.dgeg.gov.pt/api/PrecoComb/PMD?idsTiposComb=1120&dataIni=2017-01-01&dataFim=2026-11-14",
     "unidade": "eur_litro_media_nacional",
-    "recolhidoEm": "2026-11-13T14:16:11.087Z",
-    "serieAte": "2026-11-12"
+    "recolhidoEm": "2026-11-14T13:13:36.384Z",
+    "serieAte": "2026-11-13"
   },
   "series": [
     {
@@ -14420,6 +14420,10 @@
     {
       "t": "2026-11-12",
       "v": 1.0258
+    },
+    {
+      "t": "2026-11-13",
+      "v": 1.0259
     }
   ]
 }
