@@ -1,5 +1,5 @@
 {
-  "consultadoEm": "2026-11-13T22:06:28.946Z",
+  "consultadoEm": "2026-11-15T15:31:57.064Z",
   "fonteUrl": "https://news.google.com/rss/search?q=ISP+site%3Adiariodarepublica.pt&hl=pt-PT&gl=PT&ceid=PT%3Apt",
   "nota": "Feed RSS do Google Notícias restrito ao DR; o DR não é legível por máquina (só shell JS).",
   "ultimaPortariaFeed": {
@@ -43,10 +43,6 @@
       "data": "2023-06-07"
     },
     {
-      "titulo": "Decreto-Lei n.º 261-A/91, de 25 de julho - Diário da República",
-      "data": "2023-07-04"
-    },
-    {
       "titulo": "Lei n.º 12-B/2026, de 15 de abril - Diário da República",
       "data": "2026-04-15"
     },
@@ -62,19 +58,13 @@
   "accao": "Há novas: abrir a issue, confirmar cada portaria no DR, ler o art. 2.º e atualizar data/fiscal/isp.json (vigencia, fonte, fonteUrl, ispELitro, nota) com os testes. O alarme nunca é dado.",
   "novas": [
     {
-      "numero": "496-A/2026/1",
-      "data": "2026-11-06",
-      "titulo": "Portaria n.º 496-A/2026/1, de 6 de novembro - Diário da República",
-      "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTFBEaHg5ZEVKaHpqOXJqaUNocHdiRHZFaDlGNmQzNHdQU0lMV2pVWHBHaXRPZlljTXZpNHJad0lyU1c3aHA5b1cwZE0wRnI0RGFYdVhMbTB1cTFJdHMwanp3MnVjT3pQb09YYUNUM2RpQ0QxQThHZ2VBVEhn?oc=5"
-    },
-    {
       "numero": "501-A/2026/1",
       "data": "2026-11-13",
       "titulo": "Portaria n.º 501-A/2026/1, de 13 de novembro - Diário da República",
       "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1OVUtnU3FCTGR3NjFhYzdvbEtFSGZKYmpHSzRxWWViNFNHOWVjMXVkZGY1Q0RmaFd0aXdvWkJ1dUNfM0ZqM1B1NlZ5LWJkd0U0V2hVb29WMFVURXg1bmZGX25nVkZHYXVQZWV6eG44cTNwYkFBbGNWWjFR?oc=5"
     }
   ],
-  "idadeDias": 39,
+  "idadeDias": 41,
   "alarmeIdade": true,
   "alarme": true,
   "motivo": "ambos",
