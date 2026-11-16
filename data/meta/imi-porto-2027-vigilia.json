@@ -1,5 +1,5 @@
 {
-  "consultadoEm": "2026-11-09T17:40:35.842Z",
+  "consultadoEm": "2026-11-16T17:11:07.774Z",
   "fontes": [
     {
       "rotulo": "Minutas (atas) da Assembleia Municipal",
@@ -1719,9 +1719,90 @@
       "titulo": "Recomendação “Pela Criação de Financiamento Específico para a Reabilitação de Conjuntos Habitacionais de Propriedade Mista”, apresentada pelo Grupo Municipal Coligação Democrática Unitária.",
       "url": "https://www.cm-porto.pt/files/uploads/cms/20260928_09_GMCDU_Rec.Pela%20Cria%C3%A7%C3%A3o%20de%20Financiamento.pdf",
       "data": null
+    },
+    {
+      "titulo": "Minuta da Ata, 27.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 26 de outubro de 2026.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20261026_MinutaAta27_Sess%C3%A3oExtAM_signed_signed.pdf",
+      "data": "2026-10-26"
+    },
+    {
+      "titulo": "Deliberação sobre Retificação da designação do suplente do fiscal único da STCP.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%201%20(46).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Deliberação sobre Autorização dos encargos plurianuais decorrentes da outorga do contrato de usufruto, entre o Município do Porto e a STCP, sobre o imóvel «Estação de Recolha de Francos».",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%202%20(45).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Deliberação sobre Autorização prévia da assunção de compromissos plurianuais relativos ao contrato a celebrar com o Centro Social do Barredo, a Associação Seis, a Cooperativa Longevidade e o CASA - Centro de Apoio ao Sem Abrigo, no âmbito do Projeto ComSigo.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%203%20(43).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Deliberação sobre Aprovação do Contrato de Cedência de Utilização com a União de Freguesias de Cedofeita, Santo Ildefonso, Sé, Miragaia, São Nicolau e Vitória para parte do imóvel municipal sito na Rua de São Bento da Vitória n.º 62.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%204%20(37).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Deliberação sobre Alteração das condições do direito de superfície constituído sobre imóvel municipal a favor da Fábrica da Igreja Paroquial da Freguesia de S. Veríssimo de Paranhos.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%205%20(35).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Deliberação sobre Desafetação da parcela de terreno do domínio público municipal, sita na Rua da Travagem.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%206%20(35).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Deliberação sobre Aprovação do Regulamento Municipal de Funcionamento das Instalações do Equipamento Municipal de Feiras e Mercados - Praça Vandoma.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%207%20(28).pdf",
+      "data": null
     }
   ],
-  "novos": [],
+  "novos": [
+    {
+      "titulo": "Minuta da Ata, 27.ª reunião, Sessão Extraordinária da Assembleia Municipal do Porto realizada no dia 26 de outubro de 2026.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/20261026_MinutaAta27_Sess%C3%A3oExtAM_signed_signed.pdf",
+      "data": "2026-10-26"
+    },
+    {
+      "titulo": "Deliberação sobre Retificação da designação do suplente do fiscal único da STCP.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%201%20(46).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Deliberação sobre Autorização dos encargos plurianuais decorrentes da outorga do contrato de usufruto, entre o Município do Porto e a STCP, sobre o imóvel «Estação de Recolha de Francos».",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%202%20(45).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Deliberação sobre Autorização prévia da assunção de compromissos plurianuais relativos ao contrato a celebrar com o Centro Social do Barredo, a Associação Seis, a Cooperativa Longevidade e o CASA - Centro de Apoio ao Sem Abrigo, no âmbito do Projeto ComSigo.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%203%20(43).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Deliberação sobre Aprovação do Contrato de Cedência de Utilização com a União de Freguesias de Cedofeita, Santo Ildefonso, Sé, Miragaia, São Nicolau e Vitória para parte do imóvel municipal sito na Rua de São Bento da Vitória n.º 62.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%204%20(37).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Deliberação sobre Alteração das condições do direito de superfície constituído sobre imóvel municipal a favor da Fábrica da Igreja Paroquial da Freguesia de S. Veríssimo de Paranhos.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%205%20(35).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Deliberação sobre Desafetação da parcela de terreno do domínio público municipal, sita na Rua da Travagem.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%206%20(35).pdf",
+      "data": null
+    },
+    {
+      "titulo": "Deliberação sobre Aprovação do Regulamento Municipal de Funcionamento das Instalações do Equipamento Municipal de Feiras e Mercados - Praça Vandoma.",
+      "url": "https://www.cm-porto.pt/files/uploads/cms/Ponto%207%20(28).pdf",
+      "data": null
+    }
+  ],
   "destacados": [],
   "accao": "Documento novo da Assembleia Municipal do Porto: abrir docs/VIGILANCIA-IMI-PORTO-2027.md, abrir o PDF e procurar o ponto «fixação das taxas do IMI» (e o IMI Familiar 30/70/140 €). Se a deliberação estiver lá: criar data/fiscal/imi-2027.json conforme a checklist (prazo legal de comunicação à AT: 31 de dezembro, art. 112.º n.º 14 do CIMI)."
 }
