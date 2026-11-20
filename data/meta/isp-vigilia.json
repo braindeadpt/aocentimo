@@ -1,14 +1,14 @@
 {
-  "consultadoEm": "2026-11-15T15:31:57.064Z",
+  "consultadoEm": "2026-11-20T22:46:43.630Z",
   "fonteUrl": "https://news.google.com/rss/search?q=ISP+site%3Adiariodarepublica.pt&hl=pt-PT&gl=PT&ceid=PT%3Apt",
   "nota": "Feed RSS do Google Notícias restrito ao DR; o DR não é legível por máquina (só shell JS).",
   "ultimaPortariaFeed": {
-    "numero": "501-A/2026/1",
-    "data": "2026-11-13",
-    "titulo": "Portaria n.º 501-A/2026/1, de 13 de novembro - Diário da República",
-    "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1OVUtnU3FCTGR3NjFhYzdvbEtFSGZKYmpHSzRxWWViNFNHOWVjMXVkZGY1Q0RmaFd0aXdvWkJ1dUNfM0ZqM1B1NlZ5LWJkd0U0V2hVb29WMFVURXg1bmZGX25nVkZHYXVQZWV6eG44cTNwYkFBbGNWWjFR?oc=5"
+    "numero": "527-A/2026/1",
+    "data": "2026-11-20",
+    "titulo": "Portaria n.º 527-A/2026/1, de 20 de novembro - Diário da República",
+    "link": "https://news.google.com/rss/articles/CBMidEFVX3lxTE16TTVSZ0hNV3hxUU9sV05ZTHdSU2Npb2RjYTB6SUY3LXhfVTZ6eFA1Q0VfUTUzQks0d09qV0tUd1UwX21xdEhENGNzX25XM29oRjI2cDk1dm5zUDNhX0dCemJIZm9fWlpuS2Nhc1pfeU8yRUo1?oc=5"
   },
-  "ultimaReportada": "501-A/2026/1",
+  "ultimaReportada": "527-A/2026/1",
   "ispJson": {
     "vigencia": "2026-10-05",
     "portaria": "448-A/2026/1"
@@ -27,20 +27,16 @@
       "data": "2023-06-07"
     },
     {
-      "titulo": "Fixa o valor das taxas unitárias do imposto sobre os produtos petrolíferos e energéticos (ISP) - Diário da República",
-      "data": "2023-06-08"
-    },
-    {
-      "titulo": "Portaria n.º 1038/97, de 3 de outubro - Diário da República",
-      "data": "2023-12-14"
-    },
-    {
       "titulo": "Decreto-Lei n.º 292/87, de 30 de julho - Diário da República",
       "data": "2023-07-10"
     },
     {
       "titulo": "Decreto-Lei n.º 289/2001, de 13 de novembro - Diário da República",
       "data": "2023-06-07"
+    },
+    {
+      "titulo": "Decreto-Lei n.º 261-A/91, de 25 de julho - Diário da República",
+      "data": "2023-07-04"
     },
     {
       "titulo": "Lei n.º 12-B/2026, de 15 de abril - Diário da República",
@@ -62,9 +58,15 @@
       "data": "2026-11-13",
       "titulo": "Portaria n.º 501-A/2026/1, de 13 de novembro - Diário da República",
       "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1OVUtnU3FCTGR3NjFhYzdvbEtFSGZKYmpHSzRxWWViNFNHOWVjMXVkZGY1Q0RmaFd0aXdvWkJ1dUNfM0ZqM1B1NlZ5LWJkd0U0V2hVb29WMFVURXg1bmZGX25nVkZHYXVQZWV6eG44cTNwYkFBbGNWWjFR?oc=5"
+    },
+    {
+      "numero": "527-A/2026/1",
+      "data": "2026-11-20",
+      "titulo": "Portaria n.º 527-A/2026/1, de 20 de novembro - Diário da República",
+      "link": "https://news.google.com/rss/articles/CBMidEFVX3lxTE16TTVSZ0hNV3hxUU9sV05ZTHdSU2Npb2RjYTB6SUY3LXhfVTZ6eFA1Q0VfUTUzQks0d09qV0tUd1UwX21xdEhENGNzX25XM29oRjI2cDk1dm5zUDNhX0dCemJIZm9fWlpuS2Nhc1pfeU8yRUo1?oc=5"
     }
   ],
-  "idadeDias": 41,
+  "idadeDias": 46,
   "alarmeIdade": true,
   "alarme": true,
   "motivo": "ambos",
