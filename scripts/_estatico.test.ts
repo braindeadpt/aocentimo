@@ -21,9 +21,15 @@ beforeAll(async () => {
   writeFileSync(join(out, "estilo.html"), "estilo");
   writeFileSync(join(out, "404.html"), "nao-existe");
   writeFileSync(join(pai, "segredo.txt"), "SEGREDO");
+  mkdirSync(join(pai, "vazio"));
+  writeFileSync(join(pai, "vazio.html"), "SEGREDO");
   srv = await servirEstatico(out);
 });
-afterAll(() => srv?.close());
+afterAll(() => {
+  srv?.close();
+  semIndex?.close();
+});
+let semIndex: Server;
 
 function pedir(caminho: string): Promise<{ status: number; corpo: string }> {
   const { port } = srv.address() as { port: number };
@@ -70,5 +76,20 @@ describe("servirEstatico", () => {
       expect(r.status, p).toBe(404);
       expect(r.corpo, p).not.toContain("SEGREDO");
     }
+  });
+  it("sem index.html, `/` não cai no `<raiz>.html` irmão", async () => {
+    semIndex = await servirEstatico(join(pai, "vazio"));
+    const { port } = semIndex.address() as { port: number };
+    const r = await new Promise<{ status: number; corpo: string }>((ok, falha) => {
+      request({ host: HOST, port, path: "/" }, (res) => {
+        let corpo = "";
+        res.on("data", (c) => (corpo += c));
+        res.on("end", () => ok({ status: res.statusCode ?? 0, corpo }));
+      })
+        .on("error", falha)
+        .end();
+    });
+    expect(r.status).toBe(404);
+    expect(r.corpo).not.toContain("SEGREDO");
   });
 });

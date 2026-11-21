@@ -43,7 +43,9 @@ export function criarServidorEstatico(raiz) {
     try {
       const f = resolverNaRaiz(base, req.url);
       if (f) {
-        for (const t of [f, join(f, "index.html"), f + ".html"]) {
+        // `<raiz>.html` é irmão da raiz, não filho: só se tenta `.html` abaixo dela
+        const tentativas = f === base ? [join(f, "index.html")] : [f, join(f, "index.html"), f + ".html"];
+        for (const t of tentativas) {
           try {
             if (!(await stat(t)).isFile()) continue;
             const data = await readFile(t);
