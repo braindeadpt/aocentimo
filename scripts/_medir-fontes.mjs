@@ -2,54 +2,13 @@
 // transferido. Usa o Playwright que o repo já tem.
 //   node /tmp/medir-fontes.mjs <rotas> <raiz-do-out>
 import { chromium } from "playwright";
-import { createServer } from "node:http";
-import { readFile, stat } from "node:fs/promises";
-import { join, extname } from "node:path";
+import { servirEstatico, urlBase } from "./_estatico.mjs";
 
 const raiz = process.argv[3] || "out";
 const rotas = process.argv[2] ? process.argv[2].split(",") : ["/", "/estilo"];
 
-const tipos = {
-  ".html": "text/html; charset=utf-8",
-  ".css": "text/css",
-  ".js": "text/javascript",
-  ".woff2": "font/woff2",
-  ".json": "application/json",
-  ".png": "image/png",
-  ".svg": "image/svg+xml",
-  ".xml": "application/xml",
-  ".txt": "text/plain",
-};
-
-const srv = createServer(async (req, res) => {
-  let p = decodeURIComponent(req.url.split("?")[0]);
-  let f = join(raiz, p);
-  const candidatos = extname(f)
-    ? [f]
-    : [`${f}.html`, join(f, "index.html"), f];
-  for (const c of candidatos) {
-    try {
-      const s = await stat(c);
-      if (s.isFile()) {
-        f = c;
-        break;
-      }
-    } catch {
-      /* segue para o próximo */
-    }
-  }
-  try {
-    const b = await readFile(f);
-    res.writeHead(200, { "content-type": tipos[extname(f)] || "application/octet-stream" });
-    res.end(b);
-  } catch {
-    res.writeHead(404).end("nope");
-  }
-});
-
-await new Promise((r) => srv.listen(0, r));
-const porta = srv.address().port;
-const base = `http://localhost:${porta}`;
+const srv = await servirEstatico(raiz);
+const base = urlBase(srv);
 
 const browser = await chromium.launch();
 const relatorio = [];

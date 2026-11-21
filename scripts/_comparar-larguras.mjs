@@ -3,55 +3,14 @@
 // renderizada de cada nó de texto tem de bater ao milésimo.
 //   node scripts/_comparar-larguras.mjs <out-antes> <out-depois> <rotas>
 import { chromium } from "playwright";
-import { createServer } from "node:http";
-import { readFile, stat } from "node:fs/promises";
-import { join, extname } from "node:path";
+import { servirEstatico, urlBase } from "./_estatico.mjs";
 
 const raizA = process.argv[2];
 const raizB = process.argv[3];
 const rotas = (process.argv[4] || "/,/estilo,/salario,/casa,/credito,/metodologia,/trabalho").split(",");
 
-const tipos = {
-  ".html": "text/html; charset=utf-8",
-  ".css": "text/css",
-  ".js": "text/javascript",
-  ".woff2": "font/woff2",
-  ".json": "application/json",
-  ".png": "image/png",
-  ".svg": "image/svg+xml",
-  ".xml": "application/xml",
-  ".txt": "text/plain",
-};
-function servidor(raiz) {
-  return createServer(async (req, res) => {
-    const p = decodeURIComponent(req.url.split("?")[0]);
-    let f = join(raiz, p);
-    const cands = extname(f) ? [f] : [`${f}.html`, join(f, "index.html"), f];
-    for (const c of cands) {
-      try {
-        if ((await stat(c)).isFile()) {
-          f = c;
-          break;
-        }
-      } catch {
-        /* segue */
-      }
-    }
-    try {
-      const b = await readFile(f);
-      res.writeHead(200, {
-        "content-type": tipos[extname(f)] || "application/octet-stream",
-      });
-      res.end(b);
-    } catch {
-      res.writeHead(404).end("x");
-    }
-  });
-}
-
-const srvs = [servidor(raizA), servidor(raizB)];
-await Promise.all(srvs.map((s) => new Promise((r) => s.listen(0, r))));
-const bases = srvs.map((s) => `http://localhost:${s.address().port}`);
+const srvs = await Promise.all([servirEstatico(raizA), servirEstatico(raizB)]);
+const bases = srvs.map(urlBase);
 
 // Percorre os nós de texto (não os elementos) e mede o rectângulo de
 // cada um: é a largura que o leitor vê, glifo a glifo.

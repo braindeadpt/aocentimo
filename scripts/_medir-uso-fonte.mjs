@@ -2,24 +2,13 @@
 // e adivinhar, pergunta-se ao browser por cada elemento com texto.
 //   node scripts/_medir-uso-fonte.mjs <rotas>
 import { chromium } from "playwright";
-import { createServer } from "node:http";
-import { readFile, stat } from "node:fs/promises";
-import { join, extname } from "node:path";
+import { servirEstatico, urlBase } from "./_estatico.mjs";
 
 const raiz = "out";
 const rotas = (process.argv[2] || "/,/estilo,/salario,/casa,/credito,/dados,/aprender/taeg,/trabalho,/precos,/poupanca,/irs,/impostos,/inflacao,/casa,/metodologia,/sobre").split(",");
 
-const tipos = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".woff2": "font/woff2", ".json": "application/json", ".png": "image/png", ".svg": "image/svg+xml", ".xml": "application/xml", ".txt": "text/plain" };
-const srv = createServer(async (req, res) => {
-  const p = decodeURIComponent(req.url.split("?")[0]);
-  let f = join(raiz, p);
-  const cands = extname(f) ? [f] : [`${f}.html`, join(f, "index.html"), f];
-  for (const c of cands) { try { if ((await stat(c)).isFile()) { f = c; break; } } catch {} }
-  try { const b = await readFile(f); res.writeHead(200, { "content-type": tipos[extname(f)] || "application/octet-stream" }); res.end(b); }
-  catch { res.writeHead(404).end("x"); }
-});
-await new Promise((r) => srv.listen(0, r));
-const base = `http://localhost:${srv.address().port}`;
+const srv = await servirEstatico(raiz);
+const base = urlBase(srv);
 
 const browser = await chromium.launch();
 const usos = new Map(); // "fam|peso|largura" -> {n, exemplo}
