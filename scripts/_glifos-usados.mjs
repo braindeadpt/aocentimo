@@ -4,48 +4,13 @@
 // construido so a partir das fontes de texto perderia o euro ou o menos.
 //   node scripts/_glifos-usados.mjs > /tmp/glifos-usados.txt
 import { chromium } from "playwright";
-import { createServer } from "node:http";
-import { readFile, stat } from "node:fs/promises";
-import { join, extname } from "node:path";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+import { servirEstatico, urlBase } from "./_estatico.mjs";
 
 const raiz = "out";
-const tipos = {
-  ".html": "text/html; charset=utf-8",
-  ".css": "text/css",
-  ".js": "text/javascript",
-  ".woff2": "font/woff2",
-  ".json": "application/json",
-  ".png": "image/png",
-  ".svg": "image/svg+xml",
-  ".xml": "application/xml",
-  ".txt": "text/plain",
-};
-const srv = createServer(async (req, res) => {
-  const p = decodeURIComponent(req.url.split("?")[0]);
-  let f = join(raiz, p);
-  const cands = extname(f) ? [f] : [`${f}.html`, join(f, "index.html"), f];
-  for (const c of cands) {
-    try {
-      if ((await stat(c)).isFile()) {
-        f = c;
-        break;
-      }
-    } catch {
-      /* segue */
-    }
-  }
-  try {
-    const b = await readFile(f);
-    res.writeHead(200, {
-      "content-type": tipos[extname(f)] || "application/octet-stream",
-    });
-    res.end(b);
-  } catch {
-    res.writeHead(404).end("x");
-  }
-});
-await new Promise((r) => srv.listen(0, r));
-const base = `http://localhost:${srv.address().port}`;
+const srv = await servirEstatico(raiz);
+const base = urlBase(srv);
 
 const sitemap = await readFile(join(raiz, "sitemap.xml"), "utf8");
 const doSitemap = [...sitemap.matchAll(/<loc>https?:\/\/[^/]+\/([^<]*)<\/loc>/g)].map(
