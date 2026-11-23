@@ -133,13 +133,12 @@ test.describe("3D — /metodologia e /sobre", () => {
     await expect(
       page.locator("a[href='https://github.com/braindeadpt/aocentimo']")
     ).toBeVisible();
-    await expect(
-      page
-        .locator(
-          "a[href='https://github.com/braindeadpt/aocentimo/issues']"
-        )
-        .first()
-    ).toBeVisible();
+    // dois contactos legítimos para o mesmo issues: o geral (autor) e o
+    // de privacidade — cada um tem de existir na sua secção
+    const issues =
+      "a[href='https://github.com/braindeadpt/aocentimo/issues']";
+    await expect(page.locator(issues)).toHaveCount(2);
+    await expect(page.locator(`#privacidade ${issues}`)).toBeVisible();
   });
 });
 
