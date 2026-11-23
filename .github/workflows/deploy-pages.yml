@@ -120,3 +120,14 @@ jobs:
           node-version: 22
       - name: Verificar o orçamento da home publicada (gzip do CDN)
         run: node scripts/_verifica-cdn.mjs "${{ steps.deployment.outputs.page_url }}"
+      # A app TWA na Play Store só abre sem barra de URL se o Android
+      # encontrar este ficheiro — um 404 aqui é uma app avariada na loja,
+      # não um detalhe de SEO. Falha alta como o orçamento acima.
+      - name: Verificar o assetlinks.json publicado (TWA)
+        run: |
+          url="${{ steps.deployment.outputs.page_url }}"
+          url="${url%/}/.well-known/assetlinks.json"
+          body="$(curl -fsS "$url")"
+          echo "$body" | grep -q '"package_name": "pt.aocentimo.twa"' \
+            || { echo "::error::assetlinks.json publicado sem pt.aocentimo.twa"; exit 1; }
+          echo "assetlinks.json OK no domínio publicado"

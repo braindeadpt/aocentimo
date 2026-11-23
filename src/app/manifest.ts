@@ -36,6 +36,15 @@ export default function manifest(): MetadataRoute.Manifest {
       { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
       { src: "/icon-144.png", sizes: "144x144", type: "image/png" },
       { src: "/icon-96.png", sizes: "96x96", type: "image/png" },
+      // o mesmo azulejo declarado duas vezes: o Bubblewrap (TWA) exige um
+      // ícone «any» ≥ 512 px e os launchers adaptativos pedem «maskable» —
+      // a spec permite os dois propósitos no mesmo ficheiro, mas o tipo do
+      // Next só aceita um por entrada.
+      {
+        src: "/icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
       {
         src: "/icon-512.png",
         sizes: "512x512",

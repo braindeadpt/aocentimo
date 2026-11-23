@@ -255,14 +255,21 @@ test.describe("P4 · SEO", () => {
     for (const icone of m.icons) {
       expect((await request.get(icone.src)).status(), icone.src).toBe(200);
     }
-    // TWA: o Chrome exige id + um ícone ≥192 e o maskable de 512
+    // TWA: o Chrome exige id + um ícone «any» ≥192; o Bubblewrap ≥512
     expect(m.id).toBe("/");
-    const tamanhos = m.icons.map(
-      (i: { sizes?: string; purpose?: string }) =>
-        `${i.sizes}·${i.purpose ?? "any"}`,
-    );
-    expect(tamanhos).toContain("192x192·any");
-    expect(tamanhos).toContain("512x512·maskable");
+    const icones = m.icons as { sizes?: string; purpose?: string }[];
+    const ehAny = (p?: string) => !p || p.includes("any");
+    expect(
+      icones.some((i) => i.sizes === "192x192" && ehAny(i.purpose)),
+    ).toBe(true);
+    expect(
+      icones.some((i) => i.sizes === "512x512" && ehAny(i.purpose)),
+    ).toBe(true);
+    expect(
+      icones.some(
+        (i) => i.sizes === "512x512" && i.purpose?.includes("maskable"),
+      ),
+    ).toBe(true);
   });
 
   test("o assetlinks.json autoriza a app TWA neste domínio", async ({

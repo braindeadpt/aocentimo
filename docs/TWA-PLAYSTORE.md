@@ -17,8 +17,10 @@ sem publicação nova na loja.
 ## O que é local e NUNCA vai para o git (`twa/`, gitignored)
 
 - `twa/aocentimo.keystore` — **keystore de assinatura** (RSA 2048, 30 anos,
-  alias `aocentimo`). Perdê-lo = nunca mais atualizar a app na Play Store.
-  Fazer cópia de segurança fora do disco.
+  alias `aocentimo`). Fazer cópia de segurança fora do disco. Com
+  Play App Signing ativo, esta passa a ser só a *chave de upload* — se se
+  perder, a Play Console deixa repô-la; sem Play App Signing, perdê-la é
+  nunca mais poder atualizar a app.
 - `twa/keystore-password.txt` — a password do keystore.
 - `twa/listagem/` — artefactos da ficha da loja:
   `feature-graphic-1024x500.png` (obrigatória) + screenshots
@@ -48,15 +50,19 @@ Re-obter: `keytool -list -v -keystore twa/aocentimo.keystore -alias aocentimo`
 
    ```bash
    npm install -g @bubblewrap/cli
-   mkdir twa\app && cd twa\app
+   mkdir -p twa/app && cd twa/app
    bubblewrap init --manifest https://aocentimo.pt/manifest.webmanifest
    # responde: package pt.aocentimo.twa · keystore ../aocentimo.keystore
    #           alias aocentimo · password em ../keystore-password.txt
-   bubblewrap build        # → app-release-signed.aab
+   bubblewrap build        # → app-release-signed.apk (teste local)
+                           # + app-release-bundle.aab (Play Console)
    ```
 
-4. **Testar o AAB/APK** num telemóvel (`bubblewrap install` ou upload
-   interno na Play Console). Abrir → tem de aparecer **sem barra de URL**.
+4. **Testar local com o APK** (`bubblewrap install`, ou `adb install
+   app-release-signed.apk`). O APK sai assinado com o keystore local — é
+   este fingerprint que já está no `assetlinks.json`, por isso o teste
+   local funciona antes de a loja existir. Abrir → tem de aparecer
+   **sem barra de URL**.
    Se aparecer barra: `assetlinks` errado ou ainda não publicado — o
    verificador oficial é
    `https://digitalassetlinks.googleapis.com/v1/statements:list?source.web.site=https://aocentimo.pt&relation=delegate_permission/common.handle_all_urls`.
@@ -69,7 +75,11 @@ Re-obter: `keytool -list -v -keystore twa/aocentimo.keystore -alias aocentimo`
      `public/.well-known/assetlinks.json` (os dois fingerprints vivem juntos:
      o local para builds de teste, o da Google para a produção). Sem este
      passo a app da loja abre com barra de URL.
-   - Upload do `.aab` na faixa interna/fechada primeiro.
+   - Upload do `app-release-bundle.aab` na faixa interna/fechada primeiro.
+     ⚠️ A instalação vinda da loja só fica sem barra **depois** de o
+     `assetlinks.json` com o fingerprint da Google estar publicado — por
+     isso a ordem é: ativar o signing → acrescentar o fingerprint →
+     fundir+deploy → e só então verificar o build da faixa interna.
 
 6. **Ficha da loja:**
    - Ícone de alta resolução 512×512 → `public/icon-512.png`
@@ -77,10 +87,12 @@ Re-obter: `keytool -list -v -keystore twa/aocentimo.keystore -alias aocentimo`
    - Screenshots telemóvel (mín. 2) → `twa/listagem/shot-*.png`
    - Categoria: Finanças ou Educação. Data safety: **tudo "não recolhe"**
      (o site não tem cookies, analytics nem contas).
-   - ⚠️ **Privacy policy URL é obrigatória** mesmo sem recolha de dados —
-     apontar para uma página do site que diga isso. A casa não tem página
-     de privacidade; ou se usa `/sobre`, ou se cria uma nota curta
-     (decisão de copy do dono).
+   - ⚠️ **Privacy policy** — a Play exige duas coisas mesmo sem recolha
+     de dados: um URL na consola **e** a política acessível dentro da
+     própria app (numa TWA = uma página do site). O `/sobre` fala da
+     ausência de rastreamento mas não é uma política. Falta decidir:
+     uma secção de privacidade no `/sobre`, ou uma nota própria
+     (decisão de copy do dono — sem isto a submissão é rejeitada).
 
 ## O que muda no dia a dia
 
