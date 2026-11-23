@@ -63,6 +63,40 @@ export default function SobrePage() {
           .
         </p>
       </div>
+
+      {/* privacidade — a Play Store exige uma política dentro da app
+          (a TWA é este site); a honestidade aqui é que ela cabe numa
+          secção porque a resposta é «não recolhe nada» */}
+      <section id="privacidade" className="mt-10 border-t border-line pt-6">
+        <h2 className="font-display text-display-sm mb-6">Privacidade</h2>
+        <div className="body-copy space-y-5">
+          <p>
+            O AO CÊNTIMO não recolhe dados pessoais. Não há contas,
+            formulários, cookies, analytics, publicidade nem rastreadores —
+            o site não sabe quem és.
+          </p>
+          <p>
+            Os cálculos correm todos no teu aparelho: nada do que escrevas
+            num simulador sai do dispositivo — e não podia, porque este site
+            não tem servidor de aplicação, só ficheiros estáticos. A
+            preferência de tema (claro ou escuro) fica guardada no
+            armazenamento local do navegador e nunca é enviada para lado
+            nenhum.
+          </p>
+          <p>
+            As ligações de «fonte» abrem sites oficiais — DGEG, INE, Banco
+            de Portugal, Eurostat e outros. A partir do momento em que as
+            segues, passam a valer as políticas desses sites.
+          </p>
+          <p>
+            A app Android é este mesmo site a correr em ecrã inteiro:
+            recolhe exatamente os mesmos dados — nenhuns.
+          </p>
+          <p className="text-sm text-muted">
+            Última revisão: novembro de 2026.
+          </p>
+        </div>
+      </section>
     </div>
   );
 }
