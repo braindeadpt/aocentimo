@@ -26,6 +26,7 @@ export default function manifest(): MetadataRoute.Manifest {
     description: m.meta.description,
     lang: "pt-PT",
     dir: "ltr",
+    categories: ["finance", "education"],
     start_url: "/",
     scope: "/",
     display: "standalone",
