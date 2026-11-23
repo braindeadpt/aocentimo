@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { metaDeRota } from "@/lib/seo";
+import { m } from "@/lib/messages";
 import { TituloPagina } from "@/components/Voo";
 
 export const metadata: Metadata = metaDeRota("/sobre");
@@ -63,6 +64,34 @@ export default function SobrePage() {
           .
         </p>
       </div>
+
+      {/* privacidade — a Play Store exige uma política dentro da app
+          (a TWA é este site); a honestidade aqui é que ela cabe numa
+          secção porque a resposta é «não recolhe nada». Texto em
+          messages/pt.json — copy do dono. */}
+      <section id="privacidade" className="mt-10 border-t border-line pt-6">
+        <h2 className="font-display text-display-sm mb-6">
+          {m.sobre.privacidade.titulo}
+        </h2>
+        <div className="body-copy space-y-5">
+          <p>{m.sobre.privacidade.p1}</p>
+          <p>{m.sobre.privacidade.p2}</p>
+          <p>{m.sobre.privacidade.p3}</p>
+          <p>{m.sobre.privacidade.p4}</p>
+          <p>{m.sobre.privacidade.p5}</p>
+          <p>{m.sobre.privacidade.p6}</p>
+          <p>
+            Dúvidas ou pedidos sobre privacidade:{" "}
+            <a
+              href="https://github.com/braindeadpt/aocentimo/issues"
+              className="underline decoration-line2 underline-offset-2"
+            >
+              GitHub Issues
+            </a>
+            .
+          </p>
+        </div>
+      </section>
     </div>
   );
 }

@@ -93,10 +93,9 @@ Re-obter: `keytool -list -v -keystore twa/aocentimo.keystore -alias aocentimo`
      (o site não tem cookies, analytics nem contas).
    - ⚠️ **Privacy policy** — a Play exige duas coisas mesmo sem recolha
      de dados: um URL na consola **e** a política acessível dentro da
-     própria app (numa TWA = uma página do site). O `/sobre` fala da
-     ausência de rastreamento mas não é uma política. Falta decidir:
-     uma secção de privacidade no `/sobre`, ou uma nota própria
-     (decisão de copy do dono — sem isto a submissão é rejeitada).
+     própria app (numa TWA = uma página do site). A política da casa
+     vive em **`/sobre#privacidade`** — na consola usa-se
+     `https://aocentimo.pt/sobre#privacidade`.
 
 ## O que muda no dia a dia
 
