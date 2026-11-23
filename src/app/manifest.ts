@@ -20,6 +20,7 @@ export const dynamic = "force-static";
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
+    id: "/",
     name: `${m.brand.name} — ${m.brand.kicker}`,
     short_name: m.brand.name,
     description: m.meta.description,
@@ -32,6 +33,9 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: "#f2f1ea",
     theme_color: "#0d0b08",
     icons: [
+      { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { src: "/icon-144.png", sizes: "144x144", type: "image/png" },
+      { src: "/icon-96.png", sizes: "96x96", type: "image/png" },
       {
         src: "/icon-512.png",
         sizes: "512x512",

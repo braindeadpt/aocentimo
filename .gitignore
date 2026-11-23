@@ -34,3 +34,7 @@ referencias/
 .freebuff/
 
 build.log
+
+# TWA / Play Store — keystore, passwords e projeto Bubblewrap são locais
+# (o assetlinks.json commitado em public/ é o único artefacto que sai)
+twa/
