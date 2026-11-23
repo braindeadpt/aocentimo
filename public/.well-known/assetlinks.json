@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "pt.aocentimo.twa",
+    "sha256_cert_fingerprints": [
+      "13:A0:D2:C5:84:F4:F6:C0:63:07:21:BA:6A:99:7E:D6:8B:9D:95:92:8A:EF:0A:60:39:12:A9:0B:89:59:19:36"
+    ]
+  }
+}]

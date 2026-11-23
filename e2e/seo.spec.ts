@@ -255,6 +255,35 @@ test.describe("P4 · SEO", () => {
     for (const icone of m.icons) {
       expect((await request.get(icone.src)).status(), icone.src).toBe(200);
     }
+    // TWA: o Chrome exige id + um ícone «any» ≥192; o Bubblewrap ≥512
+    expect(m.id).toBe("/");
+    const icones = m.icons as { sizes?: string; purpose?: string }[];
+    const ehAny = (p?: string) => !p || p.includes("any");
+    expect(
+      icones.some((i) => i.sizes === "192x192" && ehAny(i.purpose)),
+    ).toBe(true);
+    expect(
+      icones.some((i) => i.sizes === "512x512" && ehAny(i.purpose)),
+    ).toBe(true);
+    expect(
+      icones.some(
+        (i) => i.sizes === "512x512" && i.purpose?.includes("maskable"),
+      ),
+    ).toBe(true);
+  });
+
+  test("o assetlinks.json autoriza a app TWA neste domínio", async ({
+    request,
+  }) => {
+    const res = await request.get("/.well-known/assetlinks.json");
+    expect(res.status()).toBe(200);
+    const [ligacao] = JSON.parse(await res.text());
+    expect(ligacao.relation).toContain(
+      "delegate_permission/common.handle_all_urls",
+    );
+    expect(ligacao.target.namespace).toBe("android_app");
+    expect(ligacao.target.package_name).toBe("pt.aocentimo.twa");
+    expect(ligacao.target.sha256_cert_fingerprints.length).toBeGreaterThan(0);
   });
 
   test("as âncoras da cena partilham a imagem do site e não viram rotas", async ({

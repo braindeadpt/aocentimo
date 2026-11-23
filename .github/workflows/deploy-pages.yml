@@ -120,3 +120,19 @@ jobs:
           node-version: 22
       - name: Verificar o orçamento da home publicada (gzip do CDN)
         run: node scripts/_verifica-cdn.mjs "${{ steps.deployment.outputs.page_url }}"
+      # A app TWA na Play Store só abre sem barra de URL se o Android
+      # encontrar este ficheiro — um 404 aqui é uma app avariada na loja,
+      # não um detalhe de SEO. Falha alta como o orçamento acima.
+      - name: Verificar o assetlinks.json publicado (TWA)
+        run: |
+          url="${{ steps.deployment.outputs.page_url }}"
+          url="${url%/}/.well-known/assetlinks.json"
+          # 200 DIRETO — sem -L: o Android não segue redirects no
+          # assetlinks, por isso um 30x tem de falhar aqui também.
+          code=$(curl -sS -o /tmp/assetlinks-served.json -w '%{http_code}' "$url") \
+            || { echo "::error::GET ao assetlinks.json falhou"; exit 1; }
+          [ "$code" = 200 ] \
+            || { echo "::error::assetlinks.json respondeu $code — o Android exige 200 direto, sem redirects"; exit 1; }
+          cmp -s /tmp/assetlinks-served.json public/.well-known/assetlinks.json \
+            || { echo "::error::assetlinks.json servido difere do repo"; exit 1; }
+          echo "assetlinks.json OK — 200 direto e bytes iguais aos do repo"
