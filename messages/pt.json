@@ -664,6 +664,17 @@
       "quiosque": "Inflação: {inflacao} num ano. Desemprego: {desemprego}."
     }
   },
+  "sobre": {
+    "privacidade": {
+      "titulo": "Privacidade",
+      "p1": "O AO CÊNTIMO não recolhe dados pessoais: não há contas, formulários, cookies, analytics, publicidade nem rastreadores — o site não sabe quem és.",
+      "p2": "Os cálculos correm todos no teu aparelho. A preferência de tema (claro ou escuro) fica guardada no armazenamento local do navegador e nunca sai do dispositivo.",
+      "p3": "Duas notas honestas. A hospedagem (GitHub Pages) regista o endereço IP em logs técnicos, como qualquer servidor web — logs que não consultamos nem usamos para te identificar. E quando partilhas uma ligação gerada por um simulador, os valores viajam no próprio URL — é assim por desenho, sem servidor — e chegam a esses mesmos logs quando a ligação é aberta.",
+      "p4": "As ligações de «fonte» abrem sites oficiais — DGEG, INE, Banco de Portugal, Eurostat e outros — onde passam a valer as políticas desses sites.",
+      "p5": "A app Android é este mesmo site a correr em ecrã inteiro: recolhe exatamente os mesmos dados — nenhuns.",
+      "contacto": "Dúvidas ou pedidos sobre privacidade: GitHub Issues."
+    }
+  },
   "estilo": {
     "titulo": "Contrato visual «O Bairro»",
     "nota": "Esta página é a referência do aspecto do site: as cores, a tipografia e as formas que se repetem em todas as páginas. Onde ela e as regras da casa divergirem, ganham as regras da casa.",
