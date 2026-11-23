@@ -79,6 +79,7 @@ export default function SobrePage() {
           <p>{m.sobre.privacidade.p3}</p>
           <p>{m.sobre.privacidade.p4}</p>
           <p>{m.sobre.privacidade.p5}</p>
+          <p>{m.sobre.privacidade.p6}</p>
           <p>
             Dúvidas ou pedidos sobre privacidade:{" "}
             <a
