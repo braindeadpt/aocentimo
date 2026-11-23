@@ -134,9 +134,11 @@ test.describe("3D — /metodologia e /sobre", () => {
       page.locator("a[href='https://github.com/braindeadpt/aocentimo']")
     ).toBeVisible();
     await expect(
-      page.locator(
-        "a[href='https://github.com/braindeadpt/aocentimo/issues']"
-      )
+      page
+        .locator(
+          "a[href='https://github.com/braindeadpt/aocentimo/issues']"
+        )
+        .first()
     ).toBeVisible();
   });
 });
