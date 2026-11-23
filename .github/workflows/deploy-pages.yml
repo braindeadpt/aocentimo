@@ -127,8 +127,12 @@ jobs:
         run: |
           url="${{ steps.deployment.outputs.page_url }}"
           url="${url%/}/.well-known/assetlinks.json"
-          # bytes servidos == ficheiro do repo: 200 OK, sem redirect que
-          # entregue outra coisa, e sem depender do formato do JSON
-          curl -fsSL "$url" | cmp -s - public/.well-known/assetlinks.json \
-            || { echo "::error::assetlinks.json publicado difere do repo ou falhou o GET"; exit 1; }
-          echo "assetlinks.json OK no domínio publicado"
+          # 200 DIRETO — sem -L: o Android não segue redirects no
+          # assetlinks, por isso um 30x tem de falhar aqui também.
+          code=$(curl -sS -o /tmp/assetlinks-served.json -w '%{http_code}' "$url") \
+            || { echo "::error::GET ao assetlinks.json falhou"; exit 1; }
+          [ "$code" = 200 ] \
+            || { echo "::error::assetlinks.json respondeu $code — o Android exige 200 direto, sem redirects"; exit 1; }
+          cmp -s /tmp/assetlinks-served.json public/.well-known/assetlinks.json \
+            || { echo "::error::assetlinks.json servido difere do repo"; exit 1; }
+          echo "assetlinks.json OK — 200 direto e bytes iguais aos do repo"
