@@ -76,6 +76,10 @@ Re-obter: `keytool -list -v -keystore twa/aocentimo.keystore -alias aocentimo`
      o local para builds de teste, o da Google para a produção). Sem este
      passo a app da loja abre com barra de URL.
    - Upload do `app-release-bundle.aab` na faixa interna/fechada primeiro.
+     ⚠️ No telemóvel de teste: **desinstala o APK local primeiro** — o
+     build da loja vai assinado com o certificado da Google, e o Android
+     recusa instalar uma assinatura diferente por cima (usa outro
+     telemóvel ou desinstala).
      ⚠️ A instalação vinda da loja só fica sem barra **depois** de o
      `assetlinks.json` com o fingerprint da Google estar publicado — por
      isso a ordem é: ativar o signing → acrescentar o fingerprint →

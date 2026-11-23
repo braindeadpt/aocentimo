@@ -127,7 +127,8 @@ jobs:
         run: |
           url="${{ steps.deployment.outputs.page_url }}"
           url="${url%/}/.well-known/assetlinks.json"
-          body="$(curl -fsS "$url")"
-          echo "$body" | grep -q '"package_name": "pt.aocentimo.twa"' \
-            || { echo "::error::assetlinks.json publicado sem pt.aocentimo.twa"; exit 1; }
+          # bytes servidos == ficheiro do repo: 200 OK, sem redirect que
+          # entregue outra coisa, e sem depender do formato do JSON
+          curl -fsSL "$url" | cmp -s - public/.well-known/assetlinks.json \
+            || { echo "::error::assetlinks.json publicado difere do repo ou falhou o GET"; exit 1; }
           echo "assetlinks.json OK no domínio publicado"
