@@ -78,12 +78,17 @@ F4:98:5F:6B:C9:DA:52:C0:6A:28:85:35:26:07:C6:E2:1E:2C:C1:D8:9A:65:25:8D:7D:E4:9E
 
 5. **Play Console** (conta dev: 25 $, verificação de identidade):
    - Criar app «AO CÊNTIMO», package `pt.aocentimo.twa` (não muda NUNCA).
-   - **Play App Signing**: ao ativar, a Google re-assina — ir a
-     *Setup → App integrity*, copiar o **SHA-256 do certificado de assinatura
-     da app** e **acrescentá-lo ao array** em
-     `public/.well-known/assetlinks.json` (os dois fingerprints vivem juntos:
-     o local para builds de teste, o da Google para a produção). Sem este
-     passo a app da loja abre com barra de URL.
+   - **Play App Signing**: ao ativar, a Google re-assina. ✅ **FEITO
+     (2026-11-27)**: o SHA-256 do certificado de assinatura da app da
+     Google já está no array do `assetlinks.json`, ao lado do local (o
+     local serve os builds de teste, o da Google serve a produção) —
+     ver os dois fingerprints registados acima. O caminho na consola
+     mudou: já não é *Setup → App integrity*, é *Protegido com o
+     Google Play → Proteção da Play Store → Gerir a Assinatura de apps
+     do Play*. O que falta aqui é só **verificação**: depois do
+     merge+deploy, confirmar em *Links diretos* que `aocentimo.pt`
+     passa a validar, e na primeira instalação da loja confirmar que
+     a app abre **sem barra de URL**.
    - Upload do `app-release-bundle.aab` na faixa interna/fechada primeiro.
      ⚠️ No telemóvel de teste: **desinstala o APK local primeiro** — o
      build da loja vai assinado com o certificado da Google, e o Android
