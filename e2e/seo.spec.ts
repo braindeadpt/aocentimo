@@ -284,6 +284,10 @@ test.describe("P4 · SEO", () => {
     expect(ligacao.target.namespace).toBe("android_app");
     expect(ligacao.target.package_name).toBe("pt.aocentimo.twa");
     expect(ligacao.target.sha256_cert_fingerprints.length).toBeGreaterThan(0);
+    // sem o fingerprint do Play App Signing a app da loja abre com barra de URL
+    expect(ligacao.target.sha256_cert_fingerprints).toContain(
+      "F4:98:5F:6B:C9:DA:52:C0:6A:28:85:35:26:07:C6:E2:1E:2C:C1:D8:9A:65:25:8D:7D:E4:9E:0A:5E:5F:C0:22",
+    );
   });
 
   test("as âncoras da cena partilham a imagem do site e não viram rotas", async ({

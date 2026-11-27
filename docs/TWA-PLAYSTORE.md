@@ -35,6 +35,15 @@ Fingerprint SHA-256 da chave local (já está no `assetlinks.json`):
 
 Re-obter: `keytool -list -v -keystore twa/aocentimo.keystore -alias aocentimo`
 
+Fingerprint SHA-256 do **certificado de assinatura da app da Google**
+(Play App Signing — também já está no `assetlinks.json`; copiado de
+*Protegido com o Google Play → Gerir a Assinatura de apps do Play* em
+2026-11-27):
+
+```
+F4:98:5F:6B:C9:DA:52:C0:6A:28:85:35:26:07:C6:E2:1E:2C:C1:D8:9A:65:25:8D:7D:E4:9E:0A:5E:5F:C0:22
+```
+
 ## Passos (na ordem)
 
 1. **Fundir + publicar este PR.** O `assetlinks.json` tem de estar no ar

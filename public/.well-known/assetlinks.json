@@ -4,7 +4,8 @@
     "namespace": "android_app",
     "package_name": "pt.aocentimo.twa",
     "sha256_cert_fingerprints": [
-      "13:A0:D2:C5:84:F4:F6:C0:63:07:21:BA:6A:99:7E:D6:8B:9D:95:92:8A:EF:0A:60:39:12:A9:0B:89:59:19:36"
+      "13:A0:D2:C5:84:F4:F6:C0:63:07:21:BA:6A:99:7E:D6:8B:9D:95:92:8A:EF:0A:60:39:12:A9:0B:89:59:19:36",
+      "F4:98:5F:6B:C9:DA:52:C0:6A:28:85:35:26:07:C6:E2:1E:2C:C1:D8:9A:65:25:8D:7D:E4:9E:0A:5E:5F:C0:22"
     ]
   }
 }]
