@@ -1,14 +1,14 @@
 {
-  "consultadoEm": "2026-11-22T16:08:12.589Z",
+  "consultadoEm": "2026-11-28T00:11:07.617Z",
   "fonteUrl": "https://news.google.com/rss/search?q=ISP+site%3Adiariodarepublica.pt&hl=pt-PT&gl=PT&ceid=PT%3Apt",
   "nota": "Feed RSS do Google Notícias restrito ao DR; o DR não é legível por máquina (só shell JS).",
   "ultimaPortariaFeed": {
-    "numero": "527-A/2026/1",
-    "data": "2026-11-20",
-    "titulo": "Portaria n.º 527-A/2026/1, de 20 de novembro - Diário da República",
-    "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1NaG92WDZoc24wem9TVHlkUm5lUlprUk5xZWNRQXBjQzJEMHNDUGE1dUNjaDg0Uk5MR1NsemNQZVUwNFBFX25QRGlRa2VzOFZqQVVweVE1bHZRa2NCckVvZjVWMWZqLXhzTGcwajJsNDY4VUFSRy1tdEpB?oc=5"
+    "numero": "539-A/2026/1",
+    "data": "2026-11-27",
+    "titulo": "Portaria n.º 539-A/2026/1, de 27 de novembro - Diário da República",
+    "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE0tY1Z0aW9tM2FZZ0xLV045OFN3b1ZWNV9DM1RvaC1PZmxtbmlYd0JwYWxFZ2twakdkcGRyY1ZPMjNOM0ZyMFQxREhHdFhaWGFFR19zLU5leXF2MHpaMjBFaENtX0VUZVIwbWJoRk9XS0J2MExzb1dkS0l3?oc=5"
   },
-  "ultimaReportada": "527-A/2026/1",
+  "ultimaReportada": "539-A/2026/1",
   "ispJson": {
     "vigencia": "2026-10-05",
     "portaria": "448-A/2026/1"
@@ -62,9 +62,15 @@
       "data": "2026-11-20",
       "titulo": "Portaria n.º 527-A/2026/1, de 20 de novembro - Diário da República",
       "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1NaG92WDZoc24wem9TVHlkUm5lUlprUk5xZWNRQXBjQzJEMHNDUGE1dUNjaDg0Uk5MR1NsemNQZVUwNFBFX25QRGlRa2VzOFZqQVVweVE1bHZRa2NCckVvZjVWMWZqLXhzTGcwajJsNDY4VUFSRy1tdEpB?oc=5"
+    },
+    {
+      "numero": "539-A/2026/1",
+      "data": "2026-11-27",
+      "titulo": "Portaria n.º 539-A/2026/1, de 27 de novembro - Diário da República",
+      "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE0tY1Z0aW9tM2FZZ0xLV045OFN3b1ZWNV9DM1RvaC1PZmxtbmlYd0JwYWxFZ2twakdkcGRyY1ZPMjNOM0ZyMFQxREhHdFhaWGFFR19zLU5leXF2MHpaMjBFaENtX0VUZVIwbWJoRk9XS0J2MExzb1dkS0l3?oc=5"
     }
   ],
-  "idadeDias": 48,
+  "idadeDias": 54,
   "alarmeIdade": true,
   "alarme": true,
   "motivo": "ambos",
